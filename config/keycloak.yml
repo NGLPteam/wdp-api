@@ -1,0 +1,15 @@
+default: &default
+  allow_anonymous: true
+  realm_id: "NGLP"
+  server_url: "https://auth.staging.nglp.org/auth"
+
+development:
+  <<: *default
+
+test:
+  <<: *default
+  server_url: "http://keycloak.example.com"
+  realm_id: "Test"
+
+production:
+  <<: *default
