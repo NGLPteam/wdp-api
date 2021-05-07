@@ -3,6 +3,7 @@
 module Types
   class CollectionType < Types::BaseObject
     implements GraphQL::Types::Relay::Node
+    implements Types::Sluggable
 
     global_id_field :id
 

@@ -9,22 +9,22 @@ module Types
     field :collections, resolver: Resolvers::CollectionResolver
 
     field :collection, Types::CollectionType, null: true do
-      argument :id, ID, required: true
+      argument :slug, Types::SlugType, required: true
     end
 
     field :item, Types::ItemType, null: true do
-      argument :id, ID, required: true
+      argument :slug, Types::SlugType, required: true
     end
 
     field :viewer, Types::UserType, null: true,
       description: "The currently authenticated user. AKA: you"
 
-    def collection(id:)
-      WDPAPISchema.object_from_id(id, context)
+    def collection(slug:)
+      Collection.find slug
     end
 
-    def item(id:)
-      WDPAPISchema.object_from_id(id, context)
+    def item(slug:)
+      Item.find slug
     end
 
     def viewer
