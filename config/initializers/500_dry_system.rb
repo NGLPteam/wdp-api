@@ -7,7 +7,7 @@ Dry::Rails.container do
 
   namespace :keycloak do
     register :config, memoize: true do
-      Keycloak::Config.new
+      KeycloakRack::Config.new
     end
 
     register :realm_id, memoize: true do
@@ -15,7 +15,7 @@ Dry::Rails.container do
     end
 
     register :realm do
-      KeycloakAdmin.realm(resolve("realm"))
+      KeycloakAdmin.realm(resolve("realm_id"))
     end
 
     register :roles, memoize: true do

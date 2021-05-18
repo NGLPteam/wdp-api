@@ -1,7 +1,20 @@
 # frozen_string_literal: true
 
 class Item < ApplicationRecord
+  include HasSchemaDefinition
+  include HasSystemSlug
+
+  has_closure_tree
+
   belongs_to :collection, inverse_of: :items
 
-  validates :title, :description, presence: true
+  has_many :contributions, class_name: "ItemContribution", dependent: :destroy, inverse_of: :item
+  has_many :contributors, through: :contributions
+
+  has_many :item_links, foreign_key: :source_id, dependent: :destroy, inverse_of: :source
+  has_many :targeting_item_links, class_name: "ItemLink", foreign_key: :target_id, dependent: :destroy, inverse_of: :target
+
+  has_one :community, through: :collection
+
+  validates :identifier, :title, presence: true
 end

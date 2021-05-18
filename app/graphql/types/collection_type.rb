@@ -1,20 +1,21 @@
 # frozen_string_literal: true
 
 module Types
-  class CollectionType < Types::BaseObject
-    implements GraphQL::Types::Relay::Node
-    implements Types::Sluggable
+  class CollectionType < Types::AbstractModel
+    implements Types::HierarchicalEntryType
+    implements Types::ContributableType
 
-    global_id_field :id
+    description "A collection of items"
 
-    description "A collection"
+    field :community, Types::CommunityType, null: false
 
-    field :title, String, null: false
-    field :description, String, null: false
+    field :parent, self, null: true
+    field :children, connection_type, null: false
+
+    field :contributions, Types::CollectionContributionType.connection_type, null: false
 
     field :items, resolver: Resolvers::ItemResolver
-
-    field :created_at, GraphQL::Types::ISO8601DateTime, null: false
-    field :updated_at, GraphQL::Types::ISO8601DateTime, null: false
+    field :links, Types::CollectionLinkType.connection_type, null: false, method: :collection_links
+    field :item_links, Types::CollectionLinkedItemType.connection_type, null: false, method: :collection_linked_items
   end
 end

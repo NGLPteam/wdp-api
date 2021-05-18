@@ -6,8 +6,18 @@ module DerivedGraphqlTypes
   extend ActiveSupport::Concern
 
   included do
-    delegate :graphql_connection_type, :graphql_edge_type, :graphql_node_type, :graphql_node_type_name,
+    delegate :graphql_node_type, :graphql_node_type_name,
       to: :class
+  end
+
+  # @return [Class, nil]
+  def graphql_connection_type
+    graphql_node_type&.connection_type
+  end
+
+  # @return [Class, nil]
+  def graphql_edge_type
+    graphql_node_type&.edge_type
   end
 
   module ClassMethods

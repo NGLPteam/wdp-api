@@ -90,6 +90,9 @@ Lint/ToEnumArguments:
 Lint/TripleQuotes:
   Enabled: true
 
+Lint/UnderscorePrefixedVariableName:
+  Enabled: false
+
 Lint/UnexpectedBlockArity:
   Enabled: true
 
@@ -105,11 +108,20 @@ Lint/UnusedMethodArgument:
 Metrics/AbcSize:
   Max: 25
 
+Metrics/BlockLength:
+  Enabled: false
+
 Metrics/ClassLength:
   Enabled: false
 
 Metrics/MethodLength:
   Max: 30
+
+Naming/AccessorMethodName:
+  Enabled: false
+
+Naming/MethodParameterName:
+  Enabled: false
 
 Naming/MethodName:
   Enabled: false
@@ -192,6 +204,9 @@ Style/CharacterLiteral:
 Style/ClassCheck:
   Enabled: false
 
+Style/ClassVars:
+  Enabled: false
+
 Style/CollectionCompact:
   Enabled: true
 
@@ -234,6 +249,9 @@ Style/NegatedIfElseCondition:
 Style/NilLambda:
   Enabled: true
 
+Style/NumericPredicate:
+  Enabled: false
+
 Style/RedundantArgument:
   Enabled: true
 
@@ -271,4 +289,7 @@ Style/TrailingUnderscoreVariable:
   Enabled: false
 
 Style/UnlessElse:
+  Enabled: false
+
+Style/ZeroLengthPredicate:
   Enabled: false

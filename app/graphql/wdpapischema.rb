@@ -16,6 +16,8 @@ class WDPAPISchema < GraphQL::Schema
     raise GraphQL::ExecutionError, "#{field.type.unwrap.graphql_name} not found"
   end
 
+  orphan_types Types::ContributorType, Types::OrganizationContributorType, Types::PersonContributorType
+
   class << self
     def id_from_object(object, type_definition, query_ctx)
       WDPAPI::Container["relay_node.id_from_object"].call(object, type_definition: type_definition, query_context: query_ctx) do |m|

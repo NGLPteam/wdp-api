@@ -18,5 +18,36 @@ class ApplicationRecord < ActiveRecord::Base
     def escape_ilike_needle(needle)
       needle.gsub("%", "\\%").gsub("_", "\\_")
     end
+
+    def find_graphql_slug(slug)
+      id = WDPAPI::Container["slugs.decode_id"].call(slug).value!
+
+      find id
+    end
+
+    # @return [void]
+    def pg_enum!(attr_name, as:, **options)
+      values = pg_enum_values(as).to_h { |v| [v, v] }
+
+      enum options.merge attr_name => values
+    end
+
+    def sample(num = nil)
+      randomized = reorder(Arel.sql("RANDOM()"))
+
+      if num.is_a?(Integer) && num >= 1
+        randomized.limit(num)
+      else
+        randomized.first
+      end
+    end
+
+    private
+
+    def pg_enum_values(enum_name)
+      schema = Rails.root.join("db/schema.rb").read
+      matched = schema.match(/create_enum .#{enum_name}.?, \[([^\]]*)\]/m)
+      matched[1].tr(" \n\"", "").split(",").map(&:to_s)
+    end
   end
 end
