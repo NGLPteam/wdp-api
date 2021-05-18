@@ -1,0 +1,22 @@
+# frozen_string_literal: true
+
+class Contributor < ApplicationRecord
+  pg_enum! :kind, as: "contributor_kind"
+
+  attribute :links, Contributors::Link.to_array_type
+  attribute :properties, Contributors::Properties.to_type
+
+  has_many :collection_contributions, dependent: :destroy, inverse_of: :contributor
+  has_many :collections, through: :collection_contributions
+
+  has_many :item_contributions, dependent: :destroy, inverse_of: :contributor
+  has_many :items, through: :item_contributions
+
+  scope :by_kind, ->(kind) { where(kind: kind) }
+
+  validates :identifier, :kind, presence: true
+
+  def graphql_node_type
+    organization? ? Types::OrganizationContributorType : Types::PersonContributorType
+  end
+end

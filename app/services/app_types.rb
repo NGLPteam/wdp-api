@@ -13,6 +13,8 @@ module AppTypes
 
   JWTIssuer = (AppTypes::String | StringList).optional
 
+  ContributorKind = AppTypes::Coercible::Symbol.enum(:organization, :person)
+
   class << self
     def Implements(mod)
       AppTypes::Class.constrained(lt: mod)

@@ -5,6 +5,9 @@ require File.expand_path("../config/environment", __dir__)
 abort("The Rails environment is running in production mode!") if Rails.env.production?
 
 require "rspec/rails"
+require "rspec/json_expectations"
+require "dry/container/stub"
+require "webmock/rspec"
 
 # Add additional requires below this line. Rails is not loaded until this point!
 
@@ -37,9 +40,16 @@ RSpec.configure do |config|
   config.use_transactional_fixtures = false
 
   config.before(:suite) do
-    DatabaseCleaner.strategy = :transaction
+    DatabaseCleaner[:active_record].strategy = :transaction
+    DatabaseCleaner[:redis].strategy = :deletion
 
-    DatabaseCleaner.clean_with(:truncation)
+    DatabaseCleaner[:active_record].clean_with(:truncation)
+    DatabaseCleaner[:redis].clean_with(:deletion)
+  end
+
+  config.before(:suite) do
+    WDPAPI::Container.enable_stubs!
+    WebMock.disable_net_connect!
   end
 
   config.around(:each) do |example|

@@ -1,12 +1,7 @@
 # frozen_string_literal: true
 
 module Types
-  class UserType < Types::BaseObject
-    implements GraphQL::Types::Relay::Node
-    implements Types::Sluggable
-
-    global_id_field :id
-
+  class UserType < Types::AbstractModel
     description "A user"
 
     field :email_verified, Boolean, null: false
@@ -17,7 +12,7 @@ module Types
     field :global_admin, Boolean, null: false
 
     def global_admin
-      object.has_global_admin?
+      object.has_global_admin_access?
     end
   end
 end

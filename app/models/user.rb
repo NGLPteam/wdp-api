@@ -1,6 +1,12 @@
 # frozen_string_literal: true
 
 class User < ApplicationRecord
+  include HasSystemSlug
+
+  has_many :community_memberships, dependent: :destroy, inverse_of: :user
+
+  has_many :communities, through: :community_memberships
+
   validates :keycloak_id, presence: true
 
   scope :global_admins, -> { where(arel_has_role(:admin)) }
@@ -19,6 +25,10 @@ class User < ApplicationRecord
 
   def has_global_admin_access?
     has_role? :global_admin
+  end
+
+  def system_slug_id
+    keycloak_id
   end
 
   class << self
