@@ -18,7 +18,7 @@ class ApplicationPolicy
   end
 
   def index?
-    false
+    show?
   end
 
   def show?
@@ -43,6 +43,10 @@ class ApplicationPolicy
 
   def destroy?
     admin_or_owns_resource?
+  end
+
+  def manage_roles?
+    user.has_global_admin_access?
   end
 
   def admin_or_owns_resource?

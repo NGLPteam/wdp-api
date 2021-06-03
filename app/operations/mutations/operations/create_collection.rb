@@ -5,8 +5,23 @@ module Mutations
     class CreateCollection
       include MutationOperations::Base
 
-      def call(**args)
-        attributes = args.slice(:title, :description)
+      def call(parent:, **args)
+        attributes = args.slice(:title, :identifier)
+
+        attributes[:schema_definition] = SchemaDefinition.default_collection
+
+        case parent
+        when Community
+          attributes[:community] = parent
+          attributes[:parent] = nil
+        when Collection
+          attributes[:community] = parent.community
+          attributes[:parent] = parent
+        else
+          add_error! "Not a valid parent", path: "input.parent"
+
+          return throw_invalid
+        end
 
         collection = Collection.new attributes
 

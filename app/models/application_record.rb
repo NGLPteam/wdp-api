@@ -4,6 +4,7 @@ class ApplicationRecord < ActiveRecord::Base
   self.abstract_class = true
 
   include DerivedGraphqlTypes
+  include WhereMatches
 
   # @return [String]
   def to_encoded_id

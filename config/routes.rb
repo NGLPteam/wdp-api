@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 Rails.application.routes.draw do
+  mount WDPAPI::TusUploader, at: "/files"
+
   post "/graphql", to: "graphql#execute"
 
   get "/ping", to: "status#ping"

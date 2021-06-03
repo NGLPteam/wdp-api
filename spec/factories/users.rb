@@ -9,7 +9,7 @@ FactoryBot.define do
     name { "#{given_name} #{family_name}" }
 
     given_name { Faker::Name.first_name }
-    last_name { Faker::Name.last_name }
+    family_name { Faker::Name.last_name }
 
     roles { [] }
     resource_roles { {} }

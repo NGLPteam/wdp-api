@@ -3,6 +3,8 @@
 class User < ApplicationRecord
   include HasSystemSlug
 
+  has_many :access_grants, dependent: :destroy, inverse_of: :user
+
   has_many :community_memberships, dependent: :destroy, inverse_of: :user
 
   has_many :communities, through: :community_memberships
@@ -10,6 +12,7 @@ class User < ApplicationRecord
   validates :keycloak_id, presence: true
 
   scope :global_admins, -> { where(arel_has_role(:admin)) }
+  scope :testing, -> { where_contains(email: "@example.") }
 
   def anonymous?
     false

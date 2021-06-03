@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_05_14_175833) do
+ActiveRecord::Schema.define(version: 2021_05_27_225127) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
@@ -20,11 +20,58 @@ ActiveRecord::Schema.define(version: 2021_05_14_175833) do
   enable_extension "plpgsql"
 
   # These are custom enum types that must be created before they can be used in the schema definition
+  create_enum "asset_kind", ["unknown", "image", "video", "audio", "pdf", "document", "archive"]
   create_enum "collection_link_operator", ["contains", "references"]
   create_enum "collection_linked_item_operator", ["contains", "references"]
   create_enum "contributor_kind", ["person", "organization"]
   create_enum "item_link_operator", ["contains", "references"]
+  create_enum "permission_name", ["read", "create", "update", "delete", "manage_access"]
   create_enum "schema_kind", ["collection", "item", "metadata"]
+
+# Could not dump table "access_grants" because of following StandardError
+#   Unknown type 'lquery' for column 'auth_query'
+
+  create_table "asset_hierarchies", id: false, force: :cascade do |t|
+    t.uuid "ancestor_id", null: false
+    t.uuid "descendant_id", null: false
+    t.integer "generations", null: false
+    t.index ["ancestor_id", "descendant_id", "generations"], name: "asset_anc_desc_idx", unique: true
+    t.index ["descendant_id"], name: "asset_desc_idx"
+  end
+
+  create_table "assets", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "attachable_type", null: false
+    t.uuid "attachable_id", null: false
+    t.uuid "parent_id"
+    t.enum "kind", default: "unknown", null: false, as: "asset_kind"
+    t.integer "position"
+    t.citext "name"
+    t.citext "content_type"
+    t.bigint "file_size"
+    t.text "alt_text"
+    t.text "caption"
+    t.jsonb "attachment_data"
+    t.jsonb "alternatives_data"
+    t.jsonb "preview_data"
+    t.jsonb "properties"
+    t.datetime "created_at", precision: 6, default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.datetime "updated_at", precision: 6, default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.uuid "community_id"
+    t.uuid "collection_id"
+    t.uuid "item_id"
+    t.index ["attachable_id", "attachable_type", "position"], name: "index_assets_on_attachable_id_and_attachable_type_and_position"
+    t.index ["attachable_type", "attachable_id"], name: "index_assets_on_attachable"
+    t.index ["attachment_data"], name: "index_assets_on_attachment_data", using: :gin
+    t.index ["collection_id"], name: "index_assets_on_collection_id"
+    t.index ["community_id"], name: "index_assets_on_community_id"
+    t.index ["file_size"], name: "index_assets_on_file_size"
+    t.index ["item_id"], name: "index_assets_on_item_id"
+    t.index ["kind"], name: "index_assets_on_kind"
+    t.index ["name"], name: "index_assets_on_name"
+    t.index ["parent_id", "position"], name: "index_assets_on_parent_id_and_position"
+    t.index ["parent_id"], name: "index_assets_on_parent_id"
+    t.index ["preview_data"], name: "index_assets_on_preview_data", using: :gin
+  end
 
   create_table "collection_contributions", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "contributor_id", null: false
@@ -36,6 +83,14 @@ ActiveRecord::Schema.define(version: 2021_05_14_175833) do
     t.index ["collection_id"], name: "index_collection_contributions_on_collection_id"
     t.index ["contributor_id", "collection_id"], name: "index_collection_contributions_uniqueness", unique: true
     t.index ["contributor_id"], name: "index_collection_contributions_on_contributor_id"
+  end
+
+  create_table "collection_hierarchies", id: false, force: :cascade do |t|
+    t.uuid "ancestor_id", null: false
+    t.uuid "descendant_id", null: false
+    t.integer "generations", null: false
+    t.index ["ancestor_id", "descendant_id", "generations"], name: "collection_anc_desc_idx", unique: true
+    t.index ["descendant_id"], name: "collection_desc_idx"
   end
 
   create_table "collection_linked_items", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -75,8 +130,11 @@ ActiveRecord::Schema.define(version: 2021_05_14_175833) do
     t.datetime "visible_after_at"
     t.datetime "created_at", precision: 6, default: -> { "CURRENT_TIMESTAMP" }, null: false
     t.datetime "updated_at", precision: 6, default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.ltree "auth_path", null: false
+    t.index ["auth_path"], name: "index_collections_on_auth_path", using: :gist
     t.index ["community_id"], name: "index_collections_on_community_id"
     t.index ["doi"], name: "index_collections_on_doi", unique: true
+    t.index ["identifier", "community_id", "parent_id"], name: "index_collections_unique_identifier", unique: true
     t.index ["parent_id"], name: "index_collections_on_parent_id"
     t.index ["properties"], name: "index_collections_on_properties", using: :gin
     t.index ["published_on"], name: "index_collections_on_published_on"
@@ -93,6 +151,8 @@ ActiveRecord::Schema.define(version: 2021_05_14_175833) do
     t.jsonb "metadata"
     t.datetime "created_at", precision: 6, default: -> { "CURRENT_TIMESTAMP" }, null: false
     t.datetime "updated_at", precision: 6, default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.ltree "auth_path", null: false
+    t.index ["auth_path"], name: "index_communities_on_auth_path", using: :gist
     t.index ["position"], name: "index_communities_on_position"
     t.index ["system_slug"], name: "index_communities_on_system_slug", unique: true
   end
@@ -124,6 +184,19 @@ ActiveRecord::Schema.define(version: 2021_05_14_175833) do
     t.datetime "updated_at", precision: 6, default: -> { "CURRENT_TIMESTAMP" }, null: false
   end
 
+  create_table "entities", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "hierarchical_type", null: false
+    t.uuid "hierarchical_id", null: false
+    t.citext "system_slug", null: false
+    t.ltree "auth_path", null: false
+    t.ltree "role_prefix", null: false
+    t.datetime "created_at", precision: 6, default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.datetime "updated_at", precision: 6, default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.index ["auth_path"], name: "index_entities_on_auth_path", using: :gist
+    t.index ["hierarchical_type", "hierarchical_id"], name: "index_entities_on_hierarchical", unique: true
+    t.index ["system_slug"], name: "index_entities_on_system_slug", unique: true
+  end
+
   create_table "item_contributions", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "contributor_id", null: false
     t.uuid "item_id", null: false
@@ -134,6 +207,14 @@ ActiveRecord::Schema.define(version: 2021_05_14_175833) do
     t.index ["contributor_id", "item_id"], name: "index_item_contributions_uniqueness", unique: true
     t.index ["contributor_id"], name: "index_item_contributions_on_contributor_id"
     t.index ["item_id"], name: "index_item_contributions_on_item_id"
+  end
+
+  create_table "item_hierarchies", id: false, force: :cascade do |t|
+    t.uuid "ancestor_id", null: false
+    t.uuid "descendant_id", null: false
+    t.integer "generations", null: false
+    t.index ["ancestor_id", "descendant_id", "generations"], name: "item_anc_desc_idx", unique: true
+    t.index ["descendant_id"], name: "item_desc_idx"
   end
 
   create_table "item_links", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -162,8 +243,11 @@ ActiveRecord::Schema.define(version: 2021_05_14_175833) do
     t.datetime "visible_after_at"
     t.datetime "created_at", precision: 6, default: -> { "CURRENT_TIMESTAMP" }, null: false
     t.datetime "updated_at", precision: 6, default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.ltree "auth_path", null: false
+    t.index ["auth_path"], name: "index_items_on_auth_path", using: :gist
     t.index ["collection_id"], name: "index_items_on_collection_id"
     t.index ["doi"], name: "index_items_on_doi", unique: true
+    t.index ["identifier", "collection_id", "parent_id"], name: "index_items_unique_identifier", unique: true
     t.index ["parent_id"], name: "index_items_on_parent_id"
     t.index ["properties"], name: "index_items_on_properties", using: :gin
     t.index ["published_on"], name: "index_items_on_published_on"
@@ -178,6 +262,9 @@ ActiveRecord::Schema.define(version: 2021_05_14_175833) do
     t.jsonb "access_control_list", default: {}, null: false
     t.datetime "created_at", precision: 6, default: -> { "CURRENT_TIMESTAMP" }, null: false
     t.datetime "updated_at", precision: 6, default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.ltree "allowed_actions", default: [], null: false, array: true
+    t.index ["allowed_actions"], name: "index_roles_on_allowed_actions", using: :gist
+    t.index ["name"], name: "index_roles_unique_name", unique: true
     t.index ["system_slug"], name: "index_roles_on_system_slug", unique: true
   end
 
@@ -221,6 +308,15 @@ ActiveRecord::Schema.define(version: 2021_05_14_175833) do
     t.index ["system_slug"], name: "index_users_on_system_slug", unique: true
   end
 
+  add_foreign_key "access_grants", "collections", on_delete: :cascade
+  add_foreign_key "access_grants", "communities", on_delete: :cascade
+  add_foreign_key "access_grants", "items", on_delete: :cascade
+  add_foreign_key "access_grants", "roles", on_delete: :restrict
+  add_foreign_key "access_grants", "users", on_delete: :cascade
+  add_foreign_key "assets", "assets", column: "parent_id", on_delete: :restrict
+  add_foreign_key "assets", "collections", on_delete: :restrict
+  add_foreign_key "assets", "communities", on_delete: :restrict
+  add_foreign_key "assets", "items", on_delete: :restrict
   add_foreign_key "collection_contributions", "collections"
   add_foreign_key "collection_contributions", "contributors"
   add_foreign_key "collection_linked_items", "collections", column: "source_id", on_delete: :restrict
@@ -241,4 +337,103 @@ ActiveRecord::Schema.define(version: 2021_05_14_175833) do
   add_foreign_key "items", "items", column: "parent_id", on_delete: :restrict
   add_foreign_key "items", "schema_definitions", on_delete: :restrict
   add_foreign_key "schema_versions", "schema_definitions", on_delete: :cascade
+
+  create_view "collection_authorizations", materialized: true, sql_definition: <<-SQL
+      WITH RECURSIVE closure_tree(community_id, collection_id, auth_path) AS (
+           SELECT coll.community_id,
+              coll.id AS collection_id,
+              (comm.auth_path || text2ltree((coll.system_slug)::text)) AS auth_path
+             FROM (collections coll
+               JOIN communities comm ON ((comm.id = coll.community_id)))
+            WHERE (coll.parent_id IS NULL)
+          UNION ALL
+           SELECT coll.community_id,
+              coll.id AS collection_id,
+              (ct.auth_path || text2ltree((coll.system_slug)::text)) AS auth_path
+             FROM (collections coll
+               JOIN closure_tree ct ON ((ct.collection_id = coll.parent_id)))
+          )
+   SELECT closure_tree.community_id,
+      closure_tree.collection_id,
+      closure_tree.auth_path
+     FROM closure_tree;
+  SQL
+  add_index "collection_authorizations", ["auth_path"], name: "index_collection_authorizations_on_auth_path", using: :gist
+  add_index "collection_authorizations", ["collection_id"], name: "index_collection_authorizations_on_collection_id", unique: true
+  add_index "collection_authorizations", ["community_id"], name: "index_collection_authorizations_on_community_id"
+
+  create_view "item_authorizations", materialized: true, sql_definition: <<-SQL
+      WITH RECURSIVE collection_paths(community_id, collection_id, auth_path) AS (
+           SELECT coll.community_id,
+              coll.id AS collection_id,
+              (comm.auth_path || text2ltree((coll.system_slug)::text)) AS auth_path
+             FROM (collections coll
+               JOIN communities comm ON ((comm.id = coll.community_id)))
+            WHERE (coll.parent_id IS NULL)
+          UNION ALL
+           SELECT coll.community_id,
+              coll.id AS collection_id,
+              (ct.auth_path || text2ltree((coll.system_slug)::text)) AS auth_path
+             FROM (collections coll
+               JOIN collection_paths ct ON ((ct.collection_id = coll.parent_id)))
+          ), item_paths(community_id, collection_id, item_id, auth_path) AS (
+           SELECT coll.community_id,
+              i.collection_id,
+              i.id AS item_id,
+              (coll.auth_path || text2ltree((i.system_slug)::text)) AS auth_path
+             FROM (items i
+               JOIN collection_paths coll USING (collection_id))
+            WHERE (i.parent_id IS NULL)
+          UNION ALL
+           SELECT coll.community_id,
+              i.collection_id,
+              i.id AS item_id,
+              (ip.auth_path || text2ltree((i.system_slug)::text)) AS auth_path
+             FROM ((items i
+               JOIN collection_paths coll USING (collection_id))
+               JOIN item_paths ip ON ((ip.item_id = i.parent_id)))
+          )
+   SELECT item_paths.community_id,
+      item_paths.collection_id,
+      item_paths.item_id,
+      item_paths.auth_path
+     FROM item_paths;
+  SQL
+  add_index "item_authorizations", ["auth_path"], name: "index_item_authorizations_on_auth_path", using: :gist
+  add_index "item_authorizations", ["collection_id"], name: "index_item_authorizations_on_collection_id"
+  add_index "item_authorizations", ["community_id"], name: "index_item_authorizations_on_community_id"
+  add_index "item_authorizations", ["item_id"], name: "index_item_authorizations_on_item_id", unique: true
+
+  create_view "permission_names", materialized: true, sql_definition: <<-SQL
+      SELECT t.name,
+      (t.name)::text AS key,
+      text2ltree((t.name)::text) AS path,
+      (('*{1}.'::text || (t.name)::text))::lquery AS query
+     FROM unnest(enum_range(NULL::permission_name)) t(name);
+  SQL
+  add_index "permission_names", ["name"], name: "index_permission_names_on_name", unique: true
+
+  create_view "derived_permissions", sql_definition: <<-SQL
+      SELECT ent.hierarchical_type,
+      ent.hierarchical_id,
+      ag.user_id,
+      pn.key AS name,
+      COALESCE((bool_or(((r.allowed_actions @> (text2ltree('self'::text) || pn.path)) AND ((ag.accessible_type)::text = (ent.hierarchical_type)::text) AND (ag.accessible_id = ent.hierarchical_id))) OR bool_or(((r.allowed_actions @> (ent.role_prefix || pn.path)) AND (ag.auth_query ~ ent.auth_path)))), false) AS granted,
+      COALESCE(bool_or(((r.allowed_actions @> (text2ltree('self'::text) || pn.path)) AND ((ag.accessible_type)::text = (ent.hierarchical_type)::text) AND (ag.accessible_id = ent.hierarchical_id))), false) AS direct_access,
+      COALESCE(bool_or(((r.allowed_actions @> (ent.role_prefix || pn.path)) AND (ag.auth_query ~ ent.auth_path))), false) AS inherited_access
+     FROM (((entities ent
+       CROSS JOIN permission_names pn)
+       JOIN access_grants ag ON ((ag.auth_path @> ent.auth_path)))
+       JOIN roles r ON ((ag.role_id = r.id)))
+    GROUP BY ent.hierarchical_type, ent.hierarchical_id, ag.user_id, pn.key;
+  SQL
+  create_view "composed_permissions", sql_definition: <<-SQL
+      SELECT derived_permissions.hierarchical_type,
+      derived_permissions.hierarchical_id,
+      derived_permissions.user_id,
+      jsonb_object_agg(derived_permissions.name, derived_permissions.granted) AS grid,
+      jsonb_object_agg(derived_permissions.name, jsonb_build_object('direct_access', derived_permissions.direct_access, 'inherited_access', derived_permissions.inherited_access)) AS debug
+     FROM derived_permissions
+    GROUP BY derived_permissions.hierarchical_type, derived_permissions.hierarchical_id, derived_permissions.user_id;
+  SQL
 end
