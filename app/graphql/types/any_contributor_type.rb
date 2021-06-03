@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Types
   class AnyContributorType < Types::BaseUnion
     possible_types Types::OrganizationContributorType, Types::PersonContributorType

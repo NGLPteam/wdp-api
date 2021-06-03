@@ -1,8 +1,11 @@
 # frozen_string_literal: true
 
 class Collection < ApplicationRecord
+  include Accessible
+  include Attachable
   include HasSchemaDefinition
   include HasSystemSlug
+  include HierarchicalEntity
 
   has_closure_tree
 
@@ -22,4 +25,10 @@ class Collection < ApplicationRecord
   has_many :items, dependent: :destroy, inverse_of: :collection
 
   validates :identifier, :title, presence: true
+  validates :identifier, uniqueness: { scope: %i[community_id parent_id] }
+
+  # @return [Community]
+  def hierarchical_parent
+    community
+  end
 end

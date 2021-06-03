@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class CommunityPolicy < ApplicationPolicy
+class CommunityPolicy < HierarchicalEntityPolicy
   class Scope < Scope
     def resolve
       scope.all

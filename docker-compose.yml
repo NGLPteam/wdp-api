@@ -1,0 +1,49 @@
+version: "3.9"
+services:
+  db:
+    image: "postgres:13.1-alpine"
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: password
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+  redis:
+    image: bitnami/redis:latest
+    environment:
+      - "ALLOW_EMPTY_PASSWORD=yes"
+  web:
+    tty: true
+    stdin_open: true
+    build: .
+    environment:
+      - "REDIS_URL=redis://redis:6379"
+      - "UPLOAD_BUCKET=wdp-api"
+      - "WEB_CONCURRENCY=0"
+    volumes:
+      - bundle_cache:/bundle
+      - .:/srv/app
+    ports:
+      - "6111:6111"
+    restart: unless-stopped
+    depends_on:
+      - db
+      - redis
+  worker:
+    build: .
+    command: bin/sidekiq -C config/sidekiq.yml
+    environment:
+      - "REDIS_URL=redis://redis:6379"
+      - "UPLOAD_BUCKET=wdp-api"
+    volumes:
+      - bundle_cache:/bundle
+      - .:/srv/app
+    restart: unless-stopped
+    depends_on:
+      - db
+      - redis
+
+volumes:
+  bundle_cache:
+    driver: local
+  postgres-data:
+    driver: local

@@ -8,12 +8,13 @@ module Testing
 
     option :collection, AppTypes.Instance(Collection)
     option :parent, AppTypes.Instance(Item).optional, default: proc { nil }
+    option :schema_definition, AppTypes.Instance(SchemaDefinition).optional, default: proc { SchemaDefinition.default_item }
     option :child_count, AppTypes::Integer, default: proc { 3 }
     option :grandchild_count, AppTypes::Integer, default: proc { 2 }
     option :depth, AppTypes::Integer, default: proc { 0 }
 
     def call
-      attributes = initializer_options.slice(:collection, :parent).compact
+      attributes = initializer_options.slice(:collection, :parent, :schema_definition).compact
 
       item = FactoryBot.create :item, attributes
 

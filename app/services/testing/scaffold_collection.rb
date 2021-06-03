@@ -8,13 +8,14 @@ module Testing
 
     option :community, AppTypes.Instance(Community).optional, default: proc { nil }
     option :parent, AppTypes.Instance(Collection).optional, default: proc { nil }
+    option :schema_definition, AppTypes.Instance(SchemaDefinition).optional, default: proc { SchemaDefinition.default_collection }
     option :child_count, AppTypes::Integer, default: proc { 3 }
     option :grandchild_count, AppTypes::Integer, default: proc { 2 }
     option :depth, AppTypes::Integer, default: proc { 0 }
     option :items_count, AppTypes::Integer, default: proc { 5 }
 
     def call
-      attributes = initializer_options.slice(:community, :parent).compact
+      attributes = initializer_options.slice(:community, :parent, :schema_definition).compact
 
       collection = FactoryBot.create :collection, attributes
 
@@ -59,7 +60,7 @@ module Testing
     end
 
     def item_options_for(collection)
-      initializer_options.without(:community, :parent).merge(collection: collection, depth: 0)
+      initializer_options.without(:community, :parent, :schema_definition).merge(collection: collection, depth: 0)
     end
   end
 end

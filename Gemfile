@@ -15,6 +15,7 @@ gem "store_model", "~> 0.9.0"
 # Redis
 gem "hiredis", "~> 0.6.3"
 gem "redis", "~> 4.2.5", require: %w[redis redis/connection/hiredis]
+gem "sidekiq", "~> 6.2.1"
 
 # GraphQL
 gem "graphql", "1.12.8"
@@ -46,8 +47,11 @@ gem "validate_url", "~> 1.0.13"
 
 # File processing
 gem "aws-sdk-s3", "~> 1.94.1"
+gem "content_disposition", "~> 1.0.0"
 gem "fastimage"
+gem "image_processing", "~> 1.12.1"
 gem "marcel", "~> 1.0.1"
+gem "oily_png", "~> 1.2.1"
 gem "shrine", "~> 3.3.0"
 gem "shrine-tus", "~> 2.1.1"
 gem "ffi", "~> 1.15"
@@ -58,6 +62,10 @@ gem "tus-server", "~> 2.3"
 gem "falcon", "~> 0.38.1", require: false
 gem "puma", "~> 5.3.1"
 gem "rack-cors", "~> 1.1.1"
+
+# Job Processing
+gem "sneakers", "~> 2.12.0"
+gem "advanced-sneakers-activejob", "~> 0.5.0"
 
 # Debugging / system-level things
 gem "bootsnap", ">= 1.7.5", require: false
