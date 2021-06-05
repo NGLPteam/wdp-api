@@ -25,5 +25,15 @@ module Roles
         actions << name
       end
     end
+
+    # @param [#to_s] scope
+    # @return [{ Symbol => String, Boolean }]
+    def to_permissions(scope: nil)
+      base = scope.present? ? { scope: scope.to_s } : {}
+
+      attributes.map do |name, allowed|
+        base.merge({ name: name, allowed: allowed })
+      end
+    end
   end
 end

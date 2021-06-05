@@ -45,5 +45,22 @@ class AccessGrant < ApplicationRecord
     def fetch(accessible, user)
       where(accessible: accessible, user: user).first_or_initialize
     end
+
+    # Uses an `ltree @> ltree` operation to check if the entity is contained by this access grant.
+    #
+    # @param [HierarchicalEntity, #auth_path] entity
+    # @return [Arel::Nodes::InfixOperator]
+    def arel_contains_entity(entity)
+      arel_ltree_contains(arel_table[:auth_path], arel_cast(entity.auth_path, "ltree"))
+    end
+
+    # @return [ActiveRecord::Relation<AccessGrant>]
+    def with_allowed_action(name:, entity:)
+      joins(:role).where(arel_contains_entity(entity)).where(Role.arel_allowed_action(name))
+    end
+
+    def with_allowed_action?(**options)
+      with_allowed_action(**options).exists?
+    end
   end
 end

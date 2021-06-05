@@ -8,9 +8,9 @@ module Testing
     def call
       roles = [Role.fetch("manager"), Role.fetch("editor")]
 
-      communities = Community.sample(2)
-      collections = Collection.where.not(community: communities).sample(20)
-      items = Item.where.not(collection: collections).sample(20)
+      communities = Community.sample(5)
+      collections = Collection.where.not(community: communities).sample(50)
+      items = Item.where.not(collection: collections).sample(100)
 
       things = [*communities, *collections, *items].shuffle
 

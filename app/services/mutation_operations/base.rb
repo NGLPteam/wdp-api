@@ -35,6 +35,15 @@ module MutationOperations
       graphql_response[:errors] << error
     end
 
+    # @return [void]
+    def halt_if_errors!
+      throw_invalid if graphql_response[:errors].any?
+    end
+
+    # @abstract
+    # @return [void]
+    def validate!(**args); end
+
     # @!group Authorization logic
 
     def authorize(*)

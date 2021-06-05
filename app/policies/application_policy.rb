@@ -45,7 +45,7 @@ class ApplicationPolicy
     admin_or_owns_resource?
   end
 
-  def manage_roles?
+  def manage_access?
     user.has_global_admin_access?
   end
 
@@ -64,6 +64,22 @@ class ApplicationPolicy
       false
     end
   end
+
+  # @!group Hierarchical permissions
+
+  def create_assets?
+    false
+  end
+
+  def create_collections?
+    false
+  end
+
+  def create_items?
+    false
+  end
+
+  # @!endgroup
 
   class Scope
     attr_reader :user, :scope

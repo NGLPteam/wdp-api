@@ -27,7 +27,7 @@ class HierarchicalEntityPolicy < ApplicationPolicy
     admin_or_grid_has? :destroy
   end
 
-  def manage_roles?
+  def manage_access?
     admin_or_grid_has? :manage_access
   end
 
@@ -36,6 +36,28 @@ class HierarchicalEntityPolicy < ApplicationPolicy
   # @see Roles::PermissionGrid#[]
   def has_grid?(name)
     @grid[name]
+  end
+
+  # @todo scoped asset permissions
+  def create_assets?
+    true
+  end
+
+  def create_collections?
+    has_hierarchical_scoped_permission? :collections, :create
+  end
+
+  def create_items?
+    has_hierarchical_scoped_permission? :items, :create
+  end
+
+  # @!scope private
+  # @param [#to_s] scope_name e.g. "collections", "items"
+  # @param [#to_s] permission_name e.g. "read", "create"
+  def has_hierarchical_scoped_permission?(scope_name, permission_name)
+    action_name = "#{scope_name}.#{permission_name}"
+
+    AccessGrant.for_user(user).with_allowed_action?(name: action_name, entity: record)
   end
 
   private

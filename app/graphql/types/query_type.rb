@@ -34,6 +34,8 @@ module Types
       argument :slug, Types::SlugType, required: true
     end
 
+    field :roles, resolver: Resolvers::RoleResolver
+
     field :viewer, Types::UserType, null: true,
       description: "The currently authenticated user. AKA: you"
 
