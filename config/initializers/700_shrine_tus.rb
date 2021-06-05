@@ -44,6 +44,12 @@ Shrine.plugin :type_predicates, methods: %i[pdf], mime: :marcel
 Shrine.plugin :pretty_location, class_underscore: true
 Shrine.plugin :tempfile # load it globally so that it overrides `Shrine.with_file`
 Shrine.plugin :derivatives, create_on_promote: true, store: :derivatives
+Shrine.plugin :upload_options, store: { acl: Rails.env.production? ? "private" : "public-read" }
+if UploadConfig.host.present?
+  url_options = { public: !Rails.env.production?, host: "#{URI.join(UploadConfig.host, UploadConfig.bucket)}/" }
+
+  Shrine.plugin :url_options, cache: { **url_options }, store: { **url_options }
+end
 Shrine.plugin :tus
 
 Shrine::Attacher.promote_block do
