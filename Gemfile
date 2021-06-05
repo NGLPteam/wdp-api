@@ -9,6 +9,7 @@ gem "rails", "~> 6.1.3.2"
 gem "pg", "~> 1.2.3"
 gem "activerecord-pg_enum"
 gem "closure_tree", "~> 7.2.0"
+gem "pg_query"
 gem "scenic", "~> 1.5.4"
 gem "store_model", "~> 0.9.0"
 

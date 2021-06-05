@@ -1,5 +1,12 @@
-FROM ruby:2.7.2
-RUN apt-get update -qq && apt-get install -y -qq --no-install-recommends libsndfile1-dev build-essential postgresql-client libvips-dev mediainfo ffmpeg
+FROM ruby:2.7.2-buster
+
+RUN apt-get update -qq && apt-get install -y -qq --no-install-recommends gnupg2 libsndfile1-dev build-essential libvips-dev mediainfo ffmpeg
+
+RUN wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
+
+RUN echo "deb http://apt.postgresql.org/pub/repos/apt/ buster-pgdg main" | tee /etc/apt/sources.list.d/pgdg.list
+
+RUN apt-get update -qq && apt-get install -y -qq --no-install-recommends postgresql-client-13
 
 RUN gem update --system && gem install bundler:2.2.16
 

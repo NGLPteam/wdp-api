@@ -4,6 +4,7 @@ class ApplicationRecord < ActiveRecord::Base
   self.abstract_class = true
 
   include DerivedGraphqlTypes
+  include PostgresEnums
   include WhereMatches
 
   # @return [String]
@@ -26,13 +27,6 @@ class ApplicationRecord < ActiveRecord::Base
       find id
     end
 
-    # @return [void]
-    def pg_enum!(attr_name, as:, **options)
-      values = pg_enum_values(as).to_h { |v| [v, v] }
-
-      enum options.merge attr_name => values
-    end
-
     def sample(num = nil)
       randomized = reorder(Arel.sql("RANDOM()"))
 
@@ -41,14 +35,6 @@ class ApplicationRecord < ActiveRecord::Base
       else
         randomized.first
       end
-    end
-
-    private
-
-    def pg_enum_values(enum_name)
-      schema = Rails.root.join("db/schema.rb").read
-      matched = schema.match(/create_enum .#{enum_name}.?, \[([^\]]*)\]/m)
-      matched[1].tr(" \n\"", "").split(",").map(&:to_s)
     end
   end
 end
