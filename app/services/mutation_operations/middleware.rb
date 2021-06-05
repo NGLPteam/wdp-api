@@ -24,6 +24,10 @@ module MutationOperations
       response, result = with_graphql_response(base_response) do
         with_transaction do
           with_effects_stack do
+            operation.validate!(**args)
+
+            operation.halt_if_errors!
+
             operation.call(**args)
           end
         end

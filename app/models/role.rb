@@ -11,6 +11,8 @@ class Role < ApplicationRecord
 
   before_validation :calculate_allowed_actions!
 
+  scope :with_allowed_action, ->(name) { where(arel_allowed_action(name)) }
+
   validates :name, presence: true, uniqueness: true
 
   # @!private
@@ -22,6 +24,10 @@ class Role < ApplicationRecord
   class << self
     def fetch(name)
       where(name: name).first!
+    end
+
+    def arel_allowed_action(name)
+      arel_ltree_contains(arel_table[:allowed_actions], arel_cast(name, "ltree"))
     end
   end
 end

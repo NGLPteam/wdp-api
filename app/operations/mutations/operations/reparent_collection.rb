@@ -2,15 +2,13 @@
 
 module Mutations
   module Operations
-    class CreateCollection
+    class ReparentCollection
       include MutationOperations::Base
 
-      def call(parent:, **args)
+      def call(parent:, collection:)
         authorize parent, :create_collections?
 
-        attributes = args.slice(:title, :identifier)
-
-        attributes[:schema_definition] = SchemaDefinition.default_collection
+        attributes = {}
 
         case parent
         when Community
@@ -25,9 +23,15 @@ module Mutations
           return throw_invalid
         end
 
-        collection = Collection.new attributes
+        collection.assign_attributes attributes
 
         persist_model! collection, attach_to: :collection
+      end
+
+      def validate!(parent:, collection:)
+        add_error! "A collection cannot own itself", path: "parent" if parent == collection
+
+        add_error! "A collection cannot be owned by its children", path: "parent" if parent.kind_of?(Collection) && parent.in?(collection.descendants)
       end
     end
   end

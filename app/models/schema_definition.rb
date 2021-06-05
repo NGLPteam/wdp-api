@@ -9,7 +9,7 @@ class SchemaDefinition < ApplicationRecord
 
   class << self
     def default_collection
-      @default_collection ||= collection.first || FactoryBot.create(:schema_definintion, :collection)
+      @default_collection ||= collection.first || FactoryBot.create(:schema_definition, :collection)
     end
 
     def default_item

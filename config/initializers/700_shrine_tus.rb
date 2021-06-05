@@ -81,7 +81,7 @@ class UploadAuthMiddleware
   private
 
   def authorize(env)
-    WDPAPI::Container["tokens.decode"].call(env["HTTP_UPPY_AUTH_TOKEN"])
+    WDPAPI::Container["uploads.authorize"].call(env)
   end
 
   def build_forbidden_response

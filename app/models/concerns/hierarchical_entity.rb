@@ -8,6 +8,7 @@ module HierarchicalEntity
   included do
     delegate :auth_path, to: :contextual_parent, allow_nil: true, prefix: :contextual
 
+    after_validation :set_temporary_auth_path!, on: :create
     before_validation :maybe_update_auth_path!, on: :update
   end
 
@@ -16,7 +17,7 @@ module HierarchicalEntity
   def derive_auth_path
     return unless persisted? && system_slug?
 
-    [contextual_auth_path, system_slug].compact.join(".")
+    [contextual_auth_path, system_slug].compact.join(?.)
   end
 
   def contextual_parent
@@ -69,5 +70,10 @@ module HierarchicalEntity
 
   def to_hierarchical_tuple
     slice(:hierarchical_id, :hierarchical_type, :auth_path, :system_slug, :role_prefix)
+  end
+
+  # @return [void]
+  def set_temporary_auth_path!
+    self.auth_path = system_slug
   end
 end

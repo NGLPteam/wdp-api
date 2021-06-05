@@ -3,21 +3,51 @@
 module ArelHelpers
   extend ActiveSupport::Concern
 
+  LTREE_TYPE = ActiveRecord::ConnectionAdapters::PostgreSQL::OID::SpecializedString.new(:ltree)
+
+  LTREE_ARRAY = ActiveRecord::ConnectionAdapters::PostgreSQL::OID::Array.new(LTREE_TYPE).freeze
+
+  TEXT_ARRAY = ActiveRecord::ConnectionAdapters::PostgreSQL::OID::Array.new(ActiveRecord::Type::Text.new).freeze
+
   class_methods do
+    def arel_ltree_contains(left, right)
+      arel_infix "@>", arel_attrify(left), arel_quote(right)
+    end
+
+    def arel_ltree_matches(left, right)
+      arel_infix ?~, arel_attrify(left), arel_quote(right)
+    end
+
     def arel_json_contains(attribute, **values)
-      arel_infix "@>", arel_table[attribute], arel_cast(values.to_json, "jsonb")
+      arel_infix "@>", arel_attrify(attribute), arel_cast(values.to_json, "jsonb")
     end
 
     def arel_json_has_key(attribute, key)
-      arel_infix ??, arel_table[attribute], arel_quote(key)
+      arel_infix ??, arel_attrify(attribute), arel_quote(key)
     end
 
-    def arel_json_get_property(attribute, key)
-      arel_infix "->>", arel_table[attribute], arel_quote(key)
+    def arel_json_get_path(attribute, *path_parts)
+      raise "Must have at least one part" if path_parts.blank?
+
+      arel_infix "#>", arel_attrify(attribute), arel_encode_text_array(*path_parts)
+    end
+
+    def arel_json_get_path_as_text(attribute, *path_parts)
+      raise "Must have at least one part" if path_parts.blank?
+
+      arel_infix "#>>", arel_attrify(attribute), arel_encode_text_array(*path_parts)
+    end
+
+    def arel_json_get(attribute, key)
+      arel_infix "->", arel_attrify(attribute), arel_quote(key)
+    end
+
+    def arel_json_get_as_text(attribute, key)
+      arel_infix "->>", arel_attrify(attribute), arel_quote(key)
     end
 
     def arel_json_cast_property(attribute, key, type)
-      arel_cast(arel_json_get_property(attribute, key), type)
+      arel_cast(arel_json_get_as_text(attribute, key), type)
     end
 
     def arel_as(left, right)
@@ -47,10 +77,28 @@ module ArelHelpers
     end
 
     def arel_quote(arg)
-      return arg if arg.kind_of?(Arel::Node)
+      return arg if arg.kind_of?(Arel::Nodes::Node)
 
       Arel::Nodes.build_quoted arg
     end
+
+    # @return [Arel::Nodes::Quoted]
+    def arel_encode_ltree_array(*elements)
+      arel_cast(arel_quote(LTREE_ARRAY.serialize(elements.flatten)), "ltree[]")
+    end
+
+    # @return [Arel::Nodes::Quoted]
+    def arel_encode_text_array(*elements)
+      arel_cast(arel_quote(TEXT_ARRAY.serialize(elements.flatten)), "text[]")
+    end
+
+    # @param [Arel::Nodes::Node] value
+    # @return [Arel::Nodes::Grouping]
+    def arel_grouped(value)
+      Arel::Nodes::Grouping.new(value)
+    end
+
+    alias_method :arel_grouping, :arel_grouped
 
     # Makes a more legible series of OR conditions.
     # @return [Arel::Nodes::Grouping(Arel::Nodes::Or)]
@@ -63,6 +111,29 @@ module ArelHelpers
           grouping.or(expression)
         end
       end
+    end
+
+    # @param [String, Symbol, Arel::Attributes::Attribute, Arel::Nodes::SqlLiteral, Arel::Expresions, Arel::Node] attribute
+    # @return [Arel::Attributes::Attribute]
+    # @return [Arel::Nodes::SqlLiteral]
+    # @return [Arel::Node]
+    def arel_attrify(attribute)
+      case attribute
+      when Arel::Attributes::Attribute, Arel::Nodes::SqlLiteral, Arel::Expressions, Arel::Node
+        attribute
+      when arel_column_matcher
+        arel_table[attribute]
+      when /\A[^.\s]+\.[^.\s]+/
+        arel_literal attribute
+      else
+        raise TypeError, "Don't know how to turn #{attribute} into an Arel::Attribute"
+      end
+    end
+
+    # @!scope private
+    # @return [Regexp]
+    def arel_column_matcher
+      @arel_column_matcher ||= /\A#{Regexp.union(column_names)}\z/
     end
   end
 end
