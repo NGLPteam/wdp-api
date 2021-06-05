@@ -2,11 +2,13 @@
 
 module Types
   class QueryType < Types::BaseObject
+    description <<~TEXT
+    The entry point for retrieving data from within the WDP API.
+    TEXT
+
     add_field GraphQL::Types::Relay::NodeField
 
     add_field GraphQL::Types::Relay::NodesField
-
-    field :collections, resolver: Resolvers::CollectionResolver
 
     field :collection, Types::CollectionType, null: true do
       description "Look up a collection by slug"
@@ -14,7 +16,9 @@ module Types
       argument :slug, Types::SlugType, required: true
     end
 
-    field :communities, resolver: Resolvers::CommunityResolver
+    field :communities, resolver: Resolvers::CommunityResolver do
+      description "List all communities"
+    end
 
     field :community, Types::CommunityType, null: true do
       description "Look up a community by slug"
@@ -34,7 +38,9 @@ module Types
       argument :slug, Types::SlugType, required: true
     end
 
-    field :roles, resolver: Resolvers::RoleResolver
+    field :roles, resolver: Resolvers::RoleResolver do
+      description "List all roles"
+    end
 
     field :viewer, Types::UserType, null: true,
       description: "The currently authenticated user. AKA: you"

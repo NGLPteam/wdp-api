@@ -2,10 +2,12 @@
 
 module Mutations
   class CreateCommunity < Mutations::BaseMutation
-    field :community, Types::CommunityType, null: true
+    description "Create a community"
 
-    argument :name, String, required: true
-    argument :position, Int, required: false
+    field :community, Types::CommunityType, null: true, description: "A representation of a successfully created community"
+
+    argument :name, String, required: true, description: "A human readable title for the community"
+    argument :position, Int, required: false, description: "The position the community occupies in the list"
 
     performs_operation! "mutations.operations.create_community"
   end

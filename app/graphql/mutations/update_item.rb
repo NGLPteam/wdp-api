@@ -2,7 +2,9 @@
 
 module Mutations
   class UpdateItem < Mutations::BaseMutation
-    field :item, Types::ItemType, null: true
+    description "Update an item"
+
+    field :item, Types::ItemType, null: true, description: "A new representation of the item, on a succesful update"
 
     argument :item_id, ID, loads: Types::ItemType, description: "The item to update", required: true
     argument :title, String, required: true

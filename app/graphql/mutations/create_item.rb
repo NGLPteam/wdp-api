@@ -2,9 +2,16 @@
 
 module Mutations
   class CreateItem < Mutations::BaseMutation
-    field :item, Types::ItemType, null: true
+    description "Create an item"
 
-    argument :parent_id, ID, loads: Types::ItemParentType, description: "The parent of the item", required: true
+    field :item, Types::ItemType, null: true, description: "A representation of a successfully created item"
+
+    argument :parent_id, ID, loads: Types::ItemParentType, required: true do
+      description <<~TEXT.strip_heredoc
+      The parent of the item. This can be the encoded ID of a collection or another item.
+      TEXT
+    end
+
     argument :title, String, required: true
     argument :identifier, String, required: true
 

@@ -4,7 +4,12 @@ module Mutations
   class CreateCollection < Mutations::BaseMutation
     field :collection, Types::CollectionType, null: true
 
-    argument :parent_id, ID, loads: Types::CollectionParentType, description: "The parent of the collection", required: true
+    argument :parent_id, ID, loads: Types::CollectionParentType, required: true do
+      description <<~TEXT.strip_heredoc
+      The parent of the new collection. This can be the encoded ID of a community or another collection.
+      TEXT
+    end
+
     argument :title, String, required: true
     argument :identifier, String, required: true
 

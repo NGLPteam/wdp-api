@@ -31,4 +31,8 @@ class Collection < ApplicationRecord
   def hierarchical_parent
     community
   end
+
+  def hierarchical_children
+    items
+  end
 end
