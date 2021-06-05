@@ -24,6 +24,6 @@ ENV BUNDLE_PATH=/bundle \
     GEM_HOME=/bundle
 ENV PATH="${BUNDLE_BIN}:${PATH}"
 
-EXPOSE 6111
+EXPOSE 6222
 
-CMD ["bin/falcon", "-b", "http://0.0.0.0:6111", "-p", "6111"]
+CMD ["bin/falcon", "-b", "http://0.0.0.0:6222", "-p", "6222"]
