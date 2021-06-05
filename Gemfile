@@ -2,7 +2,7 @@
 
 source "https://rubygems.org"
 
-ruby "2.7.2"
+ruby "2.7.3"
 
 # Rails / database
 gem "rails", "~> 6.1.3.2"
@@ -60,13 +60,9 @@ gem "mediainfo"
 gem "tus-server", "~> 2.3"
 
 # Servers / Rack
-gem "falcon", "~> 0.38.1", require: false
+gem "falcon", "~> 0.39.0", require: false
 gem "puma", "~> 5.3.1"
 gem "rack-cors", "~> 1.1.1"
-
-# Job Processing
-gem "sneakers", "~> 2.12.0"
-gem "advanced-sneakers-activejob", "~> 0.5.0"
 
 # Debugging / system-level things
 gem "bootsnap", ">= 1.7.5", require: false
