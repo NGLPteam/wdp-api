@@ -1,4 +1,4 @@
-FROM ruby:2.7.2-buster
+FROM ruby:2.7.3-buster
 
 RUN apt-get update -qq && apt-get install -y -qq --no-install-recommends gnupg2 libsndfile1-dev build-essential libvips-dev mediainfo ffmpeg
 
