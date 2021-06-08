@@ -44,6 +44,11 @@ module HierarchicalEntity
     [contextual_auth_path, system_slug].compact.join(?.)
   end
 
+  # @return [String]
+  def entity_scope
+    model_name.collection
+  end
+
   # @abstract
   # @return [ActiveRecord::Relation<HierarchicalEntity>]
   def hierarchical_children
@@ -57,6 +62,8 @@ module HierarchicalEntity
   def hierarchical_id
     id
   end
+
+  alias entity_id hierarchical_id
 
   # @abstract
   def hierarchical_parent
@@ -72,6 +79,8 @@ module HierarchicalEntity
   def hierarchical_type
     model_name.to_s
   end
+
+  alias entity_type hierarchical_type
 
   # If a parent collection changes its community, we need its children to to also inherit that update.
   #
@@ -91,16 +100,18 @@ module HierarchicalEntity
     public_send writer, inherited_hierarchical_parent
   end
 
-  # @!private
+  # @see Loaders::ContextualPermissionLoader
+  # @return [String]
+  def loader_cache_key
+    "#{hierarchical_type}:#{hierarchical_id}"
+  end
+
+  # @!scope private
   # @return [void]
   def maybe_update_auth_path!
     return unless persisted? && system_slug?
 
     self.auth_path = derive_auth_path
-  end
-
-  def role_prefix
-    model_name.collection
   end
 
   # @return [void]
@@ -112,16 +123,15 @@ module HierarchicalEntity
     sync_entity!
   end
 
-  # @!private
+  # @!scope private
   # @return [void]
   def sync_entity!
-    tuple = to_hierarchical_tuple
-
-    Entity.upsert(tuple, unique_by: %i[hierarchical_type hierarchical_id])
+    Entity.upsert(to_entity_tuple, unique_by: %i[entity_type entity_id])
   end
 
-  def to_hierarchical_tuple
-    slice(:hierarchical_id, :hierarchical_type, :auth_path, :system_slug, :role_prefix)
+  # @return [Hash]
+  def to_entity_tuple
+    slice(:entity_id, :entity_type, :hierarchical_id, :hierarchical_type, :auth_path, :system_slug).merge(scope: entity_scope)
   end
 
   def saved_change_to_contextual_parent?

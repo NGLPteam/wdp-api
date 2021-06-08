@@ -4,6 +4,7 @@ module Testing
   class AssignRandomRoles
     include WDPAPI::Deps[grant_access: "access.grant"]
     include Dry::Monads[:do, :result]
+    prepend HushActiveRecord
 
     def call
       roles = [Role.fetch("manager"), Role.fetch("editor")]
@@ -15,9 +16,9 @@ module Testing
       things = [*communities, *collections, *items].shuffle
 
       User.testing.find_each do |user|
-        role = roles.sample
-
         things.sample(20).each do |thing|
+          role = roles.sample
+
           yield grant_access.call role, on: thing, to: user
         end
       end

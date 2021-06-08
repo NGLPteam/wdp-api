@@ -71,9 +71,9 @@ class HierarchicalEntityPolicy < ApplicationPolicy
   end
 
   def grid_for(user, record)
-    composed_role = ComposedPermission.fetch user, record
+    composed_role = ContextualPermission.fetch user, record
 
-    composed_role&.grid || Roles::PermissionGrid.new
+    composed_role&.grid || Roles::EntityPermissionGrid.new
   end
 
   class Scope < Scope

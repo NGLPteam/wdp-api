@@ -4,6 +4,8 @@ module Testing
   class ScaffoldRoles
     extend Dry::Initializer
 
+    prepend HushActiveRecord
+
     def call
       make_role! "Manager", all: { read: true, create: true, update: true, delete: true }
       make_role! "Editor", self: { read: true, update: true }, items: { read: true, update: true }

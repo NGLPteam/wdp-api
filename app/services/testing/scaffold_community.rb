@@ -5,6 +5,7 @@ module Testing
     extend Dry::Initializer
 
     include InitializerOptions
+    prepend HushActiveRecord
 
     option :collections_count, AppTypes::Integer, default: proc { 3 }, reader: :private
     option :child_count, AppTypes::Integer, default: proc { 3 }

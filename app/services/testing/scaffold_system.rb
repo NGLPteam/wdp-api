@@ -4,17 +4,17 @@ module Testing
   class ScaffoldSystem
     extend Dry::Initializer
 
+    prepend HushActiveRecord
+
     option :community_count, AppTypes::Integer, default: proc { 10 }
     option :fake_user_count, AppTypes::Integer, default: proc { 500 }
 
     def call
-      ApplicationRecord.logger.silence do
-        scaffold_roles!
+      scaffold_roles!
 
-        scaffold_communities!
+      scaffold_communities!
 
-        scaffold_users_and_role_assignments!
-      end
+      scaffold_users_and_role_assignments!
     end
 
     private

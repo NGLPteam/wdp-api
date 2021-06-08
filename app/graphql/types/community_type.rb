@@ -2,6 +2,8 @@
 
 module Types
   class CommunityType < Types::AbstractModel
+    implements Types::EntityType
+
     description "A community of users"
 
     field :collections, resolver: Resolvers::CollectionResolver

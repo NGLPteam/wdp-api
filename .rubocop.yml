@@ -69,6 +69,9 @@ Lint/EmptyClass:
 Lint/LambdaWithoutLiteralBlock:
   Enabled: true
 
+Lint/MissingSuper:
+  Enabled: false
+
 Lint/NoReturnInBeginEndBlocks:
   Enabled: true
 

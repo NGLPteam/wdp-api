@@ -6,7 +6,7 @@ module Types
 
     field :permissions, [Types::PermissionGrantType], null: false
 
-    Roles::AccessControlList.permission_grids.each do |name|
+    Roles::AccessControlList.permission_grid_names.each do |name|
       field name, Types::PermissionGridType, null: false, method_conflict_warning: false
     end
   end

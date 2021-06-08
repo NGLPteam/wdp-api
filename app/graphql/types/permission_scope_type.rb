@@ -5,5 +5,10 @@ module Types
     value "self"
     value "collections"
     value "items"
+    value "assets"
+
+    value "communities"
+    value "settings"
+    value "users"
   end
 end

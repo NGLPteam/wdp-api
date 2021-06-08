@@ -5,6 +5,8 @@ class WDPAPISchema < GraphQL::Schema
 
   query Types::QueryType
 
+  use GraphQL::Batch
+
   use GraphQL::Guard.new(
     policy_object: GraphqlPolicy,
     not_authorized: ->(type, field) do
