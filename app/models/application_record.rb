@@ -27,6 +27,10 @@ class ApplicationRecord < ActiveRecord::Base
       find id
     end
 
+    def quoted_ids
+      ids.map { |id| connection.quote id }
+    end
+
     def sample(num = nil)
       randomized = reorder(Arel.sql("RANDOM()"))
 

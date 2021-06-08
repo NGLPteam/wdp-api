@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 module Roles
-  class PermissionGrid
+  class SettingsGrid
     include Roles::Grid
 
-    permission :read, :create, :update, :delete
+    permission :update
   end
 end

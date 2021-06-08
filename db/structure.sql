@@ -10,6 +10,20 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 --
+-- Name: btree_gist; Type: EXTENSION; Schema: -; Owner: -
+--
+
+CREATE EXTENSION IF NOT EXISTS btree_gist WITH SCHEMA public;
+
+
+--
+-- Name: EXTENSION btree_gist; Type: COMMENT; Schema: -; Owner: -
+--
+
+COMMENT ON EXTENSION btree_gist IS 'support for indexing common datatypes in GiST';
+
+
+--
 -- Name: citext; Type: EXTENSION; Schema: -; Owner: -
 --
 
@@ -121,15 +135,22 @@ CREATE TYPE public.item_link_operator AS ENUM (
 
 
 --
--- Name: permission_name; Type: TYPE; Schema: public; Owner: -
+-- Name: jsonb_auth_path_state; Type: TYPE; Schema: public; Owner: -
 --
 
-CREATE TYPE public.permission_name AS ENUM (
-    'read',
-    'create',
-    'update',
-    'delete',
-    'manage_access'
+CREATE TYPE public.jsonb_auth_path_state AS (
+	path public.ltree,
+	granted boolean
+);
+
+
+--
+-- Name: permission_kind; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.permission_kind AS ENUM (
+    'contextual',
+    'global'
 );
 
 
@@ -141,6 +162,117 @@ CREATE TYPE public.schema_kind AS ENUM (
     'collection',
     'item',
     'metadata'
+);
+
+
+--
+-- Name: _jsonb_auth_path_acc(public.jsonb_auth_path_state[], public.ltree, boolean); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public._jsonb_auth_path_acc(public.jsonb_auth_path_state[], public.ltree, boolean) RETURNS public.jsonb_auth_path_state[]
+    LANGUAGE sql IMMUTABLE
+    AS $_$ SELECT $1 || ($2, $3)::jsonb_auth_path_state; $_$;
+
+
+--
+-- Name: _jsonb_auth_path_final(public.jsonb_auth_path_state[]); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public._jsonb_auth_path_final(public.jsonb_auth_path_state[]) RETURNS jsonb
+    LANGUAGE sql IMMUTABLE
+    AS $_$ SELECT jsonb_set_agg(to_jsonb(x.granted), string_to_array(x.path::text, '.')) FROM ( SELECT y.path, bool_or(y.granted) AS granted FROM unnest($1) AS y(path, granted) GROUP BY y.path ) x $_$;
+
+
+--
+-- Name: array_distinct(anyarray); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.array_distinct(anyarray) RETURNS anyarray
+    LANGUAGE sql IMMUTABLE
+    AS $_$ SELECT array_agg(DISTINCT x) FILTER (WHERE x IS NOT NULL) FROM unnest($1) t(x); $_$;
+
+
+--
+-- Name: jsonb_bool_or_rec(jsonb, boolean, text[]); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.jsonb_bool_or_rec(jsonb, boolean, text[]) RETURNS jsonb
+    LANGUAGE sql IMMUTABLE
+    AS $_$ SELECT jsonb_set_rec($1, to_jsonb(jsonb_extract_boolean($1, $3) OR $2), $3); $_$;
+
+
+--
+-- Name: jsonb_extract_boolean(jsonb, text[]); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.jsonb_extract_boolean(jsonb, text[]) RETURNS boolean
+    LANGUAGE sql IMMUTABLE
+    AS $_$ SELECT CASE jsonb_typeof($1 #> $2) WHEN 'boolean' THEN ($1 #> $2)::boolean ELSE FALSE END; $_$;
+
+
+--
+-- Name: jsonb_set_rec(jsonb, jsonb, text[]); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.jsonb_set_rec(jsonb, jsonb, text[]) RETURNS jsonb
+    LANGUAGE sql IMMUTABLE
+    AS $_$ SELECT CASE WHEN array_length($3, 1) > 1 and ($1 #> $3[:array_upper($3, 1) - 1]) is null THEN jsonb_set_rec($1, jsonb_build_object($3[array_upper($3, 1)], $2), $3[:array_upper($3, 1) - 1]) ELSE jsonb_set($1, $3, $2, true) END $_$;
+
+
+--
+-- Name: array_accum(anyarray); Type: AGGREGATE; Schema: public; Owner: -
+--
+
+CREATE AGGREGATE public.array_accum(anyarray) (
+    SFUNC = array_cat,
+    STYPE = anyarray,
+    INITCOND = '{}'
+);
+
+
+--
+-- Name: array_accum_distinct(anyarray); Type: AGGREGATE; Schema: public; Owner: -
+--
+
+CREATE AGGREGATE public.array_accum_distinct(anyarray) (
+    SFUNC = array_cat,
+    STYPE = anyarray,
+    INITCOND = '{}',
+    FINALFUNC = public.array_distinct
+);
+
+
+--
+-- Name: jsonb_auth_path(public.ltree, boolean); Type: AGGREGATE; Schema: public; Owner: -
+--
+
+CREATE AGGREGATE public.jsonb_auth_path(public.ltree, boolean) (
+    SFUNC = public._jsonb_auth_path_acc,
+    STYPE = public.jsonb_auth_path_state[],
+    INITCOND = '{}',
+    FINALFUNC = public._jsonb_auth_path_final
+);
+
+
+--
+-- Name: jsonb_bool_or(boolean, text[]); Type: AGGREGATE; Schema: public; Owner: -
+--
+
+CREATE AGGREGATE public.jsonb_bool_or(boolean, text[]) (
+    SFUNC = public.jsonb_bool_or_rec,
+    STYPE = jsonb,
+    INITCOND = '{}'
+);
+
+
+--
+-- Name: jsonb_set_agg(jsonb, text[]); Type: AGGREGATE; Schema: public; Owner: -
+--
+
+CREATE AGGREGATE public.jsonb_set_agg(jsonb, text[]) (
+    SFUNC = public.jsonb_set_rec,
+    STYPE = jsonb,
+    INITCOND = '{}'
 );
 
 
@@ -360,27 +492,44 @@ CREATE TABLE public.community_memberships (
 
 CREATE TABLE public.entities (
     id uuid DEFAULT gen_random_uuid() NOT NULL,
+    entity_type character varying NOT NULL,
+    entity_id uuid NOT NULL,
     hierarchical_type character varying NOT NULL,
     hierarchical_id uuid NOT NULL,
     system_slug public.citext NOT NULL,
     auth_path public.ltree NOT NULL,
-    role_prefix public.ltree NOT NULL,
+    scope public.ltree NOT NULL,
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
 
 --
--- Name: permission_names; Type: MATERIALIZED VIEW; Schema: public; Owner: -
+-- Name: permissions; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE MATERIALIZED VIEW public.permission_names AS
- SELECT t.name,
-    (t.name)::text AS key,
-    public.text2ltree((t.name)::text) AS path,
-    (('*{1}.'::text || (t.name)::text))::public.lquery AS query
-   FROM unnest(enum_range(NULL::public.permission_name)) t(name)
-  WITH NO DATA;
+CREATE TABLE public.permissions (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    kind public.permission_kind NOT NULL,
+    path public.ltree NOT NULL,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    scope public.ltree GENERATED ALWAYS AS (public.subpath(path, 0, '-1'::integer)) STORED,
+    name public.ltree GENERATED ALWAYS AS (public.subpath(path, '-1'::integer, 1)) STORED,
+    jsonb_path text[] GENERATED ALWAYS AS (string_to_array((path)::text, '.'::text)) STORED,
+    self_path public.ltree GENERATED ALWAYS AS (
+CASE kind
+    WHEN 'contextual'::public.permission_kind THEN
+    CASE public.subpath(path, 0, '-1'::integer)
+        WHEN 'self'::public.ltree THEN NULL::public.ltree
+        ELSE (public.ltree2text('self'::public.ltree) OPERATOR(public.||) public.subpath(path, '-1'::integer, 1))
+    END
+    ELSE NULL::public.ltree
+END) STORED,
+    self_prefixed boolean GENERATED ALWAYS AS ((path OPERATOR(public.~) 'self.*'::public.lquery)) STORED,
+    head public.ltree GENERATED ALWAYS AS (public.subpath(path, 1, 1)) STORED,
+    suffix public.ltree GENERATED ALWAYS AS (public.subpath(path, 1, (public.nlevel(path) - 1))) STORED
+);
 
 
 --
@@ -399,36 +548,72 @@ CREATE TABLE public.roles (
 
 
 --
--- Name: derived_permissions; Type: VIEW; Schema: public; Owner: -
+-- Name: users; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE VIEW public.derived_permissions AS
- SELECT ent.hierarchical_type,
+CREATE TABLE public.users (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    keycloak_id uuid NOT NULL,
+    system_slug public.citext NOT NULL,
+    email_verified boolean DEFAULT false NOT NULL,
+    email public.citext NOT NULL,
+    username public.citext NOT NULL,
+    name text DEFAULT ''::text NOT NULL,
+    given_name text DEFAULT ''::text NOT NULL,
+    family_name text DEFAULT ''::text NOT NULL,
+    roles text[] DEFAULT '{}'::text[] NOT NULL,
+    resource_roles jsonb DEFAULT '{}'::jsonb NOT NULL,
+    metadata jsonb DEFAULT '{}'::jsonb NOT NULL,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    global_access_control_list jsonb DEFAULT '{}'::jsonb NOT NULL,
+    allowed_actions public.ltree[] DEFAULT '{}'::public.ltree[] NOT NULL
+);
+
+
+--
+-- Name: contextual_permissions; Type: VIEW; Schema: public; Owner: -
+--
+
+CREATE VIEW public.contextual_permissions AS
+ SELECT u.id AS user_id,
     ent.hierarchical_id,
-    ag.user_id,
-    pn.key AS name,
-    COALESCE((bool_or(((r.allowed_actions OPERATOR(public.@>) (public.text2ltree('self'::text) OPERATOR(public.||) pn.path)) AND ((ag.accessible_type)::text = (ent.hierarchical_type)::text) AND (ag.accessible_id = ent.hierarchical_id))) OR bool_or(((r.allowed_actions OPERATOR(public.@>) (ent.role_prefix OPERATOR(public.||) pn.path)) AND (ag.auth_query OPERATOR(public.~) ent.auth_path)))), false) AS granted,
-    COALESCE(bool_or(((r.allowed_actions OPERATOR(public.@>) (public.text2ltree('self'::text) OPERATOR(public.||) pn.path)) AND ((ag.accessible_type)::text = (ent.hierarchical_type)::text) AND (ag.accessible_id = ent.hierarchical_id))), false) AS direct_access,
-    COALESCE(bool_or(((r.allowed_actions OPERATOR(public.@>) (ent.role_prefix OPERATOR(public.||) pn.path)) AND (ag.auth_query OPERATOR(public.~) ent.auth_path))), false) AS inherited_access
-   FROM (((public.entities ent
-     CROSS JOIN public.permission_names pn)
-     JOIN public.access_grants ag ON ((ag.auth_path OPERATOR(public.@>) ent.auth_path)))
-     JOIN public.roles r ON ((ag.role_id = r.id)))
-  GROUP BY ent.hierarchical_type, ent.hierarchical_id, ag.user_id, pn.key;
-
-
---
--- Name: composed_permissions; Type: VIEW; Schema: public; Owner: -
---
-
-CREATE VIEW public.composed_permissions AS
- SELECT derived_permissions.hierarchical_type,
-    derived_permissions.hierarchical_id,
-    derived_permissions.user_id,
-    jsonb_object_agg(derived_permissions.name, derived_permissions.granted) AS grid,
-    jsonb_object_agg(derived_permissions.name, jsonb_build_object('direct_access', derived_permissions.direct_access, 'inherited_access', derived_permissions.inherited_access)) AS debug
-   FROM public.derived_permissions
-  GROUP BY derived_permissions.hierarchical_type, derived_permissions.hierarchical_id, derived_permissions.user_id;
+    ent.hierarchical_type,
+    bool_or((ag.role_id IS NOT NULL)) AS has_role,
+    COALESCE(bool_or(info.is_direct_role), false) AS has_direct_role,
+    COALESCE(array_agg(DISTINCT ag.role_id) FILTER (WHERE (ag.role_id IS NOT NULL)), '{}'::uuid[]) AS role_ids,
+    COALESCE(array_agg(DISTINCT p.path) FILTER (WHERE access.allowed), '{}'::public.ltree[]) AS allowed_actions,
+    public.jsonb_auth_path(p.path, COALESCE(access.allowed, false)) AS access_control_list,
+    public.jsonb_auth_path(p.suffix, COALESCE(access.allowed, false)) FILTER (WHERE p.self_prefixed) AS grid
+   FROM ((((((( SELECT users.id
+           FROM public.users
+          ORDER BY users.id) u
+     CROSS JOIN public.entities ent)
+     CROSS JOIN ( SELECT permissions.id,
+            permissions.kind,
+            permissions.path,
+            permissions.created_at,
+            permissions.updated_at,
+            permissions.scope,
+            permissions.name,
+            permissions.jsonb_path,
+            permissions.self_path,
+            permissions.self_prefixed,
+            permissions.head,
+            permissions.suffix
+           FROM public.permissions
+          WHERE (permissions.kind = 'contextual'::public.permission_kind)) p)
+     LEFT JOIN public.access_grants ag ON (((ent.auth_path OPERATOR(public.<@) ag.auth_path) AND (ag.user_id = u.id))))
+     LEFT JOIN public.roles r ON ((ag.role_id = r.id)))
+     LEFT JOIN LATERAL ( SELECT (((ag.accessible_type)::text = (ent.hierarchical_type)::text) AND (ag.accessible_id = ent.hierarchical_id)) AS is_direct_role,
+            (r.allowed_actions OPERATOR(public.@>) p.path) AS is_allowed_action,
+            (ag.auth_query OPERATOR(public.~) ent.auth_path) AS is_allowed_by_scope) info ON (true))
+     LEFT JOIN LATERAL ( SELECT ((info.is_allowed_action AND info.is_direct_role) OR
+                CASE p.head
+                    WHEN 'self'::public.ltree THEN ((r.allowed_actions OPERATOR(public.@>) (ent.scope OPERATOR(public.||) p.suffix)) AND (NOT info.is_direct_role))
+                    ELSE (info.is_allowed_action AND (NOT info.is_direct_role))
+                END) AS allowed) access ON (true))
+  GROUP BY u.id, ent.hierarchical_id, ent.hierarchical_type;
 
 
 --
@@ -599,28 +784,6 @@ CREATE TABLE public.schema_versions (
 
 
 --
--- Name: users; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.users (
-    id uuid DEFAULT gen_random_uuid() NOT NULL,
-    keycloak_id uuid NOT NULL,
-    system_slug public.citext NOT NULL,
-    email_verified boolean DEFAULT false NOT NULL,
-    email public.citext NOT NULL,
-    username public.citext NOT NULL,
-    name text DEFAULT ''::text NOT NULL,
-    given_name text DEFAULT ''::text NOT NULL,
-    family_name text DEFAULT ''::text NOT NULL,
-    roles text[] DEFAULT '{}'::text[] NOT NULL,
-    resource_roles jsonb DEFAULT '{}'::jsonb NOT NULL,
-    metadata jsonb DEFAULT '{}'::jsonb NOT NULL,
-    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
-);
-
-
---
 -- Name: access_grants access_grants_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -733,6 +896,14 @@ ALTER TABLE ONLY public.items
 
 
 --
+-- Name: permissions permissions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.permissions
+    ADD CONSTRAINT permissions_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: roles roles_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -811,7 +982,7 @@ CREATE INDEX index_access_grants_on_accessible ON public.access_grants USING btr
 -- Name: index_access_grants_on_auth_path; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_access_grants_on_auth_path ON public.access_grants USING gist (auth_path);
+CREATE INDEX index_access_grants_on_auth_path ON public.access_grants USING gist (auth_path public.gist_ltree_ops (siglen='1024'));
 
 
 --
@@ -1158,10 +1329,17 @@ CREATE INDEX index_entities_on_auth_path ON public.entities USING gist (auth_pat
 
 
 --
+-- Name: index_entities_on_entity; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_entities_on_entity ON public.entities USING btree (entity_type, entity_id);
+
+
+--
 -- Name: index_entities_on_hierarchical; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE UNIQUE INDEX index_entities_on_hierarchical ON public.entities USING btree (hierarchical_type, hierarchical_id);
+CREATE INDEX index_entities_on_hierarchical ON public.entities USING btree (hierarchical_type, hierarchical_id);
 
 
 --
@@ -1169,6 +1347,20 @@ CREATE UNIQUE INDEX index_entities_on_hierarchical ON public.entities USING btre
 --
 
 CREATE UNIQUE INDEX index_entities_on_system_slug ON public.entities USING btree (system_slug);
+
+
+--
+-- Name: index_entities_permissions_calculation; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_entities_permissions_calculation ON public.entities USING gist (hierarchical_type, hierarchical_id, auth_path, scope);
+
+
+--
+-- Name: index_entities_test; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_entities_test ON public.entities USING gist (auth_path public.gist_ltree_ops (siglen='1024'), hierarchical_id, hierarchical_type);
 
 
 --
@@ -1312,10 +1504,45 @@ CREATE UNIQUE INDEX index_items_unique_identifier ON public.items USING btree (i
 
 
 --
--- Name: index_permission_names_on_name; Type: INDEX; Schema: public; Owner: -
+-- Name: index_permissions_contextual_derivations; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE UNIQUE INDEX index_permission_names_on_name ON public.permission_names USING btree (name);
+CREATE INDEX index_permissions_contextual_derivations ON public.permissions USING btree (name, scope, path) WHERE (kind = 'contextual'::public.permission_kind);
+
+
+--
+-- Name: index_permissions_name_text; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_permissions_name_text ON public.permissions USING btree (((name)::text));
+
+
+--
+-- Name: index_permissions_on_kind; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_permissions_on_kind ON public.permissions USING btree (kind);
+
+
+--
+-- Name: index_permissions_on_name; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_permissions_on_name ON public.permissions USING btree (name);
+
+
+--
+-- Name: index_permissions_on_scope; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_permissions_on_scope ON public.permissions USING btree (scope);
+
+
+--
+-- Name: index_permissions_uniqueness; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_permissions_uniqueness ON public.permissions USING btree (path);
 
 
 --
@@ -1365,6 +1592,20 @@ CREATE INDEX index_schema_versions_on_schema_definition_id ON public.schema_vers
 --
 
 CREATE UNIQUE INDEX index_schema_versions_on_system_slug ON public.schema_versions USING btree (system_slug);
+
+
+--
+-- Name: index_users_on_allowed_actions; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_users_on_allowed_actions ON public.users USING gist (allowed_actions);
+
+
+--
+-- Name: index_users_on_global_access_control_list; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_users_on_global_access_control_list ON public.users USING gin (global_access_control_list);
 
 
 --
@@ -1658,9 +1899,10 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20210526172947'),
 ('20210526193105'),
 ('20210526195425'),
-('20210526201131'),
-('20210527200351'),
-('20210527211503'),
+('20210526196331'),
+('20210526205224'),
+('20210526213652'),
+('20210526250050'),
 ('20210527225127');
 
 

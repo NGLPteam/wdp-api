@@ -5,6 +5,7 @@ module Testing
     extend Dry::Initializer
 
     include InitializerOptions
+    prepend HushActiveRecord
 
     option :collection, AppTypes.Instance(Collection)
     option :parent, AppTypes.Instance(Item).optional, default: proc { nil }

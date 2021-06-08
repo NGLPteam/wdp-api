@@ -20,6 +20,7 @@ gem "sidekiq", "~> 6.2.1"
 
 # GraphQL
 gem "graphql", "1.12.8"
+gem "graphql-batch", "~> 0.4.3"
 gem "graphql-guard", "~> 2.0.0"
 gem "search_object_graphql", require: %w[search_object search_object/plugin/graphql]
 

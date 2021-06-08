@@ -10,6 +10,10 @@ module Graphql
       record
     end
 
+    def current_user_admin?
+      context[:current_user]&.has_global_admin_access?
+    end
+
     def policy(record)
       Pundit.policy!(pundit_user, record)
     end

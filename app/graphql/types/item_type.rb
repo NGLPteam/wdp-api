@@ -2,6 +2,7 @@
 
 module Types
   class ItemType < Types::AbstractModel
+    implements Types::EntityType
     implements Types::HierarchicalEntryType
     implements Types::ContributableType
 

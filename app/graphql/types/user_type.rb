@@ -2,6 +2,8 @@
 
 module Types
   class UserType < Types::AbstractModel
+    implements Types::ExposesPermissionsType
+
     description "A user"
 
     field :email_verified, Boolean, null: false

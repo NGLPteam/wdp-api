@@ -3,6 +3,7 @@
 module Types
   module BaseInterface
     include GraphQL::Schema::Interface
+    include Graphql::PunditHelpers
 
     edge_type_class Types::BaseEdge
     connection_type_class Types::BaseConnection
