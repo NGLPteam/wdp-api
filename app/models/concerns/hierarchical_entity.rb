@@ -98,6 +98,10 @@ module HierarchicalEntity
 
   alias entity_type hierarchical_type
 
+  def top_level?
+    kind_of?(Community) || (respond_to?(:root?) && root?)
+  end
+
   # If a parent collection changes its community, we need its children to to also inherit that update.
   #
   # So too with items' parents getting new collections.
@@ -105,7 +109,7 @@ module HierarchicalEntity
   # @!scope private
   # @return [void]
   def inherit_hierarchical_parent!
-    return if root?
+    return if top_level?
 
     inherited_hierarchical_parent = parent.hierarchical_parent
 
@@ -143,6 +147,8 @@ module HierarchicalEntity
   # @return [void]
   def sync_entity!
     Entity.upsert(to_entity_tuple, unique_by: %i[entity_type entity_id])
+
+    Entities::CalculateAuthorizing.new.call auth_path: auth_path
   end
 
   # @return [Hash]
@@ -166,6 +172,8 @@ module HierarchicalEntity
   # @!scope private
   # @return [void]
   def track_parent_changes!
+    return if top_level?
+
     return unless should_update_hierarchical_children_after_save?
 
     # This will have a cascading effect on all descendants, as they should each inherit

@@ -19,9 +19,9 @@ class Entity < ApplicationRecord
   class << self
     # @return [void]
     def resync!
-      Community.find_each(&:sync_entity!)
-      Collection.find_each(&:sync_entity!)
-      Item.find_each(&:sync_entity!)
+      Entities::SynchronizeCommunitiesJob.perform_later
+      Entities::SynchronizeCollectionsJob.perform_later
+      Entities::SynchronizeItemsJob.perform_later
     end
   end
 end
