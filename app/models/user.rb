@@ -1,13 +1,16 @@
 # frozen_string_literal: true
 
 class User < ApplicationRecord
+  include AccessGrantSubject
   include HasSystemSlug
-
-  has_many :access_grants, dependent: :destroy, inverse_of: :user
 
   has_many :community_memberships, dependent: :destroy, inverse_of: :user
 
   has_many :communities, through: :community_memberships
+
+  has_many :user_group_memberships, dependent: :destroy, inverse_of: :user
+
+  has_many :user_groups, through: :user_group_memberships
 
   validates :keycloak_id, presence: true
 

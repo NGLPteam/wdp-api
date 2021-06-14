@@ -4,5 +4,7 @@ staging:
   :concurrency: 5
 :queues:
   - default
+  - permissions
   - processing
   - mailers
+  - maintenance

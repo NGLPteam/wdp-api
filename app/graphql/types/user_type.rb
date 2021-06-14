@@ -13,6 +13,10 @@ module Types
 
     field :global_admin, Boolean, null: false
 
+    field :communities, resolver: Resolvers::AccessibleCommunityResolver
+    field :collections, resolver: Resolvers::AccessibleCollectionResolver
+    field :items, resolver: Resolvers::AccessibleItemResolver
+
     def global_admin
       object.has_global_admin_access?
     end

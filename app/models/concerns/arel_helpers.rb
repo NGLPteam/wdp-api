@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 module ArelHelpers
   extend ActiveSupport::Concern
 
@@ -66,6 +67,10 @@ module ArelHelpers
       Arel.sql(value)
     end
 
+    def arel_ltree(value)
+      arel_cast(value, "ltree")
+    end
+
     def arel_named_fn(name, *args)
       quoted_args = args.map { |arg| arel_quote(arg) }
 
@@ -103,11 +108,21 @@ module ArelHelpers
     # Makes a more legible series of OR conditions.
     # @return [Arel::Nodes::Grouping(Arel::Nodes::Or)]
     def arel_or_expressions(*expressions)
-      expressions.flatten.reduce do |grouping, expression|
+      expressions.flatten!
+
+      return block_given? ? yield(expressions[0]) : expressions[0] if expressions.one?
+
+      expressions.reduce do |grouping, expression|
+        expression = yield expression if block_given?
+
+        next grouping if expression.blank?
+
         if grouping.kind_of?(Arel::Nodes::Grouping)
           grouping.expr.or(expression)
         else
           # First expression
+          grouping = yield grouping if block_given?
+
           grouping.or(expression)
         end
       end
@@ -137,3 +152,4 @@ module ArelHelpers
     end
   end
 end
+# rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity

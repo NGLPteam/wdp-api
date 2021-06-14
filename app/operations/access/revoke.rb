@@ -6,7 +6,7 @@ module Access
 
     # @param [Role] role
     # @param [Accessible] on
-    # @param [User] to
+    # @param [AccessGrantSubject] to
     # @return [Dry::Monads::Result]
     def call(role, on:, to:)
       return Success(nil) unless AccessGrant.has_granted?(role, on: on, to: to)

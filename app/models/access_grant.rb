@@ -1,49 +1,62 @@
 # frozen_string_literal: true
 
 class AccessGrant < ApplicationRecord
+  include AssignsPolymorphicForeignKey
   include ScopesForUser
 
   belongs_to :accessible, polymorphic: true
+  belongs_to :subject, polymorphic: true
+
   belongs_to :role, inverse_of: :access_grants
-  belongs_to :user, inverse_of: :access_grants
 
   belongs_to :community, optional: true
   belongs_to :collection, optional: true
   belongs_to :item, optional: true
 
-  before_validation :sync_accessible!
+  belongs_to :user_group, optional: true
+  belongs_to :user, optional: true
 
-  # @!private
+  has_many :grouped_users, through: :user_group, source: :users
+  has_many :permissions, through: :role
+
+  scope :for_subject, ->(subject) { where(subject: subject) }
+  scope :for_subject_type, ->(type) { where(subject_type: type) }
+
+  assign_polymorphic_foreign_key! :accessible, :community, :collection, :item
+  assign_polymorphic_foreign_key! :subject, :user, :user_group
+
+  before_validation :sync_auth_path!
+
+  after_save :calculate_granted_permissions!
+
+  # @api private
   # @return [void]
-  def sync_accessible!
+  def sync_auth_path!
     self.auth_path = accessible.try(:auth_path)
-    self.auth_query = auth_path? ? "#{auth_path}.*" : nil
+  end
 
-    case accessible
-    when Community
-      self.community = accessible
-      self.collection = nil
-      self.item = nil
-    when Collection
-      self.community = nil
-      self.collection = accessible
-      self.item = nil
-    when Item
-      self.community = nil
-      self.collection = nil
-      self.item = accessible
-    else
-      errors.add :accessible, "not a supported accessible model"
-    end
+  # @api private
+  # @return [void]
+  def calculate_granted_permissions!
+    WDPAPI::Container["access.calculate_granted_permissions"].call(access_grant: self)
   end
 
   class << self
-    def has_granted?(role, on:, to:)
-      exists?(role: role, accessible: on, user: to)
+    def for_user_group(user_group)
+      user_group.present? ? where(user_group: user_group) : none
     end
 
-    def fetch(accessible, user)
-      where(accessible: accessible, user: user).first_or_initialize
+    # @param [Role] role
+    # @param [HierarchicalEntity] on
+    # @param [AccessGrantSubject] to
+    def has_granted?(role, on:, to:)
+      exists?(role: role, accessible: on, subject: to)
+    end
+
+    # @param [HierarchicalEntity] accessible
+    # @param [AccessGrantSubject] subject
+    def fetch(accessible, subject)
+      where(accessible: accessible, subject: subject).first_or_initialize
     end
 
     # Uses an `ltree @> ltree` operation to check if the entity is contained by this access grant.

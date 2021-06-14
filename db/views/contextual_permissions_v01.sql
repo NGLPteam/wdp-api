@@ -12,8 +12,8 @@ SELECT
   jsonb_auth_path(p.suffix, COALESCE(access.allowed, false)) FILTER (WHERE p.self_prefixed) AS grid
   FROM (SELECT id FROM users ORDER BY id) u
   CROSS JOIN entities AS ent
-  CROSS JOIN (SELECT * FROM permissions WHERE kind = 'contextual') AS p
-  LEFT OUTER JOIN access_grants ag ON ent.auth_path <@ ag.auth_path AND ag.user_id = u.id--ag.auth_path @> ent.auth_path AND ag.user_id = u.id
+  CROSS JOIN permissions AS p
+  LEFT OUTER JOIN access_grants ag ON ent.auth_path <@ ag.auth_path AND ag.user_id = u.id
   LEFT OUTER JOIN roles r ON ag.role_id = r.id
   LEFT JOIN LATERAL (
     SELECT
@@ -32,5 +32,6 @@ SELECT
         is_allowed_action AND NOT is_direct_role
       END AS allowed
   ) AS access ON true
+  WHERE p.kind = 'contextual'
   GROUP BY 1, 2, 3
 ;

@@ -7,18 +7,30 @@ class Role < ApplicationRecord
 
   has_many :community_memberships, dependent: :destroy, inverse_of: :role
 
+  has_many :role_permissions, dependent: :destroy, inverse_of: :role
+
+  has_many :permissions, through: :role_permissions
+
   attribute :access_control_list, Roles::AccessControlList.to_type
 
   before_validation :calculate_allowed_actions!
+
+  after_save :calculate_role_permissions!
 
   scope :with_allowed_action, ->(name) { where(arel_allowed_action(name)) }
 
   validates :name, presence: true, uniqueness: true
 
-  # @!private
+  # @api private
   # @return [void]
   def calculate_allowed_actions!
     self.allowed_actions = access_control_list.calculate_allowed_actions
+  end
+
+  # @api private
+  # @return [void]
+  def calculate_role_permissions!
+    WDPAPI::Container["roles.calculate_role_permissions"].call(role: self)
   end
 
   class << self

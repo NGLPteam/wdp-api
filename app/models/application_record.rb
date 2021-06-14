@@ -7,6 +7,10 @@ class ApplicationRecord < ActiveRecord::Base
   include PostgresEnums
   include WhereMatches
 
+  def quoted_id
+    self.class.connection.quote id if persisted? && id.kind_of?(String)
+  end
+
   # @return [String]
   def to_encoded_id
     WDPAPI::Container["relay_node.id_from_object"].call(self).value! if persisted?
