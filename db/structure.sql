@@ -388,7 +388,8 @@ CREATE TABLE public.collections (
     visible_after_at timestamp without time zone,
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    auth_path public.ltree NOT NULL
+    auth_path public.ltree NOT NULL,
+    hierarchical_depth integer GENERATED ALWAYS AS (public.nlevel(auth_path)) STORED
 );
 
 
@@ -405,7 +406,8 @@ CREATE TABLE public.communities (
     metadata jsonb,
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    auth_path public.ltree NOT NULL
+    auth_path public.ltree NOT NULL,
+    hierarchical_depth integer GENERATED ALWAYS AS (public.nlevel(auth_path)) STORED
 );
 
 
@@ -600,8 +602,26 @@ CREATE TABLE public.entities (
     auth_path public.ltree NOT NULL,
     scope public.ltree NOT NULL,
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    depth integer GENERATED ALWAYS AS (public.nlevel(auth_path)) STORED
 );
+
+
+--
+-- Name: entity_breadcrumbs; Type: VIEW; Schema: public; Owner: -
+--
+
+CREATE VIEW public.entity_breadcrumbs AS
+ SELECT ent.entity_type,
+    ent.entity_id,
+    ent.system_slug AS entity_slug,
+    crumb.entity_type AS crumb_type,
+    crumb.entity_id AS crumb_id,
+    crumb.auth_path,
+    crumb.system_slug,
+    crumb.depth
+   FROM (public.entities ent
+     JOIN public.entities crumb ON (((ent.auth_path OPERATOR(public.<@) crumb.auth_path) AND (crumb.entity_id <> ent.entity_id))));
 
 
 --
@@ -624,7 +644,8 @@ CREATE TABLE public.items (
     visible_after_at timestamp without time zone,
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    auth_path public.ltree NOT NULL
+    auth_path public.ltree NOT NULL,
+    hierarchical_depth integer GENERATED ALWAYS AS (public.nlevel(auth_path)) STORED
 );
 
 
@@ -1515,6 +1536,20 @@ CREATE UNIQUE INDEX index_community_memberships_uniqueness ON public.community_m
 
 
 --
+-- Name: index_entities_crumb_source; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_entities_crumb_source ON public.entities USING gist (depth, auth_path, entity_id, entity_type, system_slug);
+
+
+--
+-- Name: index_entities_crumb_target; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_entities_crumb_target ON public.entities USING btree (auth_path, entity_id, entity_type, system_slug);
+
+
+--
 -- Name: index_entities_hierarchical_permission_matching; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -2368,6 +2403,9 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20210611170915'),
 ('20210611171346'),
 ('20210611171455'),
-('20210611172811');
+('20210611172811'),
+('20210612183500'),
+('20210612191855'),
+('20210612202131');
 
 
