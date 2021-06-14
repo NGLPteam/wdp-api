@@ -1,7 +1,9 @@
-:concurrency: 1
+:concurrency: 10
 :pidfile: tmp/pids/sidekiq.pid
 staging:
-  :concurrency: 5
+  :concurrency: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+production:
+  :concurrency: <%= ENV.fetch("RAILS_MAX_THREADS") { 10 } %>
 :queues:
   - default
   - permissions
