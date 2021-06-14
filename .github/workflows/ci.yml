@@ -1,0 +1,93 @@
+name: Continuous Integration
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+env:
+  PATH: /usr/sbin:/usr/bin:/sbin:/bin:/usr/local/bin:/usr/local/sbin
+
+jobs:
+
+  api-tests:
+    if: github.event.pull_request.draft == false
+
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:13.1-alpine
+        ports: ["5432:5432"]
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: rails_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+      redis:
+        image: redis
+        ports: ["6379:6379"]
+        options: --entrypoint redis-server
+
+    steps:
+    - name: "Checkout code"
+      uses: actions/checkout@v1
+
+    - name: "Install Ruby 2.7.x"
+      uses: actions/setup-ruby@v1
+      with:
+        ruby-version: 2.7.x
+
+    - name: "Install PostgreSQL 13 client"
+      run: |
+        sudo apt-get -yqq install libpq-dev
+
+    - name: "Restore gem dependencies from cache"
+      uses: actions/cache@v1
+      with:
+        path: api/vendor
+        key: ${{ runner.OS }}-gem-2-cache-${{ hashFiles('**/api/Gemfile.lock') }}
+        restore-keys: |
+          ${{ runner.OS }}-gem-2-cache-
+
+    - name: "Install Gem dependencies"
+      env:
+        RAILS_ENV: test
+      run: |
+        gem install bundler -v 2.2.19
+        bundle install --deployment --jobs 4 --retry 3
+
+    - name: "Setup test database"
+      env:
+        DATABASE_URL: "postgres://postgres:postgres@localhost:5432/rails_test"
+        RUBYOPT: "-W:no-deprecated -W:no-experimental" # Suppress Rails 6 deprecation warnings for ruby 2.7
+        RAILS_ENV: test
+        KEYCLOAKADMIN_SERVER_URL: foo
+        KEYCLOAKADMIN_SERVER_DOMAIN: foo
+        KEYCLOAKADMIN_CLIENT_REALM_NAME: foo
+        KEYCLOAKADMIN_CLIENT_ID: foo
+        KEYCLOAKADMIN_CLIENT_SECRET: foo
+        RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
+      run: |
+        bin/rails db:migrate
+        
+    - name: "Run API specs"
+      env:
+        DATABASE_URL: "postgres://postgres:postgres@localhost:5432/rails_test"
+        RUBYOPT: "-W:no-deprecated -W:no-experimental" # Suppress Rails 6 deprecation warnings for ruby 2.7
+        RAILS_ENV: test
+        KEYCLOAKADMIN_SERVER_URL: foo
+        KEYCLOAKADMIN_SERVER_DOMAIN: foo
+        KEYCLOAKADMIN_CLIENT_REALM_NAME: foo
+        KEYCLOAKADMIN_CLIENT_ID: foo
+        KEYCLOAKADMIN_CLIENT_SECRET: foo
+        RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
+
+      run: |
+        bin/rspec
