@@ -46,19 +46,19 @@ module Types
       description: "The currently authenticated user. AKA: you"
 
     def collection(slug:)
-      Collection.find slug
+      RecordLoader.for(Collection).find(slug)
     end
 
     def contributor(slug:)
-      Contributor.find slug
+      RecordLoader.for(Contributor).find slug
     end
 
     def community(slug:)
-      Community.find slug
+      RecordLoader.for(Community).find slug
     end
 
     def item(slug:)
-      Item.find slug
+      RecordLoader.for(Item).find slug
     end
 
     def viewer
