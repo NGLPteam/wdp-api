@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# rubocop:disable Rails/HasManyOrHasOneDependent, Rails/InverseOf
 module HierarchicalEntity
   extend ActiveSupport::Concern
 
@@ -7,6 +8,9 @@ module HierarchicalEntity
 
   included do
     delegate :auth_path, to: :contextual_parent, allow_nil: true, prefix: :contextual
+
+    has_many :contextual_permissions, as: :hierarchical
+    has_many :contextual_single_permissions, as: :hierarchical
 
     before_validation :inherit_hierarchical_parent!
 
@@ -165,4 +169,13 @@ module HierarchicalEntity
   def set_temporary_auth_path!
     self.auth_path = system_slug
   end
+
+  module ClassMethods
+    def with_permitted_actions_for(user, *actions)
+      constraint = ContextualSinglePermission.for_hierarchical_type(model_name.to_s).with_permitted_actions_for(user, *actions).select(:hierarchical_id)
+
+      where(id: constraint)
+    end
+  end
 end
+# rubocop:enable Rails/HasManyOrHasOneDependent, Rails/InverseOf

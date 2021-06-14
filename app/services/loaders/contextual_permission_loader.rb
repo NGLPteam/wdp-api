@@ -24,7 +24,11 @@ module Loaders
       entities.each do |entity|
         key = cache_key(entity)
 
-        fulfill(key, nil) unless fulfilled?(key)
+        next if fulfilled? key
+
+        record = ContextualPermission.empty_permission_for(@user, entity)
+
+        fulfill(key, record)
       end
     end
 

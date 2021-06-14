@@ -9,14 +9,18 @@ gem "rails", "~> 6.1.3.2"
 gem "pg", "~> 1.2.3"
 gem "activerecord-pg_enum"
 gem "closure_tree", "~> 7.2.0"
+gem "composite_primary_keys", "13.0.0"
+gem "frozen_record"
 gem "pg_query"
 gem "scenic", "~> 1.5.4"
 gem "store_model", "~> 0.9.0"
 
-# Redis
+# Redis / Jobs
+gem "activejob-uniqueness"
 gem "hiredis", "~> 0.6.3"
 gem "redis", "~> 4.2.5", require: %w[redis redis/connection/hiredis]
 gem "sidekiq", "~> 6.2.1"
+gem "job-iteration"
 
 # GraphQL
 gem "graphql", "1.12.8"

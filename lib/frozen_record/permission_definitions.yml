@@ -1,0 +1,193 @@
+---
+- path: collections.assets.create
+  kind: contextual
+  inheritance:
+  - collections
+  - communities
+- path: collections.assets.delete
+  kind: contextual
+  inheritance:
+  - collections
+  - communities
+- path: collections.assets.read
+  kind: contextual
+  inheritance:
+  - collections
+  - collections.linked.collections
+  - collections.linked.items
+  - communities
+- path: collections.assets.update
+  kind: contextual
+  inheritance:
+  - collections
+  - communities
+- path: collections.create
+  kind: contextual
+  inheritance:
+  - collections
+  - communities
+- path: collections.delete
+  kind: contextual
+  inheritance:
+  - collections
+  - communities
+- path: collections.manage_access
+  kind: contextual
+  inheritance:
+  - collections
+  - communities
+- path: collections.read
+  kind: contextual
+  inheritance:
+  - collections
+  - collections.linked.collections
+  - collections.linked.items
+  - communities
+- path: communities.read
+  kind: global
+  inheritance: []
+- path: communities.create
+  kind: global
+  inheritance: []
+- path: communities.update
+  kind: global
+  inheritance: []
+- path: communities.delete
+  kind: global
+  inheritance: []
+- path: users.read
+  kind: global
+  inheritance: []
+- path: users.create
+  kind: global
+  inheritance: []
+- path: users.update
+  kind: global
+  inheritance: []
+- path: users.delete
+  kind: global
+  inheritance: []
+- path: settings.update
+  kind: global
+  inheritance: []
+- path: collections.update
+  kind: contextual
+  inheritance:
+  - collections
+  - communities
+- path: items.assets.create
+  kind: contextual
+  inheritance:
+  - collections
+  - communities
+  - items
+- path: items.manage_access
+  kind: contextual
+  inheritance:
+  - collections
+  - communities
+  - items
+- path: items.read
+  kind: contextual
+  inheritance:
+  - collections
+  - communities
+  - items
+  - items.linked.items
+- path: items.update
+  kind: contextual
+  inheritance:
+  - collections
+  - communities
+  - items
+- path: self.read
+  kind: contextual
+  inheritance:
+  - collections
+  - collections.linked.collections
+  - collections.linked.items
+  - communities
+  - items
+  - items.linked.items
+- path: self.create
+  kind: contextual
+  inheritance:
+  - collections
+  - communities
+  - items
+- path: self.update
+  kind: contextual
+  inheritance:
+  - collections
+  - communities
+  - items
+- path: self.delete
+  kind: contextual
+  inheritance:
+  - collections
+  - communities
+  - items
+- path: self.manage_access
+  kind: contextual
+  inheritance:
+  - collections
+  - communities
+  - items
+- path: self.assets.read
+  kind: contextual
+  inheritance:
+  - collections
+  - collections.linked.collections
+  - collections.linked.items
+  - communities
+  - items
+  - items.linked.items
+- path: self.assets.create
+  kind: contextual
+  inheritance:
+  - collections
+  - communities
+  - items
+- path: self.assets.update
+  kind: contextual
+  inheritance:
+  - collections
+  - communities
+  - items
+- path: self.assets.delete
+  kind: contextual
+  inheritance:
+  - collections
+  - communities
+  - items
+- path: items.assets.delete
+  kind: contextual
+  inheritance:
+  - collections
+  - communities
+  - items
+- path: items.assets.read
+  kind: contextual
+  inheritance:
+  - collections
+  - communities
+  - items
+  - items.linked.items
+- path: items.assets.update
+  kind: contextual
+  inheritance:
+  - collections
+  - communities
+  - items
+- path: items.create
+  kind: contextual
+  inheritance:
+  - collections
+  - communities
+  - items
+- path: items.delete
+  kind: contextual
+  inheritance:
+  - collections
+  - communities
+  - items
