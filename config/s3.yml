@@ -14,6 +14,11 @@ development:
   force_path_style: true
 
 test:
+  access_key_id: minio
+  secret_access_key: minio123
+  endpoint: http://localhost:10042
+  region: "us-east-1"
+  force_path_style: true
   <<: *default
 
 production:
