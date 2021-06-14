@@ -15,6 +15,18 @@ module Types
       description "The role(s) that gave the permissions to access this resource, if any."
     end
 
+    field :breadcrumbs, [Types::EntityBreadcrumbType], null: false do
+      description "Previous entries in the hierarchy"
+    end
+
+    field :hierarchical_depth, Int, null: false do
+      description "The depth of the hierarchical entity, taking into account any parent types"
+    end
+
+    def breadcrumbs
+      Loaders::AssociationLoader.for(object.class, :entity_breadcrumbs).load(object)
+    end
+
     # @return [Promise(ContextualPermission)]
     def contextual_permission
       Loaders::ContextualPermissionLoader.for(context[:current_user]).load(object)

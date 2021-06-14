@@ -12,12 +12,24 @@ module HierarchicalEntity
     has_many :contextual_permissions, as: :hierarchical
     has_many :contextual_single_permissions, as: :hierarchical
 
+    has_many :entity_breadcrumbs, -> { order(depth: :asc) }, as: :entity
+    has_many :entity_breadcrumb_entries, class_name: "EntityBreadcrumb", as: :crumb
+
     before_validation :inherit_hierarchical_parent!
 
     after_validation :set_temporary_auth_path!, on: :create
     after_validation :maybe_update_auth_path!, on: :update
 
     after_save :track_parent_changes!
+  end
+
+  # @return [String]
+  def breadcrumb_label
+    case self
+    when Community then name
+    else
+      title
+    end
   end
 
   # This potentially connects to another "layer" in the hierarchy.
