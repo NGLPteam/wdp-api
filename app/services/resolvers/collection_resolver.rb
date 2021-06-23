@@ -4,6 +4,7 @@ module Resolvers
   class CollectionResolver < GraphQL::Schema::Resolver
     include SearchObject.module(:graphql)
 
+    include Resolvers::PageBasedPagination
     include Resolvers::SimplyOrdered
     include Resolvers::Treelike
 

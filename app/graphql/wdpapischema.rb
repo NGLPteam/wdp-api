@@ -14,7 +14,7 @@ class WDPAPISchema < GraphQL::Schema
     end
   )
 
-  default_max_page_size 50
+  default_max_page_size Graphql::Constants::MAX_PER_PAGE_SIZE
 
   rescue_from(ActiveRecord::RecordNotFound) do |err, obj, args, ctx, field|
     raise GraphQL::ExecutionError, "#{field.type.unwrap.graphql_name} not found"
