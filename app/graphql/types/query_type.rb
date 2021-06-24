@@ -38,12 +38,20 @@ module Types
       argument :slug, Types::SlugType, required: true
     end
 
+    field :contributors, resolver: Resolvers::ContributorResolver do
+      description "A list of all contributors in the system"
+    end
+
     field :roles, resolver: Resolvers::RoleResolver do
       description "List all roles"
     end
 
     field :viewer, Types::UserType, null: true,
       description: "The currently authenticated user. AKA: you"
+
+    field :users, resolver: Resolvers::UserResolver do
+      description "A list of all users in the system"
+    end
 
     def collection(slug:)
       Loaders::RecordLoader.for(Collection).load(slug)
