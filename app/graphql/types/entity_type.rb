@@ -23,6 +23,10 @@ module Types
       description "The depth of the hierarchical entity, taking into account any parent types"
     end
 
+    field :thumbnail, Types::AssetPreviewType, null: true do
+      description "A mapping of an entity's preview thumbnail"
+    end
+
     def breadcrumbs
       Loaders::AssociationLoader.for(object.class, :entity_breadcrumbs).load(object)
     end
@@ -60,6 +64,13 @@ module Types
 
         permission.permissions
       end
+    end
+
+    # @return [PreviewImages::TopLevelPreview]
+    def thumbnail
+      thumbnail_alt = "preview for #{object.breadcrumb_label}"
+
+      PreviewImages::TopLevelPreview.new object.thumbnail_attacher, alt: thumbnail_alt
     end
   end
 end

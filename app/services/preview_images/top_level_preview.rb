@@ -6,7 +6,7 @@ module PreviewImages
 
     include PreviewImages::SharedConstants
 
-    param :attacher, AppTypes.Instance(PreviewUploader::Attacher)
+    param :attacher, Attacher
 
     option :alt, AppTypes::String, default: proc { "preview image" }
 

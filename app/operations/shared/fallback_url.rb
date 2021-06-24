@@ -1,21 +1,37 @@
 # frozen_string_literal: true
 
 module Shared
-  # @todo Add fallback logic for preview images stored in a bucket.
   class FallbackUrl
-    extend Dry::Core::Cache
-
-    # include WDPAPI::Deps[bucket: "shared.bucket"]
+    include PreviewImages::SharedConstants
 
     # @param [#to_s] derivative_name
     # @param [:png, :webp] format
     # @return [String, nil]
-    def call(derivative_name, format: :png)
-      return nil
+    def call(derivative_name, format: :png, attachment_name: nil)
+      text = [attachment_name, derivative_name].compact.join(" ").presence || "preview fallback"
 
-      # fetch_or_store(derivative_name.to_s, format.to_s) do
-      #   bucket.object("fallback/#{derivative_name}.#{format}")&.public_url
-      # end
+      size = size_for derivative_name
+
+      options = {
+        category: "abstract",
+        is_gray: true,
+        size: size,
+        text: text
+      }
+
+      Faker::LoremPixel.image options
+    end
+
+    private
+
+    def size_for(derivative_name)
+      name = derivative_name.to_sym if derivative_name.present?
+
+      DIMENSIONS.fetch name do
+        DIMENSIONS.fetch :medium
+      end.then do |(width, height)|
+        "#{width}x#{height}"
+      end
     end
   end
 end

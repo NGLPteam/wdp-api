@@ -37,6 +37,10 @@ class User < ApplicationRecord
     ContextualPermission.fetch(self, entity)
   end
 
+  def has_allowed_action?(name)
+    name.to_s.in?(allowed_actions)
+  end
+
   def has_role?(name)
     name.to_s.in? roles
   end
