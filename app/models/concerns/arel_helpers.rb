@@ -87,6 +87,36 @@ module ArelHelpers
       Arel::Nodes.build_quoted arg
     end
 
+    # @see #arel_expr_in_query
+    # @param [Symbol] attr (see #arel_attrify)
+    # @param [#to_sql, #to_s] query
+    # @return [Arel::Nodes::In]
+    def arel_attr_in_query(attr, query)
+      arel_expr_in_query arel_attrify(attr), query
+    end
+
+    # @param [#in] expr
+    # @param [#to_sql, #to_s] query
+    # @return [Arel::Nodes::In]
+    def arel_expr_in_query(expr, query)
+      wrapped_query = arel_quote_query query
+
+      expr.in(wrapped_query)
+    end
+
+    # @param [#to_sql] query
+    # @return [Arel::Nodes::SqlLiteral]
+    def arel_quote_query(query)
+      case query
+      when AppTypes.Interface(:to_sql) then arel_literal query.to_sql
+      when String then arel_literal query
+      else
+        # :nocov:
+        raise TypeError, "cannot quote query #{query.inspect}"
+        # :nocov:
+      end
+    end
+
     # @return [Arel::Nodes::Quoted]
     def arel_encode_ltree_array(*elements)
       arel_cast(arel_quote(LTREE_ARRAY.serialize(elements.flatten)), "ltree[]")
@@ -134,7 +164,7 @@ module ArelHelpers
     # @return [Arel::Node]
     def arel_attrify(attribute)
       case attribute
-      when Arel::Attributes::Attribute, Arel::Nodes::SqlLiteral, Arel::Expressions, Arel::Node
+      when Arel::Attributes::Attribute, Arel::Nodes::SqlLiteral, Arel::Expressions, Arel::Nodes::Node
         attribute
       when arel_column_matcher
         arel_table[attribute]

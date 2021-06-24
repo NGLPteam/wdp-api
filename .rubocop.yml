@@ -120,6 +120,9 @@ Metrics/ClassLength:
 Metrics/MethodLength:
   Max: 30
 
+Metrics/ModuleLength:
+  Enabled: false
+
 Naming/AccessorMethodName:
   Enabled: false
 

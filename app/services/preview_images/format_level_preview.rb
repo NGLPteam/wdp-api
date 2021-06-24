@@ -8,7 +8,7 @@ module PreviewImages
 
     param :style_level, AppTypes.Instance(PreviewImages::StyleLevelPreview)
     param :format_name, FormatName
-    param :uploaded_file, AppTypes.Instance(PreviewUploader::UploadedFile).optional, optional: true
+    param :uploaded_file, UploadedFile.optional, optional: true
 
     delegate :dimensions, :height, :width, to: :style_level, prefix: :default
     delegate :dimensions, :height, :width, to: :uploaded_file, prefix: :exact, allow_nil: true

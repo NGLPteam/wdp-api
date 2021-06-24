@@ -7,6 +7,8 @@ module HierarchicalEntity
   include HasSystemSlug
 
   included do
+    include EntityImageUploader::Attachment.new(:thumbnail)
+
     delegate :auth_path, to: :contextual_parent, allow_nil: true, prefix: :contextual
 
     has_many :contextual_permissions, as: :hierarchical
@@ -14,6 +16,8 @@ module HierarchicalEntity
 
     has_many :entity_breadcrumbs, -> { order(depth: :asc) }, as: :entity
     has_many :entity_breadcrumb_entries, class_name: "EntityBreadcrumb", as: :crumb
+
+    scope :sans_thumbnail, -> { where(arel_json_get(:thumbnail_data, :storage).eq(nil)) }
 
     before_validation :inherit_hierarchical_parent!
 
@@ -191,6 +195,15 @@ module HierarchicalEntity
   end
 
   module ClassMethods
+    # @param [User] user
+    # @return [ActiveRecord::Relation<HierarchicalEntity>]
+    def readable_by(user)
+      with_permitted_actions_for(user, "self.read")
+    end
+
+    # @param [User] user
+    # @param [<String>] actions
+    # @return [ActiveRecord::Relation<HierarchicalEntity>]
     def with_permitted_actions_for(user, *actions)
       constraint = ContextualSinglePermission.for_hierarchical_type(model_name.to_s).with_permitted_actions_for(user, *actions).select(:hierarchical_id)
 

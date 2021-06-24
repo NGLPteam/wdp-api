@@ -402,7 +402,7 @@ CREATE TABLE public.communities (
     system_slug public.citext NOT NULL,
     "position" integer,
     name public.citext NOT NULL,
-    logo_data jsonb,
+    thumbnail_data jsonb,
     metadata jsonb,
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
@@ -2406,6 +2406,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20210611172811'),
 ('20210612183500'),
 ('20210612191855'),
-('20210612202131');
+('20210612202131'),
+('20210622224648');
 
 

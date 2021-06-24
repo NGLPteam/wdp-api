@@ -102,5 +102,17 @@ class ApplicationPolicy
 
       scope.none
     end
+
+    def has_allowed_action?(name)
+      user&.has_allowed_action?(name)
+    end
+
+    def has_global_admin_access?
+      user&.has_global_admin_access?
+    end
+
+    def admin_or_has_allowed_action?(name)
+      has_global_admin_access? || has_allowed_action?(name)
+    end
   end
 end
