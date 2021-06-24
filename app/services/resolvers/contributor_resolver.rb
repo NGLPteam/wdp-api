@@ -4,6 +4,8 @@ module Resolvers
   class ContributorResolver < GraphQL::Schema::Resolver
     include SearchObject.module(:graphql)
 
+    include Resolvers::AppliesPolicyScope
+    include Resolvers::PageBasedPagination
     include Resolvers::SimplyOrdered
 
     type Types::AnyContributorType.connection_type, null: false
