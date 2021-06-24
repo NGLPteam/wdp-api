@@ -1,12 +1,12 @@
 :concurrency: 10
 :pidfile: tmp/pids/sidekiq.pid
 staging:
-  :concurrency: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  :concurrency: <%= ENV.fetch("SIDEKIQ_CONCURRENCY") { 2 } %>
 production:
-  :concurrency: <%= ENV.fetch("RAILS_MAX_THREADS") { 10 } %>
+  :concurrency: <%= ENV.fetch("SIDEKIQ_CONCURRENCY") { 10 } %>
 :queues:
   - default
   - permissions
+  - maintenance
   - processing
   - mailers
-  - maintenance
