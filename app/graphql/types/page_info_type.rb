@@ -16,6 +16,14 @@ module Types
       description "The number of edges/nodes per page (if page-based pagination supported and a page was provided)"
     end
 
+    field :total_count, Integer, null: false do
+      description "The total number of nodes available to this connection, constrained by applied filters (if any)"
+    end
+
+    field :total_unfiltered_count, Integer, null: false do
+      description "The total number of nodes available to this connection, independent of any filters"
+    end
+
     # @return [Integer, nil]
     def page
       object.arguments[:page]
@@ -37,6 +45,23 @@ module Types
     # @return [Integer, nil]
     def per_page
       object.arguments[:per_page] if page.present?
+    end
+
+    # @return [Integer]
+    def total_count
+      object.items.size
+    end
+
+    # @return [Integer]
+    def total_unfiltered_count
+      case object.items
+      when Array then object.items.size
+      when ActiveRecord::Relation
+        # TODO: Use a GraphQL-batch loader for this
+        Pundit.policy_scope(context[:current_user], object.items.model).count
+      else
+        object.items.size
+      end
     end
   end
 end
