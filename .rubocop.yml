@@ -13,6 +13,7 @@ AllCops:
     - "db/schema.rb"
     - "node_modules/**/*"
     - "tmp/**/*"
+    - "vendor/**/*"
   SuggestExtensions: false
   TargetRubyVersion: 2.7
 

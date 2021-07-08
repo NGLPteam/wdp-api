@@ -10,8 +10,32 @@ env:
   PATH: /usr/sbin:/usr/bin:/sbin:/bin:/usr/local/bin:/usr/local/sbin
 
 jobs:
+  rubocop:
+    if: github.event.pull_request.draft == false
 
-  api-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Install Dependent libraries"
+        run: |
+          sudo apt-get -yqq install libpq-dev libvips libvips-dev
+
+      - name: "Checkout code"
+        uses: actions/checkout@v1
+
+      - name: "Install Ruby 2.7.3"
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+          ruby-version: 2.7.3
+
+      - name: "Run Rubocop"
+        env:
+          RAILS_ENV: development
+          RUBYOPT: "-W:no-deprecated -W:no-experimental" # Suppress Rails 6 deprecation warnings for ruby 2.7
+        run: |
+          bin/rubocop
+
+  rspec:
     if: github.event.pull_request.draft == false
 
     runs-on: ubuntu-latest
@@ -36,57 +60,29 @@ jobs:
         options: --entrypoint redis-server
 
     steps:
-    - name: "Checkout code"
-      uses: actions/checkout@v1
+      - name: "Install Dependent libraries"
+        run: |
+          sudo apt-get -yqq install libpq-dev libvips libvips-dev
 
-    - name: "Install Ruby 2.7.x"
-      uses: actions/setup-ruby@v1
-      with:
-        ruby-version: 2.7.x
+      - name: "Checkout code"
+        uses: actions/checkout@v1
 
-    - name: "Install PostgreSQL 13 client"
-      run: |
-        sudo apt-get -yqq install libpq-dev
+      - name: "Install Ruby 2.7.3"
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+          ruby-version: 2.7.3
 
-    - name: "Restore gem dependencies from cache"
-      uses: actions/cache@v1
-      with:
-        path: api/vendor
-        key: ${{ runner.OS }}-gem-2-cache-${{ hashFiles('**/api/Gemfile.lock') }}
-        restore-keys: |
-          ${{ runner.OS }}-gem-2-cache-
-
-    - name: "Install Gem dependencies"
-      env:
-        RAILS_ENV: test
-      run: |
-        gem install bundler -v 2.2.19
-        bundle install --deployment --jobs 4 --retry 3
-
-    - name: "Setup test database"
-      env:
-        DATABASE_URL: "postgres://postgres:postgres@localhost:5432/rails_test"
-        RUBYOPT: "-W:no-deprecated -W:no-experimental" # Suppress Rails 6 deprecation warnings for ruby 2.7
-        RAILS_ENV: test
-        KEYCLOAKADMIN_SERVER_URL: foo
-        KEYCLOAKADMIN_SERVER_DOMAIN: foo
-        KEYCLOAKADMIN_CLIENT_REALM_NAME: foo
-        KEYCLOAKADMIN_CLIENT_ID: foo
-        KEYCLOAKADMIN_CLIENT_SECRET: foo
-        RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
-      run: |
-        bin/rake db:test:prepare
-
-    - name: "Run API specs"
-      env:
-        DATABASE_URL: "postgres://postgres:postgres@localhost:5432/rails_test"
-        RUBYOPT: "-W:no-deprecated -W:no-experimental" # Suppress Rails 6 deprecation warnings for ruby 2.7
-        RAILS_ENV: test
-        KEYCLOAKADMIN_SERVER_URL: foo
-        KEYCLOAKADMIN_SERVER_DOMAIN: foo
-        KEYCLOAKADMIN_CLIENT_REALM_NAME: foo
-        KEYCLOAKADMIN_CLIENT_ID: foo
-        KEYCLOAKADMIN_CLIENT_SECRET: foo
-        RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
-      run: |
-        bin/rspec
+      - name: "Run API specs"
+        env:
+          DATABASE_URL: "postgres://postgres:postgres@localhost:5432/rails_test"
+          RUBYOPT: "-W:no-deprecated -W:no-experimental"
+          RAILS_ENV: test
+          KEYCLOAKADMIN_SERVER_URL: foo
+          KEYCLOAKADMIN_SERVER_DOMAIN: foo
+          KEYCLOAKADMIN_CLIENT_REALM_NAME: foo
+          KEYCLOAKADMIN_CLIENT_ID: foo
+          KEYCLOAKADMIN_CLIENT_SECRET: foo
+          RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
+        run: |
+          bin/rspec
