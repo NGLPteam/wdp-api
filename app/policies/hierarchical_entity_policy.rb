@@ -24,7 +24,7 @@ class HierarchicalEntityPolicy < ApplicationPolicy
   end
 
   def destroy?
-    admin_or_grid_has? :destroy
+    admin_or_grid_has? :delete
   end
 
   def manage_access?
@@ -44,10 +44,14 @@ class HierarchicalEntityPolicy < ApplicationPolicy
   end
 
   def create_collections?
+    return true if user.has_global_admin_access?
+
     has_hierarchical_scoped_permission? :collections, :create
   end
 
   def create_items?
+    return true if user.has_global_admin_access?
+
     has_hierarchical_scoped_permission? :items, :create
   end
 
@@ -78,7 +82,11 @@ class HierarchicalEntityPolicy < ApplicationPolicy
 
   class Scope < Scope
     def resolve
-      scope.all
+      return scope.all if user.has_global_admin_access?
+
+      return scope.none if user.anonymous?
+
+      scope.with_permitted_actions_for(user, "self.read")
     end
   end
 end

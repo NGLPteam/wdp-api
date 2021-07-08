@@ -32,6 +32,10 @@ module Roles
     end
 
     module ClassMethods
+      def action_names
+        permission_names
+      end
+
       # @param [Boolean, { Symbol => Boolean }] initial_value
       # @return [{ Symbol => Boolean }]
       def build_params_from(initial_value)
@@ -54,12 +58,36 @@ module Roles
         end
       end
 
+      # @api private
+      # rubocop:disable Metrics/AbcSize
+      def with_scope(parent, scope)
+        Class.new(self).tap do |klass|
+          klass.scope_parent = parent
+          klass.scope_name = scope
+
+          klass.config.permission_grids = klass.permission_grids.each_with_object({}) do |(name, defn), h|
+            inherited_type = defn[:type].with_scope(klass, name)
+
+            new_definition = defn.merge(type: inherited_type)
+
+            h[name] = new_definition
+
+            klass.attribute_types[name.to_s].dup.then do |duped_type|
+              duped_type.instance_variable_set(:@model_klass, inherited_type)
+
+              klass.attribute_types = klass.attribute_types.merge(name.to_s => duped_type)
+            end
+          end
+        end
+      end
+      # rubocop:enable Metrics/AbcSize
+
       private
 
       def build_permission_params_from(initial_value)
         case initial_value
         when AppTypes::Bool
-          permission_names.index_with { true }
+          permission_names.index_with { initial_value }
         when Hash
           initial_value.symbolize_keys.slice(*permission_names)
         else

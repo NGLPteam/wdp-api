@@ -29,7 +29,9 @@ module Tokens
 
       Success payload
     rescue JWT::JWKError => e
+      # :nocov:
       Failure[:invalid_jwk, e.message]
+      # :nocov:
     rescue JWT::DecodeError => e
       Failure[:invalid_token, e.message]
     end

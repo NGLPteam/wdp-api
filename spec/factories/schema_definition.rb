@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 FactoryBot.define do
   factory :schema_definition do
     name { Faker::Commerce.unique.product_name }

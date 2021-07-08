@@ -1,27 +1,95 @@
-require 'rails_helper'
+# frozen_string_literal: true
 
 RSpec.describe CommunityPolicy, type: :policy do
-  let(:user) { User.new }
+  let!(:user) { FactoryBot.create :user }
+
+  let!(:community) { FactoryBot.create :community }
+
+  let!(:other_community) { FactoryBot.create :community }
+
+  let!(:editor_role) { FactoryBot.create :role, :editor }
+
+  let!(:scope) { described_class::Scope.new(user, Community.all) }
 
   subject { described_class }
 
-  permissions ".scope" do
-    pending "add some examples to (or delete) #{__FILE__}"
+  context "as a user with admin access" do
+    let!(:user) { FactoryBot.create :user, :admin }
+
+    permissions ".scope" do
+      subject { scope.resolve }
+
+      it "includes everything" do
+        is_expected.to include community, other_community
+      end
+    end
   end
 
-  permissions :show? do
-    pending "add some examples to (or delete) #{__FILE__}"
+  context "as a user with communities.* access" do
+    let!(:user) { FactoryBot.create :user, :communities_access }
+
+    permissions ".scope" do
+      subject { scope.resolve }
+
+      it "includes everything" do
+        is_expected.to include community, other_community
+      end
+    end
   end
 
-  permissions :create? do
-    pending "add some examples to (or delete) #{__FILE__}"
+  context "as a user with specifically-granted access to a community" do
+    before do
+      grant_access! editor_role, on: community, to: user
+    end
+
+    permissions ".scope" do
+      subject { scope.resolve }
+
+      it "include what a user has access to" do
+        is_expected.to include community
+      end
+
+      it "excludes what a user can't see" do
+        is_expected.not_to include other_community
+      end
+    end
+
+    permissions :show?, :update?, :destroy?, :create_items?, :create_collections? do
+      it "is allowed" do
+        is_expected.to permit(user, community)
+      end
+
+      it "is not allowed on other communities" do
+        is_expected.not_to permit(user, other_community)
+      end
+    end
+
+    permissions :create? do
+      it "is not allowed" do
+        is_expected.not_to permit(user, community)
+      end
+    end
   end
 
-  permissions :update? do
-    pending "add some examples to (or delete) #{__FILE__}"
+  context "as a user with no special access" do
+    let!(:user) { FactoryBot.create :user }
+
+    permissions ".scope" do
+      subject { scope.resolve }
+
+      it "includes only the user" do
+        is_expected.to be_blank
+      end
+    end
   end
 
-  permissions :destroy? do
-    pending "add some examples to (or delete) #{__FILE__}"
+  context "as an anonymous user" do
+    let!(:user) { AnonymousUser.new }
+
+    permissions ".scope" do
+      subject { scope.resolve }
+
+      it { is_expected.to be_blank }
+    end
   end
 end

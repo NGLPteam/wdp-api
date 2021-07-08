@@ -1,5 +1,29 @@
+# frozen_string_literal: true
+
 require "spec_helper"
 ENV["RAILS_ENV"] ||= "test"
+require "simplecov"
+
+SimpleCov.start "rails" do
+  enable_coverage :branch
+
+  groups.delete "Channels"
+  groups.delete "Helpers"
+  groups.delete "Libraries"
+  groups.delete "Mailers"
+
+  add_group "GraphQL", "app/graphql"
+  add_group "Operations", "app/operations"
+  add_group "Policies", "app/policies"
+  add_group "Services", "app/services"
+  add_group "Uploaders", "app/uploaders"
+
+  add_filter "app/services/testing"
+  add_filter "app/services/tus_client"
+  add_filter "lib/cops"
+  add_filter "lib/patches"
+end
+
 require File.expand_path("../config/environment", __dir__)
 
 abort("The Rails environment is running in production mode!") if Rails.env.production?
@@ -11,6 +35,12 @@ require "pundit/rspec"
 require "webmock/rspec"
 
 # Add additional requires below this line. Rails is not loaded until this point!
+
+Rails.application.eager_load!
+
+ActiveJob::Base.queue_adapter = :test
+
+Shrine.logger = Logger.new("/dev/null")
 
 # Requires supporting ruby files with custom matchers and macros, etc, in
 # spec/support/ and its subdirectories. Files matching `spec/**/*_spec.rb` are
@@ -54,7 +84,11 @@ RSpec.configure do |config|
     WebMock.disable_net_connect!
   end
 
-  config.around(:each) do |example|
+  config.before(:suite) do
+    Testing::InitializeTestDatabase.call
+  end
+
+  config.around do |example|
     DatabaseCleaner.cleaning do
       example.run
     end

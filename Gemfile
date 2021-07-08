@@ -86,11 +86,14 @@ group :development do
   gem "listen", "~> 3.3"
   gem "rubocop", "~> 1.13.0"
   gem "rubocop-rails", "~> 2.9.1", require: false
+  gem "rubocop-rspec", "~> 2.4.0", require: false
 end
 
 group :test do
   gem "database_cleaner-active_record", "~> 2.0.0"
   gem "database_cleaner-redis", "~> 2.0.0"
+  gem "rspec-collection_matchers", "~> 1.2.0"
   gem "rspec-json_expectations", "~> 2.2.0"
+  gem "simplecov", "~> 0.21.2", require: false
   gem "webmock", "3.12.2"
 end
