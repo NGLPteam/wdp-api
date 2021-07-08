@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 # @api private
+# rubocop:disable Layout/LineLength
 class TokenHelper
   extend Dry::Initializer
 
@@ -8,7 +9,11 @@ class TokenHelper
 
   option :pem_path, Dry::Types["coercible.string"], default: proc { "#{__dir__}/test_key.pem" }
 
-  def build_token(data: {}, issued_at: Time.current, expires_at: 3.hours.from_now, jti: SecureRandom.uuid, with_random_jwk: false)
+  def build_token(data: {}, has_global_admin: false, realm_roles: [], issued_at: Time.current, expires_at: 3.hours.from_now, jti: SecureRandom.uuid, with_random_jwk: false)
+    data[:realm_roles] = [*realm_roles].tap do |rr|
+      rr << "global_admin" if has_global_admin
+    end.uniq
+
     enriched_data = FactoryBot.attributes_for(:token_payload, data)
 
     payload = enriched_data.symbolize_keys.merge(
@@ -70,3 +75,4 @@ class TokenHelper
     @rsa_key ||= OpenSSL::PKey::RSA.new File.read pem_path
   end
 end
+# rubocop:enable Layout/LineLength

@@ -81,6 +81,18 @@ class ApplicationPolicy
 
   # @!endgroup
 
+  def has_admin?
+    user.has_global_admin_access?
+  end
+
+  def has_allowed_action?(action_name)
+    action_name.in? user.allowed_actions
+  end
+
+  def has_admin_or_allowed_action?(action_name)
+    has_admin? || has_allowed_action?(action_name)
+  end
+
   class Scope
     attr_reader :user, :scope
 

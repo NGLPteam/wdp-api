@@ -9,8 +9,13 @@ module Roles
     included do
       include StoreModel::Model
 
+      delegate :scope, to: :class
+
       config.base_scope = nil
       config.permission_grids = {}
+
+      config_accessor :scope_parent
+      config_accessor :scope_name
     end
 
     # @param [#to_s]
@@ -73,7 +78,7 @@ module Roles
         build_with true
       end
 
-      # @param [Boolean, { Symbol => Boolean }] initial_value
+      # @param [Boolean, { Symbol => Boolean }, <String>] initial_value
       # @return [Roles::ComposesGrids]
       def build_with(initial_value)
         params = build_params_from initial_value
@@ -81,11 +86,11 @@ module Roles
         new params
       end
 
-      # @param [Boolean, { Symbol => Boolean }] initial_value
+      # @param [Boolean, { Symbol => Boolean }, <String>] initial_value
       # @return [{ Symbol => Boolean }]
       def build_params_from(initial_value)
         permission_grids.each_with_object({}) do |(grid_name, definition), h|
-          specific_value = initial_value.kind_of?(Hash) && initial_value[grid_name].kind_of?(Hash) ? initial_value[grid_name] : initial_value
+          specific_value = initial_value.kind_of?(Hash) && grid_name.in?(initial_value) ? initial_value[grid_name] : initial_value
 
           h[grid_name] = definition[:type].build_params_from(specific_value)
         end
@@ -98,7 +103,7 @@ module Roles
       def grid(name, type = Roles::PermissionGrid, default: {})
         name = name.to_sym
 
-        type = Roles::Grid::INHERITED[type]
+        type = Roles::Grid::INHERITED[type].with_scope(self, name)
 
         default_value = type.build_params_from(default)
 
@@ -119,6 +124,11 @@ module Roles
         permission_grids.flat_map do |(name, definition)|
           definition[:type].allow_everything.allowed_actions(scope: name)
         end
+      end
+
+      # @return [String]
+      def scope
+        [scope_parent&.scope, scope_name].map(&:presence).compact.join(?.)
       end
 
       private

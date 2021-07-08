@@ -1,27 +1,103 @@
-require 'rails_helper'
+# frozen_string_literal: true
 
 RSpec.describe ItemPolicy, type: :policy do
-  let(:user) { User.new }
+  let!(:user) { FactoryBot.create :user }
+
+  let!(:item) { FactoryBot.create :item }
+
+  let!(:subitem) { FactoryBot.create :item, parent: item }
+
+  let!(:other_item) { FactoryBot.create :item }
+
+  let!(:editor_role) { FactoryBot.create :role, :editor }
+
+  let!(:scope) { described_class::Scope.new(user, Item.all) }
 
   subject { described_class }
 
-  permissions ".scope" do
-    pending "add some examples to (or delete) #{__FILE__}"
+  context "as an admin" do
+    let!(:user) { FactoryBot.create :user, :admin }
+
+    permissions ".scope" do
+      subject { scope.resolve }
+
+      it "includes everything" do
+        is_expected.to include item, subitem, other_item
+      end
+    end
+
+    permissions :show?, :create?, :update?, :destroy? do
+      it "is allowed on an item" do
+        is_expected.to permit(user, item)
+      end
+
+      it "is allowed on a subitem" do
+        is_expected.to permit(user, subitem)
+      end
+    end
+
+    permissions :create_items?, :create_items? do
+      it "is allowed on an item" do
+        is_expected.to permit(user, item)
+      end
+
+      it "is allowed on a subitem" do
+        is_expected.to permit(user, subitem)
+      end
+    end
   end
 
-  permissions :show? do
-    pending "add some examples to (or delete) #{__FILE__}"
+  context "as a user with all contextual permissions" do
+    before do
+      grant_access! editor_role, on: item, to: user
+    end
+
+    permissions ".scope" do
+      subject { scope.resolve }
+
+      it "includes what the user has read access to" do
+        is_expected.to include item, subitem
+      end
+
+      it "excludes what a user can't see" do
+        is_expected.not_to include other_item
+      end
+    end
+
+    permissions :show?, :create?, :update?, :destroy? do
+      it "is allowed on an item" do
+        is_expected.to permit(user, item)
+      end
+
+      it "is allowed on a subitem" do
+        is_expected.to permit(user, subitem)
+      end
+    end
+
+    permissions :create_items? do
+      it "is allowed on an item" do
+        is_expected.to permit(user, item)
+      end
+
+      it "is allowed on a subitem" do
+        is_expected.to permit(user, subitem)
+      end
+    end
   end
 
-  permissions :create? do
-    pending "add some examples to (or delete) #{__FILE__}"
-  end
+  context "as a random user with no permissions" do
+    permissions ".scope" do
+      subject { scope.resolve }
 
-  permissions :update? do
-    pending "add some examples to (or delete) #{__FILE__}"
-  end
+      it "is empty" do
+        is_expected.to be_blank
+      end
+    end
 
-  permissions :destroy? do
-    pending "add some examples to (or delete) #{__FILE__}"
+    permissions :show?, :create?, :update?, :destroy? do
+      it "is not allowed on an item" do
+        is_expected.not_to permit(user, item)
+      end
+    end
   end
 end

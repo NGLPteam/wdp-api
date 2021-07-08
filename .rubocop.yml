@@ -1,5 +1,7 @@
 require:
   - rubocop-rails
+  - rubocop-rspec
+  - ./lib/cops/no_require_rails_helper.rb
 
 inherit_from: .rubocop_todo.yml
 
@@ -10,7 +12,7 @@ AllCops:
     - "db/migrate/**/*.rb"
     - "db/schema.rb"
     - "node_modules/**/*"
-    - "spec/**/*"
+    - "tmp/**/*"
   SuggestExtensions: false
   TargetRubyVersion: 2.7
 
@@ -22,6 +24,9 @@ Gemspec/DateAssignment:
 
 Layout/ArgumentAlignment:
   Enabled: false
+
+Layout/DotPosition:
+  EnforcedStyle: trailing
 
 Layout/ExtraSpacing:
   AllowForAlignment: true
@@ -123,6 +128,10 @@ Metrics/MethodLength:
 Metrics/ModuleLength:
   Enabled: false
 
+Metrics/ParameterLists:
+  Exclude:
+    - "spec/**/*.rb"
+
 Naming/AccessorMethodName:
   Enabled: false
 
@@ -146,6 +155,9 @@ Rails/AfterCommitOverride:
 
 Rails/AttributeDefaultBlockValue:
   Enabled: true
+
+Rails/Delegate:
+  Enabled: false
 
 Rails/FilePath:
   Enabled: false
@@ -194,6 +206,49 @@ Rails/WhereExists:
 
 Rails/WhereNot:
   Enabled: true
+
+RSpec/ContextWording:
+  Enabled: false
+
+RSpec/ExampleLength:
+  Enabled: false
+
+RSpec/IdenticalEqualityAssertion:
+  Enabled: true
+
+RSpec/ImplicitSubject:
+  Enabled: false
+
+RSpec/LeadingSubject:
+  Enabled: false
+
+RSpec/LetSetup:
+  Enabled: false
+
+RSpec/MultipleExpectations:
+  Enabled: false
+
+RSpec/MultipleMemoizedHelpers:
+  Enabled: false
+
+RSpec/NestedGroups:
+  Enabled: false
+
+RSpec/NoRequireRailsHelper:
+  Exclude:
+    - spec/spec_helper.rb
+    - spec/rails_helper.rb
+
+RSpec/Rails/AvoidSetupHook:
+  Enabled: true
+
+RSpec/RepeatedDescription:
+  Exclude:
+    - "spec/policies/**/*.rb"
+
+RSpec/RepeatedExample:
+  Exclude:
+    - "spec/policies/**/*.rb"
 
 Style/ArgumentsForwarding:
   Enabled: true
@@ -256,6 +311,9 @@ Style/NilLambda:
   Enabled: true
 
 Style/NumericPredicate:
+  Enabled: false
+
+Style/PercentLiteralDelimiters:
   Enabled: false
 
 Style/RedundantArgument:

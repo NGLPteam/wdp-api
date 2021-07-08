@@ -1,4 +1,4 @@
-require "rails_helper"
+# frozen_string_literal: true
 
 RSpec.describe "GraphQL Viewer", type: :request do
   context "when authenticated" do

@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require "shrine/storage/memory"
 require "shrine/storage/s3"
 require "tus/storage/s3"
 
@@ -35,6 +36,12 @@ Shrine.storages = {
   store: Shrine::Storage::S3.new(**store_s3_options),
   derivatives: Shrine::Storage::S3.new(**derivative_s3_options)
 }
+
+if Rails.env.test?
+  %i[cache store derivatives].each do |store|
+    Shrine.storages[store] = Shrine::Storage::Memory.new
+  end
+end
 
 Shrine.plugin :activerecord
 Shrine.plugin :instrumentation

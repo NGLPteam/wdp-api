@@ -11,6 +11,8 @@ module HierarchicalEntity
 
     delegate :auth_path, to: :contextual_parent, allow_nil: true, prefix: :contextual
 
+    has_one :entity, as: :entity, dependent: :destroy
+
     has_many :contextual_permissions, as: :hierarchical
     has_many :contextual_single_permissions, as: :hierarchical
 
@@ -104,6 +106,12 @@ module HierarchicalEntity
 
   def top_level?
     kind_of?(Community) || (respond_to?(:root?) && root?)
+  end
+
+  def has_permitted_actions_for?(user, *actions)
+    return unless persisted?
+
+    contextual_single_permissions.with_permitted_actions_for(user, *actions).exists?
   end
 
   # If a parent collection changes its community, we need its children to to also inherit that update.

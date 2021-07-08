@@ -1,13 +1,27 @@
 # frozen_string_literal: true
 
 class CommunityPolicy < HierarchicalEntityPolicy
+  def show?
+    has_admin_or_allowed_action?("communities.read") || super
+  end
+
   def create?
-    user.has_global_admin_access?
+    has_admin_or_allowed_action? "communities.create"
+  end
+
+  def update?
+    has_admin_or_allowed_action?("communities.update") || super
+  end
+
+  def destroy?
+    has_admin_or_allowed_action?("communities.delete") || super
   end
 
   class Scope < Scope
     def resolve
-      scope.all
+      return scope.all if admin_or_has_allowed_action?("communities.read")
+
+      super
     end
   end
 end

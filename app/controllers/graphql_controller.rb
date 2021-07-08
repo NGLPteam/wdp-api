@@ -18,15 +18,18 @@ class GraphqlController < ApplicationController
 
     render json: result
   rescue StandardError => e
+    # :nocov:
     raise e unless Rails.env.development?
 
     handle_error_in_development e
+    # :nocov:
   end
 
   private
 
   # Handle variables in form data, JSON body, or a blank value
   def prepare_variables(variables_param)
+    # :nocov:
     case variables_param
     when String
       if variables_param.present?
@@ -43,12 +46,15 @@ class GraphqlController < ApplicationController
     else
       raise ArgumentError, "Unexpected parameter: #{variables_param}"
     end
+    # :nocov:
   end
 
   def handle_error_in_development(err)
+    # :nocov:
     logger.error err.message
     logger.error err.backtrace.join("\n")
 
     render json: { errors: [{ message: err.message, backtrace: err.backtrace }], data: {} }, status: :internal_server_error
+    # :nocov:
   end
 end
