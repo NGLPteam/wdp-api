@@ -75,8 +75,8 @@ jobs:
         KEYCLOAKADMIN_CLIENT_SECRET: foo
         RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
       run: |
-        bin/rails db:migrate
-        
+        bin/rake db:test:prepare
+
     - name: "Run API specs"
       env:
         DATABASE_URL: "postgres://postgres:postgres@localhost:5432/rails_test"
@@ -88,6 +88,5 @@ jobs:
         KEYCLOAKADMIN_CLIENT_ID: foo
         KEYCLOAKADMIN_CLIENT_SECRET: foo
         RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
-
       run: |
         bin/rspec
