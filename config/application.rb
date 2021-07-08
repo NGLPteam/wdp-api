@@ -22,6 +22,7 @@ require "action_cable/engine"
 Bundler.require(*Rails.groups)
 
 require_relative "../lib/patches/support_lquery"
+require_relative "../lib/patches/set_search_path_for_dump"
 
 module WDPAPI
   class Application < Rails::Application
