@@ -9,6 +9,8 @@ module Resolvers
 
     type "Types::CollectionConnectionType", null: false
 
+    graphql_name "CollectionConnection"
+
     scope do
       if object.present? && object.kind_of?(Collection)
         object.children

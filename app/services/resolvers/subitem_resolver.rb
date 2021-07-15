@@ -9,6 +9,8 @@ module Resolvers
 
     type "Types::ItemConnectionType", null: false
 
+    graphql_name "ItemConnection"
+
     scope do
       if object.kind_of?(Item)
         object.children

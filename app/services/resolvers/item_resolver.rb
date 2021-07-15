@@ -8,7 +8,7 @@ module Resolvers
     include Resolvers::SimplyOrdered
     include Resolvers::Treelike
 
-    type "Types::ItemConnectionType", null: false
+    type Types::ItemConnectionType, null: false
 
     scope do
       if object.kind_of?(Item)

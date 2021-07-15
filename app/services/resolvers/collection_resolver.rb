@@ -8,7 +8,7 @@ module Resolvers
     include Resolvers::SimplyOrdered
     include Resolvers::Treelike
 
-    type "Types::CollectionConnectionType", null: false
+    type Types::CollectionConnectionType, null: false
 
     scope do
       if object.present? && object.kind_of?(Collection)
