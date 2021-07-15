@@ -9,7 +9,7 @@ module Resolvers
     include Resolvers::SimplyOrdered
     include Resolvers::Treelike
 
-    type Types::ItemType.connection_type, null: false
+    type Types::ItemConnectionType, null: false
 
     scope { Item.all }
   end

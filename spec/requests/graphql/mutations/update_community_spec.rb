@@ -1,14 +1,19 @@
 # frozen_string_literal: true
 
-RSpec.describe Mutations::CreateCommunity, type: :request do
+RSpec.describe Mutations::UpdateCommunity, type: :request do
   context "as an admin" do
     let(:token) { token_helper.build_token has_global_admin: true }
 
-    let!(:title) { Faker::Lorem.sentence }
+    let!(:community) { FactoryBot.create :community, title: old_title }
+
+    let!(:old_title) { Faker::Lorem.unique.sentence }
+
+    let!(:new_title) { Faker::Lorem.unique.sentence }
 
     let!(:mutation_input) do
       {
-        title: title,
+        communityId: community.to_encoded_id,
+        title: new_title,
       }
     end
 
@@ -20,9 +25,9 @@ RSpec.describe Mutations::CreateCommunity, type: :request do
 
     let!(:expected_shape) do
       {
-        createCommunity: {
+        updateCommunity: {
           community: {
-            title: title
+            title: new_title
           }
         }
       }
@@ -30,8 +35,8 @@ RSpec.describe Mutations::CreateCommunity, type: :request do
 
     let!(:query) do
       <<~GRAPHQL
-      mutation createCommunity($input: CreateCommunityInput!) {
-        createCommunity(input: $input) {
+      mutation updateCommunity($input: UpdateCommunityInput!) {
+        updateCommunity(input: $input) {
           community {
             title
           }
@@ -40,10 +45,10 @@ RSpec.describe Mutations::CreateCommunity, type: :request do
       GRAPHQL
     end
 
-    it "creates a community" do
+    it "updates a community" do
       expect do
         make_graphql_request! query, token: token, variables: graphql_variables
-      end.to change(Community, :count).by(1)
+      end.to change { community.reload.title }.from(old_title).to(new_title)
 
       expect_graphql_response_data expected_shape
     end

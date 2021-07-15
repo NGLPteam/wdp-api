@@ -10,7 +10,7 @@ module Mutations
 
         authorize community, :create?
 
-        attributes = args.slice(:name, :position).compact
+        attributes = args.slice(:title, :position).compact
 
         community.assign_attributes attributes
 

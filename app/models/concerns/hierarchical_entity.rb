@@ -31,11 +31,7 @@ module HierarchicalEntity
 
   # @return [String]
   def breadcrumb_label
-    case self
-    when Community then name
-    else
-      title
-    end
+    title
   end
 
   # This potentially connects to another "layer" in the hierarchy.

@@ -42,58 +42,6 @@ RSpec.describe "GraphQL Query", type: :request do
       end
     end
 
-    describe "fetching a single collection" do
-      let!(:collection) { FactoryBot.create :collection }
-
-      let!(:query) do
-        <<~GRAPHQL
-        query getCollection($slug: Slug!) {
-          collection(slug: $slug) {
-            title
-          }
-        }
-        GRAPHQL
-      end
-
-      it "can find by slug" do
-        make_graphql_request! query, token: token, variables: { slug: collection.system_slug }
-
-        expect_graphql_response_data collection: { title: collection.title }
-      end
-
-      it "returns nil when not found" do
-        make_graphql_request! query, token: token, variables: { slug: random_slug }
-
-        expect_graphql_response_data collection: nil
-      end
-    end
-
-    describe "fetching a single item" do
-      let!(:item) { FactoryBot.create :item }
-
-      let!(:query) do
-        <<~GRAPHQL
-        query($slug: Slug!) {
-          item(slug: $slug) {
-            title
-          }
-        }
-        GRAPHQL
-      end
-
-      it "can find by slug" do
-        make_graphql_request! query, token: token, variables: { slug: item.system_slug }
-
-        expect_graphql_response_data item: { title: item.title }
-      end
-
-      it "returns nil when not found" do
-        make_graphql_request! query, token: token, variables: { slug: random_slug }
-
-        expect_graphql_response_data item: nil
-      end
-    end
-
     describe "fetching a list of roles" do
       let!(:roles) { FactoryBot.create_list :role, 4 }
 

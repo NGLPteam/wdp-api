@@ -8,7 +8,7 @@ module Mutations
       def call(community:, **args)
         authorize community, :update?
 
-        attributes = args.slice(:name, :position).compact
+        attributes = args.slice(:title, :position).compact
 
         community.assign_attributes attributes
 

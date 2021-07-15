@@ -401,7 +401,7 @@ CREATE TABLE public.communities (
     id uuid DEFAULT gen_random_uuid() NOT NULL,
     system_slug public.citext NOT NULL,
     "position" integer,
-    name public.citext NOT NULL,
+    title public.citext NOT NULL,
     thumbnail_data jsonb,
     metadata jsonb,
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
@@ -2407,6 +2407,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20210612183500'),
 ('20210612191855'),
 ('20210612202131'),
-('20210622224648');
+('20210622224648'),
+('20210715163909');
 
 

@@ -9,7 +9,8 @@ module Types
     field :collections, resolver: Resolvers::CollectionResolver
 
     field :position, Integer, null: true
-    field :name, String, null: false
+    field :name, String, null: false, deprecation_reason: "Use Community.title"
     field :metadata, GraphQL::Types::JSON, null: true
+    field :title, String, null: false
   end
 end

@@ -12,6 +12,8 @@ class Community < ApplicationRecord
 
   has_many :users, through: :community_memberships
 
+  alias_attribute :name, :title
+
   def hierarchical_parent
     nil
   end

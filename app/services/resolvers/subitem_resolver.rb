@@ -1,23 +1,23 @@
 # frozen_string_literal: true
 
 module Resolvers
-  class ItemResolver < GraphQL::Schema::Resolver
+  class SubitemResolver < GraphQL::Schema::Resolver
     include SearchObject.module(:graphql)
 
     include Resolvers::PageBasedPagination
     include Resolvers::SimplyOrdered
-    include Resolvers::Treelike
 
     type "Types::ItemConnectionType", null: false
 
     scope do
       if object.kind_of?(Item)
-        item.children
+        object.children
       elsif object.present? && object.respond_to?(:items)
         object.items
       else
-        # We should not be fetching all items at once, but maybe we will in the future (for search?)
+        # :nocov:
         Item.none
+        # :nocov:
       end
     end
   end
