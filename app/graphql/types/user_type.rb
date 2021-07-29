@@ -6,6 +6,7 @@ module Types
 
     description "A user"
 
+    field :anonymous, Boolean, null: false, method: :anonymous?
     field :email_verified, Boolean, null: false
     field :email, String, null: true
     field :username, String, null: true

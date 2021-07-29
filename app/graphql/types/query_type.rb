@@ -46,7 +46,7 @@ module Types
       description "List all roles"
     end
 
-    field :viewer, Types::UserType, null: true,
+    field :viewer, Types::UserType, null: false,
       description: "The currently authenticated user. AKA: you"
 
     field :users, resolver: Resolvers::UserResolver do
@@ -70,7 +70,7 @@ module Types
     end
 
     def viewer
-      context[:current_user] unless context[:current_user].anonymous?
+      context[:current_user] || AnonymousUser.new
     end
   end
 end
