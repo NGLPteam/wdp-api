@@ -17,6 +17,7 @@ gem "store_model", "~> 0.9.0"
 
 # Redis / Jobs
 gem "activejob-uniqueness"
+gem "dalli", "~> 2.7.11"
 gem "hiredis", "~> 0.6.3"
 gem "redis", "~> 4.2.5", require: %w[redis redis/connection/hiredis]
 gem "sidekiq", "~> 6.2.1"
@@ -30,6 +31,7 @@ gem "search_object_graphql", require: %w[search_object search_object/plugin/grap
 
 # dry-rb
 gem "dry-auto_inject", "~> 0.7.0"
+gem "dry-core", "~> 0.7.1"
 gem "dry-effects", "~> 0.1.5"
 gem "dry-initializer", "~> 3.0.4"
 gem "dry-matcher", "~> 0.9.0"
@@ -38,6 +40,7 @@ gem "dry-rails", "~> 0.3.0"
 gem "dry-struct", "~> 1.4.0"
 gem "dry-transformer", "~> 0.1.1"
 gem "dry-types", "~> 1.5.1"
+gem "dry-validation", "~> 1.6.0"
 
 # Keycloak
 gem "keycloak-admin", "~> 0.7.9"
@@ -46,9 +49,13 @@ gem "keycloak_rack"
 # Misc
 gem "anyway_config", "~> 2.1.0"
 gem "hashids", "~> 1.0.5"
+gem "json-schema", "~> 2.8.1"
+gem "json_schemer", "~> 0.2.18"
 gem "jwt", "~> 2.2.3"
+gem "memoist", "~> 0.16.2"
 gem "naught", "~> 1.1.0"
 gem "pundit", "~> 2.1.0"
+gem "semantic", "~> 1.6.1"
 gem "validate_url", "~> 1.0.13"
 
 # File processing

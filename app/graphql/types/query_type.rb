@@ -46,6 +46,26 @@ module Types
       description "List all roles"
     end
 
+    field :schema_definition, Types::SchemaDefinitionType, null: true do
+      description "Look up a schema definition by slug"
+
+      argument :slug, Types::SlugType, required: true
+    end
+
+    field :schema_definitions, resolver: Resolvers::SchemaDefinitionResolver do
+      description "List all schema definitions"
+    end
+
+    field :schema_version, Types::SchemaVersionType, null: true do
+      description "Look up a schema version by slug"
+
+      argument :slug, Types::SlugType, required: true
+    end
+
+    field :schema_versions, resolver: Resolvers::SchemaVersionResolver do
+      description "List all schema versions"
+    end
+
     field :viewer, Types::UserType, null: false,
       description: "The currently authenticated user. AKA: you"
 
@@ -67,6 +87,18 @@ module Types
 
     def item(slug:)
       Loaders::RecordLoader.for(Item).load(slug)
+    end
+
+    # @param [String] slug
+    # @return [SchemaDefinition, nil]
+    def schema_definition(slug:)
+      WDPAPI::Container["schemas.definitions.find"].call(slug).value_or(nil)
+    end
+
+    # @param [String] slug
+    # @return [SchemaVersion, nil]
+    def schema_version(slug:)
+      WDPAPI::Container["schemas.versions.find"].call(slug).value_or(nil)
     end
 
     def viewer

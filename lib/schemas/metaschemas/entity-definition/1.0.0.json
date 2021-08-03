@@ -1,0 +1,898 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://api.staging.nglp.org/schemas/entity-definition/1.0.0.json",
+  "title": "WDP Entity Content Schema",
+  "description": "A Content Schema used by the NGLP Web Delivery Platform",
+  "$defs": {
+    "Consumer": {
+      "type": "string",
+      "title": "Consumer",
+      "description": "Lists the type of WDP models that can utilize this schema",
+      "enum": [
+        "community",
+        "collection",
+        "item",
+        "metadata"
+      ]
+    },
+    "Identifier": {
+      "description": "An unqualified name that can identify something within a certain namespace in the WDP.",
+      "pattern": "^[a-z][a-z0-9_]*[a-z]$",
+      "type": "string"
+    },
+    "NamespacedIdentifier": {
+      "description": "A unique identifier for a schema within the WDP",
+      "pattern": "^(?:[a-z][a-z0-9_]*[a-z]):(?:[a-z][a-z0-9_]*[a-z])(?::(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?)?$",
+      "type": "string"
+    },
+    "Order": {
+      "type": "object",
+      "title": "Field Order",
+      "description": "Order by a specified path",
+      "required": [
+        "path",
+        "direction",
+        "nulls"
+      ],
+      "properties": {
+        "path": {
+          "title": "Path",
+          "$ref": "#/$defs/OrderPath"
+        },
+        "direction": {
+          "type": "string",
+          "default": "asc",
+          "anyOf": [
+            {
+              "type": "string",
+              "title": "Ascending (A-Z)",
+              "enum": ["asc"]
+            },
+            {
+              "type": "string",
+              "title": "Descending (Z-A)",
+              "enum": ["desc"]
+            }
+          ]
+        },
+        "nulls": {
+          "type": "string",
+          "default": "last",
+          "anyOf": [
+            {
+              "type": "string",
+              "title": "Null Values Last",
+              "enum": ["last"]
+            },
+            {
+              "type": "string",
+              "title": "Null Values First",
+              "enum": ["first"]
+            }
+          ]
+        }
+      }
+    },
+    "Ordering": {
+      "type": "object",
+      "title": "Ordering",
+      "description": "An ordering describes a way of listing entities",
+      "required": [
+        "id",
+        "select",
+        "order"
+      ],
+      "properties": {
+        "id": {
+          "title": "Identifier",
+          "$ref": "#/$defs/Identifier"
+        },
+        "name": {
+          "title": "Name",
+          "description": "A human readable label for the ordering",
+          "type": "string"
+        },
+        "select": {
+          "type": "object",
+          "title": "Child Selection",
+          "description": "This defines what depth and type(s) of child entities will be included in the ordering",
+          "properties": {
+            "direct": {
+              "title": "Child Entities",
+              "description": "Whether no, direct descendants, or all descendants should be displayed",
+              "default": "children",
+              "type": "string",
+              "anyOf": [
+                {
+                  "type": "string",
+                  "title": "No children",
+                  "enum": ["none"]
+                },
+                {
+                  "type": "string",
+                  "title": "Direct Children",
+                  "enum": ["children"]
+                },
+                {
+                  "type": "string",
+                  "title": "All Descendants",
+                  "enum": ["descendants"]
+                }
+              ]
+            },
+            "links": {
+              "title": "Linked Entities",
+              "description": "What type(s) of links to include in the ordering",
+              "type": "object",
+              "properties": {
+                "contained": {
+                  "title": "Contained?",
+                  "type": "boolean",
+                  "default": false
+                },
+                "referenced": {
+                  "title": "Referenced?",
+                  "type": "boolean",
+                  "default": false
+                }
+              }
+            }
+          }
+        },
+        "filter": {
+          "type": "object",
+          "title": "Filter",
+          "description": "Used to filter which children should be included in the ordering",
+          "properties": {
+            "schemas": {
+              "description": "Limit the selection to entities that consume these schemas",
+              "type": "array",
+              "items": {
+                "description": "These strings should be existing Schema IDs",
+                "$ref": "#/$defs/NamespacedIdentifier"
+              }
+            }
+          }
+        },
+        "order": {
+          "description": "Specifies how to order the ordering",
+          "items": {
+            "$ref": "#/$defs/Order"
+          },
+          "minItems": 1,
+          "maxItems": 7,
+          "type": "array"
+        },
+        "header": {
+          "title": "Header",
+          "description": "Markdown content that appears before the entitie(s) in the ordering",
+          "type": "string"
+        },
+        "footer": {
+          "title": "Footer",
+          "description": "Markdown content that appears after the entitie(s) in the ordering",
+          "type": "string"
+        }
+      }
+    },
+    "OrderPath": {
+      "title": "Order Path",
+      "description": "A path to an attribute that can be used to sort an ordering",
+      "oneOf": [
+        { "$ref": "#/$defs/OrderPaths/EntityPath" },
+        { "$ref": "#/$defs/OrderPaths/SchemaPath" },
+        { "$ref": "#/$defs/OrderPaths/SchemaPropertyPath" }
+      ]
+    },
+    "OrderPaths": {
+      "EntityPath": {
+        "title": "Entity Attribute",
+        "description": "An attribute on a child entity (not schema-dependent)",
+        "type": "string",
+        "enum": [
+          "entity.created_at",
+          "entity.updated_at",
+          "entity.published_on",
+          "entity.title",
+          "entity.depth"
+        ]
+      },
+      "SchemaPath": {
+        "title": "Schema Attribute",
+        "description": "An attribute on the child entity's schema",
+        "type": "string",
+        "enum": [
+          "schema.identifier",
+          "schema.name",
+          "schema.namespace",
+          "schema.version"
+        ]
+      },
+      "SchemaPropertyPath": {
+        "title": "Schema Property",
+        "description": "A schema-derived property (will be null for children that don't have a matching property). Must be of the form props.name or props.group.name.",
+        "type": "string",
+        "pattern": "^props\\.[a-z][a-z0-9_]*[a-z](?:\\.[a-z][a-z0-9_]*[a-z])?$"
+      }
+
+    },
+    "PropertyFunction": {
+      "title": "Function",
+      "description": "The intended purpose of the property",
+      "type": "string",
+      "enum": [
+        "presentation",
+        "metadata",
+        "content"
+      ]
+    },
+    "PropertyGroup": {
+      "title": "Property Group",
+      "description": "A logical grouping of properties both in the form and within the persisted data. Only one level of nesting is permitted.",
+      "type": "object",
+      "required": [
+        "type", "path", "properties"
+      ],
+      "properties": {
+        "type": {
+          "title": "Type (fixed)",
+          "description": "This cannot be changed",
+          "type": "string",
+          "const": "group",
+          "enum": ["group"]
+        },
+        "path": {
+          "title": "Path",
+          "description": "The name of this property",
+          "$ref": "#/$defs/PropertyName"
+        },
+        "legend": {
+          "title": "Form Legend",
+          "description": "The form legend to use for this group. If not specified, the path will be titlecased.",
+          "type": "string"
+        },
+        "properties": {
+          "type": "array",
+          "title": "Properties",
+          "description": "The group's properties",
+          "default": [{ "type": "string" }],
+          "items": {
+            "$ref": "#/$defs/ScalarProperty"
+          }
+        }
+      }
+    },
+    "PropertyMapping": {
+      "$comment": "API not stable. Likely to change.",
+      "title": "Mapping",
+      "type": "object",
+      "properties": {
+        "standard": {
+          "type": "string",
+          "enum": [
+            "JATS",
+            "OAI-PMH"
+          ]
+        },
+        "entity": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        }
+      }
+    },
+    "PropertyMappings": {
+      "$comment": "Mappings can be used in the future to map this attribute to accepted metadata standards",
+      "title": "External Mappings",
+      "description": "Not Yet Used",
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/PropertyMapping" }
+    },
+    "PropertyName": {
+      "pattern": "^[a-z][a-z0-9_]*[a-z]$",
+      "type": "string"
+    },
+    "PropertyPath": {
+      "description": "A path can reference a schema property",
+      "type": "string"
+    },
+    "PropTypes": {},
+    "ScalarProperty": {
+      "type": "object",
+      "required": ["type", "path"],
+      "properties": {
+        "path": {
+          "title": "Path",
+          "description": "The accessible path to this property. When contained in a group, the full path will be prefixed by the group's path",
+          "$ref": "#/$defs/PropertyPath"
+        },
+        "type": {
+          "title": "Type",
+          "$ref": "#/$defs/ScalarPropertyType"
+        },
+        "label": {
+          "title": "Label",
+          "description": "The human-readable label for this property. The path will be titlecased if this value is not provided.",
+          "type": "string"
+        },
+        "required": {
+          "title": "Required?",
+          "description": "Whether the property is required for base validity",
+          "type": "boolean",
+          "default": false
+        },
+        "function": { "$ref": "#/$defs/PropertyFunction" }
+      },
+      "dependencies": {
+        "type": {
+          "oneOf": [
+            {
+              "properties": {
+                "type": {
+                  "enum": [
+                    "asset"
+                  ]
+                },
+                "mappings": {
+                  "$ref": "#/$defs/PropertyMappings"
+                }
+              },
+              "required": [
+                "path",
+                "type"
+              ],
+              "title": "Asset",
+              "description": "A value that references a single asset"
+            },
+            {
+              "properties": {
+                "type": {
+                  "enum": [
+                    "assets"
+                  ]
+                },
+                "mappings": {
+                  "$ref": "#/$defs/PropertyMappings"
+                }
+              },
+              "required": [
+                "path",
+                "type"
+              ],
+              "title": "Assets",
+              "description": "A value that references multiple assets"
+            },
+            {
+              "properties": {
+                "type": {
+                  "enum": [
+                    "boolean"
+                  ]
+                },
+                "mappings": {
+                  "$ref": "#/$defs/PropertyMappings"
+                }
+              },
+              "required": [
+                "path",
+                "type"
+              ],
+              "title": "Boolean",
+              "description": "A boolean value (True / False)"
+            },
+            {
+              "properties": {
+                "type": {
+                  "enum": [
+                    "contributor"
+                  ]
+                },
+                "mappings": {
+                  "$ref": "#/$defs/PropertyMappings"
+                }
+              },
+              "required": [
+                "path",
+                "type"
+              ],
+              "title": "Contributor",
+              "description": "A value that references a single contributor"
+            },
+            {
+              "properties": {
+                "type": {
+                  "enum": [
+                    "contributors"
+                  ]
+                },
+                "mappings": {
+                  "$ref": "#/$defs/PropertyMappings"
+                }
+              },
+              "required": [
+                "path",
+                "type"
+              ],
+              "title": "Contributors",
+              "description": "A value that references multiple contributors"
+            },
+            {
+              "properties": {
+                "type": {
+                  "enum": [
+                    "date"
+                  ]
+                },
+                "mappings": {
+                  "$ref": "#/$defs/PropertyMappings"
+                }
+              },
+              "required": [
+                "path",
+                "type"
+              ],
+              "title": "Date",
+              "description": "An ISO8601 Date that represents a single calendar date"
+            },
+            {
+              "properties": {
+                "type": {
+                  "enum": [
+                    "email"
+                  ]
+                },
+                "default": {
+                  "title": "Default Value",
+                  "type": "string",
+                  "format": "email"
+                },
+                "mappings": {
+                  "$ref": "#/$defs/PropertyMappings"
+                }
+              },
+              "required": [
+                "path",
+                "type"
+              ],
+              "title": "Email",
+              "description": "A value that references an email address"
+            },
+            {
+              "properties": {
+                "type": {
+                  "enum": [
+                    "float"
+                  ]
+                },
+                "default": {
+                  "title": "Default Value",
+                  "type": "number"
+                },
+                "gt": {
+                  "title": "Greater Than (>)",
+                  "description": "The property's value must be greater than this, if provided",
+                  "type": "number"
+                },
+                "gte": {
+                  "title": "Greater Than Or Equal To (≥)",
+                  "description": "The property's value must be greater than or equal to this, if provided",
+                  "type": "number"
+                },
+                "lt": {
+                  "title": "Less Than (<)",
+                  "description": "The property's value must be less than this, if provided",
+                  "type": "number"
+                },
+                "lte": {
+                  "title": "Less Than Or Equal To (≤)",
+                  "description": "The property's value must be less than or equal to this, if provided",
+                  "type": "number"
+                },
+                "mappings": {
+                  "$ref": "#/$defs/PropertyMappings"
+                }
+              },
+              "required": [
+                "path",
+                "type"
+              ],
+              "title": "Float",
+              "description": "A floating point numeral (uses decimal types for maximum precision)"
+            },
+            {
+              "properties": {
+                "type": {
+                  "enum": [
+                    "integer"
+                  ]
+                },
+                "default": {
+                  "title": "Default Value",
+                  "type": "integer"
+                },
+                "gt": {
+                  "title": "Greater Than (>)",
+                  "description": "The property's value must be greater than this, if provided",
+                  "type": "integer"
+                },
+                "gte": {
+                  "title": "Greater Than Or Equal To (≥)",
+                  "description": "The property's value must be greater than or equal to this, if provided",
+                  "type": "integer"
+                },
+                "lt": {
+                  "title": "Less Than (<)",
+                  "description": "The property's value must be less than this, if provided",
+                  "type": "integer"
+                },
+                "lte": {
+                  "title": "Less Than Or Equal To (≤)",
+                  "description": "The property's value must be less than or equal to this, if provided",
+                  "type": "integer"
+                },
+                "mappings": {
+                  "$ref": "#/$defs/PropertyMappings"
+                }
+              },
+              "required": [
+                "path",
+                "type"
+              ],
+              "title": "Integer",
+              "description": "An integer (or whole number)"
+            },
+            {
+              "properties": {
+                "type": {
+                  "enum": [
+                    "markdown"
+                  ]
+                },
+                "default": {
+                  "title": "Default Value",
+                  "type": "string"
+                },
+                "min_size": {
+                  "title": "Minimum Size",
+                  "description": "The length cannot be less than this value.",
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                "max_size": {
+                  "title": "Maximum Size",
+                  "description": "The length cannot be greater than this value.",
+                  "type": "integer"
+                },
+                "mappings": {
+                  "$ref": "#/$defs/PropertyMappings"
+                }
+              },
+              "required": [
+                "path",
+                "type"
+              ],
+              "title": "Markdown",
+              "description": "Markdown-formatted text"
+            },
+            {
+              "properties": {
+                "type": {
+                  "enum": [
+                    "multiselect"
+                  ]
+                },
+                "options": {
+                  "title": "Select Options",
+                  "items": {
+                    "$ref": "#/$defs/SelectOption"
+                  },
+                  "minItems": 1,
+                  "type": "array",
+                  "uniqueItems": true
+                },
+                "default": {
+                  "title": "Default Value",
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "uniqueItems": true
+                },
+                "min_size": {
+                  "title": "Minimum Size",
+                  "description": "The size cannot be less than this value.",
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                "max_size": {
+                  "title": "Maximum Size",
+                  "description": "The size cannot be greater than this value.",
+                  "type": "integer"
+                },
+                "mappings": {
+                  "$ref": "#/$defs/PropertyMappings"
+                }
+              },
+              "required": [
+                "path",
+                "type",
+                "options"
+              ],
+              "title": "Multiselect",
+              "description": "A select dropdown that supports selecting multiple options"
+            },
+            {
+              "properties": {
+                "type": {
+                  "enum": [
+                    "select"
+                  ]
+                },
+                "options": {
+                  "title": "Select Options",
+                  "items": {
+                    "$ref": "#/$defs/SelectOption"
+                  },
+                  "minItems": 1,
+                  "type": "array",
+                  "uniqueItems": true
+                },
+                "default": {
+                  "title": "Default Value",
+                  "type": "string"
+                },
+                "mappings": {
+                  "$ref": "#/$defs/PropertyMappings"
+                }
+              },
+              "required": [
+                "path",
+                "type",
+                "options"
+              ],
+              "title": "Select",
+              "description": "A select dropdown that supports selecting a single option"
+            },
+            {
+              "properties": {
+                "type": {
+                  "enum": [
+                    "string"
+                  ]
+                },
+                "default": {
+                  "title": "Default Value",
+                  "type": "string"
+                },
+                "pattern": {
+                  "type": "string",
+                  "format": "regexp"
+                },
+                "min_size": {
+                  "title": "Minimum Size",
+                  "description": "The length cannot be less than this value.",
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                "max_size": {
+                  "title": "Maximum Size",
+                  "description": "The length cannot be greater than this value.",
+                  "type": "integer"
+                },
+                "mappings": {
+                  "$ref": "#/$defs/PropertyMappings"
+                }
+              },
+              "required": [
+                "path",
+                "type"
+              ],
+              "title": "String",
+              "description": "A simple text value"
+            },
+            {
+              "properties": {
+                "type": {
+                  "enum": [
+                    "tags"
+                  ]
+                },
+                "min_size": {
+                  "title": "Minimum Size",
+                  "description": "The size cannot be less than this value.",
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                "max_size": {
+                  "title": "Maximum Size",
+                  "description": "The size cannot be greater than this value.",
+                  "type": "integer"
+                },
+                "mappings": {
+                  "$ref": "#/$defs/PropertyMappings"
+                }
+              },
+              "required": [
+                "path",
+                "type"
+              ],
+              "title": "Tags",
+              "description": "A value that represents multiple unique string inputs"
+            },
+            {
+              "properties": {
+                "type": {
+                  "enum": [
+                    "timestamp"
+                  ]
+                },
+                "mappings": {
+                  "$ref": "#/$defs/PropertyMappings"
+                }
+              },
+              "required": [
+                "path",
+                "type"
+              ],
+              "title": "Timestamp",
+              "description": "An ISO8601 Timestamp that represents a single point in time"
+            }
+          ]
+        }
+
+      }
+    },
+    "ScalarPropertyTypeStringish": {
+      "$comment": "This is used to describe types that are string-like",
+      "enum": [
+        "string",
+        "email",
+        "markdown"
+      ]
+    },
+    "ScalarPropertyType": {
+      "description": "The type of the property. This ensures type-safety.",
+      "enum": [
+        "string",
+        "email",
+        "markdown",
+        "integer",
+        "float",
+        "boolean",
+        "date",
+        "timestamp",
+        "contributor",
+        "contributors",
+        "select",
+        "multiselect",
+        "asset",
+        "assets",
+        "tags"
+      ],
+      "type": "string"
+    },
+    "SelectOption": {
+      "additionalProperties": false,
+      "description": "An option for a select or a multi-select",
+      "properties": {
+        "label": {
+          "description": "The human-readable label associated with the option",
+          "type": "string"
+        },
+        "value": {
+          "description": "The computer-readable value associated with the option—must be unique within the collection.",
+          "type": "string"
+        }
+      },
+      "required": ["label", "value"],
+      "type": "object"
+    },
+    "SemanticVersion": {
+      "description": "A semantic version (https://semver.org)",
+      "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$",
+      "type": "string"
+    },
+    "TopLevelProperty": {
+      "oneOf": [
+        { "title": "Property", "$ref": "#/$defs/ScalarProperty" },
+        { "title": "Group", "$ref": "#/$defs/PropertyGroup" }
+      ]
+    },
+    "TopLevelProperty2": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": {
+          "title": "Type",
+          "default": "string",
+          "$ref": "#/$defs/TopLevelPropertyType"
+        }
+      },
+      "dependencies": {
+        "type": {
+          "if": {
+            "properties": {
+              "type": {
+                "enum": [
+                  "group"
+                ]
+              }
+            },
+            "then": {
+              "$ref": "#/$defs/PropertyGroup"
+            },
+            "else": {
+              "$ref": "#/$defs/ScalarProperty"
+            }
+          }
+        }
+      }
+    },
+    "TopLevelPropertyType": {
+      "description": "The type of the top-level property. This ensures type-safety.",
+      "enum": [
+        "group",
+        "string",
+        "email",
+        "markdown",
+        "integer",
+        "float",
+        "boolean",
+        "date",
+        "timestamp",
+        "contributor",
+        "contributors",
+        "select",
+        "multiselect",
+        "asset",
+        "assets",
+        "tags"
+      ],
+      "type": "string"
+    }
+  },
+  "type": "object",
+  "required": [
+    "id",
+    "name",
+    "version",
+    "consumer"
+  ],
+  "properties": {
+    "id": {
+      "title": "Identifier",
+      "description": "This identifies the schema within its namespace.",
+      "$ref": "#/$defs/Identifier"
+    },
+    "name": {
+      "title": "Name",
+      "description": "A human readable label that can be used to reference this schema",
+      "type": "string"
+    },
+    "version": {
+      "title": "Version",
+      "$ref": "#/$defs/SemanticVersion"
+    },
+    "consumer": {
+      "$ref": "#/$defs/Consumer"
+    },
+    "orderings": {
+      "title": "Orderings",
+      "description": "A schema can provide default orderings, which a consumer can override.",
+      "items": {
+        "$ref": "#/$defs/Ordering"
+      },
+      "type": "array"
+    },
+    "properties": {
+      "title": "Properties",
+      "description": "Describes the properties that will be available for this schema",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/TopLevelProperty"
+      }
+    }
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "id": "journal",
+  "name": "Journal",
+  "version": "1.0.0",
+  "consumer": "collection",
+  "orderings": [],
+  "properties": [
+    {
+      "path": "publisher",
+      "properties": [
+        { "label": "Name", "path": "name", "type": "string", "required": true },
+        { "label": "Email", "path": "email", "type": "email", "required": false },
+        { "label": "Collaborators", "path": "collaborators", "type": "contributors", "required": false }
+      ],
+      "type": "group"
+    },
+    { "path": "collected_on", "type": "date" },
+    {
+      "type": "group",
+      "legend": "Categorization and Tagging",
+      "path": "grouping",
+      "properties": [
+        {
+          "path": "category",
+          "options": [
+            { "label": "Foo", "value": "foo" },
+            { "label": "Bar", "value": "bar" },
+            { "label": "Baz", "value": "baz" },
+            { "label": "Quux", "value": "quux" }
+          ],
+          "type": "select"
+        },
+        {
+          "label": "Journal Tags",
+          "max_size": 5,
+          "path": "tags",
+          "type": "tags"
+        }
+      ]
+    }
+  ]
+}

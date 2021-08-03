@@ -5,12 +5,18 @@ module QueryOperation
 
   included do
     include Dry::Monads[:result]
+
+    delegate :quote_column_name, to: :connection
   end
 
   def sql_insert!(*parts)
     # We use exec_query instead of exec_insert,
     # because we want control over RETURNING
     connection.exec_query compile_query(*parts)
+  end
+
+  def sql_update!(*parts)
+    connection.exec_update compile_query(*parts)
   end
 
   def sql_delete!(*parts)

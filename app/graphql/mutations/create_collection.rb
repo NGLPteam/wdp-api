@@ -12,6 +12,7 @@ module Mutations
 
     argument :title, String, required: true
     argument :identifier, String, required: true
+    argument :schema_version_slug, String, required: false, default_value: "default:collection:latest"
 
     performs_operation! "mutations.operations.create_collection"
   end

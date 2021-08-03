@@ -3,6 +3,7 @@
 class Community < ApplicationRecord
   include Accessible
   include Attachable
+  include HasSchemaDefinition
   include HasSystemSlug
   include HierarchicalEntity
 

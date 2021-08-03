@@ -1,5 +1,9 @@
 version: "3.9"
 services:
+  cache:
+    image: "memcached:1.6.9"
+    shm_size: 2g
+    restart: unless-stopped
   db:
     image: "postgres:13.1-alpine"
     shm_size: 2g
@@ -18,6 +22,7 @@ services:
     stdin_open: true
     build: .
     environment:
+      - "MEMCACHE_SERVERS=cache:11211"
       - "REDIS_URL=redis://redis:6379"
       - "S3_ENDPOINT=http://host.docker.internal:10042"
       - "UPLOAD_HOST=http://localhost:10042"
@@ -36,6 +41,7 @@ services:
     build: .
     command: bin/sidekiq -C config/sidekiq.yml
     environment:
+      - "MEMCACHE_SERVERS=cache:11211"
       - "REDIS_URL=redis://redis:6379"
       - "S3_ENDPOINT=http://host.docker.internal:10042"
       - "UPLOAD_HOST=http://localhost:10042"

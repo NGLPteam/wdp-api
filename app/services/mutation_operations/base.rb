@@ -7,13 +7,38 @@ module MutationOperations
     include Graphql::PunditHelpers
 
     included do
+      extend ActiveModel::Callbacks
+
       include Dry::Effects.CurrentTime
       include Dry::Effects.Resolve(:current_user)
       include Dry::Effects.Resolve(:graphql_context)
+      include Dry::Effects.Resolve(:local_context)
       include Dry::Effects.State(:graphql_response)
       include Dry::Effects.Interrupt(:throw_invalid)
       include Dry::Effects.Interrupt(:throw_unauthorized)
       include Dry::Monads[:result, :validated, :list]
+
+      define_model_callbacks :prepare, :validation, :execution
+    end
+
+    # @api private
+    # @return [void]
+    def perform!(**args)
+      local_context[:args] = args
+
+      run_callbacks :prepare do
+        prepare!(**args)
+      end
+
+      run_callbacks :validation do
+        validate!(**args)
+      end
+
+      halt_if_errors!
+
+      run_callbacks :execution do
+        call(**args)
+      end
     end
 
     def attach!(key, value)
@@ -39,6 +64,10 @@ module MutationOperations
     def halt_if_errors!
       throw_invalid if graphql_response[:errors].any?
     end
+
+    # @abstract
+    # @return [void]
+    def prepare!(**args); end
 
     # @abstract
     # @return [void]
@@ -112,6 +141,18 @@ module MutationOperations
         add_error! error.message, **options
       end
     end
+
+    # @!endgroup
+
+    # @!group Utility methods
+
+    def with_result!(result, &block)
+      Dry::Matcher::ResultMatcher.call(result, &block)
+    end
+
+    # @!endgroup
+
+    # @!group Schema Errors
 
     # @!endgroup
   end

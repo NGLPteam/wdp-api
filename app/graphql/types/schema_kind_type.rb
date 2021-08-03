@@ -2,8 +2,9 @@
 
 module Types
   class SchemaKindType < Types::BaseEnum
-    value "collection"
-    value "item"
-    value "metadata"
+    value "COMMUNITY", value: "community"
+    value "COLLECTION", value: "collection"
+    value "ITEM", value: "item"
+    value "METADATA", value: "metadata", description: "Presently unused"
   end
 end

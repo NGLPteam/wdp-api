@@ -1,0 +1,8 @@
+{
+  "id": "metadata",
+  "name": "Default Metadata",
+  "version": "1.0.0",
+  "consumer": "metadata",
+  "orderings": [],
+  "properties": []
+}

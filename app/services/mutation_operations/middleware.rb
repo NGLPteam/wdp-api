@@ -7,6 +7,7 @@ module MutationOperations
     include Dry::Effects::Handler.CurrentTime
     include Dry::Effects::Handler.Resolve
     include Dry::Effects::Handler.State(:graphql_response)
+    include Dry::Effects::Handler.State(:local_context)
     include Dry::Effects::Handler.Interrupt(:throw_invalid, as: :catch_invalid)
     include Dry::Effects::Handler.Interrupt(:throw_unauthorized, as: :catch_unauthorized)
     include Dry::Monads[:result]
@@ -24,11 +25,7 @@ module MutationOperations
       response, result = with_graphql_response(base_response) do
         with_transaction do
           with_effects_stack do
-            operation.validate!(**args)
-
-            operation.halt_if_errors!
-
-            operation.call(**args)
+            operation.perform! args
           end
         end
       end
@@ -66,8 +63,12 @@ module MutationOperations
       { errors: [] }.with_indifferent_access
     end
 
+    def base_local_context
+      {}.with_indifferent_access
+    end
+
     def strip_response_for_invalid(response)
-      response.slice(:halt_code, :errors)
+      response.slice(:halt_code, :errors, :schema_errors)
     end
 
     def current_user
@@ -77,7 +78,8 @@ module MutationOperations
     def dependency_injections
       {
         current_user: current_user,
-        graphql_context: context
+        graphql_context: context,
+        local_context: base_local_context,
       }
     end
 

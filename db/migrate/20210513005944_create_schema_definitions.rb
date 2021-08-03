@@ -1,6 +1,6 @@
 class CreateSchemaDefinitions < ActiveRecord::Migration[6.1]
   def change
-    create_enum "schema_kind", %w[collection item metadata]
+    create_enum "schema_kind", %w[community collection item metadata]
 
     create_table :schema_definitions, id: :uuid do |t|
       t.citext :name, null: false

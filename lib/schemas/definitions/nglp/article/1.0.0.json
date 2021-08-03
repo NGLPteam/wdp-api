@@ -1,0 +1,62 @@
+{
+  "id": "article",
+  "name": "Article",
+  "version": "1.0.0",
+  "consumer": "item",
+  "orderings": [],
+  "properties": [
+    { "path": "title", "type": "string", "required": true },
+    { "path": "body", "type": "markdown", "required": true },
+    {
+      "path": "publisher",
+      "properties": [
+        { "label": "Name", "path": "name", "type": "string", "required": true },
+        { "label": "Email", "path": "email", "type": "email", "required": false },
+        { "label": "Collaborators", "path": "collaborators", "type": "contributors", "required": false }
+      ],
+      "type": "group"
+    },
+    { "path": "authored_on", "type": "date" },
+    { "label": "Header Image", "path": "header", "type": "asset" },
+    { "label": "PDF Version", "path": "pdf", "type": "asset" },
+    {
+      "type": "group",
+      "legend": "Revision Details",
+      "path": "revision",
+      "properties": [
+        {
+          "path": "number", "type": "integer", "gte": 0, "default": 0
+        },
+        {
+          "path": "reviser", "type": "contributor"
+        },
+        {
+          "path": "published", "type": "boolean", "default": false
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "legend": "Categorization and Tagging",
+      "path": "grouping",
+      "properties": [
+        {
+          "path": "category",
+          "options": [
+            { "label": "Foo", "value": "foo" },
+            { "label": "Bar", "value": "bar" },
+            { "label": "Baz", "value": "baz" },
+            { "label": "Quux", "value": "quux" }
+          ],
+          "type": "select"
+        },
+        {
+          "label": "Article Tags",
+          "max_size": 5,
+          "path": "tags",
+          "type": "tags"
+        }
+      ]
+    }
+  ]
+}
