@@ -10,7 +10,7 @@ module Schemas
       def call(schema_instance)
         options = {}
 
-        options[:values] = schema_instance.properties.values
+        options[:values] = schema_instance&.properties&.values || {}
         options[:collected_references] = schema_instance.schematic_collected_references.to_reference_map
         options[:scalar_references] = schema_instance.schematic_scalar_references.to_reference_map
 
