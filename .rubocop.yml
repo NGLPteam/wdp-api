@@ -257,6 +257,9 @@ Style/ArgumentsForwarding:
 Style/ArrayJoin:
   Enabled: false
 
+Style/AsciiComments:
+  Enabled: false
+
 Style/CaseEquality:
   Enabled: false
 
@@ -315,6 +318,10 @@ Style/NumericPredicate:
   Enabled: false
 
 Style/PercentLiteralDelimiters:
+  Enabled: false
+
+# This clobbers unexpected method calls
+Style/PreferredHashMethods:
   Enabled: false
 
 Style/RedundantArgument:

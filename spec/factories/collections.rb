@@ -3,7 +3,8 @@
 FactoryBot.define do
   factory :collection do
     association :community
-    association :schema_definition, :collection
+
+    schema_version { SchemaVersion.default_collection }
 
     title { Faker::Lorem.sentence }
     identifier { title.parameterize }

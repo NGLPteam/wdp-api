@@ -3,8 +3,14 @@
 FactoryBot.define do
   factory :schema_definition do
     name { Faker::Commerce.unique.product_name }
-    identifier { Faker::Commerce.unique.product_name }
+    namespace { "testing" }
+    identifier { name.parameterize.underscore }
+
     kind { "metadata" }
+
+    trait :community do
+      kind { "community" }
+    end
 
     trait :collection do
       kind { "collection" }

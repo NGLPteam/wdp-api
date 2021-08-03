@@ -4,13 +4,14 @@ module Mutations
   module Operations
     class CreateItem
       include MutationOperations::Base
+      include AssignsSchemaVersion
 
       def call(parent:, **args)
         authorize parent, :create_items?
 
         attributes = args.slice(:title, :identifier)
 
-        attributes[:schema_definition] = SchemaDefinition.default_item
+        attributes[:schema_version] = fetch_found_schema_version!
 
         case parent
         when Collection

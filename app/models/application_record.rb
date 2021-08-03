@@ -4,8 +4,13 @@ class ApplicationRecord < ActiveRecord::Base
   self.abstract_class = true
 
   include DerivedGraphqlTypes
+  include LimitToOne
   include PostgresEnums
   include WhereMatches
+
+  def call_operation(name, *args)
+    WDPAPI::Container[name].call(*args)
+  end
 
   def quoted_id
     self.class.connection.quote id if persisted? && id.kind_of?(String)
@@ -13,7 +18,7 @@ class ApplicationRecord < ActiveRecord::Base
 
   # @return [String]
   def to_encoded_id
-    WDPAPI::Container["relay_node.id_from_object"].call(self).value! if persisted?
+    call_operation("relay_node.id_from_object", self).value! if persisted?
   end
 
   class << self

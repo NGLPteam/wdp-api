@@ -3,6 +3,7 @@
 module Types
   class CommunityType < Types::AbstractModel
     implements Types::EntityType
+    implements Types::HasSchemaPropertiesType
 
     description "A community of users"
 

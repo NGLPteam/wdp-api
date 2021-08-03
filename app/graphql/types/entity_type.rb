@@ -4,6 +4,7 @@ module Types
   module EntityType
     include Types::BaseInterface
     include Types::ExposesPermissionsType
+    include Types::HasSchemaPropertiesType
 
     description "An entity that exists in the hierarchy."
 
@@ -22,6 +23,10 @@ module Types
     field :hierarchical_depth, Int, null: false do
       description "The depth of the hierarchical entity, taking into account any parent types"
     end
+
+    field :schema_definition, Types::SchemaDefinitionType, null: false
+
+    field :schema_version, Types::SchemaVersionType, null: false
 
     field :thumbnail, Types::AssetPreviewType, null: true do
       description "A mapping of an entity's preview thumbnail"

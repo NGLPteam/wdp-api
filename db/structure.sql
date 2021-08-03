@@ -159,10 +159,19 @@ CREATE TYPE public.permission_kind AS ENUM (
 --
 
 CREATE TYPE public.schema_kind AS ENUM (
+    'community',
     'collection',
     'item',
     'metadata'
 );
+
+
+--
+-- Name: semantic_version; Type: DOMAIN; Schema: public; Owner: -
+--
+
+CREATE DOMAIN public.semantic_version AS public.citext DEFAULT '0.0.0'::public.citext
+	CONSTRAINT semver_format_applies CHECK ((VALUE OPERATOR(public.~) '^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$'::public.citext));
 
 
 --
@@ -389,7 +398,8 @@ CREATE TABLE public.collections (
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     auth_path public.ltree NOT NULL,
-    hierarchical_depth integer GENERATED ALWAYS AS (public.nlevel(auth_path)) STORED
+    hierarchical_depth integer GENERATED ALWAYS AS (public.nlevel(auth_path)) STORED,
+    schema_version_id uuid NOT NULL
 );
 
 
@@ -407,7 +417,10 @@ CREATE TABLE public.communities (
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     auth_path public.ltree NOT NULL,
-    hierarchical_depth integer GENERATED ALWAYS AS (public.nlevel(auth_path)) STORED
+    hierarchical_depth integer GENERATED ALWAYS AS (public.nlevel(auth_path)) STORED,
+    schema_definition_id uuid NOT NULL,
+    schema_version_id uuid NOT NULL,
+    properties jsonb
 );
 
 
@@ -645,7 +658,8 @@ CREATE TABLE public.items (
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     auth_path public.ltree NOT NULL,
-    hierarchical_depth integer GENERATED ALWAYS AS (public.nlevel(auth_path)) STORED
+    hierarchical_depth integer GENERATED ALWAYS AS (public.nlevel(auth_path)) STORED,
+    schema_version_id uuid NOT NULL
 );
 
 
@@ -814,7 +828,8 @@ CREATE TABLE public.schema_definitions (
     system_slug public.citext NOT NULL,
     kind public.schema_kind NOT NULL,
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    namespace public.citext NOT NULL
 );
 
 
@@ -836,7 +851,42 @@ CREATE TABLE public.schema_versions (
     schema_definition_id uuid NOT NULL,
     current boolean DEFAULT false NOT NULL,
     system_slug public.citext NOT NULL,
-    properties jsonb DEFAULT '{}'::jsonb NOT NULL,
+    configuration jsonb DEFAULT '{}'::jsonb NOT NULL,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    number public.semantic_version NOT NULL,
+    "position" integer
+);
+
+
+--
+-- Name: schematic_collected_references; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.schematic_collected_references (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    referrer_type character varying NOT NULL,
+    referrer_id uuid NOT NULL,
+    referent_type character varying NOT NULL,
+    referent_id uuid NOT NULL,
+    path public.citext NOT NULL,
+    "position" integer,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+--
+-- Name: schematic_scalar_references; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.schematic_scalar_references (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    referrer_type character varying NOT NULL,
+    referrer_id uuid NOT NULL,
+    referent_type character varying NOT NULL,
+    referent_id uuid NOT NULL,
+    path public.citext NOT NULL,
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
@@ -1061,6 +1111,22 @@ ALTER TABLE ONLY public.schema_migrations
 
 ALTER TABLE ONLY public.schema_versions
     ADD CONSTRAINT schema_versions_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: schematic_collected_references schematic_collected_references_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.schematic_collected_references
+    ADD CONSTRAINT schematic_collected_references_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: schematic_scalar_references schematic_scalar_references_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.schematic_scalar_references
+    ADD CONSTRAINT schematic_scalar_references_pkey PRIMARY KEY (id);
 
 
 --
@@ -1466,6 +1532,13 @@ CREATE INDEX index_collections_on_schema_definition_id ON public.collections USI
 
 
 --
+-- Name: index_collections_on_schema_version_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_collections_on_schema_version_id ON public.collections USING btree (schema_version_id);
+
+
+--
 -- Name: index_collections_on_system_slug; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -1498,6 +1571,20 @@ CREATE INDEX index_communities_on_auth_path ON public.communities USING gist (au
 --
 
 CREATE INDEX index_communities_on_position ON public.communities USING btree ("position");
+
+
+--
+-- Name: index_communities_on_schema_definition_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_communities_on_schema_definition_id ON public.communities USING btree (schema_definition_id);
+
+
+--
+-- Name: index_communities_on_schema_version_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_communities_on_schema_version_id ON public.communities USING btree (schema_version_id);
 
 
 --
@@ -1788,6 +1875,13 @@ CREATE INDEX index_items_on_schema_definition_id ON public.items USING btree (sc
 
 
 --
+-- Name: index_items_on_schema_version_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_items_on_schema_version_id ON public.items USING btree (schema_version_id);
+
+
+--
 -- Name: index_items_on_system_slug; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -1900,10 +1994,24 @@ CREATE UNIQUE INDEX index_roles_unique_name ON public.roles USING btree (name);
 
 
 --
+-- Name: index_schema_definitions_on_namespace; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_schema_definitions_on_namespace ON public.schema_definitions USING btree (namespace);
+
+
+--
 -- Name: index_schema_definitions_on_system_slug; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE UNIQUE INDEX index_schema_definitions_on_system_slug ON public.schema_definitions USING btree (system_slug);
+
+
+--
+-- Name: index_schema_definitions_uniqueness; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_schema_definitions_uniqueness ON public.schema_definitions USING btree (identifier, namespace);
 
 
 --
@@ -1921,10 +2029,73 @@ CREATE INDEX index_schema_versions_on_schema_definition_id ON public.schema_vers
 
 
 --
+-- Name: index_schema_versions_on_schema_definition_id_and_position; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_schema_versions_on_schema_definition_id_and_position ON public.schema_versions USING btree (schema_definition_id, "position");
+
+
+--
 -- Name: index_schema_versions_on_system_slug; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE UNIQUE INDEX index_schema_versions_on_system_slug ON public.schema_versions USING btree (system_slug);
+
+
+--
+-- Name: index_schema_versions_uniqueness; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_schema_versions_uniqueness ON public.schema_versions USING btree (schema_definition_id, number);
+
+
+--
+-- Name: index_schematic_collected_references_on_referent; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_schematic_collected_references_on_referent ON public.schematic_collected_references USING btree (referent_type, referent_id);
+
+
+--
+-- Name: index_schematic_collected_references_on_referrer; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_schematic_collected_references_on_referrer ON public.schematic_collected_references USING btree (referrer_type, referrer_id);
+
+
+--
+-- Name: index_schematic_collected_references_ordering; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_schematic_collected_references_ordering ON public.schematic_collected_references USING btree (referrer_type, referrer_id, path, "position");
+
+
+--
+-- Name: index_schematic_collected_references_uniqueness; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_schematic_collected_references_uniqueness ON public.schematic_collected_references USING btree (referrer_type, referrer_id, referent_type, referent_id, path);
+
+
+--
+-- Name: index_schematic_scalar_references_on_referent; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_schematic_scalar_references_on_referent ON public.schematic_scalar_references USING btree (referent_type, referent_id);
+
+
+--
+-- Name: index_schematic_scalar_references_on_referrer; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_schematic_scalar_references_on_referrer ON public.schematic_scalar_references USING btree (referrer_type, referrer_id);
+
+
+--
+-- Name: index_schematic_scalar_references_uniqueness; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_schematic_scalar_references_uniqueness ON public.schematic_scalar_references USING btree (referrer_type, referrer_id, path);
 
 
 --
@@ -2191,6 +2362,14 @@ ALTER TABLE ONLY public.item_links
 
 
 --
+-- Name: communities fk_rails_6beda9a645; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.communities
+    ADD CONSTRAINT fk_rails_6beda9a645 FOREIGN KEY (schema_version_id) REFERENCES public.schema_versions(id) ON DELETE RESTRICT;
+
+
+--
 -- Name: item_contributions fk_rails_73af22b63e; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2223,6 +2402,14 @@ ALTER TABLE ONLY public.schema_versions
 
 
 --
+-- Name: collections fk_rails_7f2fd62be2; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.collections
+    ADD CONSTRAINT fk_rails_7f2fd62be2 FOREIGN KEY (schema_version_id) REFERENCES public.schema_versions(id) ON DELETE RESTRICT;
+
+
+--
 -- Name: collection_linked_items fk_rails_7fdede96da; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2236,6 +2423,14 @@ ALTER TABLE ONLY public.collection_linked_items
 
 ALTER TABLE ONLY public.item_links
     ADD CONSTRAINT fk_rails_818ba287b7 FOREIGN KEY (source_id) REFERENCES public.items(id) ON DELETE RESTRICT;
+
+
+--
+-- Name: communities fk_rails_840d8c73d5; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.communities
+    ADD CONSTRAINT fk_rails_840d8c73d5 FOREIGN KEY (schema_definition_id) REFERENCES public.schema_definitions(id) ON DELETE RESTRICT;
 
 
 --
@@ -2260,6 +2455,14 @@ ALTER TABLE ONLY public.collection_contributions
 
 ALTER TABLE ONLY public.collections
     ADD CONSTRAINT fk_rails_a32ec34749 FOREIGN KEY (parent_id) REFERENCES public.collections(id) ON DELETE RESTRICT;
+
+
+--
+-- Name: items fk_rails_a5b4e81110; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.items
+    ADD CONSTRAINT fk_rails_a5b4e81110 FOREIGN KEY (schema_version_id) REFERENCES public.schema_versions(id) ON DELETE RESTRICT;
 
 
 --
@@ -2408,6 +2611,13 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20210612191855'),
 ('20210612202131'),
 ('20210622224648'),
-('20210715163909');
+('20210715163909'),
+('20210719160950'),
+('20210720164944'),
+('20210720182059'),
+('20210720182529'),
+('20210720192446'),
+('20210720192518'),
+('20210723204008');
 
 

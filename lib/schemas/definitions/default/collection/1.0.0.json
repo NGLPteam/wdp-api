@@ -1,0 +1,8 @@
+{
+  "id": "collection",
+  "name": "Default Collection",
+  "version": "1.0.0",
+  "consumer": "collection",
+  "orderings": [],
+  "properties": []
+}

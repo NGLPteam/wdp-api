@@ -6,6 +6,10 @@ module Types
     The entry point for making changes to the data within the WDP API.
     TEXT
 
+    field :alter_schema_version, mutation: Mutations::AlterSchemaVersion
+
+    field :apply_schema_properties, mutation: Mutations::ApplySchemaProperties
+
     field :create_asset, mutation: Mutations::CreateAsset
 
     field :create_collection, mutation: Mutations::CreateCollection
