@@ -47,6 +47,7 @@ gem "keycloak-admin", "~> 0.7.9"
 gem "keycloak_rack"
 
 # Misc
+gem "addressable", ">= 2.8.0"
 gem "anyway_config", "~> 2.1.0"
 gem "hashids", "~> 1.0.5"
 gem "json-schema", "~> 2.8.1"
