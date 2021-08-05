@@ -18,7 +18,6 @@ module Types
 
     field :contributions, resolver: Resolvers::ItemContributionResolver, connection: true
     field :items, resolver: Resolvers::SubitemResolver, connection: true
-    field :links, resolver: Resolvers::ItemLinkResolver, connection: true
 
     # @return [Collection, Item]
     def parent

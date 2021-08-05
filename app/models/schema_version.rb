@@ -5,6 +5,12 @@ class SchemaVersion < ApplicationRecord
 
   belongs_to :schema_definition, inverse_of: :schema_versions
 
+  has_many :communities, dependent: :restrict_with_error, inverse_of: :schema_version
+  has_many :collections, dependent: :restrict_with_error, inverse_of: :schema_version
+  has_many :items, dependent: :restrict_with_error, inverse_of: :schema_version
+
+  has_many :entity_links, dependent: :destroy
+
   attribute :number, :semantic_version
   attribute :configuration, Schemas::Versions::Configuration.to_type, default: {}
 
@@ -20,6 +26,8 @@ class SchemaVersion < ApplicationRecord
   delegate :collection?, :community?, :item?, :kind,
     :identifier, :namespace, :name,
     to: :schema_definition
+
+  delegate :has_ordering?, :ordering_definition_for, to: :configuration, allow_nil: true
 
   validates :number, presence: true, uniqueness: { scope: :schema_definition }
 
@@ -68,6 +76,14 @@ class SchemaVersion < ApplicationRecord
     # @return [SchemaVersion]
     def default_item
       by_tuple("default", "item").latest!
+    end
+
+    def filtered_by(schemas)
+      schema_versions = Array(schemas).map do |needle|
+        WDPAPI::Container["schemas.versions.find"].call(needle).value_or(nil)
+      end.compact
+
+      schema_versions.present? ? where(id: schema_versions) : all
     end
 
     # @raise [ActiveRecord::RecordNotFound] if no current version set

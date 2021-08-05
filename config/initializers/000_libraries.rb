@@ -9,6 +9,7 @@ require "dry/schema"
 require "dry/types"
 require "dry/validation"
 require "net/http"
+require "sidekiq/api"
 
 require_relative Rails.root.join("lib", "global_types", "array_types")
 require_relative Rails.root.join("lib", "global_types", "indifferent_hash")

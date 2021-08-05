@@ -125,12 +125,12 @@
               "description": "What type(s) of links to include in the ordering",
               "type": "object",
               "properties": {
-                "contained": {
+                "contains": {
                   "title": "Contained?",
                   "type": "boolean",
                   "default": false
                 },
-                "referenced": {
+                "references": {
                   "title": "Referenced?",
                   "type": "boolean",
                   "default": false
@@ -180,6 +180,7 @@
       "description": "A path to an attribute that can be used to sort an ordering",
       "oneOf": [
         { "$ref": "#/$defs/OrderPaths/EntityPath" },
+        { "$ref": "#/$defs/OrderPaths/LinkPath" },
         { "$ref": "#/$defs/OrderPaths/SchemaPath" },
         { "$ref": "#/$defs/OrderPaths/SchemaPropertyPath" }
       ]
@@ -197,14 +198,24 @@
           "entity.depth"
         ]
       },
+      "LinkPath": {
+        "title": "Link Attribute",
+        "description": "Sort by link attributes",
+        "type": "string",
+        "enum": [
+          "link.operator"
+        ]
+      },
       "SchemaPath": {
         "title": "Schema Attribute",
         "description": "An attribute on the child entity's schema",
         "type": "string",
         "enum": [
+          "schema.consumer",
           "schema.identifier",
           "schema.name",
           "schema.namespace",
+          "schema.namespaced_version",
           "schema.version"
         ]
       },

@@ -3,6 +3,12 @@
 class ApplicationContract < Dry::Validation::Contract
   import_predicates_as_macros
 
+  config.messages.backend = :i18n
+
+  register_macro :entity do
+    key.failure(:must_be_entity) unless value.kind_of?(::HierarchicalEntity)
+  end
+
   register_macro :email_format do
     key.failure("must be an email") unless AppTypes::EMAIL_PATTERN.match? value
   end

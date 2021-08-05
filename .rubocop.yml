@@ -214,6 +214,9 @@ RSpec/ContextWording:
 RSpec/ExampleLength:
   Enabled: false
 
+RSpec/ExpectActual:
+  Enabled: false
+
 RSpec/IdenticalEqualityAssertion:
   Enabled: true
 

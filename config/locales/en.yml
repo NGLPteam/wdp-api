@@ -30,4 +30,20 @@
 # available at https://guides.rubyonrails.org/i18n.html.
 
 en:
-  hello: "Hello world"
+  activerecord:
+    errors:
+      messages:
+        must_be_entity: "must be an entity"
+      models:
+        entity_link:
+          attributes:
+            source:
+              linked_to_parent: "cannot be linked to its parent"
+            target:
+              linked_to_itself: "cannot be linked to itself"
+              linked_to_parent: "cannot be linked to its parent"
+  dry_validation:
+    errors:
+      linked_to_parent: "cannot be linked to its parent"
+      linked_to_itself: "cannot be linked to itself"
+      must_be_entity: "must be an entity"

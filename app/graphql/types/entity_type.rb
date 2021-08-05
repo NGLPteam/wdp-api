@@ -24,6 +24,16 @@ module Types
       description "The depth of the hierarchical entity, taking into account any parent types"
     end
 
+    field :links, resolver: Resolvers::EntityLinkResolver
+
+    field :ordering, Types::OrderingType, null: true do
+      description "Look up an ordering for this entity by identifier"
+
+      argument :identifier, String, required: true
+    end
+
+    field :orderings, resolver: Resolvers::OrderingResolver
+
     field :schema_definition, Types::SchemaDefinitionType, null: false
 
     field :schema_version, Types::SchemaVersionType, null: false
@@ -34,6 +44,10 @@ module Types
 
     def breadcrumbs
       Loaders::AssociationLoader.for(object.class, :entity_breadcrumbs).load(object)
+    end
+
+    def links
+      Loaders::AssociationLoader.for(object.class, :entity_links).load(object)
     end
 
     # @return [Promise(ContextualPermission)]
@@ -61,6 +75,12 @@ module Types
 
         Loaders::RecordLoader.for(::Role).load_many(permission.role_ids)
       end
+    end
+
+    # @param [String] identifier
+    # @return
+    def ordering(identifier:)
+      object.orderings.by_identifier(identifier).first
     end
 
     def permissions

@@ -3,7 +3,26 @@
   "name": "Journal",
   "version": "1.0.0",
   "consumer": "collection",
-  "orderings": [],
+  "orderings": [
+    {
+      "id": "everything",
+      "name": "Everything",
+      "select": {
+        "direct": "descendants",
+        "links": {
+          "contains": true,
+          "references": true
+        }
+      },
+      "order": [
+        { "path": "link.operator", "direction": "asc", "nulls": "last" },
+        { "path": "schema.consumer", "direction": "asc", "nulls": "last" },
+        { "path": "schema.namespaced_version", "direction": "desc", "nulls": "last" },
+        { "path": "props.revision.number", "direction": "desc", "nulls": "first" },
+        { "path": "entity.updated_at", "direction": "desc", "nulls": "last" }
+      ]
+    }
+  ],
   "properties": [
     {
       "path": "publisher",

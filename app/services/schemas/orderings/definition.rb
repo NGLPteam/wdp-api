@@ -14,7 +14,9 @@ module Schemas
       attribute :select, Schemas::Orderings::SelectDefinition.to_type, default: proc { {} }
       attribute :filter, Schemas::Orderings::FilterDefinition.to_type, default: proc { {} }
 
-      validates :id, :name, :order, :select, presence: true
+      validates :id, :order, :select, presence: true
+
+      validates :select, :filter, :order, store_model: true
 
       validates :order, length: { minimum: 1, maximum: 7 }, unique_items: true
     end

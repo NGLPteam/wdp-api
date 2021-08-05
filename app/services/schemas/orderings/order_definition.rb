@@ -14,7 +14,7 @@ module Schemas
 
       validates :direction, presence: true, inclusion: { in: %w[asc desc] }
       validates :nulls, presence: true, inclusion: { in: %w[last first] }
-      validates :path, presence: true
+      validates :path, presence: true, format: { with: Schemas::Orderings::OrderBuilder::PATTERN }
 
       def asc?
         direction == "asc"
@@ -30,6 +30,15 @@ module Schemas
 
       def nulls_last?
         nulls == "last"
+      end
+
+      # @return [String]
+      def query_builder_key
+        schema_property? ? "props.*" : path
+      end
+
+      def schema_property?
+        path.present? && path.starts_with?("props.")
       end
     end
   end

@@ -8,7 +8,10 @@ module Schemas
     # @see Schemas::Instances::Apply
     class AlterAndGenerate
       include Dry::Monads[:do, :result]
-      include WDPAPI::Deps[apply_generated: "schemas.instances.apply_generated_properties"]
+      include WDPAPI::Deps[
+        apply_generated: "schemas.instances.apply_generated_properties",
+        populate_orderings: "schemas.instances.populate_orderings"
+      ]
       include MonadicPersistence
 
       prepend TransactionalCall
@@ -19,7 +22,11 @@ module Schemas
       def call(schema_instance, schema_version)
         entity = yield alter_version! schema_instance, schema_version
 
-        apply_generated.call entity
+        yield apply_generated.call entity
+
+        yield populate_orderings.call entity
+
+        Success entity
       end
 
       private
@@ -28,6 +35,8 @@ module Schemas
       # @param [SchemaVersion] schema_version
       def alter_version!(schema_instance, schema_version)
         schema_instance.schema_version = schema_version
+
+        schema_instance.orderings.delete_all
 
         monadic_save schema_instance
       end

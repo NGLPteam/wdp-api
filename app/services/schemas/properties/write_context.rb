@@ -94,7 +94,7 @@ module Schemas
       end
 
       def output_group(path)
-        @output_values[path] ||= {}
+        output_values[path] ||= {}
       end
 
       def output_values

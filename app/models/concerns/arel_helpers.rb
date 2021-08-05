@@ -8,6 +8,10 @@ module ArelHelpers
 
   LTREE_ARRAY = ActiveRecord::ConnectionAdapters::PostgreSQL::OID::Array.new(LTREE_TYPE).freeze
 
+  LQUERY_TYPE = ActiveRecord::ConnectionAdapters::PostgreSQL::OID::SpecializedString.new(:lquery)
+
+  LQUERY_ARRAY = ActiveRecord::ConnectionAdapters::PostgreSQL::OID::Array.new(LQUERY_TYPE).freeze
+
   TEXT_ARRAY = ActiveRecord::ConnectionAdapters::PostgreSQL::OID::Array.new(ActiveRecord::Type::Text.new).freeze
 
   class_methods do
@@ -49,6 +53,10 @@ module ArelHelpers
 
     def arel_json_cast_property(attribute, key, type)
       arel_cast(arel_json_get_as_text(attribute, key), type)
+    end
+
+    def arel_ltree_matches_any_query(attribute, *queries)
+      arel_infix(??, arel_attrify(attribute), arel_encode_lquery_array(*queries))
     end
 
     def arel_as(left, right)
@@ -115,6 +123,10 @@ module ArelHelpers
         raise TypeError, "cannot quote query #{query.inspect}"
         # :nocov:
       end
+    end
+
+    def arel_encode_lquery_array(*elements)
+      arel_cast(arel_quote(LQUERY_ARRAY.serialize(elements.flatten)), "lquery[]")
     end
 
     # @return [Arel::Nodes::Quoted]

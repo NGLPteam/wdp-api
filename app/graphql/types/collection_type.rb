@@ -19,8 +19,6 @@ module Types
     field :collections, resolver: Resolvers::SubcollectionResolver, connection: true
     field :contributions, resolver: Resolvers::CollectionContributionResolver, connection: true
     field :items, resolver: Resolvers::ItemResolver, connection: true
-    field :links, resolver: Resolvers::CollectionLinkResolver, connection: true
-    field :item_links, resolver: Resolvers::CollectionLinkedItemResolver, connection: true
 
     # @return [Community, Collection]
     def parent

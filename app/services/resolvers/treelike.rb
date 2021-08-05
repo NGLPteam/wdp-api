@@ -4,6 +4,8 @@ module Resolvers
   module Treelike
     extend ActiveSupport::Concern
 
+    include Resolvers::FiltersBySchemaName
+
     included do
       option :node_filter,
         type: Types::TreeNodeFilterType,

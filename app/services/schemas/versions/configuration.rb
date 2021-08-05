@@ -19,6 +19,25 @@ module Schemas
 
       validates :orderings, :properties, unique_items: true
 
+      # @param [#to_s] identifier
+      def has_ordering?(identifier)
+        id = identifier.to_s
+
+        orderings.any? do |ordering|
+          ordering.id == id
+        end
+      end
+
+      # @param [#to_s] identifier
+      # @return [Schemas::Orderings::Definition, nil]
+      def ordering_definition_for(identifier)
+        id = identifier.to_s
+
+        orderings.detect do |ordering|
+          ordering.id == id
+        end
+      end
+
       def to_contract
         WDPAPI::Container["schemas.properties.compile_contract"].call(properties)
       end

@@ -150,6 +150,26 @@ module MutationOperations
       Dry::Matcher::ResultMatcher.call(result, &block)
     end
 
+    def with_attached_result!(key, result)
+      with_result! result do |m|
+        m.success do |model|
+          attach! key, model
+        end
+
+        m.failure do |(code, reason)|
+          if reason.kind_of?(ApplicationRecord)
+            invalid_model! reason
+
+            break
+          end
+
+          message = reason.kind_of?(String) ? reason : "Something went wrong"
+
+          add_error! message, code: code.to_s.presence
+        end
+      end
+    end
+
     # @!endgroup
 
     # @!group Schema Errors

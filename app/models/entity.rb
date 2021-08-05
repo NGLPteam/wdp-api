@@ -10,6 +10,7 @@ class Entity < ApplicationRecord
 
   belongs_to :entity, polymorphic: true
   belongs_to :hierarchical, polymorphic: true
+  belongs_to :schema_version
 
   CONTEXTUAL_TUPLE = %i[hierarchical_type hierarchical_id].freeze
 
@@ -17,6 +18,9 @@ class Entity < ApplicationRecord
   has_many :contextual_permissions, primary_key: CONTEXTUAL_TUPLE, foreign_key: CONTEXTUAL_TUPLE
   # rubocop:enable Rails/HasManyOrHasOneDependent, Rails/InverseOf
 
+  scope :filtered_by_schema_version, ->(schemas) { where(schema_version: SchemaVersion.filtered_by(schemas)) }
+
+  scope :actual, -> { where(scope: %w[communities items collections]) }
   scope :sans_thumbnail, -> { where(arel_sans_thumbnail) }
 
   class << self

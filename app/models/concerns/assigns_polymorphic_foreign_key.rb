@@ -21,8 +21,16 @@ module AssignsPolymorphicForeignKey
       @polymorphic_foreign_keys ||= defined?(super) ? super.deep_dup : {}.with_indifferent_access
     end
 
-    def assign_polymorphic_foreign_key!(name, *foreign_keys, **options)
-      foreign_keys.flatten!
+    def assign_polymorphic_foreign_key!(name, *direct_foreign_keys, required_interface: nil, **mapped_foreign_keys)
+      direct_foreign_keys.flatten!
+
+      foreign_keys = direct_foreign_keys.each_with_object({}) do |key, h|
+        h[key.to_sym] = key.to_sym
+      end.merge(mapped_foreign_keys)
+
+      options = {}
+
+      options[:required_interface] = required_interface unless required_interface.nil?
 
       definition = Definition.new(name, foreign_keys, **options)
 
@@ -38,26 +46,29 @@ module AssignsPolymorphicForeignKey
 
   # @api private
   class Definition
-    extend Dry::Initializer
-
-    param :name, AppTypes::Coercible::Symbol
-    param :foreign_keys, AppTypes::Array.of(AppTypes::Coercible::Symbol)
-    option :required_interface, AppTypes.Instance(Module), optional: true
+    include Dry::Initializer.define -> do
+      param :name, AppTypes::Coercible::Symbol
+      param :foreign_keys, AppTypes::Hash.map(AppTypes::Coercible::Symbol, AppTypes::Coercible::Symbol)
+      option :required_interface, AppTypes.Instance(Module), optional: true
+      option :validation_method_name, AppTypes::Symbol, default: proc { :"sync_#{name}!" }
+    end
 
     # @param [ApplicationRecord] model
     # @return [Symbol]
     def foreign_key_for(model)
-      model.model_name.i18n_key
+      base_key = model.model_name.i18n_key
+
+      foreign_keys.key base_key
+    end
+
+    def foreign_key_targets
+      foreign_keys.keys
     end
 
     def foreign_key_assignments_for(model_key, model)
-      foreign_keys.index_with do |key|
+      foreign_key_targets.index_with do |key|
         model_key == key ? model : nil
       end
-    end
-
-    def validation_method_name
-      @validation_method_name ||= :"sync_#{name}!"
     end
   end
 

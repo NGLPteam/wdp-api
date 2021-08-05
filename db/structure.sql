@@ -145,6 +145,29 @@ CREATE TYPE public.jsonb_auth_path_state AS (
 
 
 --
+-- Name: link_operator; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.link_operator AS ENUM (
+    'contains',
+    'references'
+);
+
+
+--
+-- Name: parsed_semver; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.parsed_semver AS (
+	major integer,
+	minor integer,
+	patch integer,
+	pre public.citext,
+	build public.citext
+);
+
+
+--
 -- Name: permission_kind; Type: TYPE; Schema: public; Owner: -
 --
 
@@ -226,6 +249,15 @@ CREATE FUNCTION public.jsonb_extract_boolean(jsonb, text[]) RETURNS boolean
 CREATE FUNCTION public.jsonb_set_rec(jsonb, jsonb, text[]) RETURNS jsonb
     LANGUAGE sql IMMUTABLE
     AS $_$ SELECT CASE WHEN array_length($3, 1) > 1 and ($1 #> $3[:array_upper($3, 1) - 1]) is null THEN jsonb_set_rec($1, jsonb_build_object($3[array_upper($3, 1)], $2), $3[:array_upper($3, 1) - 1]) ELSE jsonb_set($1, $3, $2, true) END $_$;
+
+
+--
+-- Name: parse_semver(text); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.parse_semver(text) RETURNS public.parsed_semver
+    LANGUAGE sql IMMUTABLE STRICT PARALLEL SAFE
+    AS $_$ SELECT (a[1], a[2], a[3], a[4], a[5])::parsed_semver FROM ( SELECT '^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$' AS pat ) p LEFT JOIN LATERAL ( SELECT regexp_matches($1, p.pat) AS a ) match ON true WHERE match.a IS NOT NULL; $_$;
 
 
 --
@@ -616,7 +648,9 @@ CREATE TABLE public.entities (
     scope public.ltree NOT NULL,
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    depth integer GENERATED ALWAYS AS (public.nlevel(auth_path)) STORED
+    depth integer GENERATED ALWAYS AS (public.nlevel(auth_path)) STORED,
+    schema_version_id uuid NOT NULL,
+    link_operator public.link_operator
 );
 
 
@@ -635,6 +669,32 @@ CREATE VIEW public.entity_breadcrumbs AS
     crumb.depth
    FROM (public.entities ent
      JOIN public.entities crumb ON (((ent.auth_path OPERATOR(public.<@) crumb.auth_path) AND (crumb.entity_id <> ent.entity_id))));
+
+
+--
+-- Name: entity_links; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.entity_links (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    source_type character varying NOT NULL,
+    source_id uuid NOT NULL,
+    target_type character varying NOT NULL,
+    target_id uuid NOT NULL,
+    schema_version_id uuid NOT NULL,
+    source_community_id uuid,
+    source_collection_id uuid,
+    source_item_id uuid,
+    target_community_id uuid,
+    target_collection_id uuid,
+    target_item_id uuid,
+    operator public.link_operator NOT NULL,
+    auth_path public.ltree NOT NULL,
+    scope public.ltree NOT NULL,
+    system_slug public.citext NOT NULL,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
 
 
 --
@@ -747,6 +807,291 @@ CREATE TABLE public.item_links (
 
 
 --
+-- Name: ordering_entries; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.ordering_entries (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    ordering_id uuid NOT NULL,
+    entity_id uuid NOT NULL,
+    entity_type text NOT NULL,
+    "position" bigint NOT NULL,
+    link_operator public.link_operator,
+    auth_path public.ltree NOT NULL,
+    scope public.ltree NOT NULL,
+    relative_depth integer NOT NULL,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+)
+PARTITION BY HASH (ordering_id);
+
+
+--
+-- Name: ordering_entries_part_1; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.ordering_entries_part_1 (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    ordering_id uuid NOT NULL,
+    entity_id uuid NOT NULL,
+    entity_type text NOT NULL,
+    "position" bigint NOT NULL,
+    link_operator public.link_operator,
+    auth_path public.ltree NOT NULL,
+    scope public.ltree NOT NULL,
+    relative_depth integer NOT NULL,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+ALTER TABLE ONLY public.ordering_entries ATTACH PARTITION public.ordering_entries_part_1 FOR VALUES WITH (modulus 8, remainder 0);
+
+
+--
+-- Name: ordering_entries_part_2; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.ordering_entries_part_2 (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    ordering_id uuid NOT NULL,
+    entity_id uuid NOT NULL,
+    entity_type text NOT NULL,
+    "position" bigint NOT NULL,
+    link_operator public.link_operator,
+    auth_path public.ltree NOT NULL,
+    scope public.ltree NOT NULL,
+    relative_depth integer NOT NULL,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+ALTER TABLE ONLY public.ordering_entries ATTACH PARTITION public.ordering_entries_part_2 FOR VALUES WITH (modulus 8, remainder 1);
+
+
+--
+-- Name: ordering_entries_part_3; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.ordering_entries_part_3 (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    ordering_id uuid NOT NULL,
+    entity_id uuid NOT NULL,
+    entity_type text NOT NULL,
+    "position" bigint NOT NULL,
+    link_operator public.link_operator,
+    auth_path public.ltree NOT NULL,
+    scope public.ltree NOT NULL,
+    relative_depth integer NOT NULL,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+ALTER TABLE ONLY public.ordering_entries ATTACH PARTITION public.ordering_entries_part_3 FOR VALUES WITH (modulus 8, remainder 2);
+
+
+--
+-- Name: ordering_entries_part_4; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.ordering_entries_part_4 (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    ordering_id uuid NOT NULL,
+    entity_id uuid NOT NULL,
+    entity_type text NOT NULL,
+    "position" bigint NOT NULL,
+    link_operator public.link_operator,
+    auth_path public.ltree NOT NULL,
+    scope public.ltree NOT NULL,
+    relative_depth integer NOT NULL,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+ALTER TABLE ONLY public.ordering_entries ATTACH PARTITION public.ordering_entries_part_4 FOR VALUES WITH (modulus 8, remainder 3);
+
+
+--
+-- Name: ordering_entries_part_5; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.ordering_entries_part_5 (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    ordering_id uuid NOT NULL,
+    entity_id uuid NOT NULL,
+    entity_type text NOT NULL,
+    "position" bigint NOT NULL,
+    link_operator public.link_operator,
+    auth_path public.ltree NOT NULL,
+    scope public.ltree NOT NULL,
+    relative_depth integer NOT NULL,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+ALTER TABLE ONLY public.ordering_entries ATTACH PARTITION public.ordering_entries_part_5 FOR VALUES WITH (modulus 8, remainder 4);
+
+
+--
+-- Name: ordering_entries_part_6; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.ordering_entries_part_6 (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    ordering_id uuid NOT NULL,
+    entity_id uuid NOT NULL,
+    entity_type text NOT NULL,
+    "position" bigint NOT NULL,
+    link_operator public.link_operator,
+    auth_path public.ltree NOT NULL,
+    scope public.ltree NOT NULL,
+    relative_depth integer NOT NULL,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+ALTER TABLE ONLY public.ordering_entries ATTACH PARTITION public.ordering_entries_part_6 FOR VALUES WITH (modulus 8, remainder 5);
+
+
+--
+-- Name: ordering_entries_part_7; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.ordering_entries_part_7 (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    ordering_id uuid NOT NULL,
+    entity_id uuid NOT NULL,
+    entity_type text NOT NULL,
+    "position" bigint NOT NULL,
+    link_operator public.link_operator,
+    auth_path public.ltree NOT NULL,
+    scope public.ltree NOT NULL,
+    relative_depth integer NOT NULL,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+ALTER TABLE ONLY public.ordering_entries ATTACH PARTITION public.ordering_entries_part_7 FOR VALUES WITH (modulus 8, remainder 6);
+
+
+--
+-- Name: ordering_entries_part_8; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.ordering_entries_part_8 (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    ordering_id uuid NOT NULL,
+    entity_id uuid NOT NULL,
+    entity_type text NOT NULL,
+    "position" bigint NOT NULL,
+    link_operator public.link_operator,
+    auth_path public.ltree NOT NULL,
+    scope public.ltree NOT NULL,
+    relative_depth integer NOT NULL,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+ALTER TABLE ONLY public.ordering_entries ATTACH PARTITION public.ordering_entries_part_8 FOR VALUES WITH (modulus 8, remainder 7);
+
+
+--
+-- Name: schema_definitions; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.schema_definitions (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    name public.citext NOT NULL,
+    identifier public.citext NOT NULL,
+    system_slug public.citext NOT NULL,
+    kind public.schema_kind NOT NULL,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    namespace public.citext NOT NULL
+);
+
+
+--
+-- Name: schema_versions; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.schema_versions (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    schema_definition_id uuid NOT NULL,
+    current boolean DEFAULT false NOT NULL,
+    system_slug public.citext NOT NULL,
+    configuration jsonb DEFAULT '{}'::jsonb NOT NULL,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    number public.semantic_version NOT NULL,
+    "position" integer,
+    parsed public.parsed_semver GENERATED ALWAYS AS (public.parse_semver((number)::text)) STORED
+);
+
+
+--
+-- Name: ordering_entry_candidates; Type: VIEW; Schema: public; Owner: -
+--
+
+CREATE VIEW public.ordering_entry_candidates AS
+ SELECT ent.entity_type,
+    ent.entity_id,
+    ent.hierarchical_type,
+    ent.hierarchical_id,
+    ent.auth_path,
+    ent.scope,
+    ent.schema_version_id,
+    ent.link_operator,
+    ent.depth AS entity_depth,
+    sv.number AS schema_number,
+    sv.parsed AS schema_parsed_number,
+    sv.system_slug AS schema_slug,
+    sd.kind AS schema_consumer,
+    sd.identifier AS schema_identifier,
+    sd.namespace AS schema_namespace,
+    sd.name AS schema_name,
+    ent.created_at AS entity_created_at,
+    ent.updated_at AS entity_updated_at,
+    src.title AS entity_title,
+    src.published_on AS entity_published_on,
+    src.properties AS entity_properties
+   FROM ((((((public.entities ent
+     JOIN public.schema_versions sv ON ((sv.id = ent.schema_version_id)))
+     JOIN public.schema_definitions sd ON ((sd.id = sv.schema_definition_id)))
+     LEFT JOIN public.entity_links link ON (((ent.entity_type = 'EntityLink'::text) AND (ent.entity_id = link.id))))
+     LEFT JOIN public.collections collection ON (((ent.hierarchical_type = 'Collection'::text) AND (ent.hierarchical_id = collection.id))))
+     LEFT JOIN public.items item ON (((ent.hierarchical_type = 'Item'::text) AND (ent.hierarchical_id = item.id))))
+     LEFT JOIN LATERAL ( SELECT
+                CASE ent.hierarchical_type
+                    WHEN 'Collection'::text THEN collection.title
+                    WHEN 'Item'::text THEN item.title
+                    ELSE NULL::public.citext
+                END AS title,
+                CASE ent.hierarchical_type
+                    WHEN 'Collection'::text THEN collection.published_on
+                    WHEN 'Item'::text THEN item.published_on
+                    ELSE NULL::date
+                END AS published_on,
+                CASE ent.hierarchical_type
+                    WHEN 'Collection'::text THEN collection.properties
+                    WHEN 'Item'::text THEN item.properties
+                    ELSE NULL::jsonb
+                END AS properties) src ON (true));
+
+
+--
+-- Name: orderings; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.orderings (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    entity_type character varying NOT NULL,
+    entity_id uuid NOT NULL,
+    schema_version_id uuid NOT NULL,
+    community_id uuid,
+    collection_id uuid,
+    item_id uuid,
+    identifier public.citext NOT NULL,
+    inherited_from_schema boolean DEFAULT false NOT NULL,
+    definition jsonb DEFAULT '{}'::jsonb NOT NULL,
+    disabled_at timestamp without time zone,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+--
 -- Name: permissions; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -818,44 +1163,11 @@ CREATE TABLE public.roles (
 
 
 --
--- Name: schema_definitions; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.schema_definitions (
-    id uuid DEFAULT gen_random_uuid() NOT NULL,
-    name public.citext NOT NULL,
-    identifier public.citext NOT NULL,
-    system_slug public.citext NOT NULL,
-    kind public.schema_kind NOT NULL,
-    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    namespace public.citext NOT NULL
-);
-
-
---
 -- Name: schema_migrations; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.schema_migrations (
     version character varying NOT NULL
-);
-
-
---
--- Name: schema_versions; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.schema_versions (
-    id uuid DEFAULT gen_random_uuid() NOT NULL,
-    schema_definition_id uuid NOT NULL,
-    current boolean DEFAULT false NOT NULL,
-    system_slug public.citext NOT NULL,
-    configuration jsonb DEFAULT '{}'::jsonb NOT NULL,
-    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    number public.semantic_version NOT NULL,
-    "position" integer
 );
 
 
@@ -1034,6 +1346,14 @@ ALTER TABLE ONLY public.entities
 
 
 --
+-- Name: entity_links entity_links_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.entity_links
+    ADD CONSTRAINT entity_links_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: granted_permissions granted_permissions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1063,6 +1383,86 @@ ALTER TABLE ONLY public.item_links
 
 ALTER TABLE ONLY public.items
     ADD CONSTRAINT items_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: ordering_entries ordering_entries_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.ordering_entries
+    ADD CONSTRAINT ordering_entries_pkey PRIMARY KEY (ordering_id, id);
+
+
+--
+-- Name: ordering_entries_part_1 ordering_entries_part_1_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.ordering_entries_part_1
+    ADD CONSTRAINT ordering_entries_part_1_pkey PRIMARY KEY (ordering_id, id);
+
+
+--
+-- Name: ordering_entries_part_2 ordering_entries_part_2_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.ordering_entries_part_2
+    ADD CONSTRAINT ordering_entries_part_2_pkey PRIMARY KEY (ordering_id, id);
+
+
+--
+-- Name: ordering_entries_part_3 ordering_entries_part_3_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.ordering_entries_part_3
+    ADD CONSTRAINT ordering_entries_part_3_pkey PRIMARY KEY (ordering_id, id);
+
+
+--
+-- Name: ordering_entries_part_4 ordering_entries_part_4_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.ordering_entries_part_4
+    ADD CONSTRAINT ordering_entries_part_4_pkey PRIMARY KEY (ordering_id, id);
+
+
+--
+-- Name: ordering_entries_part_5 ordering_entries_part_5_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.ordering_entries_part_5
+    ADD CONSTRAINT ordering_entries_part_5_pkey PRIMARY KEY (ordering_id, id);
+
+
+--
+-- Name: ordering_entries_part_6 ordering_entries_part_6_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.ordering_entries_part_6
+    ADD CONSTRAINT ordering_entries_part_6_pkey PRIMARY KEY (ordering_id, id);
+
+
+--
+-- Name: ordering_entries_part_7 ordering_entries_part_7_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.ordering_entries_part_7
+    ADD CONSTRAINT ordering_entries_part_7_pkey PRIMARY KEY (ordering_id, id);
+
+
+--
+-- Name: ordering_entries_part_8 ordering_entries_part_8_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.ordering_entries_part_8
+    ADD CONSTRAINT ordering_entries_part_8_pkey PRIMARY KEY (ordering_id, id);
+
+
+--
+-- Name: orderings orderings_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.orderings
+    ADD CONSTRAINT orderings_pkey PRIMARY KEY (id);
 
 
 --
@@ -1672,6 +2072,20 @@ CREATE INDEX index_entities_on_hierarchical ON public.entities USING btree (hier
 
 
 --
+-- Name: index_entities_on_link_operator; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_entities_on_link_operator ON public.entities USING btree (link_operator);
+
+
+--
+-- Name: index_entities_on_schema_version_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_entities_on_schema_version_id ON public.entities USING btree (schema_version_id);
+
+
+--
 -- Name: index_entities_on_system_slug; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -1683,6 +2097,97 @@ CREATE UNIQUE INDEX index_entities_on_system_slug ON public.entities USING btree
 --
 
 CREATE INDEX index_entities_permissions_calculation ON public.entities USING gist (hierarchical_type, hierarchical_id, auth_path, scope);
+
+
+--
+-- Name: index_entity_links_on_auth_path; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_entity_links_on_auth_path ON public.entity_links USING gist (auth_path);
+
+
+--
+-- Name: index_entity_links_on_schema_version_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_entity_links_on_schema_version_id ON public.entity_links USING btree (schema_version_id);
+
+
+--
+-- Name: index_entity_links_on_scope; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_entity_links_on_scope ON public.entity_links USING gist (scope);
+
+
+--
+-- Name: index_entity_links_on_source; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_entity_links_on_source ON public.entity_links USING btree (source_type, source_id);
+
+
+--
+-- Name: index_entity_links_on_source_collection_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_entity_links_on_source_collection_id ON public.entity_links USING btree (source_collection_id);
+
+
+--
+-- Name: index_entity_links_on_source_community_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_entity_links_on_source_community_id ON public.entity_links USING btree (source_community_id);
+
+
+--
+-- Name: index_entity_links_on_source_item_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_entity_links_on_source_item_id ON public.entity_links USING btree (source_item_id);
+
+
+--
+-- Name: index_entity_links_on_system_slug; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_entity_links_on_system_slug ON public.entity_links USING btree (system_slug);
+
+
+--
+-- Name: index_entity_links_on_target; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_entity_links_on_target ON public.entity_links USING btree (target_type, target_id);
+
+
+--
+-- Name: index_entity_links_on_target_collection_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_entity_links_on_target_collection_id ON public.entity_links USING btree (target_collection_id);
+
+
+--
+-- Name: index_entity_links_on_target_community_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_entity_links_on_target_community_id ON public.entity_links USING btree (target_community_id);
+
+
+--
+-- Name: index_entity_links_on_target_item_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_entity_links_on_target_item_id ON public.entity_links USING btree (target_item_id);
+
+
+--
+-- Name: index_entity_links_uniqueness; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_entity_links_uniqueness ON public.entity_links USING btree (source_type, source_id, target_type, target_id);
 
 
 --
@@ -1900,6 +2405,90 @@ CREATE INDEX index_items_on_visible_after_at ON public.items USING btree (visibl
 --
 
 CREATE UNIQUE INDEX index_items_unique_identifier ON public.items USING btree (identifier, collection_id, parent_id);
+
+
+--
+-- Name: index_ordering_entries_on_ordering_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_ordering_entries_on_ordering_id ON ONLY public.ordering_entries USING btree (ordering_id);
+
+
+--
+-- Name: index_ordering_entries_references_entity; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_ordering_entries_references_entity ON ONLY public.ordering_entries USING btree (entity_type, entity_id);
+
+
+--
+-- Name: index_ordering_entries_sort; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_ordering_entries_sort ON ONLY public.ordering_entries USING btree (ordering_id, "position");
+
+
+--
+-- Name: index_ordering_entries_sorted_by_scope; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_ordering_entries_sorted_by_scope ON ONLY public.ordering_entries USING gist (ordering_id, scope, "position");
+
+
+--
+-- Name: index_ordering_entries_uniqueness; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_ordering_entries_uniqueness ON ONLY public.ordering_entries USING btree (ordering_id, entity_type, entity_id);
+
+
+--
+-- Name: index_orderings_enabled_by_entity; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_orderings_enabled_by_entity ON public.orderings USING btree (entity_id, entity_type) WHERE (disabled_at IS NULL);
+
+
+--
+-- Name: index_orderings_on_collection_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_orderings_on_collection_id ON public.orderings USING btree (collection_id);
+
+
+--
+-- Name: index_orderings_on_community_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_orderings_on_community_id ON public.orderings USING btree (community_id);
+
+
+--
+-- Name: index_orderings_on_entity; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_orderings_on_entity ON public.orderings USING btree (entity_type, entity_id);
+
+
+--
+-- Name: index_orderings_on_item_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_orderings_on_item_id ON public.orderings USING btree (item_id);
+
+
+--
+-- Name: index_orderings_on_schema_version_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_orderings_on_schema_version_id ON public.orderings USING btree (schema_version_id);
+
+
+--
+-- Name: index_orderings_uniqueness; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_orderings_uniqueness ON public.orderings USING btree (entity_id, entity_type, identifier);
 
 
 --
@@ -2176,6 +2765,286 @@ CREATE INDEX item_desc_idx ON public.item_hierarchies USING btree (descendant_id
 
 
 --
+-- Name: ordering_entries_part_1_entity_type_entity_id_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX ordering_entries_part_1_entity_type_entity_id_idx ON public.ordering_entries_part_1 USING btree (entity_type, entity_id);
+
+
+--
+-- Name: ordering_entries_part_1_ordering_id_entity_type_entity_id_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX ordering_entries_part_1_ordering_id_entity_type_entity_id_idx ON public.ordering_entries_part_1 USING btree (ordering_id, entity_type, entity_id);
+
+
+--
+-- Name: ordering_entries_part_1_ordering_id_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX ordering_entries_part_1_ordering_id_idx ON public.ordering_entries_part_1 USING btree (ordering_id);
+
+
+--
+-- Name: ordering_entries_part_1_ordering_id_position_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX ordering_entries_part_1_ordering_id_position_idx ON public.ordering_entries_part_1 USING btree (ordering_id, "position");
+
+
+--
+-- Name: ordering_entries_part_1_ordering_id_scope_position_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX ordering_entries_part_1_ordering_id_scope_position_idx ON public.ordering_entries_part_1 USING gist (ordering_id, scope, "position");
+
+
+--
+-- Name: ordering_entries_part_2_entity_type_entity_id_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX ordering_entries_part_2_entity_type_entity_id_idx ON public.ordering_entries_part_2 USING btree (entity_type, entity_id);
+
+
+--
+-- Name: ordering_entries_part_2_ordering_id_entity_type_entity_id_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX ordering_entries_part_2_ordering_id_entity_type_entity_id_idx ON public.ordering_entries_part_2 USING btree (ordering_id, entity_type, entity_id);
+
+
+--
+-- Name: ordering_entries_part_2_ordering_id_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX ordering_entries_part_2_ordering_id_idx ON public.ordering_entries_part_2 USING btree (ordering_id);
+
+
+--
+-- Name: ordering_entries_part_2_ordering_id_position_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX ordering_entries_part_2_ordering_id_position_idx ON public.ordering_entries_part_2 USING btree (ordering_id, "position");
+
+
+--
+-- Name: ordering_entries_part_2_ordering_id_scope_position_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX ordering_entries_part_2_ordering_id_scope_position_idx ON public.ordering_entries_part_2 USING gist (ordering_id, scope, "position");
+
+
+--
+-- Name: ordering_entries_part_3_entity_type_entity_id_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX ordering_entries_part_3_entity_type_entity_id_idx ON public.ordering_entries_part_3 USING btree (entity_type, entity_id);
+
+
+--
+-- Name: ordering_entries_part_3_ordering_id_entity_type_entity_id_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX ordering_entries_part_3_ordering_id_entity_type_entity_id_idx ON public.ordering_entries_part_3 USING btree (ordering_id, entity_type, entity_id);
+
+
+--
+-- Name: ordering_entries_part_3_ordering_id_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX ordering_entries_part_3_ordering_id_idx ON public.ordering_entries_part_3 USING btree (ordering_id);
+
+
+--
+-- Name: ordering_entries_part_3_ordering_id_position_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX ordering_entries_part_3_ordering_id_position_idx ON public.ordering_entries_part_3 USING btree (ordering_id, "position");
+
+
+--
+-- Name: ordering_entries_part_3_ordering_id_scope_position_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX ordering_entries_part_3_ordering_id_scope_position_idx ON public.ordering_entries_part_3 USING gist (ordering_id, scope, "position");
+
+
+--
+-- Name: ordering_entries_part_4_entity_type_entity_id_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX ordering_entries_part_4_entity_type_entity_id_idx ON public.ordering_entries_part_4 USING btree (entity_type, entity_id);
+
+
+--
+-- Name: ordering_entries_part_4_ordering_id_entity_type_entity_id_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX ordering_entries_part_4_ordering_id_entity_type_entity_id_idx ON public.ordering_entries_part_4 USING btree (ordering_id, entity_type, entity_id);
+
+
+--
+-- Name: ordering_entries_part_4_ordering_id_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX ordering_entries_part_4_ordering_id_idx ON public.ordering_entries_part_4 USING btree (ordering_id);
+
+
+--
+-- Name: ordering_entries_part_4_ordering_id_position_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX ordering_entries_part_4_ordering_id_position_idx ON public.ordering_entries_part_4 USING btree (ordering_id, "position");
+
+
+--
+-- Name: ordering_entries_part_4_ordering_id_scope_position_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX ordering_entries_part_4_ordering_id_scope_position_idx ON public.ordering_entries_part_4 USING gist (ordering_id, scope, "position");
+
+
+--
+-- Name: ordering_entries_part_5_entity_type_entity_id_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX ordering_entries_part_5_entity_type_entity_id_idx ON public.ordering_entries_part_5 USING btree (entity_type, entity_id);
+
+
+--
+-- Name: ordering_entries_part_5_ordering_id_entity_type_entity_id_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX ordering_entries_part_5_ordering_id_entity_type_entity_id_idx ON public.ordering_entries_part_5 USING btree (ordering_id, entity_type, entity_id);
+
+
+--
+-- Name: ordering_entries_part_5_ordering_id_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX ordering_entries_part_5_ordering_id_idx ON public.ordering_entries_part_5 USING btree (ordering_id);
+
+
+--
+-- Name: ordering_entries_part_5_ordering_id_position_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX ordering_entries_part_5_ordering_id_position_idx ON public.ordering_entries_part_5 USING btree (ordering_id, "position");
+
+
+--
+-- Name: ordering_entries_part_5_ordering_id_scope_position_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX ordering_entries_part_5_ordering_id_scope_position_idx ON public.ordering_entries_part_5 USING gist (ordering_id, scope, "position");
+
+
+--
+-- Name: ordering_entries_part_6_entity_type_entity_id_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX ordering_entries_part_6_entity_type_entity_id_idx ON public.ordering_entries_part_6 USING btree (entity_type, entity_id);
+
+
+--
+-- Name: ordering_entries_part_6_ordering_id_entity_type_entity_id_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX ordering_entries_part_6_ordering_id_entity_type_entity_id_idx ON public.ordering_entries_part_6 USING btree (ordering_id, entity_type, entity_id);
+
+
+--
+-- Name: ordering_entries_part_6_ordering_id_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX ordering_entries_part_6_ordering_id_idx ON public.ordering_entries_part_6 USING btree (ordering_id);
+
+
+--
+-- Name: ordering_entries_part_6_ordering_id_position_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX ordering_entries_part_6_ordering_id_position_idx ON public.ordering_entries_part_6 USING btree (ordering_id, "position");
+
+
+--
+-- Name: ordering_entries_part_6_ordering_id_scope_position_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX ordering_entries_part_6_ordering_id_scope_position_idx ON public.ordering_entries_part_6 USING gist (ordering_id, scope, "position");
+
+
+--
+-- Name: ordering_entries_part_7_entity_type_entity_id_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX ordering_entries_part_7_entity_type_entity_id_idx ON public.ordering_entries_part_7 USING btree (entity_type, entity_id);
+
+
+--
+-- Name: ordering_entries_part_7_ordering_id_entity_type_entity_id_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX ordering_entries_part_7_ordering_id_entity_type_entity_id_idx ON public.ordering_entries_part_7 USING btree (ordering_id, entity_type, entity_id);
+
+
+--
+-- Name: ordering_entries_part_7_ordering_id_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX ordering_entries_part_7_ordering_id_idx ON public.ordering_entries_part_7 USING btree (ordering_id);
+
+
+--
+-- Name: ordering_entries_part_7_ordering_id_position_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX ordering_entries_part_7_ordering_id_position_idx ON public.ordering_entries_part_7 USING btree (ordering_id, "position");
+
+
+--
+-- Name: ordering_entries_part_7_ordering_id_scope_position_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX ordering_entries_part_7_ordering_id_scope_position_idx ON public.ordering_entries_part_7 USING gist (ordering_id, scope, "position");
+
+
+--
+-- Name: ordering_entries_part_8_entity_type_entity_id_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX ordering_entries_part_8_entity_type_entity_id_idx ON public.ordering_entries_part_8 USING btree (entity_type, entity_id);
+
+
+--
+-- Name: ordering_entries_part_8_ordering_id_entity_type_entity_id_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX ordering_entries_part_8_ordering_id_entity_type_entity_id_idx ON public.ordering_entries_part_8 USING btree (ordering_id, entity_type, entity_id);
+
+
+--
+-- Name: ordering_entries_part_8_ordering_id_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX ordering_entries_part_8_ordering_id_idx ON public.ordering_entries_part_8 USING btree (ordering_id);
+
+
+--
+-- Name: ordering_entries_part_8_ordering_id_position_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX ordering_entries_part_8_ordering_id_position_idx ON public.ordering_entries_part_8 USING btree (ordering_id, "position");
+
+
+--
+-- Name: ordering_entries_part_8_ordering_id_scope_position_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX ordering_entries_part_8_ordering_id_scope_position_idx ON public.ordering_entries_part_8 USING gist (ordering_id, scope, "position");
+
+
+--
 -- Name: role_permissions_context; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -2187,6 +3056,342 @@ CREATE INDEX role_permissions_context ON public.role_permissions USING btree (ro
 --
 
 CREATE UNIQUE INDEX role_permissions_uniqueness ON public.role_permissions USING btree (role_id, permission_id) INCLUDE (inferred, inferring_scopes, inferring_actions);
+
+
+--
+-- Name: ordering_entries_part_1_entity_type_entity_id_idx; Type: INDEX ATTACH; Schema: public; Owner: -
+--
+
+ALTER INDEX public.index_ordering_entries_references_entity ATTACH PARTITION public.ordering_entries_part_1_entity_type_entity_id_idx;
+
+
+--
+-- Name: ordering_entries_part_1_ordering_id_entity_type_entity_id_idx; Type: INDEX ATTACH; Schema: public; Owner: -
+--
+
+ALTER INDEX public.index_ordering_entries_uniqueness ATTACH PARTITION public.ordering_entries_part_1_ordering_id_entity_type_entity_id_idx;
+
+
+--
+-- Name: ordering_entries_part_1_ordering_id_idx; Type: INDEX ATTACH; Schema: public; Owner: -
+--
+
+ALTER INDEX public.index_ordering_entries_on_ordering_id ATTACH PARTITION public.ordering_entries_part_1_ordering_id_idx;
+
+
+--
+-- Name: ordering_entries_part_1_ordering_id_position_idx; Type: INDEX ATTACH; Schema: public; Owner: -
+--
+
+ALTER INDEX public.index_ordering_entries_sort ATTACH PARTITION public.ordering_entries_part_1_ordering_id_position_idx;
+
+
+--
+-- Name: ordering_entries_part_1_ordering_id_scope_position_idx; Type: INDEX ATTACH; Schema: public; Owner: -
+--
+
+ALTER INDEX public.index_ordering_entries_sorted_by_scope ATTACH PARTITION public.ordering_entries_part_1_ordering_id_scope_position_idx;
+
+
+--
+-- Name: ordering_entries_part_1_pkey; Type: INDEX ATTACH; Schema: public; Owner: -
+--
+
+ALTER INDEX public.ordering_entries_pkey ATTACH PARTITION public.ordering_entries_part_1_pkey;
+
+
+--
+-- Name: ordering_entries_part_2_entity_type_entity_id_idx; Type: INDEX ATTACH; Schema: public; Owner: -
+--
+
+ALTER INDEX public.index_ordering_entries_references_entity ATTACH PARTITION public.ordering_entries_part_2_entity_type_entity_id_idx;
+
+
+--
+-- Name: ordering_entries_part_2_ordering_id_entity_type_entity_id_idx; Type: INDEX ATTACH; Schema: public; Owner: -
+--
+
+ALTER INDEX public.index_ordering_entries_uniqueness ATTACH PARTITION public.ordering_entries_part_2_ordering_id_entity_type_entity_id_idx;
+
+
+--
+-- Name: ordering_entries_part_2_ordering_id_idx; Type: INDEX ATTACH; Schema: public; Owner: -
+--
+
+ALTER INDEX public.index_ordering_entries_on_ordering_id ATTACH PARTITION public.ordering_entries_part_2_ordering_id_idx;
+
+
+--
+-- Name: ordering_entries_part_2_ordering_id_position_idx; Type: INDEX ATTACH; Schema: public; Owner: -
+--
+
+ALTER INDEX public.index_ordering_entries_sort ATTACH PARTITION public.ordering_entries_part_2_ordering_id_position_idx;
+
+
+--
+-- Name: ordering_entries_part_2_ordering_id_scope_position_idx; Type: INDEX ATTACH; Schema: public; Owner: -
+--
+
+ALTER INDEX public.index_ordering_entries_sorted_by_scope ATTACH PARTITION public.ordering_entries_part_2_ordering_id_scope_position_idx;
+
+
+--
+-- Name: ordering_entries_part_2_pkey; Type: INDEX ATTACH; Schema: public; Owner: -
+--
+
+ALTER INDEX public.ordering_entries_pkey ATTACH PARTITION public.ordering_entries_part_2_pkey;
+
+
+--
+-- Name: ordering_entries_part_3_entity_type_entity_id_idx; Type: INDEX ATTACH; Schema: public; Owner: -
+--
+
+ALTER INDEX public.index_ordering_entries_references_entity ATTACH PARTITION public.ordering_entries_part_3_entity_type_entity_id_idx;
+
+
+--
+-- Name: ordering_entries_part_3_ordering_id_entity_type_entity_id_idx; Type: INDEX ATTACH; Schema: public; Owner: -
+--
+
+ALTER INDEX public.index_ordering_entries_uniqueness ATTACH PARTITION public.ordering_entries_part_3_ordering_id_entity_type_entity_id_idx;
+
+
+--
+-- Name: ordering_entries_part_3_ordering_id_idx; Type: INDEX ATTACH; Schema: public; Owner: -
+--
+
+ALTER INDEX public.index_ordering_entries_on_ordering_id ATTACH PARTITION public.ordering_entries_part_3_ordering_id_idx;
+
+
+--
+-- Name: ordering_entries_part_3_ordering_id_position_idx; Type: INDEX ATTACH; Schema: public; Owner: -
+--
+
+ALTER INDEX public.index_ordering_entries_sort ATTACH PARTITION public.ordering_entries_part_3_ordering_id_position_idx;
+
+
+--
+-- Name: ordering_entries_part_3_ordering_id_scope_position_idx; Type: INDEX ATTACH; Schema: public; Owner: -
+--
+
+ALTER INDEX public.index_ordering_entries_sorted_by_scope ATTACH PARTITION public.ordering_entries_part_3_ordering_id_scope_position_idx;
+
+
+--
+-- Name: ordering_entries_part_3_pkey; Type: INDEX ATTACH; Schema: public; Owner: -
+--
+
+ALTER INDEX public.ordering_entries_pkey ATTACH PARTITION public.ordering_entries_part_3_pkey;
+
+
+--
+-- Name: ordering_entries_part_4_entity_type_entity_id_idx; Type: INDEX ATTACH; Schema: public; Owner: -
+--
+
+ALTER INDEX public.index_ordering_entries_references_entity ATTACH PARTITION public.ordering_entries_part_4_entity_type_entity_id_idx;
+
+
+--
+-- Name: ordering_entries_part_4_ordering_id_entity_type_entity_id_idx; Type: INDEX ATTACH; Schema: public; Owner: -
+--
+
+ALTER INDEX public.index_ordering_entries_uniqueness ATTACH PARTITION public.ordering_entries_part_4_ordering_id_entity_type_entity_id_idx;
+
+
+--
+-- Name: ordering_entries_part_4_ordering_id_idx; Type: INDEX ATTACH; Schema: public; Owner: -
+--
+
+ALTER INDEX public.index_ordering_entries_on_ordering_id ATTACH PARTITION public.ordering_entries_part_4_ordering_id_idx;
+
+
+--
+-- Name: ordering_entries_part_4_ordering_id_position_idx; Type: INDEX ATTACH; Schema: public; Owner: -
+--
+
+ALTER INDEX public.index_ordering_entries_sort ATTACH PARTITION public.ordering_entries_part_4_ordering_id_position_idx;
+
+
+--
+-- Name: ordering_entries_part_4_ordering_id_scope_position_idx; Type: INDEX ATTACH; Schema: public; Owner: -
+--
+
+ALTER INDEX public.index_ordering_entries_sorted_by_scope ATTACH PARTITION public.ordering_entries_part_4_ordering_id_scope_position_idx;
+
+
+--
+-- Name: ordering_entries_part_4_pkey; Type: INDEX ATTACH; Schema: public; Owner: -
+--
+
+ALTER INDEX public.ordering_entries_pkey ATTACH PARTITION public.ordering_entries_part_4_pkey;
+
+
+--
+-- Name: ordering_entries_part_5_entity_type_entity_id_idx; Type: INDEX ATTACH; Schema: public; Owner: -
+--
+
+ALTER INDEX public.index_ordering_entries_references_entity ATTACH PARTITION public.ordering_entries_part_5_entity_type_entity_id_idx;
+
+
+--
+-- Name: ordering_entries_part_5_ordering_id_entity_type_entity_id_idx; Type: INDEX ATTACH; Schema: public; Owner: -
+--
+
+ALTER INDEX public.index_ordering_entries_uniqueness ATTACH PARTITION public.ordering_entries_part_5_ordering_id_entity_type_entity_id_idx;
+
+
+--
+-- Name: ordering_entries_part_5_ordering_id_idx; Type: INDEX ATTACH; Schema: public; Owner: -
+--
+
+ALTER INDEX public.index_ordering_entries_on_ordering_id ATTACH PARTITION public.ordering_entries_part_5_ordering_id_idx;
+
+
+--
+-- Name: ordering_entries_part_5_ordering_id_position_idx; Type: INDEX ATTACH; Schema: public; Owner: -
+--
+
+ALTER INDEX public.index_ordering_entries_sort ATTACH PARTITION public.ordering_entries_part_5_ordering_id_position_idx;
+
+
+--
+-- Name: ordering_entries_part_5_ordering_id_scope_position_idx; Type: INDEX ATTACH; Schema: public; Owner: -
+--
+
+ALTER INDEX public.index_ordering_entries_sorted_by_scope ATTACH PARTITION public.ordering_entries_part_5_ordering_id_scope_position_idx;
+
+
+--
+-- Name: ordering_entries_part_5_pkey; Type: INDEX ATTACH; Schema: public; Owner: -
+--
+
+ALTER INDEX public.ordering_entries_pkey ATTACH PARTITION public.ordering_entries_part_5_pkey;
+
+
+--
+-- Name: ordering_entries_part_6_entity_type_entity_id_idx; Type: INDEX ATTACH; Schema: public; Owner: -
+--
+
+ALTER INDEX public.index_ordering_entries_references_entity ATTACH PARTITION public.ordering_entries_part_6_entity_type_entity_id_idx;
+
+
+--
+-- Name: ordering_entries_part_6_ordering_id_entity_type_entity_id_idx; Type: INDEX ATTACH; Schema: public; Owner: -
+--
+
+ALTER INDEX public.index_ordering_entries_uniqueness ATTACH PARTITION public.ordering_entries_part_6_ordering_id_entity_type_entity_id_idx;
+
+
+--
+-- Name: ordering_entries_part_6_ordering_id_idx; Type: INDEX ATTACH; Schema: public; Owner: -
+--
+
+ALTER INDEX public.index_ordering_entries_on_ordering_id ATTACH PARTITION public.ordering_entries_part_6_ordering_id_idx;
+
+
+--
+-- Name: ordering_entries_part_6_ordering_id_position_idx; Type: INDEX ATTACH; Schema: public; Owner: -
+--
+
+ALTER INDEX public.index_ordering_entries_sort ATTACH PARTITION public.ordering_entries_part_6_ordering_id_position_idx;
+
+
+--
+-- Name: ordering_entries_part_6_ordering_id_scope_position_idx; Type: INDEX ATTACH; Schema: public; Owner: -
+--
+
+ALTER INDEX public.index_ordering_entries_sorted_by_scope ATTACH PARTITION public.ordering_entries_part_6_ordering_id_scope_position_idx;
+
+
+--
+-- Name: ordering_entries_part_6_pkey; Type: INDEX ATTACH; Schema: public; Owner: -
+--
+
+ALTER INDEX public.ordering_entries_pkey ATTACH PARTITION public.ordering_entries_part_6_pkey;
+
+
+--
+-- Name: ordering_entries_part_7_entity_type_entity_id_idx; Type: INDEX ATTACH; Schema: public; Owner: -
+--
+
+ALTER INDEX public.index_ordering_entries_references_entity ATTACH PARTITION public.ordering_entries_part_7_entity_type_entity_id_idx;
+
+
+--
+-- Name: ordering_entries_part_7_ordering_id_entity_type_entity_id_idx; Type: INDEX ATTACH; Schema: public; Owner: -
+--
+
+ALTER INDEX public.index_ordering_entries_uniqueness ATTACH PARTITION public.ordering_entries_part_7_ordering_id_entity_type_entity_id_idx;
+
+
+--
+-- Name: ordering_entries_part_7_ordering_id_idx; Type: INDEX ATTACH; Schema: public; Owner: -
+--
+
+ALTER INDEX public.index_ordering_entries_on_ordering_id ATTACH PARTITION public.ordering_entries_part_7_ordering_id_idx;
+
+
+--
+-- Name: ordering_entries_part_7_ordering_id_position_idx; Type: INDEX ATTACH; Schema: public; Owner: -
+--
+
+ALTER INDEX public.index_ordering_entries_sort ATTACH PARTITION public.ordering_entries_part_7_ordering_id_position_idx;
+
+
+--
+-- Name: ordering_entries_part_7_ordering_id_scope_position_idx; Type: INDEX ATTACH; Schema: public; Owner: -
+--
+
+ALTER INDEX public.index_ordering_entries_sorted_by_scope ATTACH PARTITION public.ordering_entries_part_7_ordering_id_scope_position_idx;
+
+
+--
+-- Name: ordering_entries_part_7_pkey; Type: INDEX ATTACH; Schema: public; Owner: -
+--
+
+ALTER INDEX public.ordering_entries_pkey ATTACH PARTITION public.ordering_entries_part_7_pkey;
+
+
+--
+-- Name: ordering_entries_part_8_entity_type_entity_id_idx; Type: INDEX ATTACH; Schema: public; Owner: -
+--
+
+ALTER INDEX public.index_ordering_entries_references_entity ATTACH PARTITION public.ordering_entries_part_8_entity_type_entity_id_idx;
+
+
+--
+-- Name: ordering_entries_part_8_ordering_id_entity_type_entity_id_idx; Type: INDEX ATTACH; Schema: public; Owner: -
+--
+
+ALTER INDEX public.index_ordering_entries_uniqueness ATTACH PARTITION public.ordering_entries_part_8_ordering_id_entity_type_entity_id_idx;
+
+
+--
+-- Name: ordering_entries_part_8_ordering_id_idx; Type: INDEX ATTACH; Schema: public; Owner: -
+--
+
+ALTER INDEX public.index_ordering_entries_on_ordering_id ATTACH PARTITION public.ordering_entries_part_8_ordering_id_idx;
+
+
+--
+-- Name: ordering_entries_part_8_ordering_id_position_idx; Type: INDEX ATTACH; Schema: public; Owner: -
+--
+
+ALTER INDEX public.index_ordering_entries_sort ATTACH PARTITION public.ordering_entries_part_8_ordering_id_position_idx;
+
+
+--
+-- Name: ordering_entries_part_8_ordering_id_scope_position_idx; Type: INDEX ATTACH; Schema: public; Owner: -
+--
+
+ALTER INDEX public.index_ordering_entries_sorted_by_scope ATTACH PARTITION public.ordering_entries_part_8_ordering_id_scope_position_idx;
+
+
+--
+-- Name: ordering_entries_part_8_pkey; Type: INDEX ATTACH; Schema: public; Owner: -
+--
+
+ALTER INDEX public.ordering_entries_pkey ATTACH PARTITION public.ordering_entries_part_8_pkey;
 
 
 --
@@ -2282,11 +3487,27 @@ ALTER TABLE ONLY public.items
 
 
 --
+-- Name: orderings fk_rails_3a24b6bb35; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.orderings
+    ADD CONSTRAINT fk_rails_3a24b6bb35 FOREIGN KEY (item_id) REFERENCES public.items(id) ON DELETE CASCADE;
+
+
+--
 -- Name: collection_links fk_rails_3cc144ad4c; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.collection_links
     ADD CONSTRAINT fk_rails_3cc144ad4c FOREIGN KEY (source_id) REFERENCES public.collections(id) ON DELETE RESTRICT;
+
+
+--
+-- Name: entities fk_rails_40b78347f2; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.entities
+    ADD CONSTRAINT fk_rails_40b78347f2 FOREIGN KEY (schema_version_id) REFERENCES public.schema_versions(id) ON DELETE RESTRICT;
 
 
 --
@@ -2362,11 +3583,35 @@ ALTER TABLE ONLY public.item_links
 
 
 --
+-- Name: orderings fk_rails_6ac675728d; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.orderings
+    ADD CONSTRAINT fk_rails_6ac675728d FOREIGN KEY (collection_id) REFERENCES public.collections(id) ON DELETE CASCADE;
+
+
+--
+-- Name: entity_links fk_rails_6ad35546ca; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.entity_links
+    ADD CONSTRAINT fk_rails_6ad35546ca FOREIGN KEY (schema_version_id) REFERENCES public.schema_versions(id) ON DELETE CASCADE;
+
+
+--
 -- Name: communities fk_rails_6beda9a645; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.communities
     ADD CONSTRAINT fk_rails_6beda9a645 FOREIGN KEY (schema_version_id) REFERENCES public.schema_versions(id) ON DELETE RESTRICT;
+
+
+--
+-- Name: entity_links fk_rails_6c08f572dd; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.entity_links
+    ADD CONSTRAINT fk_rails_6c08f572dd FOREIGN KEY (source_item_id) REFERENCES public.items(id) ON DELETE CASCADE;
 
 
 --
@@ -2418,11 +3663,27 @@ ALTER TABLE ONLY public.collection_linked_items
 
 
 --
+-- Name: entity_links fk_rails_8181666751; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.entity_links
+    ADD CONSTRAINT fk_rails_8181666751 FOREIGN KEY (target_item_id) REFERENCES public.items(id) ON DELETE CASCADE;
+
+
+--
 -- Name: item_links fk_rails_818ba287b7; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.item_links
     ADD CONSTRAINT fk_rails_818ba287b7 FOREIGN KEY (source_id) REFERENCES public.items(id) ON DELETE RESTRICT;
+
+
+--
+-- Name: entity_links fk_rails_81fdc77239; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.entity_links
+    ADD CONSTRAINT fk_rails_81fdc77239 FOREIGN KEY (source_collection_id) REFERENCES public.collections(id) ON DELETE CASCADE;
 
 
 --
@@ -2482,11 +3743,27 @@ ALTER TABLE ONLY public.user_group_memberships
 
 
 --
+-- Name: entity_links fk_rails_b6e9726cfa; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.entity_links
+    ADD CONSTRAINT fk_rails_b6e9726cfa FOREIGN KEY (target_community_id) REFERENCES public.communities(id) ON DELETE CASCADE;
+
+
+--
 -- Name: access_grants fk_rails_b889c8e828; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.access_grants
     ADD CONSTRAINT fk_rails_b889c8e828 FOREIGN KEY (user_group_id) REFERENCES public.user_groups(id) ON DELETE CASCADE;
+
+
+--
+-- Name: orderings fk_rails_c09738b6c8; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.orderings
+    ADD CONSTRAINT fk_rails_c09738b6c8 FOREIGN KEY (schema_version_id) REFERENCES public.schema_versions(id) ON DELETE CASCADE;
 
 
 --
@@ -2530,6 +3807,14 @@ ALTER TABLE ONLY public.authorizing_entities
 
 
 --
+-- Name: entity_links fk_rails_eabc9b5139; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.entity_links
+    ADD CONSTRAINT fk_rails_eabc9b5139 FOREIGN KEY (target_collection_id) REFERENCES public.collections(id) ON DELETE CASCADE;
+
+
+--
 -- Name: item_contributions fk_rails_eca0986480; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2554,11 +3839,35 @@ ALTER TABLE ONLY public.collection_contributions
 
 
 --
+-- Name: entity_links fk_rails_f54d4f5cb3; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.entity_links
+    ADD CONSTRAINT fk_rails_f54d4f5cb3 FOREIGN KEY (source_community_id) REFERENCES public.communities(id) ON DELETE CASCADE;
+
+
+--
+-- Name: orderings fk_rails_fb64dd7c38; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.orderings
+    ADD CONSTRAINT fk_rails_fb64dd7c38 FOREIGN KEY (community_id) REFERENCES public.communities(id) ON DELETE CASCADE;
+
+
+--
 -- Name: collections fk_rails_ff82e7b8d0; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.collections
     ADD CONSTRAINT fk_rails_ff82e7b8d0 FOREIGN KEY (community_id) REFERENCES public.communities(id) ON DELETE RESTRICT;
+
+
+--
+-- Name: ordering_entries ordering_entries_ordering_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE public.ordering_entries
+    ADD CONSTRAINT ordering_entries_ordering_id_fkey FOREIGN KEY (ordering_id) REFERENCES public.orderings(id);
 
 
 --
@@ -2618,6 +3927,12 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20210720182529'),
 ('20210720192446'),
 ('20210720192518'),
-('20210723204008');
+('20210723204008'),
+('20210730165055'),
+('20210730165659'),
+('20210730170535'),
+('20210730182534'),
+('20210730183719'),
+('20210730191337');
 
 

@@ -18,13 +18,21 @@ module Types
 
     field :create_item, mutation: Mutations::CreateItem
 
+    field :create_ordering, mutation: Mutations::CreateOrdering
+
     field :create_role, mutation: Mutations::CreateRole
 
+    field :destroy_ordering, mutation: Mutations::DestroyOrdering
+
     field :grant_access, mutation: Mutations::GrantAccess
+
+    field :link_entity, mutation: Mutations::LinkEntity
 
     field :reparent_collection, mutation: Mutations::ReparentCollection
 
     field :reparent_item, mutation: Mutations::ReparentItem
+
+    field :reset_ordering, mutation: Mutations::ResetOrdering
 
     field :revoke_access, mutation: Mutations::RevokeAccess
 
@@ -33,6 +41,8 @@ module Types
     field :update_community, mutation: Mutations::UpdateCommunity
 
     field :update_item, mutation: Mutations::UpdateItem
+
+    field :update_ordering, mutation: Mutations::UpdateOrdering
 
     field :update_role, mutation: Mutations::UpdateRole
   end

@@ -8,7 +8,10 @@ module Schemas
     # @see Schemas::Instances::Apply
     class AlterVersion
       include Dry::Monads[:do, :result]
-      include WDPAPI::Deps[apply: "schemas.instances.apply"]
+      include WDPAPI::Deps[
+        apply: "schemas.instances.apply",
+        populate_orderings: "schemas.instances.populate_orderings"
+      ]
       include MonadicPersistence
 
       prepend TransactionalCall
@@ -20,7 +23,11 @@ module Schemas
       def call(schema_instance, schema_version, new_values)
         entity = yield alter_version! schema_instance, schema_version
 
-        apply.call entity, new_values
+        yield apply.call entity, new_values
+
+        yield populate_orderings.call entity
+
+        Success entity
       end
 
       private
@@ -29,6 +36,8 @@ module Schemas
       # @param [SchemaVersion] schema_version
       def alter_version!(schema_instance, schema_version)
         schema_instance.schema_version = schema_version
+
+        schema_instance.orderings.delete_all
 
         monadic_save schema_instance
       end

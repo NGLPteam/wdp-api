@@ -13,20 +13,42 @@ module HierarchicalEntity
 
     has_one :entity, as: :entity, dependent: :destroy
 
+    has_many :entity_links, as: :source, dependent: :destroy
+    has_many :incoming_links, as: :target, class_name: "EntityLink", dependent: :destroy
+
+    has_many :linked_entities, through: :entity_links, source: :target
+    has_many :linking_entities, through: :incoming_links, source: :source
+
     has_many :contextual_permissions, as: :hierarchical
     has_many :contextual_single_permissions, as: :hierarchical
 
     has_many :entity_breadcrumbs, -> { order(depth: :asc) }, as: :entity
     has_many :entity_breadcrumb_entries, class_name: "EntityBreadcrumb", as: :crumb
 
+    has_many :orderings, dependent: :destroy, as: :entity
+
+    has_many :ordering_entries, dependent: :destroy, as: :entity
+
+    has_many :parent_orderings, through: :ordering_entries, source: :ordering
+
     scope :sans_thumbnail, -> { where(arel_json_get(:thumbnail_data, :storage).eq(nil)) }
+
+    scope :filtered_by_schema_version, ->(schemas) { where(schema_version: SchemaVersion.filtered_by(schemas)) }
 
     before_validation :inherit_hierarchical_parent!
 
     after_validation :set_temporary_auth_path!, on: :create
     after_validation :maybe_update_auth_path!, on: :update
 
+    after_create :populate_initial_orderings!
+
     after_save :track_parent_changes!
+
+    after_save :sync_entity!
+
+    after_save :maintain_links!
+
+    after_save :refresh_orderings!
   end
 
   # @return [String]
@@ -81,8 +103,6 @@ module HierarchicalEntity
     id
   end
 
-  alias entity_id hierarchical_id
-
   # @abstract
   def hierarchical_parent
     # :nocov:
@@ -99,6 +119,51 @@ module HierarchicalEntity
   end
 
   alias entity_type hierarchical_type
+
+  # @see Links::Connect
+  # @param [HierarchicalEntity] source
+  # @param [String] operator
+  # @return [Dry::Monads::Result]
+  def link_from!(source, operator:)
+    call_operation("links.connect", source, self, operator)
+  end
+
+  # @see Links::Connect
+  # @param [HierarchicalEntity] target
+  # @param [String] operator
+  # @return [Dry::Monads::Result]
+  def link_to!(target, operator:)
+    call_operation("links.connect", self, target, operator)
+  end
+
+  def maintain_links
+    call_operation("links.maintain", self)
+  end
+
+  def maintain_links!
+    maintain_links.value!
+  end
+
+  # @see Schemas::Instances::PopulateOrderings
+  # @return [Dry::Monads::Result]
+  def populate_orderings!
+    call_operation("schemas.instances.populate_orderings", self)
+  end
+
+  # @return [void]
+  def populate_initial_orderings!
+    populate_orderings!.value!
+  end
+
+  # @see Schemas::Instances::RefreshOrderings
+  # @return [Dry::Monads::Result]
+  def refresh_orderings
+    call_operation("schemas.instances.refresh_orderings", self)
+  end
+
+  def refresh_orderings!
+    refresh_orderings.value!
+  end
 
   def top_level?
     kind_of?(Community) || (respond_to?(:root?) && root?)
@@ -147,8 +212,6 @@ module HierarchicalEntity
     super
 
     update_column :auth_path, derive_auth_path
-
-    sync_entity!
   end
 
   # @!scope private
@@ -161,7 +224,10 @@ module HierarchicalEntity
 
   # @return [Hash]
   def to_entity_tuple
-    slice(:entity_id, :entity_type, :hierarchical_id, :hierarchical_type, :auth_path, :system_slug).merge(scope: entity_scope)
+    slice(
+      :entity_type, :hierarchical_id, :hierarchical_type, :schema_version_id,
+      :auth_path, :system_slug, :created_at, :updated_at
+    ).merge(entity_id: id, scope: entity_scope)
   end
 
   def saved_change_to_contextual_parent?
