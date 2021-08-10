@@ -6,6 +6,7 @@ module Types
     implements Types::HierarchicalEntryType
     implements Types::ContributableType
     implements Types::HasSchemaPropertiesType
+    implements Types::AttachableType
 
     use_direct_connection_and_edge!
 
