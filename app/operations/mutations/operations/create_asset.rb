@@ -5,21 +5,12 @@ module Mutations
     class CreateAsset
       include MutationOperations::Base
 
-      def call(entity:, attachment_url:, mime_type:, filename: File.basename(attachment_url), **args)
+      def call(entity:, attachment:, **args)
         authorize entity, :create_assets?
 
         attributes = args.compact
 
-        id = File.basename(attachment_url)
-
-        attributes[:attachment] = {
-          id: id,
-          storage: :cache,
-          metadata: {
-            filename: filename,
-            mime_type: mime_type
-          }
-        }
+        attributes[:attachment] = attachment
 
         asset = entity.assets.new attributes
 
