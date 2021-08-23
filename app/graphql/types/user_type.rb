@@ -25,5 +25,7 @@ module Types
       description: "Can this user upload anything at all?",
       method: :has_any_upload_access?
 
+    field :upload_token, String, null: true,
+      description: "If a user has any upload access, this token will allow them to do so."
   end
 end

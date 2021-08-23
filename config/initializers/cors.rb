@@ -2,7 +2,7 @@
 
 module CORSHelper
   METHODS = %i[get post patch put delete options head].freeze
-  S3MP_HEADERS = %w[Authorization Content-Type x-amz-content-sha256 x-amz-date Uppy-Auth-Token].freeze
+  S3MP_HEADERS = %w[Authorization Content-Type x-amz-content-sha256 x-amz-date Upload-Token].freeze
   S3MP_EXPOSED = %w[ETag].freeze
   TUS_EXPOSED = %w[
     Location

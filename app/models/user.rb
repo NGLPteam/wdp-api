@@ -63,6 +63,12 @@ class User < ApplicationRecord
     self.allowed_actions = global_access_control_list.allowed_actions
   end
 
+  # @!attribute [r] upload_token
+  # @return [String]
+  def upload_token
+    call_operation("uploads.encode_token", self).value_or(nil)
+  end
+
   class << self
     def arel_has_role(name)
       Arel::Nodes.build_quoted(name).eq(Arel::Nodes::NamedFunction.new("ANY", [arel_table[:roles]]))
