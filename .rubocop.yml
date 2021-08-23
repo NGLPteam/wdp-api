@@ -130,8 +130,7 @@ Metrics/ModuleLength:
   Enabled: false
 
 Metrics/ParameterLists:
-  Exclude:
-    - "spec/**/*.rb"
+  Enabled: false
 
 Naming/AccessorMethodName:
   Enabled: false

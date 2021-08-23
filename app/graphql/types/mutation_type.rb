@@ -20,7 +20,13 @@ module Types
 
     field :create_ordering, mutation: Mutations::CreateOrdering
 
+    field :create_organization_contributor, mutation: Mutations::CreateOrganizationContributor
+
+    field :create_person_contributor, mutation: Mutations::CreatePersonContributor
+
     field :create_role, mutation: Mutations::CreateRole
+
+    field :destroy_contributor, mutation: Mutations::DestroyContributor
 
     field :destroy_ordering, mutation: Mutations::DestroyOrdering
 
@@ -43,6 +49,10 @@ module Types
     field :update_item, mutation: Mutations::UpdateItem
 
     field :update_ordering, mutation: Mutations::UpdateOrdering
+
+    field :update_organization_contributor, mutation: Mutations::UpdateOrganizationContributor
+
+    field :update_person_contributor, mutation: Mutations::UpdatePersonContributor
 
     field :update_role, mutation: Mutations::UpdateRole
   end

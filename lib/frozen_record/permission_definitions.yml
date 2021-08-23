@@ -55,6 +55,18 @@
 - path: communities.delete
   kind: global
   inheritance: []
+- path: contributors.read
+  kind: global
+  inheritance: []
+- path: contributors.create
+  kind: global
+  inheritance: []
+- path: contributors.update
+  kind: global
+  inheritance: []
+- path: contributors.delete
+  kind: global
+  inheritance: []
 - path: users.read
   kind: global
   inheritance: []
