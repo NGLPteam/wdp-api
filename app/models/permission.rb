@@ -6,6 +6,8 @@
 #
 # @see Permissions::Sync
 class Permission < ApplicationRecord
+  pg_enum! :kind, as: "permission_kind"
+
   has_many :role_permissions, dependent: :destroy, inverse_of: :permission
   has_many :roles, through: :role_permissions
 
@@ -16,6 +18,13 @@ class Permission < ApplicationRecord
       actions.flatten!
 
       for_path(actions).ids
+    end
+
+    # @return [ActiveRecord::Relation<Permission>]
+    def matching(*patterns)
+      patterns.flatten!
+
+      where arel_ltree_matches_one_or_any(arel_table[:path], patterns)
     end
   end
 end

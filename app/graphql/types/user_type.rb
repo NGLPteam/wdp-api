@@ -12,14 +12,18 @@ module Types
     field :username, String, null: true
     field :name, String, null: true
 
-    field :global_admin, Boolean, null: false
 
     field :communities, resolver: Resolvers::AccessibleCommunityResolver
     field :collections, resolver: Resolvers::AccessibleCollectionResolver
     field :items, resolver: Resolvers::AccessibleItemResolver
+    field :global_admin, Boolean, null: false,
+      description: "Does this user have access to administer the entire instance?",
+      method: :has_global_admin_access?
 
-    def global_admin
-      object.has_global_admin_access?
-    end
+
+    field :upload_access, Boolean, null: false,
+      description: "Can this user upload anything at all?",
+      method: :has_any_upload_access?
+
   end
 end

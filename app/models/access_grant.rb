@@ -59,6 +59,13 @@ class AccessGrant < ApplicationRecord
       where(accessible: accessible, subject: subject).first_or_initialize
     end
 
+    # @return [ActiveRecord::Relation<AccessGrant>]
+    def matching_permissions(*patterns)
+      inner_scope = unscoped.joins(:permissions).merge(Permission.contextual.matching(*patterns))
+
+      where(id: inner_scope.select(:id))
+    end
+
     # Uses an `ltree @> ltree` operation to check if the entity is contained by this access grant.
     #
     # @param [HierarchicalEntity, #auth_path] entity
@@ -74,6 +81,15 @@ class AccessGrant < ApplicationRecord
 
     def with_allowed_action?(**options)
       with_allowed_action(**options).exists?
+    end
+
+    # @return [ActiveRecord::Relation<AccessGrant>]
+    def with_asset_creation
+      matching_permissions "*.assets.create"
+    end
+
+    def with_asset_creation?
+      with_asset_creation.exists?
     end
   end
 end

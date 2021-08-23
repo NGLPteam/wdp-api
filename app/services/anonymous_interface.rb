@@ -33,8 +33,16 @@ module AnonymousInterface
     false
   end
 
+  def has_any_upload_access?
+    false
+  end
+
   def id
     "ANONYMOUS"
+  end
+
+  def name
+    "Anonymous User"
   end
 
   def present?

@@ -49,6 +49,10 @@ class User < ApplicationRecord
     has_role? :global_admin
   end
 
+  def has_any_upload_access?
+    has_global_admin_access? || has_granted_asset_creation?
+  end
+
   def system_slug_id
     keycloak_id
   end

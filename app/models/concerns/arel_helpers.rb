@@ -14,6 +14,8 @@ module ArelHelpers
 
   TEXT_ARRAY = ActiveRecord::ConnectionAdapters::PostgreSQL::OID::Array.new(ActiveRecord::Type::Text.new).freeze
 
+  MANY_ARRAY = AppTypes::Array.constrained(min_size: 2)
+
   class_methods do
     def arel_ltree_contains(left, right)
       arel_infix "@>", arel_attrify(left), arel_quote(right)
@@ -21,6 +23,21 @@ module ArelHelpers
 
     def arel_ltree_matches(left, right)
       arel_infix ?~, arel_attrify(left), arel_quote(right)
+    end
+
+    def arel_ltree_matches_any_query(attribute, *queries)
+      arel_infix(??, arel_attrify(attribute), arel_encode_lquery_array(*queries))
+    end
+
+    def arel_ltree_matches_one_or_any(left, right)
+      case right
+      when MANY_ARRAY
+        arel_ltree_matches_any_query left, *right
+      when Array
+        arel_ltree_matches left, right.first
+      else
+        arel_ltree_matches left, right
+      end
     end
 
     def arel_json_contains(attribute, **values)
@@ -53,10 +70,6 @@ module ArelHelpers
 
     def arel_json_cast_property(attribute, key, type)
       arel_cast(arel_json_get_as_text(attribute, key), type)
-    end
-
-    def arel_ltree_matches_any_query(attribute, *queries)
-      arel_infix(??, arel_attrify(attribute), arel_encode_lquery_array(*queries))
     end
 
     def arel_as(left, right)
