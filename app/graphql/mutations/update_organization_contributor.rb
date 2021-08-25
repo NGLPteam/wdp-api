@@ -9,7 +9,7 @@ module Mutations
     argument :contributor_id, ID, loads: Types::OrganizationContributorType, required: true
 
     argument :email, String, required: false, description: "An email associated with the contributor"
-    argument :url, String, required: false, description: "The position the community occupies in the list"
+    argument :url, String, required: false, description: "A url associated with the contributor"
     argument :bio, String, required: false, description: "A summary of the contributor"
 
     argument :legal_name, String, required: false

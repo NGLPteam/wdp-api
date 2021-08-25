@@ -9,7 +9,7 @@ module Mutations
     argument :identifier, String, required: true, description: "A unique identifier for the contributor"
 
     argument :email, String, required: false, description: "An email associated with the contributor"
-    argument :url, String, required: false, description: "The position the community occupies in the list"
+    argument :url, String, required: false, description: "A url associated with the contributor"
     argument :bio, String, required: false, description: "A summary of the contributor"
 
     argument :given_name, String, required: false
