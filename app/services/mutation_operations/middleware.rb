@@ -7,7 +7,6 @@ module MutationOperations
     include Dry::Effects::Handler.CurrentTime
     include Dry::Effects::Handler.Resolve
     include Dry::Effects::Handler.State(:graphql_response)
-    include Dry::Effects::Handler.State(:local_context)
     include Dry::Effects::Handler.Interrupt(:throw_invalid, as: :catch_invalid)
     include Dry::Effects::Handler.Interrupt(:throw_unauthorized, as: :catch_unauthorized)
     include Dry::Monads[:result]
@@ -18,6 +17,11 @@ module MutationOperations
     option :now, AppTypes.Interface(:call), default: proc { proc { Time.current } }
     option :mutation, AppTypes.Instance(Mutations::BaseMutation).optional, optional: true
     option :operation_name, AppTypes::String.optional
+    option :attribute_names, AppTypes::Array.of(AppTypes::String)
+    option :error_compiler, AppTypes.Instance(MutationOperations::ErrorCompiler),
+      default: proc {
+        MutationOperations::ErrorCompiler.new attribute_names: attribute_names
+      }
 
     # @param [#call] operation
     # @param [Array] args
@@ -60,7 +64,7 @@ module MutationOperations
     private
 
     def base_response
-      { errors: [] }.with_indifferent_access
+      { errors: [], global_errors: [], attribute_errors: {} }.with_indifferent_access
     end
 
     def base_local_context
@@ -68,7 +72,7 @@ module MutationOperations
     end
 
     def strip_response_for_invalid(response)
-      response.slice(:halt_code, :errors, :schema_errors)
+      response.slice(:halt_code, :errors, :schema_errors, :global_errors, :attribute_errors)
     end
 
     def current_user
@@ -77,7 +81,9 @@ module MutationOperations
 
     def dependency_injections
       {
+        attribute_names: attribute_names,
         current_user: current_user,
+        error_compiler: error_compiler,
         graphql_context: context,
         local_context: base_local_context,
       }

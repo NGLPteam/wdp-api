@@ -9,5 +9,9 @@ module Types
       description "The storage that contains the input."
     end
     argument :metadata, Types::UploadedFileMetadataInputType, required: false
+
+    def prepare
+      to_h
+    end
   end
 end

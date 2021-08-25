@@ -14,5 +14,9 @@ module Types
       an initial asset with the correct kind.
       TEXT
     end
+
+    def prepare
+      to_h
+    end
   end
 end

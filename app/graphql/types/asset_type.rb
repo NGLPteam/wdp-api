@@ -3,6 +3,8 @@
 module Types
   module AssetType
     include Types::BaseInterface
+    include GraphQL::Types::Relay::NodeBehaviors
+    include Types::Sluggable
 
     description "A generic asset type, implemented by all the more specific kinds"
 

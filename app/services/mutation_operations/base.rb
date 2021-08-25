@@ -13,6 +13,8 @@ module MutationOperations
       include Dry::Effects.Resolve(:current_user)
       include Dry::Effects.Resolve(:graphql_context)
       include Dry::Effects.Resolve(:local_context)
+      include Dry::Effects.Resolve(:attribute_names)
+      include Dry::Effects.Resolve(:error_compiler)
       include Dry::Effects.State(:graphql_response)
       include Dry::Effects.Interrupt(:throw_invalid)
       include Dry::Effects.Interrupt(:throw_unauthorized)
@@ -51,18 +53,44 @@ module MutationOperations
 
     # @param [String] message
     # @param [String] code
-    # @param [String] path
+    # @param [String, String[]] path
     # @param [Hash] extensions
     # @return [void]
     def add_error!(message, code: nil, path: nil)
-      error = { message: message, code: code, path: path }.compact
+      error = error_compiler.call(message, code: code, path: path)
 
       graphql_response[:errors] << error
+
+      if error.global?
+        graphql_response[:global_errors] << error.to_global_error
+      else
+        graphql_response[:attribute_errors].then do |errors|
+          key = error.attribute_error_key
+
+          errors[key] ||= []
+
+          errors[key] << error.message
+        end
+      end
+    end
+
+    # @param [String] message
+    # @return [void]
+    def add_global_error!(message, type: "$global")
+      error = error_compiler.global message
+
+      graphql_response[:errors] << error
+
+      graphql_response[:global_errors] << error.to_global_error
     end
 
     # @return [void]
     def halt_if_errors!
-      throw_invalid if graphql_response[:errors].any?
+      throw_invalid if has_errors?
+    end
+
+    def has_errors?
+      graphql_response[:errors].any? || graphql_response[:global_errors].any? || graphql_response[:attribute_errors].any?
     end
 
     # @abstract

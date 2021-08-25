@@ -10,37 +10,41 @@ class HierarchicalEntityPolicy < ApplicationPolicy
   end
 
   def show?
-    admin_or_grid_has? :read
+    has_admin_or_permission? :read
   end
 
   alias index? show?
 
   def create?
-    admin_or_grid_has? :create
+    has_admin_or_permission? :create
   end
 
   def update?
-    admin_or_grid_has? :update
+    has_admin_or_permission? :update
   end
 
   def destroy?
-    admin_or_grid_has? :delete
+    has_admin_or_permission? :delete
   end
 
   def manage_access?
-    admin_or_grid_has? :manage_access
+    has_admin_or_permission? :manage_access
   end
 
-  # @!scope private
-  # @param [#to_s] name
-  # @see Roles::PermissionGrid#[]
-  def has_grid?(name)
-    @grid[name]
+  def read_assets?
+    has_admin_or_asset_permission?(:read)
   end
 
-  # @todo scoped asset permissions
   def create_assets?
-    true
+    has_admin_or_asset_permission?(:create)
+  end
+
+  def update_assets?
+    has_admin_or_asset_permission?(:update)
+  end
+
+  def destroy_assets?
+    has_admin_or_asset_permission?(:delete)
   end
 
   def create_collections?
@@ -55,7 +59,21 @@ class HierarchicalEntityPolicy < ApplicationPolicy
     has_hierarchical_scoped_permission? :items, :create
   end
 
-  # @!scope private
+  # @api private
+  # @param [#to_s] name
+  # @see Roles::PermissionGrid#[]
+  def has_grid?(name)
+    @grid[name]
+  end
+
+  # @api private
+  # @param [#to_s] name
+  # @see Roles::PermissionGrid#[]
+  def has_asset_grid?(name)
+    @grid.assets[name]
+  end
+
+  # @api private
   # @param [#to_s] scope_name e.g. "collections", "items"
   # @param [#to_s] permission_name e.g. "read", "create"
   def has_hierarchical_scoped_permission?(scope_name, permission_name)
@@ -66,12 +84,20 @@ class HierarchicalEntityPolicy < ApplicationPolicy
 
   private
 
-  def admin_or_grid_has?(name)
+  def has_admin_or_permission?(name)
     return false if user.anonymous?
 
     return true if user.has_global_admin_access?
 
     has_grid? name
+  end
+
+  def has_admin_or_asset_permission?(name)
+    return false if user.anonymous?
+
+    return true if user.has_global_admin_access?
+
+    has_asset_grid? name
   end
 
   def grid_for(user, record)
