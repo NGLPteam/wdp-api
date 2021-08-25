@@ -5,7 +5,7 @@ module PostgresEnums
 
   POSTGRES_ENUM_PATTERN = /
   (?<stmt>CREATE\s+TYPE\s+(?:"?(?<schema>\w+)"?\.)"?(?<enum>\S+)"?\s+AS\s+ENUM\s+\((?<values>[^)]+?)\))
-  /xms.freeze
+  /xm.freeze
 
   class << self
     # @!scope private

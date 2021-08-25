@@ -78,8 +78,8 @@ module Schemas
       PATTERN = /\A
       (?:#{STATIC_KEYS})
       |
-      (?:props\.(?:[^\.]+)(?:\.[^\.]+)?)
-      \z/xms.freeze
+      (?:props\.(?:[^.]+)(?:\.[^.]+)?)
+      \z/x.freeze
 
       namespace :props do
         register ?* do

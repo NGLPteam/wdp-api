@@ -6,7 +6,7 @@ module Types
 
     SCHEMA_SLUG_PATTERN = /
     \A(?:[a-z_]+):(?:[a-z_]+)(?::[^:]+)?\z
-    /xms.freeze
+    /x.freeze
 
     class << self
       def coerce_input(input_value, context)
