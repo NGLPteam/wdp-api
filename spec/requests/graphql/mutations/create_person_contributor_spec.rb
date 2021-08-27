@@ -4,7 +4,6 @@ RSpec.describe Mutations::CreatePersonContributor, type: :request do
   context "as an admin" do
     let(:token) { token_helper.build_token has_global_admin: true }
 
-    let!(:identifier) { SecureRandom.uuid }
     let!(:url) { Faker::Internet.url }
     let!(:bio) { Faker::Lorem.paragraphs(number: 4).join("\n") }
 
@@ -25,7 +24,6 @@ RSpec.describe Mutations::CreatePersonContributor, type: :request do
 
     let!(:mutation_input) do
       {
-        identifier: identifier,
         url: url,
         bio: bio,
         links: links,

@@ -8,8 +8,6 @@ module Mutations
 
     field :contributor, Types::OrganizationContributorType, null: true, description: "The created organization"
 
-    argument :identifier, String, required: true, description: "A unique identifier for the contributor"
-
     performs_operation! "mutations.operations.create_organization_contributor"
   end
 end

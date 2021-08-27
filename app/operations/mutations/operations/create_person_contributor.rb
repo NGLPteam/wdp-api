@@ -12,6 +12,8 @@ module Mutations
 
         authorize contributor, :create?
 
+        contributor.identifier = SecureRandom.uuid
+
         attributes = args.compact
 
         contributor.assign_attributes attributes
