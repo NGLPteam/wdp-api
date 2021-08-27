@@ -5,7 +5,7 @@ source "https://rubygems.org"
 ruby "2.7.3"
 
 # Rails / database
-gem "rails", "~> 6.1.3.2"
+gem "rails", "~> 6.1.4"
 gem "pg", "~> 1.2.3"
 gem "activerecord-pg_enum"
 gem "closure_tree", "~> 7.2.0"
