@@ -6,5 +6,7 @@ module Contributors
 
     attribute :legal_name, :string
     attribute :location, :string
+
+    validates :legal_name, presence: true
   end
 end

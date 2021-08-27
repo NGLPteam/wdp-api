@@ -46,4 +46,6 @@ en:
     errors:
       linked_to_parent: "cannot be linked to its parent"
       linked_to_itself: "cannot be linked to itself"
+      must_be_email: "must be an email"
       must_be_entity: "must be an entity"
+      must_be_url: "must be a valid HTTP URL"

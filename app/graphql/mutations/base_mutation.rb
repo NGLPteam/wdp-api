@@ -50,6 +50,19 @@ module Mutations
         @attribute_names ||= arguments.values.map(&:attribute_names).reduce(&:+)
       end
 
+      def clearable_attachment!(attachment_name, prefix: "clear", **options, &block)
+        full_name = [prefix, attachment_name].compact.join(?_).to_sym
+
+        options[:required] = false
+        options[:default_value] = false
+
+        options[:description] ||= <<~TEXT.strip_heredoc
+        If set to true, this will clear the attachment #{attachment_name} on this model.
+        TEXT
+
+        argument full_name, GraphQL::Types::Boolean, **options, &block
+      end
+
       # @!attribute [r] error_compiler
       # @return [MutationOperations::ErrorCompiler]
       def error_compiler

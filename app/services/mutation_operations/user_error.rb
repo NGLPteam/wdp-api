@@ -5,7 +5,7 @@ module MutationOperations
   class UserError < AppTypes::FlexibleStruct
     attribute :message, AppTypes::String
     attribute :code, AppTypes::Coercible::String.optional
-    attribute :path, AppTypes::StringList
+    attribute :path, AppTypes::AttributePath
     attribute :attribute_path, AppTypes::String
     attribute :global, AppTypes::Bool
 

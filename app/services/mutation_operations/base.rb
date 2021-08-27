@@ -5,6 +5,7 @@ module MutationOperations
     extend ActiveSupport::Concern
 
     include Graphql::PunditHelpers
+    include MutationOperations::Contracts
 
     included do
       extend ActiveModel::Callbacks
@@ -20,7 +21,7 @@ module MutationOperations
       include Dry::Effects.Interrupt(:throw_unauthorized)
       include Dry::Monads[:result, :validated, :list]
 
-      define_model_callbacks :prepare, :validation, :execution
+      define_model_callbacks :prepare, :contracts, :validation, :execution
     end
 
     # @api private
@@ -33,6 +34,10 @@ module MutationOperations
       end
 
       run_callbacks :validation do
+        run_callbacks :contracts do
+          check_contracts!(**args)
+        end
+
         validate!(**args)
       end
 
@@ -56,8 +61,8 @@ module MutationOperations
     # @param [String, String[]] path
     # @param [Hash] extensions
     # @return [void]
-    def add_error!(message, code: nil, path: nil)
-      error = error_compiler.call(message, code: code, path: path)
+    def add_error!(message, code: nil, path: nil, force_attribute: false)
+      error = error_compiler.call(message, code: code, path: path, force_attribute: force_attribute)
 
       graphql_response[:errors] << error
 

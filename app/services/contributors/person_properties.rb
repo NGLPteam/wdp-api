@@ -8,5 +8,7 @@ module Contributors
     attribute :family_name, :string
     attribute :title, :string
     attribute :affiliation, :string
+
+    validates :given_name, :family_name, presence: true
   end
 end

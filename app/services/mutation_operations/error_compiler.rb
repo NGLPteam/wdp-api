@@ -14,7 +14,7 @@ module MutationOperations
     # @param [String, #to_s, nil] code
     # @param [<String, #to_s>, nil] path
     # @return [MutationOperations::UserError]
-    def call(message, code: nil, path: nil)
+    def call(message, code: nil, path: nil, force_attribute: false)
       path = normalize_path.call path
 
       attribute_path = path.join(?.)
@@ -24,7 +24,7 @@ module MutationOperations
         code: code,
         path: path,
         attribute_path: attribute_path,
-        global: !attribute_path.in?(attribute_names)
+        global: force_attribute ? false : !attribute_path.in?(attribute_names)
       )
 
       return error

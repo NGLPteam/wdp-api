@@ -9,11 +9,13 @@ module Mutations
       BASE = %w[$base].freeze
 
       # @param [#to_s, String, <String>, nil] path
-      # @return [<String>]
+      # @return [<String>, nil]
       def call(path)
+        return BASE if path.nil?
+
         fetch_or_store path do
-          AppTypes::CoercibleStringList[path].map do |part|
-            part.camelize(:lower)
+          AppTypes::AttributePath[path].map do |part|
+            part.kind_of?(Integer) ? part : part.camelize(:lower)
           end.presence || BASE
         end
       end

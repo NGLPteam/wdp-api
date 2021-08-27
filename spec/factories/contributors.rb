@@ -51,5 +51,11 @@ FactoryBot.define do
         }
       end
     end
+
+    trait :with_image do
+      image do
+        Rails.root.join("spec", "data", "lorempixel.jpg").open
+      end
+    end
   end
 end

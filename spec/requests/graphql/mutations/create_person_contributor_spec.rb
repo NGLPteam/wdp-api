@@ -60,6 +60,12 @@ RSpec.describe Mutations::CreatePersonContributor, type: :request do
           errors {
             message
           }
+
+          attributeErrors {
+            messages
+            path
+            type
+          }
         }
       }
       GRAPHQL
@@ -71,6 +77,32 @@ RSpec.describe Mutations::CreatePersonContributor, type: :request do
       end.to change(Contributor, :count).by(1)
 
       expect_graphql_response_data expected_shape
+    end
+
+    context "with an invalid link" do
+      let(:links) do
+        [{ title: "Some Link", url: "bad://link" }]
+      end
+
+      let!(:expected_shape) do
+        {
+          createPersonContributor: {
+            contributor: be_blank,
+
+            attributeErrors: [
+              path: "links.0.url", messages: [/url/i]
+            ]
+          }
+        }
+      end
+
+      it "does not create the contributor" do
+        expect do
+          make_graphql_request! query, token: token, variables: graphql_variables
+        end.to keep_the_same(Contributor, :count)
+
+        expect_graphql_response_data expected_shape
+      end
     end
   end
 end

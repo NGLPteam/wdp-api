@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class Contributor < ApplicationRecord
+  include ImageUploader::Attachment.new(:image)
+
   pg_enum! :kind, as: "contributor_kind"
 
   attribute :links, Contributors::Link.to_array_type
@@ -15,6 +17,8 @@ class Contributor < ApplicationRecord
   scope :by_kind, ->(kind) { where(kind: kind) }
 
   validates :identifier, :kind, presence: true
+
+  validates :properties, store_model: true
 
   def graphql_node_type
     organization? ? Types::OrganizationContributorType : Types::PersonContributorType

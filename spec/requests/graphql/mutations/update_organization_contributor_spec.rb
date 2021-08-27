@@ -40,6 +40,12 @@ RSpec.describe Mutations::UpdateOrganizationContributor, type: :request do
           contributor {
             legalName
           }
+
+          attributeErrors {
+            path
+            type
+            messages
+          }
         }
       }
       GRAPHQL
@@ -51,6 +57,52 @@ RSpec.describe Mutations::UpdateOrganizationContributor, type: :request do
       end.to change { contributor.reload.properties.organization.legal_name }.from(old_value).to(new_value)
 
       expect_graphql_response_data expected_shape
+    end
+
+    context "when clearing and uploading an image at the same time" do
+      let!(:contributor) { FactoryBot.create :contributor, :organization, :with_image }
+
+      let!(:uploaded_file) do
+        Rails.root.join("spec", "data", "lorempixel.jpg").open "r+" do |f|
+          f.binmode
+
+          Shrine.upload(f, :cache)
+        end
+      end
+
+      let(:image) do
+        uploaded_file.as_json.merge(storage: "CACHE").deep_transform_keys do |k|
+          k.to_s.camelize(:lower)
+        end.tap do |h|
+          h["metadata"].delete "size"
+        end
+      end
+
+      let(:mutation_input) do
+        super().merge({ clearImage: true, image: image })
+      end
+
+      let!(:expected_shape) do
+        {
+          updateOrganizationContributor: {
+            contributor: nil,
+            attributeErrors: [
+              {
+                path: "clearImage",
+                messages: ["cannot be set while uploading a new image"]
+              }
+            ]
+          }
+        }
+      end
+
+      it "does nothing" do
+        expect do
+          make_graphql_request! query, token: token, variables: graphql_variables
+        end.to(keep_the_same { contributor.image.id })
+
+        expect_graphql_response_data expected_shape
+      end
     end
   end
 end

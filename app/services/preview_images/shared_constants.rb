@@ -17,7 +17,9 @@ module PreviewImages
 
     FormatName = AppTypes::Coercible::Symbol.enum(*FORMATS.map(&:to_sym))
 
-    Attacher = AppTypes.Instance(EntityImageUploader::Attacher) | AppTypes.Instance(PreviewUploader::Attacher)
-    UploadedFile = AppTypes.Instance(EntityImageUploader::UploadedFile) | AppTypes.Instance(PreviewUploader::UploadedFile)
+    Attacher = AppTypes.Instance(EntityImageUploader::Attacher) | AppTypes.Instance(PreviewUploader::Attacher) | AppTypes.Instance(ImageUploader::Attacher)
+    UploadedFile = AppTypes.Instance(EntityImageUploader::UploadedFile) |
+                   AppTypes.Instance(PreviewUploader::UploadedFile) |
+                   AppTypes.Instance(ImageUploader::UploadedFile)
   end
 end

@@ -10,10 +10,14 @@ RSpec.describe Mutations::UpdatePersonContributor, type: :request do
 
     let!(:new_value) { Faker::Lorem.unique.sentence }
 
+    let(:clear_image) { false }
+
     let!(:mutation_input) do
       {
         contributorId: contributor.to_encoded_id,
         givenName: new_value,
+        familyName: contributor.properties.person.family_name,
+        clearImage: clear_image,
       }
     end
 
@@ -40,6 +44,10 @@ RSpec.describe Mutations::UpdatePersonContributor, type: :request do
           contributor {
             givenName
           }
+
+          errors {
+            message
+          }
         }
       }
       GRAPHQL
@@ -51,6 +59,32 @@ RSpec.describe Mutations::UpdatePersonContributor, type: :request do
       end.to change { contributor.reload.properties.person.given_name }.from(old_value).to(new_value)
 
       expect_graphql_response_data expected_shape
+    end
+
+    context "when clearing an image" do
+      let!(:contributor) { FactoryBot.create :contributor, :person, :with_image }
+
+      let(:clear_image) { true }
+
+      it "removes the image" do
+        expect do
+          make_graphql_request! query, token: token, variables: graphql_variables
+        end.to change { contributor.reload.image.present? }.from(true).to(false)
+      end
+    end
+
+    context "when sending image: nil with an existing image" do
+      let!(:contributor) { FactoryBot.create :contributor, :person, :with_image }
+
+      let(:mutation_input) do
+        super().merge(image: nil)
+      end
+
+      it "keeps the image" do
+        expect do
+          make_graphql_request! query, token: token, variables: graphql_variables
+        end.to(keep_the_same { contributor.reload.image })
+      end
     end
   end
 end

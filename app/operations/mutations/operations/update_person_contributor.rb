@@ -5,7 +5,9 @@ module Mutations
     class UpdatePersonContributor
       include MutationOperations::Base
 
-      def call(contributor:, links: [], given_name: nil, family_name: nil, title: nil, affiliation: nil, **args)
+      use_contract! :person_contributor
+
+      def call(contributor:, links: [], clear_image: false, image: nil, given_name: nil, family_name: nil, title: nil, affiliation: nil, **args)
         authorize contributor, :update?
 
         attributes = args.compact
@@ -13,6 +15,12 @@ module Mutations
         contributor.assign_attributes attributes
 
         contributor.links = Array(links).map(&:to_h)
+
+        if image.present?
+          contributor.image = image
+        elsif clear_image
+          contributor.image = nil
+        end
 
         properties = {
           given_name: given_name,

@@ -19,6 +19,8 @@ module AppTypes
 
   CoercibleStringList = AppTypes::Coercible::Array.of(AppTypes::Coercible::String)
 
+  AttributePath = AppTypes::Array.of(AppTypes::Integer | AppTypes::Coercible::String)
+
   JWTIssuer = (AppTypes::String | StringList).optional
 
   ContributorKind = AppTypes::Coercible::Symbol.enum(:organization, :person)

@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "base64"
+require "i18n"
 require "dry/core/equalizer"
 require "dry/core/memoizable"
 require "dry/matcher/result_matcher"
@@ -14,6 +15,13 @@ require "sidekiq/api"
 require_relative Rails.root.join("lib", "global_types", "array_types")
 require_relative Rails.root.join("lib", "global_types", "indifferent_hash")
 require_relative Rails.root.join("lib", "global_types", "semantic_version")
+
+I18n.backend.eager_load!
+
+[Dry::Schema, Dry::Validation::Contract].each do |lib|
+  lib.config.messages.backend = :i18n
+  lib.config.messages.load_paths << Rails.root.join("config", "locales", "en.yml").realpath
+end
 
 Dry::Schema.load_extensions :hints
 Dry::Schema.load_extensions :info
