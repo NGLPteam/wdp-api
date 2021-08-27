@@ -8,30 +8,9 @@ module Shared
     # @param [:png, :webp] format
     # @return [String, nil]
     def call(derivative_name, format: :png, attachment_name: nil)
-      text = [attachment_name, derivative_name].compact.join(" ").presence || "preview fallback"
+      uri = "/images/#{StyleName[derivative_name]}.#{FormatName[format]}"
 
-      size = size_for derivative_name
-
-      options = {
-        category: "abstract",
-        is_gray: true,
-        size: size,
-        text: text
-      }
-
-      Faker::LoremPixel.image options
-    end
-
-    private
-
-    def size_for(derivative_name)
-      name = derivative_name.to_sym if derivative_name.present?
-
-      DIMENSIONS.fetch name do
-        DIMENSIONS.fetch :medium
-      end.then do |(width, height)|
-        "#{width}x#{height}"
-      end
+      URI.join(LocationsConfig.api, uri).to_s
     end
   end
 end

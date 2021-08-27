@@ -5,14 +5,18 @@ module Entities
     include Dry::Monads[:do, :result]
     include MonadicPersistence
 
-    ORIGINAL_SIZE = "1000x1000"
+    DEFAULT_IMAGE = Rails.root.join("public", "images", "large.png")
 
     def call(entity)
       return Success(entity) if entity.thumbnail.present?
 
-      entity.thumbnail_remote_url = Faker::LoremPixel.image size: ORIGINAL_SIZE
+      DEFAULT_IMAGE.open "r+" do |f|
+        f.binmode
 
-      monadic_save entity
+        entity.thumbnail = f
+
+        monadic_save entity
+      end
     end
   end
 end

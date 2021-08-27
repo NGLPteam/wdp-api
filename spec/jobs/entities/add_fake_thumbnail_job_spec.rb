@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 RSpec.describe Entities::AddFakeThumbnailJob, type: :job do
-  include_context "stubs lorempixel"
-
   let!(:collection) { FactoryBot.create :collection }
 
   it "works with an Entity" do
