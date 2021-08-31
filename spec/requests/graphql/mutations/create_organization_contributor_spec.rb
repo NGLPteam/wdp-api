@@ -115,20 +115,8 @@ RSpec.describe Mutations::CreateOrganizationContributor, type: :request do
     end
 
     context "with an upload" do
-      let!(:uploaded_file) do
-        Rails.root.join("spec", "data", "lorempixel.jpg").open "r+" do |f|
-          f.binmode
-
-          Shrine.upload(f, :cache)
-        end
-      end
-
       let(:image) do
-        uploaded_file.as_json.merge(storage: "CACHE").deep_transform_keys do |k|
-          k.to_s.camelize(:lower)
-        end.tap do |h|
-          h["metadata"].delete "size"
-        end
+        graphql_upload_from "spec", "data", "lorempixel.jpg"
       end
 
       let!(:expected_shape) do

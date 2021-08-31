@@ -14,7 +14,7 @@ module Contributors
       end
 
       rule(:clear_image, :image) do
-        key(:clear_image).failure("cannot be set while uploading a new image") if key?(:clear_image) && key?(:image) && values[:image].present?
+        key(:clear_image).failure("cannot be set while uploading a new image") if values[:clear_image].present? && values[:image].present?
       end
     end
   end

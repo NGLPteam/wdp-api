@@ -68,7 +68,7 @@ RSpec.describe Mutations::UpdatePersonContributor, type: :request do
 
       it "removes the image" do
         expect do
-          make_graphql_request! query, token: token, variables: graphql_variables
+          make_default_request!
         end.to change { contributor.reload.image.present? }.from(true).to(false)
       end
     end
@@ -82,8 +82,24 @@ RSpec.describe Mutations::UpdatePersonContributor, type: :request do
 
       it "keeps the image" do
         expect do
-          make_graphql_request! query, token: token, variables: graphql_variables
+          make_default_request!
         end.to(keep_the_same { contributor.reload.image })
+      end
+    end
+
+    context "when uploading an image" do
+      let(:image) do
+        graphql_upload_from "spec", "data", "lorempixel.jpg"
+      end
+
+      let(:mutation_input) do
+        super().merge(image: image)
+      end
+
+      it "adds the image" do
+        expect do
+          make_default_request!
+        end.to change { contributor.reload.image.present? }.from(false).to(true)
       end
     end
   end

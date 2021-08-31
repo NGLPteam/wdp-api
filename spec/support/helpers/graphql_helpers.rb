@@ -60,6 +60,26 @@ module TestHelpers
       def have_typename(name)
         include_json __typename: name
       end
+
+      def graphql_upload_from(*path_parts, **options)
+        uploaded_file = Rails.root.join(*path_parts).open "r+" do |f|
+          f.binmode
+
+          Shrine.upload(f, :cache)
+        end
+
+        to_graphql_upload uploaded_file, **options
+      end
+
+      # @param [Shrine::UploadedFile] uploaded_file
+      # @return [Hash]
+      def to_graphql_upload(uploaded_file, storage: "CACHE")
+        uploaded_file.as_json.merge(storage: storage).deep_transform_keys do |k|
+          k.to_s.camelize(:lower)
+        end.tap do |h|
+          h["metadata"].delete "size"
+        end
+      end
     end
   end
 end

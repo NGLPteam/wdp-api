@@ -14,6 +14,7 @@ RSpec.describe Mutations::UpdateOrganizationContributor, type: :request do
       {
         contributorId: contributor.to_encoded_id,
         legalName: new_value,
+        clearImage: false,
       }
     end
 
@@ -62,20 +63,8 @@ RSpec.describe Mutations::UpdateOrganizationContributor, type: :request do
     context "when clearing and uploading an image at the same time" do
       let!(:contributor) { FactoryBot.create :contributor, :organization, :with_image }
 
-      let!(:uploaded_file) do
-        Rails.root.join("spec", "data", "lorempixel.jpg").open "r+" do |f|
-          f.binmode
-
-          Shrine.upload(f, :cache)
-        end
-      end
-
       let(:image) do
-        uploaded_file.as_json.merge(storage: "CACHE").deep_transform_keys do |k|
-          k.to_s.camelize(:lower)
-        end.tap do |h|
-          h["metadata"].delete "size"
-        end
+        graphql_upload_from "spec", "data", "lorempixel.jpg"
       end
 
       let(:mutation_input) do
