@@ -20,8 +20,25 @@ class Contributor < ApplicationRecord
 
   validates :properties, store_model: true
 
+  delegate :display_name, to: :properties
+
+  def fetch_property(property_name, from: nil)
+    property_source(from)&.public_send(property_name)
+  end
+
   def graphql_node_type
     organization? ? Types::OrganizationContributorType : Types::PersonContributorType
+  end
+
+  def property_source(from)
+    case from
+    when /organization/
+      properties&.organization
+    when /person/
+      properties&.person
+    else
+      self
+    end
   end
 
   def system_slug

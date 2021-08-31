@@ -10,5 +10,10 @@ module Contributors
     attribute :affiliation, :string
 
     validates :given_name, :family_name, presence: true
+
+    # @return [String]
+    def display_name
+      [given_name, family_name].map(&:presence).compact.join(" ").strip.presence
+    end
   end
 end

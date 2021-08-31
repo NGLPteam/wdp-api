@@ -26,6 +26,8 @@ module Types
 
     field :create_role, mutation: Mutations::CreateRole
 
+    field :destroy_contribution, mutation: Mutations::DestroyContribution
+
     field :destroy_contributor, mutation: Mutations::DestroyContributor
 
     field :destroy_ordering, mutation: Mutations::DestroyOrdering
@@ -46,6 +48,8 @@ module Types
 
     field :update_community, mutation: Mutations::UpdateCommunity
 
+    field :update_contribution, mutation: Mutations::UpdateContribution
+
     field :update_item, mutation: Mutations::UpdateItem
 
     field :update_ordering, mutation: Mutations::UpdateOrdering
@@ -55,5 +59,7 @@ module Types
     field :update_person_contributor, mutation: Mutations::UpdatePersonContributor
 
     field :update_role, mutation: Mutations::UpdateRole
+
+    field :upsert_contribution, mutation: Mutations::UpsertContribution
   end
 end

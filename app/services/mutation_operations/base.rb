@@ -132,6 +132,20 @@ module MutationOperations
       end
     end
 
+    def upsert_model!(klass, attributes, unique_by:, attach_to: nil)
+      result = klass.upsert attributes, returning: unique_by, unique_by: unique_by
+
+      conditions = unique_by.each_with_object({}) do |key, h|
+        h[key.to_sym] = result.first[key.to_s]
+      end
+
+      model = klass.find_by! conditions
+
+      attach! attach_to, model if attach_to.present?
+
+      return model
+    end
+
     def validate_model!(model, validation_context: nil)
       if model.valid? validation_context
         model

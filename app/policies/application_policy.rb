@@ -93,6 +93,16 @@ class ApplicationPolicy
     has_admin? || has_allowed_action?(action_name)
   end
 
+  def authorized?(record, query, admin_always_allowed: true, pundit_user: @user)
+    return true if admin_always_allowed && pundit_user.has_global_admin_access?
+
+    return false if record.blank?
+
+    policy = Pundit.policy!(pundit_user, record)
+
+    policy.public_send query
+  end
+
   class Scope
     attr_reader :user, :scope
 

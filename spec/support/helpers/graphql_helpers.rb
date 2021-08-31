@@ -24,7 +24,7 @@ module TestHelpers
 
         post "/graphql", params: params.to_json, headers: headers
 
-        expect(graphql_response(:errors)).to be_blank if no_top_level_errors
+        expect(Array(graphql_response(:errors))).to eq([]) if no_top_level_errors
       end
 
       def expect_graphql_response_data(shape, **options)

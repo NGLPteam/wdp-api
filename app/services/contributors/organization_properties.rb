@@ -8,5 +8,9 @@ module Contributors
     attribute :location, :string
 
     validates :legal_name, presence: true
+
+    def display_name
+      legal_name
+    end
   end
 end

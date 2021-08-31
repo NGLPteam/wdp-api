@@ -3,6 +3,7 @@
 class Collection < ApplicationRecord
   include Accessible
   include Attachable
+  include Contributable
   include HasSchemaDefinition
   include HasSystemSlug
   include HierarchicalEntity

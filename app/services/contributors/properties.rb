@@ -11,5 +11,13 @@ module Contributors
 
     validates :organization, store_model: true, if: :organization?
     validates :person, store_model: true, if: :person?
+
+    # @return [String, nil]
+    def display_name
+      case parent.kind
+      when "organization" then organization&.display_name
+      when "person" then person&.display_name
+      end.to_s
+    end
   end
 end
