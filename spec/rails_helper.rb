@@ -42,6 +42,10 @@ ActiveJob::Base.queue_adapter = :test
 
 Shrine.logger = Logger.new("/dev/null")
 
+require_relative "./system/test_container"
+
+WDPAPI::TestContainer.finalize!
+
 # Requires supporting ruby files with custom matchers and macros, etc, in
 # spec/support/ and its subdirectories. Files matching `spec/**/*_spec.rb` are
 # run as spec files by default. This means that files in spec/support that end

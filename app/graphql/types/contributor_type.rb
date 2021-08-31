@@ -21,8 +21,8 @@ module Types
     end
 
     field :links, [Types::ContributorLinkType, { null: true }], null: false
-    field :collection_contributions, Types::CollectionContributionType.connection_type, null: false
-    field :item_contributions, Types::ItemContributionType.connection_type, null: false
+    field :collection_contributions, resolver: Resolvers::CollectionContributionResolver, connection: true
+    field :item_contributions, resolver: Resolvers::ItemContributionResolver, connection: true
 
     # @return [PreviewImages::TopLevelPreview]
     def image

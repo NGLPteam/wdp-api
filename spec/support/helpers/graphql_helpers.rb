@@ -3,7 +3,11 @@
 module TestHelpers
   module GraphQLRequest
     module ExampleHelpers
-      def make_graphql_request!(query, token: nil, variables: {})
+      def make_default_request!(variables: graphql_variables, token: self.token, **options)
+        make_graphql_request! query, token: token, variables: variables, **options
+      end
+
+      def make_graphql_request!(query, token: nil, variables: {}, camelize_variables: true, no_top_level_errors: true)
         headers = {}
 
         headers["ACCEPT"] = "application/json"
@@ -14,19 +18,35 @@ module TestHelpers
           query: query&.strip_heredoc&.strip
         }
 
-        params[:variables] = variables if variables.present?
+        params[:variables] = encode_graphql_variables variables, camelize: camelize_variables
+
+        params.compact!
 
         post "/graphql", params: params.to_json, headers: headers
+
+        expect(graphql_response(:errors)).to be_blank if no_top_level_errors
       end
 
-      def expect_graphql_response_data(shape)
-        expect(graphql_response).to include_json data: shape
+      def expect_graphql_response_data(shape, **options)
+        expect(graphql_response(**options)).to include_json data: shape
       end
 
-      def graphql_response(*path)
-        response.parsed_body.with_indifferent_access.then do |res|
+      def graphql_response(*path, decamelize: false)
+        parsed_graphql_response(decamelize: decamelize).then do |res|
           path.present? ? res.dig(*path) : res
         end
+      end
+
+      def parsed_graphql_response(decamelize: false)
+        WDPAPI::TestContainer["requests.response_transformer"].call(response.parsed_body, decamelize: decamelize)
+      end
+
+      def encode_graphql_variables(variables, camelize: true)
+        return nil if variables.blank?
+
+        return variables unless camelize
+
+        WDPAPI::TestContainer["requests.variable_transformer"].call(variables)
       end
 
       def generate_slug_for(uuid)
@@ -44,6 +64,15 @@ module TestHelpers
   end
 end
 
+RSpec.shared_context "with default graphql context" do
+  let(:query) { "" }
+
+  let(:token) { nil }
+
+  let(:graphql_variables) { {} }
+end
+
 RSpec.configure do |config|
   config.include TestHelpers::GraphQLRequest::ExampleHelpers, type: :request
+  config.include_context "with default graphql context", type: :request
 end

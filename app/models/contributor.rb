@@ -23,4 +23,8 @@ class Contributor < ApplicationRecord
   def graphql_node_type
     organization? ? Types::OrganizationContributorType : Types::PersonContributorType
   end
+
+  def system_slug
+    call_operation("slugs.encode_id", id).value_or(nil)
+  end
 end

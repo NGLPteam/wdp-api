@@ -9,6 +9,17 @@ module Resolvers
 
     type Types::ItemContributionType.connection_type, null: false
 
-    scope { object.contributions }
+    scope do
+      case object
+      when Contributor
+        object.item_contributions
+      when Item
+        object.contributions
+      else
+        # :nocov:
+        ItemContribution.none
+        # :nocov:
+      end
+    end
   end
 end
