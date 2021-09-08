@@ -6,6 +6,8 @@ module Mutations
       include MutationOperations::Base
       include AssignsSchemaVersion
 
+      use_contract! :community_input
+
       def call(**args)
         community = Community.new
 

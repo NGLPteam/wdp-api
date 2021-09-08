@@ -23,7 +23,8 @@ RSpec.describe Mutations::CreateCommunity, type: :request do
         createCommunity: {
           community: {
             title: title
-          }
+          },
+          attributeErrors: be_blank
         }
       }
     end
@@ -34,6 +35,11 @@ RSpec.describe Mutations::CreateCommunity, type: :request do
         createCommunity(input: $input) {
           community {
             title
+          }
+
+          attributeErrors {
+            path
+            messages
           }
         }
       }
@@ -46,6 +52,29 @@ RSpec.describe Mutations::CreateCommunity, type: :request do
       end.to change(Community, :count).by(1)
 
       expect_graphql_response_data expected_shape
+    end
+
+    context "with a blank title" do
+      let(:title) { "" }
+
+      let!(:expected_shape) do
+        {
+          createCommunity: {
+            community: be_blank,
+            attributeErrors: [
+              { path: "title", messages: ["must be filled"] },
+            ]
+          }
+        }
+      end
+
+      it "fails to create a community" do
+        expect do
+          make_graphql_request! query, token: token, variables: graphql_variables
+        end.to keep_the_same(Community, :count)
+
+        expect_graphql_response_data expected_shape
+      end
     end
   end
 end
