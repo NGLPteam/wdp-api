@@ -20,7 +20,7 @@ module Types
       description "An optional image associated with the contributor"
     end
 
-    field :links, [Types::ContributorLinkType, { null: true }], null: false
+    field :links, [Types::ContributorLinkType, { null: false }], null: false
     field :collection_contributions, resolver: Resolvers::CollectionContributionResolver, connection: true
     field :item_contributions, resolver: Resolvers::ItemContributionResolver, connection: true
 
@@ -29,6 +29,11 @@ module Types
       image_alt = "preview for contributor"
 
       PreviewImages::TopLevelPreview.new object.image_attacher, alt: image_alt
+    end
+
+    # @return [<Contributors::Link>]
+    def links
+      Array(object.links).compact
     end
   end
 end
