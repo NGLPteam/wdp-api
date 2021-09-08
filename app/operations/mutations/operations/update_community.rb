@@ -5,6 +5,8 @@ module Mutations
     class UpdateCommunity
       include MutationOperations::Base
 
+      use_contract! :community_input
+
       def call(community:, **args)
         authorize community, :update?
 
