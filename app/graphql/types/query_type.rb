@@ -66,12 +66,18 @@ module Types
       description "List all schema versions"
     end
 
-    field :viewer, Types::UserType, null: false,
-      description: "The currently authenticated user. AKA: you"
+    field :user, Types::UserType, null: true do
+      description "Look up a user by slug"
+
+      argument :slug, Types::SlugType, required: true
+    end
 
     field :users, resolver: Resolvers::UserResolver do
       description "A list of all users in the system"
     end
+
+    field :viewer, Types::UserType, null: false,
+      description: "The currently authenticated user. AKA: you"
 
     def collection(slug:)
       Loaders::RecordLoader.for(Collection).load(slug)
@@ -99,6 +105,12 @@ module Types
     # @return [SchemaVersion, nil]
     def schema_version(slug:)
       WDPAPI::Container["schemas.versions.find"].call(slug).value_or(nil)
+    end
+
+    # @param [String] slug
+    # @return [User, nil]
+    def user(slug:)
+      Loaders::RecordLoader.for(User, column: :keycloak_id).load(slug)
     end
 
     def viewer
