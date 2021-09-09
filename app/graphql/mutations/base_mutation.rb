@@ -71,8 +71,9 @@ module Mutations
 
       # @param [String] name
       # @return [void]
-      def performs_operation!(name, standard_mutation: true)
+      def performs_operation!(name, standard_mutation: true, destroy: false)
         standard_mutation! if standard_mutation
+        destroy_mutation! if destroy
 
         class_eval <<~RUBY, __FILE__, __LINE__ + 1
         def resolve(**args)
@@ -84,6 +85,10 @@ module Mutations
       # @return [void]
       def standard_mutation!
         payload_type.implements Types::StandardMutationPayload
+      end
+
+      def destroy_mutation!
+        payload_type.implements Types::DestroyMutationPayloadType
       end
     end
   end
