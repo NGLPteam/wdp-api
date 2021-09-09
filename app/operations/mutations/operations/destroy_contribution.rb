@@ -7,13 +7,7 @@ module Mutations
 
       # @param [CollectionContribution, ItemContribution] contribution
       def call(contribution:)
-        authorize contribution, :destroy?
-
-        graphql_response[:destroyed] = false
-
-        destroy_model! contribution
-
-        graphql_response[:destroyed] = true
+        destroy_model! contribution, auth: true
       end
     end
   end

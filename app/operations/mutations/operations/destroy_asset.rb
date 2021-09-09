@@ -6,11 +6,7 @@ module Mutations
       include MutationOperations::Base
 
       def call(asset:)
-        graphql_response[:destroyed] = false
-
-        authorize asset, :destroy?
-
-        destroy_model! asset
+        destroy_model! asset, auth: true
       end
     end
   end

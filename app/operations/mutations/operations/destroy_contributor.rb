@@ -6,13 +6,7 @@ module Mutations
       include MutationOperations::Base
 
       def call(contributor:)
-        authorize contributor, :destroy?
-
-        graphql_response[:destroyed] = false
-
-        destroy_model! contributor
-
-        graphql_response[:destroyed] = true
+        destroy_model! contributor, auth: true
       end
     end
   end
