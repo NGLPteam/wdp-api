@@ -6,10 +6,8 @@ module Mutations
     Destroy an asset by ID.
     TEXT
 
-    field :destroyed, Boolean, null: true
-
     argument :asset_id, ID, loads: Types::AnyAssetType, description: "The ID for the asset to destroy", required: true
 
-    performs_operation! "mutations.operations.destroy_asset"
+    performs_operation! "mutations.operations.destroy_asset", destroy: true
   end
 end

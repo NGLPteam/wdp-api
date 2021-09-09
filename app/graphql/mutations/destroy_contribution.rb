@@ -6,10 +6,8 @@ module Mutations
     Destroy a Contribution by ID.
     TEXT
 
-    field :destroyed, Boolean, null: true
-
     argument :contribution_id, ID, loads: Types::ContributionType, required: true
 
-    performs_operation! "mutations.operations.destroy_contribution"
+    performs_operation! "mutations.operations.destroy_contribution", destroy: true
   end
 end

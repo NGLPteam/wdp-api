@@ -6,11 +6,10 @@ module Mutations
     Destroy (or disable a schema-inherited) ordering.
     TEXT
 
-    field :destroyed, Boolean, null: true
     field :disabled, Boolean, null: true
 
     argument :ordering_id, ID, loads: Types::OrderingType, required: true
 
-    performs_operation! "mutations.operations.destroy_ordering"
+    performs_operation! "mutations.operations.destroy_ordering", destroy: true
   end
 end
