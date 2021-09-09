@@ -166,8 +166,10 @@ module MutationOperations
       throw_invalid
     end
 
-    def destroy_model!(model)
+    def destroy_model!(model, auth: false)
       graphql_response[:destroyed] = false
+
+      authorize model, :destroy? if auth
 
       if model.destroy
         graphql_response[:destroyed] = true
