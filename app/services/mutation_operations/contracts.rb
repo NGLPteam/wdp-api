@@ -8,6 +8,12 @@ module MutationOperations
       delegate :applicable_contracts, to: :class
     end
 
+    BASE_PATH = %i[base].freeze
+
+    GLOBAL_PATH = %i[$global].freeze
+
+    GLOBAL_PATHS = [GLOBAL_PATH, BASE_PATH].freeze
+
     # @api private
     # @return [void]
     def check_contracts!(**args)
@@ -25,7 +31,11 @@ module MutationOperations
       return true if result.success?
 
       result.errors.each do |error|
-        add_error! error.text, path: error.path, code: error.predicate, force_attribute: true
+        if error.path.in?(GLOBAL_PATHS)
+          add_global_error! error.text
+        else
+          add_error! error.text, path: error.path, code: error.predicate, force_attribute: true
+        end
       end
     end
 
