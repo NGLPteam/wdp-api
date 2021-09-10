@@ -22,6 +22,7 @@ RSpec.describe Mutations::DestroyCollection, type: :request do
       {
         destroyCollection: {
           destroyed: true,
+          destroyedId: a_kind_of(String),
           globalErrors: be_blank
         }
       }
@@ -32,6 +33,7 @@ RSpec.describe Mutations::DestroyCollection, type: :request do
       mutation destroyCollection($input: DestroyCollectionInput!) {
         destroyCollection(input: $input) {
           destroyed
+          destroyedId
 
           globalErrors { message }
         }
@@ -45,6 +47,13 @@ RSpec.describe Mutations::DestroyCollection, type: :request do
       end.to change(Collection, :count).by(-1)
 
       expect_graphql_response_data expected_shape
+
+      expect(
+        graphql_response(
+          :data, :destroy_collection, :destroyed_id,
+          decamelize: true
+        )
+      ).to be_an_encoded_id.of_a_deleted_model
     end
 
     context "when the collection has at least one subcollection" do
@@ -54,6 +63,7 @@ RSpec.describe Mutations::DestroyCollection, type: :request do
         {
           destroyCollection: {
             destroyed: be_blank,
+            destroyedId: be_blank,
             globalErrors: [
               { message: I18n.t("dry_validation.errors.destroy_collection_with_subcollections") }
             ]
@@ -77,6 +87,7 @@ RSpec.describe Mutations::DestroyCollection, type: :request do
         {
           destroyCollection: {
             destroyed: be_blank,
+            destroyedId: be_blank,
             globalErrors: [
               { message: I18n.t("dry_validation.errors.destroy_collection_with_items") }
             ]

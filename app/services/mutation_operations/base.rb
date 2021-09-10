@@ -171,8 +171,12 @@ module MutationOperations
 
       authorize model, :destroy? if auth
 
+      id = model.to_encoded_id
+
       if model.destroy
         graphql_response[:destroyed] = true
+
+        graphql_response[:destroyed_id] = id
       else
         invalid_model! model
       end
