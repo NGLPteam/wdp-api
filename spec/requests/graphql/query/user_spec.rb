@@ -6,6 +6,7 @@ RSpec.describe "Query.user", type: :request do
     query getUser($slug: Slug!) {
       user(slug: $slug) {
         name
+        slug
       }
     }
     GRAPHQL
@@ -30,7 +31,7 @@ RSpec.describe "Query.user", type: :request do
       it "has the right name" do
         make_default_request!
 
-        expect_graphql_response_data user: { name: user.name }
+        expect_graphql_response_data user: { name: user.name, slug: user.system_slug }
       end
     end
 
