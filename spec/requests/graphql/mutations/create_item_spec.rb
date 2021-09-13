@@ -5,7 +5,6 @@ RSpec.describe Mutations::CreateItem, type: :request do
     let(:token) { token_helper.build_token has_global_admin: true }
 
     let!(:title) { Faker::Lorem.sentence }
-    let!(:identifier) { Faker::Lorem.word }
     let!(:community) { FactoryBot.create :community }
 
     let!(:collection) { FactoryBot.create :collection, community: community }
@@ -18,7 +17,6 @@ RSpec.describe Mutations::CreateItem, type: :request do
       {
         parentId: parent.to_encoded_id,
         title: title,
-        identifier: identifier,
       }
     end
 
@@ -33,7 +31,6 @@ RSpec.describe Mutations::CreateItem, type: :request do
         createItem: {
           item: {
             title: title,
-            identifier: identifier,
             parent: { id: parent.to_encoded_id },
             collection: { id: collection.to_encoded_id },
             community: { id: community.to_encoded_id },
@@ -48,7 +45,6 @@ RSpec.describe Mutations::CreateItem, type: :request do
         createItem(input: $input) {
           item {
             title
-            identifier
             community { id }
             collection { id }
 

@@ -3,6 +3,7 @@
 class Item < ApplicationRecord
   include Accessible
   include Attachable
+  include AutoIdentifier
   include Contributable
   include HasSchemaDefinition
   include HasSystemSlug
