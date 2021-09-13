@@ -5,6 +5,7 @@ class Collection < ApplicationRecord
   include Attachable
   include AutoIdentifier
   include Contributable
+  include HasEntityVisibility
   include HasSchemaDefinition
   include HasSystemSlug
   include HierarchicalEntity

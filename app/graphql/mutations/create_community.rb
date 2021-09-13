@@ -10,6 +10,8 @@ module Mutations
     argument :position, Int, required: false, description: "The position the community occupies in the list"
     argument :schema_version_slug, String, required: false, default_value: "default:community:latest"
 
+    include Mutations::Shared::CreateEntityArguments
+
     performs_operation! "mutations.operations.create_community"
   end
 end

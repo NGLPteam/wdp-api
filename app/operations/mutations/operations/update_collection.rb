@@ -4,15 +4,14 @@ module Mutations
   module Operations
     class UpdateCollection
       include MutationOperations::Base
+      include MutationOperations::UpdatesEntity
 
-      def call(collection:, **args)
+      use_contract! :entity_visibility
+
+      def call(collection:, **attributes)
         authorize collection, :update?
 
-        attributes = args.compact
-
-        collection.assign_attributes attributes
-
-        persist_model! collection, attach_to: :collection
+        update_entity! collection, attributes
       end
     end
   end

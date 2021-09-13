@@ -13,6 +13,8 @@ module AppTypes
 
   Email = String.constrained(format: EMAIL_PATTERN)
 
+  EntityVisibility = Coercible::String.enum("visible", "hidden", "limited")
+
   IntList = AppTypes::Array.of(AppTypes::Integer)
 
   StringList = AppTypes::Array.of(AppTypes::String)

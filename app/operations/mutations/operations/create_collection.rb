@@ -6,10 +6,13 @@ module Mutations
       include MutationOperations::Base
       include AssignsSchemaVersion
 
+      use_contract! :entity_input
+      use_contract! :entity_visibility
+
       def call(parent:, **args)
         authorize parent, :create_collections?
 
-        attributes = args.slice(:title, :identifier)
+        attributes = args.without(:schema_version_slug)
 
         attributes[:schema_version] = fetch_found_schema_version!
 
