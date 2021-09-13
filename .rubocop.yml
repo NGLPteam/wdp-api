@@ -57,6 +57,10 @@ Layout/SpaceBeforeBrackets:
 Lint/AmbiguousAssignment:
   Enabled: true
 
+Lint/AmbiguousBlockAssociation:
+  Exclude:
+    - "spec/**/*.rb"
+
 Lint/DeprecatedConstants:
   Enabled: true
 
@@ -333,6 +337,9 @@ Style/RedundantFetchBlock:
   Enabled: false
 
 Style/RedundantReturn:
+  Enabled: false
+
+Style/SoleNestedConditional:
   Enabled: false
 
 Style/StringChars:
