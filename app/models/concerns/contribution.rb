@@ -3,6 +3,8 @@
 module Contribution
   extend ActiveSupport::Concern
 
+  include HasEphemeralSystemSlug
+
   included do
     attribute :metadata, Contributions::Metadata.to_type, default: proc { {} }
 

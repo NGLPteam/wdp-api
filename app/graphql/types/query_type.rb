@@ -16,6 +16,12 @@ module Types
       argument :slug, Types::SlugType, required: true
     end
 
+    field :collection_contribution, Types::CollectionContributionType, null: true do
+      description "Look up a collection contribution by slug"
+
+      argument :slug, Types::SlugType, required: true
+    end
+
     field :communities, resolver: Resolvers::CommunityResolver do
       description "List all communities"
     end
@@ -28,6 +34,12 @@ module Types
 
     field :item, Types::ItemType, null: true do
       description "Look up an item by slug"
+
+      argument :slug, Types::SlugType, required: true
+    end
+
+    field :item_contribution, Types::ItemContributionType, null: true do
+      description "Look up an item contribution by slug"
 
       argument :slug, Types::SlugType, required: true
     end
@@ -83,16 +95,24 @@ module Types
       Loaders::RecordLoader.for(Collection).load(slug)
     end
 
-    def contributor(slug:)
-      Loaders::RecordLoader.for(Contributor).load(slug)
+    def collection_contribution(slug:)
+      Loaders::RecordLoader.for(CollectionContribution).load(slug)
     end
 
     def community(slug:)
       Loaders::RecordLoader.for(Community).load(slug)
     end
 
+    def contributor(slug:)
+      Loaders::RecordLoader.for(Contributor).load(slug)
+    end
+
     def item(slug:)
       Loaders::RecordLoader.for(Item).load(slug)
+    end
+
+    def item_contribution(slug:)
+      Loaders::RecordLoader.for(ItemContribution).load(slug)
     end
 
     # @param [String] slug
