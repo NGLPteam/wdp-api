@@ -87,9 +87,9 @@ module HasSchemaDefinition
   # @api private
   # @return [void]
   def enforce_schema_kind!
-    return if schema_kind_matches?
+    return if schema_version_kind.blank? || schema_kind_matches?
 
-    errors.add :schema_version_id, "must be #{schema_kind}, got #{schema_version.kind}"
+    errors.add :schema_version_id, "must be a #{schema_kind}, got #{schema_version_kind}"
   end
 
   # @!attribute [r] schema_kind
