@@ -6,14 +6,14 @@ module Mutations
       include MutationOperations::Base
       include AssignsSchemaVersion
 
-      use_contract! :community_input
+      use_contract! :entity_input
 
       def call(**args)
         community = Community.new
 
         authorize community, :create?
 
-        attributes = args.slice(:title, :position).compact
+        attributes = args.without(:schema_version_slug)
 
         attributes[:schema_version] = fetch_found_schema_version!
 

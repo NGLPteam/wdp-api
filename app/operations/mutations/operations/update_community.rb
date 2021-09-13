@@ -4,17 +4,12 @@ module Mutations
   module Operations
     class UpdateCommunity
       include MutationOperations::Base
+      include MutationOperations::UpdatesEntity
 
-      use_contract! :community_input
-
-      def call(community:, **args)
+      def call(community:, **attributes)
         authorize community, :update?
 
-        attributes = args.slice(:title, :position).compact
-
-        community.assign_attributes attributes
-
-        persist_model! community, attach_to: :community
+        update_entity! community, attributes
       end
     end
   end

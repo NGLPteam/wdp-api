@@ -125,6 +125,17 @@ CREATE TYPE public.contributor_kind AS ENUM (
 
 
 --
+-- Name: entity_visibility; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.entity_visibility AS ENUM (
+    'visible',
+    'hidden',
+    'limited'
+);
+
+
+--
 -- Name: item_link_operator; Type: TYPE; Schema: public; Owner: -
 --
 
@@ -222,6 +233,22 @@ CREATE FUNCTION public._jsonb_auth_path_final(public.jsonb_auth_path_state[]) RE
 CREATE FUNCTION public.array_distinct(anyarray) RETURNS anyarray
     LANGUAGE sql IMMUTABLE
     AS $_$ SELECT array_agg(DISTINCT x) FILTER (WHERE x IS NOT NULL) FROM unnest($1) t(x); $_$;
+
+
+--
+-- Name: calculate_visibility_range(public.entity_visibility, timestamp with time zone, timestamp with time zone); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.calculate_visibility_range(public.entity_visibility, after timestamp with time zone, until timestamp with time zone) RETURNS tstzrange
+    LANGUAGE sql IMMUTABLE PARALLEL SAFE
+    AS $_$
+SELECT CASE
+WHEN $1 = 'limited' AND ($2 IS NOT NULL OR $3 IS NOT NULL)
+THEN tstzrange($2, $3, '[)')
+ELSE
+  NULL
+END;
+$_$;
 
 
 --
@@ -426,12 +453,16 @@ CREATE TABLE public.collections (
     thumbnail_data jsonb,
     properties jsonb,
     published_on date,
-    visible_after_at timestamp without time zone,
+    visible_after_at timestamp with time zone,
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     auth_path public.ltree NOT NULL,
     hierarchical_depth integer GENERATED ALWAYS AS (public.nlevel(auth_path)) STORED,
-    schema_version_id uuid NOT NULL
+    schema_version_id uuid NOT NULL,
+    visible_until_at timestamp with time zone,
+    hidden_at timestamp with time zone,
+    visibility public.entity_visibility DEFAULT 'visible'::public.entity_visibility NOT NULL,
+    visibility_range tstzrange GENERATED ALWAYS AS (public.calculate_visibility_range(visibility, visible_after_at, visible_until_at)) STORED
 );
 
 
@@ -714,12 +745,16 @@ CREATE TABLE public.items (
     thumbnail_data jsonb,
     properties jsonb,
     published_on date,
-    visible_after_at timestamp without time zone,
+    visible_after_at timestamp with time zone,
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     auth_path public.ltree NOT NULL,
     hierarchical_depth integer GENERATED ALWAYS AS (public.nlevel(auth_path)) STORED,
-    schema_version_id uuid NOT NULL
+    schema_version_id uuid NOT NULL,
+    visible_until_at timestamp with time zone,
+    hidden_at timestamp with time zone,
+    visibility public.entity_visibility DEFAULT 'visible'::public.entity_visibility NOT NULL,
+    visibility_range tstzrange GENERATED ALWAYS AS (public.calculate_visibility_range(visibility, visible_after_at, visible_until_at)) STORED
 );
 
 
@@ -1960,6 +1995,13 @@ CREATE UNIQUE INDEX index_collections_unique_identifier ON public.collections US
 
 
 --
+-- Name: index_collections_visibility_coverage; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_collections_visibility_coverage ON public.collections USING gist (visibility, visibility_range);
+
+
+--
 -- Name: index_communities_on_auth_path; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -2405,6 +2447,13 @@ CREATE INDEX index_items_on_visible_after_at ON public.items USING btree (visibl
 --
 
 CREATE UNIQUE INDEX index_items_unique_identifier ON public.items USING btree (identifier, collection_id, parent_id);
+
+
+--
+-- Name: index_items_visibility_coverage; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_items_visibility_coverage ON public.items USING gist (visibility, visibility_range);
 
 
 --
@@ -3933,6 +3982,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20210730170535'),
 ('20210730182534'),
 ('20210730183719'),
-('20210730191337');
+('20210730191337'),
+('20210913191623');
 
 

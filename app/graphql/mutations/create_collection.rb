@@ -13,6 +13,8 @@ module Mutations
     argument :title, String, required: true
     argument :schema_version_slug, String, required: false, default_value: "default:collection:latest"
 
+    include Mutations::Shared::CreateHierarchicalEntityArguments
+
     performs_operation! "mutations.operations.create_collection"
   end
 end

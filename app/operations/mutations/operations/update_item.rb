@@ -4,15 +4,14 @@ module Mutations
   module Operations
     class UpdateItem
       include MutationOperations::Base
+      include MutationOperations::UpdatesEntity
 
-      def call(item:, **args)
-        authorize item, :update_items?
+      use_contract! :entity_visibility
 
-        attributes = args.compact
+      def call(item:, **attributes)
+        authorize item, :update?
 
-        item.assign_attributes attributes
-
-        persist_model! item, attach_to: :item
+        update_entity! item, attributes
       end
     end
   end
