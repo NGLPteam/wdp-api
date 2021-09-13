@@ -36,5 +36,9 @@ module Types
 
     field :upload_token, String, null: true,
       description: "If a user has any upload access, this token will allow them to do so."
+
+    def slug
+      object.keycloak_id
+    end
   end
 end
