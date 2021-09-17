@@ -10,5 +10,15 @@ module SchematicReference
     scope :by_referrer, ->(referrer) { where(referrer: referrer) }
     scope :by_referent, ->(referent) { where(referent: referent) }
     scope :by_path, ->(path) { where(path: path) }
+    scope :to_prune, -> { preload(:referrer, :referent) }
+  end
+
+  # @return [void]
+  def prune_if_orphaned!
+    destroy! if orphaned?
+  end
+
+  def orphaned?
+    referrer.blank? || referent.blank?
   end
 end

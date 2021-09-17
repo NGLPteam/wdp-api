@@ -13,6 +13,8 @@ module HasSchemaDefinition
         each_with_object({}) do |ref, h|
           h[ref.path] ||= []
 
+          next if ref.referent.blank?
+
           h[ref.path] << ref.referent
         end
       end
@@ -22,6 +24,8 @@ module HasSchemaDefinition
       # @return [{ String => ApplicationRecord, nil }]
       def to_reference_map
         each_with_object({}) do |ref, h|
+          next if ref.referent.blank?
+
           h[ref.path] = ref.referent
         end
       end

@@ -4,6 +4,7 @@ class Asset < ApplicationRecord
   include GenericUploader::Attachment.new(:attachment)
   include GenericUploader::Attachment.new(:alternatives)
   include PreviewUploader::Attachment.new(:preview)
+  include SchematicReferent
 
   pg_enum! :kind, as: "asset_kind"
 

@@ -2,6 +2,7 @@
 
 class Contributor < ApplicationRecord
   include ImageUploader::Attachment.new(:image)
+  include SchematicReferent
 
   pg_enum! :kind, as: "contributor_kind"
 

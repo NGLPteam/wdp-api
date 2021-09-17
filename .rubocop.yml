@@ -151,6 +151,9 @@ Naming/PredicateName:
   NamePrefix:
     - is_
 
+Naming/VariableNumber:
+  Enabled: false
+
 Rails/ActiveRecordCallbacksOrder:
   Enabled: true
 
