@@ -7,6 +7,7 @@ module Types
     implements Types::ContributableType
     implements Types::HasSchemaPropertiesType
     implements Types::AttachableType
+    implements Types::SchemaInstanceType
 
     use_direct_connection_and_edge!
 

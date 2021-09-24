@@ -30,7 +30,13 @@ module MutationOperations
     # @return [void]
     def add_schema_errors!(result)
       result.errors.each do |error|
-        graphql_response[:schema_errors] << to_schema_error(error)
+        path = error.path.join(?.).presence
+
+        if path.blank? || /\Abase\z/.match(path)
+          add_global_error! error.text
+        else
+          graphql_response[:schema_errors] << to_schema_error(error)
+        end
       end
     end
 
@@ -40,8 +46,8 @@ module MutationOperations
     def to_schema_error(error)
       {}.tap do |h|
         h[:hint] = error.hint?
-        h[:path] = error.path.join(?.).presence
-        h[:base] = h[:path].blank? || /\Abase\z/.match?(h[:path])
+        h[:path] = error.path.join(?.)
+        h[:base] = false
         h[:message] = error.text
         h[:metadata] = error.meta
       end

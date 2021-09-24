@@ -5,6 +5,7 @@ module Types
     implements Types::EntityType
     implements Types::HasSchemaPropertiesType
     implements Types::AttachableType
+    implements Types::SchemaInstanceType
 
     description "A community of users"
 

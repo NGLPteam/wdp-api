@@ -14,4 +14,31 @@ module SchematicReferent
 
     scope :with_referent, -> { where(id: unscoped.with_collected_referent.or(unscoped.with_scalar_referent)) }
   end
+
+  # @return [{ Symbol => Object }]
+  def to_schematic_referent_option
+    {
+      label: to_schematic_referent_label,
+      value: to_schematic_referent_value
+    }.merge(to_schematic_referent_extra)
+  end
+
+  # @abstract
+  # @return [String]
+  def to_schematic_referent_label
+    raise NotImplementedError, "Must implement #{self.class}##{__method__}"
+  end
+
+  # @return [String]
+  def to_schematic_referent_value
+    to_encoded_id
+  end
+
+  # @abstract
+  # @return [Hash]
+  def to_schematic_referent_extra
+    {}.tap do |h|
+      h[:kind] = kind if respond_to?(:kind)
+    end
+  end
 end

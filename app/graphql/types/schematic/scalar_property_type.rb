@@ -7,8 +7,16 @@ module Types
 
       include SchemaPropertyType
 
-      field :label, String, null: true
-      field :required, Boolean, null: true
+      field :label, String, null: false
+      field :required, Boolean, null: false
+
+      def label
+        object.label.presence || object.path.titleize
+      end
+
+      def required
+        object.required.present?
+      end
     end
   end
 end

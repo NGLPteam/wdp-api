@@ -7,11 +7,12 @@ module Schemas
       include WDPAPI::Deps[to_context: "schemas.instances.read_property_context", to_reader: "schemas.properties.to_reader"]
 
       # @param [HasSchemaDefinition] schema_instance
+      # @param [Schemas::Properties::Context, nil] context
       # @return [<Schemas::Properties::Reader, Schemas::Properties::GroupReader>]
-      def call(schema_instance)
+      def call(schema_instance, context: nil)
         options = {}
 
-        options[:context] = yield to_context.call schema_instance
+        options[:context] = context.kind_of?(Schemas::Properties::Context) ? context : yield(to_context.call(schema_instance))
 
         results = schema_instance.schema_version.configuration.properties.map do |property|
           to_reader.call property, options

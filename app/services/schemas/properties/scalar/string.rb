@@ -10,6 +10,14 @@ module Schemas
         attribute :default, :string
 
         schema_type! :string
+
+        def add_to_rules!(context)
+          super
+
+          context.rule(full_path) do
+            key.failure(:filled?) if value.blank?
+          end
+        end
       end
     end
   end

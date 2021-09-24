@@ -5,12 +5,13 @@ module Types
     description "An error that stems from trying to apply an invalid schema value."
 
     field :base, Boolean, null: false,
-      description: "An error with the entire set of values"
+      description: "An error with the entire set of values",
+      deprecation_reason: "Not presently used: see globalErrors"
 
     field :hint, Boolean, null: false,
       description: "Whether this is a hint"
 
-    field :path, String, null: true,
+    field :path, String, null: false,
       description: "Which input value this error came from"
 
     field :message, String, null: false,

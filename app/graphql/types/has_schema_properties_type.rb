@@ -9,11 +9,6 @@ module Types
 
     # @see Schemas::Instances::ReadProperties
     def schema_properties
-      if object.kind_of?(HasSchemaDefinition)
-        Loaders::AssociationLoader.for(object.class, :schematic_collected_references).load(object)
-        Loaders::AssociationLoader.for(object.class, :schematic_scalar_references).load(object)
-      end
-
       object.read_properties.value_or([])
     end
   end

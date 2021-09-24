@@ -70,6 +70,10 @@ class Asset < ApplicationRecord
     save!
   end
 
+  def to_schematic_referent_label
+    name
+  end
+
   private
 
   # @return [void]

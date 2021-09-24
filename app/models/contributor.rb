@@ -45,4 +45,8 @@ class Contributor < ApplicationRecord
   def system_slug
     call_operation("slugs.encode_id", id).value_or(nil)
   end
+
+  def to_schematic_referent_label
+    display_name
+  end
 end

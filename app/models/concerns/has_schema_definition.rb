@@ -77,9 +77,18 @@ module HasSchemaDefinition
   end
 
   # @see Schemas::Instances::ReadProperties
+  # @param [Schemas::Properties::Context, nil] context
   # @return [<Schemas::Properties::Reader, Schemas::Properties::GroupReader>]
-  def read_properties
-    call_operation("schemas.instances.read_properties", self)
+  def read_properties(context: nil)
+    call_operation("schemas.instances.read_properties", self, context: context)
+  end
+
+  # @note For testing use only
+  # @api private
+  # @see Schemas::Instances::ReadPropertyContext
+  # @return [Schema::Properties::Context]
+  def read_property_context
+    call_operation("schemas.instances.read_property_context", self).value!
   end
 
   # @api private
