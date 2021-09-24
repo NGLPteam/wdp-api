@@ -58,7 +58,11 @@ module Types
       when Array then object.items.size
       when ActiveRecord::Relation
         # TODO: Use a GraphQL-batch loader for this
-        Pundit.policy_scope(context[:current_user], object.items.model).count
+        scope = Pundit.policy_scope(context[:current_user], object.items.model)
+
+        scope ||= object.items.model
+
+        scope.respond_to?(:count) ? scope.count : 0
       else
         object.items.size
       end
