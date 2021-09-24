@@ -10,6 +10,10 @@ module Resolvers
 
     # @return [void]
     def apply
+      resolver = options[:resolver]
+
+      max_page_size = resolver.has_max_page_size? ? resolver.max_page_size : MAX_PER_PAGE_SIZE
+
       field.argument :page, Integer, required: false do
         description "The page of edges/nodes to fetch"
 
@@ -23,7 +27,10 @@ module Resolvers
       field.argument :per_page, Integer, required: true, default_value: 25 do
         description "The amount of edges / nodes to fetch per page"
 
-        validates numericality: { greater_than_or_equal_to: 1, less_than_or_equal_to: MAX_PER_PAGE_SIZE }
+        validates numericality: {
+          greater_than_or_equal_to: 1,
+          less_than_or_equal_to: max_page_size,
+        }
       end
     end
 

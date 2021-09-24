@@ -10,6 +10,8 @@ module Resolvers
 
     type Types::AnyContributorType.connection_type, null: false
 
+    max_page_size 1000
+
     scope { object.present? ? object.contributors : Contributor.all }
 
     option :kind, type: Types::ContributorFilterKindType, default: "ALL"

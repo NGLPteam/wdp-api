@@ -5,7 +5,7 @@ module Resolvers
     extend ActiveSupport::Concern
 
     included do
-      extension Resolvers::PageNumberExtension
+      extension Resolvers::PageNumberExtension, resolver: self
     end
   end
 end
