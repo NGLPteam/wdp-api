@@ -16,6 +16,8 @@ module Types
       description "The role(s) that gave the permissions to access this resource, if any."
     end
 
+    field :assigned_users, resolver: Resolvers::AssignedUserResolver
+
     field :breadcrumbs, [Types::EntityBreadcrumbType], null: false do
       description "Previous entries in the hierarchy"
     end

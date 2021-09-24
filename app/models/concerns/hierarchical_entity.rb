@@ -22,6 +22,8 @@ module HierarchicalEntity
     has_many :contextual_permissions, as: :hierarchical
     has_many :contextual_single_permissions, as: :hierarchical
 
+    has_many :assigned_users, through: :contextual_permissions, source: :user
+
     has_many :entity_breadcrumbs, -> { order(depth: :asc) }, as: :entity
     has_many :entity_breadcrumb_entries, class_name: "EntityBreadcrumb", as: :crumb
 
