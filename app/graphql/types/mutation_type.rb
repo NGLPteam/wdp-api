@@ -34,6 +34,8 @@ module Types
 
     field :destroy_contributor, mutation: Mutations::DestroyContributor
 
+    field :destroy_entity_link, mutation: Mutations::DestroyEntityLink
+
     field :destroy_item, mutation: Mutations::DestroyItem
 
     field :destroy_ordering, mutation: Mutations::DestroyOrdering
