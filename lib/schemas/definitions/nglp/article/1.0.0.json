@@ -9,6 +9,7 @@
     { "path": "body", "type": "markdown", "required": true },
     {
       "path": "publisher",
+      "legend": "Publisher",
       "properties": [
         { "label": "Name", "path": "name", "type": "string", "required": true },
         { "label": "Email", "path": "email", "type": "email", "required": false },
