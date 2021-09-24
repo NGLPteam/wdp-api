@@ -28,3 +28,9 @@ spec/examples.txt
 
 /config/*.local.yml
 /config/credentials/local.*
+
+# Local env files
+/.env
+
+# IntelliJ/Rubymine settings
+/.idea
