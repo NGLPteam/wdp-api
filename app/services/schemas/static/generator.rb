@@ -91,6 +91,22 @@ module Schemas
         set! key, value
       end
 
+      def random_paragraph
+        Faker::Lorem.paragraph(sentence_count: 3..7, supplemental: true, random_sentences_to_add: 4)
+      end
+
+      def random_markdown(title: Faker::Lorem.sentence, subtitle: Faker::Lorem.sentence)
+        <<~TEXT.strip_heredoc.strip
+        # #{title}
+
+        #{random_paragraph}
+
+        ## #{subtitle}
+
+        #{random_paragraph}
+        TEXT
+      end
+
       # @api private
       # @param [Integer, Range<Integer>] count
       # @return [<String>]
