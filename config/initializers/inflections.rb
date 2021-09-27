@@ -15,6 +15,7 @@
 # These inflection rules are supported but not enabled by default:
 ActiveSupport::Inflector.inflections(:en) do |inflect|
   inflect.acronym "CRUD"
+  inflect.acronym "DOI"
   inflect.acronym "NGLP"
   inflect.acronym "PDF"
   inflect.acronym "WDPAPISchema"

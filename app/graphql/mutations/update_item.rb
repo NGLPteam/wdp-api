@@ -9,6 +9,7 @@ module Mutations
     argument :item_id, ID, loads: Types::ItemType, description: "The item to update", required: true
 
     include Mutations::Shared::UpdateHierarchicalEntityArguments
+    include Mutations::Shared::AcceptsDOIInput
 
     performs_operation! "mutations.operations.update_item"
   end
