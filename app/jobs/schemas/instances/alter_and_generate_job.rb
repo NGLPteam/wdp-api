@@ -6,7 +6,7 @@ module Schemas
       queue_as :maintenance
 
       # @param [HasSchemaDefinition] schema_instance
-      # @param [SchemaVersion] schema_version
+      # @param [SchemaVersion, String] schema_version (@see Schemas::Versions::Find)
       # @return [void]
       def perform(schema_instance, schema_version)
         schema_instance.alter_and_generate!(schema_version).value!

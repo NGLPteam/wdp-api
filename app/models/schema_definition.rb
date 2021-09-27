@@ -17,6 +17,7 @@ class SchemaDefinition < ApplicationRecord
 
   scope :builtin, -> { by_namespace(BUILTIN_NAMESPACES) }
   scope :custom, -> { where.not(namespace: BUILTIN_NAMESPACES) }
+  scope :non_default, -> { where.not(namespace: %w[default testing]) }
 
   validates :name, :identifier, :kind, :namespace, presence: true
 
