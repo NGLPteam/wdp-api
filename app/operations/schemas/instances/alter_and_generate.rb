@@ -10,6 +10,7 @@ module Schemas
       include Dry::Monads[:do, :result]
       include WDPAPI::Deps[
         apply_generated: "schemas.instances.apply_generated_properties",
+        find_version: "schemas.versions.find",
         populate_orderings: "schemas.instances.populate_orderings"
       ]
       include MonadicPersistence
@@ -34,7 +35,7 @@ module Schemas
       # @param [HasSchemaDefinition] schema_instance
       # @param [SchemaVersion] schema_version
       def alter_version!(schema_instance, schema_version)
-        schema_instance.schema_version = schema_version
+        schema_instance.schema_version = yield find_version.call schema_version
 
         schema_instance.orderings.delete_all
 
