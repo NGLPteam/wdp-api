@@ -61,3 +61,31 @@ bin/rubocop
 
 docker-compose exec web bin/rubocop
 ```
+
+## Seeding with sample data
+
+In a Rails console (`bin/console` locally, or `heroku run rails console` on staging):
+
+This will eventually be better-automated, but for now
+
+```ruby
+# One-time, as-needed tasks. These are idempotent and can be run repeatedly safely.
+Permissions::Sync.new.call
+Schemas::LoadDefault.new.call
+Schemas::Static::LoadDefinitions.new.call
+
+# Additive tasks:
+
+# One time, or to add even more contributors:
+Testing::ScaffoldContributors.new.call
+
+# Scaffolds roles, communities (10 by default), each with randomized collections & items
+# and test users (500 by default).
+Testing::ScaffoldSystem.new.call
+```
+
+To randomly assign a non-default schema to items:
+
+```ruby
+Schemas::Instances::RandomizeDefaultItemsJob.perform_later
+```
