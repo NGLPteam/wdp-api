@@ -18,6 +18,6 @@ class GenericUploader < Shrine
   end
 
   Attacher.validate do
-    validate_min_size 10.kilobytes
+    validate_max_size 5.gigabytes
   end
 end
