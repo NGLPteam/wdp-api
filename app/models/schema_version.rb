@@ -20,8 +20,11 @@ class SchemaVersion < ApplicationRecord
 
   scope :by_number, ->(number) { where(number: number) }
   scope :by_schema_definition, ->(schema_definition) { where(schema_definition: schema_definition) if schema_definition.present? }
+  scope :by_kind, ->(kind) { joins(:schema_definition).merge(SchemaDefinition.by_kind(kind)) }
 
   scope :current, -> { where(current: true) }
+
+  scope :in_default_order, -> { joins(:schema_definition).merge(SchemaDefinition.in_default_order).order(parsed: :desc) }
 
   delegate :collection?, :community?, :item?, :kind,
     :identifier, :namespace, :name,
@@ -30,6 +33,12 @@ class SchemaVersion < ApplicationRecord
   delegate :has_ordering?, :ordering_definition_for, to: :configuration, allow_nil: true
 
   validates :number, presence: true, uniqueness: { scope: :schema_definition }
+
+  # @!attribute [r] label
+  # @return [String]
+  def label
+    "#{name} v#{number}"
+  end
 
   def to_declaration
     slice(:id).merge(version: number.to_s).merge(schema_definition.to_declaration)

@@ -78,6 +78,10 @@ module Types
       description "List all schema versions"
     end
 
+    field :schema_version_options, resolver: Resolvers::SchemaVersionOptionResolver do
+      description "List all options for schema versions"
+    end
+
     field :user, Types::UserType, null: true do
       description "Look up a user by slug"
 

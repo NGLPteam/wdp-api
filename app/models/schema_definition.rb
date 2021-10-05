@@ -13,11 +13,14 @@ class SchemaDefinition < ApplicationRecord
 
   scope :by_namespace, ->(namespace) { where(namespace: namespace) }
   scope :by_identifier, ->(identifier) { where(identifier: identifier) }
+  scope :by_kind, ->(kind) { where(kind: kind) }
   scope :by_tuple, ->(namespace, identifier) { by_namespace(namespace).by_identifier(identifier) }
 
   scope :builtin, -> { by_namespace(BUILTIN_NAMESPACES) }
   scope :custom, -> { where.not(namespace: BUILTIN_NAMESPACES) }
   scope :non_default, -> { where.not(namespace: %w[default testing]) }
+
+  scope :in_default_order, -> { order(namespace: :asc, name: :asc) }
 
   validates :name, :identifier, :kind, :namespace, presence: true
 
