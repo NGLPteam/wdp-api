@@ -8,6 +8,14 @@ module Types
 
     field_class Types::BaseField
 
+    def call_operation(name, *args)
+      WDPAPI::Container[name].call(*args)
+    end
+
+    def call_operation!(name, *args)
+      call_operation(name, *args).value!
+    end
+
     class << self
       def use_direct_connection_and_edge!(
         base_name: graphql_name,

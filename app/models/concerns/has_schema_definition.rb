@@ -58,8 +58,15 @@ module HasSchemaDefinition
   # @param [SchemaVersion] schema_version
   # @param [Hash] new_values
   # @return [Dry::Monads::Result]
-  def alter_version!(schema_version, new_values)
-    call_operation("schemas.instances.alter_version", self, schema_version, new_values)
+  def alter_version!(schema_version, new_values, strategy: :apply)
+    call_operation("schemas.instances.alter_version", self, schema_version, new_values, strategy: strategy)
+  end
+
+  # @param [SchemaVersion] schema_version
+  # @param [Hash] new_values
+  # @return [Dry::Monads::Result]
+  def alter_version_only!(schema_version)
+    call_operation("schemas.instances.alter_version", self, schema_version, {}, strategy: :skip)
   end
 
   # @see Schemas::Instances::Apply
@@ -89,6 +96,12 @@ module HasSchemaDefinition
   # @return [Schema::Properties::Context]
   def read_property_context
     call_operation("schemas.instances.read_property_context", self).value!
+  end
+
+  # @see Schemas::Instances::Validate
+  # @return [Hash]
+  def validate_schema_properties(context: nil)
+    call_operation("schemas.instances.validate", self, context: context).value!
   end
 
   # @api private

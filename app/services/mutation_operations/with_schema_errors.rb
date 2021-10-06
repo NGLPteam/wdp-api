@@ -32,7 +32,7 @@ module MutationOperations
       result.errors.each do |error|
         path = error.path.join(?.).presence
 
-        if path.blank? || /\Abase\z/.match(path)
+        if path.blank? || /\Abase\z/.match?(path)
           add_global_error! error.text
         else
           graphql_response[:schema_errors] << to_schema_error(error)

@@ -13,6 +13,8 @@ RSpec.describe Mutations::AlterSchemaVersion, type: :request do
         "nglp:article:latest"
       end
 
+      let!(:strategy) { "APPLY" }
+
       let!(:property_values) do
         FactoryBot.create_list :contributor, 5, :person
 
@@ -24,6 +26,7 @@ RSpec.describe Mutations::AlterSchemaVersion, type: :request do
           entityId: entity.to_encoded_id,
           schemaVersionSlug: schema_version_slug,
           propertyValues: property_values,
+          strategy: strategy,
         }
       end
 
@@ -128,6 +131,35 @@ RSpec.describe Mutations::AlterSchemaVersion, type: :request do
           expect do
             make_graphql_request! query, token: token, variables: graphql_variables
           end.to execute_safely
+
+          expect_graphql_response_data expected_shape
+        end
+      end
+
+      context "when skipping property application" do
+        let!(:property_values) { {} }
+
+        let!(:strategy) { "SKIP" }
+
+        let!(:article_version) { SchemaVersion[schema_version_slug] }
+
+        let!(:expected_shape) do
+          {
+            alterSchemaVersion: {
+              entity: { id: entity.to_encoded_id },
+              item: {
+                id: entity.to_encoded_id,
+                schemaVersion: { id: article_version.to_encoded_id }
+              },
+              schemaErrors: be_blank
+            }
+          }
+        end
+
+        it "will alter the version without altering properties" do
+          expect do
+            make_graphql_request! query, token: token, variables: graphql_variables
+          end.to change { entity.reload.schema_version.system_slug }.from(schema_version.system_slug).to(article_version.system_slug)
 
           expect_graphql_response_data expected_shape
         end

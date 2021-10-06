@@ -20,6 +20,9 @@ module Types
     field :schema_version_slug, String, null: false,
       description: "The slug for the current schema version"
 
+    field :validity, Types::SchemaInstanceValidationType, null: true,
+      description: "Information about the validity of the schema instance"
+
     # @return [<Hash>]
     def assets
       instance = object.instance
@@ -44,6 +47,16 @@ module Types
     # @return [String]
     def schema_version_slug
       object.instance.schema_version.system_slug
+    end
+
+    # @see Schemas::Instances::Validate
+    # @return [Hash, nil]
+    def validity
+      instance = object.instance
+
+      return nil if instance.blank?
+
+      call_operation! "schemas.instances.validate", instance, context: object
     end
   end
 end

@@ -12,13 +12,22 @@ module Mutations
     field :schema_errors, [Types::SchemaValueErrorType, { null: false } ], null: false
 
     argument :entity_id, ID, loads: Types::AnyEntityType, description: "The entity that owns the attachment", required: true
+
     argument :schema_version_slug, String, required: true do
       description "The slug for the new schema to apply"
     end
+
     argument :property_values, GraphQL::Types::JSON, required: true do
       description <<~TEXT.strip_heredoc
       An arbitrary set of property values. Owing to the dynamic nature, they do not have a specific GraphQL input type
       associated with them. Validation will be performed within the application and returned as errors if not valid.
+      TEXT
+    end
+
+    argument :strategy, Types::PropertyApplicationStrategyType, required: false, default_value: :apply do
+      description <<~TEXT.strip_heredoc
+      This argument dictates how the mutation should handle received property values.
+      If set to `SKIP`, it will alter the schema version without setting any new properties.
       TEXT
     end
 

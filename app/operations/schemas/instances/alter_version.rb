@@ -21,10 +21,10 @@ module Schemas
       # @param [SchemaVersion] schema_version
       # @param [Hash] new_values
       # @return [Dry::Monads::Result]
-      def call(schema_instance, schema_version, new_values)
+      def call(schema_instance, schema_version, new_values, strategy: :apply)
         entity = yield alter_version! schema_instance, schema_version
 
-        yield apply.call entity, new_values
+        yield apply.call entity, new_values unless strategy == :skip
 
         yield populate_orderings.call entity
 
