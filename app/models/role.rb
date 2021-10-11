@@ -7,6 +7,10 @@ class Role < ApplicationRecord
 
   has_many :community_memberships, dependent: :destroy, inverse_of: :role
 
+  # rubocop:disable Rails/HasManyOrHasOneDependent
+  has_many :contextually_assigned_roles, inverse_of: :role
+  # rubocop:enable Rails/HasManyOrHasOneDependent
+
   has_many :role_permissions, dependent: :destroy, inverse_of: :role
 
   has_many :permissions, through: :role_permissions

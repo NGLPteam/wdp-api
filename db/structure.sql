@@ -616,7 +616,9 @@ CREATE VIEW public.contextual_permissions AS
     array_agg(DISTINCT gp.role_id) AS role_ids,
     array_agg(DISTINCT gp.action) AS allowed_actions,
     public.jsonb_auth_path(gp.action, true) AS access_control_list,
-    public.jsonb_auth_path(public.subpath(gp.action, 1, (public.nlevel(gp.action) - 1)), true) FILTER (WHERE (gp.action OPERATOR(public.~) 'self.*'::public.lquery)) AS grid
+    public.jsonb_auth_path(public.subpath(gp.action, 1, (public.nlevel(gp.action) - 1)), true) FILTER (WHERE (gp.action OPERATOR(public.~) 'self.*'::public.lquery)) AS grid,
+    min(gp.created_at) AS created_at,
+    max(gp.updated_at) AS updated_at
    FROM ((public.granted_permissions gp
      JOIN public.authorizing_entities ent USING (auth_path, scope))
      LEFT JOIN LATERAL ( SELECT ((gp.accessible_type = ent.hierarchical_type) AND (gp.accessible_id = ent.hierarchical_id)) AS directly_assigned) info ON (true))
@@ -641,6 +643,21 @@ CREATE VIEW public.contextual_single_permissions AS
      JOIN public.authorizing_entities ent USING (auth_path, scope))
      LEFT JOIN LATERAL ( SELECT ((gp.accessible_type = ent.hierarchical_type) AND (gp.accessible_id = ent.hierarchical_id)) AS directly_assigned) info ON (true))
   WHERE ((NOT info.directly_assigned) OR (NOT gp.inferred));
+
+
+--
+-- Name: contextually_assigned_roles; Type: VIEW; Schema: public; Owner: -
+--
+
+CREATE VIEW public.contextually_assigned_roles AS
+ SELECT cp.hierarchical_id,
+    cp.hierarchical_type,
+    cp.user_id,
+    r.role_id
+   FROM (public.contextual_permissions cp
+     LEFT JOIN LATERAL ( SELECT x.role_id
+           FROM unnest(cp.role_ids) x(role_id)) r ON (true))
+  WHERE (r.role_id IS NOT NULL);
 
 
 --
@@ -3983,6 +4000,8 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20210730182534'),
 ('20210730183719'),
 ('20210730191337'),
-('20210913191623');
+('20210913191623'),
+('20211005160744'),
+('20211005183352');
 
 

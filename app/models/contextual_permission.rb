@@ -26,6 +26,12 @@ class ContextualPermission < ApplicationRecord
   belongs_to :hierarchical, polymorphic: true
   belongs_to :user
 
+  # rubocop:disable Rails/HasManyOrHasOneDependent
+  has_many :contextually_assigned_roles, primary_key: primary_key, foreign_key: primary_key, inverse_of: :contextual_permission
+  # rubocop:enable Rails/HasManyOrHasOneDependent
+
+  has_many :roles, through: :contextually_assigned_roles
+
   delegate :permissions, to: :access_control_list
 
   # @see Loaders::ContextualPermissionLoader
