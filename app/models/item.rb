@@ -9,6 +9,7 @@ class Item < ApplicationRecord
   include HasSchemaDefinition
   include HasSystemSlug
   include HierarchicalEntity
+  include ScopesForIdentifier
 
   has_closure_tree
 
