@@ -16,6 +16,8 @@
 ActiveSupport::Inflector.inflections(:en) do |inflect|
   inflect.acronym "CRUD"
   inflect.acronym "DOI"
+  inflect.acronym "OAIPMH"
+  inflect.acronym "OAI"
   inflect.acronym "NGLP"
   inflect.acronym "PDF"
   inflect.acronym "WDPAPISchema"

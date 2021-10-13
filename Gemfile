@@ -21,6 +21,7 @@ gem "dalli", "~> 2.7.11"
 gem "hiredis", "~> 0.6.3"
 gem "redis", "~> 4.2.5", require: %w[redis redis/connection/hiredis]
 gem "sidekiq", "~> 6.2.1"
+gem "redis-objects", "~> 1.5.1"
 gem "job-iteration"
 
 # GraphQL
@@ -55,9 +56,12 @@ gem "json-schema", "~> 2.8.1"
 gem "json_schemer", "~> 0.2.18"
 gem "jwt", "~> 2.2.3"
 gem "memoist", "~> 0.16.2"
+gem "mods", "~> 2.4.1"
 gem "naught", "~> 1.1.0"
+gem "oai", "~> 1.1.0"
 gem "pundit", "~> 2.1.0"
 gem "semantic", "~> 1.6.1"
+gem "statesman", "~> 9.0.0"
 gem "validate_url", "~> 1.0.13"
 
 # File processing

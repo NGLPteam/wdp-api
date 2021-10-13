@@ -9,6 +9,7 @@ class Collection < ApplicationRecord
   include HasSchemaDefinition
   include HasSystemSlug
   include HierarchicalEntity
+  include ScopesForIdentifier
 
   has_closure_tree
 
@@ -19,6 +20,9 @@ class Collection < ApplicationRecord
   has_many :contributors, through: :contributions
 
   has_many :items, dependent: :destroy, inverse_of: :collection
+
+  has_many :harvest_attempts, inverse_of: :collection, dependent: :destroy
+  has_many :harvest_mappings, inverse_of: :collection, dependent: :destroy
 
   validates :identifier, :title, presence: true
   validates :identifier, uniqueness: { scope: %i[community_id parent_id] }

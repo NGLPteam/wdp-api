@@ -814,6 +814,144 @@ CREATE TABLE public.entity_links (
 
 
 --
+-- Name: harvest_attempts; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.harvest_attempts (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    harvest_source_id uuid NOT NULL,
+    harvest_set_id uuid,
+    harvest_mapping_id uuid,
+    collection_id uuid NOT NULL,
+    kind text NOT NULL,
+    description text,
+    metadata jsonb DEFAULT '{}'::jsonb NOT NULL,
+    record_count bigint,
+    began_at timestamp without time zone,
+    ended_at timestamp without time zone,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+--
+-- Name: harvest_entities; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.harvest_entities (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    harvest_record_id uuid NOT NULL,
+    parent_id uuid,
+    schema_version_id uuid,
+    entity_type character varying,
+    entity_id uuid,
+    identifier text NOT NULL,
+    metadata_kind text,
+    extracted_attributes jsonb,
+    extracted_properties jsonb,
+    extracted_assets jsonb,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+--
+-- Name: harvest_entity_hierarchies; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.harvest_entity_hierarchies (
+    ancestor_id uuid NOT NULL,
+    descendant_id uuid NOT NULL,
+    generations integer NOT NULL
+);
+
+
+--
+-- Name: harvest_mappings; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.harvest_mappings (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    harvest_source_id uuid NOT NULL,
+    harvest_set_id uuid,
+    collection_id uuid,
+    mode text DEFAULT 'manual'::text NOT NULL,
+    frequency text,
+    frequency_expression text,
+    list_options jsonb DEFAULT '{}'::jsonb NOT NULL,
+    read_options jsonb DEFAULT '{}'::jsonb NOT NULL,
+    format_options jsonb DEFAULT '{}'::jsonb NOT NULL,
+    mapping_options jsonb DEFAULT '{}'::jsonb NOT NULL,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+--
+-- Name: harvest_records; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.harvest_records (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    harvest_attempt_id uuid NOT NULL,
+    identifier text NOT NULL,
+    metadata_format text NOT NULL,
+    raw_source text,
+    raw_metadata_source text,
+    local_metadata jsonb DEFAULT '{}'::jsonb NOT NULL,
+    entity_count bigint,
+    datestamp date,
+    issued_on date,
+    available_on date,
+    issued_at timestamp without time zone,
+    available_at timestamp without time zone,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+--
+-- Name: harvest_sets; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.harvest_sets (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    harvest_source_id uuid NOT NULL,
+    identifier text NOT NULL,
+    name text NOT NULL,
+    description text,
+    raw_source text,
+    metadata jsonb DEFAULT '{}'::jsonb NOT NULL,
+    estimated_record_count integer,
+    last_harvested_at timestamp without time zone,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+--
+-- Name: harvest_sources; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.harvest_sources (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    name text NOT NULL,
+    kind text NOT NULL,
+    source_format text NOT NULL,
+    base_url text NOT NULL,
+    description text,
+    list_options jsonb DEFAULT '{}'::jsonb NOT NULL,
+    read_options jsonb DEFAULT '{}'::jsonb NOT NULL,
+    format_options jsonb DEFAULT '{}'::jsonb NOT NULL,
+    mapping_options jsonb DEFAULT '{}'::jsonb NOT NULL,
+    sets_refreshed_at timestamp without time zone,
+    last_harvested_at timestamp without time zone,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+--
 -- Name: items; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -1456,6 +1594,54 @@ ALTER TABLE ONLY public.granted_permissions
 
 
 --
+-- Name: harvest_attempts harvest_attempts_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.harvest_attempts
+    ADD CONSTRAINT harvest_attempts_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: harvest_entities harvest_entities_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.harvest_entities
+    ADD CONSTRAINT harvest_entities_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: harvest_mappings harvest_mappings_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.harvest_mappings
+    ADD CONSTRAINT harvest_mappings_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: harvest_records harvest_records_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.harvest_records
+    ADD CONSTRAINT harvest_records_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: harvest_sets harvest_sets_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.harvest_sets
+    ADD CONSTRAINT harvest_sets_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: harvest_sources harvest_sources_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.harvest_sources
+    ADD CONSTRAINT harvest_sources_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: item_contributions item_contributions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1680,6 +1866,20 @@ CREATE UNIQUE INDEX collection_anc_desc_idx ON public.collection_hierarchies USI
 --
 
 CREATE INDEX collection_desc_idx ON public.collection_hierarchies USING btree (descendant_id);
+
+
+--
+-- Name: harvest_entity_anc_desc_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX harvest_entity_anc_desc_idx ON public.harvest_entity_hierarchies USING btree (ancestor_id, descendant_id, generations);
+
+
+--
+-- Name: harvest_entity_desc_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX harvest_entity_desc_idx ON public.harvest_entity_hierarchies USING btree (descendant_id);
 
 
 --
@@ -2366,6 +2566,125 @@ CREATE INDEX index_granted_permissions_on_user_id ON public.granted_permissions 
 --
 
 CREATE UNIQUE INDEX index_granted_permissions_uniqueness ON public.granted_permissions USING btree (access_grant_id, permission_id, user_id, scope, action);
+
+
+--
+-- Name: index_harvest_attempts_on_collection_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_harvest_attempts_on_collection_id ON public.harvest_attempts USING btree (collection_id);
+
+
+--
+-- Name: index_harvest_attempts_on_harvest_mapping_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_harvest_attempts_on_harvest_mapping_id ON public.harvest_attempts USING btree (harvest_mapping_id);
+
+
+--
+-- Name: index_harvest_attempts_on_harvest_set_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_harvest_attempts_on_harvest_set_id ON public.harvest_attempts USING btree (harvest_set_id);
+
+
+--
+-- Name: index_harvest_attempts_on_harvest_source_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_harvest_attempts_on_harvest_source_id ON public.harvest_attempts USING btree (harvest_source_id);
+
+
+--
+-- Name: index_harvest_entities_on_entity; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_harvest_entities_on_entity ON public.harvest_entities USING btree (entity_type, entity_id);
+
+
+--
+-- Name: index_harvest_entities_on_harvest_record_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_harvest_entities_on_harvest_record_id ON public.harvest_entities USING btree (harvest_record_id);
+
+
+--
+-- Name: index_harvest_entities_on_parent_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_harvest_entities_on_parent_id ON public.harvest_entities USING btree (parent_id);
+
+
+--
+-- Name: index_harvest_entities_on_schema_version_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_harvest_entities_on_schema_version_id ON public.harvest_entities USING btree (schema_version_id);
+
+
+--
+-- Name: index_harvest_entities_uniqueness; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_harvest_entities_uniqueness ON public.harvest_entities USING btree (harvest_record_id, identifier);
+
+
+--
+-- Name: index_harvest_mappings_on_collection_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_harvest_mappings_on_collection_id ON public.harvest_mappings USING btree (collection_id);
+
+
+--
+-- Name: index_harvest_mappings_on_harvest_set_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_harvest_mappings_on_harvest_set_id ON public.harvest_mappings USING btree (harvest_set_id);
+
+
+--
+-- Name: index_harvest_mappings_on_harvest_source_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_harvest_mappings_on_harvest_source_id ON public.harvest_mappings USING btree (harvest_source_id);
+
+
+--
+-- Name: index_harvest_mappings_uniqueness; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_harvest_mappings_uniqueness ON public.harvest_mappings USING btree (harvest_source_id, harvest_set_id, collection_id);
+
+
+--
+-- Name: index_harvest_records_on_harvest_attempt_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_harvest_records_on_harvest_attempt_id ON public.harvest_records USING btree (harvest_attempt_id);
+
+
+--
+-- Name: index_harvest_records_uniqueness; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_harvest_records_uniqueness ON public.harvest_records USING btree (harvest_attempt_id, identifier);
+
+
+--
+-- Name: index_harvest_sets_on_harvest_source_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_harvest_sets_on_harvest_source_id ON public.harvest_sets USING btree (harvest_source_id);
+
+
+--
+-- Name: index_harvest_sets_uniqueness; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_harvest_sets_uniqueness ON public.harvest_sets USING btree (harvest_source_id, identifier);
 
 
 --
@@ -3554,6 +3873,22 @@ ALTER TABLE ONLY public.assets
 
 
 --
+-- Name: harvest_attempts fk_rails_0b61d27d1a; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.harvest_attempts
+    ADD CONSTRAINT fk_rails_0b61d27d1a FOREIGN KEY (harvest_set_id) REFERENCES public.harvest_sets(id) ON DELETE CASCADE;
+
+
+--
+-- Name: harvest_sets fk_rails_0f046d2238; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.harvest_sets
+    ADD CONSTRAINT fk_rails_0f046d2238 FOREIGN KEY (harvest_source_id) REFERENCES public.harvest_sources(id) ON DELETE CASCADE;
+
+
+--
 -- Name: collections fk_rails_1036c77f58; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -3615,6 +3950,14 @@ ALTER TABLE ONLY public.orderings
 
 ALTER TABLE ONLY public.collection_links
     ADD CONSTRAINT fk_rails_3cc144ad4c FOREIGN KEY (source_id) REFERENCES public.collections(id) ON DELETE RESTRICT;
+
+
+--
+-- Name: harvest_attempts fk_rails_3e309e8f30; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.harvest_attempts
+    ADD CONSTRAINT fk_rails_3e309e8f30 FOREIGN KEY (harvest_mapping_id) REFERENCES public.harvest_mappings(id) ON DELETE CASCADE;
 
 
 --
@@ -3690,6 +4033,14 @@ ALTER TABLE ONLY public.role_permissions
 
 
 --
+-- Name: harvest_mappings fk_rails_648247aee2; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.harvest_mappings
+    ADD CONSTRAINT fk_rails_648247aee2 FOREIGN KEY (harvest_source_id) REFERENCES public.harvest_sources(id) ON DELETE CASCADE;
+
+
+--
 -- Name: item_links fk_rails_67a3fd259e; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -3730,6 +4081,14 @@ ALTER TABLE ONLY public.entity_links
 
 
 --
+-- Name: harvest_attempts fk_rails_6eb1b8ebed; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.harvest_attempts
+    ADD CONSTRAINT fk_rails_6eb1b8ebed FOREIGN KEY (harvest_source_id) REFERENCES public.harvest_sources(id) ON DELETE CASCADE;
+
+
+--
 -- Name: item_contributions fk_rails_73af22b63e; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -3751,6 +4110,14 @@ ALTER TABLE ONLY public.assets
 
 ALTER TABLE ONLY public.granted_permissions
     ADD CONSTRAINT fk_rails_79f89b52dc FOREIGN KEY (role_id) REFERENCES public.roles(id) ON DELETE CASCADE;
+
+
+--
+-- Name: harvest_records fk_rails_7d3cd534d8; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.harvest_records
+    ADD CONSTRAINT fk_rails_7d3cd534d8 FOREIGN KEY (harvest_attempt_id) REFERENCES public.harvest_attempts(id) ON DELETE CASCADE;
 
 
 --
@@ -3818,11 +4185,35 @@ ALTER TABLE ONLY public.community_memberships
 
 
 --
+-- Name: harvest_attempts fk_rails_8e749243ac; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.harvest_attempts
+    ADD CONSTRAINT fk_rails_8e749243ac FOREIGN KEY (collection_id) REFERENCES public.collections(id) ON DELETE CASCADE;
+
+
+--
+-- Name: harvest_entities fk_rails_96a93b8164; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.harvest_entities
+    ADD CONSTRAINT fk_rails_96a93b8164 FOREIGN KEY (harvest_record_id) REFERENCES public.harvest_records(id) ON DELETE CASCADE;
+
+
+--
 -- Name: collection_contributions fk_rails_9955c93f4b; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.collection_contributions
     ADD CONSTRAINT fk_rails_9955c93f4b FOREIGN KEY (collection_id) REFERENCES public.collections(id);
+
+
+--
+-- Name: harvest_entities fk_rails_a1262d403c; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.harvest_entities
+    ADD CONSTRAINT fk_rails_a1262d403c FOREIGN KEY (parent_id) REFERENCES public.harvest_entities(id) ON DELETE CASCADE;
 
 
 --
@@ -3855,6 +4246,14 @@ ALTER TABLE ONLY public.assets
 
 ALTER TABLE ONLY public.user_group_memberships
     ADD CONSTRAINT fk_rails_aece7151f8 FOREIGN KEY (user_group_id) REFERENCES public.user_groups(id) ON DELETE CASCADE;
+
+
+--
+-- Name: harvest_entities fk_rails_b601edda92; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.harvest_entities
+    ADD CONSTRAINT fk_rails_b601edda92 FOREIGN KEY (schema_version_id) REFERENCES public.schema_versions(id) ON DELETE RESTRICT;
 
 
 --
@@ -3898,11 +4297,27 @@ ALTER TABLE ONLY public.granted_permissions
 
 
 --
+-- Name: harvest_mappings fk_rails_d21568b378; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.harvest_mappings
+    ADD CONSTRAINT fk_rails_d21568b378 FOREIGN KEY (collection_id) REFERENCES public.collections(id) ON DELETE RESTRICT;
+
+
+--
 -- Name: access_grants fk_rails_d9b8218fcb; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.access_grants
     ADD CONSTRAINT fk_rails_d9b8218fcb FOREIGN KEY (collection_id) REFERENCES public.collections(id) ON DELETE CASCADE;
+
+
+--
+-- Name: harvest_mappings fk_rails_dc2ccde798; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.harvest_mappings
+    ADD CONSTRAINT fk_rails_dc2ccde798 FOREIGN KEY (harvest_set_id) REFERENCES public.harvest_sets(id) ON DELETE RESTRICT;
 
 
 --
@@ -4052,9 +4467,15 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20210913191623'),
 ('20211005160744'),
 ('20211005183352'),
+('20211012214418'),
+('20211012220659'),
+('20211012220943'),
 ('20211013192548'),
 ('20211013193041'),
 ('20211013195329'),
-('20211013235624');
+('20211013235624'),
+('20211014234854'),
+('20211015191012'),
+('20211015191701');
 
 
