@@ -10,9 +10,17 @@ module Types
       description "Derived access control list"
     end
 
-    field :roles, [Types::RoleType, { null: false }], null: false
+    field :access_grants, [Types::AnyUserAccessGrantType, { null: false }], null: false,
+      description: "The access grants that correspond to this contextual permission"
+
+    field :roles, [Types::RoleType, { null: false }], null: false,
+      description: "The roles that correspond to this contextual permission"
 
     field :user, Types::UserType, null: false
+
+    def access_grants
+      object.association(:access_grants).loaded? ? object.access_grants : Loaders::AssociationLoader.for(object.class, :access_grants).load(object)
+    end
 
     def roles
       object.association(:roles).loaded? ? object.roles : Loaders::AssociationLoader.for(object.class, :roles).load(object)
