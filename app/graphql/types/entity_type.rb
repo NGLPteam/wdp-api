@@ -3,6 +3,7 @@
 module Types
   module EntityType
     include Types::BaseInterface
+    include Types::AccessibleType
     include Types::ExposesPermissionsType
     include Types::HasSchemaPropertiesType
 

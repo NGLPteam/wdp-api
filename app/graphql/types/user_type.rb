@@ -2,6 +2,7 @@
 
 module Types
   class UserType < Types::AbstractModel
+    implements Types::AccessGrantSubjectType
     implements Types::ExposesPermissionsType
 
     description "A known or anonymous user in the system. Registration and management is primarily handled through the WDP Keycloak instance."
@@ -36,6 +37,18 @@ module Types
 
     field :upload_token, String, null: true,
       description: "If a user has any upload access, this token will allow them to do so."
+
+    field :access_grants, resolver: Resolvers::AccessGrants::UserResolver,
+      description: "All access grants for this user"
+
+    field :community_access_grants, resolver: Resolvers::AccessGrants::UserCommunityResolver,
+      description: "All access grants for this user on a community"
+
+    field :collection_access_grants, resolver: Resolvers::AccessGrants::UserCollectionResolver,
+      description: "All access grants for this user on a collection"
+
+    field :item_access_grants, resolver: Resolvers::AccessGrants::UserItemResolver,
+      description: "All access grants for this user on an item"
 
     def slug
       object.keycloak_id

@@ -19,8 +19,31 @@ class AccessGrant < ApplicationRecord
   has_many :grouped_users, through: :user_group, source: :users
   has_many :permissions, through: :role
 
+  # rubocop:disable Rails/HasManyOrHasOneDependent
+  has_many :management_links, class_name: "AccessGrantManagementLink", inverse_of: :access_grant
+
+  has_many :contextually_assigned_access_grants, inverse_of: :access_grant
+  # rubocop:enable Rails/HasManyOrHasOneDependent
+
+  has_many :managers, -> { distinct }, through: :management_links, source: :user
+
+  scope :for_accessible_type, ->(type) { where(accessible_type: type) }
   scope :for_subject, ->(subject) { where(subject: subject) }
   scope :for_subject_type, ->(type) { where(subject_type: type) }
+
+  scope :for_communities, -> { for_accessible_type("Community") }
+  scope :for_collections, -> { for_accessible_type("Collection") }
+  scope :for_items, -> { for_accessible_type("Item") }
+
+  scope :for_role, ->(role) { where(role: role) }
+  scope :for_role_name, ->(name) { joins(:role).merge(Role.for_name(name)) }
+
+  scope :for_groups, -> { for_subject_type "UserGroup" }
+  scope :for_users, -> { for_subject_type "User" }
+
+  scope :managed_by, ->(user) { where(id: AccessGrantManagementLink.for_user(user).select(:access_grant_id)) }
+
+  scope :with_preloads, -> { preload(:accessible, :subject, :role, :user, :user_group, :community, :collection, :item) }
 
   assign_polymorphic_foreign_key! :accessible, :community, :collection, :item
   assign_polymorphic_foreign_key! :subject, :user, :user_group
@@ -41,6 +64,11 @@ class AccessGrant < ApplicationRecord
     WDPAPI::Container["access.calculate_granted_permissions"].call(access_grant: self)
   end
 
+  # @return [Class]
+  def graphql_node_type
+    "Types::#{subject_type}#{accessible_type}AccessGrantType".constantize
+  end
+
   class << self
     def for_user_group(user_group)
       user_group.present? ? where(user_group: user_group) : none
@@ -57,6 +85,18 @@ class AccessGrant < ApplicationRecord
     # @param [AccessGrantSubject] subject
     def fetch(accessible, subject)
       where(accessible: accessible, subject: subject).first_or_initialize
+    end
+
+    # @param [User] user
+    # @return [ActiveRecord::Relation<AccessGrant>]
+    def manageable_by(user)
+      if user.has_global_admin_access?
+        all
+      elsif user.anonymous?
+        none
+      else
+        managed_by user
+      end
     end
 
     # @return [ActiveRecord::Relation<AccessGrant>]

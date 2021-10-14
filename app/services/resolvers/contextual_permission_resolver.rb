@@ -8,7 +8,12 @@ module Resolvers
 
     type Types::ContextualPermissionType.connection_type, null: false
 
-    scope { object.contextual_permissions.preload(:roles, :user) }
+    scope do
+      object.contextual_permissions.preload(
+        :roles, :user,
+        access_grants: %i[user accessible subject item community collection role]
+      )
+    end
 
     option :order, type: Types::ContextualPermissionOrderType, default: "USER_NAME_ASC"
 

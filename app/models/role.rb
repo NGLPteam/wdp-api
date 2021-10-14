@@ -21,6 +21,8 @@ class Role < ApplicationRecord
 
   after_save :calculate_role_permissions!
 
+  scope :for_name, ->(name) { where(name: name) }
+
   scope :with_allowed_action, ->(name) { where(arel_allowed_action(name)) }
 
   validates :name, presence: true, uniqueness: true
@@ -34,7 +36,12 @@ class Role < ApplicationRecord
   # @api private
   # @return [void]
   def calculate_role_permissions!
-    WDPAPI::Container["roles.calculate_role_permissions"].call(role: self)
+    call_operation "roles.calculate_role_permissions", role: self
+  end
+
+  # @return [void]
+  def recalculate_granted_permissions!
+    Access::CalculateRoleGrantedPermissionsJob.perform_later self
   end
 
   class << self

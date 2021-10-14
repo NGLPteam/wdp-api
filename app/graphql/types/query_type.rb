@@ -10,6 +10,9 @@ module Types
 
     add_field GraphQL::Types::Relay::NodesField
 
+    field :access_grants, resolver: Resolvers::AccessGrantResolver,
+      description: "Retrieve all access grants"
+
     field :collection, Types::CollectionType, null: true do
       description "Look up a collection by slug"
 

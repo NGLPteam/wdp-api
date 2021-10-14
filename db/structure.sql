@@ -371,6 +371,112 @@ CREATE TABLE public.access_grants (
 
 
 --
+-- Name: authorizing_entities; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.authorizing_entities (
+    auth_path public.ltree NOT NULL,
+    entity_id uuid NOT NULL,
+    scope public.ltree NOT NULL,
+    hierarchical_type text NOT NULL,
+    hierarchical_id uuid NOT NULL,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+--
+-- Name: granted_permissions; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.granted_permissions (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    access_grant_id uuid NOT NULL,
+    permission_id uuid NOT NULL,
+    user_id uuid NOT NULL,
+    scope public.ltree NOT NULL,
+    action public.ltree NOT NULL,
+    role_id uuid NOT NULL,
+    accessible_type text NOT NULL,
+    accessible_id uuid NOT NULL,
+    auth_path public.ltree NOT NULL,
+    inferred boolean DEFAULT false NOT NULL,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+--
+-- Name: contextual_single_permissions; Type: VIEW; Schema: public; Owner: -
+--
+
+CREATE VIEW public.contextual_single_permissions AS
+ SELECT ent.hierarchical_id,
+    ent.hierarchical_type,
+    gp.user_id,
+    gp.permission_id,
+    gp.action,
+    gp.access_grant_id,
+    gp.role_id,
+    info.directly_assigned
+   FROM ((public.granted_permissions gp
+     JOIN public.authorizing_entities ent USING (auth_path, scope))
+     LEFT JOIN LATERAL ( SELECT ((gp.accessible_type = ent.hierarchical_type) AND (gp.accessible_id = ent.hierarchical_id)) AS directly_assigned) info ON (true))
+  WHERE ((NOT info.directly_assigned) OR (NOT gp.inferred));
+
+
+--
+-- Name: permissions; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.permissions (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    kind public.permission_kind NOT NULL,
+    path public.ltree NOT NULL,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    scope public.ltree GENERATED ALWAYS AS (public.subpath(path, 0, '-1'::integer)) STORED,
+    name public.ltree GENERATED ALWAYS AS (public.subpath(path, '-1'::integer, 1)) STORED,
+    jsonb_path text[] GENERATED ALWAYS AS (string_to_array((path)::text, '.'::text)) STORED,
+    self_path_old public.ltree GENERATED ALWAYS AS (
+CASE kind
+    WHEN 'contextual'::public.permission_kind THEN
+    CASE public.subpath(path, 0, '-1'::integer)
+        WHEN 'self'::public.ltree THEN NULL::public.ltree
+        ELSE (public.ltree2text('self'::public.ltree) OPERATOR(public.||) public.subpath(path, '-1'::integer, 1))
+    END
+    ELSE NULL::public.ltree
+END) STORED,
+    self_prefixed boolean GENERATED ALWAYS AS ((path OPERATOR(public.~) 'self.*'::public.lquery)) STORED,
+    infix public.ltree GENERATED ALWAYS AS (public.subpath(path, 1, 1)) STORED,
+    suffix public.ltree GENERATED ALWAYS AS (public.subpath(path, 1, (public.nlevel(path) - 1))) STORED,
+    self_path public.ltree GENERATED ALWAYS AS (
+CASE kind
+    WHEN 'contextual'::public.permission_kind THEN
+    CASE public.subpath(path, 0, 1)
+        WHEN 'self'::public.ltree THEN NULL::public.ltree
+        ELSE (public.ltree2text('self'::public.ltree) OPERATOR(public.||) public.subpath(path, 1, (public.nlevel(path) - 1)))
+    END
+    ELSE NULL::public.ltree
+END) STORED,
+    head public.ltree GENERATED ALWAYS AS (public.subpath(path, 0, 1)) STORED,
+    inheritance public.ltree[] DEFAULT '{}'::public.ltree[] NOT NULL
+);
+
+
+--
+-- Name: access_grant_management_links; Type: VIEW; Schema: public; Owner: -
+--
+
+CREATE VIEW public.access_grant_management_links AS
+ SELECT ag.id AS access_grant_id,
+    csp.user_id
+   FROM ((public.access_grants ag
+     JOIN public.permissions mp ON ((mp.path OPERATOR(public.=) 'self.manage_access'::public.ltree)))
+     JOIN public.contextual_single_permissions csp ON (((csp.hierarchical_type = (ag.accessible_type)::text) AND (csp.hierarchical_id = ag.accessible_id) AND (csp.permission_id = mp.id))));
+
+
+--
 -- Name: ar_internal_metadata; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -418,21 +524,6 @@ CREATE TABLE public.assets (
     community_id uuid,
     collection_id uuid,
     item_id uuid
-);
-
-
---
--- Name: authorizing_entities; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.authorizing_entities (
-    auth_path public.ltree NOT NULL,
-    entity_id uuid NOT NULL,
-    scope public.ltree NOT NULL,
-    hierarchical_type text NOT NULL,
-    hierarchical_id uuid NOT NULL,
-    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
 
@@ -582,27 +673,6 @@ CREATE TABLE public.community_memberships (
 
 
 --
--- Name: granted_permissions; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.granted_permissions (
-    id uuid DEFAULT gen_random_uuid() NOT NULL,
-    access_grant_id uuid NOT NULL,
-    permission_id uuid NOT NULL,
-    user_id uuid NOT NULL,
-    scope public.ltree NOT NULL,
-    action public.ltree NOT NULL,
-    role_id uuid NOT NULL,
-    accessible_type text NOT NULL,
-    accessible_id uuid NOT NULL,
-    auth_path public.ltree NOT NULL,
-    inferred boolean DEFAULT false NOT NULL,
-    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
-);
-
-
---
 -- Name: contextual_permissions; Type: VIEW; Schema: public; Owner: -
 --
 
@@ -627,22 +697,19 @@ CREATE VIEW public.contextual_permissions AS
 
 
 --
--- Name: contextual_single_permissions; Type: VIEW; Schema: public; Owner: -
+-- Name: contextually_assigned_access_grants; Type: VIEW; Schema: public; Owner: -
 --
 
-CREATE VIEW public.contextual_single_permissions AS
+CREATE VIEW public.contextually_assigned_access_grants AS
  SELECT ent.hierarchical_id,
     ent.hierarchical_type,
     gp.user_id,
-    gp.permission_id,
-    gp.action,
-    gp.access_grant_id,
-    gp.role_id,
-    info.directly_assigned
+    gp.access_grant_id
    FROM ((public.granted_permissions gp
      JOIN public.authorizing_entities ent USING (auth_path, scope))
      LEFT JOIN LATERAL ( SELECT ((gp.accessible_type = ent.hierarchical_type) AND (gp.accessible_id = ent.hierarchical_id)) AS directly_assigned) info ON (true))
-  WHERE ((NOT info.directly_assigned) OR (NOT gp.inferred));
+  WHERE ((NOT info.directly_assigned) OR (NOT gp.inferred))
+  GROUP BY ent.hierarchical_id, ent.hierarchical_type, gp.user_id, gp.access_grant_id;
 
 
 --
@@ -650,14 +717,15 @@ CREATE VIEW public.contextual_single_permissions AS
 --
 
 CREATE VIEW public.contextually_assigned_roles AS
- SELECT cp.hierarchical_id,
-    cp.hierarchical_type,
-    cp.user_id,
-    r.role_id
-   FROM (public.contextual_permissions cp
-     LEFT JOIN LATERAL ( SELECT x.role_id
-           FROM unnest(cp.role_ids) x(role_id)) r ON (true))
-  WHERE (r.role_id IS NOT NULL);
+ SELECT ent.hierarchical_id,
+    ent.hierarchical_type,
+    gp.user_id,
+    gp.role_id
+   FROM ((public.granted_permissions gp
+     JOIN public.authorizing_entities ent USING (auth_path, scope))
+     LEFT JOIN LATERAL ( SELECT ((gp.accessible_type = ent.hierarchical_type) AND (gp.accessible_id = ent.hierarchical_id)) AS directly_assigned) info ON (true))
+  WHERE ((NOT info.directly_assigned) OR (NOT gp.inferred))
+  GROUP BY ent.hierarchical_id, ent.hierarchical_type, gp.user_id, gp.role_id;
 
 
 --
@@ -1144,45 +1212,6 @@ CREATE TABLE public.orderings (
 
 
 --
--- Name: permissions; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.permissions (
-    id uuid DEFAULT gen_random_uuid() NOT NULL,
-    kind public.permission_kind NOT NULL,
-    path public.ltree NOT NULL,
-    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    scope public.ltree GENERATED ALWAYS AS (public.subpath(path, 0, '-1'::integer)) STORED,
-    name public.ltree GENERATED ALWAYS AS (public.subpath(path, '-1'::integer, 1)) STORED,
-    jsonb_path text[] GENERATED ALWAYS AS (string_to_array((path)::text, '.'::text)) STORED,
-    self_path_old public.ltree GENERATED ALWAYS AS (
-CASE kind
-    WHEN 'contextual'::public.permission_kind THEN
-    CASE public.subpath(path, 0, '-1'::integer)
-        WHEN 'self'::public.ltree THEN NULL::public.ltree
-        ELSE (public.ltree2text('self'::public.ltree) OPERATOR(public.||) public.subpath(path, '-1'::integer, 1))
-    END
-    ELSE NULL::public.ltree
-END) STORED,
-    self_prefixed boolean GENERATED ALWAYS AS ((path OPERATOR(public.~) 'self.*'::public.lquery)) STORED,
-    infix public.ltree GENERATED ALWAYS AS (public.subpath(path, 1, 1)) STORED,
-    suffix public.ltree GENERATED ALWAYS AS (public.subpath(path, 1, (public.nlevel(path) - 1))) STORED,
-    self_path public.ltree GENERATED ALWAYS AS (
-CASE kind
-    WHEN 'contextual'::public.permission_kind THEN
-    CASE public.subpath(path, 0, 1)
-        WHEN 'self'::public.ltree THEN NULL::public.ltree
-        ELSE (public.ltree2text('self'::public.ltree) OPERATOR(public.||) public.subpath(path, 1, (public.nlevel(path) - 1)))
-    END
-    ELSE NULL::public.ltree
-END) STORED,
-    head public.ltree GENERATED ALWAYS AS (public.subpath(path, 0, 1)) STORED,
-    inheritance public.ltree[] DEFAULT '{}'::public.ltree[] NOT NULL
-);
-
-
---
 -- Name: role_permissions; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -1254,6 +1283,19 @@ CREATE TABLE public.schematic_scalar_references (
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
+
+
+--
+-- Name: tmp_agu; Type: VIEW; Schema: public; Owner: -
+--
+
+CREATE VIEW public.tmp_agu AS
+ SELECT ag.id AS access_grant_id,
+    csp.user_id
+   FROM ((public.access_grants ag
+     JOIN public.permissions mp ON ((mp.path OPERATOR(public.=) 'self.manage_access'::public.ltree)))
+     JOIN public.contextual_single_permissions csp ON (((csp.hierarchical_type = (ag.accessible_type)::text) AND (csp.hierarchical_id = ag.accessible_id) AND (csp.user_id = ag.user_id) AND (csp.permission_id = mp.id))))
+  GROUP BY ag.id, csp.user_id;
 
 
 --
@@ -1848,6 +1890,13 @@ CREATE INDEX index_authorizing_entities_on_entity_id ON public.authorizing_entit
 --
 
 CREATE INDEX index_authorizing_entities_on_hierarchical ON public.authorizing_entities USING btree (hierarchical_type, hierarchical_id);
+
+
+--
+-- Name: index_authorizing_entities_single_user; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_authorizing_entities_single_user ON public.authorizing_entities USING btree (auth_path, scope) INCLUDE (hierarchical_id, hierarchical_type);
 
 
 --
@@ -4002,6 +4051,10 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20210730191337'),
 ('20210913191623'),
 ('20211005160744'),
-('20211005183352');
+('20211005183352'),
+('20211013192548'),
+('20211013193041'),
+('20211013195329'),
+('20211013235624');
 
 
