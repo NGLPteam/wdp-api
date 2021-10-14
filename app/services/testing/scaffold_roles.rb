@@ -7,7 +7,7 @@ module Testing
     prepend HushActiveRecord
 
     def call
-      make_role! "Manager", all: { read: true, create: true, update: true, delete: true }
+      make_role! "Manager", all: { read: true, create: true, update: true, delete: true, manage_access: true }
       make_role! "Editor", self: { read: true, update: true }, items: { read: true, update: true }
       make_role! "Reader", all: { read: true }
     end
