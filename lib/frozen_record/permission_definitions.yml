@@ -55,6 +55,21 @@
 - path: communities.delete
   kind: global
   inheritance: []
+- path: communities.manage_access
+  kind: global
+  inheritance: []
+- path: communities.assets.create
+  kind: global
+  inheritance: []
+- path: communities.assets.delete
+  kind: global
+  inheritance: []
+- path: communities.assets.read
+  kind: global
+  inheritance: []
+- path: communities.assets.update
+  kind: global
+  inheritance: []
 - path: contributors.read
   kind: global
   inheritance: []

@@ -4,7 +4,7 @@ module Roles
   class GlobalAccessControlList
     include Roles::ComposesGrids
 
-    grid :communities, default: false
+    grid :communities, EntityPermissionGrid, default: false
     grid :contributors, default: false
     grid :users, default: false
     grid :settings, Roles::SettingsGrid, default: false
