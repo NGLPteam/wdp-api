@@ -11,6 +11,9 @@ module Types
     field :target, "Types::AnyLinkTargetType", null: false,
       description: "The actual target"
 
+    field :target_id, ID, null: false,
+      description: "The targetID to provide to linkEntity"
+
     field :kind, Types::LinkTargetCandidateKindType, null: false,
       method: :target_type
 
@@ -22,5 +25,9 @@ module Types
 
     field :created_at, GraphQL::Types::ISO8601DateTime, null: false
     field :updated_at, GraphQL::Types::ISO8601DateTime, null: false
+
+    def target_id
+      object.target.to_encoded_id
+    end
   end
 end
