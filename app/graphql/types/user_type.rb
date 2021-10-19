@@ -20,6 +20,16 @@ module Types
     field :name, String, null: true,
       description: "The user's full provided name. Depending on the upstream provider, this may not be set."
 
+    field :given_name, String, null: true,
+      description: "The user's given (first) name. Depending on the upstream provider, this may not be set."
+
+    field :family_name, String, null: true,
+      description: "The user's family (last) name. Depending on the upstream provider, this may not be set."
+
+    field :avatar, Types::AssetPreviewType, null: true do
+      description "A user's avatar"
+    end
+
     field :global_admin, Boolean, null: false,
       description: "Does this user have access to administer the entire instance?",
       method: :has_global_admin_access?
