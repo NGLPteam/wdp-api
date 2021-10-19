@@ -26,6 +26,8 @@ module Types
 
     field :create_role, mutation: Mutations::CreateRole
 
+    field :destroy_asset, mutation: Mutations::DestroyAsset
+
     field :destroy_collection, mutation: Mutations::DestroyCollection
 
     field :destroy_community, mutation: Mutations::DestroyCommunity

@@ -6,10 +6,29 @@ module Mutations
 
     argument :asset_id, ID, loads: Types::AnyAssetType, description: "The ID for the asset to update", required: true
 
-    argument :name, String, required: true, description: "A human readable name for the asset"
-    argument :position, Int, required: false, description: "The position the asset occupies amongst siblings"
-    argument :alt_text, String, required: false, description: "Alt text to display for the asset (if applicable)"
-    argument :caption, String, required: false, description: "A caption to display below the asset (if applicable)"
+    argument :attachment, Types::UploadedFileInputType, required: false, attribute: true do
+      description <<~TEXT.strip_heredoc
+      An optional reference to an upload in Tus. It will replace the current file if provided.
+      Note: Unlike other attachments in the API, there is no way to clear an attachment from
+      an existing asset. If you wish to do that, simply call destroyAsset.
+      TEXT
+    end
+
+    argument :name, String, required: true, attribute: true do
+      description "A human readable name for the asset"
+    end
+
+    argument :position, Int, required: false, attribute: true do
+      description "The position the asset occupies amongst siblings"
+    end
+
+    argument :alt_text, String, required: false, attribute: true do
+      description "Alt text to display for the asset (if applicable)"
+    end
+
+    argument :caption, String, required: false, attribute: true do
+      description "A caption to display below the asset (if applicable)"
+    end
 
     performs_operation! "mutations.operations.update_asset"
   end
