@@ -7,6 +7,10 @@ class ApplicationContract < Dry::Validation::Contract
     key.failure(:must_be_entity) unless value.kind_of?(::HierarchicalEntity)
   end
 
+  register_macro :slug_format do
+    key.failure(:must_be_slug) unless AppTypes::SLUG_PATTERN.match? value
+  end
+
   register_macro :email_format do
     key.failure(:must_be_email) unless AppTypes::EMAIL_PATTERN.match? value
   end

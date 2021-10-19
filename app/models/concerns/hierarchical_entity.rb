@@ -27,11 +27,15 @@ module HierarchicalEntity
     has_many :entity_breadcrumbs, -> { order(depth: :asc) }, as: :entity
     has_many :entity_breadcrumb_entries, class_name: "EntityBreadcrumb", as: :crumb
 
+    has_many :link_target_candidates, as: :source
+
     has_many :orderings, dependent: :destroy, as: :entity
 
     has_many :ordering_entries, dependent: :destroy, as: :entity
 
     has_many :parent_orderings, through: :ordering_entries, source: :ordering
+
+    has_many :pages, -> { in_default_order }, as: :entity, dependent: :destroy
 
     scope :sans_thumbnail, -> { where(arel_json_get(:thumbnail_data, :storage).eq(nil)) }
 
@@ -228,7 +232,7 @@ module HierarchicalEntity
   def to_entity_tuple
     slice(
       :entity_type, :hierarchical_id, :hierarchical_type, :schema_version_id,
-      :auth_path, :system_slug, :created_at, :updated_at
+      :auth_path, :system_slug, :title, :created_at, :updated_at
     ).merge(entity_id: id, scope: entity_scope)
   end
 

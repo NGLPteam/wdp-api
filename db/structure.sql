@@ -766,7 +766,8 @@ CREATE TABLE public.entities (
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     depth integer GENERATED ALWAYS AS (public.nlevel(auth_path)) STORED,
     schema_version_id uuid NOT NULL,
-    link_operator public.link_operator
+    link_operator public.link_operator,
+    title public.citext DEFAULT ''::public.citext NOT NULL
 );
 
 
@@ -1350,6 +1351,24 @@ CREATE TABLE public.orderings (
 
 
 --
+-- Name: pages; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.pages (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    entity_type character varying NOT NULL,
+    entity_id uuid NOT NULL,
+    "position" integer DEFAULT 0 NOT NULL,
+    title public.citext NOT NULL,
+    slug public.citext NOT NULL,
+    body text NOT NULL,
+    hero_image_data jsonb,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+--
 -- Name: role_permissions; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -1744,6 +1763,14 @@ ALTER TABLE ONLY public.ordering_entries_part_8
 
 ALTER TABLE ONLY public.orderings
     ADD CONSTRAINT orderings_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: pages pages_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.pages
+    ADD CONSTRAINT pages_pkey PRIMARY KEY (id);
 
 
 --
@@ -2402,6 +2429,13 @@ CREATE UNIQUE INDEX index_entities_on_system_slug ON public.entities USING btree
 
 
 --
+-- Name: index_entities_on_title; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_entities_on_title ON public.entities USING btree (title);
+
+
+--
 -- Name: index_entities_permissions_calculation; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -2924,6 +2958,27 @@ CREATE INDEX index_orderings_on_schema_version_id ON public.orderings USING btre
 --
 
 CREATE UNIQUE INDEX index_orderings_uniqueness ON public.orderings USING btree (entity_id, entity_type, identifier);
+
+
+--
+-- Name: index_pages_on_entity; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_pages_on_entity ON public.pages USING btree (entity_type, entity_id);
+
+
+--
+-- Name: index_pages_ordering; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_pages_ordering ON public.pages USING btree (entity_type, entity_id, "position");
+
+
+--
+-- Name: index_pages_uniqueness; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_pages_uniqueness ON public.pages USING btree (entity_type, entity_id, slug);
 
 
 --
@@ -4478,6 +4533,8 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20211014170459'),
 ('20211014234854'),
 ('20211015191012'),
-('20211015191701');
+('20211015191701'),
+('20211018224246'),
+('20211018235750');
 
 
