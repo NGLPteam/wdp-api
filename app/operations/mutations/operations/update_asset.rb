@@ -5,10 +5,12 @@ module Mutations
     class UpdateAsset
       include MutationOperations::Base
 
-      def call(asset:, **args)
+      def call(asset:, attachment:, **args)
         authorize asset, :update?
 
         asset.assign_attributes args
+
+        asset.attachment = attachment if attachment.present?
 
         persist_model! asset, attach_to: :asset
       end
