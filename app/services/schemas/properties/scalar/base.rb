@@ -11,10 +11,12 @@ module Schemas
         attribute :function, :string
         attribute :mappings, Schemas::Properties::MappingDefinition.to_array_type
         attribute :required, :boolean, default: proc { false }
+        attribute :wide, :boolean, default: proc { false }
 
         config.array = false
         config.base_type = Dry::Types["any"]
         config.schema_predicates = {}
+        config.always_wide = false
 
         def add_to_schema!(context)
           return if exclude_from_schema?
@@ -24,6 +26,10 @@ module Schemas
 
         def actually_required?
           !exclude_from_schema? && required
+        end
+
+        def always_wide?
+          config.always_wide
         end
 
         # @!attribute [r] dig_path
@@ -107,6 +113,10 @@ module Schemas
           validated_value = validate_raw_value extracted_value
 
           normalize_read_value validated_value
+        end
+
+        def wide?
+          wide
         end
 
         # @api private

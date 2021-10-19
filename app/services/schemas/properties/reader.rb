@@ -9,7 +9,7 @@ module Schemas
       option :property, AppTypes.Instance(Schemas::Properties::Scalar::Base)
       option :context, AppTypes.Instance(Schemas::Properties::Context), default: proc { Schemas::Properties::Context.new({}) }
 
-      delegate :function, :label, :full_path, :path, :required, :type, to: :property
+      delegate :function, :label, :full_path, :path, :required, :type, :wide?, to: :property
 
       def default
         property.default if property.has_default?
@@ -29,6 +29,10 @@ module Schemas
 
       def value
         property.read_value_from context
+      end
+
+      def wide?
+        property.always_wide? || property.wide?
       end
     end
   end

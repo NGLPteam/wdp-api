@@ -334,6 +334,12 @@
           "type": "boolean",
           "default": false
         },
+        "wide": {
+          "title": "Is Wide?",
+          "description": "Whether the field should take up the full width of a schema property form. Most types will default to not",
+          "type": "boolean",
+          "default": false
+        },
         "function": { "$ref": "#/$defs/PropertyFunction" }
       },
       "dependencies": {
