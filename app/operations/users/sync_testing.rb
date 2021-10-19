@@ -6,6 +6,7 @@ module Users
     include Dry::Monads[:do, :result]
     include WDPAPI::Deps[
       realm: "keycloak.realm",
+      normalize_testing: "users.normalize_testing",
       update_profile: "users.update_profile",
     ]
 
@@ -39,6 +40,8 @@ module Users
     end
 
     def create!(user)
+      user = yield normalize_testing.call user
+
       user_rep = realm.users.create!(
         user.username,
         user.email,

@@ -3,6 +3,7 @@
 module Testing
   class ScaffoldSystem
     extend Dry::Initializer
+    include Dry::Monads[:do, :result]
 
     prepend HushActiveRecord
 
@@ -36,7 +37,11 @@ module Testing
     def scaffold_users_and_role_assignments!
       return if User.testing.count >= fake_user_count
 
-      FactoryBot.create_list(:user, fake_user_count)
+      users = FactoryBot.create_list(:user, fake_user_count)
+
+      users.each do |user|
+        yield WDPAPI::Container["users.normalize_testing"].call user
+      end
 
       Testing::AssignRandomRoles.new.call
     end

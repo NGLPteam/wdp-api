@@ -9,9 +9,9 @@ FactoryBot.define do
     keycloak_id { SecureRandom.uuid }
 
     email { Faker::Internet.safe_email }
-    email_verified { true }
+    email_verified { false }
 
-    username { Faker::Internet.username }
+    username { email }
     name { "#{given_name} #{family_name}" }
 
     given_name { Faker::Name.first_name }
@@ -19,7 +19,7 @@ FactoryBot.define do
 
     roles { [] }
     resource_roles { {} }
-    metadata { {} }
+    metadata { { "testing" => true } }
 
     global_access_control_list do
       Roles::GlobalAccessControlList.build_with(acl).as_json
