@@ -1066,6 +1066,36 @@ CREATE TABLE public.item_links (
 
 
 --
+-- Name: link_target_candidates; Type: VIEW; Schema: public; Owner: -
+--
+
+CREATE VIEW public.link_target_candidates AS
+ SELECT src.entity_type AS source_type,
+    src.entity_id AS source_id,
+    src.system_slug AS source_slug,
+    target.entity_type AS target_type,
+    target.entity_id AS target_id,
+    target.auth_path,
+    target.system_slug,
+    target.depth,
+    target.title,
+        CASE
+            WHEN (target.entity_type = 'Collection'::text) THEN target.entity_id
+            ELSE NULL::uuid
+        END AS collection_id,
+        CASE
+            WHEN (target.entity_type = 'Item'::text) THEN target.entity_id
+            ELSE NULL::uuid
+        END AS item_id,
+    target.created_at,
+    target.updated_at
+   FROM ((public.entities src
+     JOIN public.entities target ON (((target.entity_type = ANY (ARRAY['Collection'::text, 'Item'::text])) AND (NOT (src.auth_path OPERATOR(public.<@) target.auth_path)) AND (src.auth_path OPERATOR(public.<>) target.auth_path) AND (NOT (src.auth_path OPERATOR(public.@>) target.auth_path)))))
+     LEFT JOIN public.entity_links existing_link ON (((src.entity_type = (existing_link.source_type)::text) AND (src.entity_id = existing_link.source_id) AND (target.entity_type = (existing_link.target_type)::text) AND (target.entity_id = existing_link.target_id))))
+  WHERE (existing_link.id IS NULL);
+
+
+--
 -- Name: ordering_entries; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -4535,6 +4565,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20211015191012'),
 ('20211015191701'),
 ('20211018224246'),
-('20211018235750');
+('20211018235750'),
+('20211019011930');
 
 

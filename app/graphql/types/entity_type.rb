@@ -31,6 +31,9 @@ module Types
 
     field :links, resolver: Resolvers::EntityLinkResolver
 
+    field :link_target_candidates, resolver: Resolvers::LinkTargetCandidateResolver,
+      description: "Available link targets for this entity"
+
     field :ordering, Types::OrderingType, null: true do
       description "Look up an ordering for this entity by identifier"
 
