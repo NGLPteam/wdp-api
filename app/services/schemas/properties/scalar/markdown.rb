@@ -9,6 +9,8 @@ module Schemas
         attribute :default, :string
 
         schema_type! :string
+
+        config.always_wide = true
       end
     end
   end

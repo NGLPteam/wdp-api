@@ -9,6 +9,7 @@ module Types
 
       field :label, String, null: false
       field :required, Boolean, null: false
+      field :is_wide, Boolean, null: false, method: :wide?
 
       def label
         object.label.presence || object.path.titleize
