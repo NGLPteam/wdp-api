@@ -39,6 +39,14 @@ module Types
 
     field :orderings, resolver: Resolvers::OrderingResolver
 
+    field :page, Types::PageType, null: true do
+      description "Look up a page for this entity by slug"
+
+      argument :slug, String, required: true
+    end
+
+    field :pages, resolver: Resolvers::PageResolver
+
     field :schema_definition, Types::SchemaDefinitionType, null: false
 
     field :schema_version, Types::SchemaVersionType, null: false
@@ -83,9 +91,15 @@ module Types
     end
 
     # @param [String] identifier
-    # @return
+    # @return [Ordering, nil]
     def ordering(identifier:)
       object.orderings.by_identifier(identifier).first
+    end
+
+    # @param [String] slug
+    # @return [Page, nil]
+    def page(slug:)
+      object.pages.by_slug(slug).first
     end
 
     def permissions

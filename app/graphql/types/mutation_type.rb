@@ -22,6 +22,8 @@ module Types
 
     field :create_organization_contributor, mutation: Mutations::CreateOrganizationContributor
 
+    field :create_page, mutation: Mutations::CreatePage
+
     field :create_person_contributor, mutation: Mutations::CreatePersonContributor
 
     field :create_role, mutation: Mutations::CreateRole
@@ -41,6 +43,8 @@ module Types
     field :destroy_item, mutation: Mutations::DestroyItem
 
     field :destroy_ordering, mutation: Mutations::DestroyOrdering
+
+    field :destroy_page, mutation: Mutations::DestroyPage
 
     field :grant_access, mutation: Mutations::GrantAccess
 
@@ -65,6 +69,8 @@ module Types
     field :update_ordering, mutation: Mutations::UpdateOrdering
 
     field :update_organization_contributor, mutation: Mutations::UpdateOrganizationContributor
+
+    field :update_page, mutation: Mutations::UpdatePage
 
     field :update_person_contributor, mutation: Mutations::UpdatePersonContributor
 

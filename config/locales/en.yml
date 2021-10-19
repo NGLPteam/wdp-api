@@ -57,6 +57,8 @@ en:
       linked_to_itself: "cannot be linked to itself"
       must_be_email: "must be an email"
       must_be_entity: "must be an entity"
+      must_be_slug: "must be a valid slug (all lowercase, no whitespace)"
+      must_be_unique_slug: "must be a unique slug for the entity"
       must_be_url: "must be a valid HTTP URL"
       range_required_when_limited_visibility: "must be set when visibility is limited"
       update_and_clear_attachment: "cannot receive a new attachment while also clearing it"

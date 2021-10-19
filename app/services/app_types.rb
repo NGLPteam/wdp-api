@@ -9,6 +9,8 @@ module AppTypes
 
   EMAIL_PATTERN = URI::MailTo::EMAIL_REGEXP
 
+  SLUG_PATTERN = /\A[a-z0-9]+(?:-[a-z0-9]+)*\z/.freeze
+
   CoercibleEmail = Coercible::String.constrained(format: EMAIL_PATTERN).optional
 
   Email = String.constrained(format: EMAIL_PATTERN)
