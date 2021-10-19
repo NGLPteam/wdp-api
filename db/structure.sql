@@ -1485,7 +1485,8 @@ CREATE TABLE public.users (
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     global_access_control_list jsonb DEFAULT '{}'::jsonb NOT NULL,
-    allowed_actions public.ltree[] DEFAULT '{}'::public.ltree[] NOT NULL
+    allowed_actions public.ltree[] DEFAULT '{}'::public.ltree[] NOT NULL,
+    avatar_data jsonb
 );
 
 
@@ -4474,6 +4475,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20211013193041'),
 ('20211013195329'),
 ('20211013235624'),
+('20211014170459'),
 ('20211014234854'),
 ('20211015191012'),
 ('20211015191701');

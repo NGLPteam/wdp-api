@@ -68,6 +68,8 @@ module Types
 
     field :update_role, mutation: Mutations::UpdateRole
 
+    field :update_viewer_settings, mutation: Mutations::UpdateViewerSettings
+
     field :upsert_contribution, mutation: Mutations::UpsertContribution
   end
 end

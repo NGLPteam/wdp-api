@@ -3,6 +3,7 @@
 class User < ApplicationRecord
   include AccessGrantSubject
   include HasSystemSlug
+  include ImageUploader::Attachment.new(:avatar)
 
   has_many :community_memberships, dependent: :destroy, inverse_of: :user
 
@@ -61,6 +62,14 @@ class User < ApplicationRecord
   # @return [void]
   def set_allowed_actions!
     self.allowed_actions = global_access_control_list.allowed_actions
+  end
+
+  def testing?
+    /@example\./.match?(email) || metadata["testing"]
+  end
+
+  def sync_testing!
+    call_operation("users.sync_testing", self)
   end
 
   # @!attribute [r] upload_token

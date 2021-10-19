@@ -203,6 +203,22 @@ module MutationOperations
       Dry::Matcher::ResultMatcher.call(result, &block)
     end
 
+    def with_operation_result!(result)
+      with_result!(result) do |m|
+        m.success do |value|
+          value
+        end
+
+        m.failure do |failure|
+          if failure.kind_of?(Array) && failure.length == 2
+            add_global_error! failure[1], type: failure[0].to_s
+          else
+            add_global_error! "Something went wrong"
+          end
+        end
+      end
+    end
+
     def with_attached_result!(key, result)
       with_result! result do |m|
         m.success do |model|
