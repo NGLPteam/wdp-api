@@ -60,6 +60,13 @@ module Types
     field :item_access_grants, resolver: Resolvers::AccessGrants::UserItemResolver,
       description: "All access grants for this user on an item"
 
+    # @return [PreviewImages::TopLevelPreview]
+    def avatar
+      avatar_alt = "avatar for #{object.name}"
+
+      PreviewImages::TopLevelPreview.new object.avatar_attacher, alt: avatar_alt
+    end
+
     def slug
       object.keycloak_id
     end
