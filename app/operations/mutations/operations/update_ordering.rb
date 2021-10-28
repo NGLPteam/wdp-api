@@ -2,7 +2,6 @@
 
 module Mutations
   module Operations
-    # rubocop:disable Metrics/AbcSize
     class UpdateOrdering
       include MutationOperations::Base
 
@@ -21,6 +20,5 @@ module Mutations
         persist_model! ordering, attach_to: :ordering
       end
     end
-    # rubocop:enable Metrics/AbcSize
   end
 end

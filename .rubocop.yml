@@ -119,6 +119,9 @@ Lint/UnusedMethodArgument:
   Enabled: false
 
 Metrics/AbcSize:
+  Exclude:
+    - "app/operations/**/*.rb"
+    - "app/services/**/*.rb"
   Max: 25
 
 Metrics/BlockLength:
@@ -126,6 +129,11 @@ Metrics/BlockLength:
 
 Metrics/ClassLength:
   Enabled: false
+
+Metrics/CyclomaticComplexity:
+  Exclude:
+    - "app/operations/**/*.rb"
+    - "app/services/**/*.rb"
 
 Metrics/MethodLength:
   Max: 30
@@ -135,6 +143,11 @@ Metrics/ModuleLength:
 
 Metrics/ParameterLists:
   Enabled: false
+
+Metrics/PerceivedComplexity:
+  Exclude:
+    - "app/operations/**/*.rb"
+    - "app/services/**/*.rb"
 
 Naming/AccessorMethodName:
   Enabled: false
@@ -162,6 +175,9 @@ Rails/AfterCommitOverride:
 
 Rails/AttributeDefaultBlockValue:
   Enabled: true
+
+Rails/Date:
+  Enabled: false
 
 Rails/Delegate:
   Enabled: false
@@ -203,7 +219,7 @@ Rails/SkipsModelValidations:
   Enabled: false
 
 Rails/SquishedSQLHeredocs:
-  Enabled: true
+  Enabled: false
 
 Rails/WhereEquals:
   Enabled: true
@@ -291,6 +307,12 @@ Style/EndlessMethod:
   Enabled: true
 
 Style/ExplicitBlockArgument:
+  Enabled: false
+
+Style/FormatString:
+  Enabled: false
+
+Style/FormatStringToken:
   Enabled: false
 
 Style/FrozenStringLiteralComment:
