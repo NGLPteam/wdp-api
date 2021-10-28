@@ -9,6 +9,7 @@ require "dry/transformer/all"
 require "dry/schema"
 require "dry/types"
 require "dry/validation"
+require "faraday_middleware"
 require "net/http"
 require "sidekiq/api"
 
