@@ -1,8 +1,10 @@
 # See https://git-scm.com/docs/gitattributes for more about git attribute files.
 
+config/credentials.yml.enc binary
+
 # Mark the database schema as having been generated.
 db/schema.rb linguist-generated
-
+db/structure.sql linguist-generated
 
 # Mark any vendored files as having been vendored.
 vendor/* linguist-vendored
