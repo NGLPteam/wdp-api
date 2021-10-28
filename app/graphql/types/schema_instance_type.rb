@@ -20,11 +20,14 @@ module Types
 
     # @see Schemas::Instances::ReadProperties
     def schema_properties
-      Promise.all([
-                    schema_instance_context,
-                    Loaders::AssociationLoader.for(object.class, :schematic_collected_references).load(object),
-                    Loaders::AssociationLoader.for(object.class, :schematic_scalar_references).load(object),
-                  ]).then do |(context, *)|
+      Promise.all(
+        [
+          schema_instance_context,
+          Loaders::AssociationLoader.for(object.class, :schematic_collected_references).load(object),
+          Loaders::AssociationLoader.for(object.class, :schematic_scalar_references).load(object),
+          Loaders::AssociationLoader.for(object.class, :schematic_texts).load(object)
+        ]
+      ).then do |(context, *)|
         object.read_properties(context: context).value_or([])
       end
     end

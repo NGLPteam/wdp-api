@@ -10,6 +10,7 @@ module Schemas
 
       include WDPAPI::Deps[
         write_collected_references: "schemas.references.write_collected_references",
+        write_full_text: "schemas.instances.write_full_text",
         write_scalar_reference: "schemas.references.write_scalar_reference"
       ]
 
@@ -20,6 +21,8 @@ module Schemas
         yield assign_values! entity, context
 
         yield write_collected_references! entity, context
+
+        yield write_full_text! entity, context
 
         yield write_scalar_references! entity, context
 
@@ -43,6 +46,17 @@ module Schemas
       def write_collected_references!(entity, context)
         context.collected_references.each do |full_path, referents|
           yield write_collected_references.call entity, full_path, referents
+        end
+
+        Success nil
+      end
+
+      # @param [HasSchemaDefinition] entity
+      # @param [Schemas::Properties::Context] context
+      # @return [Dry::Monads::Result]
+      def write_full_text!(entity, context)
+        context.full_texts.each do |full_path, text|
+          yield write_full_text.call entity, full_path, text
         end
 
         Success nil

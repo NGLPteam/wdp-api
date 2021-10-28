@@ -68,6 +68,22 @@ module AppTypes
 
   GraphQLConnectionClass = Inherits(GraphQL::Types::Relay::BaseConnection)
 
+  FullTextKind = AppTypes::Coercible::String.default("text").enum("text", "markdown", "html")
+
+  FullTextKindOption = FullTextKind.constructor do |value|
+    case value
+    when FullTextKind then value
+    else
+      "text"
+    end
+  end
+
+  FullTextReference = AppTypes::Hash.schema(
+    content?: AppTypes::String.optional,
+    kind?: FullTextKindOption,
+    lang?: AppTypes::String.optional,
+  ).with_key_transform(&:to_sym)
+
   Model = Instance(ActiveRecord::Base)
 
   ModelList = AppTypes::Array.of(Model)
@@ -77,6 +93,8 @@ module AppTypes
   ModelClassList = AppTypes::Array.of(ModelClass)
 
   CollectedReferenceMap = AppTypes::Hash.map(AppTypes::String, ModelList)
+
+  FullTextMap = AppTypes::Hash.map(AppTypes::String, FullTextReference.optional)
 
   ScalarReferenceMap = AppTypes::Hash.map(AppTypes::String, Model.optional)
 

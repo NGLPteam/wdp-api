@@ -15,6 +15,7 @@ module Schemas
       when "date" then Schemas::Properties::Scalar::Date
       when "email" then Schemas::Properties::Scalar::Email
       when "float" then Schemas::Properties::Scalar::Float
+      when "full_text" then Schemas::Properties::Scalar::FullText
       when "integer" then Schemas::Properties::Scalar::Integer
       when "markdown" then Schemas::Properties::Scalar::Markdown
       when "multiselect" then Schemas::Properties::Scalar::Multiselect
