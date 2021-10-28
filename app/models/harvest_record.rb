@@ -2,6 +2,7 @@
 
 class HarvestRecord < ApplicationRecord
   include ScopesForIdentifier
+  include ScopesForMetadataFormat
 
   belongs_to :harvest_attempt, inverse_of: :harvest_records
 
@@ -10,6 +11,16 @@ class HarvestRecord < ApplicationRecord
   has_one :harvest_set, through: :harvest_attempt
 
   has_many :harvest_entities, inverse_of: :harvest_record, dependent: :destroy
+
+  # @return [void]
+  def asynchronously_prepare_entities!
+    Harvesting::PrepareEntitiesFromRecordJob.perform_later self
+  end
+
+  # @return [void]
+  def asynchronously_upsert_entities!
+    Harvesting::UpsertEntitiesForRecordJob.perform_later self
+  end
 
   # @return [Dry::Monads::Result]
   def prepare_entities!

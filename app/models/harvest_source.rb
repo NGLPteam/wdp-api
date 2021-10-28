@@ -3,6 +3,7 @@
 class HarvestSource < ApplicationRecord
   include HasEphemeralSystemSlug
   include ScopesForMetadataFormat
+  include TimestampScopes
 
   has_many :harvest_attempts, inverse_of: :harvest_source, dependent: :destroy
   has_many :harvest_contributors, inverse_of: :harvest_source, dependent: :destroy

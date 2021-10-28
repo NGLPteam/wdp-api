@@ -5,6 +5,7 @@ module HierarchicalEntity
   extend ActiveSupport::Concern
 
   include HasSystemSlug
+  include TimestampScopes
 
   included do
     include EntityImageUploader::Attachment.new(:thumbnail)
