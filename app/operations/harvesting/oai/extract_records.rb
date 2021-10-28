@@ -10,12 +10,12 @@ module Harvesting
       include Dry::Effects.Resolve(:harvest_source)
       include Dry::Effects.Resolve(:harvest_attempt)
       include Dry::Effects.Resolve(:harvest_mapping)
-      include Dry::Effects.Resolve(:metadata_processor)
+      include Dry::Effects.Resolve(:metadata_format)
       include Harvesting::OAI::WithClient
       include Harvesting::WithLogger
       include WDPAPI::Deps[process_record: "harvesting.oai.process_record"]
 
-      SANITY_MAX = 400
+      SANITY_MAX = 4000
 
       # @param [HarvestAttempt] harvest_attempt
       def call(harvest_attempt)
@@ -34,6 +34,7 @@ module Harvesting
 
       private
 
+      # @return [void]
       def paginate_requests!
         options = yield prepare_initial_request
 
@@ -54,7 +55,7 @@ module Harvesting
 
           break if resp.resumption_token.blank? || total >= SANITY_MAX
 
-          resp = oai_client.list_sets resumption_token: resp.resumption_token
+          resp = oai_client.list_records resumption_token: resp.resumption_token
         end
 
         Success nil
@@ -62,7 +63,7 @@ module Harvesting
 
       def prepare_initial_request
         options = {}.tap do |h|
-          h[:metadata_prefix] = metadata_processor.oai_metadata_prefix
+          h[:metadata_prefix] = metadata_format.oai_metadata_prefix
 
           h[:set] = harvest_set.identifier if harvest_set.present?
         end

@@ -1,0 +1,11 @@
+{
+  "id": "journal_volume",
+  "name": "Journal Volume",
+  "version": "1.0.0",
+  "consumer": "collection",
+  "orderings": [],
+  "properties": [
+    { "path": "id", "label": "Identifier", "type": "string" },
+    { "path": "seq", "label": "Sequence", "type": "string" }
+  ]
+}

@@ -5,6 +5,7 @@ class Asset < ApplicationRecord
   include GenericUploader::Attachment.new(:alternatives)
   include PreviewUploader::Attachment.new(:preview)
   include SchematicReferent
+  include ScopesForIdentifier
 
   pg_enum! :kind, as: "asset_kind"
 
@@ -32,6 +33,7 @@ class Asset < ApplicationRecord
   scope :with_unpromoted_preview, -> { where(%(preview_data ->> 'storage' = 'cache')) }
 
   validates :attachment, :name, :content_type, :file_size, presence: true
+  validates :identifier, uniqueness: { scope: %i[attachable_type attachable_id], if: :identifier? }
 
   # @return [String]
   def content_disposition

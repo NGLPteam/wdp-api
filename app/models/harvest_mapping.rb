@@ -8,4 +8,15 @@ class HarvestMapping < ApplicationRecord
   belongs_to :collection, inverse_of: :harvest_mappings
 
   has_many :harvest_attempts, inverse_of: :harvest_mapping, dependent: :destroy
+
+  validates :metadata_format, harvesting_metadata_format: true
+
+  before_validation :inherit_metadata_format!
+
+  private
+
+  # @return [void]
+  def inherit_metadata_format!
+    self.metadata_format ||= harvest_source&.metadata_format
+  end
 end

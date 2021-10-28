@@ -19,7 +19,7 @@ module Harvesting
 
           records = resp.map do |set|
             yield prepare harvest_source, set
-          end.compact
+          end.compact.uniq { |rec| rec[:identifier] }
 
           yield upsert! records if records.any?
 
@@ -59,8 +59,7 @@ module Harvesting
           harvest_source_id: harvest_source.id,
           identifier: set.spec,
           name: set.name.presence || set.spec,
-          description: set.description,
-          raw_source: set.to_json,
+          description: set.description&.text.presence,
         }.compact
 
         Success attributes

@@ -6,8 +6,8 @@ module TestOAI
       include Dry::Monads[:do, :result]
       include MonadicPersistence
 
-      def call
-        community = Community.where(title: "Cornell Testing").first_or_initialize do |c|
+      def call(title:)
+        community = Community.where(title: title).first_or_initialize do |c|
           c.schema_version = SchemaVersion["default:community"]
         end
 

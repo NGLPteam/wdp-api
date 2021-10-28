@@ -2,6 +2,7 @@
 
 module Harvesting
   module Logs
+    # @abstract
     class Base
       extend Dry::Initializer
 
@@ -13,7 +14,8 @@ module Harvesting
 
       redis_id_field :model_id
 
-      list :messages, marshal: true, maxlength: 1000
+      list :messages, marshal: true, maxlength: 1000,
+        expireat: proc { 1.day.from_now }
 
       def log(message, tags: [], level: nil)
         obj = { message: message, time: Time.current, tags: tags.presence, level: level }.compact

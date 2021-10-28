@@ -3,6 +3,7 @@
 module Contributors
   class PersonProperties
     include StoreModel::Model
+    include Digestable
 
     attribute :given_name, :string
     attribute :family_name, :string
@@ -10,6 +11,17 @@ module Contributors
     attribute :affiliation, :string
 
     validates :given_name, :family_name, presence: true
+
+    def digest
+      digest_with do |dig|
+        dig << "given_name" << given_name.to_s
+        dig << "family_name" << family_name.to_s
+      end
+    end
+
+    def digestable?
+      given_name.present? && family_name.present?
+    end
 
     # @return [String]
     def display_name

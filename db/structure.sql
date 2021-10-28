@@ -125,6 +125,18 @@ CREATE TYPE public.contributor_kind AS ENUM (
 
 
 --
+-- Name: date_precision; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.date_precision AS ENUM (
+    'none',
+    'year',
+    'month',
+    'day'
+);
+
+
+--
 -- Name: entity_visibility; Type: TYPE; Schema: public; Owner: -
 --
 
@@ -133,6 +145,14 @@ CREATE TYPE public.entity_visibility AS ENUM (
     'hidden',
     'limited'
 );
+
+
+--
+-- Name: full_text_weight; Type: DOMAIN; Schema: public; Owner: -
+--
+
+CREATE DOMAIN public.full_text_weight AS "char" DEFAULT 'D'::"char"
+	CONSTRAINT valid_full_text_weight CHECK ((VALUE = ANY (ARRAY['A'::"char", 'B'::"char", 'C'::"char", 'D'::"char"])));
 
 
 --
@@ -206,6 +226,16 @@ CREATE TYPE public.schema_kind AS ENUM (
 
 CREATE DOMAIN public.semantic_version AS public.citext DEFAULT '0.0.0'::public.citext
 	CONSTRAINT semver_format_applies CHECK ((VALUE OPERATOR(public.~) '^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$'::public.citext));
+
+
+--
+-- Name: variable_precision_date; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.variable_precision_date AS (
+	value date,
+	"precision" public.date_precision
+);
 
 
 --
@@ -285,6 +315,63 @@ CREATE FUNCTION public.jsonb_set_rec(jsonb, jsonb, text[]) RETURNS jsonb
 CREATE FUNCTION public.parse_semver(text) RETURNS public.parsed_semver
     LANGUAGE sql IMMUTABLE STRICT PARALLEL SAFE
     AS $_$ SELECT (a[1], a[2], a[3], a[4], a[5])::parsed_semver FROM ( SELECT '^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$' AS pat ) p LEFT JOIN LATERAL ( SELECT regexp_matches($1, p.pat) AS a ) match ON true WHERE match.a IS NOT NULL; $_$;
+
+
+--
+-- Name: variable_daterange(public.variable_precision_date); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.variable_daterange(public.variable_precision_date) RETURNS daterange
+    LANGUAGE sql IMMUTABLE STRICT PARALLEL SAFE
+    AS $_$
+SELECT CASE WHEN $1.value IS NOT NULL THEN
+  CASE $1.precision
+  WHEN 'day' THEN daterange($1.value, $1.value, '[]')
+  WHEN 'month' THEN daterange(
+    date_trunc('month', $1.value)::date,
+    (date_trunc('month', $1.value) + INTERVAL '1 month')::date,
+    '[)')
+  WHEN 'year' THEN daterange(
+    date_trunc('year', $1.value)::date,
+    (date_trunc('year', $1.value) + INTERVAL '1 year')::date,
+    '[)')
+  ELSE
+    NULL
+  END
+ELSE
+  NUll
+END;
+$_$;
+
+
+--
+-- Name: variable_precision(date); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.variable_precision(date) RETURNS public.variable_precision_date
+    LANGUAGE sql IMMUTABLE PARALLEL SAFE
+    AS $_$
+SELECT CASE
+WHEN $1 IS NOT NULL THEN ROW($1, 'day')::variable_precision_date
+ELSE
+  ROW(NULL, 'none')::variable_precision_date
+END;
+$_$;
+
+
+--
+-- Name: variable_precision_for(public.variable_precision_date); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.variable_precision_for(public.variable_precision_date) RETURNS public.date_precision
+    LANGUAGE sql IMMUTABLE PARALLEL SAFE
+    AS $_$
+SELECT CASE
+WHEN $1 IS NOT NULL AND $1.value IS NOT NULL AND $1.precision IS NOT NULL THEN $1.precision
+ELSE
+  'none'::date_precision
+END;
+$_$;
 
 
 --
@@ -523,7 +610,8 @@ CREATE TABLE public.assets (
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     community_id uuid,
     collection_id uuid,
-    item_id uuid
+    item_id uuid,
+    identifier text
 );
 
 
@@ -553,7 +641,19 @@ CREATE TABLE public.collections (
     visible_until_at timestamp with time zone,
     hidden_at timestamp with time zone,
     visibility public.entity_visibility DEFAULT 'visible'::public.entity_visibility NOT NULL,
-    visibility_range tstzrange GENERATED ALWAYS AS (public.calculate_visibility_range(visibility, visible_after_at, visible_until_at)) STORED
+    visibility_range tstzrange GENERATED ALWAYS AS (public.calculate_visibility_range(visibility, visible_after_at, visible_until_at)) STORED,
+    published public.variable_precision_date DEFAULT '(,none)'::public.variable_precision_date,
+    published_range daterange GENERATED ALWAYS AS (public.variable_daterange(published)) STORED,
+    published_precision public.date_precision GENERATED ALWAYS AS (public.variable_precision_for(published)) STORED,
+    accessioned public.variable_precision_date DEFAULT '(,none)'::public.variable_precision_date,
+    accessioned_range daterange GENERATED ALWAYS AS (public.variable_daterange(accessioned)) STORED,
+    accessioned_precision public.date_precision GENERATED ALWAYS AS (public.variable_precision_for(accessioned)) STORED,
+    available public.variable_precision_date DEFAULT '(,none)'::public.variable_precision_date,
+    available_range daterange GENERATED ALWAYS AS (public.variable_daterange(available)) STORED,
+    available_precision public.date_precision GENERATED ALWAYS AS (public.variable_precision_for(available)) STORED,
+    issued public.variable_precision_date DEFAULT '(,none)'::public.variable_precision_date,
+    issued_range daterange GENERATED ALWAYS AS (public.variable_daterange(issued)) STORED,
+    issued_precision public.date_precision GENERATED ALWAYS AS (public.variable_precision_for(issued)) STORED
 );
 
 
@@ -831,6 +931,44 @@ CREATE TABLE public.harvest_attempts (
     began_at timestamp without time zone,
     ended_at timestamp without time zone,
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    metadata_format text NOT NULL
+);
+
+
+--
+-- Name: harvest_contributions; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.harvest_contributions (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    harvest_contributor_id uuid NOT NULL,
+    harvest_entity_id uuid NOT NULL,
+    kind public.citext,
+    metadata jsonb,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+--
+-- Name: harvest_contributors; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.harvest_contributors (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    harvest_source_id uuid NOT NULL,
+    contributor_id uuid,
+    kind public.contributor_kind NOT NULL,
+    identifier public.citext NOT NULL,
+    email public.citext,
+    prefix text,
+    suffix text,
+    bio text,
+    url text,
+    properties jsonb,
+    links jsonb,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
@@ -884,7 +1022,8 @@ CREATE TABLE public.harvest_mappings (
     format_options jsonb DEFAULT '{}'::jsonb NOT NULL,
     mapping_options jsonb DEFAULT '{}'::jsonb NOT NULL,
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    metadata_format text NOT NULL
 );
 
 
@@ -937,8 +1076,8 @@ CREATE TABLE public.harvest_sets (
 CREATE TABLE public.harvest_sources (
     id uuid DEFAULT gen_random_uuid() NOT NULL,
     name text NOT NULL,
-    kind text NOT NULL,
-    source_format text NOT NULL,
+    protocol text NOT NULL,
+    metadata_format text NOT NULL,
     base_url text NOT NULL,
     description text,
     list_options jsonb DEFAULT '{}'::jsonb NOT NULL,
@@ -978,7 +1117,19 @@ CREATE TABLE public.items (
     visible_until_at timestamp with time zone,
     hidden_at timestamp with time zone,
     visibility public.entity_visibility DEFAULT 'visible'::public.entity_visibility NOT NULL,
-    visibility_range tstzrange GENERATED ALWAYS AS (public.calculate_visibility_range(visibility, visible_after_at, visible_until_at)) STORED
+    visibility_range tstzrange GENERATED ALWAYS AS (public.calculate_visibility_range(visibility, visible_after_at, visible_until_at)) STORED,
+    published public.variable_precision_date DEFAULT '(,none)'::public.variable_precision_date,
+    published_range daterange GENERATED ALWAYS AS (public.variable_daterange(published)) STORED,
+    published_precision public.date_precision GENERATED ALWAYS AS (public.variable_precision_for(published)) STORED,
+    accessioned public.variable_precision_date DEFAULT '(,none)'::public.variable_precision_date,
+    accessioned_range daterange GENERATED ALWAYS AS (public.variable_daterange(accessioned)) STORED,
+    accessioned_precision public.date_precision GENERATED ALWAYS AS (public.variable_precision_for(accessioned)) STORED,
+    available public.variable_precision_date DEFAULT '(,none)'::public.variable_precision_date,
+    available_range daterange GENERATED ALWAYS AS (public.variable_daterange(available)) STORED,
+    available_precision public.date_precision GENERATED ALWAYS AS (public.variable_precision_for(available)) STORED,
+    issued public.variable_precision_date DEFAULT '(,none)'::public.variable_precision_date,
+    issued_range daterange GENERATED ALWAYS AS (public.variable_daterange(issued)) STORED,
+    issued_precision public.date_precision GENERATED ALWAYS AS (public.variable_precision_for(issued)) STORED
 );
 
 
@@ -1473,6 +1624,27 @@ CREATE TABLE public.schematic_scalar_references (
 
 
 --
+-- Name: schematic_texts; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.schematic_texts (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    entity_type character varying NOT NULL,
+    entity_id uuid NOT NULL,
+    path public.citext NOT NULL,
+    lang public.citext,
+    kind public.citext DEFAULT 'text'::public.citext,
+    dictionary regconfig DEFAULT 'simple'::regconfig NOT NULL,
+    weight public.full_text_weight DEFAULT 'D'::"char" NOT NULL,
+    content text,
+    text_content text,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    document tsvector GENERATED ALWAYS AS (setweight(to_tsvector(dictionary, text_content), (weight)::"char")) STORED
+);
+
+
+--
 -- Name: tmp_agu; Type: VIEW; Schema: public; Owner: -
 --
 
@@ -1649,6 +1821,22 @@ ALTER TABLE ONLY public.granted_permissions
 
 ALTER TABLE ONLY public.harvest_attempts
     ADD CONSTRAINT harvest_attempts_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: harvest_contributions harvest_contributions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.harvest_contributions
+    ADD CONSTRAINT harvest_contributions_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: harvest_contributors harvest_contributors_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.harvest_contributors
+    ADD CONSTRAINT harvest_contributors_pkey PRIMARY KEY (id);
 
 
 --
@@ -1865,6 +2053,14 @@ ALTER TABLE ONLY public.schematic_collected_references
 
 ALTER TABLE ONLY public.schematic_scalar_references
     ADD CONSTRAINT schematic_scalar_references_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: schematic_texts schematic_texts_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.schematic_texts
+    ADD CONSTRAINT schematic_texts_pkey PRIMARY KEY (id);
 
 
 --
@@ -2102,6 +2298,13 @@ CREATE INDEX index_assets_on_preview_data ON public.assets USING gin (preview_da
 
 
 --
+-- Name: index_assets_uniqueness; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_assets_uniqueness ON public.assets USING btree (attachable_type, attachable_id, identifier) WHERE (identifier IS NOT NULL);
+
+
+--
 -- Name: index_authorizing_entities_for_collections; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -2242,10 +2445,52 @@ CREATE UNIQUE INDEX index_collection_links_uniqueness ON public.collection_links
 
 
 --
+-- Name: index_collections_on_accessioned; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_collections_on_accessioned ON public.collections USING btree (accessioned);
+
+
+--
+-- Name: index_collections_on_accessioned_precision; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_collections_on_accessioned_precision ON public.collections USING btree (accessioned_precision);
+
+
+--
+-- Name: index_collections_on_accessioned_range; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_collections_on_accessioned_range ON public.collections USING gist (accessioned_range);
+
+
+--
 -- Name: index_collections_on_auth_path; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_collections_on_auth_path ON public.collections USING gist (auth_path);
+
+
+--
+-- Name: index_collections_on_available; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_collections_on_available ON public.collections USING btree (available);
+
+
+--
+-- Name: index_collections_on_available_precision; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_collections_on_available_precision ON public.collections USING btree (available_precision);
+
+
+--
+-- Name: index_collections_on_available_range; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_collections_on_available_range ON public.collections USING gist (available_range);
 
 
 --
@@ -2263,6 +2508,27 @@ CREATE UNIQUE INDEX index_collections_on_doi ON public.collections USING btree (
 
 
 --
+-- Name: index_collections_on_issued; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_collections_on_issued ON public.collections USING btree (issued);
+
+
+--
+-- Name: index_collections_on_issued_precision; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_collections_on_issued_precision ON public.collections USING btree (issued_precision);
+
+
+--
+-- Name: index_collections_on_issued_range; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_collections_on_issued_range ON public.collections USING gist (issued_range);
+
+
+--
 -- Name: index_collections_on_parent_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -2277,10 +2543,31 @@ CREATE INDEX index_collections_on_properties ON public.collections USING gin (pr
 
 
 --
+-- Name: index_collections_on_published; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_collections_on_published ON public.collections USING btree (published);
+
+
+--
 -- Name: index_collections_on_published_on; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_collections_on_published_on ON public.collections USING btree (published_on);
+
+
+--
+-- Name: index_collections_on_published_precision; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_collections_on_published_precision ON public.collections USING btree (published_precision);
+
+
+--
+-- Name: index_collections_on_published_range; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_collections_on_published_range ON public.collections USING gist (published_range);
 
 
 --
@@ -2386,6 +2673,20 @@ CREATE INDEX index_community_memberships_on_user_id ON public.community_membersh
 --
 
 CREATE UNIQUE INDEX index_community_memberships_uniqueness ON public.community_memberships USING btree (community_id, user_id);
+
+
+--
+-- Name: index_contributors_on_identifier; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_contributors_on_identifier ON public.contributors USING btree (identifier);
+
+
+--
+-- Name: index_contributors_on_properties; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_contributors_on_properties ON public.contributors USING gin (properties);
 
 
 --
@@ -2662,6 +2963,48 @@ CREATE INDEX index_harvest_attempts_on_harvest_source_id ON public.harvest_attem
 
 
 --
+-- Name: index_harvest_contributions_on_harvest_contributor_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_harvest_contributions_on_harvest_contributor_id ON public.harvest_contributions USING btree (harvest_contributor_id);
+
+
+--
+-- Name: index_harvest_contributions_on_harvest_entity_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_harvest_contributions_on_harvest_entity_id ON public.harvest_contributions USING btree (harvest_entity_id);
+
+
+--
+-- Name: index_harvest_contributions_uniqueness; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_harvest_contributions_uniqueness ON public.harvest_contributions USING btree (harvest_contributor_id, harvest_entity_id);
+
+
+--
+-- Name: index_harvest_contributors_on_contributor_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_harvest_contributors_on_contributor_id ON public.harvest_contributors USING btree (contributor_id);
+
+
+--
+-- Name: index_harvest_contributors_on_harvest_source_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_harvest_contributors_on_harvest_source_id ON public.harvest_contributors USING btree (harvest_source_id);
+
+
+--
+-- Name: index_harvest_contributors_uniqueness; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_harvest_contributors_uniqueness ON public.harvest_contributors USING btree (harvest_source_id, identifier);
+
+
+--
 -- Name: index_harvest_entities_on_entity; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -2753,6 +3096,13 @@ CREATE UNIQUE INDEX index_harvest_sets_uniqueness ON public.harvest_sets USING b
 
 
 --
+-- Name: index_harvest_sources_on_name; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_harvest_sources_on_name ON public.harvest_sources USING btree (name);
+
+
+--
 -- Name: index_item_authorizations_on_auth_path; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -2823,10 +3173,52 @@ CREATE UNIQUE INDEX index_item_links_uniqueness ON public.item_links USING btree
 
 
 --
+-- Name: index_items_on_accessioned; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_items_on_accessioned ON public.items USING btree (accessioned);
+
+
+--
+-- Name: index_items_on_accessioned_precision; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_items_on_accessioned_precision ON public.items USING btree (accessioned_precision);
+
+
+--
+-- Name: index_items_on_accessioned_range; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_items_on_accessioned_range ON public.items USING gist (accessioned_range);
+
+
+--
 -- Name: index_items_on_auth_path; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_items_on_auth_path ON public.items USING gist (auth_path);
+
+
+--
+-- Name: index_items_on_available; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_items_on_available ON public.items USING btree (available);
+
+
+--
+-- Name: index_items_on_available_precision; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_items_on_available_precision ON public.items USING btree (available_precision);
+
+
+--
+-- Name: index_items_on_available_range; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_items_on_available_range ON public.items USING gist (available_range);
 
 
 --
@@ -2844,6 +3236,27 @@ CREATE UNIQUE INDEX index_items_on_doi ON public.items USING btree (doi);
 
 
 --
+-- Name: index_items_on_issued; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_items_on_issued ON public.items USING btree (issued);
+
+
+--
+-- Name: index_items_on_issued_precision; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_items_on_issued_precision ON public.items USING btree (issued_precision);
+
+
+--
+-- Name: index_items_on_issued_range; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_items_on_issued_range ON public.items USING gist (issued_range);
+
+
+--
 -- Name: index_items_on_parent_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -2858,10 +3271,31 @@ CREATE INDEX index_items_on_properties ON public.items USING gin (properties);
 
 
 --
+-- Name: index_items_on_published; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_items_on_published ON public.items USING btree (published);
+
+
+--
 -- Name: index_items_on_published_on; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_items_on_published_on ON public.items USING btree (published_on);
+
+
+--
+-- Name: index_items_on_published_precision; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_items_on_published_precision ON public.items USING btree (published_precision);
+
+
+--
+-- Name: index_items_on_published_range; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_items_on_published_range ON public.items USING gist (published_range);
 
 
 --
@@ -3205,6 +3639,27 @@ CREATE INDEX index_schematic_scalar_references_on_referrer ON public.schematic_s
 --
 
 CREATE UNIQUE INDEX index_schematic_scalar_references_uniqueness ON public.schematic_scalar_references USING btree (referrer_type, referrer_id, path);
+
+
+--
+-- Name: index_schematic_texts_entity_path_uniqueness; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_schematic_texts_entity_path_uniqueness ON public.schematic_texts USING btree (entity_type, entity_id, path);
+
+
+--
+-- Name: index_schematic_texts_on_document; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_schematic_texts_on_document ON public.schematic_texts USING gin (document);
+
+
+--
+-- Name: index_schematic_texts_on_entity; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_schematic_texts_on_entity ON public.schematic_texts USING btree (entity_type, entity_id);
 
 
 --
@@ -4111,6 +4566,14 @@ ALTER TABLE ONLY public.access_grants
 
 
 --
+-- Name: harvest_contributions fk_rails_57cba9c70f; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.harvest_contributions
+    ADD CONSTRAINT fk_rails_57cba9c70f FOREIGN KEY (harvest_contributor_id) REFERENCES public.harvest_contributors(id);
+
+
+--
 -- Name: role_permissions fk_rails_60126080bd; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4196,6 +4659,14 @@ ALTER TABLE ONLY public.assets
 
 ALTER TABLE ONLY public.granted_permissions
     ADD CONSTRAINT fk_rails_79f89b52dc FOREIGN KEY (role_id) REFERENCES public.roles(id) ON DELETE CASCADE;
+
+
+--
+-- Name: harvest_contributions fk_rails_7a0d956912; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.harvest_contributions
+    ADD CONSTRAINT fk_rails_7a0d956912 FOREIGN KEY (harvest_entity_id) REFERENCES public.harvest_entities(id);
 
 
 --
@@ -4343,6 +4814,14 @@ ALTER TABLE ONLY public.harvest_entities
 
 
 --
+-- Name: harvest_contributors fk_rails_b607efe09d; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.harvest_contributors
+    ADD CONSTRAINT fk_rails_b607efe09d FOREIGN KEY (harvest_source_id) REFERENCES public.harvest_sources(id) ON DELETE CASCADE;
+
+
+--
 -- Name: entity_links fk_rails_b6e9726cfa; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4364,6 +4843,14 @@ ALTER TABLE ONLY public.access_grants
 
 ALTER TABLE ONLY public.orderings
     ADD CONSTRAINT fk_rails_c09738b6c8 FOREIGN KEY (schema_version_id) REFERENCES public.schema_versions(id) ON DELETE CASCADE;
+
+
+--
+-- Name: harvest_contributors fk_rails_cbaeac6363; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.harvest_contributors
+    ADD CONSTRAINT fk_rails_cbaeac6363 FOREIGN KEY (contributor_id) REFERENCES public.contributors(id) ON DELETE SET NULL;
 
 
 --
@@ -4566,6 +5053,16 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20211015191701'),
 ('20211018224246'),
 ('20211018235750'),
-('20211019011930');
+('20211019011930'),
+('20211021190227'),
+('20211021194549'),
+('20211021224524'),
+('20211021224948'),
+('20211025041435'),
+('20211025181924'),
+('20211025193642'),
+('20211027003925'),
+('20211028000811'),
+('20211028000854');
 
 
