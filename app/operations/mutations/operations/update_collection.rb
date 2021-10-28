@@ -6,6 +6,7 @@ module Mutations
       include MutationOperations::Base
       include MutationOperations::UpdatesEntity
 
+      use_contract! :update_collection
       use_contract! :entity_visibility
 
       def call(collection:, **attributes)
