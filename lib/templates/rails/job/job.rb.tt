@@ -22,7 +22,7 @@
 
   INDENTABLE = /(\A|(?:#{NL}(?!#{NL}|\z)))/m
 
-  class_body = <<~RUBY.strip_heredoc.gsub(INDENTABLE, '\1' + body_indentation)#.insert(0, body_indentation)
+  class_body = <<~RUBY.strip_heredoc.gsub(INDENTABLE, '\1' + body_indentation)
   queue_as :#{options[:queue]}
 
   # @return [void]
@@ -36,4 +36,6 @@
     "#{indentation}end"
   end.join("\n")
 -%>
+# frozen_string_literal: true
+
 <%= header + class_body + footer %>
