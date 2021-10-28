@@ -9,6 +9,8 @@ module Schemas
           def generate
             set! :authored_on, Faker::Date.backward(days: 365 * 30)
 
+            set_random_year_month! :acquired
+
             set_publisher!
 
             # set! :header, header_asset
@@ -68,6 +70,8 @@ module Schemas
               #{Faker::Lorem.paragraph(sentence_count: 5..10)}
               MARKDOWN
             end
+
+            set_full_text_from! :content, :body, kind: "markdown"
           end
 
           # @return [String]
