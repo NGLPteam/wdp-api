@@ -17,7 +17,7 @@
     },
     {
       "path": "epub",
-      "label": "EPub",
+      "legend": "EPub",
       "properties": [
         { "path": "published", "label": "Published", "type": "variable_date" }
       ],
@@ -25,7 +25,7 @@
     },
     {
       "path": "volume",
-      "label": "Volume Metadata",
+      "legend": "Volume Metadata",
       "properties": [
         { "path": "id", "label": "ID", "type": "string" },
         { "path": "sortable_number", "label": "Sortable Number", "type": "integer" },
@@ -35,7 +35,7 @@
     },
     {
       "path": "issue",
-      "label": "Issue Metadata",
+      "legend": "Issue Metadata",
 
       "properties": [
         { "path": "title", "label": "Title", "type": "string", "wide": true },
@@ -48,7 +48,7 @@
     },
     {
       "path": "dates",
-      "label": "Dates",
+      "legend": "Dates",
       "properties": [
         { "path": "collected", "label": "Collected", "type": "variable_date" }
       ],
