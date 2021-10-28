@@ -13,12 +13,12 @@ module Harvesting
       include MonadicPersistence
 
       # @param [OAI::Record] oai_record
-      # @return [HarvestRecord]
+      # @return [HarvestRecord, nil]
       def call(oai_record)
-        unless oai_record.header.status == "deleted"
+        unless oai_record.header.status == "deleted" || oai_record.metadata.blank?
           create_record_from oai_record
         else
-          handle_deleted oai_record
+          handle_deleted! oai_record
         end
       end
 

@@ -15,7 +15,7 @@ module Harvesting
       def call(harvest_record)
         wrap_middleware.call(harvest_record) do
           silence_activerecord do
-            yield metadata_format.extract_entities.call harvest_record.raw_metadata_source
+            yield metadata_format.extract_entities.call harvest_record.raw_metadata_source if harvest_record.raw_metadata_source?
           end
         end
 
