@@ -19,6 +19,12 @@ module Types
     field :parent, "Types::CollectionParentType", null: true
     field :children, connection_type, null: false, deprecation_reason: "Use Collection.collections"
 
+    field :has_collections, Boolean, null: false,
+      description: "Whether this collection has any child collections"
+
+    field :has_items, Boolean, null: false,
+      description: "Whether this collection has any child items"
+
     field :collections, resolver: Resolvers::SubcollectionResolver, connection: true
     field :contributions, resolver: Resolvers::CollectionContributionResolver, connection: true
     field :items, resolver: Resolvers::ItemResolver, connection: true
@@ -30,6 +36,16 @@ module Types
 
     field :user_group_access_grants, resolver: Resolvers::AccessGrants::UserGroupCollectionResolver,
       description: "Not presently used"
+
+    # @return [Boolean]
+    def has_collections
+      object.children.exists?
+    end
+
+    # @return [Boolean]
+    def has_items
+      object.items.exists?
+    end
 
     # @return [Community, Collection]
     def parent
