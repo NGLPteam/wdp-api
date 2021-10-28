@@ -16,10 +16,20 @@
 ActiveSupport::Inflector.inflections(:en) do |inflect|
   inflect.acronym "CRUD"
   inflect.acronym "DOI"
+  inflect.acronym "JATS"
+  inflect.acronym "METS"
+  inflect.acronym "MODS"
   inflect.acronym "OAIPMH"
   inflect.acronym "OAI"
   inflect.acronym "NGLP"
   inflect.acronym "PDF"
+  inflect.acronym "URL"
   inflect.acronym "WDPAPISchema"
   inflect.acronym "WDPAPI"
+
+  inflect.uncountable "JATS"
+  inflect.uncountable "METS"
+  inflect.uncountable "MODS"
 end
+
+URLValidator = ActiveModel::Validations::UrlValidator
