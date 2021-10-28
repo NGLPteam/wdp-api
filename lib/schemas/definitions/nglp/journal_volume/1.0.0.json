@@ -6,6 +6,6 @@
   "orderings": [],
   "properties": [
     { "path": "id", "label": "Identifier", "type": "string" },
-    { "path": "seq", "label": "Sequence", "type": "string" }
+    { "path": "sortable_number", "label": "Sortable Number", "type": "integer" }
   ]
 }
