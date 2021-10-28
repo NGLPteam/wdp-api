@@ -4,6 +4,7 @@ class GenericUploader < Shrine
   plugin :add_metadata
   plugin :refresh_metadata
   plugin :infer_extension, force: true
+  plugin :remote_url, max_size: 250.megabytes
   plugin :signature
   plugin :validation_helpers
   plugin :restore_cached_data
