@@ -19,6 +19,9 @@ module Types
     field :parent, "Types::ItemParentType", null: true
     field :children, connection_type, null: false, deprecation_reason: "Use Item.items"
 
+    field :has_items, Boolean, null: false,
+      description: "Whether this item has any child items"
+
     field :contributions, resolver: Resolvers::ItemContributionResolver, connection: true
     field :items, resolver: Resolvers::SubitemResolver, connection: true
 
@@ -29,6 +32,11 @@ module Types
 
     field :user_group_access_grants, resolver: Resolvers::AccessGrants::UserGroupCollectionResolver,
       description: "Not presently used"
+
+    # @return [Boolean]
+    def has_items
+      object.children.exists?
+    end
 
     # @return [Collection, Item]
     def parent
