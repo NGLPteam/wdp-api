@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Shared
-  class FallbackUrl
+  class FallbackURL
     include PreviewImages::SharedConstants
 
     # @param [#to_s] derivative_name
