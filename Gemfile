@@ -61,6 +61,7 @@ gem "kramdown", "~> 2.3.1"
 gem "memoist", "~> 0.16.2"
 gem "mods", "~> 2.4.1"
 gem "naught", "~> 1.1.0"
+gem "nokogiri", "~> 1.12.5"
 gem "oai", "~> 1.1.0"
 gem "pundit", "~> 2.1.0"
 gem "semantic", "~> 1.6.1"
@@ -83,7 +84,7 @@ gem "tus-server", "~> 2.3"
 
 # Servers / Rack
 gem "falcon", "~> 0.39.0", require: false
-gem "puma", "~> 5.3.1"
+gem "puma", "~> 5.5.1"
 gem "rack-cors", "~> 1.1.1"
 
 # Debugging / system-level things
