@@ -22,6 +22,7 @@ services:
     stdin_open: true
     build: .
     environment:
+      - "EDITOR=vim"
       - "MEMCACHE_SERVERS=cache:11211"
       - "REDIS_URL=redis://redis:6379"
       - "S3_ENDPOINT=http://host.docker.internal:10042"
