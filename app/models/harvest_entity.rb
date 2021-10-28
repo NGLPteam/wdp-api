@@ -19,5 +19,13 @@ class HarvestEntity < ApplicationRecord
 
   attribute :extracted_assets, Harvesting::Assets::Mapping.to_type, default: proc { {} }
 
+  scope :filtered_by_schema_version, ->(schemas) { where(schema_version: SchemaVersion.filtered_by(schemas)) }
+  scope :by_metadata_kind, ->(kind) { where(metadata_kind: kind) }
+  scope :for_metadata_format, ->(metadata_format) { joins(:harvest_record).merge(HarvestRecord.for_metadata_format(metadata_format)) }
+  scope :with_jats_format, -> { for_metadata_format "jats" }
+  scope :with_mets_format, -> { for_metadata_format "mets" }
+  scope :with_mods_format, -> { for_metadata_format "mods" }
+  scope :with_extracted_properties, ->(props) { where(arel_json_contains(:extracted_properties, props)) }
+
   validates :identifier, presence: true, uniqueness: { scope: :harvest_record_id }
 end

@@ -3,6 +3,7 @@
 class HarvestAttempt < ApplicationRecord
   include HasEphemeralSystemSlug
   include ScopesForMetadataFormat
+  include TimestampScopes
 
   belongs_to :collection, inverse_of: :harvest_attempts
   belongs_to :harvest_source, inverse_of: :harvest_attempts

@@ -2,6 +2,7 @@
 
 class HarvestMapping < ApplicationRecord
   include HasEphemeralSystemSlug
+  include TimestampScopes
 
   belongs_to :harvest_source, inverse_of: :harvest_mappings
   belongs_to :harvest_set, inverse_of: :harvest_mappings, optional: true
