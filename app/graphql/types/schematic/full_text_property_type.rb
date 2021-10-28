@@ -5,7 +5,7 @@ module Types
     class FullTextPropertyType < Types::AbstractObjectType
       implements ScalarPropertyType
 
-      field :full_text, Types::FullTextType, null: true
+      field :full_text, Types::FullTextType, null: true, method: :value
     end
   end
 end

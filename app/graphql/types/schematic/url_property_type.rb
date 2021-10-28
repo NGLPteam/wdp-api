@@ -7,7 +7,7 @@ module Types
 
       implements ScalarPropertyType
 
-      field :url, Types::URLReferenceType, null: true
+      field :url, Types::URLReferenceType, null: true, method: :value
     end
   end
 end
