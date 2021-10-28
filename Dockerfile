@@ -1,6 +1,6 @@
 FROM ruby:2.7.3-buster
 
-RUN apt-get update -qq && apt-get install -y -qq --no-install-recommends gnupg2 libsndfile1-dev build-essential libvips-dev mediainfo ffmpeg
+RUN apt-get update -qq && apt-get install -y -qq --no-install-recommends gnupg2 libsndfile1-dev build-essential libvips-dev mediainfo ffmpeg vim
 
 RUN wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
 
