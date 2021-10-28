@@ -23,6 +23,7 @@ module Schemas
       when "string" then Schemas::Properties::Scalar::String
       when "tags" then Schemas::Properties::Scalar::Tags
       when "timestamp" then Schemas::Properties::Scalar::Timestamp
+      when "url" then Schemas::Properties::Scalar::URL
       when "variable_date" then Schemas::Properties::Scalar::VariableDate
       else
         # :nocov:

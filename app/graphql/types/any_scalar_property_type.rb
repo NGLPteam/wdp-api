@@ -20,6 +20,7 @@ module Types
       Types::Schematic::TagsPropertyType,
       Types::Schematic::TimestampPropertyType,
       Types::Schematic::UnknownPropertyType,
+      Types::Schematic::URLPropertyType,
       Types::Schematic::VariableDatePropertyType
     )
 
