@@ -2,6 +2,7 @@
 
 require "shrine/storage/memory"
 require "shrine/storage/s3"
+require "shrine/storage/url"
 require "tus/storage/s3"
 
 aws_credentials = S3Config.to_h
@@ -34,11 +35,12 @@ Tus::Server.opts[:max_size] = 3.gigabytes
 Shrine.storages = {
   cache: Shrine::Storage::S3.new(**cache_s3_options),
   store: Shrine::Storage::S3.new(**store_s3_options),
-  derivatives: Shrine::Storage::S3.new(**derivative_s3_options)
+  derivatives: Shrine::Storage::S3.new(**derivative_s3_options),
+  remote: Shrine::Storage::Url,
 }
 
 if Rails.env.test?
-  %i[cache store derivatives].each do |store|
+  %i[cache store derivatives remote].each do |store|
     Shrine.storages[store] = Shrine::Storage::Memory.new
   end
 end
