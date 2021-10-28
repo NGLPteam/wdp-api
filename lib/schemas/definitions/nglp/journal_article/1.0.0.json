@@ -27,8 +27,9 @@
       "path": "volume",
       "label": "Volume Metadata",
       "properties": [
-        { "path": "number", "label": "Number", "type": "string" },
-        { "path": "sequence", "label": "Sequence", "type": "string" }
+        { "path": "id", "label": "ID", "type": "string" },
+        { "path": "sortable_number", "label": "Sortable Number", "type": "integer" },
+        { "path": "sequence", "label": "Sequence", "type": "integer" }
       ],
       "type": "group"
     },

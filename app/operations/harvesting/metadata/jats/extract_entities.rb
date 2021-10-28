@@ -39,7 +39,7 @@ module Harvesting
             assigner.attr! :title, parsed.volume_title
 
             assigner.prop! "id", parsed.volume_id
-            assigner.prop! "seq", parsed.volume_sequence
+            assigner.prop! "sortable_number", parsed.volume_sortable_number
 
             assigner.schema! schemas[:volume]
           end
@@ -76,14 +76,9 @@ module Harvesting
             assigner.attr! :summary, parsed.summary
 
             assigner.prop! "body", parsed.body
+            assigner.prop! "online_version", parsed.online_version
 
             assigner.prop! "dates.collected", parsed.date_collected
-            assigner.prop! "epub.published", parsed.epub_published
-
-            assigner.prop! "volume.number", parsed.volume_id
-            assigner.prop! "volume.sequence", parsed.volume_sequence
-
-            assigner.prop! "online_version", parsed.online_version
 
             if parsed.pdf_url.present?
               assigner.scalar_asset!(
@@ -91,6 +86,12 @@ module Harvesting
                 name: "PDF Version", mime_type: "application/pdf"
               )
             end
+
+            assigner.prop! "epub.published", parsed.epub_published
+
+            assigner.prop! "volume.id", parsed.volume_id
+            assigner.prop! "volume.sortable_number", parsed.volume_sortable_number
+            assigner.prop! "volume.sequence", parsed.volume_sequence_number
 
             assigner.prop! "issue.title", parsed.issue_title
             assigner.prop! "issue.number", parsed.issue_number

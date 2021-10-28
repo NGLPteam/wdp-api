@@ -153,38 +153,40 @@ module Harvesting
         # @!group Volume Attributes
 
         def has_volume?
-          volume_full_id.present?
+          volume_id.present?
         end
 
         memoize def volume_identifier
-          volume_full_id.then do |fid|
-            "volume-#{fid}" if fid.present?
-          end
+          return unless has_volume?
+
+          "volume-#{volume_id}"
+        end
+
+        # @note This is a place for improvement. Volume IDs are not guaranteed to be integral.
+        #   They could be roman numerals, alphanumeric, etc.
+        memoize def volume_sortable_number
+          volume_id&.to_i
         end
 
         memoize def volume_title
-          volume_full_id.then do |fid|
-            "Volume #{fid}" if fid.present?
-          end
-        end
+          return unless has_volume?
 
-        memoize def volume_full_id
-          id = volume_id.presence
-          seq = volume_sequence.presence
-
-          combined = [id, seq].compact
-
-          return nil if combined.blank?
-
-          combined.join(?-)
+          "Volume #{volume_id}"
         end
 
         memoize def volume_id
           text_from from_article_meta(%,./xmlns:volume/text(),)
         end
 
+        alias volume_number volume_id
+
         memoize def volume_sequence
           text_from from_article_meta(%,./xmlns:volume/@seq,)
+        end
+
+        # @note Like {#volume_sortable_number}, these values are not guaranteed to be integral.
+        memoize def volume_sequence_number
+          volume_sequence&.to_i
         end
 
         # @!endgroup
