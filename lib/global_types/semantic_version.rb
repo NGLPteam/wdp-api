@@ -32,6 +32,10 @@ module GlobalTypes
       value.nil? ? super : super(value.to_s)
     end
 
+    def type
+      :semantic_version
+    end
+
     private
 
     def version_string_from(major:, minor:, patch:, pre: nil, build: nil)
