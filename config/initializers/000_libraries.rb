@@ -15,6 +15,7 @@ require "sidekiq/api"
 require_relative Rails.root.join("lib", "global_types", "array_types")
 require_relative Rails.root.join("lib", "global_types", "indifferent_hash")
 require_relative Rails.root.join("lib", "global_types", "semantic_version")
+require_relative Rails.root.join("lib", "global_types", "variable_precision_date")
 
 I18n.backend.eager_load!
 
