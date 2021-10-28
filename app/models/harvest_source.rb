@@ -2,17 +2,22 @@
 
 class HarvestSource < ApplicationRecord
   include HasEphemeralSystemSlug
+  include ScopesForMetadataFormat
 
   has_many :harvest_attempts, inverse_of: :harvest_source, dependent: :destroy
+  has_many :harvest_contributors, inverse_of: :harvest_source, dependent: :destroy
   has_many :harvest_mappings, inverse_of: :harvest_source, dependent: :destroy
   has_many :harvest_sets, inverse_of: :harvest_source, dependent: :destroy
 
-  KNOWN_KINDS = %w[oai].freeze
-  KNOWN_SOURCE_FORMATS = %w[mods].freeze
+  KNOWN_PROTOCOLS = %w[oai].freeze
 
-  validates :name, :kind, :source_format, :base_url, presence: true
-  validates :kind, inclusion: { in: KNOWN_KINDS }
-  validates :source_format, inclusion: { in: KNOWN_SOURCE_FORMATS }
+  scope :for_protocol, ->(protocol) { where(protocol: protocol) }
+  scope :with_oai_protocol, -> { for_protocol "oai" }
+
+  validates :name, uniqueness: true
+  validates :name, :protocol, :base_url, presence: true
+  validates :protocol, inclusion: { in: KNOWN_PROTOCOLS }
+  validates :metadata_format, harvesting_metadata_format: true
 
   def logger
     @logger ||= Harvesting::Logs::Source.new self

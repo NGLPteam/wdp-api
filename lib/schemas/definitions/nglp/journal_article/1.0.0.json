@@ -1,0 +1,60 @@
+{
+  "id": "journal_article",
+  "name": "Journal Article",
+  "version": "1.0.0",
+  "consumer": "item",
+  "orderings": [],
+  "properties": [
+    { "path": "body", "label": "Full Text", "type": "full_text", "required": false },
+    { "path": "online_version", "label": "Online Version", "type": "url", "required": false },
+    {
+      "path": "pdf",
+      "legend": "PDF Version",
+      "properties": [
+        { "path": "version", "label": "Downloadable Version", "type": "asset" }
+      ],
+      "type": "group"
+    },
+    {
+      "path": "epub",
+      "label": "EPub",
+      "properties": [
+        { "path": "published", "label": "Published", "type": "variable_date" }
+      ],
+      "type": "group"
+    },
+    {
+      "path": "volume",
+      "label": "Volume Metadata",
+      "properties": [
+        { "path": "number", "label": "Number", "type": "string" },
+        { "path": "sequence", "label": "Sequence", "type": "string" }
+      ],
+      "type": "group"
+    },
+    {
+      "path": "issue",
+      "label": "Issue Metadata",
+
+      "properties": [
+        { "path": "title", "label": "Title", "type": "string", "wide": true },
+        { "path": "number", "label": "Number", "type": "string" },
+        { "path": "id", "label": "ID", "type": "string" },
+        { "path": "fpage", "label": "Start Page (of Issue)", "type": "integer" },
+        { "path": "lpage", "label": "Ending Page (of Issue)", "type": "integer" }
+      ],
+      "type": "group"
+    },
+    {
+      "path": "dates",
+      "label": "Dates",
+      "properties": [
+        { "path": "collected", "label": "Collected", "type": "variable_date" }
+      ],
+      "type": "group"
+    },
+    {
+      "path": "page_count", "label": "Page Count", "type": "integer"
+    }
+  ]
+}

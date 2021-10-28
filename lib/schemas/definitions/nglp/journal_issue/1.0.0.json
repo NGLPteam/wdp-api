@@ -1,0 +1,11 @@
+{
+  "id": "journal_issue",
+  "name": "Journal Issue",
+  "version": "1.0.0",
+  "consumer": "collection",
+  "orderings": [],
+  "properties": [
+    { "path": "number", "label": "Number", "type": "string" },
+    { "path": "id", "label": "Identifier", "type": "string" }
+  ]
+}

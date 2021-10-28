@@ -2,29 +2,24 @@
 
 module Harvesting
   module OAI
-    # Extract records from an OAI-PMH feed.
+    # Transform a single `OAI::Record` from an OAI-PMH feed
+    # into a {HarvestRecord} for later consumption.
     class ProcessRecord
       include Dry::Monads[:do, :result]
-      include Dry::Effects::Handler.Resolve
-      include Dry::Effects.Resolve(:collection)
-      include Dry::Effects.Resolve(:harvest_set)
-      include Dry::Effects.Resolve(:harvest_source)
       include Dry::Effects.Resolve(:harvest_attempt)
-      include Dry::Effects.Resolve(:harvest_mapping)
-      include Dry::Effects.Resolve(:metadata_processor)
+      include Dry::Effects.Resolve(:metadata_format)
+      include Dry::Effects.Resolve(:protocol)
       include Harvesting::WithLogger
       include MonadicPersistence
 
-      # @param [OAI::Record] record
+      # @param [OAI::Record] oai_record
       # @return [HarvestRecord]
       def call(oai_record)
-        record = yield create_record_from oai_record
-
-        provide harvest_record: record do
-          yield metadata_processor.extract_entities.call record.raw_metadata_source
+        unless oai_record.header.status == "deleted"
+          create_record_from oai_record
+        else
+          handle_deleted oai_record
         end
-
-        Success record
       end
 
       private
@@ -32,15 +27,11 @@ module Harvesting
       # @param [OAI::Record] oai_record
       # @return [HarvestRecord]
       def create_record_from(oai_record)
-        identifier = oai_record.header.identifier
+        record = record_for oai_record
 
-        record = harvest_attempt.harvest_records.where(identifier: identifier).reorder(nil).first_or_initialize
+        record.metadata_format = metadata_format.format
 
-        record.metadata_format = metadata_processor.format
-
-        record.raw_source = oai_record._source.to_s
-
-        record.raw_metadata_source = yield extract_raw_metadata_from oai_record
+        yield extract_source_and_metadata! record, oai_record
 
         record.local_metadata = {
           datestamp: oai_record.header.datestamp,
@@ -50,15 +41,40 @@ module Harvesting
       end
 
       # @param [OAI::Record] oai_record
-      # @return [String]
-      def extract_raw_metadata_from(oai_record)
-        metadata = oai_record.metadata
+      # @return [ActiveRecord::Relation<HarvestRecord>]
+      def scope_for(oai_record)
+        identifier = oai_record.header.identifier
 
-        if metadata.respond_to?(:children) && metadata.children.length == 1
-          Success metadata.children.first.to_s
-        else
-          Failure[:invalid_metadata, "expected metadata to have only 1 child"]
-        end
+        harvest_attempt.harvest_records.by_identifier(identifier)
+      end
+
+      # @param [OAI::Record] oai_record
+      # @return [HarvestRecord]
+      def record_for(oai_record)
+        scope_for(oai_record).first_or_initialize
+      end
+
+      # @param [HarvestRecord] record
+      # @param [OAI::Record] oai_record
+      # @return [void]
+      def extract_source_and_metadata!(record, oai_record)
+        record.raw_source = oai_record._source.to_s
+
+        raw_metadata = yield protocol.extract_raw_metadata.call oai_record
+
+        validated_raw_metadata = yield metadata_format.validate_raw_metadata.call raw_metadata
+
+        record.raw_metadata_source = validated_raw_metadata
+
+        Success nil
+      end
+
+      # @param [OAI::Record] oai_record
+      # @return [void]
+      def handle_deleted!(oai_record)
+        scope_for(oai_record).destroy_all
+
+        Success nil
       end
     end
   end
