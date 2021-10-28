@@ -7,6 +7,7 @@
   "properties": [
     { "path": "title", "type": "string", "required": true },
     { "path": "body", "type": "markdown", "required": true },
+    { "path": "content", "type": "full_text", "required": false },
     {
       "path": "publisher",
       "legend": "Publisher",
@@ -17,6 +18,7 @@
       ],
       "type": "group"
     },
+    { "path": "acquired", "type": "variable_date" },
     { "path": "authored_on", "type": "date" },
     { "label": "Header Image", "path": "header", "type": "asset" },
     { "label": "PDF Version", "path": "pdf", "type": "asset" },
