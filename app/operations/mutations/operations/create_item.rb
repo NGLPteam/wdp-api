@@ -6,6 +6,7 @@ module Mutations
       include MutationOperations::Base
       include AssignsSchemaVersion
 
+      use_contract! :create_item
       use_contract! :entity_input
       use_contract! :entity_visibility
 

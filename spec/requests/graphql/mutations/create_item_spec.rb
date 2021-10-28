@@ -10,6 +10,7 @@ RSpec.describe Mutations::CreateItem, type: :request do
     let!(:thumbnail) do
       graphql_upload_from "spec", "data", "lorempixel.jpg"
     end
+    let!(:summary) { "A test summary" }
 
     let!(:collection) { FactoryBot.create :collection, community: community }
 
@@ -23,6 +24,7 @@ RSpec.describe Mutations::CreateItem, type: :request do
         title: title,
         visibility: visibility,
         thumbnail: thumbnail,
+        summary: summary,
       }
     end
 
@@ -38,10 +40,13 @@ RSpec.describe Mutations::CreateItem, type: :request do
           item: {
             title: title,
             visibility: visibility,
+            summary: summary,
             parent: { id: parent.to_encoded_id },
             collection: { id: collection.to_encoded_id },
             community: { id: community.to_encoded_id },
-          }
+          },
+          attributeErrors: be_blank,
+          globalErrors: be_blank,
         }
       }
     end
@@ -53,6 +58,7 @@ RSpec.describe Mutations::CreateItem, type: :request do
           item {
             title
             visibility
+            summary
             community { id }
             collection { id }
 
@@ -60,9 +66,72 @@ RSpec.describe Mutations::CreateItem, type: :request do
               ... on Node { id }
             }
           }
+
+          attributeErrors {
+            messages
+            path
+            type
+          }
+
+          globalErrors {
+            message
+          }
         }
       }
       GRAPHQL
+    end
+
+    context "with a blank title" do
+      let(:title) { "" }
+
+      let(:expected_shape) do
+        {
+          createItem: {
+            item: be_blank,
+            attributeErrors: [
+              {
+                path: "title",
+                messages: [
+                  I18n.t("dry_validation.errors.filled?")
+                ]
+              }
+            ],
+            globalErrors: be_blank,
+          }
+        }
+      end
+
+      it "fails" do
+        expect do
+          make_graphql_request! query, token: token, variables: graphql_variables
+        end.to keep_the_same(Item, :count)
+
+        expect_graphql_response_data expected_shape
+      end
+    end
+
+    context "with an empty string for the summary" do
+      let(:summary) { "" }
+
+      it "works" do
+        expect do
+          make_graphql_request! query, token: token, variables: graphql_variables
+        end.to change(Item, :count).by(1)
+
+        expect_graphql_response_data expected_shape
+      end
+    end
+
+    context "with a null value for the summary" do
+      let(:summary) { nil }
+
+      it "works" do
+        expect do
+          make_graphql_request! query, token: token, variables: graphql_variables
+        end.to change(Item, :count).by(1)
+
+        expect_graphql_response_data expected_shape
+      end
     end
 
     context "with a collection as a parent" do

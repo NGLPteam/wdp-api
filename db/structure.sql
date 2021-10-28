@@ -626,9 +626,9 @@ CREATE TABLE public.collections (
     parent_id uuid,
     identifier public.citext NOT NULL,
     system_slug public.citext NOT NULL,
-    title public.citext,
+    title public.citext NOT NULL,
     doi public.citext,
-    summary text DEFAULT ''::text NOT NULL,
+    summary text DEFAULT ''::text,
     thumbnail_data jsonb,
     properties jsonb,
     published_on date,
@@ -1102,9 +1102,9 @@ CREATE TABLE public.items (
     parent_id uuid,
     identifier public.citext NOT NULL,
     system_slug public.citext NOT NULL,
-    title public.citext,
+    title public.citext NOT NULL,
     doi public.citext,
-    summary text DEFAULT ''::text NOT NULL,
+    summary text DEFAULT ''::text,
     thumbnail_data jsonb,
     properties jsonb,
     published_on date,
@@ -5063,6 +5063,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20211025193642'),
 ('20211027003925'),
 ('20211028000811'),
-('20211028000854');
+('20211028000854'),
+('20211028180614');
 
 
