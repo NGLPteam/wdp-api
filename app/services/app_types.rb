@@ -98,6 +98,12 @@ module AppTypes
 
   ScalarReferenceMap = AppTypes::Hash.map(AppTypes::String, Model.optional)
 
+  SchemaURL = AppTypes::Hash.schema(
+    href: AppTypes::String,
+    label: AppTypes::String.default("URL"),
+    title?: AppTypes::String.default("").optional,
+  ).with_key_transform(&:to_sym)
+
   ValueHash = Instance(ActiveSupport::HashWithIndifferentAccess).constructor do |value|
     maybe_value = value.respond_to?(:to_h) ? value.to_h : value
 

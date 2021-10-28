@@ -778,6 +778,24 @@
               "properties": {
                 "type": {
                   "enum": [
+                    "url"
+                  ]
+                },
+                "mappings": {
+                  "$ref": "#/$defs/PropertyMappings"
+                }
+              },
+              "required": [
+                "path",
+                "type"
+              ],
+              "title": "URL",
+              "description": "A representation of a URL"
+            },
+            {
+              "properties": {
+                "type": {
+                  "enum": [
                     "variable_date"
                   ]
                 },
@@ -816,7 +834,8 @@
         "multiselect",
         "asset",
         "assets",
-        "tags"
+        "tags",
+        "url"
       ],
       "type": "string"
     },
@@ -897,7 +916,8 @@
         "multiselect",
         "asset",
         "assets",
-        "tags"
+        "tags",
+        "url"
       ],
       "type": "string"
     }
