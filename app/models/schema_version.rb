@@ -3,6 +3,8 @@
 class SchemaVersion < ApplicationRecord
   include HasCalculatedSystemSlug
 
+  attr_readonly :parsed
+
   belongs_to :schema_definition, inverse_of: :schema_versions
 
   has_many :communities, dependent: :restrict_with_error, inverse_of: :schema_version
