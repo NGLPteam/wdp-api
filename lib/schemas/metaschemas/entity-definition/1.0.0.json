@@ -522,6 +522,24 @@
               "properties": {
                 "type": {
                   "enum": [
+                    "full_text"
+                  ]
+                },
+                "mappings": {
+                  "$ref": "#/$defs/PropertyMappings"
+                }
+              },
+              "required": [
+                "path",
+                "type"
+              ],
+              "title": "Full Text",
+              "description": "A reference to a full-text value (with search capabilities)"
+            },
+            {
+              "properties": {
+                "type": {
+                  "enum": [
                     "integer"
                   ]
                 },
@@ -787,6 +805,7 @@
         "markdown",
         "integer",
         "float",
+        "full_text",
         "boolean",
         "date",
         "variable_date",
@@ -867,6 +886,7 @@
         "markdown",
         "integer",
         "float",
+        "full_text",
         "boolean",
         "date",
         "variable_date",

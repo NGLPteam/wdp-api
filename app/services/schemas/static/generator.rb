@@ -53,6 +53,22 @@ module Schemas
         set! key, value
       end
 
+      def calculate_full_text!(key, kind: "text", lang: nil)
+        reference = { kind: kind, lang: lang }
+
+        calculate! key do |props|
+          reference[:content] = yield props
+
+          reference
+        end
+      end
+
+      def set_full_text_from!(key, other_prop, **options)
+        calculate_full_text! key, **options do |props|
+          props[other_prop]
+        end
+      end
+
       def set!(key, value, skip_chance: nil)
         return if skip_chance.present? && percent_chance?(skip_chance)
 

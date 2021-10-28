@@ -11,6 +11,7 @@ module Types
       Types::Schematic::DatePropertyType,
       Types::Schematic::EmailPropertyType,
       Types::Schematic::FloatPropertyType,
+      Types::Schematic::FullTextPropertyType,
       Types::Schematic::IntegerPropertyType,
       Types::Schematic::MarkdownPropertyType,
       Types::Schematic::MultiselectPropertyType,

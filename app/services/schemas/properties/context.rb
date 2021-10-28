@@ -11,6 +11,7 @@ module Schemas
 
       option :instance, AppTypes.Instance(HasSchemaDefinition).optional, default: proc { nil }
       option :values, AppTypes::ValueHash, default: EMPTY_HASH
+      option :full_texts, AppTypes::FullTextMap, default: EMPTY_HASH
       option :collected_references, AppTypes::CollectedReferenceMap, default: EMPTY_HASH
       option :scalar_references, AppTypes::ScalarReferenceMap, default: EMPTY_HASH
 
@@ -26,6 +27,12 @@ module Schemas
       # @return [<ApplicationRecord>]
       def collected_reference(path)
         collected_references.fetch path, []
+      end
+
+      # @param [String] path
+      # @return [SchematicText, nil]
+      def full_text(path)
+        full_texts[path]
       end
 
       # @param [String] path

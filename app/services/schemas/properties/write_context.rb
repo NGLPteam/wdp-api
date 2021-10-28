@@ -65,6 +65,18 @@ module Schemas
 
       # @param [String] path
       # @return [void]
+      def write_full_text!(path)
+        full_path = full_path_for path
+
+        attributes = value_for(path)
+
+        value_context[:full_texts][full_path] = attributes
+
+        Success nil
+      end
+
+      # @param [String] path
+      # @return [void]
       def write_scalar_reference!(path)
         full_path = full_path_for path
 
@@ -102,7 +114,7 @@ module Schemas
       end
 
       def value_context
-        @value_context ||= { values: {}, collected_references: {}, scalar_references: {} }
+        @value_context ||= { values: {}, collected_references: {}, full_texts: {}, scalar_references: {} }
       end
     end
   end

@@ -31,6 +31,17 @@ module HasSchemaDefinition
       end
     end
 
+    has_many :schematic_texts, as: :entity, dependent: :destroy, inverse_of: :entity do
+      # @return [{ String => FullTextContent, nil }]
+      def to_reference_map
+        each_with_object({}) do |text, h|
+          next if text.content.blank?
+
+          h[text.path] = text.to_reference
+        end
+      end
+    end
+
     attribute :properties, Schemas::Instances::PropertySet.to_type, default: proc { { values: {} } }
 
     before_validation :enforce_schema_definition!, if: :schema_version_id_changed?
