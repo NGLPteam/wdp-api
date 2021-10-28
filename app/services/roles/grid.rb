@@ -59,7 +59,6 @@ module Roles
       end
 
       # @api private
-      # rubocop:disable Metrics/AbcSize
       def with_scope(parent, scope)
         Class.new(self).tap do |klass|
           klass.scope_parent = parent
@@ -80,7 +79,6 @@ module Roles
           end
         end
       end
-      # rubocop:enable Metrics/AbcSize
 
       private
 
