@@ -18,7 +18,8 @@ module Types
       Types::Schematic::StringPropertyType,
       Types::Schematic::TagsPropertyType,
       Types::Schematic::TimestampPropertyType,
-      Types::Schematic::UnknownPropertyType
+      Types::Schematic::UnknownPropertyType,
+      Types::Schematic::VariableDatePropertyType
     )
 
     class << self

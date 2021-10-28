@@ -7,6 +7,7 @@ module Schemas
       extend ActiveModel::Callbacks
 
       include Schemas::Static::Import[definitions: "definitions.map"]
+      include WDPAPI::Deps[parse_variable_date: "variable_precision.parse_date"]
 
       define_model_callbacks :generate, :finalize
 
@@ -67,6 +68,10 @@ module Schemas
         end
       end
 
+      def set_variable_precision_date!(key, value)
+        set! key, parse_variable_date.call(value).value_or(nil)
+      end
+
       # @api private
       # @param [String, Symbol] key
       # @param [Integer, Float] chance
@@ -89,6 +94,22 @@ module Schemas
         value = log_chance(*values)
 
         set! key, value
+      end
+
+      def set_random_year!(key, from: 1950, to: Date.current.year)
+        year = rand(from..to).to_s
+
+        set_variable_precision_date! key, year
+      end
+
+      def set_random_year_month!(key, from: 1950, to: Date.current.year)
+        year = rand(from..to).to_s
+
+        month = rand(1..12).to_s
+
+        value = "%04d-%02d" % [year, month]
+
+        set_variable_precision_date! key, value
       end
 
       def random_paragraph

@@ -755,19 +755,29 @@
               ],
               "title": "Timestamp",
               "description": "An ISO8601 Timestamp that represents a single point in time"
+            },
+            {
+              "properties": {
+                "type": {
+                  "enum": [
+                    "variable_date"
+                  ]
+                },
+                "mappings": {
+                  "$ref": "#/$defs/PropertyMappings"
+                }
+              },
+              "required": [
+                "path",
+                "type"
+              ],
+              "title": "Variable Date",
+              "description": "A date with variable precision"
             }
           ]
         }
 
       }
-    },
-    "ScalarPropertyTypeStringish": {
-      "$comment": "This is used to describe types that are string-like",
-      "enum": [
-        "string",
-        "email",
-        "markdown"
-      ]
     },
     "ScalarPropertyType": {
       "description": "The type of the property. This ensures type-safety.",
@@ -779,6 +789,7 @@
         "float",
         "boolean",
         "date",
+        "variable_date",
         "timestamp",
         "contributor",
         "contributors",
@@ -858,6 +869,7 @@
         "float",
         "boolean",
         "date",
+        "variable_date",
         "timestamp",
         "contributor",
         "contributors",

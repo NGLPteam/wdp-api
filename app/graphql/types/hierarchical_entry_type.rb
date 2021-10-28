@@ -17,7 +17,20 @@ module Types
     field :doi, String, null: true, description: "The Digital Object Identifier for this entity. See https://doi.org"
     field :summary, String, null: true, description: "A description of the contents of the entity"
 
-    field :published_on, GraphQL::Types::ISO8601Date, null: true, description: "The date the entity was published on, if present"
+    field :published_on, GraphQL::Types::ISO8601Date, null: true,
+      deprecation_reason: "Use the variable-precision 'published' field instead"
+
+    field :accessioned, Types::VariablePrecisionDateType, null: false,
+      description: "The date this entity was added to its parent"
+
+    field :available, Types::VariablePrecisionDateType, null: false,
+      description: "The date this entity was made available"
+
+    field :issued, Types::VariablePrecisionDateType, null: false,
+      description: "The date this entity was issued"
+
+    field :published, Types::VariablePrecisionDateType, null: false,
+      description: "The date this entity was published"
 
     field :visibility, Types::EntityVisibilityType, null: false,
       description: "If an entity is available in the frontend"
@@ -28,8 +41,10 @@ module Types
     field :visible_until_at, GraphQL::Types::ISO8601DateTime, null: true,
       description: "If present, this is the timestamp an entity is visible until"
 
-    field :created_at, GraphQL::Types::ISO8601DateTime, null: false
-    field :updated_at, GraphQL::Types::ISO8601DateTime, null: false
+    field :created_at, GraphQL::Types::ISO8601DateTime, null: false,
+      description: "The date this entity was added to the WDP"
+    field :updated_at, GraphQL::Types::ISO8601DateTime, null: false,
+      description: "The date this entity was last updated within the WDP"
 
     field :root, Boolean, null: false, method: :root?
     field :leaf, Boolean, null: false, method: :leaf?
