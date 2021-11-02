@@ -21,5 +21,11 @@ module Types
 
     field :created_at, GraphQL::Types::ISO8601DateTime, null: false
     field :updated_at, GraphQL::Types::ISO8601DateTime, null: false
+
+    def hero_image
+      preview_alt = "hero image for #{object.title}"
+
+      PreviewImages::TopLevelPreview.new object.hero_image_attacher, alt: preview_alt
+    end
   end
 end
