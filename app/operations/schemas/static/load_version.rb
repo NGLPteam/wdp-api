@@ -17,6 +17,8 @@ module Schemas
 
         version.configuration = configuration
 
+        version.configuration_will_change!
+
         monadic_save version
       end
 

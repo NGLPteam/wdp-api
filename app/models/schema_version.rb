@@ -62,6 +62,29 @@ class SchemaVersion < ApplicationRecord
     call_operation("schemas.properties.compile_contract", self).value!
   end
 
+  # @return [void]
+  def reload_static_version!
+    raw_configuration = static_definition&.raw_data
+
+    return if raw_configuration.blank?
+
+    self.configuration = raw_configuration
+
+    configuration_will_change!
+
+    save!
+  end
+
+  def static_definition
+    ::Schemas::Static["definitions.map"][static_definition_key][number.to_s]
+  rescue Dry::Container::Error
+    return nil
+  end
+
+  def static_definition_key
+    "#{namespace}.#{identifier}"
+  end
+
   class << self
     # @param [String] needle
     # @return [SchemaVersion]
