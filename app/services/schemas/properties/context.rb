@@ -52,6 +52,8 @@ module Schemas
       private
 
       def calculate_field_values
+        property_hash = PropertyHash.new values
+
         encoded_collections = collected_references.transform_values do |value|
           value.map(&:to_encoded_id)
         end
@@ -60,21 +62,11 @@ module Schemas
           value&.to_encoded_id
         end
 
-        combined_references = encoded_collections.merge(encoded_scalars)
+        property_hash.merge! encoded_collections
+        property_hash.merge! encoded_scalars
+        property_hash.merge! full_texts
 
-        flattened_references = flatten_map combined_references
-
-        values.deep_merge(flattened_references)
-      end
-
-      def flatten_map(reference_map)
-        reference_map.each_with_object({}) do |(path, value), new_hash|
-          parts = path.split(?.)
-
-          target = parts[0..-2].reduce(new_hash) { |h, k| h[k] ||= {} }
-
-          target[parts.last] = value
-        end
+        property_hash.to_h
       end
     end
   end

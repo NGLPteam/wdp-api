@@ -32,7 +32,9 @@ class SchemaVersion < ApplicationRecord
     :identifier, :namespace, :name,
     to: :schema_definition
 
-  delegate :has_ordering?, :ordering_definition_for, to: :configuration, allow_nil: true
+  delegate :has_ordering?, :ordering_definition_for, :property_paths, to: :configuration, allow_nil: true
+
+  before_validation :extract_reference_paths!
 
   validates :number, presence: true, uniqueness: { scope: :schema_definition }
 
@@ -83,6 +85,14 @@ class SchemaVersion < ApplicationRecord
 
   def static_definition_key
     "#{namespace}.#{identifier}"
+  end
+
+  # @api private
+  # @return [void]
+  def extract_reference_paths!
+    self.collected_reference_paths = Array(configuration&.collected_reference_paths)
+    self.scalar_reference_paths = Array(configuration&.scalar_reference_paths)
+    self.text_reference_paths = Array(configuration&.text_reference_paths)
   end
 
   class << self

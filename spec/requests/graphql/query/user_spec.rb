@@ -7,6 +7,13 @@ RSpec.describe "Query.user", type: :request do
       user(slug: $slug) {
         name
         slug
+        avatar {
+          small {
+            webp {
+              url
+            }
+          }
+        }
       }
     }
     GRAPHQL
@@ -26,7 +33,7 @@ RSpec.describe "Query.user", type: :request do
     context "with a valid slug" do
       let!(:graphql_variables) { { slug: user.system_slug } }
 
-      let!(:user) { FactoryBot.create :user }
+      let!(:user) { FactoryBot.create :user, :with_avatar }
 
       it "has the right name" do
         make_default_request!

@@ -7,7 +7,7 @@ module HasSchemaDefinition
     belongs_to :schema_definition
     belongs_to :schema_version
 
-    has_many :schematic_collected_references, -> { in_order.preload(:referent) }, as: :referrer, dependent: :destroy, inverse_of: :referrer do
+    has_many :schematic_collected_references, -> { with_valid_path.in_order.preload(:referent) }, as: :referrer, dependent: :destroy, inverse_of: :referrer do
       # @return [{ String => <ApplicationRecord>, nil }]
       def to_reference_map
         each_with_object({}) do |ref, h|
@@ -20,7 +20,7 @@ module HasSchemaDefinition
       end
     end
 
-    has_many :schematic_scalar_references, -> { preload(:referent) }, as: :referrer, dependent: :destroy, inverse_of: :referrer do
+    has_many :schematic_scalar_references, -> { with_valid_path.preload(:referent) }, as: :referrer, dependent: :destroy, inverse_of: :referrer do
       # @return [{ String => ApplicationRecord, nil }]
       def to_reference_map
         each_with_object({}) do |ref, h|
@@ -31,7 +31,7 @@ module HasSchemaDefinition
       end
     end
 
-    has_many :schematic_texts, as: :entity, dependent: :destroy, inverse_of: :entity do
+    has_many :schematic_texts, -> { with_valid_path }, as: :entity, dependent: :destroy, inverse_of: :entity do
       # @return [{ String => FullTextContent, nil }]
       def to_reference_map
         each_with_object({}) do |text, h|
