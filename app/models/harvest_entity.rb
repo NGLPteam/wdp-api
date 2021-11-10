@@ -28,4 +28,9 @@ class HarvestEntity < ApplicationRecord
   scope :with_extracted_properties, ->(props) { where(arel_json_contains(:extracted_properties, props)) }
 
   validates :identifier, presence: true, uniqueness: { scope: :harvest_record_id }
+
+  # @return [void]
+  def upsert!
+    call_operation("harvesting.actions.upsert_entity", self)
+  end
 end
