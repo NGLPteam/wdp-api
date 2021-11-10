@@ -7,6 +7,8 @@ module Harvesting
     class AttachAsset
       include MonadicPersistence
 
+      DOWNLOAD_OVERRIDE = %r!(?<=/article/)view(?=/\d+/\d+)!.freeze
+
       # @param [Attachable] entity
       # @param [Harvesting::Assets::ExtractedSource]
       # @return [Dry::Monads::Result]
@@ -17,9 +19,17 @@ module Harvesting
 
         asset.name ||= source.name.presence || source.identifier
 
-        asset.attachment_attacher.assign_remote_url(source.url, metadata: metadata)
+        url = prepare_url source.url
+
+        asset.attachment_attacher.assign_remote_url(url, metadata: metadata)
 
         monadic_save asset
+      end
+
+      private
+
+      def prepare_url(url)
+        url.sub(DOWNLOAD_OVERRIDE, "download")
       end
     end
   end
