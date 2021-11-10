@@ -44,5 +44,11 @@ FactoryBot.define do
     trait :users_access do
       acl { { users: true } }
     end
+
+    trait :with_avatar do
+      avatar do
+        Rails.root.join("spec", "data", "lorempixel.jpg").open
+      end
+    end
   end
 end

@@ -3,9 +3,17 @@
 module SchematicReference
   extend ActiveSupport::Concern
 
+  include SchematicPathValidity
+
   included do
     belongs_to :referrer, polymorphic: true
     belongs_to :referent, polymorphic: true
+
+    # rubocop:disable Rails/InverseOf
+    belongs_to :entity, foreign_key: %i[referrer_type referrer_id], primary_key: %i[entity_type entity_id]
+    # rubocop:enable Rails/InverseOf
+
+    has_one :schema_version, through: :entity
 
     scope :by_referrer, ->(referrer) { where(referrer: referrer) }
     scope :by_referent, ->(referent) { where(referent: referent) }

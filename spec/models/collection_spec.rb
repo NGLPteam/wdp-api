@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
 RSpec.describe Collection, type: :model do
-  pending "add some examples to (or delete) #{__FILE__}"
+  let!(:collection) { FactoryBot.create :collection }
+
+  it_behaves_like "an entity with schematic properties", :collection
+  it_behaves_like "an entity with schematic references", :collection
 end

@@ -1456,7 +1456,10 @@ CREATE TABLE public.schema_versions (
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     number public.semantic_version NOT NULL,
     "position" integer,
-    parsed public.parsed_semver GENERATED ALWAYS AS (public.parse_semver((number)::text)) STORED
+    parsed public.parsed_semver GENERATED ALWAYS AS (public.parse_semver((number)::text)) STORED,
+    collected_reference_paths text[] DEFAULT '{}'::text[] NOT NULL,
+    scalar_reference_paths text[] DEFAULT '{}'::text[] NOT NULL,
+    text_reference_paths text[] DEFAULT '{}'::text[] NOT NULL
 );
 
 
@@ -5064,6 +5067,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20211027003925'),
 ('20211028000811'),
 ('20211028000854'),
-('20211028180614');
+('20211028180614'),
+('20211110171716');
 
 

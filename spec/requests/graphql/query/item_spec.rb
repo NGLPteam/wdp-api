@@ -21,8 +21,6 @@ RSpec.describe "Query.item", type: :request do
         }
 
         items { nodes { id } }
-
-        items { nodes { id } }
       }
     }
     GRAPHQL

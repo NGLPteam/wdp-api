@@ -38,6 +38,39 @@ module Schemas
         end
       end
 
+      # @return [<String>]
+      def property_paths
+        build_paths = ->(prop, paths) do
+          if prop.group?
+            prop.properties.each_with_object(paths, &build_paths)
+          else
+            next if block_given? && !yield(prop)
+
+            paths << prop.full_path
+          end
+        end
+
+        properties.each_with_object([], &build_paths)
+      end
+
+      def collected_reference_paths
+        property_paths do |prop|
+          prop.kind_of?(Schemas::Properties::Scalar::CollectedReference)
+        end
+      end
+
+      def scalar_reference_paths
+        property_paths do |prop|
+          prop.kind_of?(Schemas::Properties::Scalar::ScalarReference)
+        end
+      end
+
+      def text_reference_paths
+        property_paths do |prop|
+          prop.kind_of?(Schemas::Properties::Scalar::FullText)
+        end
+      end
+
       def to_contract
         WDPAPI::Container["schemas.properties.compile_contract"].call(properties)
       end
