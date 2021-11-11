@@ -28,7 +28,7 @@ class Ordering < ApplicationRecord
 
   before_validation :sync_inherited!
 
-  IDENTIFIER_FORMAT = /\A[a-z][a-z0-9_]*[a-z]\z/.freeze
+  IDENTIFIER_FORMAT = /\A[a-z](?:[a-z0-9]*|(?:(?<![-_])[_-](?![_-])))*[a-z0-9]\z/.freeze
 
   validates :identifier, presence: true, format: { with: IDENTIFIER_FORMAT }, uniqueness: { scope: %i[entity_type entity_id] }
   validates :definition, store_model: true

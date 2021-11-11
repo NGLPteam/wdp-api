@@ -12,27 +12,27 @@ module Mutations
       TEXT
     end
 
-    argument :identifier, String, required: true do
+    argument :identifier, String, required: true, attribute: true do
       description "A unique (within the context of the entity) identifier. Cannot be changed"
     end
 
-    argument :name, String, required: false do
+    argument :name, String, required: false, attribute: true do
       description "A human readable label for the ordering"
     end
 
-    argument :header, String, required: false do
+    argument :header, String, required: false, attribute: true do
       description "Optional markdown content to display before the ordering's children"
     end
 
-    argument :footer, String, required: false do
+    argument :footer, String, required: false, attribute: true do
       description "Optional markdown content to display after the ordering's children"
     end
 
-    argument :filter, Types::OrderingFilterDefinitionInputType, required: false
+    argument :filter, Types::OrderingFilterDefinitionInputType, required: false, attribute: true
 
-    argument :select, Types::OrderingSelectDefinitionInputType, required: false
+    argument :select, Types::OrderingSelectDefinitionInputType, required: false, attribute: true
 
-    argument :order, [Types::OrderDefinitionInputType, { null: false }], required: true
+    argument :order, [Types::OrderDefinitionInputType, { null: false }], required: true, attribute: true
 
     performs_operation! "mutations.operations.create_ordering"
   end

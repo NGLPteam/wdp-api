@@ -5,6 +5,8 @@ module Mutations
     class CreateOrdering
       include MutationOperations::Base
 
+      use_contract! :create_ordering
+
       def call(entity:, identifier:, **attributes)
         authorize entity, :update?
 

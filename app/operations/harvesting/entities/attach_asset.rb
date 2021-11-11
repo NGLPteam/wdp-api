@@ -7,7 +7,7 @@ module Harvesting
     class AttachAsset
       include MonadicPersistence
 
-      DOWNLOAD_OVERRIDE = %r!(?<=/article/)view(?=/\d+/\d+)!.freeze
+      DOWNLOAD_OVERRIDE = %r!(?<=/article/)view(?=/[^/]+/[^/]+)!.freeze
 
       # @param [Attachable] entity
       # @param [Harvesting::Assets::ExtractedSource]
