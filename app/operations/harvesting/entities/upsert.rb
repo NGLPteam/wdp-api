@@ -136,9 +136,17 @@ module Harvesting
       # @param [HarvestEntity] harvest_entity
       # @return [Collection, Item]
       def find_or_initialize_entity_for(parent, harvest_entity)
-        scope = yield scope_for parent, harvest_entity
+        if harvest_entity.entity.present?
+          existing_entity = harvest_entity.entity
 
-        Success scope.by_identifier(harvest_entity.identifier).first_or_initialize
+          existing_entity.identifier = harvest_entity.identifier
+
+          Success existing_entity
+        else
+          scope = yield scope_for parent, harvest_entity
+
+          Success scope.by_identifier(harvest_entity.identifier).first_or_initialize
+        end
       end
 
       # Based on the provided parent and harvest_entity, return the correct scope
