@@ -78,16 +78,12 @@ module Harvesting
             assigner.prop! "body", parsed.body
             assigner.prop! "online_version", parsed.online_version
 
-            assigner.prop! "dates.collected", parsed.date_collected
-
             if parsed.pdf_url.present?
               assigner.scalar_asset!(
-                "pdf.version", "pdf", parsed.pdf_url,
+                "pdf_version", "pdf", parsed.pdf_url,
                 name: "PDF Version", mime_type: "application/pdf"
               )
             end
-
-            assigner.prop! "epub.published", parsed.epub_published
 
             assigner.prop! "volume.id", parsed.volume_id
             assigner.prop! "volume.sortable_number", parsed.volume_sortable_number
@@ -99,7 +95,9 @@ module Harvesting
             assigner.prop! "issue.fpage", parsed.fpage
             assigner.prop! "issue.lpage", parsed.lpage
 
-            assigner.prop! "page_count", parsed.page_count
+            assigner.prop! "meta.collected", parsed.date_collected
+            assigner.prop! "meta.published", parsed.epub_published
+            assigner.prop! "meta.page_count", parsed.page_count
 
             assigner.schema! schemas[:article]
           end
