@@ -11,4 +11,9 @@ class EntityBreadcrumb < ApplicationRecord
   belongs_to :entity, polymorphic: true, inverse_of: :entity_breadcrumbs
 
   belongs_to :crumb, polymorphic: true, inverse_of: :entity_breadcrumb_entries
+
+  belongs_to :schema_version
+  has_one :schema_definition, through: :schema_version
+
+  scope :filtered_by_schema_version, ->(schemas) { where(schema_version: SchemaVersion.filtered_by(schemas)) }
 end
