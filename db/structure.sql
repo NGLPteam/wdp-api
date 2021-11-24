@@ -881,6 +881,7 @@ CREATE VIEW public.entity_breadcrumbs AS
     ent.system_slug AS entity_slug,
     crumb.entity_type AS crumb_type,
     crumb.entity_id AS crumb_id,
+    crumb.schema_version_id,
     crumb.auth_path,
     crumb.system_slug,
     crumb.depth
@@ -1089,6 +1090,62 @@ CREATE TABLE public.harvest_sources (
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
+
+
+--
+-- Name: schema_versions; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.schema_versions (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    schema_definition_id uuid NOT NULL,
+    current boolean DEFAULT false NOT NULL,
+    system_slug public.citext NOT NULL,
+    configuration jsonb DEFAULT '{}'::jsonb NOT NULL,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    number public.semantic_version NOT NULL,
+    "position" integer,
+    parsed public.parsed_semver GENERATED ALWAYS AS (public.parse_semver((number)::text)) STORED,
+    collected_reference_paths text[] DEFAULT '{}'::text[] NOT NULL,
+    scalar_reference_paths text[] DEFAULT '{}'::text[] NOT NULL,
+    text_reference_paths text[] DEFAULT '{}'::text[] NOT NULL
+);
+
+
+--
+-- Name: hierarchical_schema_ranks; Type: VIEW; Schema: public; Owner: -
+--
+
+CREATE VIEW public.hierarchical_schema_ranks AS
+ SELECT ent.entity_type,
+    ent.entity_id,
+    sv.schema_definition_id,
+    count(DISTINCT crumb.schema_version_id) AS distinct_version_count,
+    count(*) AS schema_count,
+    mode() WITHIN GROUP (ORDER BY crumb.depth) AS schema_rank
+   FROM ((public.entities ent
+     JOIN public.entities crumb ON (((ent.auth_path OPERATOR(public.@>) crumb.auth_path) AND (crumb.entity_id <> ent.entity_id) AND (crumb.link_operator IS NULL))))
+     JOIN public.schema_versions sv ON ((crumb.schema_version_id = sv.id)))
+  GROUP BY ent.entity_type, ent.entity_id, sv.schema_definition_id
+  ORDER BY (mode() WITHIN GROUP (ORDER BY crumb.depth)), (count(*)) DESC;
+
+
+--
+-- Name: hierarchical_schema_version_ranks; Type: VIEW; Schema: public; Owner: -
+--
+
+CREATE VIEW public.hierarchical_schema_version_ranks AS
+ SELECT ent.entity_type,
+    ent.entity_id,
+    sv.schema_definition_id,
+    crumb.schema_version_id,
+    count(*) AS schema_count,
+    mode() WITHIN GROUP (ORDER BY crumb.depth) AS schema_rank
+   FROM ((public.entities ent
+     JOIN public.entities crumb ON (((ent.auth_path OPERATOR(public.@>) crumb.auth_path) AND (crumb.entity_id <> ent.entity_id) AND (crumb.link_operator IS NULL))))
+     JOIN public.schema_versions sv ON ((crumb.schema_version_id = sv.id)))
+  GROUP BY ent.entity_type, ent.entity_id, sv.schema_definition_id, crumb.schema_version_id;
 
 
 --
@@ -1439,27 +1496,6 @@ CREATE TABLE public.schema_definitions (
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     namespace public.citext NOT NULL
-);
-
-
---
--- Name: schema_versions; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.schema_versions (
-    id uuid DEFAULT gen_random_uuid() NOT NULL,
-    schema_definition_id uuid NOT NULL,
-    current boolean DEFAULT false NOT NULL,
-    system_slug public.citext NOT NULL,
-    configuration jsonb DEFAULT '{}'::jsonb NOT NULL,
-    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    number public.semantic_version NOT NULL,
-    "position" integer,
-    parsed public.parsed_semver GENERATED ALWAYS AS (public.parse_semver((number)::text)) STORED,
-    collected_reference_paths text[] DEFAULT '{}'::text[] NOT NULL,
-    scalar_reference_paths text[] DEFAULT '{}'::text[] NOT NULL,
-    text_reference_paths text[] DEFAULT '{}'::text[] NOT NULL
 );
 
 
@@ -2448,6 +2484,48 @@ CREATE UNIQUE INDEX index_collection_links_uniqueness ON public.collection_links
 
 
 --
+-- Name: index_collections_accessioned_sort_asc; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_collections_accessioned_sort_asc ON public.collections USING btree (((accessioned).value));
+
+
+--
+-- Name: index_collections_accessioned_sort_desc; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_collections_accessioned_sort_desc ON public.collections USING btree (((accessioned).value) DESC NULLS LAST);
+
+
+--
+-- Name: index_collections_available_sort_asc; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_collections_available_sort_asc ON public.collections USING btree (((available).value));
+
+
+--
+-- Name: index_collections_available_sort_desc; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_collections_available_sort_desc ON public.collections USING btree (((available).value) DESC NULLS LAST);
+
+
+--
+-- Name: index_collections_issued_sort_asc; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_collections_issued_sort_asc ON public.collections USING btree (((issued).value));
+
+
+--
+-- Name: index_collections_issued_sort_desc; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_collections_issued_sort_desc ON public.collections USING btree (((issued).value) DESC NULLS LAST);
+
+
+--
 -- Name: index_collections_on_accessioned; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -2599,6 +2677,20 @@ CREATE UNIQUE INDEX index_collections_on_system_slug ON public.collections USING
 --
 
 CREATE INDEX index_collections_on_visible_after_at ON public.collections USING btree (visible_after_at);
+
+
+--
+-- Name: index_collections_published_sort_asc; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_collections_published_sort_asc ON public.collections USING btree (((published).value));
+
+
+--
+-- Name: index_collections_published_sort_desc; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_collections_published_sort_desc ON public.collections USING btree (((published).value) DESC NULLS LAST);
 
 
 --
@@ -3176,6 +3268,48 @@ CREATE UNIQUE INDEX index_item_links_uniqueness ON public.item_links USING btree
 
 
 --
+-- Name: index_items_accessioned_sort_asc; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_items_accessioned_sort_asc ON public.items USING btree (((accessioned).value));
+
+
+--
+-- Name: index_items_accessioned_sort_desc; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_items_accessioned_sort_desc ON public.items USING btree (((accessioned).value) DESC NULLS LAST);
+
+
+--
+-- Name: index_items_available_sort_asc; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_items_available_sort_asc ON public.items USING btree (((available).value));
+
+
+--
+-- Name: index_items_available_sort_desc; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_items_available_sort_desc ON public.items USING btree (((available).value) DESC NULLS LAST);
+
+
+--
+-- Name: index_items_issued_sort_asc; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_items_issued_sort_asc ON public.items USING btree (((issued).value));
+
+
+--
+-- Name: index_items_issued_sort_desc; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_items_issued_sort_desc ON public.items USING btree (((issued).value) DESC NULLS LAST);
+
+
+--
 -- Name: index_items_on_accessioned; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -3327,6 +3461,20 @@ CREATE UNIQUE INDEX index_items_on_system_slug ON public.items USING btree (syst
 --
 
 CREATE INDEX index_items_on_visible_after_at ON public.items USING btree (visible_after_at);
+
+
+--
+-- Name: index_items_published_sort_asc; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_items_published_sort_asc ON public.items USING btree (((published).value));
+
+
+--
+-- Name: index_items_published_sort_desc; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_items_published_sort_desc ON public.items USING btree (((published).value) DESC NULLS LAST);
 
 
 --
@@ -5068,6 +5216,10 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20211028000811'),
 ('20211028000854'),
 ('20211028180614'),
-('20211110171716');
+('20211110171716'),
+('20211123211418'),
+('20211123235058'),
+('20211124013249'),
+('20211124164728');
 
 

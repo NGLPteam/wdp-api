@@ -28,6 +28,9 @@ module HierarchicalEntity
     has_many :entity_breadcrumbs, -> { order(depth: :asc) }, as: :entity
     has_many :entity_breadcrumb_entries, class_name: "EntityBreadcrumb", as: :crumb
 
+    has_many :hierarchical_schema_ranks, -> { for_association }, as: :entity
+    has_many :hierarchical_schema_version_ranks, -> { for_association }, as: :entity
+
     has_many :link_target_candidates, as: :source
 
     has_many :orderings, dependent: :destroy, as: :entity
