@@ -42,6 +42,10 @@ module HierarchicalEntity
 
     scope :filtered_by_schema_version, ->(schemas) { where(schema_version: SchemaVersion.filtered_by(schemas)) }
 
+    scope :with_schema_name_asc, -> { joins(:schema_definition).merge(SchemaDefinition.order(name: :asc)) }
+
+    scope :with_schema_name_desc, -> { joins(:schema_definition).merge(SchemaDefinition.order(name: :desc)) }
+
     before_validation :inherit_hierarchical_parent!
 
     after_validation :set_temporary_auth_path!, on: :create

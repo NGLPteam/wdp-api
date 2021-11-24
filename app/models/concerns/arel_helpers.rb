@@ -17,6 +17,12 @@ module ArelHelpers
   MANY_ARRAY = AppTypes::Array.constrained(min_size: 2)
 
   class_methods do
+    def arel_composite_attr(column, attribute)
+      composite = arel_grouping(arel_attrify(column))
+
+      arel_literal("(%s.#{attribute})" % [composite.to_sql, attribute])
+    end
+
     def arel_ltree_contains(left, right)
       arel_infix "@>", arel_attrify(left), arel_quote(right)
     end

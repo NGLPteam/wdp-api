@@ -3,9 +3,11 @@
 class ApplicationRecord < ActiveRecord::Base
   self.abstract_class = true
 
+  include ArelHelpers
   include DerivedGraphqlTypes
   include LimitToOne
   include PostgresEnums
+  include ComplexOrderingScopes
   include WhereMatches
 
   def call_operation(name, *args)
