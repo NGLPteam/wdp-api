@@ -6,7 +6,7 @@ module Resolvers
 
     include Resolvers::FiltersByEntityPermission
     include Resolvers::PageBasedPagination
-    include Resolvers::SimplyOrdered
+    include Resolvers::OrderedAsEntity
     include Resolvers::Treelike
 
     type Types::ItemConnectionType, null: false
