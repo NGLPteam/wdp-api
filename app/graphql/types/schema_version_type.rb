@@ -4,15 +4,13 @@ module Types
   class SchemaVersionType < Types::AbstractModel
     description "A specific version of a schema definition"
 
+    implements Types::DescribesSchemaType
     implements HasSchemaPropertiesType
 
     field :schema_definition, Types::SchemaDefinitionType, null: false
 
-    field :kind, Types::SchemaKindType, null: false
-    field :identifier, String, null: false
-    field :name, String, null: false
-    field :namespace, String, null: false
-    field :number, String, null: false
+    field :number, String, null: false,
+      description: "A semantic version for the schema"
 
     def slug
       object.system_slug

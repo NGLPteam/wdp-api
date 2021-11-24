@@ -50,6 +50,8 @@ module Types
 
     field :pages, resolver: Resolvers::PageResolver
 
+    field :schema_ranks, [Types::HierarchicalSchemaRankType, { null: false }], null: false
+
     field :schema_definition, Types::SchemaDefinitionType, null: false
 
     field :schema_version, Types::SchemaVersionType, null: false
@@ -64,6 +66,10 @@ module Types
 
     def links
       Loaders::AssociationLoader.for(object.class, :entity_links).load(object)
+    end
+
+    def schema_ranks
+      Loaders::AssociationLoader.for(object.class, :hierarchical_schema_ranks).load(object)
     end
 
     # @return [Promise(ContextualPermission)]

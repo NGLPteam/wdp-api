@@ -13,14 +13,14 @@ RSpec.describe "Query.collection", type: :request do
 
   let!(:article) { FactoryBot.create :item, collection: issue, schema: "nglp:journal_article" }
 
-  let!(:other_item) { FactoryBot.create :item, collection: issue, schema: "default:item" }
-
   def make_default_request!
     make_graphql_request! query, token: token, variables: graphql_variables
   end
 
   context "when fetching ancestors and children of a specific type" do
     let!(:graphql_variables) { { slug: issue.system_slug } }
+
+    let!(:other_item) { FactoryBot.create :item, collection: issue, schema: "default:item" }
 
     let!(:query) do
       <<~GRAPHQL
@@ -81,6 +81,42 @@ RSpec.describe "Query.collection", type: :request do
     end
 
     it "finds the right relatives" do
+      make_default_request!
+
+      expect_graphql_response_data expected_shape, decamelize: true
+    end
+  end
+
+  describe "schemaRanks" do
+    let!(:graphql_variables) { { slug: journal.system_slug } }
+
+    let!(:query) do
+      <<~GRAPHQL
+      query getSchemaRanks($slug: Slug!) {
+        journal: collection(slug: $slug) {
+          schemaRanks {
+            slug
+            kind
+            count
+          }
+        }
+      }
+      GRAPHQL
+    end
+
+    let!(:expected_shape) do
+      {
+        journal: {
+          schema_ranks: [
+            { slug: "nglp:journal_volume", kind: "COLLECTION", count: 1 },
+            { slug: "nglp:journal_issue", kind: "COLLECTION", count: 1 },
+            { slug: "nglp:journal_article", kind: "ITEM", count: 1 },
+          ]
+        }
+      }
+    end
+
+    it "calculates the right ranks" do
       make_default_request!
 
       expect_graphql_response_data expected_shape, decamelize: true
