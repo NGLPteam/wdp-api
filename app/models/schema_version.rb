@@ -127,7 +127,13 @@ class SchemaVersion < ApplicationRecord
         WDPAPI::Container["schemas.versions.find"].call(needle).value_or(nil)
       end.compact
 
-      schema_versions.present? ? where(id: schema_versions) : all
+      if schema_versions.present?
+        where(id: schema_versions)
+      elsif schemas.present?
+        none
+      else
+        all
+      end
     end
 
     # @raise [ActiveRecord::RecordNotFound] if no current version set

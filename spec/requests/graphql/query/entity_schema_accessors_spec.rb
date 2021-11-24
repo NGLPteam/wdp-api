@@ -1,0 +1,89 @@
+# frozen_string_literal: true
+
+RSpec.describe "Query.collection", type: :request do
+  let(:token) { token_helper.build_token has_global_admin: true }
+
+  let!(:graphql_variables) { {} }
+
+  let!(:journal) { FactoryBot.create :collection, schema: "nglp:journal" }
+
+  let!(:volume) { FactoryBot.create :collection, parent: journal, schema: "nglp:journal_volume" }
+
+  let!(:issue) { FactoryBot.create :collection, parent: volume, schema: "nglp:journal_issue" }
+
+  let!(:article) { FactoryBot.create :item, collection: issue, schema: "nglp:journal_article" }
+
+  let!(:other_item) { FactoryBot.create :item, collection: issue, schema: "default:item" }
+
+  def make_default_request!
+    make_graphql_request! query, token: token, variables: graphql_variables
+  end
+
+  context "when fetching ancestors and children of a specific type" do
+    let!(:graphql_variables) { { slug: issue.system_slug } }
+
+    let!(:query) do
+      <<~GRAPHQL
+        query getCollection($slug: Slug!) {
+          issue: collection(slug: $slug) {
+            id
+
+            journal: ancestorOfType(schema: "nglp:journal") {
+              ... on Node { id }
+            }
+
+            volume: ancestorOfType(schema: "nglp:journal_volume") {
+              ... on Node { id }
+            }
+
+            unknown: ancestorOfType(schema: "does_not:exist") {
+              ... on Node { id }
+            }
+
+            articles: items(schema: "nglp:journal_article") {
+              edges {
+                node {
+                  id
+                }
+              }
+
+              pageInfo {
+                totalCount
+              }
+            }
+
+            items {
+              pageInfo { totalCount }
+            }
+          }
+        }
+      GRAPHQL
+    end
+
+    let!(:expected_shape) do
+      {
+        issue: {
+          id: issue.to_encoded_id,
+          journal: {
+            id: journal.to_encoded_id,
+          },
+          volume: {
+            id: volume.to_encoded_id,
+          },
+          unknown: nil,
+          articles: {
+            edges: [{ node: { id: article.to_encoded_id } }],
+            page_info: { total_count: 1 },
+          },
+          items: { page_info: { total_count: 2 } },
+        }
+      }
+    end
+
+    it "finds the right relatives" do
+      make_default_request!
+
+      expect_graphql_response_data expected_shape, decamelize: true
+    end
+  end
+end

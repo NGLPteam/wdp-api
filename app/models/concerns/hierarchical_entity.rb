@@ -58,6 +58,12 @@ module HierarchicalEntity
     after_save :refresh_orderings!
   end
 
+  # @param [String] schema_name
+  # @return [HierarchicalEntity]
+  def ancestor_of_type(schema_name)
+    entity_breadcrumbs.filtered_by_schema_version(schema_name).first&.crumb
+  end
+
   # @return [String]
   def breadcrumb_label
     title

@@ -2,9 +2,13 @@
 
 FactoryBot.define do
   factory :collection do
+    transient do
+      schema { nil }
+    end
+
     association :community
 
-    schema_version { SchemaVersion.default_collection }
+    schema_version { schema.present? ? SchemaVersion[schema] : SchemaVersion.default_collection }
 
     title { Faker::Lorem.sentence }
     identifier { title.parameterize }

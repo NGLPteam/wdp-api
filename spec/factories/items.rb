@@ -2,12 +2,17 @@
 
 FactoryBot.define do
   factory :item do
+    transient do
+      schema { nil }
+    end
+
     association :collection
 
-    schema_version { SchemaVersion.default_item }
+    schema_version { schema.present? ? SchemaVersion[schema] : SchemaVersion.default_item }
 
     title { Faker::Lorem.sentence }
     identifier { title.parameterize }
+
     doi { SecureRandom.uuid }
     summary { Faker::Lorem.paragraph }
 

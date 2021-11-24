@@ -50,5 +50,20 @@ module Types
     field :leaf, Boolean, null: false, method: :leaf?
     field :hidden, Boolean, null: false, method: :visibility_hidden?
     field :visible, Boolean, null: false, method: :visibility_visible?
+
+    field :ancestor_of_type, Types::AnyEntityType, null: true do
+      description <<~TEXT
+      Look up an ancestor for this entity that implements a specific type. It ascends from this entity,
+      so it will first check the parent, then the grandparent, and so on.
+      TEXT
+
+      argument :schema, String, required: true, description: "A fully-qualified name of a schema to look for."
+    end
+
+    # @param [String] schema_slug
+    # @return [HierarchicalEntity]
+    def ancestor_of_type(schema:)
+      object.ancestor_of_type(schema)
+    end
   end
 end
