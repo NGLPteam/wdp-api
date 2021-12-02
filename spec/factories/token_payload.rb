@@ -5,6 +5,7 @@ FactoryBot.define do
     transient do
       realm_roles { ["foo"] }
       widget_roles { ["bar"] }
+      user { nil }
     end
 
     aud { "keycloak" }
@@ -13,7 +14,7 @@ FactoryBot.define do
     session_state { SecureRandom.uuid }
     allowed_origins { ["http://example.com"] }
 
-    sub { SecureRandom.uuid }
+    sub { user&.keycloak_id || SecureRandom.uuid }
     realm_access { { "roles" => Array(realm_roles) } }
     resource_access do
       { "widgets" => { "roles" => Array(widget_roles) } }
@@ -21,13 +22,13 @@ FactoryBot.define do
     scope { "openid" }
 
     email_verified { true }
-    given_name { Faker::Name.first_name }
-    family_name { Faker::Name.last_name }
-    name { "#{given_name} #{family_name}" }
+    given_name { user&.given_name.presence || Faker::Name.first_name }
+    family_name { user&.family_name.presence || Faker::Name.last_name }
+    name { user&.name || "#{given_name} #{family_name}" }
     preferred_username do
-      Faker::Internet.username specifier: "#{given_name}.#{family_name}"
+      user&.username.presence || Faker::Internet.username(specifier: "#{given_name}.#{family_name}")
     end
-    email { Faker::Internet.safe_email name: name }
+    email { user&.email.presence || Faker::Internet.safe_email(name: name) }
 
     custom_attribute { "custom_value" }
 
