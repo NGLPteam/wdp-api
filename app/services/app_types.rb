@@ -39,6 +39,8 @@ module AppTypes
 
   Position = Coercible::Integer.constrained(gteq: 0)
 
+  SimpleSortDirection = Coercible::String.default("asc").enum("asc", "desc").fallback("asc")
+
   SemanticVersion = Constructor(Semantic::Version) do |input|
     raise Dry::Types::ConstraintError.new(nil, input) if input.blank?
 

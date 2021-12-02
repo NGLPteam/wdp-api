@@ -5,8 +5,8 @@ module Resolvers
     include SearchObject.module(:graphql)
 
     include Resolvers::AppliesPolicyScope
+    include Resolvers::OrderedAsContributor
     include Resolvers::PageBasedPagination
-    include Resolvers::SimplyOrdered
 
     type Types::AnyContributorType.connection_type, null: false
 

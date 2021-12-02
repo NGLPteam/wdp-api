@@ -6,7 +6,7 @@ module Resolvers
 
     include Resolvers::AppliesPolicyScope
     include Resolvers::PageBasedPagination
-    include Resolvers::SimplyOrdered
+    include Resolvers::OrderedAsUser
 
     type Types::UserType.connection_type, null: false
 

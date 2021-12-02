@@ -276,6 +276,9 @@ RSpec/RepeatedExample:
   Exclude:
     - "spec/policies/**/*.rb"
 
+RSpec/ScatteredLet:
+  Enabled: false
+
 Style/ArgumentsForwarding:
   Enabled: true
 

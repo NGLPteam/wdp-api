@@ -113,5 +113,6 @@ group :test do
   gem "rspec-collection_matchers", "~> 1.2.0"
   gem "rspec-json_expectations", "~> 2.2.0"
   gem "simplecov", "~> 0.21.2", require: false
+  gem "timecop", "~> 0.9.4"
   gem "webmock", "3.12.2"
 end
