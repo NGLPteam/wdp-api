@@ -4,8 +4,8 @@ module Resolvers
   class ItemContributionResolver < GraphQL::Schema::Resolver
     include SearchObject.module(:graphql)
 
+    include Resolvers::OrderedAsContribution
     include Resolvers::PageBasedPagination
-    include Resolvers::SimplyOrdered
 
     type Types::ItemContributionType.connection_type, null: false
 
