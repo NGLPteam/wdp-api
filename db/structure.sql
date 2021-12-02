@@ -318,6 +318,28 @@ CREATE FUNCTION public.parse_semver(text) RETURNS public.parsed_semver
 
 
 --
+-- Name: user_role_priority(text[], jsonb, public.ltree[]); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.user_role_priority(roles text[], metadata jsonb, allowed_actions public.ltree[]) RETURNS integer
+    LANGUAGE sql IMMUTABLE STRICT PARALLEL SAFE
+    AS $$
+SELECT
+  CASE
+  WHEN metadata @> jsonb_build_object('testing', true) THEN -1000
+  ELSE
+    0
+  END
+  +
+  CASE
+  WHEN 'global_admin' = ANY (roles) THEN 900
+  ELSE
+    0
+  END;
+$$;
+
+
+--
 -- Name: variable_daterange(public.variable_precision_date); Type: FUNCTION; Schema: public; Owner: -
 --
 
@@ -1746,7 +1768,8 @@ CREATE TABLE public.users (
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     global_access_control_list jsonb DEFAULT '{}'::jsonb NOT NULL,
     allowed_actions public.ltree[] DEFAULT '{}'::public.ltree[] NOT NULL,
-    avatar_data jsonb
+    avatar_data jsonb,
+    role_priority integer GENERATED ALWAYS AS (public.user_role_priority(roles, metadata, allowed_actions)) STORED
 );
 
 
@@ -3870,6 +3893,13 @@ CREATE UNIQUE INDEX index_users_on_keycloak_id ON public.users USING btree (keyc
 
 
 --
+-- Name: index_users_on_role_priority; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_users_on_role_priority ON public.users USING btree (role_priority DESC);
+
+
+--
 -- Name: index_users_on_system_slug; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -5220,6 +5250,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20211123211418'),
 ('20211123235058'),
 ('20211124013249'),
-('20211124164728');
+('20211124164728'),
+('20211201182458');
 
 

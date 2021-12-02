@@ -21,6 +21,7 @@ class User < ApplicationRecord
 
   scope :global_admins, -> { where(arel_has_role(:global_admin)) }
   scope :testing, -> { where_contains(email: "@example.") }
+  scope :by_role_priority, -> { order(role_priority: :desc) }
 
   delegate :permissions, to: :global_access_control_list
 
