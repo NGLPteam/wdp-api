@@ -1,5 +1,9 @@
 # frozen_string_literal: true
 
 RSpec.describe CollectionContribution, type: :model do
-  pending "add some examples to (or delete) #{__FILE__}"
+  let!(:contributor) { FactoryBot.create :contributor, :person }
+
+  let!(:contribution) { FactoryBot.create :collection_contribution, contributor: contributor }
+
+  it_behaves_like "a contribution"
 end
