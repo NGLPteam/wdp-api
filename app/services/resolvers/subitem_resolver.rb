@@ -1,11 +1,15 @@
 # frozen_string_literal: true
 
 module Resolvers
+  # A resolver for getting {Item}s below an {Item}.
   class SubitemResolver < GraphQL::Schema::Resolver
     include SearchObject.module(:graphql)
 
     include Resolvers::PageBasedPagination
     include Resolvers::OrderedAsEntity
+    include Resolvers::Subtreelike
+
+    description "Retrieve the items beneath this item"
 
     type "Types::ItemConnectionType", null: false
 
@@ -13,9 +17,7 @@ module Resolvers
 
     scope do
       if object.kind_of?(Item)
-        object.children
-      elsif object.present? && object.respond_to?(:items)
-        object.items
+        object.descendants
       else
         # :nocov:
         Item.none
