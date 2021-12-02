@@ -9,10 +9,12 @@ class TokenHelper
 
   option :pem_path, Dry::Types["coercible.string"], default: proc { "#{__dir__}/test_key.pem" }
 
-  def build_token(data: {}, has_global_admin: false, realm_roles: [], issued_at: Time.current, expires_at: 3.hours.from_now, jti: SecureRandom.uuid, with_random_jwk: false)
+  def build_token(data: {}, from_user: nil, has_global_admin: nil, realm_roles: [], issued_at: Time.current, expires_at: 3.hours.from_now, jti: SecureRandom.uuid, with_random_jwk: false)
     data[:realm_roles] = [*realm_roles].tap do |rr|
-      rr << "global_admin" if has_global_admin
+      rr << "global_admin" if has_global_admin.nil? ? from_user&.has_global_admin_access? : has_global_admin.present?
     end.uniq
+
+    data[:user] = from_user
 
     enriched_data = FactoryBot.attributes_for(:token_payload, data)
 
