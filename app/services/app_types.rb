@@ -3,6 +3,8 @@
 module AppTypes
   include Dry.Types
 
+  extend Shared::EnhancedTypes
+
   UUID_PATTERN = /\A[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\z/i.freeze
 
   UUID = AppTypes::String.constrained(format: UUID_PATTERN)
@@ -47,21 +49,6 @@ module AppTypes
     Semantic::Version.new input.to_s
   rescue ArgumentError => e
     raise Dry::Types::ConstraintError.new e.message, input
-  end
-
-  class << self
-    def Implements(mod)
-      AppTypes::Class.constrained(lt: mod)
-    end
-
-    alias Inherits Implements
-
-    def InstanceOrClass(mod)
-      instance = Instance(mod)
-      klass = Implements(mod)
-
-      instance | klass
-    end
   end
 
   GraphQLTypeClass = Inherits(Types::BaseObject)
