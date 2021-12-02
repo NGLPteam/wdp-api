@@ -282,6 +282,85 @@ $_$;
 
 
 --
+-- Name: derive_contributor_affiliation(public.contributor_kind, jsonb); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.derive_contributor_affiliation(kind public.contributor_kind, properties jsonb) RETURNS text
+    LANGUAGE sql IMMUTABLE STRICT PARALLEL SAFE
+    AS $_$
+SELECT
+  NULLIF(
+    TRIM(
+      CASE kind
+      WHEN 'person' THEN
+        jsonb_extract_path_text($2, 'person', 'affiliation')
+      WHEN 'organization' THEN
+        jsonb_extract_path_text($2, 'organization', 'legal_name')
+      ELSE
+        NULL
+      END
+    ),
+    ''
+  );
+$_$;
+
+
+--
+-- Name: derive_contributor_name(public.contributor_kind, jsonb); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.derive_contributor_name(kind public.contributor_kind, properties jsonb) RETURNS text
+    LANGUAGE sql IMMUTABLE STRICT PARALLEL SAFE
+    AS $_$
+SELECT
+  NULLIF(
+    TRIM(
+      CASE kind
+      WHEN 'person' THEN
+        CONCAT(
+          jsonb_extract_path_text($2, 'person', 'given_name'),
+          ' ',
+          jsonb_extract_path_text($2, 'person', 'family_name')
+        )
+      WHEN 'organization' THEN
+        jsonb_extract_path_text($2, 'organization', 'legal_name')
+      ELSE
+        NULL
+      END
+    ),
+    ''
+  );
+$_$;
+
+
+--
+-- Name: derive_contributor_sort_name(public.contributor_kind, jsonb); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.derive_contributor_sort_name(kind public.contributor_kind, properties jsonb) RETURNS public.citext
+    LANGUAGE sql IMMUTABLE STRICT PARALLEL SAFE
+    AS $_$
+SELECT
+  NULLIF(
+    TRIM(
+      CASE kind
+      WHEN 'person' THEN
+        CONCAT_WS(', ',
+          NULLIF(TRIM(jsonb_extract_path_text($2, 'person', 'family_name')), ''),
+          NULLIF(TRIM(jsonb_extract_path_text($2, 'person', 'given_name')), '')
+        )
+      WHEN 'organization' THEN
+        jsonb_extract_path_text($2, 'organization', 'legal_name')
+      ELSE
+        NULL
+      END
+    ),
+    ''
+  );
+$_$;
+
+
+--
 -- Name: jsonb_bool_or_rec(jsonb, boolean, text[]); Type: FUNCTION; Schema: public; Owner: -
 --
 
@@ -867,7 +946,13 @@ CREATE TABLE public.contributors (
     properties jsonb,
     links jsonb,
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    collection_contribution_count bigint DEFAULT 0 NOT NULL,
+    item_contribution_count bigint DEFAULT 0 NOT NULL,
+    contribution_count bigint GENERATED ALWAYS AS ((GREATEST(collection_contribution_count, (0)::bigint) + GREATEST(item_contribution_count, (0)::bigint))) STORED,
+    name text GENERATED ALWAYS AS (public.derive_contributor_name(kind, properties)) STORED,
+    sort_name public.citext GENERATED ALWAYS AS (public.derive_contributor_sort_name(kind, properties)) STORED,
+    affiliation text GENERATED ALWAYS AS (public.derive_contributor_affiliation(kind, properties)) STORED
 );
 
 
@@ -2794,6 +2879,20 @@ CREATE UNIQUE INDEX index_community_memberships_uniqueness ON public.community_m
 
 
 --
+-- Name: index_contributors_on_affiliation; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_contributors_on_affiliation ON public.contributors USING btree (affiliation);
+
+
+--
+-- Name: index_contributors_on_contribution_count; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_contributors_on_contribution_count ON public.contributors USING btree (contribution_count);
+
+
+--
 -- Name: index_contributors_on_identifier; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -2801,10 +2900,24 @@ CREATE UNIQUE INDEX index_contributors_on_identifier ON public.contributors USIN
 
 
 --
+-- Name: index_contributors_on_name; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_contributors_on_name ON public.contributors USING btree (name);
+
+
+--
 -- Name: index_contributors_on_properties; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_contributors_on_properties ON public.contributors USING gin (properties);
+
+
+--
+-- Name: index_contributors_on_sort_name; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_contributors_on_sort_name ON public.contributors USING btree (sort_name);
 
 
 --
@@ -5251,6 +5364,8 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20211123235058'),
 ('20211124013249'),
 ('20211124164728'),
-('20211201182458');
+('20211201182458'),
+('20211202011224'),
+('20211202013847');
 
 

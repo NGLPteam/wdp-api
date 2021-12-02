@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class Contributor < ApplicationRecord
+  include HasEphemeralSystemSlug
   include ImageUploader::Attachment.new(:image)
   include SchematicReferent
   include ScopesForIdentifier
@@ -27,6 +28,31 @@ class Contributor < ApplicationRecord
 
   delegate :display_name, to: :properties
 
+  # @param [Contributable] contributable
+  # @return [Dry::Monads::Result]
+  def attach!(contributable)
+    call_operation("contributors.attach", self, contributable)
+  end
+
+  # @api private
+  # @return [void]
+  def count_collection_contributions!
+    call_operation "contributors.count_collections", self
+  end
+
+  # @api private
+  # @return [void]
+  def count_item_contributions!
+    call_operation "contributors.count_items", self
+  end
+
+  # @return [String]
+  def display_kind
+    return "Contributor" unless kind?
+
+    kind.to_s.titleize
+  end
+
   def fetch_property(property_name, from: nil)
     property_source(from)&.public_send(property_name)
   end
@@ -46,8 +72,15 @@ class Contributor < ApplicationRecord
     end
   end
 
-  def system_slug
-    call_operation("slugs.encode_id", id).value_or(nil)
+  # @api private
+  # @return [void]
+  def recount_contributions!
+    call_operation "contributors.recount_contributions", self
+  end
+
+  # @return [String]
+  def safe_name
+    name.presence || "(Unknown #{display_kind})"
   end
 
   def to_schematic_referent_label
