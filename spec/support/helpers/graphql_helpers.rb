@@ -80,6 +80,92 @@ module TestHelpers
           h["metadata"].delete "size"
         end
       end
+
+      def gql
+        @gql ||= GQLShaper.new
+      end
+    end
+
+    class GQLShaper
+      def attribute_errors
+        AttributeErrorsBuilder.new.tap do |eb|
+          yield eb if block_given?
+        end.to_errors
+      end
+
+      def attribute_error_on(...)
+        AttributeErrorBuilder.build(...)
+      end
+    end
+
+    class AttributeErrorsBuilder
+      def initialize
+        @errors = []
+      end
+
+      def error(...)
+        @errors << AttributeErrorBuilder.build(...)
+
+        return self
+      end
+
+      def to_errors
+        @errors
+      end
+    end
+
+    class AttributeErrorBuilder
+      include Dry::Initializer.define -> do
+        param :path, Dry::Types["string"]
+      end
+
+      def included_in(*items)
+        list = items.flatten.join(", ")
+
+        messages << I18n.t("dry_validation.errors.included_in?.arg.default", list: list)
+      end
+
+      def exact(message)
+        messages << message
+
+        return self
+      end
+
+      def message(key, **options)
+        case key
+        when Symbol, /\A\S+\z/
+          messages << I18n.t(key, **options, scope: %i[dry_validation errors])
+        when Regexp
+          messages << key
+        end
+
+        return self
+      end
+
+      alias msg message
+
+      def to_error
+        {
+          path: path,
+          messages: messages,
+        }
+      end
+
+      private
+
+      def messages
+        @messages ||= []
+      end
+
+      class << self
+        def build(path, key = nil, **options)
+          AttributeErrorBuilder.new(path).tap do |eb|
+            eb.message key, **options if key.present?
+
+            yield eb if block_given?
+          end.to_error
+        end
+      end
     end
   end
 end

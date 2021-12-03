@@ -66,6 +66,7 @@ gem "oai", "~> 1.1.0"
 gem "pundit", "~> 2.1.0"
 gem "semantic", "~> 1.6.1"
 gem "statesman", "~> 9.0.0"
+gem "strip_attributes", "1.11.0"
 gem "validate_url", "~> 1.0.13"
 
 # File processing

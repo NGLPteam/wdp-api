@@ -66,6 +66,8 @@ module Types
 
     field :update_item, mutation: Mutations::UpdateItem
 
+    field :update_global_configuration, mutation: Mutations::UpdateGlobalConfiguration
+
     field :update_ordering, mutation: Mutations::UpdateOrdering
 
     field :update_organization_contributor, mutation: Mutations::UpdateOrganizationContributor
