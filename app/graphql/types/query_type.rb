@@ -57,6 +57,10 @@ module Types
       description "A list of all contributors in the system"
     end
 
+    field :global_configuration, Types::GlobalConfigurationType, null: false do
+      description "Fetch the global configuration for this installation"
+    end
+
     field :roles, resolver: Resolvers::RoleResolver do
       description "List all roles"
     end
@@ -112,6 +116,11 @@ module Types
 
     def contributor(slug:)
       Loaders::RecordLoader.for(Contributor).load(slug)
+    end
+
+    # @return [GlobalConfiguration]
+    def global_configuration
+      GlobalConfiguration.fetch
     end
 
     def item(slug:)

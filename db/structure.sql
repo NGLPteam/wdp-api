@@ -1023,6 +1023,25 @@ CREATE TABLE public.entity_links (
 
 
 --
+-- Name: global_configurations; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.global_configurations (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    guard boolean DEFAULT true NOT NULL,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    institution jsonb DEFAULT '{}'::jsonb NOT NULL,
+    schema jsonb DEFAULT '{}'::jsonb NOT NULL,
+    site jsonb DEFAULT '{}'::jsonb NOT NULL,
+    theme jsonb DEFAULT '{}'::jsonb NOT NULL,
+    logo_data jsonb,
+    banner_data jsonb,
+    CONSTRAINT ensure_global_configurations_singleton CHECK (guard)
+);
+
+
+--
 -- Name: harvest_attempts; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -1952,6 +1971,14 @@ ALTER TABLE ONLY public.entities
 
 ALTER TABLE ONLY public.entity_links
     ADD CONSTRAINT entity_links_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: global_configurations global_configurations_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.global_configurations
+    ADD CONSTRAINT global_configurations_pkey PRIMARY KEY (id);
 
 
 --
@@ -3093,6 +3120,13 @@ CREATE INDEX index_entity_links_on_target_item_id ON public.entity_links USING b
 --
 
 CREATE UNIQUE INDEX index_entity_links_uniqueness ON public.entity_links USING btree (source_type, source_id, target_type, target_id);
+
+
+--
+-- Name: index_global_configurations_singleton_guard; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_global_configurations_singleton_guard ON public.global_configurations USING btree (guard);
 
 
 --
@@ -5366,6 +5400,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20211124164728'),
 ('20211201182458'),
 ('20211202011224'),
-('20211202013847');
+('20211202013847'),
+('20211202195122');
 
 
