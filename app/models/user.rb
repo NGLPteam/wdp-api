@@ -77,6 +77,13 @@ class User < ApplicationRecord
     call_operation("users.sync_testing", self)
   end
 
+  def to_whoami
+    {
+      anonymous: false,
+      name: name
+    }
+  end
+
   # @!attribute [r] upload_token
   # @return [String]
   def upload_token

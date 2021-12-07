@@ -71,3 +71,7 @@ en:
         missing_range: "must have a range"
       visible_until_at:
         before_start: "comes before the start of the range"
+  server_messages:
+    tokens:
+      expired: "Token is Expired"
+      invalid: "Failed to Authenticate"

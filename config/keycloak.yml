@@ -1,5 +1,6 @@
 default: &default
   allow_anonymous: true
+  halt_on_auth_failure: false
   realm_id: "NGLP"
   server_url: "https://auth.staging.nglp.org/auth"
 

@@ -5,6 +5,8 @@ Rails.application.routes.draw do
 
   mount WDPAPI::SidekiqFrontend, at: "/sekrit/sidekiq"
 
+  resource :identity, path: "whoami", only: %i[show]
+
   post "/graphql", to: "graphql#execute"
 
   get "/ping", to: "status#ping"

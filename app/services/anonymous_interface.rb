@@ -49,6 +49,12 @@ module AnonymousInterface
     true
   end
 
+  def to_whoami
+    {
+      anonymous: true
+    }
+  end
+
   def updated_at
     Time.current
   end

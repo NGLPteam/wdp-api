@@ -29,9 +29,7 @@ module Users
         end
 
         m.failure do |code, reason|
-          # :nocov:
           Failure[code, reason]
-          # :nocov:
         end
       end
     end
