@@ -16,5 +16,17 @@ FactoryBot.define do
         properties: []
       }
     end
+
+    trait :community do
+      association :schema_definition, :community
+    end
+
+    trait :collection do
+      association :schema_definition, :collection
+    end
+
+    trait :item do
+      association :schema_definition, :item
+    end
   end
 end

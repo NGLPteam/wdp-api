@@ -26,6 +26,7 @@ module Types
       description: "Whether this collection has any child items"
 
     field :collections, resolver: Resolvers::SubcollectionResolver, connection: true
+    field :related_collections, resolver: Resolvers::RelatedCollectionResolver, connection: true
     field :contributions, resolver: Resolvers::CollectionContributionResolver, connection: true
     field :items, resolver: Resolvers::ItemResolver, connection: true
 
