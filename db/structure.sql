@@ -1715,6 +1715,34 @@ CREATE TABLE public.pages (
 
 
 --
+-- Name: related_collection_links; Type: VIEW; Schema: public; Owner: -
+--
+
+CREATE VIEW public.related_collection_links AS
+ SELECT entity_links.source_id,
+    entity_links.target_id,
+    src.schema_version_id
+   FROM ((public.entity_links
+     JOIN public.collections src ON ((src.id = entity_links.source_id)))
+     JOIN public.collections tgt ON (((tgt.id = entity_links.target_id) AND (tgt.schema_version_id = src.schema_version_id))))
+  WHERE (((entity_links.source_type)::text = 'Collection'::text) AND ((entity_links.target_type)::text = 'Collection'::text));
+
+
+--
+-- Name: related_item_links; Type: VIEW; Schema: public; Owner: -
+--
+
+CREATE VIEW public.related_item_links AS
+ SELECT entity_links.source_id,
+    entity_links.target_id,
+    src.schema_version_id
+   FROM ((public.entity_links
+     JOIN public.items src ON ((src.id = entity_links.source_id)))
+     JOIN public.items tgt ON (((tgt.id = entity_links.target_id) AND (tgt.schema_version_id = src.schema_version_id))))
+  WHERE (((entity_links.source_type)::text = 'Item'::text) AND ((entity_links.target_type)::text = 'Item'::text));
+
+
+--
 -- Name: role_permissions; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -2829,6 +2857,13 @@ CREATE INDEX index_collections_published_sort_desc ON public.collections USING b
 
 
 --
+-- Name: index_collections_related_by_schema; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_collections_related_by_schema ON public.collections USING btree (id, schema_version_id);
+
+
+--
 -- Name: index_collections_unique_identifier; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -3113,6 +3148,20 @@ CREATE INDEX index_entity_links_on_target_community_id ON public.entity_links US
 --
 
 CREATE INDEX index_entity_links_on_target_item_id ON public.entity_links USING btree (target_item_id);
+
+
+--
+-- Name: index_entity_links_related_collections; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_entity_links_related_collections ON public.entity_links USING btree (source_id, target_id) WHERE (((source_type)::text = 'Collection'::text) AND ((target_type)::text = 'Collection'::text));
+
+
+--
+-- Name: index_entity_links_related_items; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_entity_links_related_items ON public.entity_links USING btree (source_id, target_id) WHERE (((source_type)::text = 'Item'::text) AND ((target_type)::text = 'Item'::text));
 
 
 --
@@ -3645,6 +3694,13 @@ CREATE INDEX index_items_published_sort_asc ON public.items USING btree (((publi
 --
 
 CREATE INDEX index_items_published_sort_desc ON public.items USING btree (((published).value) DESC NULLS LAST);
+
+
+--
+-- Name: index_items_related_by_schema; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_items_related_by_schema ON public.items USING btree (id, schema_version_id);
 
 
 --
@@ -5401,6 +5457,8 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20211201182458'),
 ('20211202011224'),
 ('20211202013847'),
-('20211202195122');
+('20211202195122'),
+('20211203210440'),
+('20211203210512');
 
 
