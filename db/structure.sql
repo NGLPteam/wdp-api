@@ -754,7 +754,8 @@ CREATE TABLE public.collections (
     available_precision public.date_precision GENERATED ALWAYS AS (public.variable_precision_for(available)) STORED,
     issued public.variable_precision_date DEFAULT '(,none)'::public.variable_precision_date,
     issued_range daterange GENERATED ALWAYS AS (public.variable_daterange(issued)) STORED,
-    issued_precision public.date_precision GENERATED ALWAYS AS (public.variable_precision_for(issued)) STORED
+    issued_precision public.date_precision GENERATED ALWAYS AS (public.variable_precision_for(issued)) STORED,
+    hero_image_data jsonb
 );
 
 
@@ -775,7 +776,8 @@ CREATE TABLE public.communities (
     hierarchical_depth integer GENERATED ALWAYS AS (public.nlevel(auth_path)) STORED,
     schema_definition_id uuid NOT NULL,
     schema_version_id uuid NOT NULL,
-    properties jsonb
+    properties jsonb,
+    hero_image_data jsonb
 );
 
 
@@ -1312,7 +1314,8 @@ CREATE TABLE public.items (
     available_precision public.date_precision GENERATED ALWAYS AS (public.variable_precision_for(available)) STORED,
     issued public.variable_precision_date DEFAULT '(,none)'::public.variable_precision_date,
     issued_range daterange GENERATED ALWAYS AS (public.variable_daterange(issued)) STORED,
-    issued_precision public.date_precision GENERATED ALWAYS AS (public.variable_precision_for(issued)) STORED
+    issued_precision public.date_precision GENERATED ALWAYS AS (public.variable_precision_for(issued)) STORED,
+    hero_image_data jsonb
 );
 
 
@@ -5459,6 +5462,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20211202013847'),
 ('20211202195122'),
 ('20211203210440'),
-('20211203210512');
+('20211203210512'),
+('20211208020200');
 
 

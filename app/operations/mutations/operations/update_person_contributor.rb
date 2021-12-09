@@ -7,20 +7,14 @@ module Mutations
 
       use_contract! :person_contributor
 
-      def call(contributor:, links: [], clear_image: false, image: nil, given_name: nil, family_name: nil, title: nil, affiliation: nil, **args)
+      attachment! :image, image: true
+
+      def call(contributor:, links: [], given_name: nil, family_name: nil, title: nil, affiliation: nil, **args)
         authorize contributor, :update?
-
-        attributes = args.compact
-
-        contributor.assign_attributes attributes
 
         contributor.links = Array(links).map(&:to_h)
 
-        if image.present?
-          contributor.image = image
-        elsif clear_image
-          contributor.image = nil
-        end
+        assign_attributes! contributor, **args
 
         properties = {
           given_name: given_name,

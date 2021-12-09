@@ -15,11 +15,7 @@ module Mutations
     argument :position, Integer, required: false, attribute: true
     argument :body, String, required: true, attribute: true
 
-    argument :hero_image, Types::UploadedFileInputType, required: false, attribute: true do
-      description <<~TEXT.strip_heredoc
-      The hero image to represent the page.
-      TEXT
-    end
+    image_attachment! :hero_image
 
     performs_operation! "mutations.operations.create_page"
   end

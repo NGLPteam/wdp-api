@@ -15,17 +15,10 @@ module Types
     field :slug, String, null: false
     field :body, String, null: false
 
-    field :hero_image, Types::AssetPreviewType, null: true do
-      description "The hero image for a page"
-    end
+    image_attachment_field :hero_image,
+      description: "The hero image for a page"
 
     field :created_at, GraphQL::Types::ISO8601DateTime, null: false
     field :updated_at, GraphQL::Types::ISO8601DateTime, null: false
-
-    def hero_image
-      preview_alt = "hero image for #{object.title}"
-
-      PreviewImages::TopLevelPreview.new object.hero_image_attacher, alt: preview_alt
-    end
   end
 end

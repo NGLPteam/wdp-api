@@ -46,7 +46,9 @@ RSpec.describe Mutations::CreateOrganizationContributor, type: :request do
             kind: "organization"
           },
 
-          errors: be_blank
+          errors: be_blank,
+
+          attributeErrors: be_blank,
         }
       }
     end
@@ -58,8 +60,14 @@ RSpec.describe Mutations::CreateOrganizationContributor, type: :request do
           contributor {
             kind
             image {
+              original {
+                storage
+                url
+              }
+
               thumb {
                 png {
+                  storage
                   url
                 }
               }
@@ -124,9 +132,14 @@ RSpec.describe Mutations::CreateOrganizationContributor, type: :request do
           createOrganizationContributor: {
             contributor: {
               image: {
+                original: {
+                  storage: "CACHE",
+                  url: be_present
+                },
                 thumb: {
                   png: {
-                    url: be_present,
+                    storage: nil,
+                    url: be_blank,
                   }
                 }
               }

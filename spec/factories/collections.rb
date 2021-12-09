@@ -31,6 +31,12 @@ FactoryBot.define do
       visible_until_at { 1.day.from_now }
     end
 
+    trait :with_hero_image do
+      hero_image do
+        Rails.root.join("spec", "data", "lorempixel.jpg").open
+      end
+    end
+
     trait :with_thumbnail do
       thumbnail do
         Rails.root.join("spec", "data", "lorempixel.jpg").open

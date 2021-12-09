@@ -56,9 +56,11 @@ module Types
 
     field :schema_version, Types::SchemaVersionType, null: false
 
-    field :thumbnail, Types::AssetPreviewType, null: true do
-      description "A mapping of an entity's preview thumbnail"
-    end
+    image_attachment_field :hero_image,
+      description: "A hero image for the entity, suitable for displaying in page headers"
+
+    image_attachment_field :thumbnail,
+      description: "A representative thumbnail for the entity, suitable for displaying in lists, tables, grids, etc."
 
     def breadcrumbs
       Loaders::AssociationLoader.for(object.class, :entity_breadcrumbs).load(object)
@@ -117,13 +119,6 @@ module Types
 
         permission.permissions
       end
-    end
-
-    # @return [PreviewImages::TopLevelPreview]
-    def thumbnail
-      thumbnail_alt = "preview for #{object.breadcrumb_label}"
-
-      PreviewImages::TopLevelPreview.new object.thumbnail_attacher, alt: thumbnail_alt
     end
   end
 end

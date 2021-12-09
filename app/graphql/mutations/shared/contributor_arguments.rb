@@ -12,11 +12,7 @@ module Mutations
 
         argument :links, [Types::ContributorLinkInputType], required: false, attribute: true
 
-        argument :image, Types::UploadedFileInputType, required: false, attribute: true do
-          description <<~TEXT.strip_heredoc
-          A reference to an upload in Tus.
-          TEXT
-        end
+        image_attachment! :image
       end
     end
   end

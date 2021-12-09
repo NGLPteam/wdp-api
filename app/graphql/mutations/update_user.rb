@@ -10,11 +10,7 @@ module Mutations
 
     argument :user_id, ID, loads: Types::UserType, required: true
 
-    argument :avatar, Types::UploadedFileInputType, required: false, attribute: true do
-      description <<~TEXT.strip_heredoc
-      An avatar to represent your user in the WDP.
-      TEXT
-    end
+    image_attachment! :avatar
 
     clearable_attachment! :avatar
 

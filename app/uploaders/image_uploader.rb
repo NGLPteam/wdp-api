@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
+# An uploader specifically for images, with common dimensions and formats.
+#
+# @see ImageAttachments::ImageWrapper
 class ImageUploader < Shrine
-  include PreviewImages::SharedConstants
-
   plugin :derivatives, create_on_promote: false
-  plugin :default_url
   plugin :add_metadata
   plugin :refresh_metadata
   plugin :remote_url, max_size: 20.megabytes
@@ -12,6 +12,22 @@ class ImageUploader < Shrine
   plugin :signature
   plugin :validation_helpers
   plugin :restore_cached_data
+
+  plugin :included do |name|
+    delegate :alt, :graphql_metadata, to: name, prefix: name, allow_nil: true
+
+    class_eval <<~RUBY, __FILE__, __LINE__ + 1
+    def #{name}_metadata
+      #{name}&.graphql_metadata
+    end
+
+    def #{name}_metadata=(new_metadata)
+      #{name}&.merge_graphql_metadata! new_metadata
+    end
+    RUBY
+  end
+
+  metadata_method :alt
 
   add_metadata :sha256 do |io, derivative: nil, **|
     calculate_signature(io, :sha256, format: :base64) unless derivative
@@ -22,22 +38,8 @@ class ImageUploader < Shrine
   end
 
   Attacher.derivatives do |original|
-    vips = ImageProcessing::Vips.source(original)
-
-    DIMENSIONS.each_with_object({}) do |(style, (width, height)), h|
-      resized = vips.resize_to_limit(width, height)
-
-      h[style] = FORMATS.each_with_object({}) do |format, hh|
-        hh[format.to_sym] = resized.convert!(format)
-      end
-    end
+    WDPAPI::Container["image_attachments.generate_derivatives"].call(original).value!
   end
 
-  Attacher.default_url do |derivative: nil, **|
-    if derivative.present? && derivative.kind_of?(Array) && derivative.length == 2
-      name, format = derivative
-
-      WDPAPI::Container["shared.fallback_url"].call(name, format: format, attachment_name: self.name)
-    end
-  end
+  UploadedFile.include ImageAttachments::HasMetadata
 end

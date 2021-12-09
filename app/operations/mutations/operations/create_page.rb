@@ -8,10 +8,14 @@ module Mutations
       use_contract! :page_input
       use_contract! :create_page
 
+      attachment! :hero_image, image: true
+
       def call(entity:, position: nil, **args)
         authorize entity, :update?
 
-        page = entity.pages.new args
+        page = entity.pages.new
+
+        assign_attributes! page, **args
 
         page.position = position if position.present?
 
