@@ -26,7 +26,7 @@ module Types
 
     # @return [Integer, nil]
     def page
-      object.arguments[:page]
+      from_info :page
     end
 
     # @return [Integer, nil]
@@ -44,7 +44,7 @@ module Types
 
     # @return [Integer, nil]
     def per_page
-      object.arguments[:per_page] if page.present?
+      from_info :per_page
     end
 
     # @return [Integer]
@@ -54,17 +54,30 @@ module Types
 
     # @return [Integer]
     def total_unfiltered_count
-      case object.items
-      when Array then object.items.size
-      when ActiveRecord::Relation
-        # TODO: Use a GraphQL-batch loader for this
-        scope = Pundit.policy_scope(context[:current_user], object.items.model)
+      object.context[:resolver].try(:raw_scope).try(:count).then do |value|
+        # rubocop:disable Rails/Presence
+        if value.present?
+          value
+        else
+          # :nocov:
+          total_count
+          # :nocov:
+        end
+        # rubocop:enable Rails/Presence
+      end
+    end
 
-        scope ||= object.items.model
+    private
 
-        scope.respond_to?(:count) ? scope.count : 0
-      else
-        object.items.size
+    def from_info(key)
+      object.context[:pagination].then do |pagination|
+        if pagination.kind_of?(Hash)
+          pagination[key]
+        else
+          # :nocov:
+          object.arguments[key]
+          # :nocov:
+        end
       end
     end
   end

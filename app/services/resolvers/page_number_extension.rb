@@ -24,10 +24,11 @@ module Resolvers
         description "The direction in which pages advance (to traverse pages backwards)"
       end
 
-      field.argument :per_page, Integer, required: true, default_value: 25 do
+      field.argument :per_page, Integer, required: false do
         description "The amount of edges / nodes to fetch per page"
 
         validates numericality: {
+          allow_blank: true,
           greater_than_or_equal_to: 1,
           less_than_or_equal_to: max_page_size,
         }
@@ -38,25 +39,40 @@ module Resolvers
     def resolve(object:, arguments:, context:, **rest)
       cleaned_args = arguments.dup
 
-      current_args = context[:current_arguments]
-
       page = cleaned_args.delete(:page)
-      page_direction = cleaned_args.delete(:page_direction)
+      page_direction = cleaned_args[:page_direction]
       per_page = cleaned_args.delete(:per_page)
 
       cursor_name = page_direction == :backwards ? :before : :after
       limit_name = page_direction == :backwards ? :last : :first
 
+      # perPage was set without page, or page was set without perPage
+      if page.present? ^ per_page.present?
+        page ||= 1
+        per_page ||= DEFAULT_PER_PAGE_SIZE
+      end
+
+      raise GraphQL::ExecutionError, "Cannot specify both page and before/after cursor" if exclusive_options?(page, context)
+
+      # Update to make sure our inconsistencies are accounted for
+      cleaned_args[:page] = page
+
+      cleaned_args[:per_page] = per_page
+
       info = { page: page, per_page: per_page, page_direction: page_direction }
 
       if page.present?
-        raise GraphQL::ExecutionError, "Cannot specify both page and #{cursor_name.inspect} cursor" if current_args[cursor_name].present?
-
         info[cursor_name] = calculate_cursor page, per_page
         info[limit_name] = per_page
       end
 
-      yield object, arguments, info
+      info.freeze
+
+      context.scoped_set! :resolver, options[:resolver].new(object: object.object, context: context)
+
+      context.scoped_set! :pagination, info
+
+      yield object, cleaned_args, info
     end
 
     # @see apply_page_based_pagination!
@@ -67,6 +83,12 @@ module Resolvers
       apply_page_based_pagination! value, memo
 
       value
+    end
+
+    def exclusive_options?(page, context)
+      return false if page.blank?
+
+      %i[before after].any? { |cursor| cursor.in?(context[:current_arguments]) }
     end
 
     # We need to override certain keys in the connection with the values calculated
