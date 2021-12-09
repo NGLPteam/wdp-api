@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Resolvers
-  # A resolver for getting {Item}s below an {Item}.
+  # A resolver for getting {Collection}s below a {Collection}.
   class SubcollectionResolver < GraphQL::Schema::Resolver
     include SearchObject.module(:graphql)
 
@@ -16,13 +16,7 @@ module Resolvers
     graphql_name "CollectionConnection"
 
     scope do
-      if object.kind_of?(Collection)
-        object.descendants
-      else
-        # :nocov:
-        Collection.none
-        # :nocov:
-      end
+      object.descendants.reorder(nil)
     end
   end
 end

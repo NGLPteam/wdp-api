@@ -33,6 +33,10 @@ module TestHelpers
         expect(graphql_response(**options)).to include_json data: shape
       end
 
+      def expect_graphql_response_errors(shape)
+        expect(graphql_response(decamelize: true)).to include_json errors: shape
+      end
+
       def graphql_response(*path, decamelize: false)
         parsed_graphql_response(decamelize: decamelize).then do |res|
           path.present? ? res.dig(*path) : res
