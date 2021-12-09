@@ -41,5 +41,12 @@ module Shared
     def string_enum(*values, fallback: nil)
       enum_with_fallback(*values, type: "coercible.string", fallback: fallback)
     end
+
+    # @param [<Symbol>] values
+    # @param [Symbol, nil] fallback (will default to first value)
+    # @return [Dry::Types::Type]
+    def symbol_enum(*values, fallback: nil)
+      enum_with_fallback(*values, type: "coercible.symbol", fallback: fallback)
+    end
   end
 end

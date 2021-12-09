@@ -9,16 +9,14 @@ module Mutations
         update_profile: "users.update_profile"
       ]
 
-      def call(avatar: nil, clear_avatar: false, profile: {}, **args)
+      attachment! :avatar, image: true
+
+      def call(profile: {}, **args)
         updated = update_profile.call current_user, **profile
 
         user = with_operation_result! updated
 
-        if clear_avatar
-          user.avatar = nil
-        elsif avatar.present?
-          user.avatar = avatar
-        end
+        assign_attributes! user, **args
 
         persist_model! user, attach_to: :user
       end

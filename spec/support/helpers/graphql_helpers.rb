@@ -7,7 +7,7 @@ module TestHelpers
         make_graphql_request! query, token: token, variables: variables, **options
       end
 
-      def make_graphql_request!(query, token: nil, variables: {}, camelize_variables: true, no_top_level_errors: true)
+      def make_graphql_request!(query, token: nil, variables: {}, camelize_variables: true, no_top_level_errors: true, operation: operation_name)
         headers = {}
 
         headers["ACCEPT"] = "application/json"
@@ -17,6 +17,8 @@ module TestHelpers
         params = {
           query: query&.strip_heredoc&.strip
         }
+
+        params[:operationName] = operation if operation.present?
 
         params[:variables] = encode_graphql_variables variables, camelize: camelize_variables
 
@@ -73,10 +75,11 @@ module TestHelpers
 
       # @param [Shrine::UploadedFile] uploaded_file
       # @return [Hash]
-      def to_graphql_upload(uploaded_file, storage: "CACHE")
+      def to_graphql_upload(uploaded_file, storage: "CACHE", alt: nil)
         uploaded_file.as_json.merge(storage: storage).deep_transform_keys do |k|
           k.to_s.camelize(:lower)
         end.tap do |h|
+          h["metadata"]["alt"] = alt if alt.present?
           h["metadata"].delete "size"
         end
       end
@@ -176,6 +179,8 @@ RSpec.shared_context "with default graphql context" do
   let(:token) { nil }
 
   let(:graphql_variables) { {} }
+
+  let(:operation_name) { nil }
 end
 
 RSpec.configure do |config|

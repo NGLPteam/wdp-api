@@ -8,7 +8,9 @@ module Types
     argument :storage, Types::UploadStorageType, required: false, default_value: :cache do
       description "The storage that contains the input."
     end
-    argument :metadata, Types::UploadedFileMetadataInputType, required: false
+    argument :metadata, Types::UploadedFileMetadataInputType, required: false do
+      description "Metadata to associate with the upload"
+    end
 
     def prepare
       to_h

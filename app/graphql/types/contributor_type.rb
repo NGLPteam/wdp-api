@@ -20,9 +20,8 @@ module Types
       method: :safe_name,
       description: "A display name, independent of the type of contributor"
 
-    field :image, Types::AssetPreviewType, null: true do
-      description "An optional image associated with the contributor"
-    end
+    image_attachment_field :image,
+      description: "An optional image associated with the contributor."
 
     field :links, [Types::ContributorLinkType, { null: false }], null: false
     field :collection_contributions, resolver: Resolvers::CollectionContributionResolver, connection: true
@@ -36,13 +35,6 @@ module Types
 
     field :item_contribution_count, Integer, null: false,
       description: "The total number of item contributions from this contributor"
-
-    # @return [PreviewImages::TopLevelPreview]
-    def image
-      image_alt = "preview for contributor"
-
-      PreviewImages::TopLevelPreview.new object.image_attacher, alt: image_alt
-    end
 
     # @return [<Contributors::Link>]
     def links

@@ -50,9 +50,11 @@ module Mutations
         @attribute_names ||= arguments.values.map(&:attribute_names).reduce(&:+)
       end
 
+      # @return [void]
       def clearable_attachment!(attachment_name, prefix: "clear", **options, &block)
         full_name = [prefix, attachment_name].compact.join(?_).to_sym
 
+        options[:attribute] = true
         options[:required] = false
         options[:default_value] = false
 
@@ -87,8 +89,37 @@ module Mutations
         payload_type.implements Types::StandardMutationPayload
       end
 
+      # @return [void]
       def destroy_mutation!
         payload_type.implements Types::DestroyMutationPayloadType
+      end
+
+      # @param [Symbol] attachment_name
+      # @return [void]
+      def image_attachment!(attachment_name, required: false, has_metadata: true)
+        argument attachment_name, Types::UploadedFileInputType, required: required, attribute: true do
+          description <<~TEXT.strip_heredoc
+          A reference to an uploaded image in Tus.
+          TEXT
+        end
+
+        add_image_metadata_input! attachment_name if has_metadata
+      end
+
+      # @param [Symbol] attachment_name
+      # @return [void]
+      def add_image_metadata_input!(attachment_name)
+        full_name = :"#{attachment_name}_metadata"
+
+        options = {}
+
+        options[:attribute] = true
+        options[:required] = false
+        options[:description] = <<~TEXT
+        Metadata for an image attachment.
+        TEXT
+
+        argument full_name, Types::ImageMetadataInputType, options
       end
     end
   end

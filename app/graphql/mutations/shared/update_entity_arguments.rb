@@ -8,6 +8,7 @@ module Mutations
       include Mutations::Shared::EntityArguments
 
       included do
+        clearable_attachment! :hero_image
         clearable_attachment! :thumbnail
       end
     end

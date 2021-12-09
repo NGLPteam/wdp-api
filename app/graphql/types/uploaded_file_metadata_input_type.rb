@@ -4,6 +4,10 @@ module Types
   class UploadedFileMetadataInputType < Types::BaseInputObject
     description "File metadata to attach to the upload."
 
+    argument :alt, String, required: false do
+      description "Alt text for the upload (not always applicable)"
+    end
+
     argument :filename, String, required: false, default_value: "asset" do
       description "The original filename, since Tus mangles them."
     end

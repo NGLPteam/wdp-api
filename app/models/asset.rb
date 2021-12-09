@@ -3,7 +3,7 @@
 class Asset < ApplicationRecord
   include GenericUploader::Attachment.new(:attachment)
   include GenericUploader::Attachment.new(:alternatives)
-  include PreviewUploader::Attachment.new(:preview)
+  include ImageUploader::Attachment.new(:preview)
   include SchematicReferent
   include ScopesForIdentifier
 

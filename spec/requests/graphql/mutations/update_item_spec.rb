@@ -99,6 +99,87 @@ RSpec.describe Mutations::UpdateItem, type: :request do
       end
     end
 
+    context "when setting alt text" do
+      let!(:upload_alt_text) { "Upload Alt Text" }
+
+      let!(:new_thumbnail) do
+        graphql_upload_from "spec", "data", "lorempixel.jpg", alt: upload_alt_text
+      end
+
+      let!(:query) do
+        <<~GRAPHQL
+        mutation updateItem($input: UpdateItemInput!) {
+          updateItem(input: $input) {
+            item {
+              thumbnail {
+                alt
+              }
+
+              thumbnailMetadata {
+                alt
+              }
+            }
+
+            attributeErrors {
+              path
+              messages
+            }
+          }
+        }
+        GRAPHQL
+      end
+
+      context "with it set on the upload itself" do
+        let!(:expected_shape) do
+          {
+            update_item: {
+              item: {
+                thumbnail: { alt: upload_alt_text },
+                thumbnail_metadata: { alt: upload_alt_text },
+              },
+              attribute_errors: be_blank,
+            },
+          }
+        end
+
+        it "defers to the alt text set on the meta input" do
+          expect do
+            make_default_request!
+          end.to change { item.reload.thumbnail.id }
+
+          expect_graphql_response_data expected_shape, decamelize: true
+        end
+      end
+
+      context "with explicit metadata set" do
+        let!(:meta_alt_text) { "Meta Alt Text" }
+
+        let!(:thumbnail_metadata) { { alt: meta_alt_text } }
+
+        let!(:mutation_input) { super().merge(thumbnail_metadata: thumbnail_metadata) }
+
+        let!(:expected_shape) do
+          {
+            update_item: {
+              item: {
+                thumbnail: { alt: meta_alt_text },
+                thumbnail_metadata: { alt: meta_alt_text },
+              },
+              attribute_errors: be_blank,
+            },
+          }
+        end
+
+        it "defers to the expliicit metadata" do
+          expect do
+            make_default_request!
+          end.to change { item.reload.thumbnail.id }
+
+          expect_graphql_response_data expected_shape, decamelize: true
+        end
+      end
+    end
+
     context "when clearing a thumbnail" do
       let!(:clear_thumbnail) { true }
 

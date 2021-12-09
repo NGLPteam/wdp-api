@@ -7,8 +7,9 @@ RSpec.describe Mutations::CreateCollection, type: :request do
     let!(:title) { Faker::Lorem.sentence }
     let!(:community) { FactoryBot.create :community }
     let!(:visibility) { "VISIBLE" }
+    let!(:alt_text) { "Some Alt Text" }
     let!(:thumbnail) do
-      graphql_upload_from "spec", "data", "lorempixel.jpg"
+      graphql_upload_from "spec", "data", "lorempixel.jpg", alt: alt_text
     end
 
     let!(:parent_collection) { FactoryBot.create :collection, community: community }
@@ -38,6 +39,7 @@ RSpec.describe Mutations::CreateCollection, type: :request do
             visibility: visibility,
             parent: { id: parent.to_encoded_id },
             community: { id: community.to_encoded_id },
+            thumbnail: { alt: alt_text }
           }
         }
       }
@@ -51,6 +53,10 @@ RSpec.describe Mutations::CreateCollection, type: :request do
             title
             visibility
             community { id }
+
+            thumbnail {
+              alt
+            }
 
             parent {
               ... on Node { id }

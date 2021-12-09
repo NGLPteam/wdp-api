@@ -8,7 +8,8 @@ module HierarchicalEntity
   include TimestampScopes
 
   included do
-    include EntityImageUploader::Attachment.new(:thumbnail)
+    include ImageUploader::Attachment.new(:hero_image)
+    include ImageUploader::Attachment.new(:thumbnail)
 
     delegate :auth_path, to: :contextual_parent, allow_nil: true, prefix: :contextual
 

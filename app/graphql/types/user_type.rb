@@ -26,9 +26,8 @@ module Types
     field :family_name, String, null: true,
       description: "The user's family (last) name. Depending on the upstream provider, this may not be set."
 
-    field :avatar, Types::AssetPreviewType, null: true do
-      description "A user's avatar"
-    end
+    image_attachment_field :avatar,
+      description: "A user's avatar"
 
     field :global_admin, Boolean, null: false,
       description: "Does this user have access to administer the entire instance?",
@@ -59,13 +58,6 @@ module Types
 
     field :item_access_grants, resolver: Resolvers::AccessGrants::UserItemResolver,
       description: "All access grants for this user on an item"
-
-    # @return [PreviewImages::TopLevelPreview]
-    def avatar
-      avatar_alt = "avatar for #{object.name}"
-
-      PreviewImages::TopLevelPreview.new object.avatar_attacher, alt: avatar_alt
-    end
 
     def slug
       object.keycloak_id

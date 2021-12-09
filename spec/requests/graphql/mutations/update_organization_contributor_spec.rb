@@ -73,14 +73,11 @@ RSpec.describe Mutations::UpdateOrganizationContributor, type: :request do
 
       let!(:expected_shape) do
         {
-          updateOrganizationContributor: {
+          update_organization_contributor: {
             contributor: nil,
-            attributeErrors: [
-              {
-                path: "clearImage",
-                messages: ["cannot be set while uploading a new image"]
-              }
-            ]
+            attribute_errors: gql.attribute_errors do |eb|
+              eb.error "image", :update_and_clear_attachment
+            end
           }
         }
       end
@@ -90,7 +87,7 @@ RSpec.describe Mutations::UpdateOrganizationContributor, type: :request do
           make_graphql_request! query, token: token, variables: graphql_variables
         end.to(keep_the_same { contributor.image.id })
 
-        expect_graphql_response_data expected_shape
+        expect_graphql_response_data expected_shape, decamelize: true
       end
     end
   end

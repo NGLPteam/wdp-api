@@ -3,6 +3,7 @@
 module Types
   # @abstract
   class AbstractObjectType < GraphQL::Schema::Object
+    include Graphql::ImageAttachmentSupport
     include Graphql::OperationHelpers
     include Graphql::PunditHelpers
 

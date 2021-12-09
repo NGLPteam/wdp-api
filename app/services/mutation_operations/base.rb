@@ -5,6 +5,7 @@ module MutationOperations
     extend ActiveSupport::Concern
 
     include Graphql::PunditHelpers
+    include MutationOperations::AttributeExtraction
     include MutationOperations::Contracts
 
     included do
