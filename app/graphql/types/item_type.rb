@@ -24,6 +24,7 @@ module Types
 
     field :contributions, resolver: Resolvers::ItemContributionResolver, connection: true
     field :items, resolver: Resolvers::SubitemResolver, connection: true
+    field :first_item, resolver: Resolvers::SingleSubitemResolver
     field :related_items, resolver: Resolvers::RelatedItemResolver, connection: true
 
     field :access_grants, resolver: Resolvers::AccessGrants::CollectionResolver

@@ -17,7 +17,7 @@ module Resolvers
 
     scope do
       if object.kind_of?(Item)
-        object.descendants
+        object.descendants.reorder(nil)
       else
         # :nocov:
         Item.none

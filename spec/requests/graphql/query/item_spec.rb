@@ -81,4 +81,10 @@ RSpec.describe "Query.item", type: :request do
       end
     end
   end
+
+  it_behaves_like "a graphql type with firstItem" do
+    let!(:item) { FactoryBot.create :item }
+
+    subject { item }
+  end
 end
