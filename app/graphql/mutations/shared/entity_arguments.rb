@@ -6,7 +6,9 @@ module Mutations
       extend ActiveSupport::Concern
 
       included do
-        argument :title, String, required: true, description: "Human readable title for the entity", attribute: true
+        argument :title, String, required: true, description: "Human-readable title for the entity", attribute: true
+
+        argument :subtitle, String, required: false, description: "Human-readable subtitle for the entity", attribute: true
 
         image_attachment! :hero_image
 

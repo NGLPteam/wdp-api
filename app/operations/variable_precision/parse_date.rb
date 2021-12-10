@@ -19,9 +19,9 @@ module VariablePrecision
 
       return Success(value) if value.kind_of?(VariablePrecisionDate)
 
-      return wrap_day(value) if value.kind_of?(Date)
-
       return wrap_day(value.to_date) if datelike? value
+
+      return wrap_day(value) if value.kind_of?(Date)
 
       case value
       when ISO_8601

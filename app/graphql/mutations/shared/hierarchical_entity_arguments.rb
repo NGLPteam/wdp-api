@@ -8,14 +8,15 @@ module Mutations
       include Mutations::Shared::EntityArguments
 
       included do
-        argument :doi, String, required: false,
-          description: "The Digital Object Identifier for this entity. See https://doi.org",
-          attribute: true
         argument :summary, String, required: false,
-          description: "A brief description of the entity's contents",
+          description: "A brief description of the entity's contents.",
+          attribute: true
+        argument :published, Types::VariablePrecisionDateInputType, required: false,
+          description: "The date the entity was published",
           attribute: true
         argument :published_on, GraphQL::Types::ISO8601Date, required: false,
           description: "The date the entity was published",
+          deprecation_reason: "Use the variable 'published' input instead",
           attribute: true
         argument :visibility, Types::EntityVisibilityType, required: true,
           description: "What level of visibility the entity has",

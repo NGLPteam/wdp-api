@@ -40,6 +40,10 @@ module Schemas
         false
       end
 
+      def prefix
+        "#{full_path}."
+      end
+
       def required?
         properties.any?(&:actually_required?)
       end

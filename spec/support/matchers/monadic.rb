@@ -3,7 +3,7 @@
 RSpec::Matchers.define :be_a_monadic_success do
   match do |actual|
     if actual.success? && instance_variable_defined?(:@expected_value)
-      values_match? actual.value!, @expected_value
+      values_match? @expected_value, actual.value!
     else
       actual.success?
     end

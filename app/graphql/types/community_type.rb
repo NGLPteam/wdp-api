@@ -15,7 +15,6 @@ module Types
     field :position, Integer, null: true
     field :name, String, null: false, deprecation_reason: "Use Community.title"
     field :metadata, GraphQL::Types::JSON, null: true
-    field :title, String, null: false
 
     field :first_collection, resolver: Resolvers::SingleSubcollectionResolver
     field :first_item, resolver: Resolvers::SingleSubitemResolver

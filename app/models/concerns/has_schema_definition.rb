@@ -101,6 +101,16 @@ module HasSchemaDefinition
     call_operation("schemas.instances.read_properties", self, context: context)
   end
 
+  # @see Schemas::Instances::ReadProperty
+  # @param [String] full_path
+  # @param [Schemas::Properties::Context, nil] context
+  # @return [Dry::Monads::Success(Schemas::Properties::Reader)]
+  # @return [Dry::Monads::Success(Schemas::Properties::GroupReader)]
+  # @return [Dry::Monads::Failure(Symbol, String)]
+  def read_property(full_path, context: nil)
+    call_operation("schemas.instances.read_property", self, full_path, context: context)
+  end
+
   # @note For testing use only
   # @api private
   # @see Schemas::Instances::ReadPropertyContext

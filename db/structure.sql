@@ -755,7 +755,9 @@ CREATE TABLE public.collections (
     issued public.variable_precision_date DEFAULT '(,none)'::public.variable_precision_date,
     issued_range daterange GENERATED ALWAYS AS (public.variable_daterange(issued)) STORED,
     issued_precision public.date_precision GENERATED ALWAYS AS (public.variable_precision_for(issued)) STORED,
-    hero_image_data jsonb
+    hero_image_data jsonb,
+    subtitle text,
+    issn text
 );
 
 
@@ -777,7 +779,8 @@ CREATE TABLE public.communities (
     schema_definition_id uuid NOT NULL,
     schema_version_id uuid NOT NULL,
     properties jsonb,
-    hero_image_data jsonb
+    hero_image_data jsonb,
+    subtitle text
 );
 
 
@@ -976,7 +979,8 @@ CREATE TABLE public.entities (
     depth integer GENERATED ALWAYS AS (public.nlevel(auth_path)) STORED,
     schema_version_id uuid NOT NULL,
     link_operator public.link_operator,
-    title public.citext DEFAULT ''::public.citext NOT NULL
+    title public.citext DEFAULT ''::public.citext NOT NULL,
+    properties jsonb DEFAULT '{}'::jsonb NOT NULL
 );
 
 
@@ -1315,7 +1319,9 @@ CREATE TABLE public.items (
     issued public.variable_precision_date DEFAULT '(,none)'::public.variable_precision_date,
     issued_range daterange GENERATED ALWAYS AS (public.variable_daterange(issued)) STORED,
     issued_precision public.date_precision GENERATED ALWAYS AS (public.variable_precision_for(issued)) STORED,
-    hero_image_data jsonb
+    hero_image_data jsonb,
+    subtitle text,
+    issn text
 );
 
 
@@ -1838,19 +1844,6 @@ CREATE TABLE public.schematic_texts (
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     document tsvector GENERATED ALWAYS AS (setweight(to_tsvector(dictionary, text_content), (weight)::"char")) STORED
 );
-
-
---
--- Name: tmp_agu; Type: VIEW; Schema: public; Owner: -
---
-
-CREATE VIEW public.tmp_agu AS
- SELECT ag.id AS access_grant_id,
-    csp.user_id
-   FROM ((public.access_grants ag
-     JOIN public.permissions mp ON ((mp.path OPERATOR(public.=) 'self.manage_access'::public.ltree)))
-     JOIN public.contextual_single_permissions csp ON (((csp.hierarchical_type = (ag.accessible_type)::text) AND (csp.hierarchical_id = ag.accessible_id) AND (csp.user_id = ag.user_id) AND (csp.permission_id = mp.id))))
-  GROUP BY ag.id, csp.user_id;
 
 
 --
@@ -2755,6 +2748,13 @@ CREATE UNIQUE INDEX index_collections_on_doi ON public.collections USING btree (
 
 
 --
+-- Name: index_collections_on_issn; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_collections_on_issn ON public.collections USING btree (issn);
+
+
+--
 -- Name: index_collections_on_issued; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -3039,6 +3039,13 @@ CREATE INDEX index_entities_on_hierarchical ON public.entities USING btree (hier
 --
 
 CREATE INDEX index_entities_on_link_operator ON public.entities USING btree (link_operator);
+
+
+--
+-- Name: index_entities_on_properties; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_entities_on_properties ON public.entities USING gin (properties jsonb_path_ops);
 
 
 --
@@ -3592,6 +3599,13 @@ CREATE INDEX index_items_on_collection_id ON public.items USING btree (collectio
 --
 
 CREATE UNIQUE INDEX index_items_on_doi ON public.items USING btree (doi);
+
+
+--
+-- Name: index_items_on_issn; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_items_on_issn ON public.items USING btree (issn);
 
 
 --
@@ -5463,6 +5477,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20211202195122'),
 ('20211203210440'),
 ('20211203210512'),
-('20211208020200');
+('20211208020200'),
+('20211209180555');
 
 

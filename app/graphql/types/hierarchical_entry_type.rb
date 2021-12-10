@@ -3,6 +3,8 @@
 module Types
   module HierarchicalEntryType
     include Types::BaseInterface
+    include Types::HasDOIType
+    include Types::HasISSNType
 
     description "A hierarchical entity, like a collection or an item."
 
@@ -13,8 +15,6 @@ module Types
       TEXT
     end
 
-    field :title, String, null: false, description: "A human-readable title for the entity"
-    field :doi, String, null: true, description: "The Digital Object Identifier for this entity. See https://doi.org"
     field :summary, String, null: true, description: "A description of the contents of the entity"
 
     field :published_on, GraphQL::Types::ISO8601Date, null: true,

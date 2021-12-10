@@ -55,6 +55,10 @@ module Harvesting
 
             assigner.attr! :title, parsed.issue_title
 
+            assigner.prop! "volume.id", parsed.volume_id
+            assigner.prop! "volume.sortable_number", parsed.volume_sortable_number
+            assigner.prop! "volume.sequence", parsed.volume_sequence_number
+
             assigner.prop! "number", parsed.issue_number
             assigner.prop! "id", parsed.issue_id
 
@@ -76,6 +80,7 @@ module Harvesting
             assigner.attr! :summary, parsed.summary
 
             assigner.prop! "body", parsed.body
+            assigner.prop! "abstract", parsed.abstract
             assigner.prop! "online_version", parsed.online_version
 
             if parsed.pdf_url.present?

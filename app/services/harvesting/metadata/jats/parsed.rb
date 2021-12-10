@@ -79,6 +79,16 @@ module Harvesting
           text_from from_article_meta(%,./xmlns:abstract,), fallback: ""
         end
 
+        memoize def abstract
+          return if summary.blank?
+
+          {
+            content: summary,
+            lang: "en",
+            kind: "text",
+          }
+        end
+
         TITLE_CANDIDATES = [
           %,./xmlns:title-group/xmlns:article-title/text(),,
           %,./xmlns:title-group/xmlns:trans-title-group[@xml:lang="en"]/xmlns:trans-title/text(),,
