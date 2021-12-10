@@ -8,6 +8,7 @@ module Mutations
 
       included do
         argument :doi, String, required: false, description: "Digital Object Identifier (see: https://doi.org)", attribute: true
+        argument :issn, String, required: false, description: "International Standard Serial Number (see: https://issn.org)", attribute: true
       end
     end
   end

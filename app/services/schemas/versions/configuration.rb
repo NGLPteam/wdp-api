@@ -38,6 +38,26 @@ module Schemas
         end
       end
 
+      # @param [String] full_path
+      # @return [Schemas::Properties::GroupDefinition, Schemas::Properties::ScalarDefinition]
+      def property_for(full_path)
+        find_prop = ->(prop) do
+          throw :found, prop if prop.full_path == full_path
+
+          next unless prop.group?
+
+          next unless full_path.starts_with? prop.prefix
+
+          prop.properties.each(&find_prop)
+        end
+
+        catch(:found) do
+          properties.each(&find_prop)
+
+          nil
+        end
+      end
+
       # @return [<String>]
       def property_paths
         build_paths = ->(prop, paths) do

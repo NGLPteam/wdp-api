@@ -5,12 +5,19 @@ RSpec.describe Mutations::CreateItem, type: :request do
     let(:token) { token_helper.build_token has_global_admin: true }
 
     let!(:title) { Faker::Lorem.sentence }
+    let!(:subtitle) { Faker::Lorem.sentence }
     let!(:community) { FactoryBot.create :community }
     let!(:visibility) { "VISIBLE" }
     let!(:thumbnail) do
       graphql_upload_from "spec", "data", "lorempixel.jpg"
     end
     let!(:summary) { "A test summary" }
+    let!(:published) do
+      {
+        value: "2021-10-31",
+        precision: "DAY",
+      }
+    end
 
     let!(:collection) { FactoryBot.create :collection, community: community }
 
@@ -22,6 +29,8 @@ RSpec.describe Mutations::CreateItem, type: :request do
       {
         parentId: parent.to_encoded_id,
         title: title,
+        subtitle: subtitle,
+        published: published,
         visibility: visibility,
         thumbnail: thumbnail,
         summary: summary,
@@ -39,6 +48,8 @@ RSpec.describe Mutations::CreateItem, type: :request do
         createItem: {
           item: {
             title: title,
+            subtitle: subtitle,
+            published: published,
             visibility: visibility,
             summary: summary,
             parent: { id: parent.to_encoded_id },
@@ -57,6 +68,11 @@ RSpec.describe Mutations::CreateItem, type: :request do
         createItem(input: $input) {
           item {
             title
+            subtitle
+            published {
+              value
+              precision
+            }
             visibility
             summary
             community { id }

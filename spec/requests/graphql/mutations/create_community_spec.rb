@@ -5,10 +5,12 @@ RSpec.describe Mutations::CreateCommunity, type: :request do
     let(:token) { token_helper.build_token has_global_admin: true }
 
     let!(:title) { Faker::Lorem.sentence }
+    let!(:subtitle) { Faker::Lorem.sentence }
 
     let!(:mutation_input) do
       {
         title: title,
+        subtitle: subtitle,
       }
     end
 
@@ -22,7 +24,8 @@ RSpec.describe Mutations::CreateCommunity, type: :request do
       {
         createCommunity: {
           community: {
-            title: title
+            title: title,
+            subtitle: subtitle,
           },
           attributeErrors: be_blank
         }
@@ -35,6 +38,7 @@ RSpec.describe Mutations::CreateCommunity, type: :request do
         createCommunity(input: $input) {
           community {
             title
+            subtitle
           }
 
           attributeErrors {

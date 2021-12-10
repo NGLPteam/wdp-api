@@ -9,6 +9,14 @@ module Types
 
     description "An entity that exists in the hierarchy."
 
+    field :title, String, null: false do
+      description "A human-readable title for the entity"
+    end
+
+    field :subtitle, String, null: true do
+      description "A human-readable subtitle for the entity"
+    end
+
     field :access_control_list, Types::AccessControlListType, null: true do
       description "Derived access control list"
     end

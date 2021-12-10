@@ -24,6 +24,7 @@
     }
   ],
   "properties": [
+    { "path": "description", "label": "Description", "type": "full_text", "required": false },
     {
       "path": "publisher",
       "properties": [

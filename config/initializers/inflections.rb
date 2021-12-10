@@ -16,6 +16,8 @@
 ActiveSupport::Inflector.inflections(:en) do |inflect|
   inflect.acronym "CRUD"
   inflect.acronym "DOI"
+  inflect.acronym "ISBN"
+  inflect.acronym "ISSN"
   inflect.acronym "JATS"
   inflect.acronym "METS"
   inflect.acronym "MODS"

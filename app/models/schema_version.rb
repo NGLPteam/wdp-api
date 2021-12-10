@@ -32,7 +32,7 @@ class SchemaVersion < ApplicationRecord
     :identifier, :namespace, :name,
     to: :schema_definition
 
-  delegate :has_ordering?, :ordering_definition_for, :property_paths, to: :configuration, allow_nil: true
+  delegate :has_ordering?, :ordering_definition_for, :property_for, :property_paths, to: :configuration, allow_nil: true
 
   before_validation :extract_reference_paths!
 

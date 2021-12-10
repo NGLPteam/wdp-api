@@ -5,6 +5,15 @@
   "consumer": "collection",
   "orderings": [],
   "properties": [
+    {
+      "path": "volume",
+      "legend": "Volume Metadata",
+      "properties": [
+        { "path": "id", "label": "ID", "type": "string" },
+        { "path": "sortable_number", "label": "Sortable Number", "type": "integer" }
+      ],
+      "type": "group"
+    },
     { "path": "number", "label": "Number", "type": "string" },
     { "path": "id", "label": "Identifier", "type": "string" }
   ]
