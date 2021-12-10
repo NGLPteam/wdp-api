@@ -4,6 +4,7 @@ class Asset < ApplicationRecord
   include GenericUploader::Attachment.new(:attachment)
   include GenericUploader::Attachment.new(:alternatives)
   include ImageUploader::Attachment.new(:preview)
+  include HasEphemeralSystemSlug
   include SchematicReferent
   include ScopesForIdentifier
 

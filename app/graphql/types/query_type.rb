@@ -13,6 +13,12 @@ module Types
     field :access_grants, resolver: Resolvers::AccessGrantResolver,
       description: "Retrieve all access grants"
 
+    field :asset, Types::AnyAssetType, null: true do
+      description "Look up an asset by slug"
+
+      argument :slug, Types::SlugType, required: true
+    end
+
     field :collection, Types::CollectionType, null: true do
       description "Look up a collection by slug"
 
@@ -101,6 +107,10 @@ module Types
 
     field :viewer, Types::UserType, null: false,
       description: "The currently authenticated user. AKA: you"
+
+    def asset(slug:)
+      Loaders::RecordLoader.for(Asset).load(slug)
+    end
 
     def collection(slug:)
       Loaders::RecordLoader.for(Collection).load(slug)
