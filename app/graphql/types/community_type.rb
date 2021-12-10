@@ -17,6 +17,9 @@ module Types
     field :metadata, GraphQL::Types::JSON, null: true
     field :title, String, null: false
 
+    field :first_collection, resolver: Resolvers::SingleSubcollectionResolver
+    field :first_item, resolver: Resolvers::SingleSubitemResolver
+
     field :access_grants, resolver: Resolvers::AccessGrants::CommunityResolver
 
     field :user_access_grants, resolver: Resolvers::AccessGrants::UserCommunityResolver,

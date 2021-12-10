@@ -15,11 +15,19 @@ module Resolvers
     end
 
     def apply_node_filter_with_children(scope)
-      scope.where(parent: object)
+      if object.kind_of?(scope.model)
+        scope.where(parent: object)
+      else
+        scope.roots
+      end
     end
 
     def apply_node_filter_with_descendants(scope)
-      scope.all
+      if scope.model == Item && object.kind_of?(Collection)
+        scope.rewhere(collection_id: object.self_and_descendants.select(:id))
+      else
+        scope.all
+      end
     end
   end
 end

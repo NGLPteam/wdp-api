@@ -28,14 +28,6 @@ RSpec.describe "Query.collection", type: :request do
     GRAPHQL
   end
 
-  let!(:token) { nil }
-
-  let!(:graphql_variables) { {} }
-
-  def make_default_request!
-    make_graphql_request! query, token: token, variables: graphql_variables
-  end
-
   context "as an admin" do
     let(:token) { token_helper.build_token has_global_admin: true }
 
@@ -90,5 +82,17 @@ RSpec.describe "Query.collection", type: :request do
         expect_graphql_response_data collection: nil
       end
     end
+  end
+
+  it_behaves_like "a graphql type with firstCollection" do
+    let!(:collection) { FactoryBot.create :collection }
+
+    subject { collection }
+  end
+
+  it_behaves_like "a graphql type with firstItem" do
+    let!(:collection) { FactoryBot.create :collection }
+
+    subject { collection }
   end
 end

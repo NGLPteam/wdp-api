@@ -26,9 +26,11 @@ module Types
       description: "Whether this collection has any child items"
 
     field :collections, resolver: Resolvers::SubcollectionResolver, connection: true
+    field :first_collection, resolver: Resolvers::SingleSubcollectionResolver
     field :related_collections, resolver: Resolvers::RelatedCollectionResolver, connection: true
     field :contributions, resolver: Resolvers::CollectionContributionResolver, connection: true
     field :items, resolver: Resolvers::ItemResolver, connection: true
+    field :first_item, resolver: Resolvers::SingleSubitemResolver
 
     field :access_grants, resolver: Resolvers::AccessGrants::CollectionResolver
 
