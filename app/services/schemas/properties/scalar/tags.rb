@@ -12,6 +12,8 @@ module Schemas
 
         schema_type! :string
 
+        config.graphql_value_key = :tags
+
         def add_to_rules!(context)
           super
 

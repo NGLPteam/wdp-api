@@ -12,6 +12,9 @@ module Schemas
           defines :model_types, type: AppTypes::ModelClassList
 
           memoize :reference_normalizer
+
+          config.complex = true
+          config.graphql_value_key = type_reference
         end
 
         def might_normalize_value_before_coercion?

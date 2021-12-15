@@ -57,19 +57,13 @@ module AppTypes
 
   GraphQLConnectionClass = Inherits(GraphQL::Types::Relay::BaseConnection)
 
-  FullTextKind = AppTypes::Coercible::String.default("text").enum("text", "markdown", "html")
-
-  FullTextKindOption = FullTextKind.constructor do |value|
-    case value
-    when FullTextKind then value
-    else
-      "text"
-    end
+  FullTextKind = AppTypes::Coercible::String.enum("text", "markdown", "html").fallback("text").constructor do |value|
+    value.to_s.underscore
   end
 
   FullTextReference = AppTypes::Hash.schema(
     content?: AppTypes::String.optional,
-    kind?: FullTextKindOption,
+    kind?: FullTextKind,
     lang?: AppTypes::String.optional,
   ).with_key_transform(&:to_sym)
 

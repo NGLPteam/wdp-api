@@ -8,6 +8,8 @@ module Schemas
         attribute :default, :any_json
 
         schema_type! :any
+
+        config.graphql_value_key :unknown_value
       end
     end
   end

@@ -12,6 +12,8 @@ module Schemas
 
         schema_type! :decimal
 
+        config.graphql_value_key = :float_value
+
         def build_schema_predicates
           super.merge(
             gteq?: gte,

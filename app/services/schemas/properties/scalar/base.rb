@@ -17,6 +17,8 @@ module Schemas
         config.base_type = Dry::Types["any"]
         config.schema_predicates = {}
         config.always_wide = false
+        config.complex = false
+        config.graphql_value_key = :content
 
         def add_to_schema!(context)
           return if exclude_from_schema?
@@ -245,10 +247,40 @@ module Schemas
           end
 
           def schema_type!(value)
+            config.complex = !(value.kind_of?(Symbol) || value.kind_of?(String))
+
             config.schema_type = value
 
             config.base_type = AppTypes::PropertyType[value]
           end
+
+          # @!group Introspection
+
+          def array?
+            config.array
+          end
+
+          def complex?
+            config.complex
+          end
+
+          def graphql_value_key
+            config.graphql_value_key
+          end
+
+          def graphql_typename
+            "#{name.demodulize}Property"
+          end
+
+          def simple?
+            !config.complex
+          end
+
+          def type_reference
+            name.demodulize.underscore.to_sym
+          end
+
+          # @!endgroup
         end
       end
     end

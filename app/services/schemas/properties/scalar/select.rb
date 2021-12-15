@@ -11,6 +11,8 @@ module Schemas
 
         schema_type! :string
 
+        config.graphql_value_key = :selection
+
         def base_schema_predicates
           super().merge(included_in?: option_values)
         end

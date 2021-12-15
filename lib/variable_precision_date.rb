@@ -10,7 +10,13 @@ class VariablePrecisionDate
   # The level of precision this date affords
   #
   # Can be `:none`, `:year`, `:month, or `:day`, in order of increasing precision.
-  Precision = Dry::Types["coercible.symbol"].default(:none).enum(:none, :year, :month, :day)
+  Precision = Dry::Types["coercible.symbol"].enum(:none, :year, :month, :day).fallback(:none).constructor do |value|
+    case value
+    when String then value.downcase
+    else
+      value
+    end
+  end
 
   HashSchema = Dry::Types["hash"].schema(
     value: Dry::Types["json.date"],
@@ -99,7 +105,9 @@ class VariablePrecisionDate
       when Date, Dry::Types["json.date"]
         new value, :day
       when VariablePrecisionDate::HashSchema
-        new value[:value], value[:precision]
+        validated = VariablePrecisionDate::HashSchema[value]
+
+        new validated[:value], validated[:precision]
       else
         new nil, :none
       end
