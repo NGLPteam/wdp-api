@@ -34,13 +34,13 @@ RSpec.describe Mutations::UpdateGlobalConfiguration, type: :request do
 
     let(:expected_errors) { be_blank }
 
+    let(:has_errors) { false }
+
     let(:expected_shape) do
-      {
-        update_global_configuration: {
-          global_configuration: expected_global_configuration,
-          attribute_errors: expected_errors,
-        },
-      }
+      gql.mutation :update_global_configuration, no_errors: !has_errors do |m|
+        m[:global_configuration] = expected_global_configuration
+        m[:attribute_errors] = expected_errors
+      end
     end
 
     let!(:query) do
@@ -61,6 +61,11 @@ RSpec.describe Mutations::UpdateGlobalConfiguration, type: :request do
           attributeErrors {
             path
             messages
+          }
+
+          globalErrors {
+            type
+            message
           }
         }
       }

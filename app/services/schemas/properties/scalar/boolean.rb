@@ -7,6 +7,8 @@ module Schemas
         attribute :default, :boolean
 
         schema_type! :bool
+
+        config.graphql_value_key = :checked
       end
     end
   end

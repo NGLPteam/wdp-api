@@ -6,6 +6,8 @@ module Schemas
       class URL < Base
         schema_type! AppTypes::SchemaURL
 
+        config.graphql_value_key = :url
+
         def might_normalize_value_before_coercion?
           true unless exclude_from_schema?
         end

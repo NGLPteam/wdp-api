@@ -60,4 +60,8 @@ RSpec.describe VariablePrecision::ParseDate, type: :operation do
   it "handles the SQL representation" do
     expect_calling_with("(2021-05-01,month)").to succeed.with(VariablePrecisionDate.from_month(2021, 5))
   end
+
+  it "handles the quoted SQL representation" do
+    expect_calling_with(%[("2021-05-01","month")]).to succeed.with(VariablePrecisionDate.from_month(2021, 5))
+  end
 end

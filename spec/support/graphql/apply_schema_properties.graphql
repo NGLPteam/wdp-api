@@ -1,0 +1,191 @@
+mutation appliesSchemaProperties($input: ApplySchemaPropertiesInput!) {
+  applySchemaProperties(input: $input) {
+    entity {
+      ... on Node {
+        id
+      }
+
+      ... on SchemaInstance {
+        ... GetSchemaInstanceFragment
+      }
+    }
+
+    attributeErrors {
+      path
+      type
+      messages
+    }
+
+    globalErrors {
+      message
+      type
+    }
+
+    schemaErrors {
+      path
+      message
+      metadata
+    }
+  }
+}
+
+fragment GetSchemaInstanceFragment on SchemaInstance {
+  schemaInstanceContext {
+    validity {
+      valid
+    }
+  }
+
+  schemaProperties {
+    __typename
+
+    ... GetPropertyInfoFragment
+
+    ... on GroupProperty {
+      path
+      fullPath
+      legend
+
+      properties {
+        ... GetPropertyInfoFragment
+      }
+    }
+  }
+}
+
+fragment GetPropertyInfoFragment on AnyScalarProperty {
+  __typename
+
+  ... on ScalarProperty {
+    path
+    fullPath
+    required
+    isWide
+  }
+
+  ... on AssetProperty {
+    asset {
+      ... GetAssetInfoFragment
+    }
+  }
+
+  ... on AssetsProperty {
+    assets {
+      ... GetAssetInfoFragment
+    }
+  }
+
+  ... on BooleanProperty {
+    checked
+  }
+
+  ... on ContributorProperty {
+    contributor {
+      ... GetContributorInfoFragment
+    }
+  }
+
+  ... on ContributorsProperty {
+    contributors {
+      ... GetContributorInfoFragment
+    }
+  }
+
+  ... on DateProperty {
+    date
+  }
+
+  ... on EmailProperty {
+    address
+  }
+
+  ... on FloatProperty {
+    floatValue
+  }
+
+  ... on FullTextProperty {
+    fullText {
+      kind
+      lang
+      content
+    }
+  }
+
+  ... on IntegerProperty {
+    integerValue
+  }
+
+  ... on MarkdownProperty {
+    content
+  }
+
+  ... on MultiselectProperty {
+    ... OptionalPropertyFragment
+    selections
+    defaultSelections
+  }
+
+  ... on SelectProperty {
+    ... OptionalPropertyFragment
+
+    selection
+    defaultSelection
+  }
+
+  ... on StringProperty {
+    content
+  }
+
+  ... on TagsProperty {
+    tags
+  }
+
+  ... on TimestampProperty {
+    timestamp
+  }
+
+  ... on URLProperty {
+    url {
+      label
+      title
+      href
+    }
+  }
+
+  ... on UnknownProperty {
+    unknownValue
+  }
+
+  ... on VariableDateProperty {
+    dateWithPrecision {
+      value
+      precision
+    }
+  }
+}
+
+fragment GetAssetInfoFragment on AnyAsset {
+  ... on Asset {
+    id
+    kind
+    downloadUrl
+  }
+}
+
+fragment GetContributorInfoFragment on AnyContributor {
+  __typename
+
+  ... on Contributor {
+    identifier
+    kind
+    name
+    email
+  }
+}
+
+fragment OptionalPropertyFragment on OptionableProperty {
+  options {
+    label
+    value
+  }
+}

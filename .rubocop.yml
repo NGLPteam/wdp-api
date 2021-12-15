@@ -233,6 +233,10 @@ Rails/WhereNot:
 RSpec/ContextWording:
   Enabled: false
 
+RSpec/DescribeClass:
+  Exclude:
+    - spec/requests/**/*.rb
+
 RSpec/ExampleLength:
   Enabled: false
 

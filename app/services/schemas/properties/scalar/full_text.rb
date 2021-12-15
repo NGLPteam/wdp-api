@@ -8,6 +8,7 @@ module Schemas
         schema_type! AppTypes::FullTextReference
 
         config.always_wide = true
+        config.graphql_value_key = :full_text
 
         def extract_raw_value_from(context)
           context.full_text(full_path)

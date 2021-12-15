@@ -11,6 +11,8 @@ module Schemas
         config.schema_predicates = {
           format?: AppTypes::EMAIL_PATTERN
         }
+
+        config.graphql_value_key = :address
       end
     end
   end
