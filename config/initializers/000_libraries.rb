@@ -17,6 +17,7 @@ require_relative Rails.root.join("lib", "global_types", "array_types")
 require_relative Rails.root.join("lib", "global_types", "indifferent_hash")
 require_relative Rails.root.join("lib", "global_types", "semantic_version")
 require_relative Rails.root.join("lib", "global_types", "variable_precision_date")
+require_relative Rails.root.join("lib", "global_types", "version_requirement")
 
 I18n.backend.eager_load!
 
@@ -42,6 +43,8 @@ ActiveModel::Type.register :integer_array, GlobalTypes::IntegerArray
 
 ActiveModel::Type.register :indifferent_hash, GlobalTypes::IndifferentHash
 ActiveModel::Type.register :semantic_version, GlobalTypes::SemanticVersion
+ActiveModel::Type.register :version_requirement, GlobalTypes::VersionRequirement
 
 ActiveRecord::Type.register :indifferent_hash, GlobalTypes::IndifferentHash
 ActiveRecord::Type.register :semantic_version, GlobalTypes::SemanticVersion
+ActiveRecord::Type.register :version_requirement, GlobalTypes::VersionRequirement
