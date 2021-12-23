@@ -20,7 +20,9 @@ module GlobalTypes
       when String
         Semantic::Version.new(value)
       when VERSION_HASH
+        # :nocov:
         cast version_string_from(**VERSION_HASH[value])
+        # :nocov:
       else
         super
       end
@@ -32,6 +34,8 @@ module GlobalTypes
       value.nil? ? super : super(value.to_s)
     end
 
+    alias serialize_for_store_model serialize
+
     def type
       :semantic_version
     end
@@ -39,11 +43,13 @@ module GlobalTypes
     private
 
     def version_string_from(major:, minor:, patch:, pre: nil, build: nil)
+      # :nocov:
       [major, minor, patch].join(?.).then do |version|
         pre.present? ? "#{version}-#{pre}" : version
       end.then do |version|
         build.present? ? "#{version}+#{build}" : version
       end
+      # :nocov:
     end
   end
 end
