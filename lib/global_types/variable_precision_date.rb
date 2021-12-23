@@ -13,7 +13,12 @@ module GlobalTypes
     # @param [VariablePrecisionDate] new_value
     # @return [String] the SQL representation of the variable precision date (e.g. `(2021-01-01,year)`)
     def serialize(value)
-      value.to_sql
+      case value
+      when VariablePrecisionDate
+        value.to_sql
+      else
+        cast(value).to_sql
+      end
     end
 
     # @param [String] raw_old_value
