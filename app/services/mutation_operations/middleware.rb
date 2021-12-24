@@ -18,6 +18,7 @@ module MutationOperations
     option :mutation, AppTypes.Instance(Mutations::BaseMutation).optional, optional: true
     option :operation_name, AppTypes::String.optional
     option :attribute_names, AppTypes::Array.of(AppTypes::String)
+    option :transient_arguments, AppTypes::Array.of(AppTypes::Symbol)
     option :error_compiler, AppTypes.Instance(MutationOperations::ErrorCompiler),
       default: proc {
         MutationOperations::ErrorCompiler.new attribute_names: attribute_names
@@ -86,6 +87,7 @@ module MutationOperations
         error_compiler: error_compiler,
         graphql_context: context,
         local_context: base_local_context,
+        transient_arguments: transient_arguments,
       }
     end
 

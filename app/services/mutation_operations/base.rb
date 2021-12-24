@@ -17,6 +17,7 @@ module MutationOperations
       include Dry::Effects.Resolve(:local_context)
       include Dry::Effects.Resolve(:attribute_names)
       include Dry::Effects.Resolve(:error_compiler)
+      include Dry::Effects.Resolve(:transient_arguments)
       include Dry::Effects.State(:graphql_response)
       include Dry::Effects.Interrupt(:throw_invalid)
       include Dry::Effects.Interrupt(:throw_unauthorized)
@@ -29,6 +30,8 @@ module MutationOperations
     # @return [void]
     def perform!(**args)
       local_context[:args] = args
+
+      local_context[:execution_args] = args.dup
 
       run_callbacks :prepare do
         prepare!(**args)
@@ -44,8 +47,12 @@ module MutationOperations
 
       halt_if_errors!
 
+      unset_transient_arguments!
+
       run_callbacks :execution do
-        call(**args)
+        exec_args = local_context.fetch(:execution_args).deep_symbolize_keys
+
+        call(**exec_args)
       end
     end
 
@@ -106,6 +113,13 @@ module MutationOperations
     # @abstract
     # @return [void]
     def validate!(**args); end
+
+    # @return [void]
+    def unset_transient_arguments!
+      return if transient_arguments.none?
+
+      unset_arg_for_execution!(*transient_arguments)
+    end
 
     # @!group Authorization logic
 
@@ -199,6 +213,39 @@ module MutationOperations
     # @!endgroup
 
     # @!group Utility methods
+
+    # @param [String] name the fully-qualified name of the operation
+    # @param [<Object>] args the arguments for the operation (if any)
+    # @return [Dry::Monads::Result] This is not guaranteed, but assumed for most operations
+    #   that would be called by a mutation
+    def call_operation(name, *args)
+      WDPAPI::Container[name].call(*args)
+    end
+
+    # @param [<Symbol>] keys
+    # @return [void]
+    def unset_arg_for_execution!(*keys)
+      keys.flatten.each do |key|
+        local_context[:execution_args].delete key
+      end
+    end
+
+    # Call an operation by name and run through {#with_result!} in order
+    # to easily handle its result.
+    #
+    # @note This differs from {#with_operation_result!} in that we inline the operation
+    #   call and also allow the implementation to use its own resolution logic.
+    # @param [String] name the fully-qualified name of the operation
+    # @param [<Object>] args the arguments for the operation (if any)
+    # @yield [matcher] handle the result of the operation based on `success` or `failure`
+    # @yieldparam [Dry::Matcher::ResultMatcher] matcher
+    # @yieldreturn [void]
+    # @return [void]
+    def with_called_operation!(name, *args, &block)
+      result = call_operation(name, *args)
+
+      with_result! result, &block
+    end
 
     def with_result!(result, &block)
       Dry::Matcher::ResultMatcher.call(result, &block)

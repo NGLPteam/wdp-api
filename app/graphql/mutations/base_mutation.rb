@@ -10,7 +10,7 @@ module Mutations
     input_object_class Types::BaseInputObject
     object_class Types::BaseObject
 
-    delegate :attribute_names, :error_compiler, to: :class
+    delegate :attribute_names, :error_compiler, :transient_arguments, to: :class
 
     def app_container
       WDPAPI::Container
@@ -27,6 +27,7 @@ module Mutations
         error_compiler: self.class.error_compiler,
         mutation: self,
         operation_name: name,
+        transient_arguments: transient_arguments,
       )
 
       operation = resolve_container_value name
@@ -120,6 +121,13 @@ module Mutations
         TEXT
 
         argument full_name, Types::ImageMetadataInputType, options
+      end
+
+      # @!attribute [r] transient_arguments
+      # @see Types::BaseArgument#transient_arguments
+      # @return [<Symbol>]
+      def transient_arguments
+        @transient_arguments ||= arguments.values.map(&:transient_arguments).reduce(&:+)
       end
     end
   end
