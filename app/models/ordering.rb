@@ -12,7 +12,7 @@ class Ordering < ApplicationRecord
 
   has_one :schema_definition, through: :schema_version
 
-  has_many :ordering_entries, -> { preload(:entity).in_order }, inverse_of: :ordering
+  has_many :ordering_entries, -> { preload(:entity) }, inverse_of: :ordering, dependent: :destroy
 
   attribute :definition, Schemas::Orderings::Definition.to_type, default: proc { {} }
 
@@ -45,6 +45,12 @@ class Ordering < ApplicationRecord
   # @return [void]
   def asynchronously_reset!
     Schemas::Orderings::ResetJob.perform_later self
+  end
+
+  # @see Schemas::Orderings::OrderBuilder::Compile
+  # @return [Schemas::Ordering::OrderExpression]
+  def compile_ordering_expression
+    call_operation("schemas.orderings.order_builder.compile", definition)
   end
 
   def disabled?

@@ -4,6 +4,21 @@
 module ArelHelpers
   extend ActiveSupport::Concern
 
+  SORT_DIR = Dry::Types["coercible.string"].fallback("asc").enum("asc", "desc").constructor do |value|
+    value.to_s.downcase
+  end
+
+  NULLS_VALUE = Dry::Types["coercible.string"].fallback("last").enum("last", "first").constructor do |raw|
+    value = raw.to_s.downcase
+
+    case value
+    when "asc" then "last"
+    when "desc" then "first"
+    else
+      value
+    end
+  end
+
   LTREE_TYPE = ActiveRecord::ConnectionAdapters::PostgreSQL::OID::SpecializedString.new(:ltree)
 
   LTREE_ARRAY = ActiveRecord::ConnectionAdapters::PostgreSQL::OID::Array.new(LTREE_TYPE).freeze
@@ -165,6 +180,51 @@ module ArelHelpers
     end
 
     alias_method :arel_grouping, :arel_grouped
+
+    # @param [Arel::OrderPredications] expression
+    # @param ["asc", "desc"] dir
+    # @param ["first", "last", nil] nulls
+    # @return [Arel::Nodes::Ordering]
+    def arel_apply_order_to(expression, dir, nulls: nil)
+      direction = SORT_DIR[dir]
+
+      nulls_value = NULLS_VALUE[nulls || direction]
+
+      if direction == "desc"
+        expression.desc
+      else
+        expression.asc
+      end.then do |ordered|
+        if nulls_value == "first"
+          ordered.nulls_first
+        else
+          ordered.nulls_last
+        end
+      end
+    end
+
+    # Makes a more legible series of AND conditions.
+    # @return [Arel::Nodes::Grouping(Arel::Nodes::And)]
+    def arel_and_expressions(*expressions)
+      expressions.flatten!
+
+      return block_given? ? yield(expressions[0]) : expressions[0] if expressions.one?
+
+      expressions.reduce do |grouping, expression|
+        expression = yield expression if block_given?
+
+        next grouping if expression.blank?
+
+        if grouping.kind_of?(Arel::Nodes::Grouping)
+          grouping.expr.and(expression)
+        else
+          # First expression
+          grouping = yield grouping if block_given?
+
+          grouping.and(expression)
+        end
+      end
+    end
 
     # Makes a more legible series of OR conditions.
     # @return [Arel::Nodes::Grouping(Arel::Nodes::Or)]

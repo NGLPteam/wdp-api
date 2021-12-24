@@ -19,11 +19,11 @@ module Resolvers
     end
 
     def apply_order_with_published_ascending(scope)
-      scope_wraps?(scope, Community) ? apply_order_with_oldest(scope) : scope.with_sorted_variable_date(:published, :asc)
+      scope_wraps?(scope, Community) ? apply_order_with_oldest(scope) : scope.with_sorted_published_date(:asc)
     end
 
     def apply_order_with_published_descending(scope)
-      scope_wraps?(scope, Community) ? apply_order_with_recent(scope) : scope.with_sorted_variable_date(:published, :desc)
+      scope_wraps?(scope, Community) ? apply_order_with_recent(scope) : scope.with_sorted_published_date(:desc)
     end
 
     def apply_order_with_title_ascending(scope)

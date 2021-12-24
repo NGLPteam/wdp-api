@@ -8,6 +8,8 @@ module Schemas
 
       attribute :path, :string
 
+      attribute :constant, :boolean, default: proc { false }
+
       attribute :direction, :string, default: "asc"
 
       attribute :nulls, :string, default: "last"
@@ -15,6 +17,10 @@ module Schemas
       validates :direction, presence: true, inclusion: { in: %w[asc desc] }
       validates :nulls, presence: true, inclusion: { in: %w[last first] }
       validates :path, presence: true, format: { with: Schemas::Orderings::OrderBuilder::PATTERN }
+
+      def constant?
+        constant.present?
+      end
 
       def asc?
         direction == "asc"

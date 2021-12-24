@@ -10,6 +10,7 @@ class Collection < ApplicationRecord
   include HasSystemSlug
   include HasUniqueDOI
   include HierarchicalEntity
+  include ChildEntity
   include ScopesForIdentifier
 
   has_closure_tree

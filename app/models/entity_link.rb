@@ -118,10 +118,12 @@ class EntityLink < ApplicationRecord
 
   # @return [Hash]
   def to_entity_tuple
-    slice(
-      :entity_type, :hierarchical_id, :hierarchical_type, :schema_version_id,
-      :auth_path, :system_slug, :created_at, :updated_at
-    ).merge(entity_id: id, scope: scope, link_operator: operator)
+    target.to_entity_tuple.merge(
+      slice(:entity_type).merge(
+        auth_path: auth_path,
+        entity_id: id, scope: scope, link_operator: operator, system_slug: system_slug
+      )
+    )
   end
 
   # @api private

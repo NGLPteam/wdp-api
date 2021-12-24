@@ -8,22 +8,43 @@ module Schemas
       # @api private
       class BySchemaProperty < Base
         # @api private
-        PATTERN = /\Aprops\.([^.]+)(?:\.([^.]+))?\z/.freeze
+        PATTERN = /\Aprops\.(?<path>[^#]+)(?:#(?<type>[^#]+))?\z/.freeze
 
         def attributes_for(definition)
-          [property_attribute_for(definition.path)].compact
+          Array(property_attribute_for(definition.path))
         end
 
-        # @param [String] path
+        private
+
+        # @param [String] order_path
         # @return [Arel::Nodes::InfixOperation]
-        memoize def property_attribute_for(path)
-          match = PATTERN.match path
+        def property_attribute_for(order_path)
+          match = PATTERN.match order_path
 
-          return nil unless match
+          raise "Unparseable schema path: #{order_path}" unless match
 
-          match.captures.reduce(arel_table[:entity_properties]) do |attr, prop_key|
-            Arel::Nodes::InfixOperation.new("->", attr, Arel::Nodes.build_quoted(prop_key))
+          path = match[:path]
+
+          type = match[:type].presence
+
+          if type == "variable_date"
+            nvd = join_for_variable_date path
+
+            return [
+              nvd[:value],
+              nvd[:precision]
+            ]
           end
+
+          op = join_for_orderable_property path
+
+          value_column = EntityOrderableProperty.value_column_for_type type
+
+          expr = op[value_column]
+
+          expr = order_boolean(expr) if type == "boolean"
+
+          return [expr]
         end
       end
     end
