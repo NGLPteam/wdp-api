@@ -10,6 +10,8 @@ module Schemas
         attribute :lte, :decimal
         attribute :default, :decimal
 
+        orderable!
+
         schema_type! :decimal
 
         config.graphql_value_key = :float_value

@@ -7,18 +7,28 @@ module Schemas
       class Base < Schemas::Properties::BaseDefinition
         include ActiveSupport::Configurable
 
+        KNOWN_FUNCTIONS = %w[content metadata presentation sorting unspecified].freeze
+
         attribute :label, :string
-        attribute :function, :string
+        attribute :function, :string, default: "unspecified"
         attribute :mappings, Schemas::Properties::MappingDefinition.to_array_type
         attribute :required, :boolean, default: proc { false }
         attribute :wide, :boolean, default: proc { false }
+        attribute :unorderable, :boolean, default: proc { false }
 
         config.array = false
         config.base_type = Dry::Types["any"]
         config.schema_predicates = {}
         config.always_wide = false
         config.complex = false
+        config.orderable = false
         config.graphql_value_key = :content
+
+        validates :function, presence: true, inclusion: { in: KNOWN_FUNCTIONS }
+
+        alias unorderable? unorderable
+
+        delegate :array?, :complex?, :simple?, :scalar_reference?, :collected_reference?, to: :class
 
         def add_to_schema!(context)
           return if exclude_from_schema?
@@ -63,6 +73,18 @@ module Schemas
         # Whether this property is nested under a {Schemas::Properties::GroupDefinition group}.
         def nested?
           parent.kind_of?(Schemas::Properties::GroupDefinition)
+        end
+
+        def orderable?
+          self.class.orderable? && !unorderable?
+        end
+
+        # @!attribute [r] order_path
+        # A condensed order path, that contains the type in order to ensure
+        # the value is properly converted when sorting.
+        # @return [String, nil]
+        def order_path
+          "#{full_path}##{type}" if orderable?
         end
 
         # A predicate to detect if we should try to coerce a value
@@ -147,6 +169,36 @@ module Schemas
 
         def write_values_within!(context)
           context.copy_value! path
+        end
+
+        def reference?
+          scalar_reference? || collected_reference? || type == "full_text"
+        end
+
+        def kind
+          if reference?
+            "reference"
+          elsif complex?
+            "complex"
+          else
+            "simple"
+          end
+        end
+
+        def version_property_label
+          label.presence || super
+        end
+
+        def to_version_property
+          super.merge(function: function)
+        end
+
+        def to_version_property_metadata
+          super.merge(
+            order_path: order_path,
+          ).tap do |metadata|
+            metadata[:default] = default if has_default?
+          end.compact
         end
 
         private
@@ -246,6 +298,10 @@ module Schemas
             config.array_element_macros = array_element_macros.flatten
           end
 
+          def orderable!
+            config.orderable = true
+          end
+
           def schema_type!(value)
             config.complex = !(value.kind_of?(Symbol) || value.kind_of?(String))
 
@@ -260,6 +316,10 @@ module Schemas
             config.array
           end
 
+          def collected_reference?
+            self < CollectedReference
+          end
+
           def complex?
             config.complex
           end
@@ -270,6 +330,15 @@ module Schemas
 
           def graphql_typename
             "#{name.demodulize}Property"
+          end
+
+          # Whether or not this property type is orderable.
+          def orderable?
+            config.orderable
+          end
+
+          def scalar_reference?
+            self < ScalarReference
           end
 
           def simple?

@@ -1,0 +1,88 @@
+{
+  "namespace": "testing",
+  "identifier": "simple_collection",
+  "name": "Simple Collection",
+  "version": "2.0.0",
+  "kind": "collection",
+  "ancestors": [
+    {
+      "name": "community",
+      "namespace": "testing",
+      "identifier": "simple_community",
+      "required": true
+    }
+  ],
+  "parents": [
+    {
+      "namespace": "testing",
+      "identifier": "simple_community"
+    },
+    {
+      "namespace": "testing",
+      "identifier": "simple_collection"
+    }
+  ],
+  "children": [
+    {
+      "namespace": "testing",
+      "identifier": "simple_collection"
+    },
+    {
+      "namespace": "testing",
+      "identifier": "simple_item",
+      "version": "> 1"
+    }
+  ],
+  "orderings": [
+    {
+      "id": "items",
+      "constant": true,
+      "name": "Items",
+      "filter": {
+        "schemas": [
+          {
+            "namespace": "testing",
+            "identifier": "simple_item"
+          }
+        ]
+      },
+      "select": {
+        "direct": "descendants"
+      },
+      "order": [
+        { "path": "props.sequence", "direction": "asc" }
+      ]
+    },
+    {
+      "id": "subcollections",
+      "constant": false,
+      "name": "Subcollections",
+      "filter": {
+        "schemas": [
+          {
+            "namespace": "testing",
+            "identifier": "simple_collection"
+          }
+        ]
+      },
+      "select": {
+        "direct": "descendants"
+      },
+      "order": [
+        { "path": "props.sequence", "direction": "asc" }
+      ]
+    }
+  ],
+  "properties": [
+    { "path": "foo", "label": "Foo", "type": "string", "function": "content" },
+    {
+      "path": "bar",
+      "legend": "Bar",
+      "type": "group",
+      "properties": [
+        { "path": "baz", "label": "Baz", "type": "string", "function": "metadata" }
+      ]
+    },
+    { "path": "sequence", "label": "Sequence", "type": "string", "function": "sorting" }
+  ]
+}

@@ -1,8 +1,9 @@
 {
-  "id": "item",
+  "namespace": "default",
+  "identifier": "item",
   "name": "Default Item",
   "version": "1.0.0",
-  "consumer": "item",
+  "kind": "item",
   "orderings": [],
   "properties": []
 }

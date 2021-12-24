@@ -1,44 +1,71 @@
 {
-  "id": "journal_article",
+  "namespace": "nglp",
+  "identifier": "journal_article",
   "name": "Journal Article",
   "version": "1.0.0",
-  "consumer": "item",
+  "kind": "item",
+  "ancestors": [
+    {
+      "name": "issue",
+      "namespace": "nglp",
+      "identifier": "journal_issue",
+      "required": true
+    },
+    {
+      "name": "volume",
+      "namespace": "nglp",
+      "identifier": "journal_volume",
+      "required": false
+    },
+    {
+      "name": "journal",
+      "namespace": "nglp",
+      "identifier": "journal",
+      "required": true
+    }
+  ],
+  "parents": [
+    {
+      "namespace": "nglp",
+      "identifier": "journal_issue"
+    }
+  ],
   "orderings": [],
   "properties": [
-    { "path": "body", "label": "Full Text", "type": "full_text", "required": false, "wide": true },
-    { "path": "abstract", "label": "Abstract", "type": "full_text", "required": false, "wide": true },
-    { "path": "online_version", "label": "Online Version", "type": "url", "required": false },
-    { "path": "pdf_version", "label": "PDF Version", "type": "asset", "required": false },
+    { "path": "body", "label": "Full Text", "type": "full_text", "required": false, "wide": true, "function": "content" },
+    { "path": "abstract", "label": "Abstract", "type": "full_text", "required": false, "wide": true, "function": "content" },
+    { "path": "online_version", "label": "Online Version", "type": "url", "required": false, "function": "content" },
+    { "path": "pdf_version", "label": "PDF Version", "type": "asset", "required": false, "function": "content" },
     {
       "path": "volume",
       "legend": "Volume Metadata",
       "properties": [
-        { "path": "id", "label": "ID", "type": "string" },
-        { "path": "sequence", "label": "Sequence", "type": "integer" },
-        { "path": "sortable_number", "label": "Sortable Number", "type": "integer" }
+        { "path": "id", "label": "ID", "type": "string", "function": "metadata" },
+        { "path": "sequence", "label": "Sequence", "type": "integer", "function": "metadata" },
+        { "path": "sortable_number", "label": "Sortable Number", "type": "integer", "function": "sorting" }
       ],
       "type": "group"
     },
     {
       "path": "issue",
       "legend": "Issue Metadata",
-
       "properties": [
-        { "path": "title", "label": "Title", "type": "string", "wide": true },
-        { "path": "number", "label": "Number", "type": "string" },
-        { "path": "id", "label": "ID", "type": "string" },
-        { "path": "fpage", "label": "Start Page (of Issue)", "type": "integer" },
-        { "path": "lpage", "label": "Ending Page (of Issue)", "type": "integer" }
+        { "path": "title", "label": "Title", "type": "string", "wide": true, "function": "metadata" },
+        { "path": "number", "label": "Number", "type": "string", "function": "metadata" },
+        { "path": "sortable_number", "label": "Sortable Number", "type": "integer", "function": "sorting" },
+        { "path": "id", "label": "ID", "type": "string", "function": "metadata" },
+        { "path": "fpage", "label": "Start Page (of Issue)", "type": "integer", "function": "metadata" },
+        { "path": "lpage", "label": "Ending Page (of Issue)", "type": "integer", "function": "metadata" }
       ],
       "type": "group"
     },
     {
       "path": "meta",
-      "legend": "Metadata",
+      "legend": "Article Metadata",
       "properties": [
-        { "path": "collected", "label": "Collected", "type": "variable_date" },
-        { "path": "published", "label": "Published", "type": "variable_date" },
-        { "path": "page_count", "label": "Page Count", "type": "integer" }
+        { "path": "collected", "label": "Collected", "type": "variable_date", "function": "metadata" },
+        { "path": "published", "label": "Published", "type": "variable_date", "function": "metadata" },
+        { "path": "page_count", "label": "Page Count", "type": "integer", "function": "metadata" }
       ],
       "type": "group"
     }

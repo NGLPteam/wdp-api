@@ -1,8 +1,9 @@
 {
-  "id": "collection",
+  "namespace": "default",
+  "identifier": "collection",
   "name": "Default Collection",
   "version": "1.0.0",
-  "consumer": "collection",
+  "kind": "collection",
   "orderings": [],
   "properties": []
 }

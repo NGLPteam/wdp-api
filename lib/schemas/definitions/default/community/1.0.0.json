@@ -1,8 +1,9 @@
 {
-  "id": "community",
+  "namespace": "default",
+  "identifier": "community",
   "name": "Default Community",
   "version": "1.0.0",
-  "consumer": "community",
+  "kind": "community",
   "orderings": [],
   "properties": []
 }

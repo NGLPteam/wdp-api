@@ -1,0 +1,80 @@
+{
+  "namespace": "testing",
+  "identifier": "simple_community",
+  "name": "Simple Community",
+  "version": "1.0.0",
+  "kind": "community",
+  "ancestors": [],
+  "parents": [
+    {
+      "namespace": "testing",
+      "identifier": "simple_community"
+    },
+    {
+      "namespace": "testing",
+      "identifier": "simple_collection"
+    }
+  ],
+  "children": [
+    {
+      "namespace": "testing",
+      "identifier": "simple_collection"
+    },
+    {
+      "namespace": "testing",
+      "identifier": "simple_item"
+    }
+  ],
+  "orderings": [
+    {
+      "id": "items",
+      "constant": true,
+      "name": "Items",
+      "filter": {
+        "schemas": [
+          {
+            "namespace": "testing",
+            "identifier": "simple_item"
+          }
+        ]
+      },
+      "select": {
+        "direct": "descendants"
+      },
+      "order": [
+        { "path": "props.sequence", "direction": "asc" }
+      ]
+    },
+    {
+      "id": "collections",
+      "constant": false,
+      "name": "Collections",
+      "filter": {
+        "schemas": [
+          {
+            "namespace": "testing",
+            "identifier": "simple_collection"
+          }
+        ]
+      },
+      "select": {
+        "direct": "descendants"
+      },
+      "order": [
+        { "path": "props.sequence", "direction": "asc" }
+      ]
+    }
+  ],
+  "properties": [
+    { "path": "foo", "label": "Foo", "type": "string", "function": "content" },
+    {
+      "path": "bar",
+      "legend": "Bar",
+      "type": "group",
+      "properties": [
+        { "path": "baz", "label": "Baz", "type": "string", "function": "metadata" }
+      ]
+    },
+    { "path": "sequence", "label": "Sequence", "type": "string", "function": "sorting" }
+  ]
+}

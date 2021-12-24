@@ -1,8 +1,9 @@
 {
-  "id": "article",
+  "namespace": "nglp",
+  "identifier": "article",
   "name": "Article",
   "version": "1.0.0",
-  "consumer": "item",
+  "kind": "item",
   "orderings": [],
   "properties": [
     { "path": "title", "type": "string", "required": true },

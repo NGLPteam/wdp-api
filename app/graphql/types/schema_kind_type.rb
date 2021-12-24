@@ -2,9 +2,10 @@
 
 module Types
   class SchemaKindType < Types::BaseEnum
+    description "The kind of entity a schema applies to"
+
     value "COMMUNITY", value: "community"
     value "COLLECTION", value: "collection"
     value "ITEM", value: "item"
-    value "METADATA", value: "metadata", description: "Presently unused"
   end
 end

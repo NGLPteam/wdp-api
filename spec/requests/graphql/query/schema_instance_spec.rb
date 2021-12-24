@@ -78,13 +78,13 @@ RSpec.describe "Schema Instances", type: :request do
       article: {
         body: {
           __typename: "FullTextProperty",
-          type: "full_text",
+          type: "FULL_TEXT",
           full_path: "body",
           full_text: be_blank,
         },
         volume_id: {
           __typename: "StringProperty",
-          type: "string",
+          type: "STRING",
           full_path: "volume.id",
           content: be_blank,
         },

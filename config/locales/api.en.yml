@@ -1,0 +1,13 @@
+# These translations really only exist for API concerns,
+# generating error messages for tests and local development,
+# etc. When WDP-API has its content translated, the keys in
+# this document do not need to be included in that process.
+
+en:
+  frozen:
+    errors:
+      models:
+        static_orderable_property:
+          attributes:
+            path:
+              invalid: "is expected to start with '%{grouping}', got '%{value}'"

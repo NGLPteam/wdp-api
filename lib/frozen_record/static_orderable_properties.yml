@@ -1,0 +1,58 @@
+---
+- path: entity.title
+  grouping: entity
+  builder: by_columns
+  hidden: false
+  columns:
+    - :entity_title
+  type: string
+- path: entity.created_at
+  grouping: entity
+  builder: by_columns
+  columns:
+    - :entity_created_at
+  type: timestamp
+- path: entity.updated_at
+  grouping: entity
+  builder: by_columns
+  columns:
+    - :entity_updated_at
+  type: timestamp
+- path: entity.depth
+  grouping: entity
+  builder: by_columns
+  columns:
+    - :entity_depth
+  type: integer
+- path: entity.published
+  grouping: entity
+  builder: by_variable_date
+  type: variable_date
+- path: entity.issued
+  grouping: entity
+  builder: by_variable_date
+  type: variable_date
+- path: entity.available
+  grouping: entity
+  builder: by_variable_date
+  type: variable_date
+- path: entity.accessioned
+  grouping: entity
+  builder: by_variable_date
+  type: variable_date
+- path: link.is_link
+  grouping: link
+  builder: by_is_link
+  type: boolean
+- path: schema.kind
+  grouping: schema
+  builder: by_columns
+  type: select
+  columns:
+    - :schema_kind
+- path: schema.name
+  grouping: schema
+  builder: by_columns
+  type: string
+  columns:
+    - :schema_name

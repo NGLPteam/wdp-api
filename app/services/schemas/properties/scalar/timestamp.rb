@@ -4,6 +4,8 @@ module Schemas
   module Properties
     module Scalar
       class Timestamp < Base
+        orderable!
+
         schema_type! :time
 
         config.graphql_value_key = :timestamp

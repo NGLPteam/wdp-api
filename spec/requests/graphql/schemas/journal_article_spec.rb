@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe "nglp:journal_article" do
+RSpec.describe "nglp:journal_article", type: :request do
   let!(:item) { FactoryBot.create :item, schema: "nglp:journal_article" }
 
   context "when updating a journal article" do
@@ -15,6 +15,7 @@ RSpec.describe "nglp:journal_article" do
     let(:body_lang) { "en" }
     let(:volume_id) { ?1 }
     let(:issue_id) { ?1 }
+    let(:issue_sortable_number) { 1 }
     let(:issue_number) { issue_id }
     let(:issue_title) { "Some Issue" }
     let(:collected) { { value: "2021/01/05", precision: "MONTH" } }
@@ -31,6 +32,7 @@ RSpec.describe "nglp:journal_article" do
         pv.prop "issue.id", issue_id
         pv.prop "issue.title", issue_title
         pv.prop "issue.number", issue_number
+        pv.prop "issue.sortable_number", issue_sortable_number
         pv.prop "meta.collected", collected
       end
     end
@@ -62,6 +64,7 @@ RSpec.describe "nglp:journal_article" do
             sp.group :issue do |ip|
               ip.string :title, issue_title
               ip.string :number, issue_number
+              ip.integer :sortable_number, issue_sortable_number
               ip.string :id, issue_id
               ip.integer :fpage
               ip.integer :lpage
@@ -80,7 +83,7 @@ RSpec.describe "nglp:journal_article" do
     it "accepts valid values" do
       make_default_request!
 
-      expect_graphql_response_data expected_shape, decamelize: true
+      expect_graphql_data expected_shape
     end
 
     context "when a required property is blank" do
@@ -99,7 +102,7 @@ RSpec.describe "nglp:journal_article" do
       it "fails with the expected schema error" do
         make_default_request!
 
-        expect_graphql_response_data expected_shape, decamelize: true
+        expect_graphql_data expected_shape
       end
     end
   end

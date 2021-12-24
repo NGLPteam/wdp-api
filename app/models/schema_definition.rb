@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class SchemaDefinition < ApplicationRecord
-  include HasCalculatedSystemSlug
+  attr_readonly :declaration
 
   BUILTIN_NAMESPACES = %w[default nglp testing].freeze
 
@@ -10,6 +10,8 @@ class SchemaDefinition < ApplicationRecord
   pg_enum! :kind, as: "schema_kind"
 
   has_many :schema_versions, dependent: :destroy, inverse_of: :schema_definition
+
+  has_many :schema_version_properties, dependent: :delete_all, inverse_of: :schema_definition
 
   scope :by_namespace, ->(namespace) { where(namespace: namespace) }
   scope :by_identifier, ->(identifier) { where(identifier: identifier) }
@@ -30,6 +32,8 @@ class SchemaDefinition < ApplicationRecord
 
   before_validation :enforce_namespace_identifier_format!
 
+  alias_attribute :system_slug, :declaration
+
   def builtin?
     namespace.in? BUILTIN_NAMESPACES
   end
@@ -38,15 +42,12 @@ class SchemaDefinition < ApplicationRecord
     namespace? && !builtin?
   end
 
-  def calculate_system_slug
-    "#{namespace}:#{identifier}" if namespace? && identifier?
-  end
-
   # @return [void]
   def reorder_versions!
     call_operation("schemas.versions.reorder", self)
   end
 
+  # @return [Hash]
   def to_declaration
     slice(:namespace, :identifier)
   end
@@ -81,6 +82,20 @@ class SchemaDefinition < ApplicationRecord
     # @return [SchemaDefinition]
     def default_item
       by_tuple("default", "item").first!
+    end
+
+    def filtered_by(schemas)
+      schema_definitions = Array(schemas).map do |needle|
+        WDPAPI::Container["schemas.definitions.find"].call(needle).value_or(nil)
+      end.compact
+
+      if schema_definitions.present?
+        where(id: schema_definitions)
+      elsif schemas.present?
+        none
+      else
+        all
+      end
     end
 
     # @param [String] namespace
