@@ -5,7 +5,10 @@ module Schemas
     class Validate
       include Dry::Monads[:do, :result]
 
-      include WDPAPI::Deps[compile_contract: "schemas.properties.compile_contract"]
+      include WDPAPI::Deps[
+        compile_contract: "schemas.properties.compile_contract",
+        decamelize_hash: "utility.decamelize_hash"
+      ]
 
       # @param [SchemaVersion] version
       # @param [Hash] values
@@ -16,7 +19,9 @@ module Schemas
 
         contract = contract_klass.new
 
-        contract.call(values).to_monad.or do |result|
+        corrected_values = decamelize_hash.call(values)
+
+        contract.call(corrected_values).to_monad.or do |result|
           Failure[:invalid_values, result]
         end
       end
