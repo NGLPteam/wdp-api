@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Mutations
-  module Operations
+  module Shared
     module AttachesPolymorphicEntity
       extend ActiveSupport::Concern
 

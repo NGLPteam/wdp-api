@@ -7,6 +7,7 @@ module MutationOperations
     include Graphql::PunditHelpers
     include MutationOperations::AttributeExtraction
     include MutationOperations::Contracts
+    include MutationOperations::Edges
 
     included do
       extend ActiveModel::Callbacks
@@ -15,6 +16,7 @@ module MutationOperations
       include Dry::Effects.Resolve(:current_user)
       include Dry::Effects.Resolve(:graphql_context)
       include Dry::Effects.Resolve(:local_context)
+      include Dry::Effects.Resolve(:edges)
       include Dry::Effects.Resolve(:attribute_names)
       include Dry::Effects.Resolve(:error_compiler)
       include Dry::Effects.Resolve(:transient_arguments)
@@ -23,7 +25,7 @@ module MutationOperations
       include Dry::Effects.Interrupt(:throw_unauthorized)
       include Dry::Monads[:result, :validated, :list]
 
-      define_model_callbacks :prepare, :contracts, :validation, :execution
+      define_model_callbacks :prepare, :edges, :contracts, :validation, :execution
     end
 
     # @api private
@@ -35,6 +37,10 @@ module MutationOperations
 
       run_callbacks :prepare do
         prepare!(**args)
+      end
+
+      run_callbacks :edges do
+        load_and_validate_edges!
       end
 
       run_callbacks :validation do

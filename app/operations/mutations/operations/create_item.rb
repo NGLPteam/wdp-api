@@ -4,31 +4,20 @@ module Mutations
   module Operations
     class CreateItem
       include MutationOperations::Base
-      include AssignsSchemaVersion
+      include Mutations::Shared::AssignsSchemaVersion
 
       use_contract! :create_item
       use_contract! :entity_input
       use_contract! :entity_visibility
 
+      derives_edge! child: :item, child_source: :static
+
       def call(parent:, **args)
         authorize parent, :create_items?
 
-        attributes = args.without(:schema_version_slug)
+        attributes = args.merge(child_attributes_for(parent))
 
-        attributes[:schema_version] = fetch_found_schema_version!
-
-        case parent
-        when Collection
-          attributes[:collection] = parent
-          attributes[:parent] = nil
-        when Item
-          attributes[:collection] = parent.collection
-          attributes[:parent] = parent
-        else
-          add_error! "Not a valid parent", path: "parent"
-
-          return throw_invalid
-        end
+        attributes[:schema_version] = loaded_schema_version
 
         item = Item.new attributes
 

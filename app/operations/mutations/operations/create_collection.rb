@@ -4,31 +4,20 @@ module Mutations
   module Operations
     class CreateCollection
       include MutationOperations::Base
-      include AssignsSchemaVersion
+      include Mutations::Shared::AssignsSchemaVersion
 
       use_contract! :create_collection
       use_contract! :entity_input
       use_contract! :entity_visibility
 
+      derives_edge! child: :collection, child_source: :static
+
       def call(parent:, **args)
         authorize parent, :create_collections?
 
-        attributes = args.without(:schema_version_slug)
+        attributes = args.merge(child_attributes_for(parent))
 
-        attributes[:schema_version] = fetch_found_schema_version!
-
-        case parent
-        when Community
-          attributes[:community] = parent
-          attributes[:parent] = nil
-        when Collection
-          attributes[:community] = parent.community
-          attributes[:parent] = parent
-        else
-          add_error! "Not a valid parent", path: "input.parent"
-
-          return throw_invalid
-        end
+        attributes[:schema_version] = loaded_schema_version
 
         collection = Collection.new attributes
 

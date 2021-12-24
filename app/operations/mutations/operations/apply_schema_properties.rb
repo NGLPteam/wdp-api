@@ -5,7 +5,7 @@ module Mutations
     class ApplySchemaProperties
       include MutationOperations::Base
       include MutationOperations::WithSchemaErrors
-      include AttachesPolymorphicEntity
+      include Mutations::Shared::AttachesPolymorphicEntity
 
       include WDPAPI::Deps[apply: "schemas.instances.apply"]
 

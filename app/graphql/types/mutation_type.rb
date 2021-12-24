@@ -50,9 +50,7 @@ module Types
 
     field :link_entity, mutation: Mutations::LinkEntity
 
-    field :reparent_collection, mutation: Mutations::ReparentCollection
-
-    field :reparent_item, mutation: Mutations::ReparentItem
+    field :reparent_entity, mutation: Mutations::ReparentEntity
 
     field :reset_ordering, mutation: Mutations::ResetOrdering
 

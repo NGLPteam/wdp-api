@@ -6,6 +6,8 @@ module Mutations
       include MutationOperations::Base
       include WDPAPI::Deps[grant_access: "access.grant"]
 
+      use_contract! :grant_access
+
       def call(role:, user:, entity:)
         authorize entity, :manage_access?
 
@@ -15,10 +17,6 @@ module Mutations
 
         attach! :entity, entity if granted
         attach! :granted, granted
-      end
-
-      def validate!(user:, **args)
-        add_error! "You cannot grant a role to yourself.", path: "user" if user == current_user
       end
     end
   end

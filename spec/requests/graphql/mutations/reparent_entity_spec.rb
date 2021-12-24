@@ -1,0 +1,163 @@
+# frozen_string_literal: true
+
+RSpec.describe Mutations::ReparentEntity, type: :request, graphql: :mutation do
+  mutation_query! <<~GRAPHQL
+  mutation reparentEntity($input: ReparentEntityInput!) {
+    reparentEntity(input: $input) {
+      child {
+        ... on Collection {
+          parent {
+            ... on Community { id }
+            ... on Collection { id }
+          }
+        }
+
+        ... on Item {
+          parent {
+            ... on Collection { id }
+            ... on Item { id }
+          }
+        }
+      }
+
+      ...ErrorFragment
+    }
+  }
+  GRAPHQL
+
+  let!(:new_parent) { nil }
+  let!(:child) { nil }
+
+  let_mutation_input!(:child_id) { child&.to_encoded_id }
+  let_mutation_input!(:parent_id) { new_parent&.to_encoded_id }
+
+  context "as an admin" do
+    let(:token) { token_helper.build_token has_global_admin: true }
+
+    let!(:community) { FactoryBot.create :community }
+
+    let!(:expected_shape) do
+      gql.mutation :reparent_entity, no_errors: true do |m|
+        m.prop :child do |c|
+          c.prop :parent do |p|
+            p[:id] = new_parent.to_encoded_id
+          end
+        end
+      end
+    end
+
+    shared_examples_for "a valid mutation" do
+      it "changes the contextual parent" do
+        expect_the_default_request.to change { child.reload.contextual_parent }.from(old_parent).to(new_parent)
+
+        expect_graphql_data expected_shape
+      end
+    end
+
+    shared_examples_for "moving a leaf to a root" do
+      it "clears the old parent" do
+        expect_the_default_request.to change { child.reload.parent_id }.from(old_parent.id).to(nil)
+
+        expect_graphql_data expected_shape
+      end
+    end
+
+    context "when moving a subcollection to the top level in a new community" do
+      let!(:old_parent) { FactoryBot.create :collection, community: community }
+
+      let!(:child) { FactoryBot.create :collection, parent: old_parent }
+
+      let!(:new_parent) { FactoryBot.create :community }
+
+      it_behaves_like "moving a leaf to a root"
+      it_behaves_like "a valid mutation"
+    end
+
+    context "when moving to another collection" do
+      let!(:old_parent) { FactoryBot.create :collection, community: community }
+
+      let!(:child) { FactoryBot.create :collection, parent: old_parent }
+
+      let!(:new_parent) { FactoryBot.create :collection, community: community }
+
+      it_behaves_like "a valid mutation"
+
+      it "stays within the same community" do
+        expect_the_default_request.to keep_the_same { child.reload.community }
+
+        expect_graphql_data expected_shape
+      end
+    end
+
+    context "when moving an item to another collection" do
+      let!(:old_collection) { FactoryBot.create :collection }
+      let!(:old_parent) { FactoryBot.create :item, collection: old_collection }
+
+      let!(:child) { FactoryBot.create :item, parent: old_parent }
+
+      let!(:new_parent) { FactoryBot.create :collection }
+
+      it_behaves_like "moving a leaf to a root"
+      it_behaves_like "a valid mutation"
+    end
+
+    shared_examples_for "a simple failure" do
+      it "fails" do
+        expect_the_default_request.to keep_the_same { child.reload.parent_id }
+
+        expect_graphql_data expected_shape
+      end
+    end
+
+    context "when moving a parent underneath a child" do
+      let!(:child) { FactoryBot.create :collection }
+      let!(:new_parent) { FactoryBot.create :collection, parent: child }
+
+      let(:expected_shape) do
+        gql.mutation :reparent_entity, no_errors: false do |m|
+          m[:child] = be_blank
+
+          m.errors do |err|
+            err.error "child", :cannot_own_parent
+          end
+        end
+      end
+
+      include_examples "a simple failure"
+    end
+
+    context "when trying to parent one's self" do
+      let!(:child) { FactoryBot.create :collection }
+      let!(:new_parent) { child }
+
+      let(:expected_shape) do
+        gql.mutation :reparent_entity, no_errors: false do |m|
+          m[:child] = be_blank
+
+          m.errors do |err|
+            err.error "child", :cannot_parent_itself
+          end
+        end
+      end
+
+      include_examples "a simple failure"
+    end
+
+    context "when trying to reparent something nonsensical" do
+      let!(:child) { FactoryBot.create :collection }
+      let!(:new_parent) { FactoryBot.create :item }
+
+      let(:expected_shape) do
+        gql.mutation :reparent_entity, no_global_errors: false do |m|
+          m[:child] = be_blank
+
+          m.global_errors do |g|
+            g.error :unacceptable_edge, message_args: { parent: "item", child: "collection" }
+          end
+        end
+      end
+
+      include_examples "a simple failure"
+    end
+  end
+end

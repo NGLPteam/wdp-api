@@ -110,6 +110,8 @@ module AppTypes
     end
   end
 
+  AnyUser = Instance(::User) | Instance(::AnonymousUser)
+
   class FlexibleStruct < Dry::Struct
     transform_keys(&:to_sym)
 
