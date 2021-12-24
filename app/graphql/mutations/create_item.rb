@@ -12,7 +12,7 @@ module Mutations
       TEXT
     end
 
-    argument :schema_version_slug, String, required: false, default_value: "default:item:latest"
+    argument :schema_version_slug, String, required: false, transient: true, attribute: true, default_value: "default:item:latest"
 
     include Mutations::Shared::CreateHierarchicalEntityArguments
     include Mutations::Shared::AcceptsDOIInput

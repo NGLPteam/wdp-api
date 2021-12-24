@@ -2,8 +2,9 @@
 
 module Types
   class BaseArgument < GraphQL::Schema::Argument
-    def initialize(*args, attribute: false, **kwargs, &block)
+    def initialize(*args, attribute: false, transient: false, **kwargs, &block)
       @attribute = attribute
+      @transient = transient
 
       super(*args, **kwargs, &block)
     end
@@ -12,13 +13,24 @@ module Types
       @attribute.present?
     end
 
+    # @return [<String>]
     def attribute_names(names: [], parent: nil)
-      attribute_name = [parent, name].compact.join(?.)
+      argument_paths_for_if(&:attribute?)
+    end
 
-      names << attribute_name if attribute?
+    # @param [<String>] names
+    # @param [String, nil] parent
+    # @yield [arg]
+    # @yieldparam [Types::BaseArgument] arg
+    # @yieldreturn [Boolean]
+    # @return [<String>]
+    def argument_paths_for_if(names: [], parent: nil, &block)
+      argument_name = [parent, name].compact.join(?.)
+
+      names << argument_name if yield(self)
 
       nested_arguments.each_with_object(names) do |arg, n|
-        names += arg.attribute_names(names: n, parent: attribute_name) if arg.attribute?
+        names += arg.argument_paths_for_if(names: n, parent: argument_name, &block) if yield(arg)
       end
     end
 
@@ -32,6 +44,17 @@ module Types
       else
         []
       end
+    end
+
+    # @return [<Symbol>]
+    def transient_arguments(names: [], parent: nil)
+      argument_paths_for_if(&:transient?).map do |arg|
+        arg.to_s.underscore.to_sym
+      end
+    end
+
+    def transient?
+      @transient
     end
   end
 end
