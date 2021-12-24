@@ -1,152 +1,117 @@
 # frozen_string_literal: true
 
-RSpec.describe Mutations::CreateItem, type: :request do
+RSpec.describe Mutations::CreateItem, type: :request, graphql: :mutation do
+  mutation_query! <<~GRAPHQL
+  mutation createItem($input: CreateItemInput!) {
+    createItem(input: $input) {
+      item {
+        title
+        subtitle
+        published {
+          value
+          precision
+        }
+        visibility
+        summary
+        community { id }
+        collection { id }
+
+        parent {
+          ... on Node { id }
+        }
+      }
+
+      ...ErrorFragment
+    }
+  }
+  GRAPHQL
+
   context "as an admin" do
     let(:token) { token_helper.build_token has_global_admin: true }
 
-    let!(:title) { Faker::Lorem.sentence }
-    let!(:subtitle) { Faker::Lorem.sentence }
     let!(:community) { FactoryBot.create :community }
-    let!(:visibility) { "VISIBLE" }
-    let!(:thumbnail) do
+    let!(:collection) { FactoryBot.create :collection, community: community }
+
+    let_mutation_input!(:title) { Faker::Lorem.sentence }
+    let_mutation_input!(:subtitle) { Faker::Lorem.sentence }
+    let_mutation_input!(:visibility) { "VISIBLE" }
+    let_mutation_input!(:thumbnail) do
       graphql_upload_from "spec", "data", "lorempixel.jpg"
     end
-    let!(:summary) { "A test summary" }
-    let!(:published) do
+    let_mutation_input!(:summary) { "A test summary" }
+    let_mutation_input!(:published) do
       {
         value: "2021-10-31",
         precision: "DAY",
       }
     end
-
-    let!(:collection) { FactoryBot.create :collection, community: community }
+    let_mutation_input!(:parent_id) { parent.to_encoded_id }
 
     let!(:parent_item) { FactoryBot.create :item, collection: collection }
 
     let!(:parent) { collection }
 
-    let!(:mutation_input) do
-      {
-        parentId: parent.to_encoded_id,
-        title: title,
-        subtitle: subtitle,
-        published: published,
-        visibility: visibility,
-        thumbnail: thumbnail,
-        summary: summary,
-      }
-    end
-
-    let!(:graphql_variables) do
-      {
-        input: mutation_input
-      }
-    end
-
     let!(:expected_shape) do
-      {
-        createItem: {
-          item: {
-            title: title,
-            subtitle: subtitle,
-            published: published,
-            visibility: visibility,
-            summary: summary,
-            parent: { id: parent.to_encoded_id },
-            collection: { id: collection.to_encoded_id },
-            community: { id: community.to_encoded_id },
-          },
-          attributeErrors: be_blank,
-          globalErrors: be_blank,
-        }
-      }
-    end
+      gql.mutation :create_item do |m|
+        m.prop :item do |itm|
+          itm[:title] = title
+          itm[:subtitle] = subtitle
+          itm[:published] = published
+          itm[:visibility] = visibility
+          itm[:summary] = summary
 
-    let!(:query) do
-      <<~GRAPHQL
-      mutation createItem($input: CreateItemInput!) {
-        createItem(input: $input) {
-          item {
-            title
-            subtitle
-            published {
-              value
-              precision
-            }
-            visibility
-            summary
-            community { id }
-            collection { id }
+          itm.prop :parent do |p|
+            p[:id] = parent_id
+          end
 
-            parent {
-              ... on Node { id }
-            }
-          }
+          itm.prop :collection do |col|
+            col[:id] = collection.to_encoded_id
+          end
 
-          attributeErrors {
-            messages
-            path
-            type
-          }
-
-          globalErrors {
-            message
-          }
-        }
-      }
-      GRAPHQL
+          itm.prop :community do |com|
+            com[:id] = community.to_encoded_id
+          end
+        end
+      end
     end
 
     context "with a blank title" do
-      let(:title) { "" }
+      let_mutation_input!(:title) { "" }
 
       let(:expected_shape) do
-        {
-          createItem: {
-            item: be_blank,
-            attributeErrors: [
-              {
-                path: "title",
-                messages: [
-                  I18n.t("dry_validation.errors.filled?")
-                ]
-              }
-            ],
-            globalErrors: be_blank,
-          }
-        }
+        gql.mutation :create_item, no_errors: false do |m|
+          m[:item] = be_blank
+
+          m.errors do |e|
+            e.error :title, :filled?
+          end
+        end
       end
 
       it "fails" do
-        expect do
-          make_graphql_request! query, token: token, variables: graphql_variables
-        end.to keep_the_same(Item, :count)
+        expect_the_default_request.to keep_the_same Item, :count
 
-        expect_graphql_response_data expected_shape
+        expect_graphql_data expected_shape
       end
     end
 
     context "with an empty string for the summary" do
-      let(:summary) { "" }
+      let_mutation_input!(:summary) { "" }
 
       it "works" do
-        expect do
-          make_graphql_request! query, token: token, variables: graphql_variables
-        end.to change(Item, :count).by(1)
+        expect_the_default_request.to change(Item, :count).by(1)
 
-        expect_graphql_response_data expected_shape
+        expect_graphql_data expected_shape
       end
     end
 
     context "with a null value for the summary" do
-      let(:summary) { nil }
+      let_mutation_input!(:summary) { nil }
 
       it "works" do
-        expect do
-          make_graphql_request! query, token: token, variables: graphql_variables
-        end.to change(Item, :count).by(1)
+        expect_the_default_request.to change(Item, :count).by(1)
 
-        expect_graphql_response_data expected_shape
+        expect_graphql_data expected_shape
       end
     end
 
@@ -154,11 +119,9 @@ RSpec.describe Mutations::CreateItem, type: :request do
       let(:parent) { collection }
 
       it "works" do
-        expect do
-          make_graphql_request! query, token: token, variables: graphql_variables
-        end.to change(Item, :count).by(1)
+        expect_the_default_request.to change(Item, :count).by(1)
 
-        expect_graphql_response_data expected_shape
+        expect_graphql_data expected_shape
       end
     end
 
@@ -166,11 +129,9 @@ RSpec.describe Mutations::CreateItem, type: :request do
       let(:parent) { parent_item }
 
       it "works" do
-        expect do
-          make_graphql_request! query, token: token, variables: graphql_variables
-        end.to change(Item, :count).by(1)
+        expect_the_default_request.to change(Item, :count).by(1)
 
-        expect_graphql_response_data expected_shape
+        expect_graphql_data expected_shape
       end
     end
   end

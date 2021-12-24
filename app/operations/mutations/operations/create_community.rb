@@ -4,7 +4,7 @@ module Mutations
   module Operations
     class CreateCommunity
       include MutationOperations::Base
-      include AssignsSchemaVersion
+      include Mutations::Shared::AssignsSchemaVersion
 
       use_contract! :entity_input
 
@@ -13,9 +13,9 @@ module Mutations
 
         authorize community, :create?
 
-        attributes = args.without(:schema_version_slug)
+        attributes = args
 
-        attributes[:schema_version] = fetch_found_schema_version!
+        attributes[:schema_version] = loaded_schema_version
 
         community.assign_attributes attributes
 

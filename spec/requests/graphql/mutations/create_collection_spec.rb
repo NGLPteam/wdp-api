@@ -1,70 +1,62 @@
 # frozen_string_literal: true
 
-RSpec.describe Mutations::CreateCollection, type: :request do
+RSpec.describe Mutations::CreateCollection, type: :request, graphql: :mutation do
+  mutation_query! <<~GRAPHQL
+  mutation createCollection($input: CreateCollectionInput!) {
+    createCollection(input: $input) {
+      collection {
+        title
+        visibility
+        community { id }
+
+        thumbnail {
+          alt
+        }
+
+        parent {
+          ... on Node { id }
+        }
+      }
+
+      ... ErrorFragment
+    }
+  }
+  GRAPHQL
+
   context "as an admin" do
     let(:token) { token_helper.build_token has_global_admin: true }
 
-    let!(:title) { Faker::Lorem.sentence }
     let!(:community) { FactoryBot.create :community }
-    let!(:visibility) { "VISIBLE" }
-    let!(:alt_text) { "Some Alt Text" }
-    let!(:thumbnail) do
+    let!(:parent_collection) { FactoryBot.create :collection, community: community }
+    let!(:parent) { community }
+
+    let(:alt_text) { "Some Alt Text" }
+
+    let_mutation_input!(:parent_id) { parent.to_encoded_id }
+    let_mutation_input!(:title) { Faker::Lorem.sentence }
+    let_mutation_input!(:visibility) { "VISIBLE" }
+    let_mutation_input!(:thumbnail) do
       graphql_upload_from "spec", "data", "lorempixel.jpg", alt: alt_text
     end
 
-    let!(:parent_collection) { FactoryBot.create :collection, community: community }
-
-    let!(:parent) { community }
-
-    let!(:mutation_input) do
-      {
-        parentId: parent.to_encoded_id,
-        title: title,
-        visibility: visibility,
-        thumbnail: thumbnail,
-      }
-    end
-
-    let!(:graphql_variables) do
-      {
-        input: mutation_input
-      }
-    end
-
     let!(:expected_shape) do
-      {
-        createCollection: {
-          collection: {
-            title: title,
-            visibility: visibility,
-            parent: { id: parent.to_encoded_id },
-            community: { id: community.to_encoded_id },
-            thumbnail: { alt: alt_text }
-          }
-        }
-      }
-    end
+      gql.mutation(:create_collection) do |m|
+        m.prop :collection do |c|
+          c[:title] = title
+          c[:visibility] = visibility
+          c.prop :parent do |p|
+            p[:id] = parent_id
+          end
 
-    let!(:query) do
-      <<~GRAPHQL
-      mutation createCollection($input: CreateCollectionInput!) {
-        createCollection(input: $input) {
-          collection {
-            title
-            visibility
-            community { id }
+          c.prop :community do |com|
+            com[:id] = community.to_encoded_id
+          end
 
-            thumbnail {
-              alt
-            }
-
-            parent {
-              ... on Node { id }
-            }
-          }
-        }
-      }
-      GRAPHQL
+          c.prop :thumbnail do |tn|
+            tn[:alt] = alt_text
+          end
+        end
+      end
     end
 
     context "with a community as a parent" do
@@ -72,10 +64,10 @@ RSpec.describe Mutations::CreateCollection, type: :request do
 
       it "works" do
         expect do
-          make_graphql_request! query, token: token, variables: graphql_variables
+          make_default_request!
         end.to change(Collection, :count).by(1)
 
-        expect_graphql_response_data expected_shape
+        expect_graphql_response_data expected_shape, decamelize: true
       end
     end
 
@@ -84,10 +76,32 @@ RSpec.describe Mutations::CreateCollection, type: :request do
 
       it "works" do
         expect do
-          make_graphql_request! query, token: token, variables: graphql_variables
+          make_default_request!
         end.to change(Collection, :count).by(1)
 
-        expect_graphql_response_data expected_shape
+        expect_graphql_response_data expected_shape, decamelize: true
+      end
+
+      context "with a blank schema_version_slug" do
+        let_mutation_input!(:schema_version_slug) { "" }
+
+        let(:expected_shape) do
+          gql.mutation(:create_collection, no_errors: false) do |m|
+            m[:collection] = be_blank
+
+            m.errors do |e|
+              e.error :schema_version_slug, :filled?
+            end
+          end
+        end
+
+        it "fails" do
+          expect do
+            make_default_request!
+          end.to keep_the_same(Collection, :count)
+
+          expect_graphql_response_data expected_shape, decamelize: true
+        end
       end
     end
   end

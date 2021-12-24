@@ -4,6 +4,12 @@ module Shared
   module EnhancedTypes
     extend ActiveSupport::Concern
 
+    class << self
+      def extended(obj)
+        obj.const_set(:Operation, obj.Interface(:call))
+      end
+    end
+
     def ClassOrSubclass(kls)
       is_klass = ::Dry::Types["class"].constrained(eql: kls)
 
