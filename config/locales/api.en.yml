@@ -4,6 +4,31 @@
 # this document do not need to be included in that process.
 
 en:
+  activerecord:
+    errors:
+      messages:
+        must_be_entity: "must be an entity"
+      models:
+        entity_link:
+          attributes:
+            source:
+              linked_to_parent: "cannot be linked to its parent"
+            target:
+              linked_to_itself: "cannot be linked to itself"
+              linked_to_parent: "cannot be linked to its parent"
+        schema_version:
+          attributes:
+            configuration:
+              mismatched_trait: "has the %{trait} '%{actual}' but was expecting '%{expected}'"
+  attributes:
+    visible_after_at: "Visibility (Start)"
+    visible_until_at: "Visibility (End)"
+  errors:
+    attributes:
+      visibility:
+        missing_range: "must have a range"
+      visible_until_at:
+        before_start: "comes before the start of the range"
   frozen:
     errors:
       models:
