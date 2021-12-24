@@ -30,6 +30,16 @@ module Types
     field :root, Boolean, null: false, method: :root?
     field :leaf, Boolean, null: false, method: :leaf?
 
+    field :ancestor_by_name, Types::AnyEntityType, null: true do
+      description <<~TEXT
+      Directly fetch a defined named ancestor by its name. It can be null,
+      either because an invalid name was provided, the schema hierarchy is
+      incomplete, or the association itself is optional.
+      TEXT
+
+      argument :name, String, required: true, description: "The name of the ancestor to fetch"
+    end
+
     field :ancestor_of_type, Types::AnyEntityType, null: true do
       description <<~TEXT
       Look up an ancestor for this entity that implements a specific type. It ascends from this entity,
@@ -39,11 +49,32 @@ module Types
       argument :schema, String, required: true, description: "A fully-qualified name of a schema to look for."
     end
 
+    field :named_ancestors, [Types::NamedAncestorType, { null: false }], null: false do
+      description <<~TEXT
+      Fetch a list of named ancestors for this entity. This list is deterministically sorted
+      to retrieve the "closest" ancestors first, ascending upwards in the hierarchy from there.
+
+      **Note**: Like breadcrumbs, this association is intentionally not paginated for ease of use,
+      because in practice a schema should not have many associations.
+      TEXT
+    end
+
+    # @todo Perhaps error on receiving an unknown association?
+    # @param [String] name
+    # @return [HierarchicalEntity, nil]
+    def ancestor_by_name(name:)
+      object.ancestor_by_name(name)
+    end
+
     # @param [String] schema
     # @return [HierarchicalEntity, nil]
     def ancestor_of_type(schema:)
       object.ancestor_of_type(schema)
     end
 
+    # @return [Promise(ActiveRecord::Relation<EntityAncestor>)]
+    def named_ancestors
+      Loaders::AssociationLoader.for(object.class, :named_ancestors).load(object)
+    end
   end
 end

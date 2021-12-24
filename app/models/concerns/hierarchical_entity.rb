@@ -17,6 +17,9 @@ module HierarchicalEntity
     has_many :hierarchical_entity_entries, as: :hierarchical, dependent: :destroy,
       class_name: "Entity"
 
+    has_many :named_ancestors, -> { in_default_order.preload(:ancestor) }, class_name: "EntityAncestor", as: :entity
+    has_many :named_descendants, class_name: "EntityAncestor", as: :ancestor
+
     has_many :entity_links, as: :source, dependent: :destroy
     has_many :incoming_links, as: :target, class_name: "EntityLink", dependent: :destroy
 
@@ -66,6 +69,12 @@ module HierarchicalEntity
     after_save :maintain_links!
 
     after_save :refresh_orderings!
+  end
+
+  # @param [String] ancestor_name
+  # @return [EntityAncestor, nil]
+  def ancestor_by_name(ancestor_name)
+    named_ancestors.by_name(ancestor_name).first&.ancestor
   end
 
   # @param [String] schema_name
