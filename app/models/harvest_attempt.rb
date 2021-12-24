@@ -22,6 +22,10 @@ class HarvestAttempt < ApplicationRecord
     @logger ||= Harvesting::Logs::Attempt.new self
   end
 
+  def reprocess!(reprepare: true)
+    call_operation("harvesting.actions.reprocess_attempt", self, reprepare: reprepare)
+  end
+
   private
 
   # @return [void]

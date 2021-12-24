@@ -3,6 +3,7 @@
 module Harvesting
   module Metadata
     module JATS
+      # rubocop:disable Metrics/MethodLength
       class ExtractEntities < Harvesting::Metadata::BaseEntityExtractor
         include WDPAPI::Deps[
           upsert_contribution: "harvesting.metadata.jats.upsert_contribution",
@@ -61,6 +62,7 @@ module Harvesting
 
             assigner.prop! "number", parsed.issue_number
             assigner.prop! "id", parsed.issue_id
+            assigner.prop! "sortable_number", parsed.issue_sortable_number
 
             assigner.schema! schemas[:issue]
           end
@@ -96,6 +98,7 @@ module Harvesting
 
             assigner.prop! "issue.title", parsed.issue_title
             assigner.prop! "issue.number", parsed.issue_number
+            assigner.prop! "issue.sortable_number", parsed.issue_sortable_number
             assigner.prop! "issue.id", parsed.issue_id
             assigner.prop! "issue.fpage", parsed.fpage
             assigner.prop! "issue.lpage", parsed.lpage
@@ -116,6 +119,7 @@ module Harvesting
           Success nil
         end
       end
+      # rubocop:enable Metrics/MethodLength
     end
   end
 end
