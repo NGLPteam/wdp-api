@@ -30,21 +30,6 @@
 # available at https://guides.rubyonrails.org/i18n.html.
 
 en:
-  activerecord:
-    errors:
-      messages:
-        must_be_entity: "must be an entity"
-      models:
-        entity_link:
-          attributes:
-            source:
-              linked_to_parent: "cannot be linked to its parent"
-            target:
-              linked_to_itself: "cannot be linked to itself"
-              linked_to_parent: "cannot be linked to its parent"
-  attributes:
-    visible_after_at: "Visibility (Start)"
-    visible_until_at: "Visibility (End)"
   dry_validation:
     errors:
       cannot_parent_itself: "cannot parent itself"
@@ -72,12 +57,6 @@ en:
       range_required_when_limited_visibility: "must be set when visibility is limited"
       unacceptable_edge: "An entity of type '%{parent}' cannot be a direct parent of '%{child}'"
       update_and_clear_attachment: "cannot receive a new attachment while also clearing it"
-  errors:
-    attributes:
-      visibility:
-        missing_range: "must have a range"
-      visible_until_at:
-        before_start: "comes before the start of the range"
   frozen:
     static_orderable_property:
       entity_title:
