@@ -7,6 +7,8 @@
 # In future, it will also be used to insert linked entries into the hierarchy.
 class Entity < ApplicationRecord
   include ScopesForHierarchical
+  include ReferencesEntityVisibility
+  include ReferencesNamedVariableDates
 
   belongs_to :entity, polymorphic: true
   belongs_to :hierarchical, polymorphic: true
@@ -14,14 +16,24 @@ class Entity < ApplicationRecord
 
   CONTEXTUAL_TUPLE = %i[hierarchical_type hierarchical_id].freeze
 
+  ENTITY_TUPLE = %i[entity_type entity_id].freeze
+
   # rubocop:disable Rails/HasManyOrHasOneDependent, Rails/InverseOf
   has_many :contextual_permissions, primary_key: CONTEXTUAL_TUPLE, foreign_key: CONTEXTUAL_TUPLE
+
+  has_one :entity_visibility, primary_key: CONTEXTUAL_TUPLE, foreign_key: ENTITY_TUPLE
+
+  has_many :named_variable_dates, primary_key: CONTEXTUAL_TUPLE, foreign_key: ENTITY_TUPLE
   # rubocop:enable Rails/HasManyOrHasOneDependent, Rails/InverseOf
 
   scope :filtered_by_schema_version, ->(schemas) { where(schema_version: SchemaVersion.filtered_by(schemas)) }
 
   scope :actual, -> { where(scope: %w[communities items collections]) }
   scope :sans_thumbnail, -> { where(arel_sans_thumbnail) }
+
+  def schema_kind
+    hierarchical_type&.underscore
+  end
 
   class << self
     # @return [void]

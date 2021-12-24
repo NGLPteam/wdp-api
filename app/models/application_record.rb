@@ -7,7 +7,6 @@ class ApplicationRecord < ActiveRecord::Base
   include DerivedGraphqlTypes
   include LimitToOne
   include PostgresEnums
-  include ComplexOrderingScopes
   include WhereMatches
 
   def call_operation(name, *args)
@@ -24,6 +23,11 @@ class ApplicationRecord < ActiveRecord::Base
   end
 
   class << self
+    # @note Only in tests
+    def default_factory
+      model_name.i18n_key
+    end
+
     def arel_text_contains(field, value)
       arel_table[field].matches("%#{escape_ilike_needle(value)}%")
     end

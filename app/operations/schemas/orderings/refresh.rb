@@ -9,18 +9,21 @@ module Schemas
       prepend TransactionalCall
 
       PREFIX = <<~SQL.squish
-      INSERT INTO ordering_entries (ordering_id, entity_id, entity_type, position, link_operator, auth_path, scope, relative_depth)
+      INSERT INTO ordering_entries (ordering_id, entity_id, entity_type, position, inverse_position, link_operator, auth_path, scope, relative_depth)
       SQL
 
       SUFFIX = <<~SQL.squish
       ON CONFLICT (ordering_id, entity_type, entity_id) DO UPDATE SET
         position = EXCLUDED.position,
+        inverse_position = EXCLUDED.inverse_position,
         link_operator = EXCLUDED.link_operator,
         auth_path = EXCLUDED.auth_path,
         scope = EXCLUDED.scope,
         relative_depth = EXCLUDED.relative_depth,
         updated_at = CASE WHEN
           ordering_entries.position IS DISTINCT FROM EXCLUDED.position
+          OR
+          ordering_entries.inverse_position IS DISTINCT FROM EXCLUDED.inverse_position
           OR
           ordering_entries.link_operator IS DISTINCT FROM EXCLUDED.link_operator
           OR

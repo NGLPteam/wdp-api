@@ -10,6 +10,9 @@ module Schemas
       attribute :name, :string
       attribute :header, :string
       attribute :footer, :string
+      attribute :hidden, :boolean, default: proc { false }
+      attribute :constant, :boolean, default: proc { false }
+
       attribute :order, Schemas::Orderings::OrderDefinition.to_array_type, default: proc { [] }
       attribute :select, Schemas::Orderings::SelectDefinition.to_type, default: proc { {} }
       attribute :filter, Schemas::Orderings::FilterDefinition.to_type, default: proc { {} }

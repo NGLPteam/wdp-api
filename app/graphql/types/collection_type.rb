@@ -4,7 +4,7 @@ module Types
   class CollectionType < Types::AbstractModel
     implements Types::AccessibleType
     implements Types::EntityType
-    implements Types::HierarchicalEntryType
+    implements Types::ChildEntityType
     implements Types::HasDOIType
     implements Types::HasISSNType
     implements Types::ContributableType

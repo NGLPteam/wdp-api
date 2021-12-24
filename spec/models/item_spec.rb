@@ -3,6 +3,7 @@
 RSpec.describe Item, type: :model do
   let!(:item) { FactoryBot.create :item }
 
+  it_behaves_like "an entity with a reference"
   it_behaves_like "an entity with schematic properties", :item
   it_behaves_like "an entity with schematic references", :item
 

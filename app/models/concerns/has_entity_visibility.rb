@@ -1,41 +1,21 @@
 # frozen_string_literal: true
 
+# For models that actually write to {EntityVisibility}, i.e. {Collection}, {Item}.
+#
+# @see ReferencesEntityVisibility
 module HasEntityVisibility
   extend ActiveSupport::Concern
+  extend DelegatesAssociationWriter
+
+  include HierarchicalEntity
+  include ReferencesEntityVisibility
 
   included do
-    pg_enum! :visibility, as: "entity_visibility", _prefix: :visibility
-
-    validate :enforce_range_with_limited_visibility!
-    validate :enforce_hidden_visibility!
+    has_one :entity_visibility, as: :entity, dependent: :destroy, autosave: true
   end
 
-  # @api private
-  # @return [void]
-  def enforce_hidden_visibility!
-    if visibility_hidden?
-      self.hidden_at ||= Time.current
-    else
-      self.hidden_at = nil
-    end
-  end
-
-  # @api private
-  # @return [void]
-  def enforce_range_with_limited_visibility!
-    unless visibility_limited?
-      self.visible_until_at = nil
-      self.visible_after_at = nil
-
-      return
-    end
-
-    if visible_after_at? && visible_until_at?
-      errors.add :visible_until_at, :before_start if visible_until_at <= visible_after_at
-    end
-
-    return if visible_after_at? || visible_until_at?
-
-    errors.add :visibility, :missing_range
-  end
+  writes_association_attribute! :entity_visibility,  :hidden_at
+  writes_association_attribute! :entity_visibility,  :visibility
+  writes_association_attribute! :entity_visibility,  :visible_after_at
+  writes_association_attribute! :entity_visibility,  :visible_until_at
 end

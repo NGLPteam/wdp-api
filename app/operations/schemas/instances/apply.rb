@@ -8,7 +8,11 @@ module Schemas
     # owing to the complexity of the inputs. Adding a merge/patch may happen later.
     class Apply
       include Dry::Monads[:do, :result]
-      include WDPAPI::Deps[validate_properties: "schemas.properties.validate", apply_value_context: "schemas.instances.apply_value_context"]
+      include WDPAPI::Deps[
+        apply_value_context: "schemas.instances.apply_value_context",
+        extract_orderable_properties: "schemas.instances.extract_orderable_properties",
+        validate_properties: "schemas.properties.validate",
+      ]
       include MonadicPersistence
 
       prepend TransactionalCall
@@ -29,7 +33,11 @@ module Schemas
 
         yield write_values! target, version, validated_values
 
-        monadic_save target
+        yield monadic_save target
+
+        yield extract_orderable_properties.call target
+
+        Success target
       end
 
       private

@@ -14,6 +14,8 @@ module HierarchicalEntity
     delegate :auth_path, to: :contextual_parent, allow_nil: true, prefix: :contextual
 
     has_one :entity, as: :entity, dependent: :destroy
+    has_many :hierarchical_entity_entries, as: :hierarchical, dependent: :destroy,
+      class_name: "Entity"
 
     has_many :entity_links, as: :source, dependent: :destroy
     has_many :incoming_links, as: :target, class_name: "EntityLink", dependent: :destroy
@@ -248,7 +250,14 @@ module HierarchicalEntity
     slice(
       :entity_type, :hierarchical_id, :hierarchical_type, :schema_version_id,
       :auth_path, :system_slug, :title, :created_at, :updated_at
-    ).merge(entity_id: id, scope: entity_scope)
+    ).merge(
+      entity_id: id, scope: entity_scope,
+      properties: to_entity_properties,
+    )
+  end
+
+  def to_entity_properties
+    {}
   end
 
   def saved_change_to_contextual_parent?

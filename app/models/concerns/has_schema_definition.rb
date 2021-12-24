@@ -42,6 +42,8 @@ module HasSchemaDefinition
       end
     end
 
+    has_many :entity_orderable_properties, as: :entity, dependent: :destroy
+
     attribute :properties, Schemas::Instances::PropertySet.to_type, default: proc { { values: {} } }
 
     before_validation :enforce_schema_definition!, if: :schema_version_id_changed?
@@ -92,6 +94,13 @@ module HasSchemaDefinition
   # @return [void]
   def apply_generated_properties!
     call_operation("schemas.instances.apply_generated_properties", self)
+  end
+
+  # @see Schemas::Instances::ExtractOrderableProperties
+  # @param [Schemas::Properties::Context, nil] context
+  # @return [void]
+  def extract_orderable_properties!(context: nil)
+    call_operation("schemas.instances.extract_orderable_properties", self, context: context).value!
   end
 
   # @see Schemas::Instances::ReadProperties
@@ -153,5 +162,9 @@ module HasSchemaDefinition
   # @api private
   def should_check_schema_kind?
     new_record? || schema_version_id_changed?
+  end
+
+  def to_entity_pair
+    slice(:entity_type).merge(entity_id: id)
   end
 end
