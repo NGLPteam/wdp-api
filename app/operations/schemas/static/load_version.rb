@@ -13,7 +13,7 @@ module Schemas
       def call(definition, static_version)
         configuration = yield validate static_version
 
-        version = yield lookup definition, static_version.number
+        version = lookup definition, static_version.number
 
         version.configuration = configuration
 
@@ -34,11 +34,13 @@ module Schemas
 
       # @param [SchemaDefinition] definition
       # @param [String] number
-      # @return [Dry::Monads::Result()]
+      # @return [Dry::Monads::Success(SchemaVersion)]
       def lookup(definition, number)
-        version = SchemaVersion.lookup_or_initialize number, schema_definition: definition
+        found = SchemaVersion.by_schema_definition(definition).by_number(number).first
 
-        Success version
+        return found if found
+
+        SchemaVersion.by_schema_definition(definition).build
       end
     end
   end

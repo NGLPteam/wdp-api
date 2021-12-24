@@ -1,66 +1,49 @@
 # frozen_string_literal: true
 
-RSpec.describe Mutations::DestroyOrdering, type: :request do
+RSpec.describe Mutations::DestroyOrdering, type: :request, graphql: :mutation do
+  mutation_query! <<~GRAPHQL
+  mutation destroyOrdering($input: DestroyOrderingInput!) {
+    destroyOrdering(input: $input) {
+      disabled
+      destroyed
+
+      ... ErrorFragment
+    }
+  }
+  GRAPHQL
+
   context "as an admin" do
     let(:token) { token_helper.build_token has_global_admin: true }
 
-    let!(:schema_version) { SchemaVersion["nglp:journal"] }
+    let!(:schema_version) { FactoryBot.create :schema_version, :simple_collection }
 
     let!(:collection) { FactoryBot.create(:collection, schema_version: schema_version) }
 
     let!(:ordering) do
       collection.populate_orderings!.value!
 
-      collection.orderings.by_identifier("everything").first!
+      collection.orderings.by_identifier("items").first!
     end
 
-    let!(:mutation_input) do
-      {
-        orderingId: ordering.to_encoded_id,
-      }
-    end
-
-    let!(:graphql_variables) do
-      {
-        input: mutation_input
-      }
-    end
+    let_mutation_input!(:ordering_id) { ordering.to_encoded_id }
 
     let(:was_disabled) { false }
     let(:was_destroyed) { false }
 
     let!(:expected_shape) do
-      {
-        destroyOrdering: {
-          disabled: was_disabled,
-          destroyed: was_destroyed,
-          errors: be_blank
-        }
-      }
-    end
-
-    let!(:query) do
-      <<~GRAPHQL
-      mutation destroyOrdering($input: DestroyOrderingInput!) {
-        destroyOrdering(input: $input) {
-          disabled
-          destroyed
-
-          errors { message }
-        }
-      }
-      GRAPHQL
+      gql.mutation(:destroy_ordering) do |m|
+        m[:disabled] = was_disabled
+        m[:destroyed] = was_destroyed
+      end
     end
 
     context "with an inherited ordering" do
       let(:was_disabled) { true }
 
       it "disables the ordering" do
-        expect do
-          make_graphql_request! query, token: token, variables: graphql_variables
-        end.to keep_the_same(Ordering, :count).and change { ordering.reload.disabled? }.from(false).to(true)
+        expect_the_default_request.to keep_the_same(Ordering, :count).and change { ordering.reload.disabled? }.from(false).to(true)
 
-        expect_graphql_response_data expected_shape
+        expect_graphql_data expected_shape
       end
     end
 
@@ -70,11 +53,9 @@ RSpec.describe Mutations::DestroyOrdering, type: :request do
       let(:was_destroyed) { true }
 
       it "destroys the ordering" do
-        expect do
-          make_graphql_request! query, token: token, variables: graphql_variables
-        end.to change(Ordering, :count).by(-1)
+        expect_the_default_request.to change(Ordering, :count).by(-1)
 
-        expect_graphql_response_data expected_shape
+        expect_graphql_data expected_shape
       end
     end
   end

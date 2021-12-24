@@ -1,5 +1,24 @@
 # frozen_string_literal: true
 
 RSpec.describe SchemaVersion, type: :model do
-  pending "add some examples to (or delete) #{__FILE__}"
+  specify "the factory upserts without issue" do
+    expect do
+      FactoryBot.create :schema_version, :simple_collection
+      FactoryBot.create :schema_version, :simple_collection
+    end.to execute_safely.and change(described_class, :count).by(1)
+  end
+
+  context "when triggering a reorder because of a new version" do
+    let!(:schema_definition) { FactoryBot.create :schema_definition, :for_item }
+
+    let!(:version_1) { FactoryBot.create :schema_version, :item, schema_definition: schema_definition, number: "1.0.0" }
+    let!(:version_2) { FactoryBot.create :schema_version, :item, schema_definition: schema_definition, number: "2.0.0" }
+
+    specify "creating a new version will reorder the definition's versions" do
+      expect do
+        @version_3 = FactoryBot.create :schema_version, :item, schema_definition: schema_definition, number: "3.0.0"
+      end.to execute_safely.and keep_the_same { version_1.reload.current }.
+        and change { version_2.reload.current }.from(true).to(false)
+    end
+  end
 end

@@ -10,7 +10,11 @@ module Schemas
         attribute :lte, :integer
         attribute :default, :integer
 
+        orderable!
+
         schema_type! :integer
+
+        config.graphql_value_key = :integer_value
 
         def build_schema_predicates
           super.merge(

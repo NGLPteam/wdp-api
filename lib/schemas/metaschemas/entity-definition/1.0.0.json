@@ -1,22 +1,90 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://api.staging.nglp.org/schemas/entity-definition/1.0.0.json",
-  "title": "WDP Entity Content Schema",
-  "description": "A Content Schema used by the NGLP Web Delivery Platform",
+  "title": "WDP Entity Definition Schema",
+  "description": "A meta-schema used by the NGLP Web Delivery Platform for validating its entity schemas.",
   "$defs": {
-    "Consumer": {
+    "Association": {
+      "type": "object",
+      "description": "A hierarchical declaration that determines what types of schemas can be above and below this schema.",
+      "properties": {
+        "namespace": {
+          "$ref": "#/$defs/Namespace"
+        },
+        "identifier": {
+          "$ref": "#/$defs/Identifier"
+        },
+        "version": {
+          "description": "An optional declaration of the supported versions of the associated schema",
+          "oneOf": [
+            {
+              "$ref": "#/$defs/VersionRequirement"
+            },
+            {
+              "$ref": "#/$defs/VersionRequirements"
+            }
+          ]
+        }
+      },
+      "required": ["namespace", "identifier"]
+    },
+    "Associations": {
+      "type": "array",
+      "description": "Limit the selection to entities that consume these schemas",
+      "items": {
+        "description": "The acceptable schema(s) for this association type",
+        "$ref": "#/$defs/Association"
+      }
+    },
+    "SchemaKind": {
       "type": "string",
-      "title": "Consumer",
-      "description": "Lists the type of WDP models that can utilize this schema",
+      "title": "Schema Kind",
+      "description": "Lists the type of WDP model that can implement this schema.",
       "enum": [
         "community",
         "collection",
-        "item",
-        "metadata"
+        "item"
       ]
     },
     "Identifier": {
       "description": "An unqualified name that can identify something within a certain namespace in the WDP.",
+      "pattern": "^[a-z][a-z0-9_]*[a-z]$",
+      "type": "string"
+    },
+    "NamedAncestor": {
+      "type": "object",
+      "description": "A reference to an ancestor with a specific schema type, it finds the depth-closest ancestor in the tree that matches the schema type",
+      "allOf": [
+        {
+          "type": "object",
+          "properties": {
+            "name": {
+              "$ref": "#/$defs/Identifier",
+              "title": "Name",
+              "description": "The name of this ancestor association. It must be unique within the current schema."
+            },
+            "required": {
+              "type": "boolean",
+              "default": false,
+              "title": "Required?",
+              "description": "Whether the associated ancestor should be considered required"
+            }
+          },
+          "required": ["name"]
+        },
+        { "$ref": "#/$defs/Association" }
+      ]
+    },
+    "NamedAncestors": {
+      "type": "array",
+      "items": {
+        "description": "A list of (uniquely) named ancestors",
+        "$ref": "#/$defs/NamedAncestor"
+      },
+      "uniqueItems": true
+    },
+    "Namespace": {
+      "description": "A namespace that can contain schema identifiers within the WDP.",
       "pattern": "^[a-z][a-z0-9_]*[a-z]$",
       "type": "string"
     },
@@ -28,7 +96,7 @@
     "Order": {
       "type": "object",
       "title": "Field Order",
-      "description": "Order by a specified path",
+      "description": "Order by a specified field or schema property.",
       "required": [
         "path",
         "direction",
@@ -38,6 +106,11 @@
         "path": {
           "title": "Path",
           "$ref": "#/$defs/OrderPath"
+        },
+        "constant": {
+          "type": "boolean",
+          "default": false,
+          "description": "Whether the field should maintain its set order when inverted."
         },
         "direction": {
           "type": "string",
@@ -91,6 +164,16 @@
           "title": "Name",
           "description": "A human readable label for the ordering",
           "type": "string"
+        },
+        "constant": {
+          "title": "Constant?",
+          "description": "If set to true, this ordering cannot be inverted and only sorts in one direction."
+        },
+        "hidden": {
+          "title": "Hidden?",
+          "description": "Whether this ordering should be hidden in end-user UIs",
+          "type": "boolean",
+          "default": false
         },
         "select": {
           "type": "object",
@@ -149,7 +232,7 @@
               "type": "array",
               "items": {
                 "description": "These strings should be existing Schema IDs",
-                "$ref": "#/$defs/NamespacedIdentifier"
+                "$ref": "#/$defs/OrderingSchemaFilter"
               }
             }
           }
@@ -191,10 +274,13 @@
         "description": "An attribute on a child entity (not schema-dependent)",
         "type": "string",
         "enum": [
+          "entity.title",
           "entity.created_at",
           "entity.updated_at",
-          "entity.published_on",
-          "entity.title",
+          "entity.published",
+          "entity.issued",
+          "entity.available",
+          "entity.accessioned",
           "entity.depth"
         ]
       },
@@ -203,7 +289,7 @@
         "description": "Sort by link attributes",
         "type": "string",
         "enum": [
-          "link.operator"
+          "link.is_link"
         ]
       },
       "SchemaPath": {
@@ -211,31 +297,57 @@
         "description": "An attribute on the child entity's schema",
         "type": "string",
         "enum": [
-          "schema.consumer",
-          "schema.identifier",
-          "schema.name",
-          "schema.namespace",
-          "schema.namespaced_version",
-          "schema.version"
+          "schema.kind",
+          "schema.name"
         ]
       },
       "SchemaPropertyPath": {
         "title": "Schema Property",
-        "description": "A schema-derived property (will be null for children that don't have a matching property). Must be of the form props.name or props.group.name.",
+        "description": "A schema-derived property (will be null for children that don't have a matching property). Must be of the form props.name#type or props.group.name#type. The #type suffix is optional and can be ommitted, in which case the property will be treated as a string.",
         "type": "string",
-        "pattern": "^props\\.[a-z][a-z0-9_]*[a-z](?:\\.[a-z][a-z0-9_]*[a-z])?$"
+        "pattern": "^props\\.[a-z][a-z0-9_]*[a-z](?:\\.[a-z][a-z0-9_]*[a-z])?(?:#[a-z][a-z0-9_]*[a-z])?$"
       }
-
+    },
+    "OrderingSchemaFilter": {
+      "type": "object",
+      "description": "A declaration of a specific schema that can be included within an order",
+      "properties": {
+        "namespace": {
+          "$ref": "#/$defs/Namespace"
+        },
+        "identifier": {
+          "$ref": "#/$defs/Identifier"
+        },
+        "version": {
+          "description": "An optional declaration of the supported versions of the associated schema",
+          "oneOf": [
+            {
+              "$ref": "#/$defs/VersionRequirement"
+            },
+            {
+              "$ref": "#/$defs/VersionRequirements"
+            }
+          ]
+        }
+      },
+      "required": ["namespace", "identifier"]
+    },
+    "PropertyDescription": {
+      "type": "string",
+      "description": "A human-readable description for the property. It should describe the intent, purpose, and general format of the property for use in forms and metadata."
     },
     "PropertyFunction": {
       "title": "Function",
       "description": "The intended purpose of the property",
       "type": "string",
       "enum": [
-        "presentation",
+        "content",
         "metadata",
-        "content"
-      ]
+        "presentation",
+        "sorting",
+        "unspecified"
+      ],
+      "default": "unspecified"
     },
     "PropertyGroup": {
       "title": "Property Group",
@@ -261,6 +373,9 @@
           "title": "Form Legend",
           "description": "The form legend to use for this group. If not specified, the path will be titlecased.",
           "type": "string"
+        },
+        "description": {
+          "$ref": "#/$defs/PropertyDescription"
         },
         "properties": {
           "type": "array",
@@ -309,7 +424,6 @@
       "description": "A path can reference a schema property",
       "type": "string"
     },
-    "PropTypes": {},
     "ScalarProperty": {
       "type": "object",
       "required": ["type", "path"],
@@ -328,9 +442,18 @@
           "description": "The human-readable label for this property. The path will be titlecased if this value is not provided.",
           "type": "string"
         },
+        "description": {
+          "$ref": "#/$defs/PropertyDescription"
+        },
         "required": {
           "title": "Required?",
           "description": "Whether the property is required for base validity",
+          "type": "boolean",
+          "default": false
+        },
+        "unorderable": {
+          "title": "Unorderable?",
+          "description": "This can be toggled on if the property _could_ be ordered, but shouldn't be. Strings that will not sort logically, numbers that are not intended for sorting, etc." ,
           "type": "boolean",
           "default": false
         },
@@ -839,6 +962,71 @@
       ],
       "type": "string"
     },
+    "Schema": {
+      "title": "A WDP Schema",
+      "description": "Representing a WDP schema version in its entirety.",
+      "type": "object",
+      "required": [
+        "namespace",
+        "identifier",
+        "name",
+        "version",
+        "kind"
+      ],
+      "properties": {
+        "namespace": {
+          "title": "Namespace",
+          "description": "This identifies the namespace within which this schema should live.",
+          "$ref": "#/$defs/Namespace"
+        },
+        "identifier": {
+          "title": "Identifier",
+          "description": "This identifies the schema within its namespace.",
+          "$ref": "#/$defs/Identifier"
+        },
+        "name": {
+          "title": "Name",
+          "description": "A human readable label that can be used to reference this schema",
+          "type": "string"
+        },
+        "version": {
+          "title": "Version",
+          "$ref": "#/$defs/SemanticVersion"
+        },
+        "kind": {
+          "title": "Kind",
+          "description": "The kind of entity that will implement this schema. Entities are also referred to as instances of the schema",
+          "$ref": "#/$defs/SchemaKind"
+        },
+        "ancestors": {
+          "$ref": "#/$defs/NamedAncestors"
+        },
+        "parents": {
+          "$ref": "#/$defs/Associations",
+          "description": "The type(s) of parent(s) this schema accepts."
+        },
+        "children": {
+          "$ref": "#/$defs/Associations",
+          "description": "The type(s) of direct children this schema accepts."
+        },
+        "orderings": {
+          "title": "Orderings",
+          "description": "A schema can provide default orderings, which an instance can override.",
+          "items": {
+            "$ref": "#/$defs/Ordering"
+          },
+          "type": "array"
+        },
+        "properties": {
+          "title": "Properties",
+          "description": "Describes the properties that will be available for this schema",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/TopLevelProperty"
+          }
+        }
+      }
+    },
     "SelectOption": {
       "additionalProperties": false,
       "description": "An option for a select or a multi-select",
@@ -866,102 +1054,18 @@
         { "title": "Group", "$ref": "#/$defs/PropertyGroup" }
       ]
     },
-    "TopLevelProperty2": {
-      "type": "object",
-      "required": ["type"],
-      "properties": {
-        "type": {
-          "title": "Type",
-          "default": "string",
-          "$ref": "#/$defs/TopLevelPropertyType"
-        }
-      },
-      "dependencies": {
-        "type": {
-          "if": {
-            "properties": {
-              "type": {
-                "enum": [
-                  "group"
-                ]
-              }
-            },
-            "then": {
-              "$ref": "#/$defs/PropertyGroup"
-            },
-            "else": {
-              "$ref": "#/$defs/ScalarProperty"
-            }
-          }
-        }
-      }
+    "VersionRequirement": {
+      "type": "string",
+      "description": "A declaration for matching semantic version requirements",
+      "format": "^\s*(=|!=|>|<|>=|<=|~>)?\s*([0-9]+(?>\.[0-9a-zA-Z]+)*(-[0-9A-Za-z-]+(\.[0-9A-Za-z-]+)*)?)\s*$"
     },
-    "TopLevelPropertyType": {
-      "description": "The type of the top-level property. This ensures type-safety.",
-      "enum": [
-        "group",
-        "string",
-        "email",
-        "markdown",
-        "integer",
-        "float",
-        "full_text",
-        "boolean",
-        "date",
-        "variable_date",
-        "timestamp",
-        "contributor",
-        "contributors",
-        "select",
-        "multiselect",
-        "asset",
-        "assets",
-        "tags",
-        "url"
-      ],
-      "type": "string"
+    "VersionRequirements": {
+      "type": "array",
+      "description": "An array of version requirements, for establishing constraints",
+      "items": {
+        "$ref": "#/$defs/VersionRequirement"
+      }
     }
   },
-  "type": "object",
-  "required": [
-    "id",
-    "name",
-    "version",
-    "consumer"
-  ],
-  "properties": {
-    "id": {
-      "title": "Identifier",
-      "description": "This identifies the schema within its namespace.",
-      "$ref": "#/$defs/Identifier"
-    },
-    "name": {
-      "title": "Name",
-      "description": "A human readable label that can be used to reference this schema",
-      "type": "string"
-    },
-    "version": {
-      "title": "Version",
-      "$ref": "#/$defs/SemanticVersion"
-    },
-    "consumer": {
-      "$ref": "#/$defs/Consumer"
-    },
-    "orderings": {
-      "title": "Orderings",
-      "description": "A schema can provide default orderings, which a consumer can override.",
-      "items": {
-        "$ref": "#/$defs/Ordering"
-      },
-      "type": "array"
-    },
-    "properties": {
-      "title": "Properties",
-      "description": "Describes the properties that will be available for this schema",
-      "type": "array",
-      "items": {
-        "$ref": "#/$defs/TopLevelProperty"
-      }
-    }
-  }
+  "$ref": "#/$defs/Schema"
 }

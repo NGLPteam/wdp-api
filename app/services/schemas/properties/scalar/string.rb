@@ -9,6 +9,8 @@ module Schemas
         attribute :pattern, :string
         attribute :default, :string
 
+        orderable!
+
         schema_type! :string
 
         def add_to_rules!(context)

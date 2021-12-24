@@ -4,6 +4,8 @@ module Schemas
   module Properties
     module Scalar
       class Date < Base
+        orderable!
+
         schema_type! :date
 
         config.graphql_value_key = :date

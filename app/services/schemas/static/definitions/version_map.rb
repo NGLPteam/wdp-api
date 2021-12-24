@@ -6,23 +6,23 @@ module Schemas
       class VersionMap < Schemas::Static::VersionMap
         version_klass Schemas::Static::Definitions::Version
 
-        validate :must_be_same_consumer!
+        validate :must_be_same_kind!
 
-        delegate :consumer, to: :latest, prefix: true
+        delegate :kind, to: :latest, prefix: true
 
         delegate :to_definition_attributes, :to_definition_tuple, to: :latest
 
-        def has_same_consumer?
+        def has_same_kind?
           all? do |version|
-            version.consumer == latest_consumer
+            version.kind == latest_kind
           end
         end
 
         private
 
         # @return [void]
-        def must_be_same_consumer!
-          errors.add :base, "must all be for the same consumer" unless has_same_consumer?
+        def must_be_same_kind!
+          errors.add :base, "must all be for the same kind" unless has_same_kind?
         end
       end
     end

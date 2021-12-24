@@ -2,14 +2,21 @@
 
 module Schemas
   module Properties
+    # A wrapper around a {Schemas::Properties::Scalar::Base scalar property} that marries it to
+    # a {Schemas::Properties::Context value context}. It is consumed by the GraphQL API in order
+    # to introspect the properties on a schema instance in a type-safe way.
+    #
+    # @see Types::Schematic::ScalarPropertyType
     class Reader
       extend Dry::Initializer
+
       include Dry::Core::Equalizer.new(:full_path)
 
       option :property, AppTypes.Instance(Schemas::Properties::Scalar::Base)
       option :context, AppTypes.Instance(Schemas::Properties::Context), default: proc { Schemas::Properties::Context.new({}) }
 
-      delegate :function, :label, :full_path, :path, :required, :type, :wide?, to: :property
+      delegate :function, :label, :full_path, :path, :required, :type, to: :property
+      delegate_missing_to :property
 
       def default
         property.default if property.has_default?

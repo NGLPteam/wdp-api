@@ -2,70 +2,96 @@
 
 module Schemas
   module Versions
-    # Look up a {SchemaVersion} with a certain type of needle
+    # Perform a polymorphic lookup of a {SchemaVersion} with several strategies
+    # based on the type of needle provided.
     class Find
-      include Dry::Monads[:do, :result]
+      include Dry::Monads[:result]
+      include Dry::Matcher.for(:call, with: Dry::Matcher::ResultMatcher)
 
-      PATTERN = /\A(?<namespace>[a-z_]+)[.:](?<identifier>[a-z_0-9]+)(?::(?<version>[^:]+))?\z/.freeze
-
+      # @param [String, SchemaVersion, SchemaDefinition] needle
+      # @return [Dry::Monads::Success(SchemaVersion)]
+      # @return [Dry::Monads::Failure(:invalid, String)] When an invalid needle is provided.
+      # @return [Dry::Monads::Failure(:no_versions, SchemaDefinition)]
+      # @return [Dry::Monads::Failure(:not_found, String)] When an identifier or ID appears valid but has no matches in the system.
+      # @return [Dry::Monads::Failure(:too_many_matches, String)] Edge case. Should not be seen.
+      # @return [Dry::Monads::Failure(:unknown_signifier, String)] Edge case. Should not be seen.
       def call(needle)
         case needle
-        when PATTERN
+        when Schemas::Types::FLEXIBLE_DECLARATION_PATTERN
           parsed = Regexp.last_match.named_captures.symbolize_keys
 
           look_up_by_slug needle, **parsed
         when AppTypes::UUID
-          find_by id: needle
+          look_up_by_id needle
         when ::SchemaVersion
           Success needle
         when ::SchemaDefinition
-          Success needle.schema_versions.latest!
+          latest_version_for needle
         else
-          Failure[:invalid_needle, "Unable to find version with #{needle.inspect}"]
+          Failure[:invalid, needle]
         end
       end
 
       private
 
-      def look_up_by_slug(needle, namespace:, identifier:, version: nil)
+      # @param [SchemaDefinition] definition
+      # @return [Dry::Monads::Success(SchemaVersion)]
+      # @return [Dry::Monads::Failure(:no_versions, SchemaDefinition)]
+      def latest_version_for(definition)
+        Success definition.schema_versions.latest!
+      rescue ActiveRecord::RecordNotFound
+        Failure[:no_versions, definition]
+      end
+
+      # @param [String] needle
+      # @param [String] namespace
+      # @param [String] identifier
+      # @param [String] version
+      # @return [Dry::Monads::Success(SchemaVersion)]
+      # @return [Dry::Monads::Failure(:not_found, String)] When an identifier or ID appears valid but has no matches in the system.
+      # @return [Dry::Monads::Failure(:too_many_matches, String)] Edge case. Should not be seen.
+      # @return [Dry::Monads::Failure(:unknown_signifier, String)] Edge case. Should not be seen.
+      def look_up_by_slug(needle, namespace:, identifier:, version: nil, **)
         scope = SchemaVersion.by_tuple namespace, identifier
 
         case version
-        when Semantic::Version::SemVerRegexp
-          Success scope.lookup version
         when nil, /\Alatest\z/i
           Success scope.latest!
+        when Semantic::Version::SemVerRegexp
+          Success scope.lookup version
         else
-          Failure[:unknown_version_specifier, "Unknown version: #{version.inspect} for #{needle.inspect}"]
+          # :nocov:
+          Failure[:unknown_signifier, needle]
+          # :nocov:
         end
       rescue LimitToOne::TooManyMatches
         # :nocov:
-        Failure[:too_many_matches, "Too many matches for #{needle.inspect}"]
+        Failure[:too_many_matches, needle]
         # :nocov:
       rescue ActiveRecord::RecordNotFound
-        Failure[:unknown_version, "No version found for #{needle.inspect}"]
+        Failure[:not_found, needle]
       end
 
+      # @param [String] id
+      # @return [Dry::Monads::Success(SchemaVersion)]
+      # @return [Dry::Monads::Failure(:no_versions, SchemaDefinition)]
+      # @return [Dry::Monads::Failure(:not_found, String)]
       def look_up_by_id(id)
-        try_schema_version_find(id).or do |_|
-          try_schema_definition_find id
+        try_model(SchemaVersion, id).or do
+          try_model(SchemaDefinition, id).bind do |definition|
+            latest_version_for definition
+          end
         end
       end
 
-      def try_schema_definition_find(id)
-        definition = yield try_model SchemaDefinition, id
-
-        Success definition.schema_versions.latest!
-      end
-
-      def try_schema_version_find(id)
-        try_model SchemaVersion, id
-      end
-
+      # @param [#find, Class] klass the {ApplicationRecord} model to search on
+      # @param [String] id a primary key to search for
+      # @return [Dry::Monads::Success(ApplicationRecord)]
+      # @return [Dry::Monads::Failure(:not_found, String)]
       def try_model(klass, id)
         Success klass.find id
       rescue ActiveRecord::RecordNotFound
-        Failure[:unknown_id, "#{id.inspect} not found"]
+        Failure[:not_found, id]
       end
     end
   end

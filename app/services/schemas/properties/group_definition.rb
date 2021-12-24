@@ -11,8 +11,6 @@ module Schemas
 
       validates :properties, presence: true, unique_items: true
 
-      alias full_path path
-
       # @return [void]
       def add_to_schema!(context)
         return if exclude_from_schema?
@@ -46,6 +44,16 @@ module Schemas
 
       def required?
         properties.any?(&:actually_required?)
+      end
+
+      def version_property_label
+        legend.presence || super
+      end
+
+      def to_version_property_metadata
+        super.merge(
+          property_count: properties.size,
+        )
       end
 
       include Dry::Monads::Do.for(:write_values_within!)

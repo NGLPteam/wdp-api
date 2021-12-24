@@ -13,6 +13,12 @@ module Schemas
         def option_values
           options.map(&:value)
         end
+
+        def to_version_property_metadata
+          super.tap do |h|
+            h[:options] = options
+          end
+        end
       end
     end
   end

@@ -1,0 +1,35 @@
+{
+  "namespace": "testing",
+  "identifier": "simple_item",
+  "name": "Simple Item",
+  "version": "1.0.0",
+  "kind": "item",
+  "ancestors": [
+    {
+      "name": "community",
+      "namespace": "testing",
+      "identifier": "simple_community",
+      "required": true
+    }
+  ],
+  "parents": [
+    {
+      "namespace": "testing",
+      "identifier": "simple_collection"
+    }
+  ],
+  "children": [],
+  "orderings": [],
+  "properties": [
+    { "path": "foo", "label": "Foo", "type": "string", "function": "content" },
+    {
+      "path": "bar",
+      "legend": "Bar",
+      "type": "group",
+      "properties": [
+        { "path": "baz", "label": "Baz", "type": "string", "function": "metadata" }
+      ]
+    },
+    { "path": "sequence", "label": "Sequence", "type": "string", "function": "sorting" }
+  ]
+}

@@ -1,8 +1,9 @@
 {
-  "id": "dissertation",
+  "namespace": "nglp",
+  "identifier": "dissertation",
   "name": "Dissertation",
   "version": "1.0.0",
-  "consumer": "item",
+  "kind": "item",
   "orderings": [],
   "properties": [
     {

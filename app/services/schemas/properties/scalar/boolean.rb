@@ -6,6 +6,8 @@ module Schemas
       class Boolean < Base
         attribute :default, :boolean
 
+        orderable!
+
         schema_type! :bool
 
         config.graphql_value_key = :checked

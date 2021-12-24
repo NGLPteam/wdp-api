@@ -45,6 +45,11 @@ module TestHelpers
   end
 end
 
+RSpec.shared_context "an operation" do
+  let(:operation) { described_class.new }
+end
+
 RSpec.configure do |config|
   config.include TestHelpers::OperationCalls::ExampleHelpers, type: :operation
+  config.include_context "an operation", type: :operation
 end

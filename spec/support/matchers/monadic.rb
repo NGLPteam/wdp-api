@@ -42,11 +42,11 @@ RSpec::Matchers.define :be_a_monadic_failure do
       if instance_variable_defined?(:@key)
         @actual = Array(actual.failure).first
 
-        values_match? @actual, @key
+        values_match? @key, @actual
       elsif instance_variable_defined?(:@value)
         @actual = actual.failure
 
-        values_match? @actual, @value
+        values_match? @value, @actual
       else
         true
       end

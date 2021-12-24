@@ -7,7 +7,6 @@ module Schemas
         include HasSelectOptions
 
         attribute :default, :string
-        attribute :options, SelectOption.to_array_type, default: proc { [] }
 
         schema_type! :string
 

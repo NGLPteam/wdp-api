@@ -3,6 +3,12 @@
 module TestHelpers
   module GraphQLRequest
     module ExampleHelpers
+      def expect_the_default_request(**options)
+        expect do
+          make_default_request!(**options)
+        end
+      end
+
       def make_default_request!(variables: graphql_variables, token: self.token, **options)
         make_graphql_request! query, token: token, variables: variables, **options
       end
@@ -27,6 +33,10 @@ module TestHelpers
         post "/graphql", params: params.to_json, headers: headers
 
         expect(Array(graphql_response(:errors))).to eq([]) if no_top_level_errors
+      end
+
+      def expect_graphql_data(shape)
+        expect(graphql_response(decamelize: true)).to include_json data: shape
       end
 
       def expect_graphql_response_data(shape, **options)
@@ -272,8 +282,16 @@ module TestHelpers
 
       alias errors attribute_errors
 
+      def global_errors(...)
+        body[:global_errors] = GlobalErrorsBuilder.build(...)
+
+        return self
+      end
+
       def schema_errors(...)
         body[:schema_errors] = SchemaErrorsBuilder.build(...)
+
+        return self
       end
 
       private
@@ -377,9 +395,17 @@ module TestHelpers
       end
     end
 
+    CamelizedErrorPath = Dry::Types["string"].constructor do |value|
+      case value
+      when Symbol then value.to_s.camelize(:lower)
+      else
+        value
+      end
+    end
+
     class AttributeErrorBuilder
       include Dry::Initializer[undefined: false].define -> do
-        param :path, Dry::Types["string"]
+        param :path, CamelizedErrorPath
       end
 
       def included_in(*items)
@@ -428,6 +454,51 @@ module TestHelpers
             yield eb if block_given?
           end.to_error
         end
+      end
+    end
+
+    class GlobalErrorBuilder
+      include BuildableObject
+      include Dry::Initializer[undefined: false].define -> do
+        param :input, Dry::Types["any"]
+        option :message_args, Dry::Types["hash"], default: proc { {} }
+        option :type, Dry::Types["coercible.string"], default: proc { "$server" }
+      end
+
+      before_build :set_type!
+      before_build :set_input!
+
+      def message(key, **args)
+        prop :message, parse_message(key, **args)
+      end
+
+      alias msg message
+
+      private
+
+      def parse_message(key, **options)
+        case key
+        when Symbol, /\A\S+\z/
+          I18n.t(key, **options, scope: %i[dry_validation errors])
+        when Regexp
+          key
+        end
+      end
+
+      def set_input!
+        msg input, **message_args if input.present?
+      end
+
+      def set_type!
+        prop :type, type
+      end
+    end
+
+    class GlobalErrorsBuilder < ObjectsShaper
+      alias error item
+
+      def build_item(...)
+        GlobalErrorBuilder.build(...)
       end
     end
 

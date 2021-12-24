@@ -6,6 +6,8 @@ module Schemas
       class Email < Base
         attribute :default, :string
 
+        orderable!
+
         schema_type! :string
 
         config.schema_predicates = {

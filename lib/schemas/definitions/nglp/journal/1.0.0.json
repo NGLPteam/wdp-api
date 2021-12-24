@@ -1,35 +1,90 @@
 {
-  "id": "journal",
+  "namespace": "nglp",
+  "identifier": "journal",
   "name": "Journal",
   "version": "1.0.0",
-  "consumer": "collection",
+  "kind": "collection",
+  "children": [
+    {
+      "namespace": "nglp",
+      "identifier": "journal_volume"
+    },
+    {
+      "namespace": "nglp",
+      "identifier": "journal_issue"
+    }
+  ],
   "orderings": [
     {
-      "id": "everything",
-      "name": "Everything",
+      "id": "articles",
+      "name": "Articles",
+      "filter": {
+        "schemas": [
+          {
+            "namespace": "nglp",
+            "identifier": "journal_article"
+          }
+        ]
+      },
       "select": {
-        "direct": "descendants",
-        "links": {
-          "contains": true,
-          "references": true
-        }
+        "direct": "descendants"
       },
       "order": [
-        { "path": "link.operator", "direction": "asc", "nulls": "last" },
-        { "path": "schema.consumer", "direction": "asc", "nulls": "last" },
-        { "path": "schema.namespaced_version", "direction": "desc", "nulls": "last" },
-        { "path": "props.revision.number", "direction": "desc", "nulls": "first" },
-        { "path": "entity.updated_at", "direction": "desc", "nulls": "last" }
+        { "path": "props.volume.sortable_number#integer", "direction": "desc" },
+        { "path": "props.issue.sortable_number#integer", "direction": "desc" },
+        { "path": "entity.published", "direction": "desc" },
+        { "path": "props.meta.collected#variable_date", "direction": "desc" },
+        { "path": "props.issue.fpage#integer", "direction": "asc" },
+        { "path": "props.issue.lpage#integer", "direction": "asc" }
+      ]
+    },
+    {
+      "id": "issues",
+      "name": "Issues",
+      "filter": {
+        "schemas": [
+          {
+            "namespace": "nglp",
+            "identifier": "journal_issue"
+          }
+        ]
+      },
+      "select": {
+        "direct": "descendants"
+      },
+      "order": [
+        { "path": "props.volume.sortable_number#integer", "direction": "desc" },
+        { "path": "props.volume.id#string", "direction": "desc" },
+        { "path": "props.issue.number#string", "direction": "asc" }
+      ]
+    },
+    {
+      "id": "volumes",
+      "name": "Volumes",
+      "filter": {
+        "schemas": [
+          {
+            "namespace": "nglp",
+            "identifier": "journal_volume"
+          }
+        ]
+      },
+      "select": {
+        "direct": "children"
+      },
+      "order": [
+        { "path": "props.volume.sortable_number#integer", "direction": "desc" },
+        { "path": "props.volume.id#string", "direction": "desc" }
       ]
     }
   ],
   "properties": [
-    { "path": "description", "label": "Description", "type": "full_text", "required": false },
+    { "path": "description", "label": "Description", "type": "full_text", "required": false, "function": "presentation" },
     {
       "path": "publisher",
       "properties": [
-        { "label": "Name", "path": "name", "type": "string", "required": true },
-        { "label": "Email", "path": "email", "type": "email", "required": false },
+        { "label": "Name", "path": "name", "type": "string", "required": true, "function": "metadata" },
+        { "label": "Email", "path": "email", "type": "email", "required": false, "function": "metadata" },
         { "label": "Collaborators", "path": "collaborators", "type": "contributors", "required": false }
       ],
       "type": "group"

@@ -10,6 +10,9 @@ module Schemas
 
       attribute :path, :string
       attribute :type, :string
+      attribute :description, :string
+
+      alias full_path path
 
       # A hook method used to attach the property to a dry-schema.
       #
@@ -29,6 +32,11 @@ module Schemas
       # @return [void]
       def add_to_rules!(context); end
 
+      # Whether or not the property is orderable
+      def orderable?
+        false
+      end
+
       # @!attribute [r] key
       # Symbol version of {#path}.
       # @return [Symbol]
@@ -36,12 +44,56 @@ module Schemas
         path.to_sym
       end
 
+      def array?
+        false
+      end
+
       def group?
         type == "group"
       end
 
+      def nested?
+        false
+      end
+
+      def required?
+        false
+      end
+
       def scalar?
         type != "group"
+      end
+
+      # @!attribute [r] kind
+      # @return ["group", "reference", "complex", "simple"]
+      def kind
+        group? ? "group" : "simple"
+      end
+
+      def version_property_label
+        path.to_s.titleize
+      end
+
+      def to_version_property
+        {
+          path: full_path,
+          type: type,
+          kind: kind,
+          label: version_property_label,
+          extract_path: full_path.split(?.),
+          array: array?,
+          nested: nested?,
+          orderable: orderable?,
+          required: required?,
+          metadata: to_version_property_metadata,
+          function: 'unspecified',
+        }
+      end
+
+      def to_version_property_metadata
+        {
+          description: description.presence,
+        }.compact
       end
 
       # A hook method for writing values to an entity

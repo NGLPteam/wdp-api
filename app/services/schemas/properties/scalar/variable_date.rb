@@ -6,6 +6,8 @@ module Schemas
       class VariableDate < Base
         schema_type! AppTypes.Instance(VariablePrecisionDate)
 
+        orderable!
+
         config.graphql_value_key = :date_with_precision
 
         def might_normalize_value_before_coercion?
