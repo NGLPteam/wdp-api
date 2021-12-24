@@ -215,8 +215,60 @@ CREATE TYPE public.permission_kind AS ENUM (
 CREATE TYPE public.schema_kind AS ENUM (
     'community',
     'collection',
-    'item',
-    'metadata'
+    'item'
+);
+
+
+--
+-- Name: schema_property_function; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.schema_property_function AS ENUM (
+    'content',
+    'metadata',
+    'presentation',
+    'sorting',
+    'unspecified'
+);
+
+
+--
+-- Name: schema_property_kind; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.schema_property_kind AS ENUM (
+    'simple',
+    'complex',
+    'reference',
+    'group'
+);
+
+
+--
+-- Name: schema_property_type; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.schema_property_type AS ENUM (
+    'group',
+    'asset',
+    'assets',
+    'boolean',
+    'contributor',
+    'contributors',
+    'date',
+    'email',
+    'float',
+    'full_text',
+    'integer',
+    'markdown',
+    'multiselect',
+    'select',
+    'string',
+    'tags',
+    'timestamp',
+    'unknown',
+    'url',
+    'variable_date'
 );
 
 
@@ -277,6 +329,25 @@ WHEN $1 = 'limited' AND ($2 IS NOT NULL OR $3 IS NOT NULL)
 THEN tstzrange($2, $3, '[)')
 ELSE
   NULL
+END;
+$_$;
+
+
+--
+-- Name: date_precision_cmp(public.date_precision, public.date_precision); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.date_precision_cmp(public.date_precision, public.date_precision) RETURNS integer
+    LANGUAGE sql IMMUTABLE PARALLEL SAFE
+    AS $_$
+SELECT
+CASE
+WHEN ?- $1 AND ?- $2 THEN 0
+-- none-valued dates sort to the end of the set
+WHEN ?- $1 AND ?^ $2 THEN 1
+WHEN ?^ $2 AND ?- $2 THEN -1
+ELSE
+  enum_cmp($1, $2)
 END;
 $_$;
 
@@ -361,6 +432,55 @@ $_$;
 
 
 --
+-- Name: is_none(public.date_precision); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.is_none(public.date_precision) RETURNS boolean
+    LANGUAGE sql IMMUTABLE PARALLEL SAFE
+    AS $_$
+SELECT $1 IS NULL OR $1 = 'none';
+$_$;
+
+
+--
+-- Name: is_valid_semver(jsonb); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.is_valid_semver(jsonb) RETURNS boolean
+    LANGUAGE sql IMMUTABLE STRICT PARALLEL SAFE
+    AS $_$
+SELECT
+CASE jsonb_typeof($1)
+WHEN 'string' THEN is_valid_semver($1 #>> '{}')
+ELSE
+  FALSE
+END;
+$_$;
+
+
+--
+-- Name: is_valid_semver(text); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.is_valid_semver(text) RETURNS boolean
+    LANGUAGE sql IMMUTABLE STRICT PARALLEL SAFE
+    AS $_$
+SELECT $1 ~ '^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$';
+$_$;
+
+
+--
+-- Name: is_valued(public.date_precision); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.is_valued(public.date_precision) RETURNS boolean
+    LANGUAGE sql IMMUTABLE PARALLEL SAFE
+    AS $_$
+SELECT $1 IS NOT NULL AND $1 <> 'none';
+$_$;
+
+
+--
 -- Name: jsonb_bool_or_rec(jsonb, boolean, text[]); Type: FUNCTION; Schema: public; Owner: -
 --
 
@@ -388,12 +508,217 @@ CREATE FUNCTION public.jsonb_set_rec(jsonb, jsonb, text[]) RETURNS jsonb
 
 
 --
+-- Name: jsonb_to_bigint(jsonb); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.jsonb_to_bigint(jsonb) RETURNS bigint
+    LANGUAGE sql IMMUTABLE STRICT PARALLEL SAFE
+    AS $_$
+SELECT CASE WHEN jsonb_typeof($1) = 'number' THEN COALESCE(try_cast_bigint($1 #>> '{}'), CAST(CAST($1 #>> '{}' AS numeric) AS bigint)) ELSE NULL END;
+$_$;
+
+
+--
+-- Name: jsonb_to_boolean(jsonb); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.jsonb_to_boolean(jsonb) RETURNS boolean
+    LANGUAGE sql IMMUTABLE STRICT PARALLEL SAFE
+    AS $_$
+SELECT CASE WHEN jsonb_typeof($1) = 'boolean' THEN CAST($1 #>> '{}' AS boolean) ELSE NULL END;
+$_$;
+
+
+--
+-- Name: jsonb_to_citext(jsonb); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.jsonb_to_citext(jsonb) RETURNS public.citext
+    LANGUAGE sql IMMUTABLE STRICT PARALLEL SAFE
+    AS $_$
+SELECT CASE WHEN jsonb_typeof($1) = 'string' THEN CAST($1 #>> '{}' AS citext) ELSE NULL END;
+$_$;
+
+
+--
+-- Name: jsonb_to_date(jsonb); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.jsonb_to_date(jsonb) RETURNS date
+    LANGUAGE sql IMMUTABLE STRICT PARALLEL SAFE
+    AS $_$
+SELECT CASE WHEN jsonb_typeof($1) = 'string' THEN try_cast_date($1 #>> '{}') ELSE NULL END;
+$_$;
+
+
+--
+-- Name: jsonb_to_numeric(jsonb); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.jsonb_to_numeric(jsonb) RETURNS numeric
+    LANGUAGE sql IMMUTABLE STRICT PARALLEL SAFE
+    AS $_$
+SELECT CASE WHEN jsonb_typeof($1) = 'number' THEN CAST ($1 #>> '{}' AS numeric) ELSE NULL END;
+$_$;
+
+
+--
+-- Name: jsonb_to_text(jsonb); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.jsonb_to_text(jsonb) RETURNS text
+    LANGUAGE sql IMMUTABLE STRICT PARALLEL SAFE
+    AS $_$
+SELECT CASE WHEN jsonb_typeof($1) = 'string' THEN $1 #>> '{}' ELSE NULL END;
+$_$;
+
+
+--
+-- Name: jsonb_to_timestamptz(jsonb); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.jsonb_to_timestamptz(jsonb) RETURNS timestamp with time zone
+    LANGUAGE sql IMMUTABLE STRICT PARALLEL SAFE
+    AS $_$
+SELECT CASE WHEN jsonb_typeof($1) = 'string' THEN try_cast_timestamptz($1 #>> '{}') ELSE NULL END;
+$_$;
+
+
+--
+-- Name: jsonb_to_variable_precision_date(jsonb); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.jsonb_to_variable_precision_date(jsonb) RETURNS public.variable_precision_date
+    LANGUAGE sql IMMUTABLE STRICT PARALLEL SAFE
+    AS $_$
+SELECT CASE WHEN jsonb_typeof($1) = 'string' THEN try_cast_variable_precision_date($1 #>> '{}') ELSE NULL END;
+$_$;
+
+
+--
 -- Name: parse_semver(text); Type: FUNCTION; Schema: public; Owner: -
 --
 
 CREATE FUNCTION public.parse_semver(text) RETURNS public.parsed_semver
     LANGUAGE sql IMMUTABLE STRICT PARALLEL SAFE
     AS $_$ SELECT (a[1], a[2], a[3], a[4], a[5])::parsed_semver FROM ( SELECT '^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$' AS pat ) p LEFT JOIN LATERAL ( SELECT regexp_matches($1, p.pat) AS a ) match ON true WHERE match.a IS NOT NULL; $_$;
+
+
+--
+-- Name: parsed_to_semver(public.parsed_semver); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.parsed_to_semver(public.parsed_semver) RETURNS public.semantic_version
+    LANGUAGE sql IMMUTABLE STRICT PARALLEL SAFE
+    AS $_$
+SELECT CONCAT(
+  COALESCE($1.major, 0)::text,
+  '.',
+  COALESCE($1.minor, 0)::text,
+  '.',
+  COALESCE($1.patch, 0)::text,
+  (
+    '-' || $1.pre
+  ),
+  (
+    '+' || $1.build
+  )
+);
+$_$;
+
+
+--
+-- Name: prevent_column_update(); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.prevent_column_update() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+DECLARE
+  protected_column text := COALESCE(TG_ARGV[0], 'UNKNOWN');
+BEGIN
+  RAISE EXCEPTION 'attempted to update protected column %.%', TG_TABLE_NAME, protected_column;
+END;
+$$;
+
+
+--
+-- Name: to_schema_kind(text); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.to_schema_kind(text) RETURNS public.schema_kind
+    LANGUAGE sql IMMUTABLE STRICT PARALLEL SAFE
+    AS $_$
+SELECT CASE WHEN $1 = ANY(enum_range(NULL::schema_kind)::text[]) THEN $1::schema_kind ELSE NULL END;
+$_$;
+
+
+--
+-- Name: try_cast_bigint(text); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.try_cast_bigint(text) RETURNS bigint
+    LANGUAGE plpgsql IMMUTABLE STRICT PARALLEL SAFE
+    AS $_$
+BEGIN
+  BEGIN
+    RETURN CAST($1 AS bigint);
+  EXCEPTION WHEN OTHERS THEN
+    RETURN NULL;
+  END;
+END;
+$_$;
+
+
+--
+-- Name: try_cast_date(text, text); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.try_cast_date(text, format text DEFAULT 'YYYY-MM-DD'::text) RETURNS date
+    LANGUAGE plpgsql IMMUTABLE STRICT PARALLEL SAFE
+    AS $_$
+BEGIN
+  BEGIN
+    RETURN to_date($1, $2);
+  EXCEPTION WHEN OTHERS THEN
+    RETURN NULL;
+  END;
+END;
+$_$;
+
+
+--
+-- Name: try_cast_timestamptz(text); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.try_cast_timestamptz(text) RETURNS timestamp with time zone
+    LANGUAGE plpgsql IMMUTABLE STRICT PARALLEL SAFE
+    AS $_$
+BEGIN
+  BEGIN
+    RETURN CAST($1 AS timestamptz);
+  EXCEPTION WHEN OTHERS THEN
+    RETURN NULL;
+  END;
+END;
+$_$;
+
+
+--
+-- Name: try_cast_variable_precision_date(text); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.try_cast_variable_precision_date(text) RETURNS public.variable_precision_date
+    LANGUAGE plpgsql IMMUTABLE STRICT PARALLEL SAFE
+    AS $_$
+BEGIN
+  BEGIN
+    RETURN CAST($1 AS variable_precision_date);
+  EXCEPTION WHEN OTHERS THEN
+    RETURN NULL;
+  END;
+END;
+$_$;
 
 
 --
@@ -461,6 +786,47 @@ $_$;
 
 
 --
+-- Name: variable_precision(date, public.date_precision); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.variable_precision(date, public.date_precision) RETURNS public.variable_precision_date
+    LANGUAGE sql IMMUTABLE PARALLEL SAFE
+    AS $_$
+SELECT CASE
+WHEN $1 IS NOT NULL AND $2 IS NOT NULL AND $2 <> 'none' THEN
+  ROW(vpdate_value_for($1, $2), $2)::variable_precision_date
+ELSE
+  ROW(NULL, 'none')::variable_precision_date
+END;
+$_$;
+
+
+--
+-- Name: FUNCTION variable_precision(date, public.date_precision); Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON FUNCTION public.variable_precision(date, public.date_precision) IS 'Construct a variable precision date from args';
+
+
+--
+-- Name: variable_precision(public.date_precision, date); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.variable_precision(public.date_precision, date) RETURNS public.variable_precision_date
+    LANGUAGE sql IMMUTABLE PARALLEL SAFE
+    AS $_$
+SELECT variable_precision($2, $1);
+$_$;
+
+
+--
+-- Name: FUNCTION variable_precision(public.date_precision, date); Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON FUNCTION public.variable_precision(public.date_precision, date) IS 'Construct a variable precision date from args';
+
+
+--
 -- Name: variable_precision_for(public.variable_precision_date); Type: FUNCTION; Schema: public; Owner: -
 --
 
@@ -471,6 +837,609 @@ SELECT CASE
 WHEN $1 IS NOT NULL AND $1.value IS NOT NULL AND $1.precision IS NOT NULL THEN $1.precision
 ELSE
   'none'::date_precision
+END;
+$_$;
+
+
+--
+-- Name: vpd_greatest(public.variable_precision_date, public.variable_precision_date); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.vpd_greatest(public.variable_precision_date, public.variable_precision_date) RETURNS public.variable_precision_date
+    LANGUAGE sql IMMUTABLE STRICT PARALLEL SAFE
+    AS $_$
+SELECT
+CASE
+WHEN $1 -||- $2 THEN
+  CASE
+  WHEN $1 ?- $2 THEN $1
+  WHEN ?- $1 AND ?^ $2 THEN $2
+  WHEN ?^ $1 AND ?- $2 THEN $1
+  ELSE
+    $1
+  END
+WHEN ($2).value > ($1).value THEN $2
+ELSE
+  $1
+END;
+$_$;
+
+
+--
+-- Name: vpd_least(public.variable_precision_date, public.variable_precision_date); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.vpd_least(public.variable_precision_date, public.variable_precision_date) RETURNS public.variable_precision_date
+    LANGUAGE sql IMMUTABLE STRICT PARALLEL SAFE
+    AS $_$
+SELECT
+CASE
+WHEN $1 -||- $2 THEN
+  CASE
+  WHEN $1 ?- $2 THEN $1
+  WHEN ?- $1 AND ?^ $2 THEN $2
+  WHEN ?^ $1 AND ?- $2 THEN $1
+  ELSE
+    $1
+  END
+WHEN ($2).value < ($1).value THEN $2
+ELSE
+  $1
+END;
+$_$;
+
+
+--
+-- Name: vpdate_cmp(public.variable_precision_date, public.variable_precision_date); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.vpdate_cmp(public.variable_precision_date, public.variable_precision_date) RETURNS integer
+    LANGUAGE sql IMMUTABLE STRICT PARALLEL SAFE
+    AS $_$
+SELECT
+CASE
+-- if either are none, we short-circuit and cmp by precision
+WHEN $1 -||- $2 THEN $1 ~>? $2
+WHEN date_cmp(~^ $1, ~^ $2) < 0 THEN -1
+WHEN date_cmp(~^ $1, ~^ $2) > 0 THEN 1
+ELSE
+  -- assume dates are the same, cmp by precision
+  $1 ~>? $2
+END;
+$_$;
+
+
+--
+-- Name: FUNCTION vpdate_cmp(public.variable_precision_date, public.variable_precision_date); Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON FUNCTION public.vpdate_cmp(public.variable_precision_date, public.variable_precision_date) IS 'Base comparison function for operator class. First sort none-valued to the end of the set, then by date, then by precision.';
+
+
+--
+-- Name: vpdate_cmp_any_none(public.variable_precision_date, public.variable_precision_date); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.vpdate_cmp_any_none(public.variable_precision_date, public.variable_precision_date) RETURNS boolean
+    LANGUAGE sql IMMUTABLE PARALLEL SAFE
+    AS $_$
+SELECT ?- $1 OR ?- $2;
+$_$;
+
+
+--
+-- Name: vpdate_cmp_both_none(public.variable_precision_date, public.variable_precision_date); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.vpdate_cmp_both_none(public.variable_precision_date, public.variable_precision_date) RETURNS boolean
+    LANGUAGE sql IMMUTABLE PARALLEL SAFE
+    AS $_$
+SELECT ?- $1 AND ?- $2;
+$_$;
+
+
+--
+-- Name: vpdate_cmp_both_valued(public.variable_precision_date, public.variable_precision_date); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.vpdate_cmp_both_valued(public.variable_precision_date, public.variable_precision_date) RETURNS boolean
+    LANGUAGE sql IMMUTABLE PARALLEL SAFE
+    AS $_$
+SELECT ?^ $1 AND ?^ $2;
+$_$;
+
+
+--
+-- Name: vpdate_cmp_precision(public.date_precision, public.variable_precision_date); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.vpdate_cmp_precision(public.date_precision, public.variable_precision_date) RETURNS integer
+    LANGUAGE sql IMMUTABLE PARALLEL SAFE
+    AS $_$
+SELECT date_precision_cmp($1, ~> $2);
+$_$;
+
+
+--
+-- Name: vpdate_cmp_precision(public.variable_precision_date, public.date_precision); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.vpdate_cmp_precision(public.variable_precision_date, public.date_precision) RETURNS integer
+    LANGUAGE sql IMMUTABLE PARALLEL SAFE
+    AS $_$
+SELECT date_precision_cmp(~> $1, $2);
+$_$;
+
+
+--
+-- Name: vpdate_cmp_precision(public.variable_precision_date, public.variable_precision_date); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.vpdate_cmp_precision(public.variable_precision_date, public.variable_precision_date) RETURNS integer
+    LANGUAGE sql IMMUTABLE PARALLEL SAFE
+    AS $_$
+SELECT date_precision_cmp(~> $1, ~> $2);
+$_$;
+
+
+--
+-- Name: vpdate_cmp_xor_valued(public.variable_precision_date, public.variable_precision_date); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.vpdate_cmp_xor_valued(public.variable_precision_date, public.variable_precision_date) RETURNS boolean
+    LANGUAGE sql IMMUTABLE PARALLEL SAFE
+    AS $_$
+SELECT
+CASE
+WHEN ?- $1 THEN ?^ $2
+WHEN ?^ $1 THEN ?- $2
+ELSE
+  FALSE
+END;
+$_$;
+
+
+--
+-- Name: vpdate_contained_by(date, public.variable_precision_date); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.vpdate_contained_by(date, public.variable_precision_date) RETURNS boolean
+    LANGUAGE sql IMMUTABLE STRICT PARALLEL SAFE
+    AS $_$
+SELECT $1 <@ @& $2;
+$_$;
+
+
+--
+-- Name: vpdate_contained_by(daterange, public.variable_precision_date); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.vpdate_contained_by(daterange, public.variable_precision_date) RETURNS boolean
+    LANGUAGE sql IMMUTABLE STRICT PARALLEL SAFE
+    AS $_$
+SELECT $1 <@ @& $2;
+$_$;
+
+
+--
+-- Name: vpdate_contained_by(public.variable_precision_date, daterange); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.vpdate_contained_by(public.variable_precision_date, daterange) RETURNS boolean
+    LANGUAGE sql IMMUTABLE STRICT PARALLEL SAFE
+    AS $_$
+SELECT @& $1 <@ $2;
+$_$;
+
+
+--
+-- Name: vpdate_contained_by(public.variable_precision_date, public.variable_precision_date); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.vpdate_contained_by(public.variable_precision_date, public.variable_precision_date) RETURNS boolean
+    LANGUAGE sql IMMUTABLE STRICT PARALLEL SAFE
+    AS $_$
+SELECT @& $1 <@ @& $2;
+$_$;
+
+
+--
+-- Name: vpdate_contains(daterange, public.variable_precision_date); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.vpdate_contains(daterange, public.variable_precision_date) RETURNS boolean
+    LANGUAGE sql IMMUTABLE STRICT PARALLEL SAFE
+    AS $_$
+SELECT $1 @> @& $2;
+$_$;
+
+
+--
+-- Name: vpdate_contains(public.variable_precision_date, date); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.vpdate_contains(public.variable_precision_date, date) RETURNS boolean
+    LANGUAGE sql IMMUTABLE STRICT PARALLEL SAFE
+    AS $_$
+SELECT @& $1 @> $2;
+$_$;
+
+
+--
+-- Name: vpdate_contains(public.variable_precision_date, daterange); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.vpdate_contains(public.variable_precision_date, daterange) RETURNS boolean
+    LANGUAGE sql IMMUTABLE STRICT PARALLEL SAFE
+    AS $_$
+SELECT @& $1 @> $2;
+$_$;
+
+
+--
+-- Name: vpdate_contains(public.variable_precision_date, public.variable_precision_date); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.vpdate_contains(public.variable_precision_date, public.variable_precision_date) RETURNS boolean
+    LANGUAGE sql IMMUTABLE STRICT PARALLEL SAFE
+    AS $_$
+SELECT @& $1 @> @& $2;
+$_$;
+
+
+--
+-- Name: vpdate_eq(public.variable_precision_date, public.variable_precision_date); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.vpdate_eq(public.variable_precision_date, public.variable_precision_date) RETURNS boolean
+    LANGUAGE sql IMMUTABLE STRICT PARALLEL SAFE
+    AS $_$
+SELECT vpdate_cmp($1, $2) = 0;
+$_$;
+
+
+--
+-- Name: FUNCTION vpdate_eq(public.variable_precision_date, public.variable_precision_date); Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON FUNCTION public.vpdate_eq(public.variable_precision_date, public.variable_precision_date) IS 'Equality function. Implementation for =(variable_precision_date, variable_precision_date)';
+
+
+--
+-- Name: vpdate_ge(public.variable_precision_date, public.variable_precision_date); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.vpdate_ge(public.variable_precision_date, public.variable_precision_date) RETURNS boolean
+    LANGUAGE sql IMMUTABLE STRICT PARALLEL SAFE
+    AS $_$
+SELECT vpdate_cmp($1, $2) >= 0;
+$_$;
+
+
+--
+-- Name: FUNCTION vpdate_ge(public.variable_precision_date, public.variable_precision_date); Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON FUNCTION public.vpdate_ge(public.variable_precision_date, public.variable_precision_date) IS 'Implementation for >=(variable_precision_date, variable_precision_date)';
+
+
+--
+-- Name: vpdate_gt(public.variable_precision_date, public.variable_precision_date); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.vpdate_gt(public.variable_precision_date, public.variable_precision_date) RETURNS boolean
+    LANGUAGE sql IMMUTABLE STRICT PARALLEL SAFE
+    AS $_$
+SELECT vpdate_cmp($1, $2) > 0;
+$_$;
+
+
+--
+-- Name: FUNCTION vpdate_gt(public.variable_precision_date, public.variable_precision_date); Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON FUNCTION public.vpdate_gt(public.variable_precision_date, public.variable_precision_date) IS 'Implementation for >(variable_precision_date, variable_precision_date)';
+
+
+--
+-- Name: vpdate_has_value(public.variable_precision_date); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.vpdate_has_value(public.variable_precision_date) RETURNS boolean
+    LANGUAGE sql IMMUTABLE PARALLEL SAFE
+    AS $_$
+SELECT $1 IS NOT NULL AND ~> $1 <> 'none';
+$_$;
+
+
+--
+-- Name: vpdate_is_none(public.variable_precision_date); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.vpdate_is_none(public.variable_precision_date) RETURNS boolean
+    LANGUAGE sql IMMUTABLE PARALLEL SAFE
+    AS $_$
+SELECT $1 IS NULL OR ~> $1 = 'none';
+$_$;
+
+
+--
+-- Name: vpdate_le(public.variable_precision_date, public.variable_precision_date); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.vpdate_le(public.variable_precision_date, public.variable_precision_date) RETURNS boolean
+    LANGUAGE sql IMMUTABLE STRICT PARALLEL SAFE
+    AS $_$
+SELECT vpdate_cmp($1, $2) <= 0;
+$_$;
+
+
+--
+-- Name: FUNCTION vpdate_le(public.variable_precision_date, public.variable_precision_date); Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON FUNCTION public.vpdate_le(public.variable_precision_date, public.variable_precision_date) IS 'Implementation for <=(variable_precision_date, variable_precision_date)';
+
+
+--
+-- Name: vpdate_lt(public.variable_precision_date, public.variable_precision_date); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.vpdate_lt(public.variable_precision_date, public.variable_precision_date) RETURNS boolean
+    LANGUAGE sql IMMUTABLE STRICT PARALLEL SAFE
+    AS $_$
+SELECT vpdate_cmp($1, $2) < 0;
+$_$;
+
+
+--
+-- Name: FUNCTION vpdate_lt(public.variable_precision_date, public.variable_precision_date); Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON FUNCTION public.vpdate_lt(public.variable_precision_date, public.variable_precision_date) IS 'Implementation for <(variable_precision_date, variable_precision_date)';
+
+
+--
+-- Name: vpdate_neq(public.variable_precision_date, public.variable_precision_date); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.vpdate_neq(public.variable_precision_date, public.variable_precision_date) RETURNS boolean
+    LANGUAGE sql IMMUTABLE STRICT PARALLEL SAFE
+    AS $_$
+SELECT vpdate_cmp($1, $2) <> 0;
+$_$;
+
+
+--
+-- Name: FUNCTION vpdate_neq(public.variable_precision_date, public.variable_precision_date); Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON FUNCTION public.vpdate_neq(public.variable_precision_date, public.variable_precision_date) IS 'Inequality function. Implementation for <>(variable_precision_date, variable_precision_date), and by proxy, !=';
+
+
+--
+-- Name: vpdate_normalize(public.variable_precision_date); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.vpdate_normalize(public.variable_precision_date) RETURNS public.variable_precision_date
+    LANGUAGE sql IMMUTABLE PARALLEL SAFE
+    AS $_$
+SELECT CASE
+WHEN $1 IS NULL OR $1.precision = 'none' THEN ROW(NULL, 'none')::variable_precision_date
+ELSE
+  variable_precision($1.value, $1.precision)
+END;
+$_$;
+
+
+--
+-- Name: vpdate_nullif_none(public.variable_precision_date); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.vpdate_nullif_none(public.variable_precision_date) RETURNS public.variable_precision_date
+    LANGUAGE sql IMMUTABLE STRICT PARALLEL SAFE
+    AS $_$
+SELECT CASE WHEN ?^ $1 THEN @ $1 ELSE NULL END;
+$_$;
+
+
+--
+-- Name: FUNCTION vpdate_nullif_none(public.variable_precision_date); Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON FUNCTION public.vpdate_nullif_none(public.variable_precision_date) IS 'Normalize and nullify none-valued variable precision dates';
+
+
+--
+-- Name: vpdate_overlaps(daterange, public.variable_precision_date); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.vpdate_overlaps(daterange, public.variable_precision_date) RETURNS boolean
+    LANGUAGE sql IMMUTABLE STRICT PARALLEL SAFE
+    AS $_$
+SELECT $1 && @& $2;
+$_$;
+
+
+--
+-- Name: vpdate_overlaps(public.variable_precision_date, daterange); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.vpdate_overlaps(public.variable_precision_date, daterange) RETURNS boolean
+    LANGUAGE sql IMMUTABLE STRICT PARALLEL SAFE
+    AS $_$
+SELECT @& $1 && $2;
+$_$;
+
+
+--
+-- Name: vpdate_overlaps(public.variable_precision_date, public.variable_precision_date); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.vpdate_overlaps(public.variable_precision_date, public.variable_precision_date) RETURNS boolean
+    LANGUAGE sql IMMUTABLE STRICT PARALLEL SAFE
+    AS $_$
+SELECT @& $1 && @& $2;
+$_$;
+
+
+--
+-- Name: vpdate_precision_eq(public.variable_precision_date, public.date_precision); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.vpdate_precision_eq(public.variable_precision_date, public.date_precision) RETURNS boolean
+    LANGUAGE sql IMMUTABLE STRICT PARALLEL SAFE
+    AS $_$
+SELECT ~> $1 = $2;
+$_$;
+
+
+--
+-- Name: vpdate_precision_eq(public.variable_precision_date, public.variable_precision_date); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.vpdate_precision_eq(public.variable_precision_date, public.variable_precision_date) RETURNS boolean
+    LANGUAGE sql IMMUTABLE STRICT PARALLEL SAFE
+    AS $_$
+SELECT ~> $1 = ~> $2;
+$_$;
+
+
+--
+-- Name: vpdate_precision_ge(public.variable_precision_date, public.date_precision); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.vpdate_precision_ge(public.variable_precision_date, public.date_precision) RETURNS boolean
+    LANGUAGE sql IMMUTABLE STRICT PARALLEL SAFE
+    AS $_$
+SELECT $1 ~>? $2 >= 0;
+$_$;
+
+
+--
+-- Name: vpdate_precision_ge(public.variable_precision_date, public.variable_precision_date); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.vpdate_precision_ge(public.variable_precision_date, public.variable_precision_date) RETURNS boolean
+    LANGUAGE sql IMMUTABLE STRICT PARALLEL SAFE
+    AS $_$
+SELECT $1 ~>? $2 >= 0;
+$_$;
+
+
+--
+-- Name: vpdate_precision_gt(public.variable_precision_date, public.date_precision); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.vpdate_precision_gt(public.variable_precision_date, public.date_precision) RETURNS boolean
+    LANGUAGE sql IMMUTABLE STRICT PARALLEL SAFE
+    AS $_$
+SELECT $1 ~>? $2 > 0;
+$_$;
+
+
+--
+-- Name: vpdate_precision_gt(public.variable_precision_date, public.variable_precision_date); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.vpdate_precision_gt(public.variable_precision_date, public.variable_precision_date) RETURNS boolean
+    LANGUAGE sql IMMUTABLE STRICT PARALLEL SAFE
+    AS $_$
+SELECT $1 ~>? $2 > 0;
+$_$;
+
+
+--
+-- Name: vpdate_precision_le(public.variable_precision_date, public.date_precision); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.vpdate_precision_le(public.variable_precision_date, public.date_precision) RETURNS boolean
+    LANGUAGE sql IMMUTABLE STRICT PARALLEL SAFE
+    AS $_$
+SELECT $1 ~>? $2 <= 0;
+$_$;
+
+
+--
+-- Name: vpdate_precision_le(public.variable_precision_date, public.variable_precision_date); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.vpdate_precision_le(public.variable_precision_date, public.variable_precision_date) RETURNS boolean
+    LANGUAGE sql IMMUTABLE STRICT PARALLEL SAFE
+    AS $_$
+SELECT $1 ~>? $2 <= 0;
+$_$;
+
+
+--
+-- Name: vpdate_precision_lt(public.variable_precision_date, public.date_precision); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.vpdate_precision_lt(public.variable_precision_date, public.date_precision) RETURNS boolean
+    LANGUAGE sql IMMUTABLE STRICT PARALLEL SAFE
+    AS $_$
+SELECT $1 ~>? $2 < 0;
+$_$;
+
+
+--
+-- Name: vpdate_precision_lt(public.variable_precision_date, public.variable_precision_date); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.vpdate_precision_lt(public.variable_precision_date, public.variable_precision_date) RETURNS boolean
+    LANGUAGE sql IMMUTABLE STRICT PARALLEL SAFE
+    AS $_$
+SELECT $1 ~>? $2 < 0;
+$_$;
+
+
+--
+-- Name: vpdate_precision_neq(public.variable_precision_date, public.date_precision); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.vpdate_precision_neq(public.variable_precision_date, public.date_precision) RETURNS boolean
+    LANGUAGE sql IMMUTABLE STRICT PARALLEL SAFE
+    AS $_$
+SELECT ~> $1 <> $2;
+$_$;
+
+
+--
+-- Name: vpdate_precision_neq(public.variable_precision_date, public.variable_precision_date); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.vpdate_precision_neq(public.variable_precision_date, public.variable_precision_date) RETURNS boolean
+    LANGUAGE sql IMMUTABLE STRICT PARALLEL SAFE
+    AS $_$
+SELECT ~> $1 <> ~> $2;
+$_$;
+
+
+--
+-- Name: vpdate_value(public.variable_precision_date); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.vpdate_value(public.variable_precision_date) RETURNS date
+    LANGUAGE sql IMMUTABLE STRICT PARALLEL SAFE
+    AS $_$
+SELECT vpdate_value_for($1.value, $1.precision);
+$_$;
+
+
+--
+-- Name: vpdate_value_for(date, public.date_precision); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.vpdate_value_for(date, public.date_precision) RETURNS date
+    LANGUAGE sql IMMUTABLE STRICT PARALLEL SAFE
+    AS $_$
+SELECT
+CASE $2
+WHEN 'day' THEN $1
+WHEN 'month' THEN date_trunc('month', $1)::date
+WHEN 'year' THEN date_trunc('year', $1)::date
+ELSE
+  NUll
 END;
 $_$;
 
@@ -530,6 +1499,927 @@ CREATE AGGREGATE public.jsonb_set_agg(jsonb, text[]) (
     STYPE = jsonb,
     INITCOND = '{}'
 );
+
+
+--
+-- Name: >; Type: OPERATOR; Schema: public; Owner: -
+--
+
+CREATE OPERATOR public.> (
+    FUNCTION = public.vpdate_gt,
+    LEFTARG = public.variable_precision_date,
+    RIGHTARG = public.variable_precision_date,
+    COMMUTATOR = OPERATOR(public.<=),
+    NEGATOR = OPERATOR(public.<),
+    RESTRICT = scalargtsel,
+    JOIN = scalargtjoinsel
+);
+
+
+--
+-- Name: max(public.variable_precision_date); Type: AGGREGATE; Schema: public; Owner: -
+--
+
+CREATE AGGREGATE public.max(public.variable_precision_date) (
+    SFUNC = public.vpd_greatest,
+    STYPE = public.variable_precision_date,
+    FINALFUNC = public.vpdate_nullif_none,
+    MSFUNC = public.vpd_greatest,
+    MINVFUNC = public.vpd_least,
+    MSTYPE = public.variable_precision_date,
+    SORTOP = OPERATOR(public.>),
+    PARALLEL = safe
+);
+
+
+--
+-- Name: <; Type: OPERATOR; Schema: public; Owner: -
+--
+
+CREATE OPERATOR public.< (
+    FUNCTION = public.vpdate_lt,
+    LEFTARG = public.variable_precision_date,
+    RIGHTARG = public.variable_precision_date,
+    COMMUTATOR = OPERATOR(public.>),
+    NEGATOR = OPERATOR(public.>=),
+    RESTRICT = scalarltsel,
+    JOIN = scalarltjoinsel
+);
+
+
+--
+-- Name: OPERATOR < (public.variable_precision_date, public.variable_precision_date); Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON OPERATOR public.< (public.variable_precision_date, public.variable_precision_date) IS 'A > B based on value then precision';
+
+
+--
+-- Name: min(public.variable_precision_date); Type: AGGREGATE; Schema: public; Owner: -
+--
+
+CREATE AGGREGATE public.min(public.variable_precision_date) (
+    SFUNC = public.vpd_least,
+    STYPE = public.variable_precision_date,
+    FINALFUNC = public.vpdate_nullif_none,
+    MSFUNC = public.vpd_least,
+    MINVFUNC = public.vpd_greatest,
+    MSTYPE = public.variable_precision_date,
+    SORTOP = OPERATOR(public.<),
+    PARALLEL = safe
+);
+
+
+--
+-- Name: #; Type: OPERATOR; Schema: public; Owner: -
+--
+
+CREATE OPERATOR public.# (
+    FUNCTION = public.vpdate_nullif_none,
+    RIGHTARG = public.variable_precision_date
+);
+
+
+--
+-- Name: OPERATOR # (NONE, public.variable_precision_date); Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON OPERATOR public.# (NONE, public.variable_precision_date) IS 'Normalize a variable precision date, but return null if it is none. Intended for ordering so we can easily always sort nulls to last';
+
+
+--
+-- Name: &&; Type: OPERATOR; Schema: public; Owner: -
+--
+
+CREATE OPERATOR public.&& (
+    FUNCTION = public.vpdate_overlaps,
+    LEFTARG = public.variable_precision_date,
+    RIGHTARG = public.variable_precision_date,
+    COMMUTATOR = OPERATOR(public.&&)
+);
+
+
+--
+-- Name: OPERATOR && (public.variable_precision_date, public.variable_precision_date); Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON OPERATOR public.&& (public.variable_precision_date, public.variable_precision_date) IS 'overlaps';
+
+
+--
+-- Name: &&; Type: OPERATOR; Schema: public; Owner: -
+--
+
+CREATE OPERATOR public.&& (
+    FUNCTION = public.vpdate_overlaps,
+    LEFTARG = daterange,
+    RIGHTARG = public.variable_precision_date,
+    COMMUTATOR = OPERATOR(public.&&)
+);
+
+
+--
+-- Name: OPERATOR && (daterange, public.variable_precision_date); Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON OPERATOR public.&& (daterange, public.variable_precision_date) IS 'overlaps';
+
+
+--
+-- Name: &&; Type: OPERATOR; Schema: public; Owner: -
+--
+
+CREATE OPERATOR public.&& (
+    FUNCTION = public.vpdate_overlaps,
+    LEFTARG = public.variable_precision_date,
+    RIGHTARG = daterange,
+    COMMUTATOR = OPERATOR(public.&&)
+);
+
+
+--
+-- Name: OPERATOR && (public.variable_precision_date, daterange); Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON OPERATOR public.&& (public.variable_precision_date, daterange) IS 'overlaps';
+
+
+--
+-- Name: +; Type: OPERATOR; Schema: public; Owner: -
+--
+
+CREATE OPERATOR public.+ (
+    FUNCTION = public.variable_precision,
+    LEFTARG = public.date_precision,
+    RIGHTARG = date,
+    COMMUTATOR = OPERATOR(public.+)
+);
+
+
+--
+-- Name: OPERATOR + (public.date_precision, date); Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON OPERATOR public.+ (public.date_precision, date) IS 'Construct a variable precision date';
+
+
+--
+-- Name: +; Type: OPERATOR; Schema: public; Owner: -
+--
+
+CREATE OPERATOR public.+ (
+    FUNCTION = public.variable_precision,
+    LEFTARG = date,
+    RIGHTARG = public.date_precision,
+    COMMUTATOR = OPERATOR(public.+)
+);
+
+
+--
+-- Name: OPERATOR + (date, public.date_precision); Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON OPERATOR public.+ (date, public.date_precision) IS 'Construct a variable precision date';
+
+
+--
+-- Name: -||-; Type: OPERATOR; Schema: public; Owner: -
+--
+
+CREATE OPERATOR public.-||- (
+    FUNCTION = public.vpdate_cmp_any_none,
+    LEFTARG = public.variable_precision_date,
+    RIGHTARG = public.variable_precision_date,
+    COMMUTATOR = OPERATOR(public.-||-),
+    NEGATOR = OPERATOR(public.?^)
+);
+
+
+--
+-- Name: OPERATOR -||- (public.variable_precision_date, public.variable_precision_date); Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON OPERATOR public.-||- (public.variable_precision_date, public.variable_precision_date) IS 'Check if any date is none-valued';
+
+
+--
+-- Name: <=; Type: OPERATOR; Schema: public; Owner: -
+--
+
+CREATE OPERATOR public.<= (
+    FUNCTION = public.vpdate_le,
+    LEFTARG = public.variable_precision_date,
+    RIGHTARG = public.variable_precision_date,
+    COMMUTATOR = OPERATOR(public.>=),
+    NEGATOR = OPERATOR(public.>),
+    RESTRICT = scalarlesel,
+    JOIN = scalarlejoinsel
+);
+
+
+--
+-- Name: <>; Type: OPERATOR; Schema: public; Owner: -
+--
+
+CREATE OPERATOR public.<> (
+    FUNCTION = public.vpdate_neq,
+    LEFTARG = public.variable_precision_date,
+    RIGHTARG = public.variable_precision_date,
+    COMMUTATOR = OPERATOR(public.<>),
+    NEGATOR = OPERATOR(public.=),
+    RESTRICT = neqsel,
+    JOIN = neqjoinsel
+);
+
+
+--
+-- Name: <@; Type: OPERATOR; Schema: public; Owner: -
+--
+
+CREATE OPERATOR public.<@ (
+    FUNCTION = public.vpdate_contained_by,
+    LEFTARG = public.variable_precision_date,
+    RIGHTARG = public.variable_precision_date,
+    COMMUTATOR = OPERATOR(public.@>)
+);
+
+
+--
+-- Name: <@; Type: OPERATOR; Schema: public; Owner: -
+--
+
+CREATE OPERATOR public.<@ (
+    FUNCTION = public.vpdate_contained_by,
+    LEFTARG = date,
+    RIGHTARG = public.variable_precision_date,
+    COMMUTATOR = OPERATOR(public.@>)
+);
+
+
+--
+-- Name: <@; Type: OPERATOR; Schema: public; Owner: -
+--
+
+CREATE OPERATOR public.<@ (
+    FUNCTION = public.vpdate_contained_by,
+    LEFTARG = daterange,
+    RIGHTARG = public.variable_precision_date,
+    COMMUTATOR = OPERATOR(public.@>)
+);
+
+
+--
+-- Name: OPERATOR <@ (daterange, public.variable_precision_date); Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON OPERATOR public.<@ (daterange, public.variable_precision_date) IS 'contained by';
+
+
+--
+-- Name: <@; Type: OPERATOR; Schema: public; Owner: -
+--
+
+CREATE OPERATOR public.<@ (
+    FUNCTION = public.vpdate_contained_by,
+    LEFTARG = public.variable_precision_date,
+    RIGHTARG = daterange,
+    COMMUTATOR = OPERATOR(public.@>)
+);
+
+
+--
+-- Name: OPERATOR <@ (public.variable_precision_date, daterange); Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON OPERATOR public.<@ (public.variable_precision_date, daterange) IS 'contained by';
+
+
+--
+-- Name: =; Type: OPERATOR; Schema: public; Owner: -
+--
+
+CREATE OPERATOR public.= (
+    FUNCTION = public.vpdate_eq,
+    LEFTARG = public.variable_precision_date,
+    RIGHTARG = public.variable_precision_date,
+    COMMUTATOR = OPERATOR(public.=),
+    NEGATOR = OPERATOR(public.<>),
+    MERGES,
+    HASHES,
+    RESTRICT = eqsel,
+    JOIN = eqjoinsel
+);
+
+
+--
+-- Name: >=; Type: OPERATOR; Schema: public; Owner: -
+--
+
+CREATE OPERATOR public.>= (
+    FUNCTION = public.vpdate_ge,
+    LEFTARG = public.variable_precision_date,
+    RIGHTARG = public.variable_precision_date,
+    COMMUTATOR = OPERATOR(public.<=),
+    NEGATOR = OPERATOR(public.<),
+    RESTRICT = scalargesel,
+    JOIN = scalargejoinsel
+);
+
+
+--
+-- Name: ?!; Type: OPERATOR; Schema: public; Owner: -
+--
+
+CREATE OPERATOR public.?! (
+    FUNCTION = public.vpdate_precision_neq,
+    LEFTARG = public.variable_precision_date,
+    RIGHTARG = public.variable_precision_date,
+    COMMUTATOR = OPERATOR(public.?!),
+    NEGATOR = OPERATOR(public.?=),
+    RESTRICT = neqsel,
+    JOIN = neqjoinsel
+);
+
+
+--
+-- Name: OPERATOR ?! (public.variable_precision_date, public.variable_precision_date); Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON OPERATOR public.?! (public.variable_precision_date, public.variable_precision_date) IS 'A.precision <> B.precision';
+
+
+--
+-- Name: ?!; Type: OPERATOR; Schema: public; Owner: -
+--
+
+CREATE OPERATOR public.?! (
+    FUNCTION = public.vpdate_precision_neq,
+    LEFTARG = public.variable_precision_date,
+    RIGHTARG = public.date_precision,
+    NEGATOR = OPERATOR(public.?=),
+    RESTRICT = neqsel,
+    JOIN = neqjoinsel
+);
+
+
+--
+-- Name: OPERATOR ?! (public.variable_precision_date, public.date_precision); Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON OPERATOR public.?! (public.variable_precision_date, public.date_precision) IS 'A.precision <> B';
+
+
+--
+-- Name: ?-; Type: OPERATOR; Schema: public; Owner: -
+--
+
+CREATE OPERATOR public.?- (
+    FUNCTION = public.is_none,
+    RIGHTARG = public.date_precision,
+    NEGATOR = OPERATOR(public.?^)
+);
+
+
+--
+-- Name: OPERATOR ?- (NONE, public.date_precision); Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON OPERATOR public.?- (NONE, public.date_precision) IS 'Check if the date precision is none-valued or null';
+
+
+--
+-- Name: ?-; Type: OPERATOR; Schema: public; Owner: -
+--
+
+CREATE OPERATOR public.?- (
+    FUNCTION = public.vpdate_is_none,
+    RIGHTARG = public.variable_precision_date,
+    NEGATOR = OPERATOR(public.?^)
+);
+
+
+--
+-- Name: OPERATOR ?- (NONE, public.variable_precision_date); Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON OPERATOR public.?- (NONE, public.variable_precision_date) IS 'Check if the variable precision date is none-valued';
+
+
+--
+-- Name: ?-; Type: OPERATOR; Schema: public; Owner: -
+--
+
+CREATE OPERATOR public.?- (
+    FUNCTION = public.vpdate_cmp_both_none,
+    LEFTARG = public.variable_precision_date,
+    RIGHTARG = public.variable_precision_date,
+    COMMUTATOR = OPERATOR(public.?-)
+);
+
+
+--
+-- Name: OPERATOR ?- (public.variable_precision_date, public.variable_precision_date); Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON OPERATOR public.?- (public.variable_precision_date, public.variable_precision_date) IS 'Check if both dates are none-valued';
+
+
+--
+-- Name: ?<; Type: OPERATOR; Schema: public; Owner: -
+--
+
+CREATE OPERATOR public.?< (
+    FUNCTION = public.vpdate_precision_lt,
+    LEFTARG = public.variable_precision_date,
+    RIGHTARG = public.variable_precision_date,
+    COMMUTATOR = OPERATOR(public.?>),
+    NEGATOR = OPERATOR(public.?>=),
+    RESTRICT = scalarltsel,
+    JOIN = scalarltjoinsel
+);
+
+
+--
+-- Name: OPERATOR ?< (public.variable_precision_date, public.variable_precision_date); Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON OPERATOR public.?< (public.variable_precision_date, public.variable_precision_date) IS 'A.precision < B.precision, with none always pushed to the end';
+
+
+--
+-- Name: ?<; Type: OPERATOR; Schema: public; Owner: -
+--
+
+CREATE OPERATOR public.?< (
+    FUNCTION = public.vpdate_precision_lt,
+    LEFTARG = public.variable_precision_date,
+    RIGHTARG = public.date_precision,
+    COMMUTATOR = OPERATOR(public.?>),
+    NEGATOR = OPERATOR(public.?>=),
+    RESTRICT = scalarltsel,
+    JOIN = scalarltjoinsel
+);
+
+
+--
+-- Name: OPERATOR ?< (public.variable_precision_date, public.date_precision); Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON OPERATOR public.?< (public.variable_precision_date, public.date_precision) IS 'A.precision < B, with none always pushed to the end';
+
+
+--
+-- Name: ?<=; Type: OPERATOR; Schema: public; Owner: -
+--
+
+CREATE OPERATOR public.?<= (
+    FUNCTION = public.vpdate_precision_le,
+    LEFTARG = public.variable_precision_date,
+    RIGHTARG = public.variable_precision_date,
+    COMMUTATOR = OPERATOR(public.?>=),
+    NEGATOR = OPERATOR(public.?>),
+    RESTRICT = scalarlesel,
+    JOIN = scalarlejoinsel
+);
+
+
+--
+-- Name: OPERATOR ?<= (public.variable_precision_date, public.variable_precision_date); Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON OPERATOR public.?<= (public.variable_precision_date, public.variable_precision_date) IS 'A.precision <= B.precision, with none always pushed to the end';
+
+
+--
+-- Name: ?<=; Type: OPERATOR; Schema: public; Owner: -
+--
+
+CREATE OPERATOR public.?<= (
+    FUNCTION = public.vpdate_precision_le,
+    LEFTARG = public.variable_precision_date,
+    RIGHTARG = public.date_precision,
+    COMMUTATOR = OPERATOR(public.?>=),
+    NEGATOR = OPERATOR(public.?>),
+    RESTRICT = scalarlesel,
+    JOIN = scalarlejoinsel
+);
+
+
+--
+-- Name: OPERATOR ?<= (public.variable_precision_date, public.date_precision); Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON OPERATOR public.?<= (public.variable_precision_date, public.date_precision) IS 'A.precision <= B, with none always pushed to the end';
+
+
+--
+-- Name: ?=; Type: OPERATOR; Schema: public; Owner: -
+--
+
+CREATE OPERATOR public.?= (
+    FUNCTION = public.vpdate_precision_eq,
+    LEFTARG = public.variable_precision_date,
+    RIGHTARG = public.variable_precision_date,
+    COMMUTATOR = OPERATOR(public.?=),
+    NEGATOR = OPERATOR(public.?!),
+    MERGES,
+    HASHES,
+    RESTRICT = eqsel,
+    JOIN = eqjoinsel
+);
+
+
+--
+-- Name: OPERATOR ?= (public.variable_precision_date, public.variable_precision_date); Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON OPERATOR public.?= (public.variable_precision_date, public.variable_precision_date) IS 'A.precision = B.precision';
+
+
+--
+-- Name: ?=; Type: OPERATOR; Schema: public; Owner: -
+--
+
+CREATE OPERATOR public.?= (
+    FUNCTION = public.vpdate_precision_eq,
+    LEFTARG = public.variable_precision_date,
+    RIGHTARG = public.date_precision,
+    NEGATOR = OPERATOR(public.?!),
+    RESTRICT = eqsel,
+    JOIN = eqjoinsel
+);
+
+
+--
+-- Name: OPERATOR ?= (public.variable_precision_date, public.date_precision); Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON OPERATOR public.?= (public.variable_precision_date, public.date_precision) IS 'A.precision = B';
+
+
+--
+-- Name: ?>; Type: OPERATOR; Schema: public; Owner: -
+--
+
+CREATE OPERATOR public.?> (
+    FUNCTION = public.vpdate_precision_gt,
+    LEFTARG = public.variable_precision_date,
+    RIGHTARG = public.variable_precision_date,
+    COMMUTATOR = OPERATOR(public.?<),
+    NEGATOR = OPERATOR(public.?<=),
+    RESTRICT = scalargtsel,
+    JOIN = scalargtjoinsel
+);
+
+
+--
+-- Name: OPERATOR ?> (public.variable_precision_date, public.variable_precision_date); Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON OPERATOR public.?> (public.variable_precision_date, public.variable_precision_date) IS 'A.precision > B.precision, with none always pushed to the end';
+
+
+--
+-- Name: ?>; Type: OPERATOR; Schema: public; Owner: -
+--
+
+CREATE OPERATOR public.?> (
+    FUNCTION = public.vpdate_precision_gt,
+    LEFTARG = public.variable_precision_date,
+    RIGHTARG = public.date_precision,
+    COMMUTATOR = OPERATOR(public.?<),
+    NEGATOR = OPERATOR(public.?<=),
+    RESTRICT = scalargtsel,
+    JOIN = scalargtjoinsel
+);
+
+
+--
+-- Name: OPERATOR ?> (public.variable_precision_date, public.date_precision); Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON OPERATOR public.?> (public.variable_precision_date, public.date_precision) IS 'A.precision > B, with none always pushed to the end';
+
+
+--
+-- Name: ?>=; Type: OPERATOR; Schema: public; Owner: -
+--
+
+CREATE OPERATOR public.?>= (
+    FUNCTION = public.vpdate_precision_ge,
+    LEFTARG = public.variable_precision_date,
+    RIGHTARG = public.variable_precision_date,
+    COMMUTATOR = OPERATOR(public.?<=),
+    NEGATOR = OPERATOR(public.?<),
+    RESTRICT = scalargesel,
+    JOIN = scalargejoinsel
+);
+
+
+--
+-- Name: OPERATOR ?>= (public.variable_precision_date, public.variable_precision_date); Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON OPERATOR public.?>= (public.variable_precision_date, public.variable_precision_date) IS 'A.precision >= B.precision, with none always pushed to the end';
+
+
+--
+-- Name: ?>=; Type: OPERATOR; Schema: public; Owner: -
+--
+
+CREATE OPERATOR public.?>= (
+    FUNCTION = public.vpdate_precision_ge,
+    LEFTARG = public.variable_precision_date,
+    RIGHTARG = public.date_precision,
+    COMMUTATOR = OPERATOR(public.?<=),
+    NEGATOR = OPERATOR(public.?<),
+    RESTRICT = scalargesel,
+    JOIN = scalargejoinsel
+);
+
+
+--
+-- Name: OPERATOR ?>= (public.variable_precision_date, public.date_precision); Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON OPERATOR public.?>= (public.variable_precision_date, public.date_precision) IS 'A.precision >= B, with none always pushed to the end';
+
+
+--
+-- Name: ?^; Type: OPERATOR; Schema: public; Owner: -
+--
+
+CREATE OPERATOR public.?^ (
+    FUNCTION = public.is_valued,
+    RIGHTARG = public.date_precision,
+    NEGATOR = OPERATOR(public.?-)
+);
+
+
+--
+-- Name: OPERATOR ?^ (NONE, public.date_precision); Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON OPERATOR public.?^ (NONE, public.date_precision) IS 'Check if the date precision refers to any real value';
+
+
+--
+-- Name: ?^; Type: OPERATOR; Schema: public; Owner: -
+--
+
+CREATE OPERATOR public.?^ (
+    FUNCTION = public.vpdate_has_value,
+    RIGHTARG = public.variable_precision_date,
+    NEGATOR = OPERATOR(public.?-)
+);
+
+
+--
+-- Name: OPERATOR ?^ (NONE, public.variable_precision_date); Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON OPERATOR public.?^ (NONE, public.variable_precision_date) IS 'Check if the variable precision date has a value, aka it is not none-valued';
+
+
+--
+-- Name: ?^; Type: OPERATOR; Schema: public; Owner: -
+--
+
+CREATE OPERATOR public.?^ (
+    FUNCTION = public.vpdate_cmp_both_valued,
+    LEFTARG = public.variable_precision_date,
+    RIGHTARG = public.variable_precision_date,
+    COMMUTATOR = OPERATOR(public.?^),
+    NEGATOR = OPERATOR(public.-||-)
+);
+
+
+--
+-- Name: OPERATOR ?^ (public.variable_precision_date, public.variable_precision_date); Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON OPERATOR public.?^ (public.variable_precision_date, public.variable_precision_date) IS 'Check if both dates have values';
+
+
+--
+-- Name: @; Type: OPERATOR; Schema: public; Owner: -
+--
+
+CREATE OPERATOR public.@ (
+    FUNCTION = public.vpdate_normalize,
+    RIGHTARG = public.variable_precision_date
+);
+
+
+--
+-- Name: @&; Type: OPERATOR; Schema: public; Owner: -
+--
+
+CREATE OPERATOR public.@& (
+    FUNCTION = public.variable_daterange,
+    RIGHTARG = public.variable_precision_date
+);
+
+
+--
+-- Name: OPERATOR @& (NONE, public.variable_precision_date); Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON OPERATOR public.@& (NONE, public.variable_precision_date) IS 'Transform a variable date into a daterange';
+
+
+--
+-- Name: @>; Type: OPERATOR; Schema: public; Owner: -
+--
+
+CREATE OPERATOR public.@> (
+    FUNCTION = public.vpdate_contains,
+    LEFTARG = public.variable_precision_date,
+    RIGHTARG = public.variable_precision_date,
+    COMMUTATOR = OPERATOR(public.<@)
+);
+
+
+--
+-- Name: @>; Type: OPERATOR; Schema: public; Owner: -
+--
+
+CREATE OPERATOR public.@> (
+    FUNCTION = public.vpdate_contains,
+    LEFTARG = public.variable_precision_date,
+    RIGHTARG = date,
+    COMMUTATOR = OPERATOR(public.<@)
+);
+
+
+--
+-- Name: @>; Type: OPERATOR; Schema: public; Owner: -
+--
+
+CREATE OPERATOR public.@> (
+    FUNCTION = public.vpdate_contains,
+    LEFTARG = public.variable_precision_date,
+    RIGHTARG = daterange,
+    COMMUTATOR = OPERATOR(public.<@)
+);
+
+
+--
+-- Name: @>; Type: OPERATOR; Schema: public; Owner: -
+--
+
+CREATE OPERATOR public.@> (
+    FUNCTION = public.vpdate_contains,
+    LEFTARG = daterange,
+    RIGHTARG = public.variable_precision_date,
+    COMMUTATOR = OPERATOR(public.<@)
+);
+
+
+--
+-- Name: ^^; Type: OPERATOR; Schema: public; Owner: -
+--
+
+CREATE OPERATOR public.^^ (
+    FUNCTION = public.vpdate_cmp_xor_valued,
+    LEFTARG = public.variable_precision_date,
+    RIGHTARG = public.variable_precision_date,
+    COMMUTATOR = OPERATOR(public.^^)
+);
+
+
+--
+-- Name: OPERATOR ^^ (public.variable_precision_date, public.variable_precision_date); Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON OPERATOR public.^^ (public.variable_precision_date, public.variable_precision_date) IS '?^ A XOR ?^ B';
+
+
+--
+-- Name: ~>; Type: OPERATOR; Schema: public; Owner: -
+--
+
+CREATE OPERATOR public.~> (
+    FUNCTION = public.variable_precision_for,
+    RIGHTARG = public.variable_precision_date
+);
+
+
+--
+-- Name: OPERATOR ~> (NONE, public.variable_precision_date); Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON OPERATOR public.~> (NONE, public.variable_precision_date) IS 'Extract the normalized precision from a variable precision date. Guaranteed to be not-null';
+
+
+--
+-- Name: ~>?; Type: OPERATOR; Schema: public; Owner: -
+--
+
+CREATE OPERATOR public.~>? (
+    FUNCTION = public.date_precision_cmp,
+    LEFTARG = public.date_precision,
+    RIGHTARG = public.date_precision
+);
+
+
+--
+-- Name: OPERATOR ~>? (public.date_precision, public.date_precision); Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON OPERATOR public.~>? (public.date_precision, public.date_precision) IS 'Compare date precisions with none-last logic';
+
+
+--
+-- Name: ~>?; Type: OPERATOR; Schema: public; Owner: -
+--
+
+CREATE OPERATOR public.~>? (
+    FUNCTION = public.vpdate_cmp_precision,
+    LEFTARG = public.variable_precision_date,
+    RIGHTARG = public.date_precision
+);
+
+
+--
+-- Name: OPERATOR ~>? (public.variable_precision_date, public.date_precision); Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON OPERATOR public.~>? (public.variable_precision_date, public.date_precision) IS 'Compare variable precision dates by precision *only*';
+
+
+--
+-- Name: ~>?; Type: OPERATOR; Schema: public; Owner: -
+--
+
+CREATE OPERATOR public.~>? (
+    FUNCTION = public.vpdate_cmp_precision,
+    LEFTARG = public.date_precision,
+    RIGHTARG = public.variable_precision_date
+);
+
+
+--
+-- Name: OPERATOR ~>? (public.date_precision, public.variable_precision_date); Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON OPERATOR public.~>? (public.date_precision, public.variable_precision_date) IS 'Compare variable precision dates by precision *only*';
+
+
+--
+-- Name: ~>?; Type: OPERATOR; Schema: public; Owner: -
+--
+
+CREATE OPERATOR public.~>? (
+    FUNCTION = public.vpdate_cmp_precision,
+    LEFTARG = public.variable_precision_date,
+    RIGHTARG = public.variable_precision_date
+);
+
+
+--
+-- Name: OPERATOR ~>? (public.variable_precision_date, public.variable_precision_date); Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON OPERATOR public.~>? (public.variable_precision_date, public.variable_precision_date) IS 'Compare variable precision dates by precision *only*';
+
+
+--
+-- Name: ~^; Type: OPERATOR; Schema: public; Owner: -
+--
+
+CREATE OPERATOR public.~^ (
+    FUNCTION = public.vpdate_value,
+    RIGHTARG = public.variable_precision_date
+);
+
+
+--
+-- Name: OPERATOR ~^ (NONE, public.variable_precision_date); Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON OPERATOR public.~^ (NONE, public.variable_precision_date) IS 'Extract the normalized date from a variable precision date';
+
+
+--
+-- Name: CAST (date AS public.variable_precision_date); Type: CAST; Schema: -; Owner: -
+--
+
+CREATE CAST (date AS public.variable_precision_date) WITH FUNCTION public.variable_precision(date) AS ASSIGNMENT;
+
+
+--
+-- Name: CAST (public.variable_precision_date AS date); Type: CAST; Schema: -; Owner: -
+--
+
+CREATE CAST (public.variable_precision_date AS date) WITH FUNCTION public.vpdate_value(public.variable_precision_date) AS ASSIGNMENT;
+
+
+--
+-- Name: CAST (public.variable_precision_date AS daterange); Type: CAST; Schema: -; Owner: -
+--
+
+CREATE CAST (public.variable_precision_date AS daterange) WITH FUNCTION public.variable_daterange(public.variable_precision_date) AS ASSIGNMENT;
 
 
 SET default_tablespace = '';
@@ -733,28 +2623,11 @@ CREATE TABLE public.collections (
     thumbnail_data jsonb,
     properties jsonb,
     published_on date,
-    visible_after_at timestamp with time zone,
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     auth_path public.ltree NOT NULL,
     hierarchical_depth integer GENERATED ALWAYS AS (public.nlevel(auth_path)) STORED,
     schema_version_id uuid NOT NULL,
-    visible_until_at timestamp with time zone,
-    hidden_at timestamp with time zone,
-    visibility public.entity_visibility DEFAULT 'visible'::public.entity_visibility NOT NULL,
-    visibility_range tstzrange GENERATED ALWAYS AS (public.calculate_visibility_range(visibility, visible_after_at, visible_until_at)) STORED,
-    published public.variable_precision_date DEFAULT '(,none)'::public.variable_precision_date,
-    published_range daterange GENERATED ALWAYS AS (public.variable_daterange(published)) STORED,
-    published_precision public.date_precision GENERATED ALWAYS AS (public.variable_precision_for(published)) STORED,
-    accessioned public.variable_precision_date DEFAULT '(,none)'::public.variable_precision_date,
-    accessioned_range daterange GENERATED ALWAYS AS (public.variable_daterange(accessioned)) STORED,
-    accessioned_precision public.date_precision GENERATED ALWAYS AS (public.variable_precision_for(accessioned)) STORED,
-    available public.variable_precision_date DEFAULT '(,none)'::public.variable_precision_date,
-    available_range daterange GENERATED ALWAYS AS (public.variable_daterange(available)) STORED,
-    available_precision public.date_precision GENERATED ALWAYS AS (public.variable_precision_for(available)) STORED,
-    issued public.variable_precision_date DEFAULT '(,none)'::public.variable_precision_date,
-    issued_range daterange GENERATED ALWAYS AS (public.variable_daterange(issued)) STORED,
-    issued_precision public.date_precision GENERATED ALWAYS AS (public.variable_precision_for(issued)) STORED,
     hero_image_data jsonb,
     subtitle text,
     issn text
@@ -980,8 +2853,45 @@ CREATE TABLE public.entities (
     schema_version_id uuid NOT NULL,
     link_operator public.link_operator,
     title public.citext DEFAULT ''::public.citext NOT NULL,
-    properties jsonb DEFAULT '{}'::jsonb NOT NULL
+    properties jsonb DEFAULT '{}'::jsonb NOT NULL,
+    stale_at timestamp without time zone,
+    refreshed_at timestamp without time zone,
+    stale boolean GENERATED ALWAYS AS (((stale_at IS NOT NULL) AND ((refreshed_at IS NULL) OR (refreshed_at < stale_at)))) STORED NOT NULL
 );
+
+
+--
+-- Name: schema_version_ancestors; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.schema_version_ancestors (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    schema_version_id uuid NOT NULL,
+    target_version_id uuid NOT NULL,
+    name text NOT NULL,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+--
+-- Name: entity_ancestors; Type: VIEW; Schema: public; Owner: -
+--
+
+CREATE VIEW public.entity_ancestors AS
+ SELECT DISTINCT ON (sva.name, ent.entity_id) ent.entity_type,
+    ent.entity_id,
+    sva.name,
+    anc.entity_type AS ancestor_type,
+    anc.entity_id AS ancestor_id,
+    anc.schema_version_id AS ancestor_schema_version_id,
+    ent.depth AS origin_depth,
+    anc.depth AS ancestor_depth,
+    (ent.depth - anc.depth) AS relative_depth
+   FROM ((public.entities ent
+     JOIN public.schema_version_ancestors sva USING (schema_version_id))
+     JOIN public.entities anc ON (((ent.auth_path OPERATOR(public.<@) anc.auth_path) AND (anc.entity_id <> ent.entity_id) AND (anc.schema_version_id = sva.target_version_id))))
+  ORDER BY sva.name, ent.entity_id, anc.depth DESC;
 
 
 --
@@ -1025,6 +2935,82 @@ CREATE TABLE public.entity_links (
     system_slug public.citext NOT NULL,
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+--
+-- Name: entity_orderable_properties; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.entity_orderable_properties (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    entity_type text NOT NULL,
+    entity_id uuid NOT NULL,
+    schema_version_property_id uuid NOT NULL,
+    type public.schema_property_type NOT NULL,
+    path text NOT NULL,
+    fixed_position bigint,
+    raw_value jsonb,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    boolean_value boolean GENERATED ALWAYS AS (
+CASE
+    WHEN (type = 'boolean'::public.schema_property_type) THEN public.jsonb_to_boolean(raw_value)
+    ELSE NULL::boolean
+END) STORED,
+    date_value date GENERATED ALWAYS AS (
+CASE
+    WHEN (type = 'date'::public.schema_property_type) THEN public.jsonb_to_date(raw_value)
+    ELSE NULL::date
+END) STORED,
+    email_value public.citext GENERATED ALWAYS AS (
+CASE
+    WHEN (type = 'email'::public.schema_property_type) THEN public.jsonb_to_citext(raw_value)
+    ELSE NULL::public.citext
+END) STORED,
+    float_value numeric GENERATED ALWAYS AS (
+CASE
+    WHEN (type = 'float'::public.schema_property_type) THEN public.jsonb_to_numeric(raw_value)
+    ELSE NULL::numeric
+END) STORED,
+    integer_value bigint GENERATED ALWAYS AS (
+CASE
+    WHEN (type = 'integer'::public.schema_property_type) THEN public.jsonb_to_bigint(raw_value)
+    ELSE NULL::bigint
+END) STORED,
+    string_value text GENERATED ALWAYS AS (
+CASE
+    WHEN (type = 'string'::public.schema_property_type) THEN public.jsonb_to_text(raw_value)
+    ELSE NULL::text
+END) STORED,
+    timestamp_value timestamp with time zone GENERATED ALWAYS AS (
+CASE
+    WHEN (type = 'timestamp'::public.schema_property_type) THEN public.jsonb_to_timestamptz(raw_value)
+    ELSE NULL::timestamp with time zone
+END) STORED,
+    variable_date_value public.variable_precision_date GENERATED ALWAYS AS (
+CASE
+    WHEN (type = 'variable_date'::public.schema_property_type) THEN public.jsonb_to_variable_precision_date(raw_value)
+    ELSE NULL::public.variable_precision_date
+END) STORED
+);
+
+
+--
+-- Name: entity_visibilities; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.entity_visibilities (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    entity_type text NOT NULL,
+    entity_id uuid NOT NULL,
+    visible_after_at timestamp with time zone,
+    visible_until_at timestamp with time zone,
+    hidden_at timestamp with time zone,
+    visibility public.entity_visibility DEFAULT 'visible'::public.entity_visibility NOT NULL,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    visibility_range tstzrange GENERATED ALWAYS AS (public.calculate_visibility_range(visibility, visible_after_at, visible_until_at)) STORED
 );
 
 
@@ -1232,16 +3218,25 @@ CREATE TABLE public.schema_versions (
     id uuid DEFAULT gen_random_uuid() NOT NULL,
     schema_definition_id uuid NOT NULL,
     current boolean DEFAULT false NOT NULL,
-    system_slug public.citext NOT NULL,
     configuration jsonb DEFAULT '{}'::jsonb NOT NULL,
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    number public.semantic_version NOT NULL,
     "position" integer,
-    parsed public.parsed_semver GENERATED ALWAYS AS (public.parse_semver((number)::text)) STORED,
     collected_reference_paths text[] DEFAULT '{}'::text[] NOT NULL,
     scalar_reference_paths text[] DEFAULT '{}'::text[] NOT NULL,
-    text_reference_paths text[] DEFAULT '{}'::text[] NOT NULL
+    text_reference_paths text[] DEFAULT '{}'::text[] NOT NULL,
+    name text GENERATED ALWAYS AS ((configuration ->> 'name'::text)) STORED NOT NULL,
+    kind public.schema_kind GENERATED ALWAYS AS (public.to_schema_kind((configuration ->> 'kind'::text))) STORED NOT NULL,
+    number public.semantic_version GENERATED ALWAYS AS ((configuration ->> 'version'::text)) STORED NOT NULL,
+    namespace text GENERATED ALWAYS AS ((configuration ->> 'namespace'::text)) STORED NOT NULL,
+    identifier text GENERATED ALWAYS AS ((configuration ->> 'identifier'::text)) STORED NOT NULL,
+    declaration text GENERATED ALWAYS AS ((((((configuration ->> 'namespace'::text) || ':'::text) || (configuration ->> 'identifier'::text)) || ':'::text) || (configuration ->> 'version'::text))) STORED NOT NULL,
+    parsed public.parsed_semver GENERATED ALWAYS AS (public.parse_semver((configuration ->> 'version'::text))) STORED NOT NULL,
+    CONSTRAINT configuration_has_identifier CHECK (((configuration ? 'identifier'::text) AND (jsonb_typeof((configuration -> 'identifier'::text)) = 'string'::text))),
+    CONSTRAINT configuration_has_name CHECK (((configuration ? 'name'::text) AND (jsonb_typeof((configuration -> 'name'::text)) = 'string'::text))),
+    CONSTRAINT configuration_has_namespace CHECK (((configuration ? 'namespace'::text) AND (jsonb_typeof((configuration -> 'namespace'::text)) = 'string'::text))),
+    CONSTRAINT configuration_is_valid_kind CHECK (((configuration ? 'kind'::text) AND ((configuration ->> 'kind'::text) = ANY ((enum_range(NULL::public.schema_kind))::text[])))),
+    CONSTRAINT configured_version_is_semantic CHECK (public.is_valid_semver((configuration -> 'version'::text)))
 );
 
 
@@ -1297,28 +3292,11 @@ CREATE TABLE public.items (
     thumbnail_data jsonb,
     properties jsonb,
     published_on date,
-    visible_after_at timestamp with time zone,
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     auth_path public.ltree NOT NULL,
     hierarchical_depth integer GENERATED ALWAYS AS (public.nlevel(auth_path)) STORED,
     schema_version_id uuid NOT NULL,
-    visible_until_at timestamp with time zone,
-    hidden_at timestamp with time zone,
-    visibility public.entity_visibility DEFAULT 'visible'::public.entity_visibility NOT NULL,
-    visibility_range tstzrange GENERATED ALWAYS AS (public.calculate_visibility_range(visibility, visible_after_at, visible_until_at)) STORED,
-    published public.variable_precision_date DEFAULT '(,none)'::public.variable_precision_date,
-    published_range daterange GENERATED ALWAYS AS (public.variable_daterange(published)) STORED,
-    published_precision public.date_precision GENERATED ALWAYS AS (public.variable_precision_for(published)) STORED,
-    accessioned public.variable_precision_date DEFAULT '(,none)'::public.variable_precision_date,
-    accessioned_range daterange GENERATED ALWAYS AS (public.variable_daterange(accessioned)) STORED,
-    accessioned_precision public.date_precision GENERATED ALWAYS AS (public.variable_precision_for(accessioned)) STORED,
-    available public.variable_precision_date DEFAULT '(,none)'::public.variable_precision_date,
-    available_range daterange GENERATED ALWAYS AS (public.variable_daterange(available)) STORED,
-    available_precision public.date_precision GENERATED ALWAYS AS (public.variable_precision_for(available)) STORED,
-    issued public.variable_precision_date DEFAULT '(,none)'::public.variable_precision_date,
-    issued_range daterange GENERATED ALWAYS AS (public.variable_daterange(issued)) STORED,
-    issued_precision public.date_precision GENERATED ALWAYS AS (public.variable_precision_for(issued)) STORED,
     hero_image_data jsonb,
     subtitle text,
     issn text
@@ -1439,6 +3417,31 @@ CREATE VIEW public.link_target_candidates AS
 
 
 --
+-- Name: named_variable_dates; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.named_variable_dates (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    entity_type text NOT NULL,
+    entity_id uuid NOT NULL,
+    schema_version_property_id uuid,
+    path text NOT NULL,
+    actual public.variable_precision_date DEFAULT '(,none)'::public.variable_precision_date NOT NULL,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    actual_precision public.date_precision GENERATED ALWAYS AS ((OPERATOR(public.~>) actual)) STORED NOT NULL,
+    "precision" public.date_precision GENERATED ALWAYS AS (
+CASE
+    WHEN (OPERATOR(public.?^) actual) THEN (OPERATOR(public.~>) actual)
+    ELSE NULL::public.date_precision
+END) STORED,
+    coverage daterange GENERATED ALWAYS AS ((OPERATOR(public.@&) actual)) STORED,
+    normalized public.variable_precision_date GENERATED ALWAYS AS ((OPERATOR(public.#) actual)) STORED,
+    value date GENERATED ALWAYS AS ((OPERATOR(public.~^) actual)) STORED
+);
+
+
+--
 -- Name: ordering_entries; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -1453,7 +3456,8 @@ CREATE TABLE public.ordering_entries (
     scope public.ltree NOT NULL,
     relative_depth integer NOT NULL,
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    inverse_position bigint NOT NULL
 )
 PARTITION BY HASH (ordering_id);
 
@@ -1473,7 +3477,8 @@ CREATE TABLE public.ordering_entries_part_1 (
     scope public.ltree NOT NULL,
     relative_depth integer NOT NULL,
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    inverse_position bigint NOT NULL
 );
 ALTER TABLE ONLY public.ordering_entries ATTACH PARTITION public.ordering_entries_part_1 FOR VALUES WITH (modulus 8, remainder 0);
 
@@ -1493,7 +3498,8 @@ CREATE TABLE public.ordering_entries_part_2 (
     scope public.ltree NOT NULL,
     relative_depth integer NOT NULL,
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    inverse_position bigint NOT NULL
 );
 ALTER TABLE ONLY public.ordering_entries ATTACH PARTITION public.ordering_entries_part_2 FOR VALUES WITH (modulus 8, remainder 1);
 
@@ -1513,7 +3519,8 @@ CREATE TABLE public.ordering_entries_part_3 (
     scope public.ltree NOT NULL,
     relative_depth integer NOT NULL,
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    inverse_position bigint NOT NULL
 );
 ALTER TABLE ONLY public.ordering_entries ATTACH PARTITION public.ordering_entries_part_3 FOR VALUES WITH (modulus 8, remainder 2);
 
@@ -1533,7 +3540,8 @@ CREATE TABLE public.ordering_entries_part_4 (
     scope public.ltree NOT NULL,
     relative_depth integer NOT NULL,
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    inverse_position bigint NOT NULL
 );
 ALTER TABLE ONLY public.ordering_entries ATTACH PARTITION public.ordering_entries_part_4 FOR VALUES WITH (modulus 8, remainder 3);
 
@@ -1553,7 +3561,8 @@ CREATE TABLE public.ordering_entries_part_5 (
     scope public.ltree NOT NULL,
     relative_depth integer NOT NULL,
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    inverse_position bigint NOT NULL
 );
 ALTER TABLE ONLY public.ordering_entries ATTACH PARTITION public.ordering_entries_part_5 FOR VALUES WITH (modulus 8, remainder 4);
 
@@ -1573,7 +3582,8 @@ CREATE TABLE public.ordering_entries_part_6 (
     scope public.ltree NOT NULL,
     relative_depth integer NOT NULL,
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    inverse_position bigint NOT NULL
 );
 ALTER TABLE ONLY public.ordering_entries ATTACH PARTITION public.ordering_entries_part_6 FOR VALUES WITH (modulus 8, remainder 5);
 
@@ -1593,7 +3603,8 @@ CREATE TABLE public.ordering_entries_part_7 (
     scope public.ltree NOT NULL,
     relative_depth integer NOT NULL,
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    inverse_position bigint NOT NULL
 );
 ALTER TABLE ONLY public.ordering_entries ATTACH PARTITION public.ordering_entries_part_7 FOR VALUES WITH (modulus 8, remainder 6);
 
@@ -1613,7 +3624,8 @@ CREATE TABLE public.ordering_entries_part_8 (
     scope public.ltree NOT NULL,
     relative_depth integer NOT NULL,
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    inverse_position bigint NOT NULL
 );
 ALTER TABLE ONLY public.ordering_entries ATTACH PARTITION public.ordering_entries_part_8 FOR VALUES WITH (modulus 8, remainder 7);
 
@@ -1626,11 +3638,11 @@ CREATE TABLE public.schema_definitions (
     id uuid DEFAULT gen_random_uuid() NOT NULL,
     name public.citext NOT NULL,
     identifier public.citext NOT NULL,
-    system_slug public.citext NOT NULL,
     kind public.schema_kind NOT NULL,
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    namespace public.citext NOT NULL
+    namespace public.citext NOT NULL,
+    declaration text GENERATED ALWAYS AS ((((namespace)::text || ':'::text) || (identifier)::text)) STORED NOT NULL
 );
 
 
@@ -1648,40 +3660,20 @@ CREATE VIEW public.ordering_entry_candidates AS
     ent.schema_version_id,
     ent.link_operator,
     ent.depth AS entity_depth,
-    sv.number AS schema_number,
-    sv.parsed AS schema_parsed_number,
-    sv.system_slug AS schema_slug,
-    sd.kind AS schema_consumer,
-    sd.identifier AS schema_identifier,
-    sd.namespace AS schema_namespace,
-    sd.name AS schema_name,
+    ent.title AS entity_title,
     ent.created_at AS entity_created_at,
     ent.updated_at AS entity_updated_at,
-    src.title AS entity_title,
-    src.published_on AS entity_published_on,
-    src.properties AS entity_properties
-   FROM ((((((public.entities ent
+    ent.properties AS entity_properties,
+    sv.namespace AS schema_namespace,
+    sv.identifier AS schema_identifier,
+    sv.kind AS schema_kind,
+    sv.number AS schema_number,
+    sv.parsed AS schema_parsed_number,
+    sv.declaration AS schema_version_slug,
+    sd.name AS schema_name
+   FROM ((public.entities ent
      JOIN public.schema_versions sv ON ((sv.id = ent.schema_version_id)))
-     JOIN public.schema_definitions sd ON ((sd.id = sv.schema_definition_id)))
-     LEFT JOIN public.entity_links link ON (((ent.entity_type = 'EntityLink'::text) AND (ent.entity_id = link.id))))
-     LEFT JOIN public.collections collection ON (((ent.hierarchical_type = 'Collection'::text) AND (ent.hierarchical_id = collection.id))))
-     LEFT JOIN public.items item ON (((ent.hierarchical_type = 'Item'::text) AND (ent.hierarchical_id = item.id))))
-     LEFT JOIN LATERAL ( SELECT
-                CASE ent.hierarchical_type
-                    WHEN 'Collection'::text THEN collection.title
-                    WHEN 'Item'::text THEN item.title
-                    ELSE NULL::public.citext
-                END AS title,
-                CASE ent.hierarchical_type
-                    WHEN 'Collection'::text THEN collection.published_on
-                    WHEN 'Item'::text THEN item.published_on
-                    ELSE NULL::date
-                END AS published_on,
-                CASE ent.hierarchical_type
-                    WHEN 'Collection'::text THEN collection.properties
-                    WHEN 'Item'::text THEN item.properties
-                    ELSE NULL::jsonb
-                END AS properties) src ON (true));
+     JOIN public.schema_definitions sd ON ((sd.id = sv.schema_definition_id)));
 
 
 --
@@ -1701,7 +3693,10 @@ CREATE TABLE public.orderings (
     definition jsonb DEFAULT '{}'::jsonb NOT NULL,
     disabled_at timestamp without time zone,
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    stale_at timestamp without time zone,
+    refreshed_at timestamp without time zone,
+    stale boolean GENERATED ALWAYS AS (((stale_at IS NOT NULL) AND ((refreshed_at IS NULL) OR (refreshed_at < stale_at)))) STORED NOT NULL
 );
 
 
@@ -1781,6 +3776,92 @@ CREATE TABLE public.roles (
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     allowed_actions public.ltree[] DEFAULT '{}'::public.ltree[] NOT NULL
 );
+
+
+--
+-- Name: schema_version_properties; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.schema_version_properties (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    schema_version_id uuid NOT NULL,
+    schema_definition_id uuid NOT NULL,
+    "position" integer NOT NULL,
+    "array" boolean DEFAULT false NOT NULL,
+    nested boolean DEFAULT false NOT NULL,
+    orderable boolean DEFAULT false NOT NULL,
+    required boolean DEFAULT false NOT NULL,
+    kind public.schema_property_kind DEFAULT 'simple'::public.schema_property_kind NOT NULL,
+    type public.schema_property_type DEFAULT 'unknown'::public.schema_property_type NOT NULL,
+    path text NOT NULL,
+    label text NOT NULL,
+    extract_path text[] NOT NULL,
+    metadata jsonb DEFAULT '{}'::jsonb NOT NULL,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    default_value jsonb GENERATED ALWAYS AS ((metadata -> 'default'::text)) STORED,
+    function public.schema_property_function DEFAULT 'unspecified'::public.schema_property_function NOT NULL
+);
+
+
+--
+-- Name: schema_definition_properties; Type: MATERIALIZED VIEW; Schema: public; Owner: -
+--
+
+CREATE MATERIALIZED VIEW public.schema_definition_properties AS
+ WITH aggregated_versions AS (
+         SELECT svp.schema_definition_id,
+            svp.path,
+            svp.type,
+            bool_or(sv.current) AS current,
+            jsonb_agg(jsonb_build_object('id', sv.id, 'number', sv.number, 'slug', sv.declaration) ORDER BY sv."position" DESC) AS versions,
+            count(DISTINCT svp.schema_version_id) AS version_count,
+            array_agg(DISTINCT svp.schema_version_id) AS covered_version_ids,
+            min(svp.created_at) AS created_at,
+            max(svp.updated_at) AS updated_at
+           FROM (public.schema_version_properties svp
+             JOIN public.schema_versions sv ON (((sv.id = svp.schema_version_id) AND (sv.schema_definition_id = svp.schema_definition_id))))
+          GROUP BY svp.schema_definition_id, svp.path, svp.type
+        ), defining_properties AS (
+         SELECT DISTINCT ON (sv.schema_definition_id, svp.path, svp.type) sv.schema_definition_id,
+            svp.path,
+            svp.type,
+            svp.kind,
+            svp.label,
+            svp.function,
+            svp."array",
+            svp.nested,
+            svp.orderable,
+            svp.required,
+            svp.extract_path,
+            svp.metadata,
+            svp.default_value
+           FROM (public.schema_version_properties svp
+             JOIN public.schema_versions sv ON (((sv.id = svp.schema_version_id) AND (sv.schema_definition_id = svp.schema_definition_id))))
+          ORDER BY sv.schema_definition_id, svp.path, svp.type, sv.parsed DESC
+        )
+ SELECT dp.schema_definition_id,
+    dp.path,
+    dp.type,
+    dp.kind,
+    dp.label,
+    dp.function,
+    dp."array",
+    dp.nested,
+    dp.orderable,
+    dp.required,
+    dp.extract_path,
+    dp.metadata,
+    dp.default_value,
+    av.current,
+    av.versions,
+    av.covered_version_ids,
+    av.version_count,
+    av.created_at,
+    av.updated_at
+   FROM (aggregated_versions av
+     JOIN defining_properties dp USING (schema_definition_id, path, type))
+  WITH NO DATA;
 
 
 --
@@ -1998,6 +4079,22 @@ ALTER TABLE ONLY public.entity_links
 
 
 --
+-- Name: entity_orderable_properties entity_orderable_properties_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.entity_orderable_properties
+    ADD CONSTRAINT entity_orderable_properties_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: entity_visibilities entity_visibilities_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.entity_visibilities
+    ADD CONSTRAINT entity_visibilities_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: global_configurations global_configurations_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2099,6 +4196,14 @@ ALTER TABLE ONLY public.item_links
 
 ALTER TABLE ONLY public.items
     ADD CONSTRAINT items_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: named_variable_dates named_variable_dates_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.named_variable_dates
+    ADD CONSTRAINT named_variable_dates_pkey PRIMARY KEY (id);
 
 
 --
@@ -2214,6 +4319,14 @@ ALTER TABLE ONLY public.roles
 
 
 --
+-- Name: schema_definitions schema_definitions_declaration_key; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.schema_definitions
+    ADD CONSTRAINT schema_definitions_declaration_key UNIQUE (declaration);
+
+
+--
 -- Name: schema_definitions schema_definitions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2227,6 +4340,22 @@ ALTER TABLE ONLY public.schema_definitions
 
 ALTER TABLE ONLY public.schema_migrations
     ADD CONSTRAINT schema_migrations_pkey PRIMARY KEY (version);
+
+
+--
+-- Name: schema_version_ancestors schema_version_ancestors_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.schema_version_ancestors
+    ADD CONSTRAINT schema_version_ancestors_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: schema_version_properties schema_version_properties_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.schema_version_properties
+    ADD CONSTRAINT schema_version_properties_pkey PRIMARY KEY (id);
 
 
 --
@@ -2643,94 +4772,10 @@ CREATE UNIQUE INDEX index_collection_links_uniqueness ON public.collection_links
 
 
 --
--- Name: index_collections_accessioned_sort_asc; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_collections_accessioned_sort_asc ON public.collections USING btree (((accessioned).value));
-
-
---
--- Name: index_collections_accessioned_sort_desc; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_collections_accessioned_sort_desc ON public.collections USING btree (((accessioned).value) DESC NULLS LAST);
-
-
---
--- Name: index_collections_available_sort_asc; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_collections_available_sort_asc ON public.collections USING btree (((available).value));
-
-
---
--- Name: index_collections_available_sort_desc; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_collections_available_sort_desc ON public.collections USING btree (((available).value) DESC NULLS LAST);
-
-
---
--- Name: index_collections_issued_sort_asc; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_collections_issued_sort_asc ON public.collections USING btree (((issued).value));
-
-
---
--- Name: index_collections_issued_sort_desc; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_collections_issued_sort_desc ON public.collections USING btree (((issued).value) DESC NULLS LAST);
-
-
---
--- Name: index_collections_on_accessioned; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_collections_on_accessioned ON public.collections USING btree (accessioned);
-
-
---
--- Name: index_collections_on_accessioned_precision; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_collections_on_accessioned_precision ON public.collections USING btree (accessioned_precision);
-
-
---
--- Name: index_collections_on_accessioned_range; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_collections_on_accessioned_range ON public.collections USING gist (accessioned_range);
-
-
---
 -- Name: index_collections_on_auth_path; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_collections_on_auth_path ON public.collections USING gist (auth_path);
-
-
---
--- Name: index_collections_on_available; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_collections_on_available ON public.collections USING btree (available);
-
-
---
--- Name: index_collections_on_available_precision; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_collections_on_available_precision ON public.collections USING btree (available_precision);
-
-
---
--- Name: index_collections_on_available_range; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_collections_on_available_range ON public.collections USING gist (available_range);
 
 
 --
@@ -2755,27 +4800,6 @@ CREATE INDEX index_collections_on_issn ON public.collections USING btree (issn);
 
 
 --
--- Name: index_collections_on_issued; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_collections_on_issued ON public.collections USING btree (issued);
-
-
---
--- Name: index_collections_on_issued_precision; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_collections_on_issued_precision ON public.collections USING btree (issued_precision);
-
-
---
--- Name: index_collections_on_issued_range; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_collections_on_issued_range ON public.collections USING gist (issued_range);
-
-
---
 -- Name: index_collections_on_parent_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -2790,31 +4814,10 @@ CREATE INDEX index_collections_on_properties ON public.collections USING gin (pr
 
 
 --
--- Name: index_collections_on_published; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_collections_on_published ON public.collections USING btree (published);
-
-
---
 -- Name: index_collections_on_published_on; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_collections_on_published_on ON public.collections USING btree (published_on);
-
-
---
--- Name: index_collections_on_published_precision; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_collections_on_published_precision ON public.collections USING btree (published_precision);
-
-
---
--- Name: index_collections_on_published_range; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_collections_on_published_range ON public.collections USING gist (published_range);
 
 
 --
@@ -2839,27 +4842,6 @@ CREATE UNIQUE INDEX index_collections_on_system_slug ON public.collections USING
 
 
 --
--- Name: index_collections_on_visible_after_at; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_collections_on_visible_after_at ON public.collections USING btree (visible_after_at);
-
-
---
--- Name: index_collections_published_sort_asc; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_collections_published_sort_asc ON public.collections USING btree (((published).value));
-
-
---
--- Name: index_collections_published_sort_desc; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_collections_published_sort_desc ON public.collections USING btree (((published).value) DESC NULLS LAST);
-
-
---
 -- Name: index_collections_related_by_schema; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -2871,13 +4853,6 @@ CREATE INDEX index_collections_related_by_schema ON public.collections USING btr
 --
 
 CREATE UNIQUE INDEX index_collections_unique_identifier ON public.collections USING btree (identifier, community_id, parent_id);
-
-
---
--- Name: index_collections_visibility_coverage; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_collections_visibility_coverage ON public.collections USING gist (visibility, visibility_range);
 
 
 --
@@ -3000,6 +4975,13 @@ CREATE INDEX index_entities_crumb_target ON public.entities USING btree (auth_pa
 
 
 --
+-- Name: index_entities_for_named_ancestor_lookup; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_entities_for_named_ancestor_lookup ON public.entities USING btree (depth DESC, schema_version_id, entity_id) INCLUDE (entity_type, auth_path);
+
+
+--
 -- Name: index_entities_hierarchical_permission_matching; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -3074,6 +5056,13 @@ CREATE INDEX index_entities_on_title ON public.entities USING btree (title);
 --
 
 CREATE INDEX index_entities_permissions_calculation ON public.entities USING gist (hierarchical_type, hierarchical_id, auth_path, scope);
+
+
+--
+-- Name: index_entities_staleness; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_entities_staleness ON public.entities USING btree (stale);
 
 
 --
@@ -3179,6 +5168,169 @@ CREATE INDEX index_entity_links_related_items ON public.entity_links USING btree
 --
 
 CREATE UNIQUE INDEX index_entity_links_uniqueness ON public.entity_links USING btree (source_type, source_id, target_type, target_id);
+
+
+--
+-- Name: index_entity_orderable_properties_on_entity; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_entity_orderable_properties_on_entity ON public.entity_orderable_properties USING btree (entity_type, entity_id);
+
+
+--
+-- Name: index_entity_orderable_properties_on_schema_version_property_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_entity_orderable_properties_on_schema_version_property_id ON public.entity_orderable_properties USING btree (schema_version_property_id);
+
+
+--
+-- Name: index_entity_visibilities_on_entity; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_entity_visibilities_on_entity ON public.entity_visibilities USING btree (entity_type, entity_id);
+
+
+--
+-- Name: index_entity_visibilities_visibility_coverage; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_entity_visibilities_visibility_coverage ON public.entity_visibilities USING gist (visibility, visibility_range, entity_type, entity_id);
+
+ALTER TABLE public.entity_visibilities CLUSTER ON index_entity_visibilities_visibility_coverage;
+
+
+--
+-- Name: index_eop_boolean; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_eop_boolean ON public.entity_orderable_properties USING btree (entity_type, entity_id, path, boolean_value) WHERE (type = 'boolean'::public.schema_property_type);
+
+
+--
+-- Name: index_eop_boolean_inverted; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_eop_boolean_inverted ON public.entity_orderable_properties USING btree (entity_type, entity_id, path, boolean_value DESC NULLS LAST) WHERE (type = 'boolean'::public.schema_property_type);
+
+
+--
+-- Name: index_eop_date; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_eop_date ON public.entity_orderable_properties USING btree (entity_type, entity_id, path, date_value) WHERE (type = 'date'::public.schema_property_type);
+
+
+--
+-- Name: index_eop_date_inverted; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_eop_date_inverted ON public.entity_orderable_properties USING btree (entity_type, entity_id, path, date_value DESC NULLS LAST) WHERE (type = 'date'::public.schema_property_type);
+
+
+--
+-- Name: index_eop_email; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_eop_email ON public.entity_orderable_properties USING btree (entity_type, entity_id, path, email_value) WHERE (type = 'email'::public.schema_property_type);
+
+
+--
+-- Name: index_eop_email_inverted; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_eop_email_inverted ON public.entity_orderable_properties USING btree (entity_type, entity_id, path, email_value DESC NULLS LAST) WHERE (type = 'email'::public.schema_property_type);
+
+
+--
+-- Name: index_eop_fixed_position; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_eop_fixed_position ON public.entity_orderable_properties USING btree (entity_type, entity_id, path, fixed_position);
+
+
+--
+-- Name: index_eop_fixed_position_inverted; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_eop_fixed_position_inverted ON public.entity_orderable_properties USING btree (entity_type, entity_id, path, fixed_position DESC NULLS LAST);
+
+
+--
+-- Name: index_eop_float; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_eop_float ON public.entity_orderable_properties USING btree (entity_type, entity_id, path, float_value) WHERE (type = 'float'::public.schema_property_type);
+
+
+--
+-- Name: index_eop_float_inverted; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_eop_float_inverted ON public.entity_orderable_properties USING btree (entity_type, entity_id, path, float_value DESC NULLS LAST) WHERE (type = 'float'::public.schema_property_type);
+
+
+--
+-- Name: index_eop_integer; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_eop_integer ON public.entity_orderable_properties USING btree (entity_type, entity_id, path, integer_value) WHERE (type = 'integer'::public.schema_property_type);
+
+
+--
+-- Name: index_eop_integer_inverted; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_eop_integer_inverted ON public.entity_orderable_properties USING btree (entity_type, entity_id, path, integer_value DESC NULLS LAST) WHERE (type = 'integer'::public.schema_property_type);
+
+
+--
+-- Name: index_eop_string; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_eop_string ON public.entity_orderable_properties USING btree (entity_type, entity_id, path, string_value) WHERE (type = 'string'::public.schema_property_type);
+
+
+--
+-- Name: index_eop_string_inverted; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_eop_string_inverted ON public.entity_orderable_properties USING btree (entity_type, entity_id, path, string_value DESC NULLS LAST) WHERE (type = 'string'::public.schema_property_type);
+
+
+--
+-- Name: index_eop_timestamp; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_eop_timestamp ON public.entity_orderable_properties USING btree (entity_type, entity_id, path, timestamp_value) WHERE (type = 'timestamp'::public.schema_property_type);
+
+
+--
+-- Name: index_eop_timestamp_inverted; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_eop_timestamp_inverted ON public.entity_orderable_properties USING btree (entity_type, entity_id, path, timestamp_value DESC NULLS LAST) WHERE (type = 'timestamp'::public.schema_property_type);
+
+
+--
+-- Name: index_eop_uniqueness; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_eop_uniqueness ON public.entity_orderable_properties USING btree (entity_type, entity_id, path);
+
+
+--
+-- Name: index_eop_variable_date; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_eop_variable_date ON public.entity_orderable_properties USING btree (entity_type, entity_id, path, variable_date_value) WHERE (type = 'variable_date'::public.schema_property_type);
+
+
+--
+-- Name: index_eop_variable_date_inverted; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_eop_variable_date_inverted ON public.entity_orderable_properties USING btree (entity_type, entity_id, path, variable_date_value DESC NULLS LAST) WHERE (type = 'variable_date'::public.schema_property_type);
 
 
 --
@@ -3497,94 +5649,10 @@ CREATE UNIQUE INDEX index_item_links_uniqueness ON public.item_links USING btree
 
 
 --
--- Name: index_items_accessioned_sort_asc; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_items_accessioned_sort_asc ON public.items USING btree (((accessioned).value));
-
-
---
--- Name: index_items_accessioned_sort_desc; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_items_accessioned_sort_desc ON public.items USING btree (((accessioned).value) DESC NULLS LAST);
-
-
---
--- Name: index_items_available_sort_asc; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_items_available_sort_asc ON public.items USING btree (((available).value));
-
-
---
--- Name: index_items_available_sort_desc; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_items_available_sort_desc ON public.items USING btree (((available).value) DESC NULLS LAST);
-
-
---
--- Name: index_items_issued_sort_asc; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_items_issued_sort_asc ON public.items USING btree (((issued).value));
-
-
---
--- Name: index_items_issued_sort_desc; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_items_issued_sort_desc ON public.items USING btree (((issued).value) DESC NULLS LAST);
-
-
---
--- Name: index_items_on_accessioned; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_items_on_accessioned ON public.items USING btree (accessioned);
-
-
---
--- Name: index_items_on_accessioned_precision; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_items_on_accessioned_precision ON public.items USING btree (accessioned_precision);
-
-
---
--- Name: index_items_on_accessioned_range; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_items_on_accessioned_range ON public.items USING gist (accessioned_range);
-
-
---
 -- Name: index_items_on_auth_path; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_items_on_auth_path ON public.items USING gist (auth_path);
-
-
---
--- Name: index_items_on_available; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_items_on_available ON public.items USING btree (available);
-
-
---
--- Name: index_items_on_available_precision; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_items_on_available_precision ON public.items USING btree (available_precision);
-
-
---
--- Name: index_items_on_available_range; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_items_on_available_range ON public.items USING gist (available_range);
 
 
 --
@@ -3609,27 +5677,6 @@ CREATE INDEX index_items_on_issn ON public.items USING btree (issn);
 
 
 --
--- Name: index_items_on_issued; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_items_on_issued ON public.items USING btree (issued);
-
-
---
--- Name: index_items_on_issued_precision; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_items_on_issued_precision ON public.items USING btree (issued_precision);
-
-
---
--- Name: index_items_on_issued_range; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_items_on_issued_range ON public.items USING gist (issued_range);
-
-
---
 -- Name: index_items_on_parent_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -3644,31 +5691,10 @@ CREATE INDEX index_items_on_properties ON public.items USING gin (properties);
 
 
 --
--- Name: index_items_on_published; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_items_on_published ON public.items USING btree (published);
-
-
---
 -- Name: index_items_on_published_on; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_items_on_published_on ON public.items USING btree (published_on);
-
-
---
--- Name: index_items_on_published_precision; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_items_on_published_precision ON public.items USING btree (published_precision);
-
-
---
--- Name: index_items_on_published_range; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_items_on_published_range ON public.items USING gist (published_range);
 
 
 --
@@ -3693,27 +5719,6 @@ CREATE UNIQUE INDEX index_items_on_system_slug ON public.items USING btree (syst
 
 
 --
--- Name: index_items_on_visible_after_at; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_items_on_visible_after_at ON public.items USING btree (visible_after_at);
-
-
---
--- Name: index_items_published_sort_asc; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_items_published_sort_asc ON public.items USING btree (((published).value));
-
-
---
--- Name: index_items_published_sort_desc; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_items_published_sort_desc ON public.items USING btree (((published).value) DESC NULLS LAST);
-
-
---
 -- Name: index_items_related_by_schema; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -3728,10 +5733,59 @@ CREATE UNIQUE INDEX index_items_unique_identifier ON public.items USING btree (i
 
 
 --
--- Name: index_items_visibility_coverage; Type: INDEX; Schema: public; Owner: -
+-- Name: index_named_variable_dates_ascending; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_items_visibility_coverage ON public.items USING gist (visibility, visibility_range);
+CREATE INDEX index_named_variable_dates_ascending ON public.named_variable_dates USING btree (value, "precision", path, entity_type, entity_id);
+
+
+--
+-- Name: index_named_variable_dates_by_coverage; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_named_variable_dates_by_coverage ON public.named_variable_dates USING gist (coverage, path, entity_type, entity_id);
+
+
+--
+-- Name: index_named_variable_dates_descending; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_named_variable_dates_descending ON public.named_variable_dates USING btree (value DESC NULLS LAST, "precision" DESC NULLS LAST, path, entity_type, entity_id);
+
+
+--
+-- Name: index_named_variable_dates_on_actual_precision; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_named_variable_dates_on_actual_precision ON public.named_variable_dates USING btree (actual_precision);
+
+
+--
+-- Name: index_named_variable_dates_on_entity; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_named_variable_dates_on_entity ON public.named_variable_dates USING btree (entity_type, entity_id);
+
+
+--
+-- Name: index_named_variable_dates_on_precision; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_named_variable_dates_on_precision ON public.named_variable_dates USING btree ("precision");
+
+
+--
+-- Name: index_named_variable_dates_on_schema_version_property_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_named_variable_dates_on_schema_version_property_id ON public.named_variable_dates USING btree (schema_version_property_id);
+
+
+--
+-- Name: index_named_variable_dates_uniqueness; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_named_variable_dates_uniqueness ON public.named_variable_dates USING btree (entity_type, entity_id, path);
 
 
 --
@@ -3753,6 +5807,13 @@ CREATE INDEX index_ordering_entries_references_entity ON ONLY public.ordering_en
 --
 
 CREATE INDEX index_ordering_entries_sort ON ONLY public.ordering_entries USING btree (ordering_id, "position");
+
+
+--
+-- Name: index_ordering_entries_sort_inverse; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_ordering_entries_sort_inverse ON ONLY public.ordering_entries USING btree (ordering_id, inverse_position);
 
 
 --
@@ -3809,6 +5870,13 @@ CREATE INDEX index_orderings_on_item_id ON public.orderings USING btree (item_id
 --
 
 CREATE INDEX index_orderings_on_schema_version_id ON public.orderings USING btree (schema_version_id);
+
+
+--
+-- Name: index_orderings_staleness; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_orderings_staleness ON public.orderings USING btree (stale);
 
 
 --
@@ -3931,17 +5999,31 @@ CREATE UNIQUE INDEX index_roles_unique_name ON public.roles USING btree (name);
 
 
 --
+-- Name: index_schema_definition_properties_on_current; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_schema_definition_properties_on_current ON public.schema_definition_properties USING btree (current);
+
+
+--
+-- Name: index_schema_definition_properties_on_orderable; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_schema_definition_properties_on_orderable ON public.schema_definition_properties USING btree (orderable);
+
+
+--
+-- Name: index_schema_definition_properties_on_versions; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_schema_definition_properties_on_versions ON public.schema_definition_properties USING gin (versions);
+
+
+--
 -- Name: index_schema_definitions_on_namespace; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_schema_definitions_on_namespace ON public.schema_definitions USING btree (namespace);
-
-
---
--- Name: index_schema_definitions_on_system_slug; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE UNIQUE INDEX index_schema_definitions_on_system_slug ON public.schema_definitions USING btree (system_slug);
 
 
 --
@@ -3952,10 +6034,94 @@ CREATE UNIQUE INDEX index_schema_definitions_uniqueness ON public.schema_definit
 
 
 --
+-- Name: index_schema_version_ancestors_on_schema_version_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_schema_version_ancestors_on_schema_version_id ON public.schema_version_ancestors USING btree (schema_version_id);
+
+
+--
+-- Name: index_schema_version_ancestors_on_target_version_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_schema_version_ancestors_on_target_version_id ON public.schema_version_ancestors USING btree (target_version_id);
+
+
+--
+-- Name: index_schema_version_ancestors_uniqueness; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_schema_version_ancestors_uniqueness ON public.schema_version_ancestors USING btree (schema_version_id, target_version_id, name);
+
+
+--
+-- Name: index_schema_version_position_ordering; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_schema_version_position_ordering ON public.schema_version_properties USING btree (schema_version_id, "position");
+
+
+--
+-- Name: index_schema_version_properties_on_function; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_schema_version_properties_on_function ON public.schema_version_properties USING btree (function);
+
+
+--
+-- Name: index_schema_version_properties_on_orderable; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_schema_version_properties_on_orderable ON public.schema_version_properties USING btree (orderable);
+
+
+--
+-- Name: index_schema_version_properties_on_schema_definition_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_schema_version_properties_on_schema_definition_id ON public.schema_version_properties USING btree (schema_definition_id);
+
+
+--
+-- Name: index_schema_version_properties_on_schema_version_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_schema_version_properties_on_schema_version_id ON public.schema_version_properties USING btree (schema_version_id);
+
+
+--
+-- Name: index_schema_version_properties_uniqueness; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_schema_version_properties_uniqueness ON public.schema_version_properties USING btree (schema_version_id, path);
+
+
+--
+-- Name: index_schema_versions_by_tuple; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_schema_versions_by_tuple ON public.schema_versions USING btree (namespace, identifier);
+
+
+--
 -- Name: index_schema_versions_current; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE UNIQUE INDEX index_schema_versions_current ON public.schema_versions USING btree (schema_definition_id, current) WHERE current;
+
+
+--
+-- Name: index_schema_versions_on_declaration; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_schema_versions_on_declaration ON public.schema_versions USING btree (declaration);
+
+
+--
+-- Name: index_schema_versions_on_kind; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_schema_versions_on_kind ON public.schema_versions USING btree (kind);
 
 
 --
@@ -3970,13 +6136,6 @@ CREATE INDEX index_schema_versions_on_schema_definition_id ON public.schema_vers
 --
 
 CREATE INDEX index_schema_versions_on_schema_definition_id_and_position ON public.schema_versions USING btree (schema_definition_id, "position");
-
-
---
--- Name: index_schema_versions_on_system_slug; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE UNIQUE INDEX index_schema_versions_on_system_slug ON public.schema_versions USING btree (system_slug);
 
 
 --
@@ -4162,6 +6321,13 @@ CREATE INDEX ordering_entries_part_1_ordering_id_idx ON public.ordering_entries_
 
 
 --
+-- Name: ordering_entries_part_1_ordering_id_inverse_position_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX ordering_entries_part_1_ordering_id_inverse_position_idx ON public.ordering_entries_part_1 USING btree (ordering_id, inverse_position);
+
+
+--
 -- Name: ordering_entries_part_1_ordering_id_position_idx; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -4194,6 +6360,13 @@ CREATE UNIQUE INDEX ordering_entries_part_2_ordering_id_entity_type_entity_id_id
 --
 
 CREATE INDEX ordering_entries_part_2_ordering_id_idx ON public.ordering_entries_part_2 USING btree (ordering_id);
+
+
+--
+-- Name: ordering_entries_part_2_ordering_id_inverse_position_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX ordering_entries_part_2_ordering_id_inverse_position_idx ON public.ordering_entries_part_2 USING btree (ordering_id, inverse_position);
 
 
 --
@@ -4232,6 +6405,13 @@ CREATE INDEX ordering_entries_part_3_ordering_id_idx ON public.ordering_entries_
 
 
 --
+-- Name: ordering_entries_part_3_ordering_id_inverse_position_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX ordering_entries_part_3_ordering_id_inverse_position_idx ON public.ordering_entries_part_3 USING btree (ordering_id, inverse_position);
+
+
+--
 -- Name: ordering_entries_part_3_ordering_id_position_idx; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -4264,6 +6444,13 @@ CREATE UNIQUE INDEX ordering_entries_part_4_ordering_id_entity_type_entity_id_id
 --
 
 CREATE INDEX ordering_entries_part_4_ordering_id_idx ON public.ordering_entries_part_4 USING btree (ordering_id);
+
+
+--
+-- Name: ordering_entries_part_4_ordering_id_inverse_position_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX ordering_entries_part_4_ordering_id_inverse_position_idx ON public.ordering_entries_part_4 USING btree (ordering_id, inverse_position);
 
 
 --
@@ -4302,6 +6489,13 @@ CREATE INDEX ordering_entries_part_5_ordering_id_idx ON public.ordering_entries_
 
 
 --
+-- Name: ordering_entries_part_5_ordering_id_inverse_position_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX ordering_entries_part_5_ordering_id_inverse_position_idx ON public.ordering_entries_part_5 USING btree (ordering_id, inverse_position);
+
+
+--
 -- Name: ordering_entries_part_5_ordering_id_position_idx; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -4334,6 +6528,13 @@ CREATE UNIQUE INDEX ordering_entries_part_6_ordering_id_entity_type_entity_id_id
 --
 
 CREATE INDEX ordering_entries_part_6_ordering_id_idx ON public.ordering_entries_part_6 USING btree (ordering_id);
+
+
+--
+-- Name: ordering_entries_part_6_ordering_id_inverse_position_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX ordering_entries_part_6_ordering_id_inverse_position_idx ON public.ordering_entries_part_6 USING btree (ordering_id, inverse_position);
 
 
 --
@@ -4372,6 +6573,13 @@ CREATE INDEX ordering_entries_part_7_ordering_id_idx ON public.ordering_entries_
 
 
 --
+-- Name: ordering_entries_part_7_ordering_id_inverse_position_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX ordering_entries_part_7_ordering_id_inverse_position_idx ON public.ordering_entries_part_7 USING btree (ordering_id, inverse_position);
+
+
+--
 -- Name: ordering_entries_part_7_ordering_id_position_idx; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -4407,6 +6615,13 @@ CREATE INDEX ordering_entries_part_8_ordering_id_idx ON public.ordering_entries_
 
 
 --
+-- Name: ordering_entries_part_8_ordering_id_inverse_position_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX ordering_entries_part_8_ordering_id_inverse_position_idx ON public.ordering_entries_part_8 USING btree (ordering_id, inverse_position);
+
+
+--
 -- Name: ordering_entries_part_8_ordering_id_position_idx; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -4435,6 +6650,13 @@ CREATE UNIQUE INDEX role_permissions_uniqueness ON public.role_permissions USING
 
 
 --
+-- Name: schema_definition_properties_pkey; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX schema_definition_properties_pkey ON public.schema_definition_properties USING btree (schema_definition_id, path, type);
+
+
+--
 -- Name: ordering_entries_part_1_entity_type_entity_id_idx; Type: INDEX ATTACH; Schema: public; Owner: -
 --
 
@@ -4453,6 +6675,13 @@ ALTER INDEX public.index_ordering_entries_uniqueness ATTACH PARTITION public.ord
 --
 
 ALTER INDEX public.index_ordering_entries_on_ordering_id ATTACH PARTITION public.ordering_entries_part_1_ordering_id_idx;
+
+
+--
+-- Name: ordering_entries_part_1_ordering_id_inverse_position_idx; Type: INDEX ATTACH; Schema: public; Owner: -
+--
+
+ALTER INDEX public.index_ordering_entries_sort_inverse ATTACH PARTITION public.ordering_entries_part_1_ordering_id_inverse_position_idx;
 
 
 --
@@ -4498,6 +6727,13 @@ ALTER INDEX public.index_ordering_entries_on_ordering_id ATTACH PARTITION public
 
 
 --
+-- Name: ordering_entries_part_2_ordering_id_inverse_position_idx; Type: INDEX ATTACH; Schema: public; Owner: -
+--
+
+ALTER INDEX public.index_ordering_entries_sort_inverse ATTACH PARTITION public.ordering_entries_part_2_ordering_id_inverse_position_idx;
+
+
+--
 -- Name: ordering_entries_part_2_ordering_id_position_idx; Type: INDEX ATTACH; Schema: public; Owner: -
 --
 
@@ -4537,6 +6773,13 @@ ALTER INDEX public.index_ordering_entries_uniqueness ATTACH PARTITION public.ord
 --
 
 ALTER INDEX public.index_ordering_entries_on_ordering_id ATTACH PARTITION public.ordering_entries_part_3_ordering_id_idx;
+
+
+--
+-- Name: ordering_entries_part_3_ordering_id_inverse_position_idx; Type: INDEX ATTACH; Schema: public; Owner: -
+--
+
+ALTER INDEX public.index_ordering_entries_sort_inverse ATTACH PARTITION public.ordering_entries_part_3_ordering_id_inverse_position_idx;
 
 
 --
@@ -4582,6 +6825,13 @@ ALTER INDEX public.index_ordering_entries_on_ordering_id ATTACH PARTITION public
 
 
 --
+-- Name: ordering_entries_part_4_ordering_id_inverse_position_idx; Type: INDEX ATTACH; Schema: public; Owner: -
+--
+
+ALTER INDEX public.index_ordering_entries_sort_inverse ATTACH PARTITION public.ordering_entries_part_4_ordering_id_inverse_position_idx;
+
+
+--
 -- Name: ordering_entries_part_4_ordering_id_position_idx; Type: INDEX ATTACH; Schema: public; Owner: -
 --
 
@@ -4621,6 +6871,13 @@ ALTER INDEX public.index_ordering_entries_uniqueness ATTACH PARTITION public.ord
 --
 
 ALTER INDEX public.index_ordering_entries_on_ordering_id ATTACH PARTITION public.ordering_entries_part_5_ordering_id_idx;
+
+
+--
+-- Name: ordering_entries_part_5_ordering_id_inverse_position_idx; Type: INDEX ATTACH; Schema: public; Owner: -
+--
+
+ALTER INDEX public.index_ordering_entries_sort_inverse ATTACH PARTITION public.ordering_entries_part_5_ordering_id_inverse_position_idx;
 
 
 --
@@ -4666,6 +6923,13 @@ ALTER INDEX public.index_ordering_entries_on_ordering_id ATTACH PARTITION public
 
 
 --
+-- Name: ordering_entries_part_6_ordering_id_inverse_position_idx; Type: INDEX ATTACH; Schema: public; Owner: -
+--
+
+ALTER INDEX public.index_ordering_entries_sort_inverse ATTACH PARTITION public.ordering_entries_part_6_ordering_id_inverse_position_idx;
+
+
+--
 -- Name: ordering_entries_part_6_ordering_id_position_idx; Type: INDEX ATTACH; Schema: public; Owner: -
 --
 
@@ -4708,6 +6972,13 @@ ALTER INDEX public.index_ordering_entries_on_ordering_id ATTACH PARTITION public
 
 
 --
+-- Name: ordering_entries_part_7_ordering_id_inverse_position_idx; Type: INDEX ATTACH; Schema: public; Owner: -
+--
+
+ALTER INDEX public.index_ordering_entries_sort_inverse ATTACH PARTITION public.ordering_entries_part_7_ordering_id_inverse_position_idx;
+
+
+--
 -- Name: ordering_entries_part_7_ordering_id_position_idx; Type: INDEX ATTACH; Schema: public; Owner: -
 --
 
@@ -4747,6 +7018,13 @@ ALTER INDEX public.index_ordering_entries_uniqueness ATTACH PARTITION public.ord
 --
 
 ALTER INDEX public.index_ordering_entries_on_ordering_id ATTACH PARTITION public.ordering_entries_part_8_ordering_id_idx;
+
+
+--
+-- Name: ordering_entries_part_8_ordering_id_inverse_position_idx; Type: INDEX ATTACH; Schema: public; Owner: -
+--
+
+ALTER INDEX public.index_ordering_entries_sort_inverse ATTACH PARTITION public.ordering_entries_part_8_ordering_id_inverse_position_idx;
 
 
 --
@@ -4799,6 +7077,13 @@ CREATE STATISTICS public.role_permissions_rp_stats ON permission_id, role_id FRO
 
 
 --
+-- Name: schema_versions lock_version_definition_id; Type: TRIGGER; Schema: public; Owner: -
+--
+
+CREATE TRIGGER lock_version_definition_id BEFORE UPDATE OF schema_definition_id ON public.schema_versions FOR EACH ROW WHEN ((old.schema_definition_id <> new.schema_definition_id)) EXECUTE FUNCTION public.prevent_column_update('schema_definition_id');
+
+
+--
 -- Name: collection_linked_items fk_rails_08f9156aa0; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4844,6 +7129,22 @@ ALTER TABLE ONLY public.collections
 
 ALTER TABLE ONLY public.collection_links
     ADD CONSTRAINT fk_rails_11a845b774 FOREIGN KEY (target_id) REFERENCES public.collections(id) ON DELETE RESTRICT;
+
+
+--
+-- Name: schema_version_properties fk_rails_1f31833d7c; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.schema_version_properties
+    ADD CONSTRAINT fk_rails_1f31833d7c FOREIGN KEY (schema_version_id) REFERENCES public.schema_versions(id) ON DELETE CASCADE;
+
+
+--
+-- Name: entity_orderable_properties fk_rails_27196ff015; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.entity_orderable_properties
+    ADD CONSTRAINT fk_rails_27196ff015 FOREIGN KEY (schema_version_property_id) REFERENCES public.schema_version_properties(id) ON DELETE RESTRICT;
 
 
 --
@@ -5052,6 +7353,22 @@ ALTER TABLE ONLY public.item_contributions
 
 ALTER TABLE ONLY public.assets
     ADD CONSTRAINT fk_rails_747cd7500c FOREIGN KEY (community_id) REFERENCES public.communities(id) ON DELETE RESTRICT;
+
+
+--
+-- Name: schema_version_ancestors fk_rails_7549530172; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.schema_version_ancestors
+    ADD CONSTRAINT fk_rails_7549530172 FOREIGN KEY (target_version_id) REFERENCES public.schema_versions(id) ON DELETE CASCADE;
+
+
+--
+-- Name: schema_version_properties fk_rails_77d4155820; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.schema_version_properties
+    ADD CONSTRAINT fk_rails_77d4155820 FOREIGN KEY (schema_definition_id) REFERENCES public.schema_definitions(id) ON DELETE CASCADE;
 
 
 --
@@ -5279,6 +7596,14 @@ ALTER TABLE ONLY public.harvest_mappings
 
 
 --
+-- Name: schema_version_ancestors fk_rails_d355266964; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.schema_version_ancestors
+    ADD CONSTRAINT fk_rails_d355266964 FOREIGN KEY (schema_version_id) REFERENCES public.schema_versions(id) ON DELETE CASCADE;
+
+
+--
 -- Name: access_grants fk_rails_d9b8218fcb; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -5308,6 +7633,14 @@ ALTER TABLE ONLY public.granted_permissions
 
 ALTER TABLE ONLY public.authorizing_entities
     ADD CONSTRAINT fk_rails_e81ba90b04 FOREIGN KEY (entity_id) REFERENCES public.entities(id) ON DELETE CASCADE;
+
+
+--
+-- Name: named_variable_dates fk_rails_e9a6036ded; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.named_variable_dates
+    ADD CONSTRAINT fk_rails_e9a6036ded FOREIGN KEY (schema_version_property_id) REFERENCES public.schema_version_properties(id) ON DELETE SET NULL;
 
 
 --
@@ -5478,6 +7811,27 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20211203210440'),
 ('20211203210512'),
 ('20211208020200'),
-('20211209180555');
+('20211209180555'),
+('20211210200825'),
+('20211211022216'),
+('20211211022308'),
+('20211211024506'),
+('20211211033841'),
+('20211211045110'),
+('20211214172204'),
+('20211214234914'),
+('20211215001414'),
+('20211215001720'),
+('20211215001920'),
+('20211215010843'),
+('20211215020817'),
+('20211215021446'),
+('20211215202155'),
+('20211216192600'),
+('20211220173609'),
+('20211221012913'),
+('20211221040913'),
+('20211221040948'),
+('20211221054949');
 
 
