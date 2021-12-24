@@ -11,6 +11,11 @@ module Harvesting
 
         MB_SPACE = " "
 
+        LOOKS_LIKE_INTEGER = /\A\d+\z/.freeze
+
+        # Some issue numbers are things like `2/3`. We'll parse them as 2 for sorting purposes.
+        ODDLY_FORMATTED_ISSUE_NUMBER = %r,\A(\d+)/\d+\z,.freeze
+
         # @!attribute [r] front
         # @return [Nokogiri::XML::Element, nil]
         attr_reader :front
@@ -144,6 +149,22 @@ module Harvesting
         # @return [String]
         memoize def issue_number
           text_from from_article_meta(%,./xmlns:issue/text(),)
+        end
+
+        # @note This is a place for improvement. Issue IDs are not guaranteed to be integral.
+        #   They could be roman numerals, alphanumeric, etc.
+        # @return [Integer, nil]
+        memoize def issue_sortable_number
+          return issue_id.to_i if LOOKS_LIKE_INTEGER.match? issue_id
+
+          # :nocov:
+          case issue_number
+          when ODDLY_FORMATTED_ISSUE_NUMBER
+            Regexp.last_match[1].to_i
+          when LOOKS_LIKE_INTEGER
+            issue_number.to_i
+          end
+          # :nocov:
         end
 
         # @return [String]

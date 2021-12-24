@@ -22,8 +22,16 @@ class HarvestRecord < ApplicationRecord
     Harvesting::UpsertEntitiesForRecordJob.perform_later self
   end
 
+  # @see Harvesting::Actions::PrepareEntitiesFromRecord
   # @return [Dry::Monads::Result]
   def prepare_entities!
     call_operation("harvesting.actions.prepare_entities_from_record", self)
+  end
+
+  # @see Harvesting::Actions::UpsertEntities
+  # @param [Boolean] reprepare
+  # @return [Dry::Monads::Result]
+  def upsert_entities!(reprepare: false)
+    call_operation("harvesting.actions.upsert_entities", self, reprepare: reprepare)
   end
 end
