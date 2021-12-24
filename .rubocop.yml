@@ -237,6 +237,9 @@ RSpec/DescribeClass:
   Exclude:
     - spec/requests/**/*.rb
 
+RSpec/EmptyLineAfterFinalLet:
+  Enabled: false
+
 RSpec/ExampleLength:
   Enabled: false
 
@@ -249,6 +252,9 @@ RSpec/IdenticalEqualityAssertion:
 RSpec/ImplicitSubject:
   Enabled: false
 
+RSpec/InstanceVariable:
+  Enabled: false
+
 RSpec/LeadingSubject:
   Enabled: false
 
@@ -259,6 +265,9 @@ RSpec/MultipleExpectations:
   Enabled: false
 
 RSpec/MultipleMemoizedHelpers:
+  Enabled: false
+
+RSpec/NamedSubject:
   Enabled: false
 
 RSpec/NestedGroups:
@@ -307,7 +316,13 @@ Style/ClassVars:
 Style/CollectionCompact:
   Enabled: true
 
+Style/ConditionalAssignment:
+  Enabled: false
+
 Style/DocumentDynamicEvalDefinition:
+  Enabled: false
+
+Style/DoubleNegation:
   Enabled: false
 
 Style/EndlessMethod:
@@ -346,6 +361,9 @@ Style/LambdaCall:
 Style/MultilineBlockChain:
   Enabled: false
 
+Style/MultilineIfModifier:
+  Enabled: false
+
 Style/NegatedIfElseCondition:
   Enabled: true
 
@@ -360,6 +378,9 @@ Style/PercentLiteralDelimiters:
 
 # This clobbers unexpected method calls
 Style/PreferredHashMethods:
+  Enabled: false
+
+Style/RaiseArgs:
   Enabled: false
 
 Style/RedundantArgument:
