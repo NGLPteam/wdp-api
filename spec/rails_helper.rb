@@ -82,6 +82,10 @@ RSpec.configure do |config|
 
     DatabaseCleaner[:active_record].clean_with(:truncation)
     DatabaseCleaner[:redis].clean_with(:deletion)
+
+    Scenic.database.views.select(&:materialized).each do |view|
+      Scenic.database.refresh_materialized_view view.name, concurrently: false, cascade: false
+    end
   end
 
   config.before(:suite) do
