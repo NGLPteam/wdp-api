@@ -4359,6 +4359,14 @@ ALTER TABLE ONLY public.schema_version_properties
 
 
 --
+-- Name: schema_versions schema_versions_current; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.schema_versions
+    ADD CONSTRAINT schema_versions_current EXCLUDE USING btree (schema_definition_id WITH =) WHERE (current) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
 -- Name: schema_versions schema_versions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -6104,13 +6112,6 @@ CREATE INDEX index_schema_versions_by_tuple ON public.schema_versions USING btre
 
 
 --
--- Name: index_schema_versions_current; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE UNIQUE INDEX index_schema_versions_current ON public.schema_versions USING btree (schema_definition_id, current) WHERE current;
-
-
---
 -- Name: index_schema_versions_on_declaration; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -7832,6 +7833,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20211221012913'),
 ('20211221040913'),
 ('20211221040948'),
-('20211221054949');
+('20211221054949'),
+('20220103194312');
 
 

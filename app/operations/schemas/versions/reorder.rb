@@ -3,72 +3,75 @@
 module Schemas
   module Versions
     # Reorder the {SchemaVersion versions} for a specific {SchemaDefinition},
-    # based on their semantic version. We need to sort within Ruby and update
-    # Postgres owing to the current impossibility of adding a dedicated semver
-    # type in PG.
+    # or all if none provided, based on their semantic version. It will also
+    # ensure the latest non-test version is marked `current`.
     #
-    # In future, we may be able to remove this with a non-Heroku PG build.
-    #
-    # @see https://pgxn.org/dist/semver/
+    # @note The ordering is descending based on the `parsed` column on {SchemaVersion},
+    #   which is a PostgreSQL composite type that parses a semver.
     class Reorder
-      include Dry::Monads[:do, :result]
+      include Dry::Monads[:do, :result, :try]
+      include WDPAPI::Deps[lock: "schemas.versions.lock_for_update"]
       include QueryOperation
 
-      # @param [SchemaDefinition] schema_definition
-      # @return [Dry::Monads::Result]
-      def call(schema_definition)
-        versions = yield sort_versions schema_definition
+      prepend TransactionalCall
 
-        return Success(nil) if versions.blank?
+      # The first half of the reorder query, that lets the operation
+      # optionally (preferably) filter the update by {SchemaDefinition}.
+      # @api private
+      PREFIX = <<~SQL.strip_heredoc.strip
+      WITH new_positions AS (
+        SELECT
+          id AS schema_version_id,
+          schema_definition_id,
+          row_number() OVER w AS position,
+          ((parsed).pre IS NULL AND (parsed).build IS NULL) AS official
+        FROM schema_versions
+      SQL
 
-        query = yield build_query schema_definition, versions
+      # The latter half of the reorder query
+      # @api private
+      SUFFIX = <<~SQL.strip_heredoc.strip
+        WINDOW w AS (
+          PARTITION BY schema_definition_id
+          ORDER BY parsed DESC
+        )
+      ), new_current AS (
+        SELECT DISTINCT ON (schema_definition_id)
+          schema_definition_id, schema_version_id AS current_version_id
+        FROM new_positions
+        WHERE official
+        ORDER BY schema_definition_id, position ASC
+      )
+      UPDATE schema_versions AS sv SET position = np.position, current = (nc.current_version_id = sv.id)
+      FROM new_positions AS np, new_current AS nc
+      WHERE
+        np.schema_version_id = sv.id
+        AND
+        nc.schema_definition_id = sv.schema_definition_id
+      SQL
 
-        Success sql_update! query
+      # @param [SchemaDefinition, nil] schema_definition
+      # @return [Dry::Monads::Success(Integer)] the number of reordered versions
+      def call(schema_definition = nil)
+        yield lock.call schema_definition if schema_definition.present?
+
+        reordered_count = yield reorder! schema_definition
+
+        Success reordered_count
       end
 
       private
 
-      def schema_versions
-        @schema_versions ||= SchemaVersion.arel_table
-      end
+      # @param [SchemaDefinition, nil] schema_definition
+      # @return [Dry::Monads::Success(Integer)]
+      def reorder!(schema_definition)
+        Try do
+          infix = with_quoted_id_for schema_definition, <<~SQL
+          WHERE schema_definition_id = %s
+          SQL
 
-      def build_position_statement(versions)
-        Arel::Nodes::Case.new(schema_versions[:id]).tap do |stmt|
-          versions.each_with_index do |version, index|
-            position = index + 1
-
-            stmt.when(version.id).then(position)
-          end
-
-          stmt.else(versions.length + 10)
+          sql_update! PREFIX, infix, SUFFIX
         end
-      end
-
-      def build_query(schema_definition, versions)
-        um = Arel::UpdateManager.new
-
-        um.table schema_versions
-
-        position_value = build_position_statement versions
-
-        current_value = schema_versions[:id].eq(versions.first.id)
-
-        um.set [
-          [schema_versions[:position], position_value],
-          [schema_versions[:current], current_value]
-        ]
-
-        um.where schema_versions[:schema_definition_id].eq(schema_definition.id)
-
-        Success um.to_sql
-      end
-
-      def sort_versions(definition)
-        sorted = definition.schema_versions.reload.to_a.sort do |a, b|
-          b.number <=> a.number
-        end
-
-        Success sorted
       end
     end
   end
