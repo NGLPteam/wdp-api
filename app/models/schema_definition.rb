@@ -1,12 +1,21 @@
 # frozen_string_literal: true
 
+# A logical grouping of {SchemaVersion schema versions}, unique by
+# {#namespace} and {#identifier}.
+#
+# @subsystem Schema
 class SchemaDefinition < ApplicationRecord
+  # @!attribute [r] declaration
+  # The combination of {#namespace} and {#identifier}.
+  # @return [String]
   attr_readonly :declaration
 
+  # Schemas in these namespaces are considered "core" and ship with NGLP, rather
+  # than being something custom created by end-users.
   BUILTIN_NAMESPACES = %w[default nglp testing].freeze
 
-  PARAMETER_FORMAT = /\A[a-z][a-z0-9_]+[a-z0-9]\z/.freeze
-
+  # @!attribute [r] kind
+  # @return ["community", "collection", "item"]
   pg_enum! :kind, as: "schema_kind"
 
   has_many :schema_versions, dependent: :destroy, inverse_of: :schema_definition
@@ -26,7 +35,7 @@ class SchemaDefinition < ApplicationRecord
 
   validates :name, :identifier, :kind, :namespace, presence: true
 
-  validates :identifier, :namespace, format: { with: PARAMETER_FORMAT }
+  validates :identifier, :namespace, schema_component: true
 
   validates :identifier, uniqueness: { scope: :namespace }
 

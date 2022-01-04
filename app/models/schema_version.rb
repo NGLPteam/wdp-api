@@ -1,6 +1,14 @@
 # frozen_string_literal: true
 
+# A specific version of a {SchemaDefinition}, used to enumerate the properties and orderings
+# that a given {SchemaInstance} can have. The core of its logic is housed {#configuration},
+# and it has connections with many key parts of the application.
+#
+# @see Schemas::Versions::Configuration
+# @subsystem Schema
 class SchemaVersion < ApplicationRecord
+  # @!attribute [r] kind
+  # @return ["community", "collection", "item"]
   pg_enum! :kind, as: "schema_kind"
 
   attr_readonly :declaration, :identifier, :name, :namespace, :number, :parsed, :schema_definition_id
@@ -17,7 +25,12 @@ class SchemaVersion < ApplicationRecord
 
   has_many :entity_links, dependent: :destroy
 
+  # @!attribute [r] number
+  # @return [Semantic::Version]
   attribute :number, :semantic_version
+
+  # @!attribute [rw] configuration
+  # @return [Schemas::Versions::Configuration]
   attribute :configuration, Schemas::Versions::Configuration.to_type, default: {}
 
   scope :by_namespace, ->(namespace) { where(namespace: namespace) }
@@ -238,6 +251,8 @@ class SchemaVersion < ApplicationRecord
       by_tuple("default", "item").latest!
     end
 
+    # @param [<String, SchemaVersion>] schemas (@see Schemas::Versions::Find)
+    # @return [ActiveRecord::Relation<SchemaVersion>]
     def filtered_by(schemas)
       schema_versions = Array(schemas).map do |needle|
         WDPAPI::Container["schemas.versions.find"].call(needle).value_or(nil)
@@ -253,6 +268,7 @@ class SchemaVersion < ApplicationRecord
     end
 
     # @raise [ActiveRecord::RecordNotFound] if no current version set
+    # @return [SchemaVersion]
     def latest!
       current.first!
     end

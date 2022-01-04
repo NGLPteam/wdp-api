@@ -8,6 +8,7 @@ en:
     errors:
       messages:
         must_be_entity: "must be an entity"
+        must_be_schema_component: "must be a valid schema component (starts with a letter, contains only alphanumeric characters and underscores, all lowercase)"
       models:
         entity_link:
           attributes:
