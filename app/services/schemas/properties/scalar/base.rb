@@ -84,7 +84,7 @@ module Schemas
         # the value is properly converted when sorting.
         # @return [String, nil]
         def order_path
-          "#{full_path}##{type}" if orderable?
+          "props.#{full_path}##{type}" if orderable?
         end
 
         # A predicate to detect if we should try to coerce a value
