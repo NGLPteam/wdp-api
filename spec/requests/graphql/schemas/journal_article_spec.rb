@@ -19,6 +19,11 @@ RSpec.describe "nglp:journal_article", type: :request do
     let(:issue_number) { issue_id }
     let(:issue_title) { "Some Issue" }
     let(:collected) { { value: "2021/01/05", precision: "MONTH" } }
+    let(:citation) do
+      <<~MARKDOWN
+      First Last, Journal (New York: Test Press, 2016), 315–16.
+      MARKDOWN
+    end
 
     let(:property_values) do
       gql.object do |pv|
@@ -27,6 +32,8 @@ RSpec.describe "nglp:journal_article", type: :request do
           b.prop :lang, body_lang
           b.prop :content, body_content
         end
+
+        pv.prop :citation, citation
 
         pv.prop "volume.id", volume_id
         pv.prop "issue.id", issue_id
@@ -50,6 +57,8 @@ RSpec.describe "nglp:journal_article", type: :request do
             end
 
             sp.full_text :abstract
+
+            sp.markdown :citation, citation
 
             sp.url :online_version
 
