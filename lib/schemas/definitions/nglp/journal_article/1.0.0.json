@@ -34,6 +34,7 @@
   "properties": [
     { "path": "body", "label": "Full Text", "type": "full_text", "required": false, "wide": true, "function": "content" },
     { "path": "abstract", "label": "Abstract", "type": "full_text", "required": false, "wide": true, "function": "content" },
+    { "path": "citation", "label": "How to Cite", "type": "markdown", "required": false, "function": "content" },
     { "path": "online_version", "label": "Online Version", "type": "url", "required": false, "function": "content" },
     { "path": "pdf_version", "label": "PDF Version", "type": "asset", "required": false, "function": "content" },
     {
