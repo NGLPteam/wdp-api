@@ -32,7 +32,12 @@ class NamedVariableDate < ApplicationRecord
       GLOBAL_FORMAT.match?(name) ? name.to_s : "$#{name}$"
     end
 
-    # Build a sort join for
+    # Build a sort join for a {ReferencesNamedVariableDates model that references this table}
+    # that allows its rows to be sorted based on the specific path.
+    #
+    # It returns a tuple that contains a reference to the join and two ordering expressions
+    # using said join that the calling query can include in its order statement.
+    #
     # @param [Class] klass
     # @param [String] path
     # @param ["asc", "desc"] dir
@@ -59,15 +64,25 @@ class NamedVariableDate < ApplicationRecord
 
     private
 
+    # Build an idempotent, guaranteed-unique name for joining against a named variable date
+    # with a specific path in order to sort on it.
+    #
+    # @param [Class] klass
+    # @param [String] path
+    # @return [String]
     def sort_join_name_for(klass, path)
       salt = Time.current.to_i.to_s(36)
 
       Base64.urlsafe_encode64 "#{klass.name}##{path}##{salt}", padding: false
     end
 
+    # Build the `ON` condition for a sort join.
+    #
+    # @see ReferencesNamedVariableDates::ClassMethods#named_variable_date_join_tuple
     # @param [Arel::Nodes::TableAlias] child_table
     # @param [Class] association
     # @param [String] path
+    # @return [Arel::Nodes::On]
     def sort_join_on_condition_for(child_table, parent, path)
       path_matches = child_table[:path].eq(path)
 
