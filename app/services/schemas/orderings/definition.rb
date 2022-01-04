@@ -12,6 +12,7 @@ module Schemas
       attribute :footer, :string
       attribute :hidden, :boolean, default: proc { false }
       attribute :constant, :boolean, default: proc { false }
+      attribute :position, :integer
 
       attribute :order, Schemas::Orderings::OrderDefinition.to_array_type, default: proc { [] }
       attribute :select, Schemas::Orderings::SelectDefinition.to_type, default: proc { {} }
@@ -22,6 +23,14 @@ module Schemas
       validates :select, :filter, :order, store_model: true
 
       validates :order, length: { minimum: 1, maximum: 7 }, unique_items: true
+
+      # @!attribute [r] schema_position
+      # @return [Integer, nil]
+      def schema_position
+        return position unless parent.kind_of?(Schemas::Versions::Configuration)
+
+        position.presence || parent.orderings.index(self) + 1
+      end
     end
   end
 end

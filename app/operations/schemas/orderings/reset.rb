@@ -33,6 +33,8 @@ module Schemas
 
         ordering.definition = inherited_definition.as_json
 
+        ordering.schema_position = ordering.position = inherited_definition.schema_position
+
         monadic_save ordering
       end
 
@@ -42,6 +44,8 @@ module Schemas
           name: ordering.definition.name,
           order: [{ path: "entity.updated_at", direction: "desc", nulls: "last" }]
         }
+
+        ordering.position = nil
 
         monadic_save ordering
       end

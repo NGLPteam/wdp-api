@@ -27,6 +27,8 @@ module Schemas
         ordering = Ordering.by_entity(entity).by_identifier(definition.id).first_or_initialize do |new_record|
           new_record.schema_version = entity.schema_version
           new_record.definition = definition
+          new_record.schema_position = definition.schema_position
+          new_record.position = definition.schema_position
         end
 
         return Success(nil) if ordering.persisted?

@@ -3696,7 +3696,10 @@ CREATE TABLE public.orderings (
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     stale_at timestamp without time zone,
     refreshed_at timestamp without time zone,
-    stale boolean GENERATED ALWAYS AS (((stale_at IS NOT NULL) AND ((refreshed_at IS NULL) OR (refreshed_at < stale_at)))) STORED NOT NULL
+    stale boolean GENERATED ALWAYS AS (((stale_at IS NOT NULL) AND ((refreshed_at IS NULL) OR (refreshed_at < stale_at)))) STORED NOT NULL,
+    name text GENERATED ALWAYS AS ((definition ->> 'name'::text)) STORED,
+    schema_position bigint,
+    "position" bigint
 );
 
 
@@ -5839,6 +5842,20 @@ CREATE UNIQUE INDEX index_ordering_entries_uniqueness ON ONLY public.ordering_en
 
 
 --
+-- Name: index_orderings_deterministic_by_position; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_orderings_deterministic_by_position ON public.orderings USING btree (entity_id, entity_type, "position", name, identifier);
+
+
+--
+-- Name: index_orderings_deterministic_by_schema_position; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_orderings_deterministic_by_schema_position ON public.orderings USING btree (entity_id, entity_type, schema_position, name, identifier);
+
+
+--
 -- Name: index_orderings_enabled_by_entity; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -7834,6 +7851,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20211221040913'),
 ('20211221040948'),
 ('20211221054949'),
-('20220103194312');
+('20220103194312'),
+('20220104185903');
 
 
