@@ -5,7 +5,7 @@ module Resolvers
     include SearchObject.module(:graphql)
 
     include Resolvers::PageBasedPagination
-    include Resolvers::SimplyOrdered
+    include Resolvers::OrderedAsOrdering
 
     type Types::OrderingType.connection_type, null: false
 

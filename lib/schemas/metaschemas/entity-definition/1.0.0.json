@@ -175,6 +175,11 @@
           "type": "boolean",
           "default": false
         },
+        "position": {
+          "title": "Position",
+          "description": "The (optional) deterministic position for an ordering when listing it",
+          "type": "number"
+        },
         "select": {
           "type": "object",
           "title": "Child Selection",

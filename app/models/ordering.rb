@@ -12,12 +12,14 @@ class Ordering < ApplicationRecord
 
   has_one :schema_definition, through: :schema_version
 
-  has_many :ordering_entries, -> { preload(:entity) }, inverse_of: :ordering, dependent: :destroy
+  has_many :ordering_entries, -> { preload(:entity) }, inverse_of: :ordering, dependent: :delete_all
 
   attribute :definition, Schemas::Orderings::Definition.to_type, default: proc { {} }
 
   scope :by_entity, ->(entity) { where(entity: entity) }
   scope :by_identifier, ->(identifier) { where(identifier: identifier) }
+
+  scope :deterministically_ordered, -> { reorder(position: :asc, name: :asc, identifier: :asc) }
 
   scope :enabled, -> { where(disabled_at: nil) }
   scope :disabled, -> { where.not(disabled_at: nil) }

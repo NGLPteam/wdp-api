@@ -45,7 +45,8 @@
         { "path": "props.meta.collected#variable_date", "direction": "desc" },
         { "path": "props.issue.fpage#integer", "direction": "asc" },
         { "path": "props.issue.lpage#integer", "direction": "asc" }
-      ]
+      ],
+      "position": 2
     },
     {
       "id": "issues",
@@ -63,7 +64,8 @@
       },
       "order": [
         { "path": "props.issue.number#string", "direction": "asc" }
-      ]
+      ],
+      "position": 1
     }
   ],
   "properties": [

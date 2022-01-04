@@ -72,7 +72,7 @@ class OrderingEntryCandidate < ApplicationRecord
 
     private
 
-    # Starts off the query for {#query_for}
+    # Starts off the query for {.query_for}
     # @param [Ordering] ordering
     # @return [ActiveRecord::Relation<OrderingEntryCandidate>]
     def build_projection_and_joins_for(ordering)
