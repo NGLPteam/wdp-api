@@ -22,7 +22,7 @@ module Schemas
           prop = self
 
           context.rule(full_path) do
-            key.failure("must be a known option") unless value.in?(prop.option_values)
+            key.failure("must be a known option") unless (!prop.actually_required? && value.blank?) || value.in?(prop.option_values)
           end
         end
       end
