@@ -19,13 +19,7 @@ module Schemas
     # @see Schemas::Properties::CompileSchema
     # @see Schemas::Properties::Scalar::Reference#normalize_schema_value_before_coercer
     # @see Schemas::Properties::Scalar::Reference#reference_normalizer_klass
-    class ScalarNormalizer
-      include Dry::Initializer.define -> do
-        option :models, type: AppTypes::ModelClassList.constrained(min_size: 1)
-      end
-
-      include WDPAPI::Deps[object_from_id: "relay_node.object_from_id"]
-
+    class ScalarNormalizer < AbstractNormalizer
       # @param [Object] value
       # @return [ApplicationRecord, nil]
       def call(value)

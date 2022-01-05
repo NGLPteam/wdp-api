@@ -1,38 +1,68 @@
 # frozen_string_literal: true
 
-require_relative "../variable_precision_date"
+require_relative "./semantic_version"
 
 module GlobalTypes
-  class ParsedSemanticVersion < ActiveRecord::Type::Value
+  # A parsed [Semantic Version](https://semver.org) used for ordering and comparison
+  # within the database. It is backed by a composite type and used on {SchemaVersion}.
+  class ParsedSemanticVersion < GlobalTypes::SemanticVersion
+    # An encoder for a PG Record
     ENCODER = PG::TextEncoder::Record.new
+
+    private_constant :ENCODER
+
+    # A decoder for a PG Record
     DECODER = PG::TextDecoder::Record.new
 
+    private_constant :DECODER
+
+    # A regular expression for matching the SQL representation of a parsed semantic version.
     ENCODED = /\A\((?:"?\d*"?),(?:"?\d*"?),(?:"?\d*"?),(?:"?[^,]*"?),(?:"?[^,]*"?)\)\z/.freeze
 
-    VERSION_HASH = Dry::Types["hash"].schema(
-      major: Dry::Types["coercible.integer"],
-      minor: Dry::Types["coercible.integer"],
-      patch: Dry::Types["coercible.integer"],
-      pre: Dry::Types["string"].optional,
-      build: Dry::Types["string"].optional,
-    ).with_key_transform(&:to_sym)
+    private_constant :ENCODED
 
-    # @param [String] value
-    # @return [VariablePrecisionDate]
+    # @param [String, Semantic::Version, Hash] value
+    # @return [Semantic::Version, nil]
+    # @overload cast(encoded_value)
+    #   Parse an {ENCODED encoded value} via {#decode_semantic_version}.
+    #   @param [String] encoded_value
+    #   @return [Semantic::Version]
+    # @overload cast(value)
+    #   Parse a semver-formatted string
+    #   @param [String] value
+    #   @raise [ArgumentError] if the value cannot be parsed
+    #   @return [Semantic::Version]
+    # @overload cast(version)
+    #   @param [Semantic::Version] version
+    #   @return [Semantic::Version]
+    # @overload cast(major:, minor:, patch:, pre: nil, build: nil)
+    #   Cast a semantic version using {VERSION_HASH}.
+    #   @param [#to_i] major
+    #   @param [#to_i] minor
+    #   @param [#to_i] patch
+    #   @param [String, nil] pre
+    #   @param [String, nil] build
+    #   @return [Semantic::Version]
     def cast(value)
       case value
       when ENCODED
         decode_semantic_version value
       when String
+        # :nocov:
         Semantic::Version.new value
+        # :nocov:
       when Semantic::Version
+        # :nocov:
         value
+        # :nocov:
       when VERSION_HASH
+        # :nocov:
         cast version_string_from(**VERSION_HASH[value])
+        # :nocov:
       end
     end
 
-    # @param [VariablePrecisionDate] new_value
+    # @param [Semantic::Version] new_value
     # @return [String] the SQL representation of the variable precision date (e.g. `(2021-01-01,year)`)
     def serialize(value)
       case value
@@ -42,31 +72,29 @@ module GlobalTypes
     end
 
     # @param [String] raw_old_value
-    # @param [VariablePrecisionDate] new_value
+    # @param [Semantic::Version] new_value
     def changed_in_place?(raw_old_value, new_value)
       raw_old_value != serialize(new_value)
     end
 
+    # @!attribute [r] type
+    # @return [:parsed_semantic_version]
     def type
       :parsed_semantic_version
     end
 
     private
 
+    # Parse a SQL representation of a parsed semantic version back into its component type.
+    #
+    # @param [String] value
+    # @return [Semantic::Version]
     def decode_semantic_version(value)
       major, minor, patch, pre, build = DECODER.decode value
 
       version_string = version_string_from major: major, minor: minor, patch: patch, pre: pre, build: build
 
       Semantic::Version.new version_string
-    end
-
-    def version_string_from(major:, minor:, patch:, pre: nil, build: nil)
-      [major, minor, patch].join(?.).then do |version|
-        pre.present? ? "#{version}-#{pre}" : version
-      end.then do |version|
-        build.present? ? "#{version}+#{build}" : version
-      end
     end
   end
 end

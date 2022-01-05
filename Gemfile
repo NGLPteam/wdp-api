@@ -99,6 +99,9 @@ gem "factory_bot_rails", "~> 6.2.0"
 group :development, :test do
   gem "rspec", "~> 3.10.0"
   gem "rspec-rails", "~> 5.0.1"
+  gem "yard", "~> 0.9.27"
+  gem "yard-activerecord", "~> 0.0.16"
+  gem "yard-activesupport-concern", "~> 0.0.1"
 end
 
 group :development do

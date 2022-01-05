@@ -20,13 +20,7 @@ module Schemas
     # @see Schemas::Properties::CompileSchema
     # @see Schemas::Properties::Scalar::Reference#normalize_schema_value_before_coercer
     # @see Schemas::Properties::Scalar::Reference#reference_normalizer_klass
-    class CollectedNormalizer
-      include Dry::Initializer.define -> do
-        option :models, type: AppTypes::ModelClassList.constrained(min_size: 1)
-      end
-
-      include WDPAPI::Deps[object_from_id: "relay_node.object_from_id"]
-
+    class CollectedNormalizer < AbstractNormalizer
       # @param [<Object>, Object] value
       # @return [<ApplicationRecord>]
       def call(value)
@@ -37,6 +31,8 @@ module Schemas
 
       private
 
+      # @param [Object] value
+      # @return [<ActiveRecord::Base>]
       def process_input(value)
         case value
         when ActiveRecord::Relation
@@ -54,12 +50,16 @@ module Schemas
         end
       end
 
+      # @param [<String>] value
+      # @return [<ActiveRecord::Base>]
       def process_string_list(value)
         value.map do |maybe_id|
           object_from_id.call(maybe_id).value_or(nil)
         end
       end
 
+      # @param [<ActiveRecord::Base>] value
+      # @return [<ActiveRecord::Base>]
       def process_model_list(value)
         Array(value).select do |instance|
           models.any? do |model|

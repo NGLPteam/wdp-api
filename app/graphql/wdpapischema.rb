@@ -1,5 +1,9 @@
 # frozen_string_literal: true
 
+# The entry point for the GraphQL schema.
+#
+# @see GraphqlController#execute
+# @subsystem GraphQL
 class WDPAPISchema < GraphQL::Schema
   mutation Types::MutationType
 

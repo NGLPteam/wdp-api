@@ -1,11 +1,19 @@
 # frozen_string_literal: true
 
 module Tokens
+  # Decode a JWT that relies on our local security salt.
+  #
+  # @see Tokens::Encode
+  # @operation
   class Decode
     include Dry::Monads[:result]
 
     # @param [String] token
-    # @return [Hash]
+    # @param [String, nil] aud
+    # @param [String, nil] sub
+    # @return [Dry::Monads::Success(Hash)] the decoded token payload
+    # @return [Dry::Monads::Failure(:invalid_jwk, String)] on an error with signing key
+    # @return [Dry::Monads::Failure(:invalid_token, String)] if the token is otherwise invalid
     def call(token, aud: nil, sub: nil)
       return Failure[:no_token_provided, "No token provided"] if token.blank?
 

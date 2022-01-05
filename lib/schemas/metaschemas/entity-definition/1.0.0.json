@@ -36,16 +36,6 @@
         "$ref": "#/$defs/Association"
       }
     },
-    "SchemaKind": {
-      "type": "string",
-      "title": "Schema Kind",
-      "description": "Lists the type of WDP model that can implement this schema.",
-      "enum": [
-        "community",
-        "collection",
-        "item"
-      ]
-    },
     "Identifier": {
       "description": "An unqualified name that can identify something within a certain namespace in the WDP.",
       "pattern": "^[a-z][a-z0-9_]*[a-z]$",
@@ -167,7 +157,9 @@
         },
         "constant": {
           "title": "Constant?",
-          "description": "If set to true, this ordering cannot be inverted and only sorts in one direction."
+          "description": "If set to true, this ordering cannot be inverted and only sorts in one direction.",
+          "type": "boolean",
+          "default": false
         },
         "hidden": {
           "title": "Hidden?",
@@ -179,6 +171,30 @@
           "title": "Position",
           "description": "The (optional) deterministic position for an ordering when listing it",
           "type": "number"
+        },
+        "filter": {
+          "type": "object",
+          "title": "Filter",
+          "description": "Used to filter which children should be included in the ordering",
+          "properties": {
+            "schemas": {
+              "description": "Limit the selection to entities that consume these schemas",
+              "type": "array",
+              "items": {
+                "description": "These strings should be existing Schema IDs",
+                "$ref": "#/$defs/OrderingSchemaFilter"
+              }
+            }
+          }
+        },
+        "order": {
+          "description": "Specifies how to order the ordering",
+          "items": {
+            "$ref": "#/$defs/Order"
+          },
+          "minItems": 1,
+          "maxItems": 7,
+          "type": "array"
         },
         "select": {
           "type": "object",
@@ -226,30 +242,6 @@
               }
             }
           }
-        },
-        "filter": {
-          "type": "object",
-          "title": "Filter",
-          "description": "Used to filter which children should be included in the ordering",
-          "properties": {
-            "schemas": {
-              "description": "Limit the selection to entities that consume these schemas",
-              "type": "array",
-              "items": {
-                "description": "These strings should be existing Schema IDs",
-                "$ref": "#/$defs/OrderingSchemaFilter"
-              }
-            }
-          }
-        },
-        "order": {
-          "description": "Specifies how to order the ordering",
-          "items": {
-            "$ref": "#/$defs/Order"
-          },
-          "minItems": 1,
-          "maxItems": 7,
-          "type": "array"
         },
         "header": {
           "title": "Header",
@@ -1031,6 +1023,16 @@
           }
         }
       }
+    },
+    "SchemaKind": {
+      "type": "string",
+      "title": "Schema Kind",
+      "description": "Lists the type of WDP model that can implement this schema.",
+      "enum": [
+        "community",
+        "collection",
+        "item"
+      ]
     },
     "SelectOption": {
       "additionalProperties": false,

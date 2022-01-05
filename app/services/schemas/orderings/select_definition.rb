@@ -2,12 +2,29 @@
 
 module Schemas
   module Orderings
+    # Configuration options to inform an {Ordering} what depth
+    # to select to as well as whether or not to include any
+    # links in the resulting {OrderingEntry entry set}.
     class SelectDefinition
       include StoreModel::Model
 
+      # The available options for {#direct}.
       DIRECT = %w[none children descendants].freeze
 
+      private_constant :DIRECT
+
+      # @!attribute [rw] direct
+      # Select the depth of children to retrieve.
+      #
+      # @note If this ordering is {Schemas::Orderings::RenderDefinition#mode in tree mode},
+      #   that takes precedence and this option will be ignored. Instead, this class will
+      #   act as though it is set to `"descendants"`.
+      # @return ["none", "children", "descendants"]
       attribute :direct, :string, default: "children"
+
+      # @!attribute [r] links
+      # The configuration for selecting links.
+      # @return [Schemas::Orderings::SelectLinkDefinition]
       attribute :links, Schemas::Orderings::SelectLinkDefinition.to_type, default: proc { {} }
 
       validates :direct, presence: true, inclusion: { in: DIRECT }

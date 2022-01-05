@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+# A client for talking to the local Tus server. It is intended for internal use only,
+# and will likely not be part of the final API in this form.
+#
 # @api private
 class TusClient
   CHUNK_SIZE = 100.megabytes
@@ -155,25 +158,37 @@ class TusClient
   end
 
   class << self
+    # Build a client for the provided base URL.
+    #
+    # @example
+    #   client = TusClient.build "http://localhost:6222"
+    #
+    # @param [String] base_url
+    # @return [TusClient]
     def build(base_url)
       server_url = URI.join(base_url, "/files").to_s
 
       new server_url, headers: generate_additional_headers
     end
 
+    # {.build Build} a client for the default local docker environment.
+    #
+    # @return [TusClient]
     def local
       build "http://localhost:6222"
     end
 
     private
 
+    # Generate an upload token
+    # @return [String]
     def generate_upload_token
       WDPAPI::Container["uploads.encode_token"].call.value!
     end
 
     def generate_additional_headers
       {}.tap do |h|
-        h["Uppy-Auth-Token"] = generate_upload_token
+        h["Upload-Token"] = generate_upload_token
       end
     end
   end

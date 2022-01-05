@@ -1,6 +1,27 @@
 # frozen_string_literal: true
 
 module MutationOperations
+  # The basic logic for an operation that backs a {Mutations::BaseMutation mutation}.
+  #
+  # Any given mutation operation gets set up by {MutationOperations::Middleware} and
+  # goes through several lifecycle methods:
+  #
+  # 1. `prepare` This step is for modifying the args and preparing the local context
+  #   for later steps.
+  # 2. `edges` This step loads and validates any "edges" for mutations that affect
+  #   the connection between two entities and factors heavily into validations.
+  #   {MutationOperations::Edges#load_and_validate_edges! It uses specialized logic}.
+  # 3. `validation` The final major step before execution, this validates the args
+  #   provided to the mutation along with any derived edges or context.
+  # 4. `contracts` A sub-step of validations, this is where
+  #   {MutationOperations::Contracts#check_contracts! contracts are run} against the
+  #   provided arguments. Failed contracts will add to the errors, which will prevent
+  #   the final step from running at all.
+  # 5. `execution` This is where the actual {#call logic of the mutation} is performed,
+  #   assuming all validations and contracts passed and no other errors were set.
+  #
+  # All of these steps are defined as ActiveModel callbacks, so mutations can opt to
+  # define hooks `after_edges`, `before_contracts`, `around_execution`, etc.
   module Base
     extend ActiveSupport::Concern
 
@@ -26,6 +47,17 @@ module MutationOperations
       include Dry::Monads[:result, :validated, :list]
 
       define_model_callbacks :prepare, :edges, :contracts, :validation, :execution
+    end
+
+    # @abstract The main logic of the mutation must be implemented in this method.
+    # @param [{ Symbol => Object }] args
+    # @return [void] The return value is not acknowledged (except for monadic failures), as it
+    #   is expected that values to be returned from the API are assigned to the
+    #   response with {#attach!}.
+    def call(**args)
+      # :nocov:
+      raise NotImplementedError, "Must implement #{self.class}#call"
+      # :nocov:
     end
 
     # @api private
@@ -62,6 +94,10 @@ module MutationOperations
       end
     end
 
+    # Attach a `value` on `key` of the GraphQL response.
+    # @param [Symbol] key
+    # @param [Object] value
+    # @return [void]
     def attach!(key, value)
       if graphql_response.key?(key) && value != graphql_response[key]
         warn "already assigned value to graphql_response[#{key.inspect}]: #{graphql_response[key]}"

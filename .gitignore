@@ -9,6 +9,9 @@
 
 /coverage
 
+/doc
+/.yardoc
+
 # Ignore all logfiles and tempfiles.
 /log/*
 /tmp/*
