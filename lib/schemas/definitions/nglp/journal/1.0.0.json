@@ -125,10 +125,6 @@
       "label": "CC License",
       "options": [
         {
-          "label": "Blank",
-          "value": "Blank"
-        },
-        {
           "label": "CC BY",
           "value": "CC BY"
         },
