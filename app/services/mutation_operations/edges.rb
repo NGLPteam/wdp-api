@@ -27,7 +27,7 @@ module MutationOperations
       local_context[:edges].fetch(key)
     end
 
-    # A hook called after the {#prepare!} step of a mutation.
+    # A hook called after the {MutationOperations::Base#prepare! prepare} step of a mutation.
     #
     # @api private
     # @see #load_and_validate_edge!

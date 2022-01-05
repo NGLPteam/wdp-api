@@ -33,7 +33,7 @@ module Schemas
 
     # A type for matching a fully-qualified schema declaration.
     #
-    # It will use {#FLEXIBLE_DECLARATION_PATTERN} to match a more lax approach that includes
+    # It will use {FLEXIBLE_DECLARATION_PATTERN} to match a more lax approach that includes
     # an optional schema version, and it will finesse it into the proper declaration format.
     #
     # @see DECLARATION_PATTERN

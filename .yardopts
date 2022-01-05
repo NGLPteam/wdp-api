@@ -1,0 +1,7 @@
+--private
+--protected
+-m markdown
+lib/global_types/**/*.rb
+-
+README.md
+LICENSE

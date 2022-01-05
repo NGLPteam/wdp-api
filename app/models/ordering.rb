@@ -1,5 +1,11 @@
 # frozen_string_literal: true
 
+# A dynamic ordering for a {SchemaInstance}. By default, these are provided by the
+# entity's associated {SchemaVersion}, but there exists the ability for administrators
+# to create custom orderings for specific entities that have all the same abilities.
+#
+# @see Schemas::Orderings::Definition
+# @see Schemas::Versions::Configuration#orderings
 class Ordering < ApplicationRecord
   include AssignsPolymorphicForeignKey
 
@@ -14,6 +20,8 @@ class Ordering < ApplicationRecord
 
   has_many :ordering_entries, -> { preload(:entity) }, inverse_of: :ordering, dependent: :delete_all
 
+  # @!attribute [rw] definition
+  # @return [Schemas::Orderings::Definition]
   attribute :definition, Schemas::Orderings::Definition.to_type, default: proc { {} }
 
   scope :by_entity, ->(entity) { where(entity: entity) }
@@ -30,6 +38,8 @@ class Ordering < ApplicationRecord
 
   before_validation :sync_inherited!
 
+  # A restrictive pattern to ensure that ordering identifiers are sane, URL-safe,
+  # and consistent across the application.
   IDENTIFIER_FORMAT = /\A[a-z](?:[a-z0-9]*|(?:(?<![-_])[_-](?![_-])))*[a-z0-9]\z/.freeze
 
   validates :identifier, presence: true, format: { with: IDENTIFIER_FORMAT }, uniqueness: { scope: %i[entity_type entity_id] }
@@ -64,6 +74,7 @@ class Ordering < ApplicationRecord
     Array(definition.order)
   end
 
+  # @see Schemas::Orderings::Refresh
   # @return [Dry::Monads::Result]
   def refresh
     call_operation("schemas.orderings.refresh", self)
@@ -73,6 +84,7 @@ class Ordering < ApplicationRecord
     refresh.value!
   end
 
+  # @see Schemas::Orderings::Reset
   # @return [Dry::Monads::Result]
   def reset!
     call_operation("schemas.orderings.reset", self)

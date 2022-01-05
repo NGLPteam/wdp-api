@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Utility
-  # Given a {Hash}, this service will deeply transform its keys into their decamelized forms.
+  # Given a `Hash`, this service will deeply transform its keys into their decamelized forms.
   #
   # It respects the original type of key, so symbol keys will remain symbols,
   # while non-stringish keys will be ignored entirely.

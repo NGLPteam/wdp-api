@@ -2,7 +2,7 @@
 
 module Testing
   module HushActiveRecord
-    def call
+    def call(*)
       ActiveRecord::Base.logger.silence do
         super
       end

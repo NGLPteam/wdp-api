@@ -1,8 +1,13 @@
 # frozen_string_literal: true
 
+# Request handling for the GraphQL API.
 class GraphqlController < ApplicationController
   before_action :authenticate_user!
 
+  # This method handles all GraphQL requests that WDP-API receives.
+  #
+  # @see WDPAPISchema
+  # @return [void]
   def execute
     variables = prepare_variables(params[:variables])
 
@@ -28,6 +33,9 @@ class GraphqlController < ApplicationController
   private
 
   # Handle variables in form data, JSON body, or a blank value
+  #
+  # @param [String, Hash, ActionController::Parameters] variables_param
+  # @return [Hash]
   def prepare_variables(variables_param)
     # :nocov:
     case variables_param
@@ -49,6 +57,10 @@ class GraphqlController < ApplicationController
     # :nocov:
   end
 
+  # Render a backtrace for errors that occur in development.
+  #
+  # @param [Exception] err
+  # @return [void]
   def handle_error_in_development(err)
     # :nocov:
     logger.error err.message

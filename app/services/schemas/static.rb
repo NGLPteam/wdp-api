@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 module Schemas
+  # This container namespace deals with services and operations tied to static, built-in schemas
+  # that ship with WDP-API, as opposed to any user-space, custom schemas that may be added to an
+  # installation at a later date.
   module Static
     extend Dry::Container::Mixin
 

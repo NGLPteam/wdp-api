@@ -21,6 +21,9 @@ module Schemas
           end
         end
 
+        # @!attribute [r] arel_table
+        # The Arel table for {OrderingEntryCandidate}.
+        # @return [Arel::Table]
         memoize def arel_table
           OrderingEntryCandidate.arel_table
         end

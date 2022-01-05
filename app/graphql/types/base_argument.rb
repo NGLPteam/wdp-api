@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module Types
+  # @abstract
   class BaseArgument < GraphQL::Schema::Argument
     def initialize(*args, attribute: false, transient: false, **kwargs, &block)
       @attribute = attribute

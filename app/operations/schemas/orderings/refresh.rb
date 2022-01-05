@@ -2,6 +2,10 @@
 
 module Schemas
   module Orderings
+    # Refresh an {Ordering} and calculate the {OrderingEntry entries} that should appear within.
+    #
+    # Once that finishes, it will purge any entries that should no longer be considered part of
+    # the ordering.
     class Refresh
       include Dry::Monads[:do, :result]
       include QueryOperation

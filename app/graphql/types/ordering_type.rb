@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module Types
+  # The GraphQL representation of an {Ordering}.
   class OrderingType < Types::AbstractModel
     description "An ordering that belongs to an entity and arranges its children in a pre-configured way"
 

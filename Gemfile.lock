@@ -287,7 +287,7 @@ GEM
     http-cookie (1.0.4)
       domain_name (~> 0.5)
     http-form_data (2.3.0)
-    i18n (1.8.10)
+    i18n (1.8.11)
       concurrent-ruby (~> 1.0)
     ice_nine (0.11.2)
     image_processing (1.12.1)
@@ -348,7 +348,7 @@ GEM
     mini_magick (4.11.0)
     mini_mime (1.1.1)
     mini_portile2 (2.6.1)
-    minitest (5.14.4)
+    minitest (5.15.0)
     mods (2.4.1)
       edtf
       iso-639
@@ -561,12 +561,19 @@ GEM
       addressable (>= 2.3.6)
       crack (>= 0.3.2)
       hashdiff (>= 0.4.0, < 2.0.0)
+    webrick (1.7.0)
     websocket-driver (0.7.5)
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.5)
     with_advisory_lock (4.6.0)
       activerecord (>= 4.2)
-    zeitwerk (2.4.2)
+    yard (0.9.27)
+      webrick (~> 1.7.0)
+    yard-activerecord (0.0.16)
+      yard (>= 0.8.3)
+    yard-activesupport-concern (0.0.1)
+      yard (>= 0.8)
+    zeitwerk (2.5.3)
 
 PLATFORMS
   ruby
@@ -657,9 +664,12 @@ DEPENDENCIES
   tus-server (~> 2.3)
   validate_url (~> 1.0.13)
   webmock (= 3.12.2)
+  yard (~> 0.9.27)
+  yard-activerecord (~> 0.0.16)
+  yard-activesupport-concern (~> 0.0.1)
 
 RUBY VERSION
    ruby 2.7.3p183
 
 BUNDLED WITH
-   2.2.19
+   2.2.29

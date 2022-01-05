@@ -1,5 +1,9 @@
 # frozen_string_literal: true
 
+# An uploader that allows effectively any type of file. Its primary application is with {Asset assets},
+# allowing users to attach just about anything to an entity.
+#
+# It stores some metadata about the kind of asset it detects, see {Assets::ParseKind}.
 class GenericUploader < Shrine
   plugin :add_metadata
   plugin :refresh_metadata
