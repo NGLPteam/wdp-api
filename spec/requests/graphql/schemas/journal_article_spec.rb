@@ -96,12 +96,13 @@ RSpec.describe "nglp:journal_article", type: :request do
     end
 
     context "when a required property is blank" do
-      let(:volume_id) { nil }
+      let(:issue_id) { nil }
+      let(:issue_number) { ?1 }
 
       let(:expected_shape) do
         gql.mutation :apply_schema_properties, schema: true, no_schema_errors: false do |m|
           m.schema_errors do |se|
-            se.error "volume.id", :filled?
+            se.error "issue.id", :filled?
           end
 
           m[:entity] = be_blank

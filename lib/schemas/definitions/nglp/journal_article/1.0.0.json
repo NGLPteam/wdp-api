@@ -51,10 +51,10 @@
       "path": "issue",
       "legend": "Issue Metadata",
       "properties": [
-        { "path": "title", "label": "Title", "type": "string", "wide": true, "function": "metadata" },
-        { "path": "number", "label": "Number", "type": "string", "function": "metadata" },
-        { "path": "sortable_number", "label": "Sortable Number", "type": "integer", "function": "sorting" },
-        { "path": "id", "label": "ID", "type": "string", "function": "metadata" },
+        { "path": "title", "label": "Title", "type": "string", "wide": true, "function": "metadata", "required": true },
+        { "path": "number", "label": "Number", "type": "string", "function": "metadata", "required": true },
+        { "path": "sortable_number", "label": "Sortable Number", "type": "integer", "function": "sorting", "required": true },
+        { "path": "id", "label": "ID", "type": "string", "function": "metadata", "required": true },
         { "path": "fpage", "label": "Start Page (of Issue)", "type": "integer", "function": "metadata" },
         { "path": "lpage", "label": "Ending Page (of Issue)", "type": "integer", "function": "metadata" }
       ],
