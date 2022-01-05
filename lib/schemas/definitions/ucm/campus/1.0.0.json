@@ -1,0 +1,128 @@
+{
+  "namespace": "ucm",
+  "identifier": "campus",
+  "name": "Campus",
+  "version": "1.0.0",
+  "kind": "collection",
+  "children": [
+    {
+      "namespace": "ucm",
+      "identifier": "oru"
+    },
+    {
+      "namespace": "ucm",
+      "identifier": "series"
+    }
+  ],
+  "orderings": [
+    {
+      "id": "series",
+      "name": "Series",
+      "filter": {
+        "schemas": [
+          {
+            "namespace": "ucm",
+            "identifier": "series"
+          }
+        ]
+      },
+      "select": {
+        "direct": "descendants"
+      },
+      "order": [
+        { "path": "entity.title", "direction": "asc" }
+      ],
+      "render": {
+        "mode": "tree"
+      },
+      "position": 1
+    },
+    {
+      "id": "units",
+      "name": "Units",
+      "filter": {
+        "schemas": [
+          {
+            "namespace": "ucm",
+            "identifier": "oru"
+          }
+        ]
+      },
+      "select": {
+        "direct": "descendants"
+      },
+      "order": [
+        { "path": "entity.title", "direction": "asc" }
+      ],
+      "render": {
+        "mode": "tree"
+      },
+      "position": 2
+    }
+  ],
+  "properties": [
+    {
+      "type": "select",
+      "path": "direct_submit",
+      "label": "Direct Submit",
+      "options": [
+        { "label": "Enabled", "value": "enabled" },
+        { "label": "Moribund", "value": "moribund"},
+        { "label": "Disabled", "value": "disabled" }
+      ]
+    },
+    {
+      "type": "select",
+      "path": "status",
+      "label": "Status",
+      "default": "active",
+      "options": [
+        { "label": "Active", "value": "active" },
+        { "label": "Archived", "value": "archived" },
+        { "label": "Hidden", "value": "hidden" }
+      ]
+    },
+    {
+      "type": "group",
+      "path": "content_card_one",
+      "legend": "Content Card 1",
+      "properties": [
+        {
+          "path": "mode",
+          "type": "select",
+          "label": "Mode",
+          "options": [
+            { "label": "Unit", "value": "unit" },
+            { "label": "Journals", "value": "journals" }
+          ]
+        },
+        {
+          "path": "unit_id",
+          "type": "string",
+          "label": "Unit ID"
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "path": "content_card_two",
+      "legend": "Content Card 2",
+      "properties": [
+        {
+          "path": "mode",
+          "type": "select",
+          "label": "Mode",
+          "options": [
+            { "label": "Unit", "value": "unit" },
+            { "label": "Journals", "value": "journals" }
+          ]
+        },
+        {
+          "path": "unit_id",
+          "type": "string",
+          "label": "Unit ID"
+        }
+      ]
+    }
+  ]
+}
