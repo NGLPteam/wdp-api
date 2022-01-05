@@ -49,6 +49,11 @@ module Schemas
       # @return [<Schemas::Associations::Child>]
       attribute :children, Schemas::Associations::Child.to_array_type, default: proc { [] }
 
+      # Configurations for core properties on schema instances.
+      #
+      # @return [Schemas::Versions::CoreDefinition]
+      attribute :core, Schemas::Versions::CoreDefinition.to_type, default: proc { {} }
+
       # A collection of definitions that dictate the default dynamic {::Ordering orderings} an entity
       # that implements this schema can have.
       #
@@ -60,6 +65,11 @@ module Schemas
       # @note This list is deterministically ordered.
       # @return [<Schemas::Properties::GroupDefinition, Schemas::Properties::Scalar::Base>]
       attribute :properties, Schemas::Properties::Definition.to_array_type, default: proc { [] }
+
+      # Configurations for handling rendering schema instances in isolation, outside of an {Ordering}.
+      #
+      # @return [Schemas::Versions::RenderDefinition]
+      attribute :render, Schemas::Versions::RenderDefinition.to_type, default: proc { {} }
 
       validates :kind, inclusion: { in: %w[community collection item] }
 

@@ -2,6 +2,7 @@
 
 module Schemas
   module Associations
+    # @see Types::OrderingSchemaFilterInputType
     class OrderingFilter < Association
     end
   end

@@ -196,6 +196,14 @@
           "maxItems": 7,
           "type": "array"
         },
+        "render": {
+          "type": "object",
+          "title": "Render Options",
+          "description": "Options for controlling how entities in an ordering render. These can have larger effects on the rest of the ordering",
+          "properties": {
+            "mode": { "$ref": "#/$defs/OrderingRenderMode" }
+          }
+        },
         "select": {
           "type": "object",
           "title": "Child Selection",
@@ -203,7 +211,7 @@
           "properties": {
             "direct": {
               "title": "Child Entities",
-              "description": "Whether no, direct descendants, or all descendants should be displayed",
+              "description": "Whether no, direct descendants, or all descendants should be displayed. Note: if `render.mode` is set to `tree`, any value set here will be ignored and the application will act as though `descendants` was set.",
               "default": "children",
               "type": "string",
               "anyOf": [
@@ -304,6 +312,13 @@
         "type": "string",
         "pattern": "^props\\.[a-z][a-z0-9_]*[a-z](?:\\.[a-z][a-z0-9_]*[a-z])?(?:#[a-z][a-z0-9_]*[a-z])?$"
       }
+    },
+    "OrderingRenderMode": {
+      "type": "string",
+      "title": "Render Mode",
+      "description": "The mode that entities inside an ordering should render in.",
+      "enum": ["flat", "tree"],
+      "default": "flat"
     },
     "OrderingSchemaFilter": {
       "type": "object",
@@ -1006,6 +1021,9 @@
           "$ref": "#/$defs/Associations",
           "description": "The type(s) of direct children this schema accepts."
         },
+        "core": {
+          "$ref": "#/$defs/SchemaCoreDefinition"
+        },
         "orderings": {
           "title": "Orderings",
           "description": "A schema can provide default orderings, which an instance can override.",
@@ -1021,6 +1039,35 @@
           "items": {
             "$ref": "#/$defs/TopLevelProperty"
           }
+        },
+        "render": {
+          "$ref": "#/$defs/SchemaRenderDefinition"
+        }
+      }
+    },
+    "SchemaCoreDefinition": {
+      "type": "object",
+      "title": "Core Properties",
+      "description": "Options for controlling certain optional core properties that may not be used on all entities, but are specific enough to not be set as a schema property. Note: these are mostly ignored for community schemas.",
+      "additionalProperties": false,
+      "properties": {
+        "doi": {
+          "type": "boolean",
+          "title": "Expose DOI?",
+          "description": "Whether the implementing instance should expose a DOI (https://doi.org)",
+          "default": true
+        },
+        "issn": {
+          "type": "boolean",
+          "title": "Expose ISSN?",
+          "description": "Whether the implementing instance should expose its ISSN (https://issn.org)",
+          "default": false
+        },
+        "subtitle": {
+          "type": "boolean",
+          "title": "Expose Subtitle?",
+          "description": "Whether the implementing instance should expose a subtitle",
+          "default": true
         }
       }
     },
@@ -1032,6 +1079,38 @@
         "community",
         "collection",
         "item"
+      ]
+    },
+    "SchemaRenderDefinition": {
+      "type": "object",
+      "title": "Render Options",
+      "description": "Options for controlling how to render instances of this schema in isolated contexts, outside of orderings.",
+      "additionalProperties": false,
+      "properties": {
+        "list_mode": { "$ref": "#/$defs/SchemaRenderListMode" }
+      }
+    },
+    "SchemaRenderListMode": {
+      "type": "string",
+      "title": "List Render Mode",
+      "description": "How instances that implement this schema should be rendered outside of an ordering, when showing only entities of the same type",
+      "default": "grid",
+      "anyOf": [
+        {
+          "type": "string",
+          "title": "Grid",
+          "enum": ["grid"]
+        },
+        {
+          "type": "string",
+          "title": "Table",
+          "enum": ["table"]
+        },
+        {
+          "type": "string",
+          "title": "Tree",
+          "enum": ["tree"]
+        }
       ]
     },
     "SelectOption": {

@@ -17,17 +17,16 @@ class OrderingEntry < ApplicationRecord
   scope :by_entity, ->(entity) { where(entity: entity) }
 
   class << self
+    # @param [Ordering] ordering
+    # @return [Integer]
+    def delete_stale_for(ordering)
+      by_ordering(ordering).where.not(stale_at: nil).delete_all
+    end
+
     # @param [HierarchicalEntity] entity
     # @return [ActiveRecord::Relation<OrderingEntry>]
     def linking_to(entity)
       where(entity_type: "EntityLink", entity_id: entity.incoming_links.select(:id))
-    end
-
-    # @param [Ordering] ordering
-    # @param [<String>] ids
-    # @return [void]
-    def purge(ordering, ids)
-      by_ordering(ordering).where.not(id: ids).delete_all
     end
   end
 end

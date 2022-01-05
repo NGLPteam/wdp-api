@@ -52,15 +52,21 @@ module Schemas
       # @return [<Schemas::Orderings::OrderDefinition>]
       attribute :order, Schemas::Orderings::OrderDefinition.to_array_type, default: proc { [] }
 
+      # @!attribute [r] render
+      # @return [Schemas::Orderings::RenderDefinition]
+      attribute :render, Schemas::Orderings::RenderDefinition.to_type, default: proc { {} }
+
       # @!attribute [r] select
       # @return [Schemas::Orderings::SelectDefinition]
       attribute :select, Schemas::Orderings::SelectDefinition.to_type, default: proc { {} }
 
       validates :id, :order, :select, presence: true
 
-      validates :select, :filter, :order, store_model: true
+      validates :filter, :order, :render, :select, store_model: true
 
       validates :order, length: { minimum: 1, maximum: 7 }, unique_items: true
+
+      delegate :tree_mode?, to: :render
 
       # Boolean complement of {#constant}
       def invertable?

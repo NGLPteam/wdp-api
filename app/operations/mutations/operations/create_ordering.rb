@@ -23,6 +23,7 @@ module Mutations
         ordering.definition.select = attributes[:select].as_json.presence || {}
         ordering.definition.filter = attributes[:filter].as_json.presence || {}
         ordering.definition.order = attributes[:order].as_json
+        ordering.definition.render = attributes[:render].as_json.presence || {}
 
         ordering.definition_will_change!
 

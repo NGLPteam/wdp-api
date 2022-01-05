@@ -12,23 +12,25 @@ module Mutations
       TEXT
     end
 
-    argument :name, String, required: false do
+    argument :name, String, required: false, attribute: true do
       description "A human readable label for the ordering"
     end
 
-    argument :header, String, required: false do
+    argument :header, String, required: false, attribute: true do
       description "Optional markdown content to display before the ordering's children"
     end
 
-    argument :footer, String, required: false do
+    argument :footer, String, required: false, attribute: true do
       description "Optional markdown content to display after the ordering's children"
     end
 
-    argument :filter, Types::OrderingFilterDefinitionInputType, required: false
+    argument :filter, Types::OrderingFilterDefinitionInputType, required: false, attribute: true
 
-    argument :select, Types::OrderingSelectDefinitionInputType, required: false
+    argument :select, Types::OrderingSelectDefinitionInputType, required: false, attribute: true
 
-    argument :order, [Types::OrderDefinitionInputType, { null: false }], required: true
+    argument :order, [Types::OrderDefinitionInputType, { null: false }], required: true, attribute: true
+
+    argument :render, Types::OrderingRenderDefinitionInputType, required: false, attribute: true
 
     performs_operation! "mutations.operations.update_ordering"
   end

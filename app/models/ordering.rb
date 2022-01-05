@@ -32,7 +32,7 @@ class Ordering < ApplicationRecord
   scope :enabled, -> { where(disabled_at: nil) }
   scope :disabled, -> { where.not(disabled_at: nil) }
 
-  delegate :name, :header, :footer, to: :definition
+  delegate :name, :header, :footer, :constant?, :hidden?, :tree_mode?, to: :definition
 
   delegate :schemas, allow_nil: true, to: "definition.filter", prefix: :filter
 

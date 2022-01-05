@@ -34,6 +34,9 @@
       "identifier": "journal_article"
     }
   ],
+  "core": {
+    "issn": true
+  },
   "orderings": [
     {
       "id": "articles",

@@ -34,6 +34,8 @@ module Mutations
 
     argument :order, [Types::OrderDefinitionInputType, { null: false }], required: true, attribute: true
 
+    argument :render, Types::OrderingRenderDefinitionInputType, required: false, attribute: true
+
     performs_operation! "mutations.operations.create_ordering"
   end
 end
