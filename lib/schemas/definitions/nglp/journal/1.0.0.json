@@ -115,6 +115,44 @@
           "type": "tags"
         }
       ]
+    },
+    { "type": "boolean", "path": "peer_reviewed", "label": "Peer Reviewed", "function": "metadata" },
+    { "type": "boolean", "path": "preprint_version", "label": "Pre-Print Version", "function": "metadata" },
+    { "type": "boolean", "path": "open_access", "label": "Open Access", "function": "metadata" },
+    {
+      "type": "select",
+      "path": "cc_license",
+      "label": "CC License",
+      "options": [
+        {
+          "label": "Blank",
+          "value": "Blank"
+        },
+        {
+          "label": "CC BY",
+          "value": "CC BY"
+        },
+        {
+          "label": "CC BY-SA",
+          "value": "CC BY-SA"
+        },
+        {
+          "label": "CC BY-NC",
+          "value": "CC BY-NC"
+        },
+        {
+          "label": "CC BY-NC-SA",
+          "value": "CC BY-NC-SA"
+        },
+        {
+          "label": "CC BY-ND",
+          "value": "CC BY-ND"
+        },
+        {
+          "label": "CC BY-NC-ND",
+          "value": "CC BY-NC-ND"
+        }
+      ]
     }
   ]
 }
