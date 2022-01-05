@@ -34,7 +34,7 @@ class ImageUploader < Shrine
   end
 
   Attacher.validate do
-    validate_mime_type %w[image/jpg image/jpeg image/png image/tiff image/webp image/heic image/heif]
+    validate_mime_type %w[image/jpg image/jpeg image/png image/tiff image/webp image/heic image/heif image/gif image/svg+xml]
   end
 
   Attacher.derivatives do |original|
