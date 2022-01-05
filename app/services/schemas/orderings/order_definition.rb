@@ -38,14 +38,41 @@ module Schemas
         nulls == "last"
       end
 
+      def schema_property?
+        path.present? && path.starts_with?("props.")
+      end
+
+      # @!group Compilation
+
+      # @api private
+      # @see #query_builder
+      # @note This method should only be called within {Schemas::Orderings::OrderBuilder::Compile the compilation process}.
+      # @param [{ Symbol => Object }] options
+      # @return [<Arel::Nodes::Ordering>]
+      def compile(**options)
+        query_builder.call self, **options
+      end
+
+      # @!attribute [r] query_builder
+      # This is the builder for a given order definition based on its
+      # {#query_builder_key query builder key}.
+      #
+      # @see Schemas::Orderings::OrderBuilder
+      # @return [#call]
+      def query_builder
+        Schemas::Orderings::OrderBuilder[query_builder_key]
+      end
+
+      # @!attribute [r] query_builder_key
+      # The key used to look up the {#query_builder}.
+      #
+      # @api private
       # @return [String]
       def query_builder_key
         schema_property? ? "props.*" : path
       end
 
-      def schema_property?
-        path.present? && path.starts_with?("props.")
-      end
+      # @!endgroup
     end
   end
 end

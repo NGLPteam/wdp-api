@@ -7,13 +7,15 @@ ruby "2.7.3"
 # Rails / database
 gem "rails", "~> 6.1.4"
 gem "pg", "~> 1.2.3"
+gem "activerecord-cte"
 gem "activerecord-pg_enum"
 gem "closure_tree", "~> 7.2.0"
 gem "composite_primary_keys", "13.0.0"
 gem "frozen_record"
 gem "pg_query"
+gem "retryable", "~> 3.0.5"
 gem "scenic", "~> 1.5.4"
-gem "store_model", "~> 0.9.0"
+gem "store_model", "~> 0.12.0"
 
 # Redis / Jobs
 gem "activejob-uniqueness"

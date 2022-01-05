@@ -3457,7 +3457,11 @@ CREATE TABLE public.ordering_entries (
     relative_depth integer NOT NULL,
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    inverse_position bigint NOT NULL
+    inverse_position bigint NOT NULL,
+    stale_at timestamp without time zone,
+    tree_depth bigint,
+    tree_parent_id uuid,
+    tree_parent_type text
 )
 PARTITION BY HASH (ordering_id);
 
@@ -3478,7 +3482,11 @@ CREATE TABLE public.ordering_entries_part_1 (
     relative_depth integer NOT NULL,
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    inverse_position bigint NOT NULL
+    inverse_position bigint NOT NULL,
+    stale_at timestamp without time zone,
+    tree_depth bigint,
+    tree_parent_id uuid,
+    tree_parent_type text
 );
 ALTER TABLE ONLY public.ordering_entries ATTACH PARTITION public.ordering_entries_part_1 FOR VALUES WITH (modulus 8, remainder 0);
 
@@ -3499,7 +3507,11 @@ CREATE TABLE public.ordering_entries_part_2 (
     relative_depth integer NOT NULL,
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    inverse_position bigint NOT NULL
+    inverse_position bigint NOT NULL,
+    stale_at timestamp without time zone,
+    tree_depth bigint,
+    tree_parent_id uuid,
+    tree_parent_type text
 );
 ALTER TABLE ONLY public.ordering_entries ATTACH PARTITION public.ordering_entries_part_2 FOR VALUES WITH (modulus 8, remainder 1);
 
@@ -3520,7 +3532,11 @@ CREATE TABLE public.ordering_entries_part_3 (
     relative_depth integer NOT NULL,
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    inverse_position bigint NOT NULL
+    inverse_position bigint NOT NULL,
+    stale_at timestamp without time zone,
+    tree_depth bigint,
+    tree_parent_id uuid,
+    tree_parent_type text
 );
 ALTER TABLE ONLY public.ordering_entries ATTACH PARTITION public.ordering_entries_part_3 FOR VALUES WITH (modulus 8, remainder 2);
 
@@ -3541,7 +3557,11 @@ CREATE TABLE public.ordering_entries_part_4 (
     relative_depth integer NOT NULL,
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    inverse_position bigint NOT NULL
+    inverse_position bigint NOT NULL,
+    stale_at timestamp without time zone,
+    tree_depth bigint,
+    tree_parent_id uuid,
+    tree_parent_type text
 );
 ALTER TABLE ONLY public.ordering_entries ATTACH PARTITION public.ordering_entries_part_4 FOR VALUES WITH (modulus 8, remainder 3);
 
@@ -3562,7 +3582,11 @@ CREATE TABLE public.ordering_entries_part_5 (
     relative_depth integer NOT NULL,
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    inverse_position bigint NOT NULL
+    inverse_position bigint NOT NULL,
+    stale_at timestamp without time zone,
+    tree_depth bigint,
+    tree_parent_id uuid,
+    tree_parent_type text
 );
 ALTER TABLE ONLY public.ordering_entries ATTACH PARTITION public.ordering_entries_part_5 FOR VALUES WITH (modulus 8, remainder 4);
 
@@ -3583,7 +3607,11 @@ CREATE TABLE public.ordering_entries_part_6 (
     relative_depth integer NOT NULL,
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    inverse_position bigint NOT NULL
+    inverse_position bigint NOT NULL,
+    stale_at timestamp without time zone,
+    tree_depth bigint,
+    tree_parent_id uuid,
+    tree_parent_type text
 );
 ALTER TABLE ONLY public.ordering_entries ATTACH PARTITION public.ordering_entries_part_6 FOR VALUES WITH (modulus 8, remainder 5);
 
@@ -3604,7 +3632,11 @@ CREATE TABLE public.ordering_entries_part_7 (
     relative_depth integer NOT NULL,
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    inverse_position bigint NOT NULL
+    inverse_position bigint NOT NULL,
+    stale_at timestamp without time zone,
+    tree_depth bigint,
+    tree_parent_id uuid,
+    tree_parent_type text
 );
 ALTER TABLE ONLY public.ordering_entries ATTACH PARTITION public.ordering_entries_part_7 FOR VALUES WITH (modulus 8, remainder 6);
 
@@ -3625,7 +3657,11 @@ CREATE TABLE public.ordering_entries_part_8 (
     relative_depth integer NOT NULL,
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    inverse_position bigint NOT NULL
+    inverse_position bigint NOT NULL,
+    stale_at timestamp without time zone,
+    tree_depth bigint,
+    tree_parent_id uuid,
+    tree_parent_type text
 );
 ALTER TABLE ONLY public.ordering_entries ATTACH PARTITION public.ordering_entries_part_8 FOR VALUES WITH (modulus 8, remainder 7);
 
@@ -5835,6 +5871,20 @@ CREATE INDEX index_ordering_entries_sorted_by_scope ON ONLY public.ordering_entr
 
 
 --
+-- Name: index_ordering_entries_staleness; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_ordering_entries_staleness ON ONLY public.ordering_entries USING btree (ordering_id, stale_at) WHERE (stale_at IS NOT NULL);
+
+
+--
+-- Name: index_ordering_entries_tree_parent; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_ordering_entries_tree_parent ON ONLY public.ordering_entries USING btree (ordering_id, tree_parent_id, tree_parent_type);
+
+
+--
 -- Name: index_ordering_entries_uniqueness; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -6360,6 +6410,20 @@ CREATE INDEX ordering_entries_part_1_ordering_id_scope_position_idx ON public.or
 
 
 --
+-- Name: ordering_entries_part_1_ordering_id_stale_at_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX ordering_entries_part_1_ordering_id_stale_at_idx ON public.ordering_entries_part_1 USING btree (ordering_id, stale_at) WHERE (stale_at IS NOT NULL);
+
+
+--
+-- Name: ordering_entries_part_1_ordering_id_tree_parent_id_tree_par_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX ordering_entries_part_1_ordering_id_tree_parent_id_tree_par_idx ON public.ordering_entries_part_1 USING btree (ordering_id, tree_parent_id, tree_parent_type);
+
+
+--
 -- Name: ordering_entries_part_2_entity_type_entity_id_idx; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -6399,6 +6463,20 @@ CREATE INDEX ordering_entries_part_2_ordering_id_position_idx ON public.ordering
 --
 
 CREATE INDEX ordering_entries_part_2_ordering_id_scope_position_idx ON public.ordering_entries_part_2 USING gist (ordering_id, scope, "position");
+
+
+--
+-- Name: ordering_entries_part_2_ordering_id_stale_at_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX ordering_entries_part_2_ordering_id_stale_at_idx ON public.ordering_entries_part_2 USING btree (ordering_id, stale_at) WHERE (stale_at IS NOT NULL);
+
+
+--
+-- Name: ordering_entries_part_2_ordering_id_tree_parent_id_tree_par_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX ordering_entries_part_2_ordering_id_tree_parent_id_tree_par_idx ON public.ordering_entries_part_2 USING btree (ordering_id, tree_parent_id, tree_parent_type);
 
 
 --
@@ -6444,6 +6522,20 @@ CREATE INDEX ordering_entries_part_3_ordering_id_scope_position_idx ON public.or
 
 
 --
+-- Name: ordering_entries_part_3_ordering_id_stale_at_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX ordering_entries_part_3_ordering_id_stale_at_idx ON public.ordering_entries_part_3 USING btree (ordering_id, stale_at) WHERE (stale_at IS NOT NULL);
+
+
+--
+-- Name: ordering_entries_part_3_ordering_id_tree_parent_id_tree_par_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX ordering_entries_part_3_ordering_id_tree_parent_id_tree_par_idx ON public.ordering_entries_part_3 USING btree (ordering_id, tree_parent_id, tree_parent_type);
+
+
+--
 -- Name: ordering_entries_part_4_entity_type_entity_id_idx; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -6483,6 +6575,20 @@ CREATE INDEX ordering_entries_part_4_ordering_id_position_idx ON public.ordering
 --
 
 CREATE INDEX ordering_entries_part_4_ordering_id_scope_position_idx ON public.ordering_entries_part_4 USING gist (ordering_id, scope, "position");
+
+
+--
+-- Name: ordering_entries_part_4_ordering_id_stale_at_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX ordering_entries_part_4_ordering_id_stale_at_idx ON public.ordering_entries_part_4 USING btree (ordering_id, stale_at) WHERE (stale_at IS NOT NULL);
+
+
+--
+-- Name: ordering_entries_part_4_ordering_id_tree_parent_id_tree_par_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX ordering_entries_part_4_ordering_id_tree_parent_id_tree_par_idx ON public.ordering_entries_part_4 USING btree (ordering_id, tree_parent_id, tree_parent_type);
 
 
 --
@@ -6528,6 +6634,20 @@ CREATE INDEX ordering_entries_part_5_ordering_id_scope_position_idx ON public.or
 
 
 --
+-- Name: ordering_entries_part_5_ordering_id_stale_at_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX ordering_entries_part_5_ordering_id_stale_at_idx ON public.ordering_entries_part_5 USING btree (ordering_id, stale_at) WHERE (stale_at IS NOT NULL);
+
+
+--
+-- Name: ordering_entries_part_5_ordering_id_tree_parent_id_tree_par_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX ordering_entries_part_5_ordering_id_tree_parent_id_tree_par_idx ON public.ordering_entries_part_5 USING btree (ordering_id, tree_parent_id, tree_parent_type);
+
+
+--
 -- Name: ordering_entries_part_6_entity_type_entity_id_idx; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -6567,6 +6687,20 @@ CREATE INDEX ordering_entries_part_6_ordering_id_position_idx ON public.ordering
 --
 
 CREATE INDEX ordering_entries_part_6_ordering_id_scope_position_idx ON public.ordering_entries_part_6 USING gist (ordering_id, scope, "position");
+
+
+--
+-- Name: ordering_entries_part_6_ordering_id_stale_at_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX ordering_entries_part_6_ordering_id_stale_at_idx ON public.ordering_entries_part_6 USING btree (ordering_id, stale_at) WHERE (stale_at IS NOT NULL);
+
+
+--
+-- Name: ordering_entries_part_6_ordering_id_tree_parent_id_tree_par_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX ordering_entries_part_6_ordering_id_tree_parent_id_tree_par_idx ON public.ordering_entries_part_6 USING btree (ordering_id, tree_parent_id, tree_parent_type);
 
 
 --
@@ -6612,6 +6746,20 @@ CREATE INDEX ordering_entries_part_7_ordering_id_scope_position_idx ON public.or
 
 
 --
+-- Name: ordering_entries_part_7_ordering_id_stale_at_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX ordering_entries_part_7_ordering_id_stale_at_idx ON public.ordering_entries_part_7 USING btree (ordering_id, stale_at) WHERE (stale_at IS NOT NULL);
+
+
+--
+-- Name: ordering_entries_part_7_ordering_id_tree_parent_id_tree_par_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX ordering_entries_part_7_ordering_id_tree_parent_id_tree_par_idx ON public.ordering_entries_part_7 USING btree (ordering_id, tree_parent_id, tree_parent_type);
+
+
+--
 -- Name: ordering_entries_part_8_entity_type_entity_id_idx; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -6651,6 +6799,20 @@ CREATE INDEX ordering_entries_part_8_ordering_id_position_idx ON public.ordering
 --
 
 CREATE INDEX ordering_entries_part_8_ordering_id_scope_position_idx ON public.ordering_entries_part_8 USING gist (ordering_id, scope, "position");
+
+
+--
+-- Name: ordering_entries_part_8_ordering_id_stale_at_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX ordering_entries_part_8_ordering_id_stale_at_idx ON public.ordering_entries_part_8 USING btree (ordering_id, stale_at) WHERE (stale_at IS NOT NULL);
+
+
+--
+-- Name: ordering_entries_part_8_ordering_id_tree_parent_id_tree_par_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX ordering_entries_part_8_ordering_id_tree_parent_id_tree_par_idx ON public.ordering_entries_part_8 USING btree (ordering_id, tree_parent_id, tree_parent_type);
 
 
 --
@@ -6717,6 +6879,20 @@ ALTER INDEX public.index_ordering_entries_sorted_by_scope ATTACH PARTITION publi
 
 
 --
+-- Name: ordering_entries_part_1_ordering_id_stale_at_idx; Type: INDEX ATTACH; Schema: public; Owner: -
+--
+
+ALTER INDEX public.index_ordering_entries_staleness ATTACH PARTITION public.ordering_entries_part_1_ordering_id_stale_at_idx;
+
+
+--
+-- Name: ordering_entries_part_1_ordering_id_tree_parent_id_tree_par_idx; Type: INDEX ATTACH; Schema: public; Owner: -
+--
+
+ALTER INDEX public.index_ordering_entries_tree_parent ATTACH PARTITION public.ordering_entries_part_1_ordering_id_tree_parent_id_tree_par_idx;
+
+
+--
 -- Name: ordering_entries_part_1_pkey; Type: INDEX ATTACH; Schema: public; Owner: -
 --
 
@@ -6763,6 +6939,20 @@ ALTER INDEX public.index_ordering_entries_sort ATTACH PARTITION public.ordering_
 --
 
 ALTER INDEX public.index_ordering_entries_sorted_by_scope ATTACH PARTITION public.ordering_entries_part_2_ordering_id_scope_position_idx;
+
+
+--
+-- Name: ordering_entries_part_2_ordering_id_stale_at_idx; Type: INDEX ATTACH; Schema: public; Owner: -
+--
+
+ALTER INDEX public.index_ordering_entries_staleness ATTACH PARTITION public.ordering_entries_part_2_ordering_id_stale_at_idx;
+
+
+--
+-- Name: ordering_entries_part_2_ordering_id_tree_parent_id_tree_par_idx; Type: INDEX ATTACH; Schema: public; Owner: -
+--
+
+ALTER INDEX public.index_ordering_entries_tree_parent ATTACH PARTITION public.ordering_entries_part_2_ordering_id_tree_parent_id_tree_par_idx;
 
 
 --
@@ -6815,6 +7005,20 @@ ALTER INDEX public.index_ordering_entries_sorted_by_scope ATTACH PARTITION publi
 
 
 --
+-- Name: ordering_entries_part_3_ordering_id_stale_at_idx; Type: INDEX ATTACH; Schema: public; Owner: -
+--
+
+ALTER INDEX public.index_ordering_entries_staleness ATTACH PARTITION public.ordering_entries_part_3_ordering_id_stale_at_idx;
+
+
+--
+-- Name: ordering_entries_part_3_ordering_id_tree_parent_id_tree_par_idx; Type: INDEX ATTACH; Schema: public; Owner: -
+--
+
+ALTER INDEX public.index_ordering_entries_tree_parent ATTACH PARTITION public.ordering_entries_part_3_ordering_id_tree_parent_id_tree_par_idx;
+
+
+--
 -- Name: ordering_entries_part_3_pkey; Type: INDEX ATTACH; Schema: public; Owner: -
 --
 
@@ -6861,6 +7065,20 @@ ALTER INDEX public.index_ordering_entries_sort ATTACH PARTITION public.ordering_
 --
 
 ALTER INDEX public.index_ordering_entries_sorted_by_scope ATTACH PARTITION public.ordering_entries_part_4_ordering_id_scope_position_idx;
+
+
+--
+-- Name: ordering_entries_part_4_ordering_id_stale_at_idx; Type: INDEX ATTACH; Schema: public; Owner: -
+--
+
+ALTER INDEX public.index_ordering_entries_staleness ATTACH PARTITION public.ordering_entries_part_4_ordering_id_stale_at_idx;
+
+
+--
+-- Name: ordering_entries_part_4_ordering_id_tree_parent_id_tree_par_idx; Type: INDEX ATTACH; Schema: public; Owner: -
+--
+
+ALTER INDEX public.index_ordering_entries_tree_parent ATTACH PARTITION public.ordering_entries_part_4_ordering_id_tree_parent_id_tree_par_idx;
 
 
 --
@@ -6913,6 +7131,20 @@ ALTER INDEX public.index_ordering_entries_sorted_by_scope ATTACH PARTITION publi
 
 
 --
+-- Name: ordering_entries_part_5_ordering_id_stale_at_idx; Type: INDEX ATTACH; Schema: public; Owner: -
+--
+
+ALTER INDEX public.index_ordering_entries_staleness ATTACH PARTITION public.ordering_entries_part_5_ordering_id_stale_at_idx;
+
+
+--
+-- Name: ordering_entries_part_5_ordering_id_tree_parent_id_tree_par_idx; Type: INDEX ATTACH; Schema: public; Owner: -
+--
+
+ALTER INDEX public.index_ordering_entries_tree_parent ATTACH PARTITION public.ordering_entries_part_5_ordering_id_tree_parent_id_tree_par_idx;
+
+
+--
 -- Name: ordering_entries_part_5_pkey; Type: INDEX ATTACH; Schema: public; Owner: -
 --
 
@@ -6959,6 +7191,20 @@ ALTER INDEX public.index_ordering_entries_sort ATTACH PARTITION public.ordering_
 --
 
 ALTER INDEX public.index_ordering_entries_sorted_by_scope ATTACH PARTITION public.ordering_entries_part_6_ordering_id_scope_position_idx;
+
+
+--
+-- Name: ordering_entries_part_6_ordering_id_stale_at_idx; Type: INDEX ATTACH; Schema: public; Owner: -
+--
+
+ALTER INDEX public.index_ordering_entries_staleness ATTACH PARTITION public.ordering_entries_part_6_ordering_id_stale_at_idx;
+
+
+--
+-- Name: ordering_entries_part_6_ordering_id_tree_parent_id_tree_par_idx; Type: INDEX ATTACH; Schema: public; Owner: -
+--
+
+ALTER INDEX public.index_ordering_entries_tree_parent ATTACH PARTITION public.ordering_entries_part_6_ordering_id_tree_parent_id_tree_par_idx;
 
 
 --
@@ -7011,6 +7257,20 @@ ALTER INDEX public.index_ordering_entries_sorted_by_scope ATTACH PARTITION publi
 
 
 --
+-- Name: ordering_entries_part_7_ordering_id_stale_at_idx; Type: INDEX ATTACH; Schema: public; Owner: -
+--
+
+ALTER INDEX public.index_ordering_entries_staleness ATTACH PARTITION public.ordering_entries_part_7_ordering_id_stale_at_idx;
+
+
+--
+-- Name: ordering_entries_part_7_ordering_id_tree_parent_id_tree_par_idx; Type: INDEX ATTACH; Schema: public; Owner: -
+--
+
+ALTER INDEX public.index_ordering_entries_tree_parent ATTACH PARTITION public.ordering_entries_part_7_ordering_id_tree_parent_id_tree_par_idx;
+
+
+--
 -- Name: ordering_entries_part_7_pkey; Type: INDEX ATTACH; Schema: public; Owner: -
 --
 
@@ -7057,6 +7317,20 @@ ALTER INDEX public.index_ordering_entries_sort ATTACH PARTITION public.ordering_
 --
 
 ALTER INDEX public.index_ordering_entries_sorted_by_scope ATTACH PARTITION public.ordering_entries_part_8_ordering_id_scope_position_idx;
+
+
+--
+-- Name: ordering_entries_part_8_ordering_id_stale_at_idx; Type: INDEX ATTACH; Schema: public; Owner: -
+--
+
+ALTER INDEX public.index_ordering_entries_staleness ATTACH PARTITION public.ordering_entries_part_8_ordering_id_stale_at_idx;
+
+
+--
+-- Name: ordering_entries_part_8_ordering_id_tree_parent_id_tree_par_idx; Type: INDEX ATTACH; Schema: public; Owner: -
+--
+
+ALTER INDEX public.index_ordering_entries_tree_parent ATTACH PARTITION public.ordering_entries_part_8_ordering_id_tree_parent_id_tree_par_idx;
 
 
 --
@@ -7852,6 +8126,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20211221040948'),
 ('20211221054949'),
 ('20220103194312'),
-('20220104185903');
+('20220104185903'),
+('20220105041448');
 
 

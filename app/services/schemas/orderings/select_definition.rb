@@ -31,6 +31,8 @@ module Schemas
 
       validate :enforce_selecting_something!
 
+      delegate :tree_mode?, to: :parent, allow_nil: true
+
       # @param [String] auth_path
       # @return [String]
       def build_auth_query_for(auth_path)
@@ -42,18 +44,20 @@ module Schemas
       end
 
       def all_descendants?
-        direct == "descendants"
+        tree_mode? || direct == "descendants"
       end
 
       def children?
-        direct == "children"
+        !tree_mode? && direct == "children"
       end
 
       def no_children?
-        direct == "none"
+        !tree_mode? && direct == "none"
       end
 
       def limit_to_single_depth?
+        return false if tree_mode?
+
         children? || (!all_descendants? && links.any?)
       end
 

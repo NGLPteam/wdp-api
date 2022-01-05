@@ -38,5 +38,39 @@ module Types
     field :footer, String, null: true do
       description "Optional markdown content to render after the children"
     end
+
+    field :constant, Boolean, null: false, method: :constant? do
+      description "A constant ordering should be treated as not being able to invert itself."
+    end
+
+    field :hidden, Boolean, null: false, method: :hidden? do
+      description <<~TEXT
+      A hidden ordering represents an ordering that should not be shown in the frontend,
+      when iterating over an entity's available orderings. It does not affect access, as
+      hidden orderings may still serve a functional purpose for their schema.
+      TEXT
+    end
+
+    field :render, Types::OrderingRenderDefinitionType, null: false do
+      description <<~TEXT
+      Configuration for how to render an ordering and its entries.
+      TEXT
+    end
+
+    field :tree, Boolean, null: false, method: :tree_mode? do
+      description <<~TEXT
+      A tree ordering has some special handling to return entities
+      in deterministic order based on their hierarchical position
+      and relation to other entities in the same ordering.
+
+      This is effectively a shortcut for `Ordering.render.mode === "TREE"`.
+      TEXT
+    end
+
+    # @see Schemas::Orderings::Definition#render
+    # @return [Schemas::Orderings::RenderDefinition]
+    def render
+      object.definition.render
+    end
   end
 end
