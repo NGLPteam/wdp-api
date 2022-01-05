@@ -1,0 +1,94 @@
+{
+  "namespace": "ucm",
+  "identifier": "oru",
+  "name": "Unit",
+  "version": "1.0.0",
+  "kind": "collection",
+  "parents": [
+    {
+      "namespace": "ucm",
+      "identifier": "campus"
+    },
+    {
+      "namespace": "ucm",
+      "identifier": "oru"
+    },
+    {
+      "namespace": "ucm",
+      "identifier": "series"
+    }
+  ],
+  "orderings": [
+    {
+      "id": "series",
+      "name": "Series",
+      "filter": {
+        "schemas": [
+          {
+            "namespace": "ucm",
+            "identifier": "series"
+          }
+        ]
+      },
+      "select": {
+        "direct": "descendants"
+      },
+      "order": [
+        { "path": "entity.title", "direction": "asc" }
+      ],
+      "render": {
+        "mode": "tree"
+      },
+      "position": 1
+    },
+    {
+      "id": "units",
+      "name": "Units",
+      "filter": {
+        "schemas": [
+          {
+            "namespace": "ucm",
+            "identifier": "oru"
+          }
+        ]
+      },
+      "select": {
+        "direct": "descendants"
+      },
+      "order": [
+        { "path": "entity.title", "direction": "asc" }
+      ],
+      "render": {
+        "mode": "tree"
+      },
+      "position": 2
+    }
+  ],
+  "properties": [
+    { "type": "markdown", "path": "about", "label": "About" },
+    { "type": "boolean", "path": "carousel", "label": "Carousel?" },
+    {
+      "type": "select",
+      "path": "direct_submit",
+      "label": "Direct Submit",
+      "options": [
+        { "label": "Enabled", "value": "enabled" },
+        { "label": "Moribund", "value": "moribund"},
+        { "label": "Disabled", "value": "disabled" }
+      ]
+    },
+    { "type": "string", "path": "facebook", "label": "Facebook Page Name", "required": false },
+    { "type": "string", "path": "twitter", "label": "Twitter Username", "required": false },
+    {
+      "type": "select",
+      "path": "status",
+      "label": "Status",
+      "default": "active",
+      "options": [
+        { "label": "Active", "value": "active" },
+        { "label": "Archived", "value": "archived" },
+        { "label": "Hidden", "value": "hidden" }
+      ]
+    }
+  ]
+}
