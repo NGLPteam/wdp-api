@@ -9,7 +9,7 @@ class SchemaVersionProperty < ApplicationRecord
   has_many :entity_orderable_properties, inverse_of: :schema_version_property, dependent: :destroy
   has_many :named_variable_dates, inverse_of: :schema_version_property, dependent: :destroy
 
-  scope :by_schema_version, ->(schema) { where(schema_version: schema) }
+  scope :by_schema_version, ->(schema) { where(schema_version: schema) if schema.present? }
 
   validates :path, presence: true, uniqueness: { scope: :schema_version_id }
   validates :kind, :type, presence: true

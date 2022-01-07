@@ -67,6 +67,14 @@ module Types
       description "Fetch the global configuration for this installation"
     end
 
+    field :ordering_paths, [Types::AnyOrderingPathType, { null: false }], null: false do
+      description "A list of ordering paths for creating and updating orderings."
+
+      argument :schemas, [Types::OrderingSchemaFilterInputType, { null: false }], required: false do
+        description "If passed, this will restrict the property fields returned to the selected schemas."
+      end
+    end
+
     field :roles, resolver: Resolvers::RoleResolver do
       description "List all roles"
     end
@@ -139,6 +147,13 @@ module Types
 
     def item_contribution(slug:)
       Loaders::RecordLoader.for(ItemContribution).load(slug)
+    end
+
+    # @see Schemas::Orderings::PathOptions::Fetch
+    # @param [<Hash>] schemas (@see Schemas::Associations::OrderingFilter)
+    # @return [<Schemas::Orderings::PathOptions::Reader>]
+    def ordering_paths(schemas: [])
+      call_operation! "schemas.orderings.path_options.fetch", schemas: schemas
     end
 
     # @param [String] slug

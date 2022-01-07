@@ -12,6 +12,8 @@ class StaticOrderableProperty < FrozenRecord::Base
 
   add_index :path, unique: true
 
+  scope :visible, -> { where(hidden: [nil, false]) }
+
   has_translated! :label
   has_translated! :description
 

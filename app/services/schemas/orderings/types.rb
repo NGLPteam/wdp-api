@@ -17,6 +17,24 @@ module Schemas
 
       ColumnList = Coercible::Array.of(Coercible::Symbol).constrained(min_size: 1)
 
+      OrderingFilter = Instance(Schemas::Associations::OrderingFilter).constructor do |value|
+        case value
+        when Schemas::Associations::OrderingFilter then value
+        when OrderingFilterOptions
+          Schemas::Associations::OrderingFilter.new(value)
+        else
+          value
+        end
+      end
+
+      OrderingFilterOptions = Hash.schema({
+        namespace: String,
+        identifier: String,
+        version?: String
+      }).with_key_transform(&:to_sym)
+
+      OrderingFilters = Array.of(OrderingFilter)
+
       VariableDatePath = String.enum(
         "$published$",
         "$issued$",
