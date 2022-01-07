@@ -574,6 +574,19 @@ $_$;
 
 
 --
+-- Name: jsonb_to_text_array(jsonb); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.jsonb_to_text_array(jsonb) RETURNS text[]
+    LANGUAGE sql IMMUTABLE STRICT PARALLEL SAFE
+    AS $_$
+SELECT array_agg(x.elm ORDER BY x.idx)
+FROM jsonb_array_elements_text($1) WITH ORDINALITY AS x(elm, idx)
+WHERE jsonb_typeof($1) = 'array';
+$_$;
+
+
+--
 -- Name: jsonb_to_timestamptz(jsonb); Type: FUNCTION; Schema: public; Owner: -
 --
 
@@ -650,6 +663,52 @@ CREATE FUNCTION public.to_schema_kind(text) RETURNS public.schema_kind
     LANGUAGE sql IMMUTABLE STRICT PARALLEL SAFE
     AS $_$
 SELECT CASE WHEN $1 = ANY(enum_range(NULL::schema_kind)::text[]) THEN $1::schema_kind ELSE NULL END;
+$_$;
+
+
+SET default_tablespace = '';
+
+SET default_table_access_method = heap;
+
+--
+-- Name: schema_versions; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.schema_versions (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    schema_definition_id uuid NOT NULL,
+    current boolean DEFAULT false NOT NULL,
+    configuration jsonb DEFAULT '{}'::jsonb NOT NULL,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    "position" integer,
+    collected_reference_paths text[] DEFAULT '{}'::text[] NOT NULL,
+    scalar_reference_paths text[] DEFAULT '{}'::text[] NOT NULL,
+    text_reference_paths text[] DEFAULT '{}'::text[] NOT NULL,
+    name text GENERATED ALWAYS AS ((configuration ->> 'name'::text)) STORED NOT NULL,
+    kind public.schema_kind GENERATED ALWAYS AS (public.to_schema_kind((configuration ->> 'kind'::text))) STORED NOT NULL,
+    number public.semantic_version GENERATED ALWAYS AS ((configuration ->> 'version'::text)) STORED NOT NULL,
+    namespace text GENERATED ALWAYS AS ((configuration ->> 'namespace'::text)) STORED NOT NULL,
+    identifier text GENERATED ALWAYS AS ((configuration ->> 'identifier'::text)) STORED NOT NULL,
+    declaration text GENERATED ALWAYS AS ((((((configuration ->> 'namespace'::text) || ':'::text) || (configuration ->> 'identifier'::text)) || ':'::text) || (configuration ->> 'version'::text))) STORED NOT NULL,
+    parsed public.parsed_semver GENERATED ALWAYS AS (public.parse_semver((configuration ->> 'version'::text))) STORED NOT NULL,
+    ordering_identifiers text[] GENERATED ALWAYS AS (public.jsonb_to_text_array(jsonb_path_query_array(configuration, '$."orderings"[*]."id"'::jsonpath))) STORED,
+    CONSTRAINT configuration_has_identifier CHECK (((configuration ? 'identifier'::text) AND (jsonb_typeof((configuration -> 'identifier'::text)) = 'string'::text))),
+    CONSTRAINT configuration_has_name CHECK (((configuration ? 'name'::text) AND (jsonb_typeof((configuration -> 'name'::text)) = 'string'::text))),
+    CONSTRAINT configuration_has_namespace CHECK (((configuration ? 'namespace'::text) AND (jsonb_typeof((configuration -> 'namespace'::text)) = 'string'::text))),
+    CONSTRAINT configuration_is_valid_kind CHECK (((configuration ? 'kind'::text) AND ((configuration ->> 'kind'::text) = ANY ((enum_range(NULL::public.schema_kind))::text[])))),
+    CONSTRAINT configured_version_is_semantic CHECK (public.is_valid_semver((configuration -> 'version'::text)))
+);
+
+
+--
+-- Name: to_header(public.schema_versions); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.to_header(public.schema_versions) RETURNS jsonb
+    LANGUAGE sql IMMUTABLE STRICT PARALLEL SAFE
+    AS $_$
+SELECT jsonb_build_object('id', $1.id, 'namespace', $1.namespace, 'identifier', $1.identifier, 'version', $1.number);
 $_$;
 
 
@@ -2422,10 +2481,6 @@ CREATE CAST (public.variable_precision_date AS date) WITH FUNCTION public.vpdate
 CREATE CAST (public.variable_precision_date AS daterange) WITH FUNCTION public.variable_daterange(public.variable_precision_date) AS ASSIGNMENT;
 
 
-SET default_tablespace = '';
-
-SET default_table_access_method = heap;
-
 --
 -- Name: access_grants; Type: TABLE; Schema: public; Owner: -
 --
@@ -2913,6 +2968,67 @@ CREATE VIEW public.entity_breadcrumbs AS
 
 
 --
+-- Name: orderings; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.orderings (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    entity_type character varying NOT NULL,
+    entity_id uuid NOT NULL,
+    schema_version_id uuid NOT NULL,
+    community_id uuid,
+    collection_id uuid,
+    item_id uuid,
+    identifier public.citext NOT NULL,
+    inherited_from_schema boolean DEFAULT false NOT NULL,
+    definition jsonb DEFAULT '{}'::jsonb NOT NULL,
+    disabled_at timestamp without time zone,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    stale_at timestamp without time zone,
+    refreshed_at timestamp without time zone,
+    stale boolean GENERATED ALWAYS AS (((stale_at IS NOT NULL) AND ((refreshed_at IS NULL) OR (refreshed_at < stale_at)))) STORED NOT NULL,
+    name text GENERATED ALWAYS AS ((definition ->> 'name'::text)) STORED,
+    schema_position bigint,
+    "position" bigint,
+    pristine boolean DEFAULT false NOT NULL,
+    paths text[] GENERATED ALWAYS AS (public.jsonb_to_text_array(jsonb_path_query_array(definition, '$."order"[*]."path"'::jsonpath))) STORED,
+    hidden boolean GENERATED ALWAYS AS (COALESCE(public.jsonb_to_boolean((definition -> 'hidden'::text)), false)) STORED NOT NULL,
+    constant boolean GENERATED ALWAYS AS (COALESCE(public.jsonb_to_boolean((definition -> 'constant'::text)), false)) STORED NOT NULL,
+    disabled boolean GENERATED ALWAYS AS ((disabled_at IS NOT NULL)) STORED NOT NULL,
+    CONSTRAINT enforce_ordering_identifier_parity CHECK (((identifier)::text = (definition ->> 'id'::text)))
+);
+
+
+--
+-- Name: entity_inherited_orderings; Type: VIEW; Schema: public; Owner: -
+--
+
+CREATE VIEW public.entity_inherited_orderings AS
+ SELECT sv.id AS schema_version_id,
+    ent.entity_id,
+    ent.entity_type,
+    ord.id AS ordering_id,
+    svo.identifier,
+    conditions.missing,
+    conditions.modified,
+    conditions.mismatch,
+        CASE
+            WHEN conditions.missing THEN 'missing'::text
+            WHEN conditions.mismatch THEN 'mismatch'::text
+            WHEN conditions.modified THEN 'modified'::text
+            ELSE 'pristine'::text
+        END AS status
+   FROM ((((public.schema_versions sv
+     CROSS JOIN LATERAL unnest(sv.ordering_identifiers) svo(identifier))
+     JOIN public.entities ent ON (((ent.schema_version_id = sv.id) AND (ent.link_operator IS NULL))))
+     LEFT JOIN public.orderings ord ON ((((ord.entity_type)::text = ent.entity_type) AND (ord.entity_id = ent.entity_id) AND ((ord.identifier)::text = svo.identifier))))
+     LEFT JOIN LATERAL ( SELECT (ord.id IS NULL) AS missing,
+            ((ord.id IS NOT NULL) AND (NOT ord.pristine)) AS modified,
+            ((ord.id IS NOT NULL) AND (ord.schema_version_id IS DISTINCT FROM sv.id)) AS mismatch) conditions ON (true));
+
+
+--
 -- Name: entity_links; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -3207,36 +3323,6 @@ CREATE TABLE public.harvest_sources (
     last_harvested_at timestamp without time zone,
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
-);
-
-
---
--- Name: schema_versions; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.schema_versions (
-    id uuid DEFAULT gen_random_uuid() NOT NULL,
-    schema_definition_id uuid NOT NULL,
-    current boolean DEFAULT false NOT NULL,
-    configuration jsonb DEFAULT '{}'::jsonb NOT NULL,
-    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    "position" integer,
-    collected_reference_paths text[] DEFAULT '{}'::text[] NOT NULL,
-    scalar_reference_paths text[] DEFAULT '{}'::text[] NOT NULL,
-    text_reference_paths text[] DEFAULT '{}'::text[] NOT NULL,
-    name text GENERATED ALWAYS AS ((configuration ->> 'name'::text)) STORED NOT NULL,
-    kind public.schema_kind GENERATED ALWAYS AS (public.to_schema_kind((configuration ->> 'kind'::text))) STORED NOT NULL,
-    number public.semantic_version GENERATED ALWAYS AS ((configuration ->> 'version'::text)) STORED NOT NULL,
-    namespace text GENERATED ALWAYS AS ((configuration ->> 'namespace'::text)) STORED NOT NULL,
-    identifier text GENERATED ALWAYS AS ((configuration ->> 'identifier'::text)) STORED NOT NULL,
-    declaration text GENERATED ALWAYS AS ((((((configuration ->> 'namespace'::text) || ':'::text) || (configuration ->> 'identifier'::text)) || ':'::text) || (configuration ->> 'version'::text))) STORED NOT NULL,
-    parsed public.parsed_semver GENERATED ALWAYS AS (public.parse_semver((configuration ->> 'version'::text))) STORED NOT NULL,
-    CONSTRAINT configuration_has_identifier CHECK (((configuration ? 'identifier'::text) AND (jsonb_typeof((configuration -> 'identifier'::text)) = 'string'::text))),
-    CONSTRAINT configuration_has_name CHECK (((configuration ? 'name'::text) AND (jsonb_typeof((configuration -> 'name'::text)) = 'string'::text))),
-    CONSTRAINT configuration_has_namespace CHECK (((configuration ? 'namespace'::text) AND (jsonb_typeof((configuration -> 'namespace'::text)) = 'string'::text))),
-    CONSTRAINT configuration_is_valid_kind CHECK (((configuration ? 'kind'::text) AND ((configuration ->> 'kind'::text) = ANY ((enum_range(NULL::public.schema_kind))::text[])))),
-    CONSTRAINT configured_version_is_semantic CHECK (public.is_valid_semver((configuration -> 'version'::text)))
 );
 
 
@@ -3713,33 +3799,6 @@ CREATE VIEW public.ordering_entry_candidates AS
 
 
 --
--- Name: orderings; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.orderings (
-    id uuid DEFAULT gen_random_uuid() NOT NULL,
-    entity_type character varying NOT NULL,
-    entity_id uuid NOT NULL,
-    schema_version_id uuid NOT NULL,
-    community_id uuid,
-    collection_id uuid,
-    item_id uuid,
-    identifier public.citext NOT NULL,
-    inherited_from_schema boolean DEFAULT false NOT NULL,
-    definition jsonb DEFAULT '{}'::jsonb NOT NULL,
-    disabled_at timestamp without time zone,
-    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    stale_at timestamp without time zone,
-    refreshed_at timestamp without time zone,
-    stale boolean GENERATED ALWAYS AS (((stale_at IS NOT NULL) AND ((refreshed_at IS NULL) OR (refreshed_at < stale_at)))) STORED NOT NULL,
-    name text GENERATED ALWAYS AS ((definition ->> 'name'::text)) STORED,
-    schema_position bigint,
-    "position" bigint
-);
-
-
---
 -- Name: pages; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -3910,6 +3969,29 @@ CREATE MATERIALIZED VIEW public.schema_definition_properties AS
 CREATE TABLE public.schema_migrations (
     version character varying NOT NULL
 );
+
+
+--
+-- Name: schema_version_orderings; Type: VIEW; Schema: public; Owner: -
+--
+
+CREATE VIEW public.schema_version_orderings AS
+ SELECT sv.id AS schema_version_id,
+    (d.definition ->> 'id'::text) AS identifier,
+    (d.definition ->> 'name'::text) AS name,
+    public.jsonb_to_bigint((d.definition -> 'position'::text)) AS schema_position,
+    d.definition_index,
+    public.jsonb_to_boolean((d.definition -> 'constant'::text)) AS constant,
+    public.jsonb_to_boolean((d.definition -> 'hidden'::text)) AS hidden,
+    (d.definition #>> '{render,mode}'::text[]) AS render_mode,
+    p.paths,
+    p.paths_with_direction,
+    d.definition
+   FROM ((public.schema_versions sv
+     CROSS JOIN LATERAL jsonb_array_elements((sv.configuration -> 'orderings'::text)) WITH ORDINALITY d(definition, definition_index))
+     LEFT JOIN LATERAL ( SELECT array_agg((x.defn ->> 'path'::text) ORDER BY x."position") AS paths,
+            jsonb_object_agg((x.defn ->> 'path'::text), (x.defn ->> 'direction'::text)) AS paths_with_direction
+           FROM jsonb_array_elements(jsonb_path_query_array(d.definition, '$."order"[*]'::jsonpath)) WITH ORDINALITY x(defn, "position")) p ON (true));
 
 
 --
@@ -5103,6 +5185,13 @@ CREATE INDEX index_entities_on_title ON public.entities USING btree (title);
 --
 
 CREATE INDEX index_entities_permissions_calculation ON public.entities USING gist (hierarchical_type, hierarchical_id, auth_path, scope);
+
+
+--
+-- Name: index_entities_real; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_entities_real ON public.entities USING btree (entity_id, entity_type, schema_version_id) WHERE (link_operator IS NULL);
 
 
 --
@@ -7355,10 +7444,24 @@ CREATE STATISTICS public.ent_hierarchical_stats ON hierarchical_type, hierarchic
 
 
 --
+-- Name: entities_real_stats; Type: STATISTICS; Schema: public; Owner: -
+--
+
+CREATE STATISTICS public.entities_real_stats ON entity_type, entity_id, system_slug, auth_path, scope FROM public.entities;
+
+
+--
 -- Name: granted_permissions_rp_stats; Type: STATISTICS; Schema: public; Owner: -
 --
 
 CREATE STATISTICS public.granted_permissions_rp_stats ON permission_id, scope, action, role_id FROM public.granted_permissions;
+
+
+--
+-- Name: orderings_id_stats; Type: STATISTICS; Schema: public; Owner: -
+--
+
+CREATE STATISTICS public.orderings_id_stats ON entity_type, entity_id, identifier FROM public.orderings;
 
 
 --
@@ -8127,6 +8230,10 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20211221054949'),
 ('20220103194312'),
 ('20220104185903'),
-('20220105041448');
+('20220105041448'),
+('20220106181423'),
+('20220106182503'),
+('20220106184920'),
+('20220107021523');
 
 

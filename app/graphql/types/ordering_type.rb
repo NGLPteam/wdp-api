@@ -51,11 +51,25 @@ module Types
       TEXT
     end
 
+    field :pristine, Boolean, null: false do
+      description <<~TEXT
+      For orderings that are `inheritedFromSchema`, this tracks whether or not the
+      entity has been modified from the schema's definition. It is always false
+      for custom, user-created orderings.
+      TEXT
+    end
+
+    field :filter, Types::OrderingFilterDefinitionType, null: false
+
+    field :order, [Types::OrderDefinitionType, { null: false }], null: false
+
     field :render, Types::OrderingRenderDefinitionType, null: false do
       description <<~TEXT
       Configuration for how to render an ordering and its entries.
       TEXT
     end
+
+    field :select, Types::OrderingSelectDefinitionType, null: false
 
     field :tree, Boolean, null: false, method: :tree_mode? do
       description <<~TEXT
@@ -65,6 +79,24 @@ module Types
 
       This is effectively a shortcut for `Ordering.render.mode === "TREE"`.
       TEXT
+    end
+
+    # @see Schemas::Orderings::Definition#filter
+    # @return [Schemas::Orderings::FilterDefinition]
+    def filter
+      object.definition.filter
+    end
+
+    # @see Schemas::Orderings::Definition#select
+    # @return [Schemas::Orderings::SelectDefinition]
+    def select
+      object.definition.select
+    end
+
+    # @see Schemas::Orderings::Definition#order
+    # @return [Schemas::Orderings::OrderDefinition]
+    def order
+      object.definition.order
     end
 
     # @see Schemas::Orderings::Definition#render

@@ -21,6 +21,8 @@ class Entity < ApplicationRecord
   # rubocop:disable Rails/HasManyOrHasOneDependent, Rails/InverseOf
   has_many :contextual_permissions, primary_key: CONTEXTUAL_TUPLE, foreign_key: CONTEXTUAL_TUPLE
 
+  has_many :entity_inherited_orderings, primary_key: ENTITY_TUPLE, foreign_key: ENTITY_TUPLE
+
   has_one :entity_visibility, primary_key: CONTEXTUAL_TUPLE, foreign_key: ENTITY_TUPLE
 
   has_many :named_variable_dates, primary_key: CONTEXTUAL_TUPLE, foreign_key: ENTITY_TUPLE
@@ -28,7 +30,11 @@ class Entity < ApplicationRecord
 
   scope :filtered_by_schema_version, ->(schemas) { where(schema_version: SchemaVersion.filtered_by(schemas)) }
 
+  scope :with_missing_orderings, -> { non_link.where(entity_id: EntityInheritedOrdering.missing.select(:entity_id)) }
+
   scope :actual, -> { where(scope: %w[communities items collections]) }
+  scope :non_link, -> { where(link_operator: nil) }
+  scope :real, -> { preload(:entity).non_link }
   scope :sans_thumbnail, -> { where(arel_sans_thumbnail) }
 
   def schema_kind

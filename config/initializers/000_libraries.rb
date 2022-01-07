@@ -16,6 +16,7 @@ require "sidekiq/api"
 
 require_relative Rails.root.join("lib", "global_types", "array_types")
 require_relative Rails.root.join("lib", "global_types", "indifferent_hash")
+require_relative Rails.root.join("lib", "global_types", "property_hash")
 require_relative Rails.root.join("lib", "global_types", "semantic_version")
 require_relative Rails.root.join("lib", "global_types", "variable_precision_date")
 require_relative Rails.root.join("lib", "global_types", "version_requirement")
@@ -43,9 +44,11 @@ ActiveModel::Type.register :string_array, GlobalTypes::StringArray
 ActiveModel::Type.register :integer_array, GlobalTypes::IntegerArray
 
 ActiveModel::Type.register :indifferent_hash, GlobalTypes::IndifferentHash
+ActiveModel::Type.register :property_hash, GlobalTypes::PropertyHash
 ActiveModel::Type.register :semantic_version, GlobalTypes::SemanticVersion
 ActiveModel::Type.register :version_requirement, GlobalTypes::VersionRequirement
 
 ActiveRecord::Type.register :indifferent_hash, GlobalTypes::IndifferentHash
+ActiveRecord::Type.register :property_hash, GlobalTypes::PropertyHash
 ActiveRecord::Type.register :semantic_version, GlobalTypes::SemanticVersion
 ActiveRecord::Type.register :version_requirement, GlobalTypes::VersionRequirement

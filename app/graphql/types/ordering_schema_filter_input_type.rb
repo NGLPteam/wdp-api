@@ -19,7 +19,7 @@ module Types
       TEXT
     end
 
-    argument :version, String, required: false, attribute: true do
+    argument :version, Types::VersionRequirementType, required: false, attribute: true do
       description <<~TEXT
       An optional version requirement for this ordering. It supports
       Ruby's version declaration syntax, so you can provide a value

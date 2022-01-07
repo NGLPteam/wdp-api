@@ -34,6 +34,8 @@ module HierarchicalEntity
     has_many :entity_breadcrumbs, -> { order(depth: :asc) }, as: :entity
     has_many :entity_breadcrumb_entries, class_name: "EntityBreadcrumb", as: :crumb
 
+    has_many :entity_inherited_orderings, as: :entity, inverse_of: :entity
+
     has_many :hierarchical_schema_ranks, -> { for_association }, as: :entity
     has_many :hierarchical_schema_version_ranks, -> { for_association }, as: :entity
 
@@ -50,6 +52,8 @@ module HierarchicalEntity
     scope :sans_thumbnail, -> { where(arel_json_get(:thumbnail_data, :storage).eq(nil)) }
 
     scope :filtered_by_schema_version, ->(schemas) { where(schema_version: SchemaVersion.filtered_by(schemas)) }
+
+    scope :with_missing_orderings, -> { where(id: EntityInheritedOrdering.missing.select(:entity_id)) }
 
     scope :with_schema_name_asc, -> { joins(:schema_definition).merge(SchemaDefinition.order(name: :asc)) }
 

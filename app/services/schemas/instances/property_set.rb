@@ -2,11 +2,31 @@
 
 module Schemas
   module Instances
+    # This stores the raw property values for a {SchemaInstance}, along with
+    # {Schemas::Header a signature header} for a {SchemaVersion}.
     class PropertySet
       include StoreModel::Model
 
-      attribute :schema, Schemas::Instances::VersionDeclaration.to_type, default: proc { {} }
-      attribute :values, :indifferent_hash, default: proc { {} }
+      # @!attribute [rw] schema
+      # A signature from a {SchemaVersion} that signs this property set
+      # as belonging to said schema. It is used for validations when
+      # applying new properties, to make sure that everything is in sync.
+      # @return [Schemas::Header]
+      attribute :schema, Schemas::Header.to_type, default: proc { {} }
+
+      # @!attribute [rw] values
+      # The authoritative source for property values that are not
+      # a {Schemas::Properties::Scalar::Reference reference} or a
+      # {Schemas::Properties::Scalar::FullText} property.
+      # @return [PropertyHash]
+      attribute :values, :property_hash, default: proc { {} }
+
+      # @return [String]
+      def inspect
+        value_paths = Array(values&.paths).map(&:inspect).join(", ")
+
+        "#<#{self.class}#{schema&.suffix} (#{value_paths})>"
+      end
     end
   end
 end

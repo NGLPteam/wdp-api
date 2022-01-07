@@ -8,6 +8,9 @@
 # @see Schemas::Versions::Configuration#orderings
 class Ordering < ApplicationRecord
   include AssignsPolymorphicForeignKey
+  include ReloadAfterSave
+
+  attr_readonly :constant, :disabled, :hidden, :identifier, :name
 
   belongs_to :entity, polymorphic: true
   belongs_to :schema_version
@@ -31,8 +34,10 @@ class Ordering < ApplicationRecord
 
   scope :enabled, -> { where(disabled_at: nil) }
   scope :disabled, -> { where.not(disabled_at: nil) }
+  scope :hidden, -> { where(hidden: true) }
+  scope :visible, -> { where(hidden: false) }
 
-  delegate :name, :header, :footer, :constant?, :hidden?, :tree_mode?, to: :definition
+  delegate :header, :footer, :tree_mode?, to: :definition
 
   delegate :schemas, allow_nil: true, to: "definition.filter", prefix: :filter
 
