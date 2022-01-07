@@ -47,6 +47,7 @@ module HasSchemaDefinition
     attribute :properties, Schemas::Instances::PropertySet.to_type, default: proc { { values: {} } }
 
     before_validation :enforce_schema_definition!, if: :schema_version_id_changed?
+    before_validation :maybe_sign_properties!
 
     delegate :kind, to: :schema_version, prefix: true, allow_nil: true
 
@@ -103,6 +104,13 @@ module HasSchemaDefinition
     call_operation("schemas.instances.extract_orderable_properties", self, context: context).value!
   end
 
+  # @return [String]
+  def inspect
+    schema_suffix = properties&.schema&.suffix
+
+    "#<#{self.class}#{schema_suffix} (#{title.inspect})>"
+  end
+
   # @see Schemas::Instances::ReadProperties
   # @param [Schemas::Properties::Context, nil] context
   # @return [<Schemas::Properties::Reader, Schemas::Properties::GroupReader>]
@@ -146,6 +154,17 @@ module HasSchemaDefinition
     return if schema_version_kind.blank? || schema_kind_matches?
 
     errors.add :schema_version_id, "must be a #{schema_kind}, got #{schema_version_kind}"
+  end
+
+  # @api private
+  # @return [void]
+  def maybe_sign_properties!
+    return if properties&.schema&.valid?
+
+    self.properties ||= {}
+    self.properties.schema = schema_version.to_header
+
+    properties_will_change!
   end
 
   # @!attribute [r] schema_kind

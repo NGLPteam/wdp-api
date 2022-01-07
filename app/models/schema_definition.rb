@@ -56,11 +56,6 @@ class SchemaDefinition < ApplicationRecord
     call_operation("schemas.versions.reorder", self)
   end
 
-  # @return [Hash]
-  def to_declaration
-    slice(:namespace, :identifier)
-  end
-
   private
 
   # @return [void]

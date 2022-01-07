@@ -16,6 +16,8 @@ module GlobalTypes
     # @return [Gem::Requirement]
     def cast(value)
       case value
+      when /[^,]+,[^,]+/
+        Gem::Requirement.create value.split(/\s*,\s*/)
       when String, StringArray
         Gem::Requirement.create value
       when Gem::Requirement

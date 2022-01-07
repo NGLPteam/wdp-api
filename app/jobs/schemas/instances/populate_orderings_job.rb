@@ -2,6 +2,7 @@
 
 module Schemas
   module Instances
+    # @see Schemas::Instances::PopulateOrderings
     class PopulateOrderingsJob < ApplicationJob
       queue_as :maintenance
 

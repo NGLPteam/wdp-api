@@ -120,6 +120,10 @@ class PropertyHash
 
   alias to_hash to_h
 
+  def as_json(*)
+    to_h
+  end
+
   protected
 
   attr_reader :inner

@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module Types
+  # A GraphQL input type for a {Schemas::Orderings::OrderDefinition}.
   class OrderDefinitionInputType < Types::BaseInputObject
     description "Ordering for a specific column"
 

@@ -23,6 +23,10 @@ class SchemaVersion < ApplicationRecord
   has_many :schema_version_descendants, dependent: :delete_all, inverse_of: :target_version, class_name: "SchemaVersionAncestor"
   has_many :schema_version_properties, dependent: :delete_all, inverse_of: :schema_version
 
+  # rubocop:disable Rails/HasManyOrHasOneDependent
+  has_many :schema_version_orderings, inverse_of: :schema_version
+  # rubocop:enable Rails/HasManyOrHasOneDependent
+
   has_many :entity_links, dependent: :destroy
 
   # @!attribute [r] number
@@ -90,11 +94,10 @@ class SchemaVersion < ApplicationRecord
     call_operation("schemas.versions.read_properties", self)
   end
 
-  # Generate a hash of values that gets set in an Entity's `properties.schema`
-  # in order to "sign" the property hash as belonging to a certain schema version.
-  #
+  # @see Schemas::Instances::PropertySet#schema
+  # @see Schemas::Header
   # @return [Hash]
-  def to_declaration
+  def to_header
     slice(:id, :identifier, :namespace).merge(version: number.to_s)
   end
 

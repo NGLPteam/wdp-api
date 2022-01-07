@@ -58,7 +58,7 @@ module Schemas
       def check_and_assign_version!(target, version)
         target.properties ||= {}
 
-        target.properties.schema = version.to_declaration
+        target.properties.schema = version.to_header
 
         Success nil
       end

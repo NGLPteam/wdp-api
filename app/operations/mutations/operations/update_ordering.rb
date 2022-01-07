@@ -2,6 +2,9 @@
 
 module Mutations
   module Operations
+    # Update an {Ordering} through the GraphQL API.
+    #
+    # @see Mutations::UpdateOrdering
     class UpdateOrdering
       include MutationOperations::Base
 
@@ -17,6 +20,8 @@ module Mutations
         ordering.definition.render = attributes[:render].as_json.presence || {}
 
         ordering.definition_will_change!
+
+        ordering.pristine = false
 
         persist_model! ordering, attach_to: :ordering
       end

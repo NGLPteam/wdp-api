@@ -63,11 +63,24 @@ RSpec.describe Mutations::CreateCollection, type: :request, graphql: :mutation d
       let(:parent) { community }
 
       it "works" do
-        expect do
-          make_default_request!
-        end.to change(Collection, :count).by(1)
+        expect_the_default_request.to change(Collection, :count).by(1)
 
-        expect_graphql_response_data expected_shape, decamelize: true
+        expect_graphql_data expected_shape
+      end
+
+      context "when creating with a schema that defines orderings" do
+        let!(:simple_community) { FactoryBot.create :schema_version, :simple_community }
+        let!(:simple_collection) { FactoryBot.create :schema_version, :simple_collection }
+
+        let!(:community) { FactoryBot.create :community, schema_version: simple_community }
+
+        let_mutation_input!(:schema_version_slug) { simple_collection.declaration }
+
+        it "creates the orderings" do
+          expect_the_default_request.to change(Ordering, :count).by(2)
+
+          expect_graphql_data expected_shape
+        end
       end
     end
 
@@ -75,11 +88,9 @@ RSpec.describe Mutations::CreateCollection, type: :request, graphql: :mutation d
       let(:parent) { parent_collection }
 
       it "works" do
-        expect do
-          make_default_request!
-        end.to change(Collection, :count).by(1)
+        expect_the_default_request.to change(Collection, :count).by(1)
 
-        expect_graphql_response_data expected_shape, decamelize: true
+        expect_graphql_data expected_shape
       end
 
       context "with a blank schema_version_slug" do
@@ -96,11 +107,9 @@ RSpec.describe Mutations::CreateCollection, type: :request, graphql: :mutation d
         end
 
         it "fails" do
-          expect do
-            make_default_request!
-          end.to keep_the_same(Collection, :count)
+          expect_the_default_request.to keep_the_same(Collection, :count)
 
-          expect_graphql_response_data expected_shape, decamelize: true
+          expect_graphql_data expected_shape
         end
       end
     end

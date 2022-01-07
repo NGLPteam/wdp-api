@@ -1,6 +1,20 @@
 # frozen_string_literal: true
 
-RSpec.describe Mutations::CreateOrdering, type: :request do
+RSpec.describe Mutations::CreateOrdering, type: :request, graphql: :mutation do
+  mutation_query! <<~GRAPHQL
+  mutation createOrdering($input: CreateOrderingInput!) {
+    createOrdering(input: $input) {
+      ordering {
+        id
+        name
+        identifier
+      }
+
+      ... ErrorFragment
+    }
+  }
+  GRAPHQL
+
   context "as an admin" do
     let(:token) { token_helper.build_token has_global_admin: true }
 
@@ -38,48 +52,21 @@ RSpec.describe Mutations::CreateOrdering, type: :request do
       }
     end
 
-    let!(:graphql_variables) do
-      {
-        input: mutation_input
-      }
-    end
-
     let!(:expected_shape) do
-      {
-        createOrdering: {
-          ordering: {
-            id: be_present,
-            name: name,
-            identifier: identifier
-          },
-          errors: be_blank
-        }
-      }
-    end
-
-    let!(:query) do
-      <<~GRAPHQL
-      mutation createOrdering($input: CreateOrderingInput!) {
-        createOrdering(input: $input) {
-          ordering {
-            id
-            name
-            identifier
-          }
-
-          errors { message }
-        }
-      }
-      GRAPHQL
+      gql.mutation(:create_ordering) do |m|
+        m.prop :ordering do |o|
+          o[:id] = be_present
+          o[:name] = name
+          o[:identifier] = identifier
+        end
+      end
     end
 
     context "with a collection" do
       it "works" do
-        expect do
-          make_graphql_request! query, token: token, variables: graphql_variables
-        end.to change(Ordering, :count).by(1)
+        expect_the_default_request.to change(Ordering, :count).by(1)
 
-        expect_graphql_response_data expected_shape
+        expect_graphql_data expected_shape
       end
     end
   end
