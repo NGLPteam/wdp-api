@@ -544,6 +544,10 @@ GEM
       activerecord (>= 5.2)
     strip_attributes (1.11.0)
       activemodel (>= 3.0, < 7.0)
+    suo (0.4.0)
+      dalli
+      msgpack
+      redis
     thor (1.1.0)
     timecop (0.9.4)
     timers (4.3.3)
@@ -577,6 +581,11 @@ GEM
     yard-activesupport-concern (0.0.1)
       yard (>= 0.8)
     zeitwerk (2.5.3)
+    zhong (0.3.0)
+      activesupport
+      redis
+      suo
+      tzinfo
 
 PLATFORMS
   ruby
@@ -672,6 +681,7 @@ DEPENDENCIES
   yard (~> 0.9.27)
   yard-activerecord (~> 0.0.16)
   yard-activesupport-concern (~> 0.0.1)
+  zhong (~> 0.3.0)
 
 RUBY VERSION
    ruby 2.7.3p183

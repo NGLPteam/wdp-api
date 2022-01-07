@@ -25,6 +25,7 @@ gem "redis", "~> 4.2.5", require: %w[redis redis/connection/hiredis]
 gem "sidekiq", "~> 6.2.1"
 gem "redis-objects", "~> 1.5.1"
 gem "job-iteration"
+gem "zhong", "~> 0.3.0"
 
 # GraphQL
 gem "graphql", "1.12.8"
