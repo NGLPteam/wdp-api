@@ -6,6 +6,7 @@ module Testing
     class UpsertUnit
       include Dry::Monads[:do, :result]
       include Dry::Effects.Resolve(:community)
+      include Dry::Effects.Resolve(:parent_counts)
       include Dry::Effects.State(:unit_ids)
       include MonadicPersistence
       prepend HushActiveRecord
@@ -37,6 +38,8 @@ module Testing
         yield extract_and_apply_schema_properties! collection, unit_definition
 
         unit_ids << unit_id
+
+        parent_counts[unit_id] += 1
 
         Success collection
       end

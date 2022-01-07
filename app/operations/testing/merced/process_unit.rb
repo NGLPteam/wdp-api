@@ -26,7 +26,7 @@ module Testing
           yield upsert_page.call page, index: index, parent: unit
         end
 
-        unit_definition[:children].each do |child_id|
+        Array(unit_definition[:children]).uniq.each do |child_id|
           child = units.detect { |c| c[:id] == child_id }
 
           yield call child, parent: unit if child.present?

@@ -26,6 +26,10 @@ module Testing
 
         base_state[:units] = yield parse_units.call
 
+        base_state[:parent_counts] = parent_counts = Hash.new do |h, k|
+          h[k] = 0
+        end
+
         ids = Set.new
 
         unit_ids, _ = with_unit_ids(ids) do
@@ -34,7 +38,12 @@ module Testing
           end
         end
 
-        Success unit_ids
+        result = {
+          parent_counts: parent_counts,
+          unit_ids: unit_ids,
+        }
+
+        Success result
       end
     end
   end
