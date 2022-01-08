@@ -42,6 +42,7 @@ class Ordering < ApplicationRecord
   delegate :schemas, allow_nil: true, to: "definition.filter", prefix: :filter
 
   before_validation :sync_inherited!
+  before_validation :track_pristine!
 
   # A restrictive pattern to ensure that ordering identifiers are sane, URL-safe,
   # and consistent across the application.
@@ -70,6 +71,10 @@ class Ordering < ApplicationRecord
     call_operation("schemas.orderings.order_builder.compile", definition)
   end
 
+  def defined_in_schema?
+    schema_version.has_ordering? identifier
+  end
+
   def disabled?
     disabled_at.present?
   end
@@ -95,9 +100,28 @@ class Ordering < ApplicationRecord
     call_operation("schemas.orderings.reset", self)
   end
 
+  # @return [Schemas::Orderings::Definition, nil]
+  def pristine_definition
+    return unless defined_in_schema?
+
+    schema_version.ordering_definition_for identifier
+  end
+
   # @return [void]
   def sync_inherited!
     self.inherited_from_schema = schema_version ? schema_version.has_ordering?(identifier) : false
+  end
+
+  # @api private
+  # @return [void]
+  def track_pristine!
+    unless inherited_from_schema?
+      self.pristine = false
+
+      return
+    end
+
+    self.pristine = pristine_definition.as_json == definition.as_json
   end
 
   class << self

@@ -180,6 +180,23 @@ module HierarchicalEntity
     maintain_links.value!
   end
 
+  # @param [String] identifier
+  # @return [Ordering, nil]
+  def ordering(identifier)
+    if orderings.loaded?
+      orderings.detect { |ord| ord.identifier == identifier }
+    else
+      orderings.by_identifier(identifier).first
+    end
+  end
+
+  # @param [String] identifier
+  # @raise [ActiveRecord::RecordNotFound]
+  # @return [Ordering]
+  def ordering!(identifier)
+    orderings.by_identifier(identifier).first!
+  end
+
   # @see Schemas::Instances::PopulateOrderings
   # @return [Dry::Monads::Result]
   def populate_orderings!

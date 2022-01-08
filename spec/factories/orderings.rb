@@ -28,5 +28,17 @@ FactoryBot.define do
     trait :item do
       entity { FactoryBot.create :item }
     end
+
+    trait :by_descending_title do
+      after(:build) do |ordering|
+        definition = ordering.definition.as_json
+
+        definition["order"] = [
+          { path: "entity.title", direction: "desc", nulls: "last" }
+        ]
+
+        ordering.definition = definition
+      end
+    end
   end
 end

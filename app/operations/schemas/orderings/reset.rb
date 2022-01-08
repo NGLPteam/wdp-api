@@ -34,7 +34,7 @@ module Schemas
 
         ordering.schema_version = ordering.entity.schema_version
 
-        if ordering.schema_version.has_ordering?(ordering.identifier)
+        if ordering.defined_in_schema?
           reset_inherited! ordering
         else
           reset_created! ordering
@@ -44,7 +44,7 @@ module Schemas
       # @param [Ordering] ordering
       # @return [Dry::Monads::Result]
       def reset_inherited!(ordering)
-        inherited_definition = ordering.schema_version.ordering_definition_for ordering.identifier
+        inherited_definition = ordering.pristine_definition
 
         ordering.definition = inherited_definition.as_json
 

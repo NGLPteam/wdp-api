@@ -18,4 +18,40 @@ RSpec.describe Collection, type: :model do
       end
     end
   end
+
+  context "with inherited orderings", simple_v1_hierarchy: true do
+    let!(:collection) { create_v1_collection }
+
+    describe "#ordering" do
+      it "fetches a known ordering" do
+        expect(collection.ordering("items")).to be_a_kind_of Ordering
+      end
+
+      it "does not touch the database if the relation is already loaded" do
+        collection.orderings.reload
+
+        allow(Ordering).to receive :by_identifier
+
+        expect(collection.ordering("items")).to be_a_kind_of Ordering
+
+        expect(Ordering).not_to have_received :by_identifier
+      end
+
+      it "returns nil if not found" do
+        expect(collection.ordering("unknown")).to be_nil
+      end
+    end
+
+    describe "#ordering!" do
+      it "fetches a known ordering" do
+        expect(collection.ordering!("items")).to be_a_kind_of Ordering
+      end
+
+      it "raises an error with an unknown ordering" do
+        expect do
+          collection.ordering! "unknown"
+        end.to raise_error ActiveRecord::RecordNotFound
+      end
+    end
+  end
 end
