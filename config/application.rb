@@ -21,6 +21,7 @@ require "action_cable/engine"
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
 
+require_relative "../lib/patches/alter_store_model_mutation_tracking"
 require_relative "../lib/patches/support_lquery"
 require_relative "../lib/patches/support_regconfig"
 require_relative "../lib/patches/support_semantic_version"

@@ -7,6 +7,7 @@ class ApplicationRecord < ActiveRecord::Base
   include DerivedGraphqlTypes
   include LimitToOne
   include PostgresEnums
+  include StoreModelIntrospection
   include WhereMatches
 
   def call_operation(name, *args)
