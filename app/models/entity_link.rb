@@ -52,7 +52,7 @@ class EntityLink < ApplicationRecord
   def calculate_auth_path
     return unless source.present? && target.present?
 
-    "#{source.auth_path}.#{target.system_slug}"
+    "#{source.auth_path}._.#{target.system_slug}"
   end
 
   # @api private
