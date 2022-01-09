@@ -2,6 +2,10 @@
 
 module Schemas
   module Instances
+    # Given a {HierarchicalEntity}, it will first populate then reset all orderings on it.
+    #
+    # @see Schemas::Instances::PopulateOrderings
+    # @see Schemas::Orderings::Reset
     class ResetAllOrderingsJob < ApplicationJob
       queue_as :maintenance
 

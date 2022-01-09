@@ -35,7 +35,7 @@ class Entity < ApplicationRecord
   scope :actual, -> { where(scope: %w[communities items collections]) }
   scope :non_link, -> { where(link_operator: nil) }
   scope :real, -> { preload(:entity).non_link }
-  scope :sans_thumbnail, -> { where(arel_sans_thumbnail) }
+  scope :sans_thumbnail, -> { real.where(arel_sans_thumbnail) }
 
   def schema_kind
     hierarchical_type&.underscore
@@ -44,9 +44,7 @@ class Entity < ApplicationRecord
   class << self
     # @return [void]
     def resync!
-      Entities::SynchronizeCommunitiesJob.perform_later
-      Entities::SynchronizeCollectionsJob.perform_later
-      Entities::SynchronizeItemsJob.perform_later
+      Entities::SynchronizeAllJob.perform_later
     end
 
     # @api private

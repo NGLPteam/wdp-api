@@ -5121,14 +5121,14 @@ CREATE INDEX index_entities_hierarchical_permission_matching ON public.entities 
 -- Name: index_entities_on_auth_path; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_entities_on_auth_path ON public.entities USING gist (auth_path);
+CREATE INDEX index_entities_on_auth_path ON public.entities USING gist (auth_path public.gist_ltree_ops (siglen='1024'));
 
 
 --
--- Name: index_entities_on_auth_path_btree; Type: INDEX; Schema: public; Owner: -
+-- Name: index_entities_on_auth_path_uniqueness; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_entities_on_auth_path_btree ON public.entities USING btree (auth_path);
+CREATE UNIQUE INDEX index_entities_on_auth_path_uniqueness ON public.entities USING btree (auth_path);
 
 
 --
@@ -8234,6 +8234,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20220106181423'),
 ('20220106182503'),
 ('20220106184920'),
-('20220107021523');
+('20220107021523'),
+('20220108054327');
 
 

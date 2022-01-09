@@ -4,6 +4,7 @@
 #
 # It is created by an {Entity} after commit and not managed directly.
 #
+# @see Entities::AuditAuthorizing
 # @see Entities::CalculateAuthorizing
 class AuthorizingEntity < ApplicationRecord
   self.primary_key = %i[auth_path entity_id scope hierarchical_type hierarchical_id].freeze

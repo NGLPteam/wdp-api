@@ -1,5 +1,9 @@
 # frozen_string_literal: true
 
 RSpec.describe Schemas::Orderings::RefreshJob, type: :job do
-  pending "add some examples to (or delete) #{__FILE__}"
+  let!(:ordering) { FactoryBot.create :ordering }
+
+  it_behaves_like "a pass-through operation job", "schemas.orderings.refresh" do
+    let(:job_arg) { ordering }
+  end
 end

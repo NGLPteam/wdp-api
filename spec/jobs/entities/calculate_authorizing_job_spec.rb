@@ -1,9 +1,13 @@
 # frozen_string_literal: true
 
 RSpec.describe Entities::CalculateAuthorizingJob, type: :job do
-  it "executes without issue" do
-    expect do
-      described_class.perform_now
-    end.to execute_safely
+  it_behaves_like "a pass-through operation job", "entities.calculate_authorizing" do
+    let!(:job_arg) do
+      {
+        auth_path: "foo.bar"
+      }
+    end
   end
+
+  it_behaves_like "a void operation job", "entities.calculate_authorizing"
 end

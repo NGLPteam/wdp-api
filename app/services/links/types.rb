@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module Links
+  # Types related to an {EntityLink}.
   module Types
     include Dry.Types
 
