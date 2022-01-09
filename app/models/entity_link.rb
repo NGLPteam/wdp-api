@@ -1,16 +1,20 @@
 # frozen_string_literal: true
 
+# A connection between two {HierarchicalEntity entities}.
+#
+# This model also stores a reference to itself in {Entity}
+# in order to facilitate authorization and hierarchical
+# fetching.
 class EntityLink < ApplicationRecord
   include HasSystemSlug
   include MatchesScopes
+  include SyncsEntities
 
   pg_enum! :operator, as: :link_operator, _prefix: :operator
 
   belongs_to :source, polymorphic: true
   belongs_to :target, polymorphic: true
   belongs_to :schema_version, inverse_of: :entity_links
-
-  has_one :entity, as: :entity, dependent: :destroy
 
   has_many :ordering_entries, as: :entity, dependent: :destroy
 
@@ -37,12 +41,11 @@ class EntityLink < ApplicationRecord
   validates :scope, inclusion: { in: Links::Types::SCOPE_VALUES }
   validates :target_id, uniqueness: { scope: %i[source_type source_id target_type] }
 
-  after_save :sync_entity!
-
   after_save :refresh_source_orderings!
 
   alias_attribute :hierarchical_type, :target_type
   alias_attribute :hierarchical_id, :target_id
+  alias_attribute :entity_scope, :scope
 
   # @api private
   # @return [String, nil]
@@ -104,25 +107,10 @@ class EntityLink < ApplicationRecord
     self.schema_version = target.respond_to?(:schema_version) ? target.schema_version : nil
   end
 
-  def entity_type
-    model_name.to_s
-  end
-
-  # @api private
-  # @return [void]
-  def sync_entity!
-    Entity.upsert(to_entity_tuple, unique_by: %i[entity_type entity_id])
-
-    Entities::CalculateAuthorizing.new.call auth_path: auth_path
-  end
-
   # @return [Hash]
   def to_entity_tuple
     target.to_entity_tuple.merge(
-      slice(:entity_type).merge(
-        auth_path: auth_path,
-        entity_id: id, scope: scope, link_operator: operator, system_slug: system_slug
-      )
+      link_operator: operator,
     )
   end
 

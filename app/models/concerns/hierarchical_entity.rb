@@ -5,6 +5,7 @@ module HierarchicalEntity
   extend ActiveSupport::Concern
 
   include HasSystemSlug
+  include SyncsEntities
   include TimestampScopes
 
   included do
@@ -13,7 +14,6 @@ module HierarchicalEntity
 
     delegate :auth_path, to: :contextual_parent, allow_nil: true, prefix: :contextual
 
-    has_one :entity, as: :entity, dependent: :destroy
     has_many :hierarchical_entity_entries, as: :hierarchical, dependent: :destroy,
       class_name: "Entity"
 
@@ -68,8 +68,6 @@ module HierarchicalEntity
 
     after_save :track_parent_changes!
 
-    after_save :sync_entity!
-
     after_save :maintain_links!
 
     after_save :refresh_orderings!
@@ -120,11 +118,6 @@ module HierarchicalEntity
     [contextual_auth_path, system_slug].compact.join(?.)
   end
 
-  # @return [String]
-  def entity_scope
-    model_name.collection
-  end
-
   # @abstract
   # @return [ActiveRecord::Relation<HierarchicalEntity>]
   def hierarchical_children
@@ -133,10 +126,6 @@ module HierarchicalEntity
 
   def hierarchical_child_association
     model_name.singular.to_sym
-  end
-
-  def hierarchical_id
-    id
   end
 
   # @abstract
@@ -149,12 +138,6 @@ module HierarchicalEntity
   def hierarchical_parent_foreign_key
     :"#{hierarchical_parent&.hierarchical_child_association}_id" if hierarchical_parent.present?
   end
-
-  def hierarchical_type
-    model_name.to_s
-  end
-
-  alias entity_type hierarchical_type
 
   # @see Links::Connect
   # @param [HierarchicalEntity] source
@@ -267,27 +250,15 @@ module HierarchicalEntity
     update_column :auth_path, derive_auth_path
   end
 
-  # @!scope private
-  # @return [void]
-  def sync_entity!
-    Entity.upsert(to_entity_tuple, unique_by: %i[entity_type entity_id])
-
-    Entities::CalculateAuthorizing.new.call auth_path: auth_path
-  end
-
-  # @return [Hash]
   def to_entity_tuple
-    slice(
-      :entity_type, :hierarchical_id, :hierarchical_type, :schema_version_id,
-      :auth_path, :system_slug, :title, :created_at, :updated_at
-    ).merge(
-      entity_id: id, scope: entity_scope,
-      properties: to_entity_properties,
+    super.merge(
+      slice(
+        :schema_version_id,
+        :title,
+        :created_at,
+        :updated_at,
+      ).symbolize_keys
     )
-  end
-
-  def to_entity_properties
-    {}
   end
 
   def saved_change_to_contextual_parent?
