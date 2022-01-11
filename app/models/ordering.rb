@@ -125,8 +125,10 @@ class Ordering < ApplicationRecord
   end
 
   class << self
+    # @param [HierarchicalEntity] entity
+    # @return [ActiveRecord::Relation<Ordering>]
     def owned_by_or_ordering(entity)
-      base_query = unscoped.by_entity(entity)
+      base_query = unscoped.by_entity(entity.self_and_referring_entities)
 
       base_query = base_query.or unscoped.where(id: entity.parent_orderings)
 

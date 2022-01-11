@@ -22,18 +22,15 @@ module HierarchicalEntity
     has_many :named_ancestors, -> { in_default_order.preload(:ancestor) }, class_name: "EntityAncestor", as: :entity
     has_many :named_descendants, class_name: "EntityAncestor", as: :ancestor
 
-    has_many :entity_links, as: :source, dependent: :destroy
-    has_many :incoming_links, as: :target, class_name: "EntityLink", dependent: :destroy
-
-    has_many :linked_entities, through: :entity_links, source: :target
-    has_many :linking_entities, through: :incoming_links, source: :source
+    has_many :entity_links, -> { preload(:target) }, as: :source, dependent: :destroy
+    has_many :incoming_links, -> { preload(:source) }, as: :target, class_name: "EntityLink", dependent: :destroy
 
     has_many :contextual_permissions, as: :hierarchical
     has_many :contextual_single_permissions, as: :hierarchical
 
     has_many :assigned_users, through: :contextual_permissions, source: :user
 
-    has_many :entity_breadcrumbs, -> { order(depth: :asc) }, as: :entity
+    has_many :entity_breadcrumbs, -> { preload(:crumb).order(depth: :asc) }, as: :entity
     has_many :entity_breadcrumb_entries, class_name: "EntityBreadcrumb", as: :crumb
 
     has_many :entity_inherited_orderings, as: :entity, inverse_of: :entity
@@ -157,6 +154,16 @@ module HierarchicalEntity
     call_operation("links.connect", self, target, operator)
   end
 
+  # @return [<HierarchicalEntity>]
+  def linked_entities
+    entity_links.map(&:target)
+  end
+
+  # @return [<HierarchicalEntity>]
+  def linking_entities
+    incoming_links.map(&:source)
+  end
+
   def maintain_links
     call_operation("links.maintain", self)
   end
@@ -201,6 +208,11 @@ module HierarchicalEntity
 
   def refresh_orderings!
     refresh_orderings.value!
+  end
+
+  # @return [<HierarchicalEntity>]
+  def self_and_referring_entities
+    [self, *entity_breadcrumbs.map(&:crumb), *linking_entities]
   end
 
   def top_level?
