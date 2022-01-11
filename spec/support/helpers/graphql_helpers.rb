@@ -116,6 +116,8 @@ module TestHelpers
         ObjectShaper.build(...)
       end
 
+      alias query object
+
       def attribute_errors(...)
         AttributeErrorsBuilder.build(...)
       end

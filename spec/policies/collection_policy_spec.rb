@@ -26,7 +26,7 @@ RSpec.describe CollectionPolicy, type: :policy do
       end
     end
 
-    permissions :show?, :create?, :update?, :destroy? do
+    permissions :read?, :show?, :create?, :update?, :destroy? do
       it "is allowed on a collection" do
         is_expected.to permit(user, collection)
       end
@@ -64,7 +64,7 @@ RSpec.describe CollectionPolicy, type: :policy do
       end
     end
 
-    permissions :show?, :create?, :update?, :destroy? do
+    permissions :read?, :show?, :create?, :update?, :destroy? do
       it "is allowed on a collection" do
         is_expected.to permit(user, collection)
       end
@@ -94,9 +94,59 @@ RSpec.describe CollectionPolicy, type: :policy do
       end
     end
 
-    permissions :show?, :create?, :update?, :destroy? do
-      it "is not allowed on a collection" do
+    permissions :show? do
+      it "is allowed" do
+        is_expected.to permit(user, collection)
+      end
+    end
+
+    permissions :read?, :create?, :update?, :destroy? do
+      it "is not allowed" do
         is_expected.not_to permit(user, collection)
+      end
+    end
+
+    context "when the collection is hidden" do
+      let(:collection) { FactoryBot.create :collection, :hidden }
+
+      permissions :show? do
+        it "is disallowed" do
+          is_expected.not_to permit user, collection
+        end
+      end
+    end
+  end
+
+  context "as an anonymous user" do
+    let(:user) { AnonymousUser.new }
+
+    permissions ".scope" do
+      subject { scope.resolve }
+
+      it "is empty" do
+        is_expected.to be_blank
+      end
+    end
+
+    permissions :show? do
+      it "is allowed" do
+        is_expected.to permit(user, collection)
+      end
+    end
+
+    permissions :read?, :create?, :update?, :destroy? do
+      it "is not allowed" do
+        is_expected.not_to permit(user, collection)
+      end
+    end
+
+    context "when the collection is hidden" do
+      let(:collection) { FactoryBot.create :collection, :hidden }
+
+      permissions :show? do
+        it "is disallowed" do
+          is_expected.not_to permit user, collection
+        end
       end
     end
   end

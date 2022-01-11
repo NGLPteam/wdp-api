@@ -14,14 +14,12 @@ RSpec.shared_examples_for "an entity sync job" do
   end
 
   it "synchronizes the expected amount of entities" do
-    allow(sync_operation).to receive(:call).and_return(success)
-
     expect do
-      WDPAPI::Container.stub "entities.sync", operation do
+      WDPAPI::Container.stub "entities.sync", sync_operation do
         described_class.perform_now
       end
     end.to execute_safely
 
-    expect(operation).to have_received(:call).with(a_kind_of(entities.first.class)).exactly(entity_count).times
+    expect(sync_operation).to have_received(:call).with(a_kind_of(entities.first.class)).exactly(entity_count).times
   end
 end

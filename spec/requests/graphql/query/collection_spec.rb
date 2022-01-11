@@ -73,6 +73,83 @@ RSpec.describe "Query.collection", type: :request do
       end
     end
 
+    context "when fetching announcements" do
+      let(:query) do
+        <<~GRAPHQL
+        query getCollection($slug: Slug!, $announcementOrder: AnnouncementOrder!) {
+          collection(slug: $slug) {
+            announcements(order: $announcementOrder) {
+              edges {
+                node {
+                  id
+                  publishedOn
+                  header
+                  teaser
+                  body
+                }
+              }
+            }
+          }
+        }
+        GRAPHQL
+      end
+
+      let!(:graphql_variables) do
+        {
+          slug: collection.system_slug,
+          announcement_order: announcement_order,
+        }
+      end
+
+      let(:announcement_order) { "RECENT" }
+
+      let!(:collection) { FactoryBot.create :collection }
+
+      let!(:today_announcement) { FactoryBot.create :announcement, :today, entity: collection }
+      let!(:yesterday_announcement) { FactoryBot.create :announcement, :yesterday, entity: collection }
+
+      let(:announcement_list) { [today_announcement, yesterday_announcement] }
+
+      let(:announcement_edges) do
+        announcement_list.map do |announcement|
+          node = announcement.slice(:published_on, :header, :teaser, :body).merge(id: announcement.to_encoded_id).as_json
+
+          {
+            node: node
+          }
+        end
+      end
+
+      let(:expected_shape) do
+        gql.query do |q|
+          q.prop :collection do |c|
+            c.prop :announcements do |a|
+              a[:edges] = announcement_edges
+            end
+          end
+        end
+      end
+
+      context "when (order: RECENT)" do
+        it "returns announcements in the correct order" do
+          make_default_request!
+
+          expect_graphql_data expected_shape
+        end
+      end
+
+      context "when (order: OLDEST)" do
+        let(:announcement_order) { "OLDEST" }
+        let(:announcement_list) { [yesterday_announcement, today_announcement] }
+
+        it "returns announcements in the correct order" do
+          make_default_request!
+
+          expect_graphql_data expected_shape
+        end
+      end
+    end
+
     context "with an invalid slug" do
       let!(:graphql_variables) { { slug: random_slug } }
 

@@ -94,9 +94,59 @@ RSpec.describe ItemPolicy, type: :policy do
       end
     end
 
-    permissions :show?, :create?, :update?, :destroy? do
-      it "is not allowed on an item" do
+    permissions :show? do
+      it "is allowed" do
+        is_expected.to permit(user, item)
+      end
+    end
+
+    permissions :create?, :update?, :destroy? do
+      it "is not allowed" do
         is_expected.not_to permit(user, item)
+      end
+    end
+
+    context "when the item is hidden" do
+      let(:item) { FactoryBot.create :item, :hidden }
+
+      permissions :show? do
+        it "is disallowed" do
+          is_expected.not_to permit user, item
+        end
+      end
+    end
+  end
+
+  context "as an anonymous user" do
+    let(:user) { AnonymousUser.new }
+
+    permissions ".scope" do
+      subject { scope.resolve }
+
+      it "is empty" do
+        is_expected.to be_blank
+      end
+    end
+
+    permissions :show? do
+      it "is allowed" do
+        is_expected.to permit(user, item)
+      end
+    end
+
+    permissions :read?, :create?, :update?, :destroy? do
+      it "is not allowed" do
+        is_expected.not_to permit(user, item)
+      end
+    end
+
+    context "when the item is hidden" do
+      let(:item) { FactoryBot.create :item, :hidden }
+
+      permissions :show? do
+        it "is disallowed" do
+          is_expected.not_to permit user, item
+        end
       end
     end
   end

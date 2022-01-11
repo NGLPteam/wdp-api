@@ -9,32 +9,16 @@
 module EntityAdjacent
   extend ActiveSupport::Concern
 
+  include EntityAdjacentAssociations
   include ReferencesEntityVisibility
   include ReferencesNamedVariableDates
 
-  # @api private
-  ENTITY_ADJACENT_TUPLE = %i[entity_type entity_id].freeze
-
   included do
+    has_many_entity_adjacent :announcements, -> { recent }
     has_many_entity_adjacent :entity_breadcrumbs, -> { order(depth: :asc) }
     has_one_entity_adjacent :entity_visibility
     has_many_entity_adjacent :named_ancestors, -> { in_default_order.preload(:ancestor) }, class_name: "EntityAncestor"
     has_many_entity_adjacent :named_variable_dates
-  end
-
-  module ClassMethods
-    def has_many_entity_adjacent(name, *args, primary_key: ENTITY_ADJACENT_TUPLE, foreign_key: ENTITY_ADJACENT_TUPLE, **options)
-      options[:primary_key] = primary_key
-      options[:foreign_key] = foreign_key
-
-      has_many name, *args, **options
-    end
-
-    def has_one_entity_adjacent(name, *args, primary_key: ENTITY_ADJACENT_TUPLE, foreign_key: ENTITY_ADJACENT_TUPLE, **options)
-      options[:primary_key] = primary_key
-      options[:foreign_key] = foreign_key
-
-      has_one name, *args, **options
-    end
+    has_many_entity_adjacent :pages
   end
 end

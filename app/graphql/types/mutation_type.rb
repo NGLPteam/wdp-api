@@ -10,6 +10,8 @@ module Types
 
     field :apply_schema_properties, mutation: Mutations::ApplySchemaProperties
 
+    field :create_announcement, mutation: Mutations::CreateAnnouncement
+
     field :create_asset, mutation: Mutations::CreateAsset
 
     field :create_collection, mutation: Mutations::CreateCollection
@@ -27,6 +29,8 @@ module Types
     field :create_person_contributor, mutation: Mutations::CreatePersonContributor
 
     field :create_role, mutation: Mutations::CreateRole
+
+    field :destroy_announcement, mutation: Mutations::DestroyAnnouncement
 
     field :destroy_asset, mutation: Mutations::DestroyAsset
 
@@ -55,6 +59,8 @@ module Types
     field :reset_ordering, mutation: Mutations::ResetOrdering
 
     field :revoke_access, mutation: Mutations::RevokeAccess
+
+    field :update_announcement, mutation: Mutations::UpdateAnnouncement
 
     field :update_collection, mutation: Mutations::UpdateCollection
 

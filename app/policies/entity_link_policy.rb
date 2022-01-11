@@ -4,20 +4,20 @@ class EntityLinkPolicy < ApplicationPolicy
   def initialize(user, record)
     super
 
-    @entity = Pundit.policy! self.user, record.source
+    @source_policy = policy_for record.source
   end
 
-  attr_reader :entity
+  # @return [HierarchicalChildPolicy]
+  attr_reader :source_policy
 
-  delegate :index?, :show?, :update?, :edit?,
-    to: :entity
+  delegate :read?, :index?, :show?, :update?, to: :source_policy
 
   def create?
-    entity.update?
+    source_policy.update?
   end
 
   def destroy?
-    entity.update?
+    source_policy.update?
   end
 
   class Scope < Scope
