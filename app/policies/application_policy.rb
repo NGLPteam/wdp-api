@@ -17,12 +17,29 @@ class ApplicationPolicy
     @record = record
   end
 
+  # This permission determines whether a given {#user}
+  # has been granted read-access to the {#record}.
+  #
+  # @note `read?` is distinct from `show?` for distinguishing
+  #   between
+  #
+  # @abstract
+  # @see #show?
+  def read?
+    admin_or_owns_resource?
+  end
+
   def index?
     show?
   end
 
+  # This determines whether an individual record can
+  # appear to a given {#user}.
+  #
+  # @abstract
+  # @see #read?
   def show?
-    admin_or_owns_resource?
+    read?
   end
 
   def create?
@@ -67,14 +84,17 @@ class ApplicationPolicy
 
   # @!group Hierarchical permissions
 
+  # @abstract
   def create_assets?
     false
   end
 
+  # @abstract
   def create_collections?
     false
   end
 
+  # @abstract
   def create_items?
     false
   end
@@ -93,30 +113,55 @@ class ApplicationPolicy
     has_admin? || has_allowed_action?(action_name)
   end
 
+  # @param [ApplicationRecord] record
+  # @param [Symbol] query
+  # @param [Boolean] admin_always_allowed
+  # @param [User, AnonymousUser] pundit_user
   def authorized?(record, query, admin_always_allowed: true, pundit_user: @user)
     return true if admin_always_allowed && pundit_user.has_global_admin_access?
 
     return false if record.blank?
 
-    policy = Pundit.policy!(pundit_user, record)
-
-    policy.public_send query
+    policy_for(record, pundit_user: pundit_user).public_send query
   end
 
+  # Load a sub-policy.
+  #
+  # @param [ApplicationRecord] record
+  # @param [User, AnonymousUser] pundit_user
+  # @return [ApplicationPolicy]
+  def policy_for(record, pundit_user: @user)
+    subpolicies[[record, pundit_user]] ||= Pundit.policy! pundit_user, record
+  end
+
+  private
+
+  # @!attribute [r] subpolicies
+  # @return [{ (ApplicationRecord, User) => ApplicationPolicy }]
+  def subpolicies
+    @subpolicies ||= {}
+  end
+
+  # @abstract
   class Scope
     attr_reader :user, :scope
 
+    # @param [User, AnonymousUser] user
+    # @param [ActiveRecord::Relation] scope
     def initialize(user, scope)
       @user = user
       @scope = scope
     end
 
+    # @abstract
+    # @return [ActiveRecord::Relation]
     def resolve
       return scope.none if user.anonymous?
 
       scope.all
     end
 
+    # @api private
     def resolve_user_owned
       return scope.none if user.anonymous?
 
@@ -125,14 +170,20 @@ class ApplicationPolicy
       scope.none
     end
 
+    # @see User#has_allowed_action?
+    # @param [String] name
     def has_allowed_action?(name)
       user&.has_allowed_action?(name)
     end
 
+    # @see User#has_global_admin_access?
     def has_global_admin_access?
       user&.has_global_admin_access?
     end
 
+    # @see #has_global_admin_access?
+    # @see #has_allowed_action?
+    # @param [String] name
     def admin_or_has_allowed_action?(name)
       has_global_admin_access? || has_allowed_action?(name)
     end

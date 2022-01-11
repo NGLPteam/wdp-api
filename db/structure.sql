@@ -2610,6 +2610,23 @@ CREATE VIEW public.access_grant_management_links AS
 
 
 --
+-- Name: announcements; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.announcements (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    entity_type text NOT NULL,
+    entity_id uuid NOT NULL,
+    published_on date NOT NULL,
+    header text NOT NULL,
+    teaser text NOT NULL,
+    body text NOT NULL,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+--
 -- Name: ar_internal_metadata; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -4112,6 +4129,14 @@ ALTER TABLE ONLY public.access_grants
 
 
 --
+-- Name: announcements announcements_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.announcements
+    ADD CONSTRAINT announcements_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: ar_internal_metadata ar_internal_metadata_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4667,6 +4692,27 @@ CREATE UNIQUE INDEX index_access_grants_role_check ON public.access_grants USING
 --
 
 CREATE UNIQUE INDEX index_access_grants_uniqueness ON public.access_grants USING btree (accessible_type, accessible_id, subject_type, subject_id);
+
+
+--
+-- Name: index_announcements_oldest_by_entity; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_announcements_oldest_by_entity ON public.announcements USING btree (entity_id, entity_type, published_on);
+
+
+--
+-- Name: index_announcements_on_entity; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_announcements_on_entity ON public.announcements USING btree (entity_type, entity_id);
+
+
+--
+-- Name: index_announcements_recent_by_entity; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_announcements_recent_by_entity ON public.announcements USING btree (entity_id, entity_type, published_on DESC);
 
 
 --
@@ -8235,6 +8281,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20220106182503'),
 ('20220106184920'),
 ('20220107021523'),
-('20220108054327');
+('20220108054327'),
+('20220110182540');
 
 

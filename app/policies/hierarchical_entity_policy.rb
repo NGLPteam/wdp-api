@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # @abstract
-# @todo Handle anonymous access for hierarchical entities
+# @see HierarchicalEntity
 class HierarchicalEntityPolicy < ApplicationPolicy
   def initialize(user, record)
     super
@@ -9,8 +9,16 @@ class HierarchicalEntityPolicy < ApplicationPolicy
     @grid = grid_for user, record
   end
 
-  def show?
+  def read?
     has_admin_or_permission? :read
+  end
+
+  def show?
+    return true if read?
+
+    return true unless record.respond_to?(:currently_visible?)
+
+    record.currently_visible?
   end
 
   alias index? show?
@@ -87,7 +95,7 @@ class HierarchicalEntityPolicy < ApplicationPolicy
   def has_admin_or_permission?(name)
     return false if user.anonymous?
 
-    return true if user.has_global_admin_access?
+    return true if has_admin?
 
     has_grid? name
   end
@@ -95,7 +103,7 @@ class HierarchicalEntityPolicy < ApplicationPolicy
   def has_admin_or_asset_permission?(name)
     return false if user.anonymous?
 
-    return true if user.has_global_admin_access?
+    return true if has_admin?
 
     has_asset_grid? name
   end

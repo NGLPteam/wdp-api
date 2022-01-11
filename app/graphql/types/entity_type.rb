@@ -21,6 +21,8 @@ module Types
       description "Derived access control list"
     end
 
+    field :announcements, resolver: Resolvers::AnnouncementResolver
+
     field :applicable_roles, [Types::RoleType], null: true do
       description "The role(s) that gave the permissions to access this resource, if any."
     end

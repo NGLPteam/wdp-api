@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
+# An arbitrary page of content associated with a specific {HierarchicalEntity}.
 class Page < ApplicationRecord
+  include EntityChildRecord
   include ImageUploader::Attachment.new(:hero_image)
 
   belongs_to :entity, polymorphic: true, inverse_of: :pages

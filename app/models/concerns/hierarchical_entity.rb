@@ -14,6 +14,8 @@ module HierarchicalEntity
 
     delegate :auth_path, to: :contextual_parent, allow_nil: true, prefix: :contextual
 
+    has_many :announcements, as: :entity, dependent: :destroy
+
     has_many :hierarchical_entity_entries, as: :hierarchical, dependent: :destroy,
       class_name: "Entity"
 

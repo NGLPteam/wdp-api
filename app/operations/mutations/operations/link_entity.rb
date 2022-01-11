@@ -8,7 +8,7 @@ module Mutations
 
       def call(source:, target:, operator:)
         authorize source, :update?
-        authorize target, :show?
+        authorize target, :read?
 
         result = connect.call(source, target, operator)
 

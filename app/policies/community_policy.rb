@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
+# @see Community
 class CommunityPolicy < HierarchicalEntityPolicy
-  def show?
+  def read?
     has_admin_or_allowed_action?("communities.read") || super
   end
 

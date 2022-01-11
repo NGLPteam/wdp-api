@@ -20,6 +20,7 @@ module ReferencesEntityVisibility
       :visibility_limited?,
       :visible_as_of?,
       :hidden_as_of?,
+      :currently_hidden?,
       :currently_visible?,
       to: :actual_entity_visibility
 

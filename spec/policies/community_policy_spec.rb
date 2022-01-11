@@ -23,6 +23,16 @@ RSpec.describe CommunityPolicy, type: :policy do
         is_expected.to include community, other_community
       end
     end
+
+    permissions :read?, :show?, :update?, :destroy?, :create_items?, :create_collections? do
+      it "is allowed" do
+        is_expected.to permit(user, community)
+      end
+
+      it "is allowed on other communities" do
+        is_expected.to permit(user, other_community)
+      end
+    end
   end
 
   context "as a user with communities.* access" do
@@ -33,6 +43,22 @@ RSpec.describe CommunityPolicy, type: :policy do
 
       it "includes everything" do
         is_expected.to include community, other_community
+      end
+    end
+
+    permissions :read?, :show?, :update?, :destroy? do
+      it "is allowed" do
+        is_expected.to permit(user, community)
+      end
+
+      it "is allowed on other communities" do
+        is_expected.to permit(user, other_community)
+      end
+    end
+
+    permissions :create_items?, :create_collections? do
+      it "is disallowed" do
+        is_expected.not_to permit user, community
       end
     end
   end
@@ -54,7 +80,17 @@ RSpec.describe CommunityPolicy, type: :policy do
       end
     end
 
-    permissions :show?, :update?, :destroy?, :create_items?, :create_collections? do
+    permissions :show? do
+      it "is allowed" do
+        is_expected.to permit(user, community)
+      end
+
+      it "is allowed on other communities" do
+        is_expected.to permit(user, other_community)
+      end
+    end
+
+    permissions :read?, :update?, :destroy?, :create_items?, :create_collections? do
       it "is allowed" do
         is_expected.to permit(user, community)
       end
@@ -77,8 +113,20 @@ RSpec.describe CommunityPolicy, type: :policy do
     permissions ".scope" do
       subject { scope.resolve }
 
-      it "includes only the user" do
+      it "includes nothing" do
         is_expected.to be_blank
+      end
+    end
+
+    permissions :show? do
+      it "is allowed" do
+        is_expected.to permit user, community
+      end
+    end
+
+    permissions :read?, :create?, :update?, :destroy?, :create_items?, :create_collections? do
+      it "is not allowed" do
+        is_expected.not_to permit user, community
       end
     end
   end
@@ -89,7 +137,21 @@ RSpec.describe CommunityPolicy, type: :policy do
     permissions ".scope" do
       subject { scope.resolve }
 
-      it { is_expected.to be_blank }
+      it "includes nothing" do
+        is_expected.to be_blank
+      end
+    end
+
+    permissions :show? do
+      it "is allowed" do
+        is_expected.to permit user, community
+      end
+    end
+
+    permissions :read?, :create?, :update?, :destroy?, :create_items?, :create_collections? do
+      it "is not allowed" do
+        is_expected.not_to permit user, community
+      end
     end
   end
 end
