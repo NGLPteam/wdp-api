@@ -61,7 +61,13 @@ module Types
     field :page, Types::PageType, null: true do
       description "Look up a page for this entity by slug"
 
-      argument :slug, String, required: true
+      argument :slug, String, required: true do
+        description <<~TEXT
+        **Note**: Unlike most other model types, a page's slug is just a string
+        as opposed to our custom `Slug` type. They are not designed to be
+        opaque, but instead be something human-readable that can appear in URIs.
+        TEXT
+      end
     end
 
     field :pages, resolver: Resolvers::PageResolver
