@@ -12,15 +12,8 @@ module Testing
       prepend HushActiveRecord
 
       SCHEMA_PROPERTY_PATHS = %w[
-        about carousel elements_id facebook status twitter type
+        about
       ].freeze
-
-      SCHEMA_PROPERTY_MAPS = {
-        contentCar1: "content_card_one",
-        contentCar2: "content_card_two",
-        directSubmit: "direct_submit",
-        directSubmitURL: "direct_submit_url",
-      }.freeze
 
       # @param [ActiveSupport::HashWithIndifferentAccess] unit_definition
       # @return [Dry::Monads::Success(Collection)]
@@ -62,10 +55,6 @@ module Testing
           p[path] = unit_definition[path] if unit_definition.key?(path)
         end
 
-        SCHEMA_PROPERTY_MAPS.each_with_object(props) do |(key, path), p|
-          p[path] = unit_definition[key] if unit_definition.key?(key)
-        end
-
         properties = props.compact
 
         collection.apply_properties! properties
@@ -82,13 +71,13 @@ module Testing
       def version_for(type)
         case type
         when "campus"
-          Success SchemaVersion["ucm:campus"]
+          Success SchemaVersion["nglp:campus"]
         when "oru"
-          Success SchemaVersion["ucm:oru"]
+          Success SchemaVersion["nglp:unit"]
         when "series"
-          Success SchemaVersion["ucm:series"]
+          Success SchemaVersion["nglp:series"]
         else
-          Failure[:unknown_type, "Cannot get schema for UCM type: #{type}"]
+          Failure[:unknown_type, "Cannot get schema for nglp type: #{type}"]
         end
       end
     end
