@@ -12,8 +12,12 @@ module Schemas
 
       prepend TransactionalCall
 
+      deadlock_retry_count 5
+
+      start_new_transaction true
+
       LOCK_QUERY = <<~SQL.strip_heredoc
-      SELECT * FROM ONLY ordering_entries
+      SELECT * FROM ordering_entries
       WHERE ordering_id = %s
       FOR UPDATE;
       SQL
