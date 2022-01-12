@@ -21,6 +21,12 @@ module Types
       description "Derived access control list"
     end
 
+    field :announcement, Types::AnnouncementType, null: true do
+      description "Look up an announcement for this entity by slug"
+
+      argument :slug, SlugType, required: true
+    end
+
     field :announcements, resolver: Resolvers::AnnouncementResolver
 
     field :applicable_roles, [Types::RoleType], null: true do
@@ -121,6 +127,12 @@ module Types
     # @return [Page, nil]
     def page(slug:)
       object.pages.by_slug(slug).first
+    end
+
+    # @param [String] slug
+    # @return [Announcement, nil]
+    def announcement(slug:)
+      Loaders::RecordLoader.for(Announcement).load(slug)
     end
 
     def permissions
