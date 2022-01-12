@@ -8,8 +8,6 @@ module Schemas
 
       include WDPAPI::Deps[refresh: "schemas.orderings.refresh"]
 
-      prepend TransactionalCall
-
       # @param [HierarchicalEntity] entity
       # @return [Dry::Monads::Result]
       def call(entity)
