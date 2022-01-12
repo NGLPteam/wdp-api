@@ -83,39 +83,6 @@
   ],
   "properties": [
     { "path": "description", "label": "Description", "type": "full_text", "required": false, "function": "presentation" },
-    {
-      "path": "publisher",
-      "properties": [
-        { "label": "Name", "path": "name", "type": "string", "required": true, "function": "metadata" },
-        { "label": "Email", "path": "email", "type": "email", "required": false, "function": "metadata" },
-        { "label": "Collaborators", "path": "collaborators", "type": "contributors", "required": false }
-      ],
-      "type": "group"
-    },
-    { "path": "collected_on", "type": "date" },
-    {
-      "type": "group",
-      "legend": "Categorization and Tagging",
-      "path": "grouping",
-      "properties": [
-        {
-          "path": "category",
-          "options": [
-            { "label": "Foo", "value": "foo" },
-            { "label": "Bar", "value": "bar" },
-            { "label": "Baz", "value": "baz" },
-            { "label": "Quux", "value": "quux" }
-          ],
-          "type": "select"
-        },
-        {
-          "label": "Journal Tags",
-          "max_size": 5,
-          "path": "tags",
-          "type": "tags"
-        }
-      ]
-    },
     { "type": "boolean", "path": "peer_reviewed", "label": "Peer Reviewed", "function": "metadata" },
     { "type": "boolean", "path": "preprint_version", "label": "Pre-Print Version", "function": "metadata" },
     { "type": "boolean", "path": "open_access", "label": "Open Access", "function": "metadata" },
