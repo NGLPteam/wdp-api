@@ -69,7 +69,8 @@
     }
   ],
   "properties": [
-    { "path": "id", "label": "Identifier", "type": "string" },
-    { "path": "sortable_number", "label": "Sortable Number", "type": "integer" }
+    { "path": "id", "label": "Harvesting Volume Identifier", "type": "string", "function": "metadata" },
+    { "path": "number", "label": "Volume Number", "type": "string", "function": "metadata" },
+    { "path": "sortable_number", "label": "Sortable Volume Number", "type": "integer", "function": "sorting" }
   ]
 }
