@@ -5,6 +5,10 @@ module TestHelpers
     module ExampleHelpers
       extend RSpec::Matchers::DSL
 
+      def expect_calling
+        expect(operation.call)
+      end
+
       def expect_calling_with(...)
         expect(operation.call(...))
       end

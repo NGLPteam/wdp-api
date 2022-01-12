@@ -13,6 +13,8 @@ module AppTypes
 
   SLUG_PATTERN = /\A[a-z0-9]+(?:-[a-z0-9]+)*\z/.freeze
 
+  UUIDList = Array.of(AppTypes::UUID).constrained(min_size: 1)
+
   CoercibleEmail = Coercible::String.constrained(format: EMAIL_PATTERN).optional
 
   Email = String.constrained(format: EMAIL_PATTERN)

@@ -36,6 +36,10 @@ module QueryOperation
     connection.exec_delete compile_query(*parts)
   end
 
+  def arel_table_for(table_name)
+    Arel::Table.new(table_name)
+  end
+
   # @api private
   # @return [ActiveRecord::ConnectionAdapters::PostgreSQLAdapter]
   def connection
@@ -46,17 +50,23 @@ module QueryOperation
   #
   # @param [<String>] parts
   # @param [String] join_with
+  # @param [Boolean] prefix
   # @return [String]
-  def compile_query(*parts, join_with: " ")
-    parts.flatten.map(&:presence).compact.join(join_with).strip
+  def compile_query(*parts, join_with: " ", prefix: false)
+    compiled = parts.flatten.map(&:presence).compact.join(join_with).strip
+
+    return compiled unless prefix && compiled.present?
+
+    "#{join_with}#{compiled}"
   end
 
   # Join components of a query with ` AND `.
   #
   # @param [<String>] parts
+  # @param [Boolean] prefix
   # @return [String]
-  def compile_and(*parts)
-    compile_query(*parts, join_with: " AND ")
+  def compile_and(*parts, prefix: false)
+    compile_query(*parts, join_with: " AND ", prefix: prefix)
   end
 
   # Provide the quoted model id as a formatting argument
@@ -69,6 +79,21 @@ module QueryOperation
     return "" if model.blank? || model.new_record?
 
     with_sql_template template, model.quoted_id
+  end
+
+  # @param [#to_s] prefix
+  # @param [<String>, String] id_or_ids
+  # @param [#to_s] column
+  # @return [String]
+  def with_quoted_id_or_ids_on(prefix, id_or_ids, column: :id)
+    case id_or_ids
+    when AppTypes::UUIDList
+      arel_table_for(prefix)[column].in(id_or_ids).to_sql
+    when AppTypes::UUID
+      arel_table_for(prefix)[column].eq(id_or_ids).to_sql
+    else
+      ""
+    end
   end
 
   # @param [String] template
