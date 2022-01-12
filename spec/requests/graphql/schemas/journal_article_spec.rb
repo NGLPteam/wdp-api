@@ -60,6 +60,8 @@ RSpec.describe "nglp:journal_article", type: :request do
 
             sp.markdown :citation, citation
 
+            sp.boolean :preprint_version
+
             sp.url :online_version
 
             sp.asset :pdf_version
