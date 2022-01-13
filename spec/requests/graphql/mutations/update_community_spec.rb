@@ -4,13 +4,17 @@ RSpec.describe Mutations::UpdateCommunity, type: :request do
   context "as an admin" do
     let(:token) { token_helper.build_token has_global_admin: true }
 
-    let!(:community) { FactoryBot.create :community, :with_thumbnail, title: old_title }
+    let!(:community) { FactoryBot.create :community, :with_logo, :with_thumbnail, title: old_title }
+    let(:hero_image_layout) { "ONE_COLUMN" }
 
+    let!(:old_logo) { nil }
     let!(:old_title) { Faker::Lorem.unique.sentence }
 
     let!(:new_title) { Faker::Lorem.unique.sentence }
 
+    let(:new_logo) { nil }
     let(:new_thumbnail) { nil }
+    let(:clear_logo) { false }
     let(:clear_thumbnail) { false }
 
     let!(:mutation_input) do
@@ -19,6 +23,9 @@ RSpec.describe Mutations::UpdateCommunity, type: :request do
         title: new_title,
         thumbnail: new_thumbnail,
         clear_thumbnail: clear_thumbnail,
+        hero_image_layout: hero_image_layout,
+        logo: new_logo,
+        clear_logo: clear_logo,
       }
     end
 
@@ -83,6 +90,24 @@ RSpec.describe Mutations::UpdateCommunity, type: :request do
         end.to(keep_the_same { community.reload.title })
 
         expect_graphql_response_data expected_shape
+      end
+    end
+
+    context "when clearing a logo" do
+      let(:clear_logo) { true }
+
+      it "removes the thumbnail" do
+        expect_the_default_request.to change { community.reload.logo.present? }.from(true).to(false)
+      end
+
+      context "with a new upload" do
+        let!(:new_logo) do
+          graphql_upload_from "spec", "data", "lorempixel.jpg"
+        end
+
+        it "fails to change anything" do
+          expect_the_default_request.to keep_the_same { community.reload.logo&.id }
+        end
       end
     end
 

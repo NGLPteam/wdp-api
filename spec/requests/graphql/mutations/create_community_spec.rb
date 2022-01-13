@@ -6,11 +6,13 @@ RSpec.describe Mutations::CreateCommunity, type: :request do
 
     let!(:title) { Faker::Lorem.sentence }
     let!(:subtitle) { Faker::Lorem.sentence }
+    let(:hero_image_layout) { "ONE_COLUMN" }
 
     let!(:mutation_input) do
       {
         title: title,
         subtitle: subtitle,
+        hero_image_layout: hero_image_layout,
       }
     end
 

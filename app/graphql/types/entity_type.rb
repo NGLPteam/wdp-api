@@ -17,6 +17,8 @@ module Types
       description "A human-readable subtitle for the entity"
     end
 
+    field :summary, String, null: true, description: "A description of the contents of the entity"
+
     field :access_control_list, Types::AccessControlListType, null: true do
       description "Derived access control list"
     end

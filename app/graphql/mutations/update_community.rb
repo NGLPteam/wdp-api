@@ -10,6 +10,9 @@ module Mutations
     argument :position, Int, required: false, description: "The position the community occupies in the list"
 
     include Mutations::Shared::UpdateEntityArguments
+    include Mutations::Shared::CommunityArguments
+
+    clearable_attachment! :logo
 
     performs_operation! "mutations.operations.update_community"
   end

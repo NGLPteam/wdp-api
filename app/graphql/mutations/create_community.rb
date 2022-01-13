@@ -11,6 +11,7 @@ module Mutations
     argument :schema_version_slug, String, required: false, transient: true, attribute: true, default_value: "default:community:latest"
 
     include Mutations::Shared::CreateEntityArguments
+    include Mutations::Shared::CommunityArguments
 
     performs_operation! "mutations.operations.create_community"
   end

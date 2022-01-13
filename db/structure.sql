@@ -2725,7 +2725,11 @@ CREATE TABLE public.communities (
     schema_version_id uuid NOT NULL,
     properties jsonb,
     hero_image_data jsonb,
-    subtitle text
+    subtitle text,
+    hero_image_layout text DEFAULT 'one_column'::text NOT NULL,
+    logo_data jsonb,
+    summary text,
+    tagline text
 );
 
 
@@ -8315,6 +8319,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20220108054327'),
 ('20220110182540'),
 ('20220112215903'),
-('20220112232400');
+('20220112232400'),
+('20220113044849');
 
 

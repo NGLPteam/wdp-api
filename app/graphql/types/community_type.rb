@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module Types
+  # A GraphQL representation of a {Community}.
   class CommunityType < Types::AbstractModel
     implements Types::AccessibleType
     implements Types::EntityType
@@ -9,6 +10,11 @@ module Types
     implements Types::SchemaInstanceType
 
     description "A community of users"
+
+    field :hero_image_layout, Types::HeroImageLayoutType, null: false,
+      description: "The layout to use when rendering this community's hero image."
+
+    field :tagline, String, null: true
 
     field :collections, resolver: Resolvers::CollectionResolver
 
@@ -26,5 +32,8 @@ module Types
 
     field :user_group_access_grants, resolver: Resolvers::AccessGrants::UserGroupCommunityResolver,
       description: "Not presently used"
+
+    image_attachment_field :logo,
+      description: "A logo for the community"
   end
 end
