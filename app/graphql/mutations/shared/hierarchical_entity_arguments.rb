@@ -24,10 +24,6 @@ module Mutations
           description: "The date this entity was published",
           attribute: true
 
-        argument :summary, String, required: false,
-          description: "A brief description of the entity's contents.",
-          attribute: true
-
         argument :visibility, Types::EntityVisibilityType, required: true,
           description: "What level of visibility the entity has",
           attribute: true

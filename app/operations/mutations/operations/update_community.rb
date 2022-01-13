@@ -6,6 +6,8 @@ module Mutations
       include MutationOperations::Base
       include MutationOperations::UpdatesEntity
 
+      attachment! :logo, image: true
+
       def call(community:, **attributes)
         authorize community, :update?
 

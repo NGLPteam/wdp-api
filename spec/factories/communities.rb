@@ -10,6 +10,12 @@ FactoryBot.define do
 
     schema_version { schema.present? ? SchemaVersion[schema] : SchemaVersion.default_community }
 
+    trait :with_logo do
+      logo do
+        Rails.root.join("spec", "data", "lorempixel.jpg").open
+      end
+    end
+
     trait :with_thumbnail do
       thumbnail do
         Rails.root.join("spec", "data", "lorempixel.jpg").open

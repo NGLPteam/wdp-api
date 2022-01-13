@@ -8,6 +8,8 @@ module Mutations
 
       use_contract! :entity_input
 
+      attachment! :logo, image: true
+
       def call(**args)
         community = Community.new
 

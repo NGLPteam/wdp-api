@@ -6,6 +6,7 @@ module Mutations
       json do
         required(:title).filled("coercible.string")
         optional(:doi).maybe("coercible.string")
+        optional(:subtitle).maybe("coercible.string")
         optional(:summary).maybe("coercible.string")
       end
     end

@@ -25,8 +25,6 @@ module Types
       TEXT
     end
 
-    field :summary, String, null: true, description: "A description of the contents of the entity"
-
     field :root, Boolean, null: false, method: :root?
     field :leaf, Boolean, null: false, method: :leaf?
 

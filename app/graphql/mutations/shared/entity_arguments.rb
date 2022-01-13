@@ -10,6 +10,10 @@ module Mutations
 
         argument :subtitle, String, required: false, description: "Human-readable subtitle for the entity", attribute: true
 
+        argument :summary, String, required: false,
+          description: "A brief description of the entity's contents.",
+          attribute: true
+
         image_attachment! :hero_image
 
         image_attachment! :thumbnail
