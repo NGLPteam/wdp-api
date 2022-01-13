@@ -3,9 +3,10 @@
 module Types
   module EntityType
     include Types::BaseInterface
-    include Types::AccessibleType
-    include Types::ExposesPermissionsType
-    include Types::HasSchemaPropertiesType
+
+    implements Types::AccessibleType
+    implements Types::ExposesPermissionsType
+    implements Types::HasSchemaPropertiesType
 
     description "An entity that exists in the hierarchy."
 
