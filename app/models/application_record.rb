@@ -1,9 +1,11 @@
 # frozen_string_literal: true
 
+# @abstract The base model for WDP-API.
 class ApplicationRecord < ActiveRecord::Base
   self.abstract_class = true
 
   include ArelHelpers
+  include AssociationHelpers
   include DerivedGraphqlTypes
   include LimitToOne
   include PostgresEnums
@@ -14,11 +16,17 @@ class ApplicationRecord < ActiveRecord::Base
     WDPAPI::Container[name].call(*args)
   end
 
+  # Quote the model's primary key if it is persisted and a single string.
+  #
+  # @return [String, nil]
   def quoted_id
     self.class.connection.quote id if persisted? && id.kind_of?(String)
   end
 
-  # @return [String]
+  # Generate a GUID for use with GraphQL / Relay for a persisted model.
+  #
+  # @see RelayNode::IdFromObject
+  # @return [String, nil] the Relay-acc
   def to_encoded_id
     call_operation("relay_node.id_from_object", self).value! if persisted?
   end

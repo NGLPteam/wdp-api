@@ -41,6 +41,8 @@ module Types
       description "Previous entries in the hierarchy"
     end
 
+    field :descendants, resolver: Resolvers::EntityDescendantResolver
+
     field :hierarchical_depth, Int, null: false do
       description "The depth of the hierarchical entity, taking into account any parent types"
     end
@@ -84,30 +86,47 @@ module Types
     image_attachment_field :thumbnail,
       description: "A representative thumbnail for the entity, suitable for displaying in lists, tables, grids, etc."
 
+    # @see HierarchicalEntity#entity_breadcrumbs
+    # @see Loaders::AssociationLoader
+    # @return [<EntityBreadcrumb>]
     def breadcrumbs
       Loaders::AssociationLoader.for(object.class, :entity_breadcrumbs).load(object)
     end
 
+    # @see HierarchicalEntity#entity_links
+    # @see Loaders::AssociationLoader
+    # @return [ActiveRecord::Relation<EntityLink>]
     def links
       Loaders::AssociationLoader.for(object.class, :entity_links).load(object)
     end
 
+    # @see HierarchicalEntity#hierarchical_schema_ranks
+    # @see Loaders::AssociationLoader
+    # @return [<HierarchicalSchemaRank>]
     def schema_ranks
       Loaders::AssociationLoader.for(object.class, :hierarchical_schema_ranks).load(object)
     end
 
-    # @return [Promise(ContextualPermission)]
+    # @see Loaders::ContextualPermissionLoader
+    # @return [ContextualPermission]
     def contextual_permission
       Loaders::ContextualPermissionLoader.for(context[:current_user]).load(object)
     end
 
-    # @return [Promise(Roles::AccessControlList)]
+    # This surfaces the `access_control_list` from the associated {#contextual_permission}.
+    #
+    # @see ContextualPermission#access_control_list
+    # @return [Roles::AccessControlList]
     def access_control_list
       contextual_permission.then do |permission|
         permission&.access_control_list || Roles::AccessControlList.new
       end
     end
 
+    # This surfaces the `allowed_actions` from the associated {#contextual_permission}.
+    #
+    # @see ContextualPermission#allowed_actions
+    # @return [<String>]
     def allowed_actions
       contextual_permission.then do |permission|
         permission&.allowed_actions || []

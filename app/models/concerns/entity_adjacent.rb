@@ -6,6 +6,10 @@
 #
 # Using said connection, we can connect this model to things like {EntityVisibility},
 # {NamedVariableDate}, {EntityOrderableProperty}, etc.
+#
+# @note if a model's association to a {HierarchicalEntity} is not named `entity`,
+#   override {.entity_adjacent_primary_key} to ensure the associations are set
+#   up properly.
 module EntityAdjacent
   extend ActiveSupport::Concern
 
@@ -14,6 +18,9 @@ module EntityAdjacent
   include ReferencesNamedVariableDates
 
   included do
+    entity_adjacent_foreign_key select_entity_adjacent_foreign_key
+    entity_adjacent_primary_key select_entity_adjacent_primary_key
+
     has_many_entity_adjacent :announcements, -> { recent }
     has_many_entity_adjacent :entity_breadcrumbs, -> { order(depth: :asc) }
     has_one_entity_adjacent :entity_visibility

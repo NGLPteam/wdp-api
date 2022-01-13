@@ -6,6 +6,7 @@
 #
 # In future, it will also be used to insert linked entries into the hierarchy.
 class Entity < ApplicationRecord
+  include FiltersBySchemaVersion
   include ScopesForHierarchical
   include ReferencesEntityVisibility
   include ReferencesNamedVariableDates
@@ -18,17 +19,13 @@ class Entity < ApplicationRecord
 
   ENTITY_TUPLE = %i[entity_type entity_id].freeze
 
-  # rubocop:disable Rails/HasManyOrHasOneDependent, Rails/InverseOf
-  has_many :contextual_permissions, primary_key: CONTEXTUAL_TUPLE, foreign_key: CONTEXTUAL_TUPLE
+  has_many_readonly :contextual_permissions, primary_key: CONTEXTUAL_TUPLE, foreign_key: CONTEXTUAL_TUPLE
 
-  has_many :entity_inherited_orderings, primary_key: ENTITY_TUPLE, foreign_key: ENTITY_TUPLE
+  has_many_readonly :entity_inherited_orderings, primary_key: ENTITY_TUPLE, foreign_key: ENTITY_TUPLE
 
-  has_one :entity_visibility, primary_key: CONTEXTUAL_TUPLE, foreign_key: ENTITY_TUPLE
+  has_one_readonly :entity_visibility, primary_key: CONTEXTUAL_TUPLE, foreign_key: ENTITY_TUPLE
 
-  has_many :named_variable_dates, primary_key: CONTEXTUAL_TUPLE, foreign_key: ENTITY_TUPLE
-  # rubocop:enable Rails/HasManyOrHasOneDependent, Rails/InverseOf
-
-  scope :filtered_by_schema_version, ->(schemas) { where(schema_version: SchemaVersion.filtered_by(schemas)) }
+  has_many_readonly :named_variable_dates, primary_key: CONTEXTUAL_TUPLE, foreign_key: ENTITY_TUPLE
 
   scope :with_missing_orderings, -> { non_link.where(entity_id: EntityInheritedOrdering.missing.select(:entity_id)) }
 
