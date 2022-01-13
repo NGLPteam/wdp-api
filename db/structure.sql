@@ -2985,6 +2985,30 @@ CREATE VIEW public.entity_breadcrumbs AS
 
 
 --
+-- Name: entity_descendants; Type: VIEW; Schema: public; Owner: -
+--
+
+CREATE VIEW public.entity_descendants AS
+ SELECT ent.entity_type AS parent_type,
+    ent.entity_id AS parent_id,
+    descendant.hierarchical_type AS descendant_type,
+    descendant.hierarchical_id AS descendant_id,
+    descendant.id AS entity_reference_id,
+    descendant.schema_version_id,
+    descendant.link_operator,
+    descendant.auth_path,
+    descendant.scope,
+    descendant.title,
+    descendant.depth AS actual_depth,
+    (descendant.depth - ent.depth) AS relative_depth,
+    descendant.created_at,
+    descendant.updated_at
+   FROM (public.entities ent
+     JOIN public.entities descendant ON (((ent.auth_path OPERATOR(public.<>) descendant.auth_path) AND (ent.auth_path OPERATOR(public.@>) descendant.auth_path))))
+  WHERE (ent.link_operator IS NULL);
+
+
+--
 -- Name: orderings; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -5147,6 +5171,13 @@ CREATE INDEX index_entities_crumb_source ON public.entities USING gist (depth, a
 --
 
 CREATE INDEX index_entities_crumb_target ON public.entities USING btree (auth_path, entity_id, entity_type, system_slug);
+
+
+--
+-- Name: index_entities_for_descendant_parents; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_entities_for_descendant_parents ON public.entities USING gist (auth_path public.gist_ltree_ops (siglen='1024'), entity_id, entity_type, depth) WHERE (link_operator IS NULL);
 
 
 --
@@ -7585,7 +7616,7 @@ ALTER TABLE ONLY public.schema_version_properties
 --
 
 ALTER TABLE ONLY public.entity_orderable_properties
-    ADD CONSTRAINT fk_rails_27196ff015 FOREIGN KEY (schema_version_property_id) REFERENCES public.schema_version_properties(id) ON DELETE RESTRICT;
+    ADD CONSTRAINT fk_rails_27196ff015 FOREIGN KEY (schema_version_property_id) REFERENCES public.schema_version_properties(id) ON DELETE CASCADE;
 
 
 --
@@ -8282,6 +8313,8 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20220106184920'),
 ('20220107021523'),
 ('20220108054327'),
-('20220110182540');
+('20220110182540'),
+('20220112215903'),
+('20220112232400');
 
 

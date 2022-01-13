@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-# rubocop:disable Rails/HasManyOrHasOneDependent, Rails/InverseOf
 module HierarchicalEntity
   extend ActiveSupport::Concern
 
+  include AssociationHelpers
   include HasSystemSlug
   include SyncsEntities
   include TimestampScopes
@@ -12,41 +12,41 @@ module HierarchicalEntity
     include ImageUploader::Attachment.new(:hero_image)
     include ImageUploader::Attachment.new(:thumbnail)
 
-    delegate :auth_path, to: :contextual_parent, allow_nil: true, prefix: :contextual
-
     has_many :announcements, as: :entity, dependent: :destroy
 
     has_many :hierarchical_entity_entries, as: :hierarchical, dependent: :destroy,
       class_name: "Entity"
 
-    has_many :named_ancestors, -> { in_default_order.preload(:ancestor) }, class_name: "EntityAncestor", as: :entity
-    has_many :named_descendants, class_name: "EntityAncestor", as: :ancestor
+    has_many_readonly :named_ancestors, -> { in_default_order.preload(:ancestor) }, class_name: "EntityAncestor", as: :entity
+    has_many_readonly :named_descendants, class_name: "EntityAncestor", as: :ancestor
 
-    has_many :entity_links, -> { preload(:target) }, as: :source, dependent: :destroy
-    has_many :incoming_links, -> { preload(:source) }, as: :target, class_name: "EntityLink", dependent: :destroy
+    has_many :entity_links, -> { preload(:target) }, as: :source, dependent: :destroy, inverse_of: :source
+    has_many :incoming_links, -> { preload(:source) }, as: :target, class_name: "EntityLink", dependent: :destroy, inverse_of: :target
 
-    has_many :contextual_permissions, as: :hierarchical
-    has_many :contextual_single_permissions, as: :hierarchical
+    has_many_readonly :contextual_permissions, as: :hierarchical
+    has_many_readonly :contextual_single_permissions, as: :hierarchical
 
-    has_many :assigned_users, through: :contextual_permissions, source: :user
+    has_many_readonly :assigned_users, through: :contextual_permissions, source: :user
 
-    has_many :entity_breadcrumbs, -> { preload(:crumb).order(depth: :asc) }, as: :entity
-    has_many :entity_breadcrumb_entries, class_name: "EntityBreadcrumb", as: :crumb
+    has_many_readonly :entity_breadcrumbs, -> { preload(:crumb).order(depth: :asc) }, as: :entity
+    has_many_readonly :entity_breadcrumb_entries, class_name: "EntityBreadcrumb", as: :crumb
 
-    has_many :entity_inherited_orderings, as: :entity, inverse_of: :entity
+    has_many_readonly :entity_descendants, -> { preload(:descendant) }, as: :parent, inverse_of: :parent
 
-    has_many :hierarchical_schema_ranks, -> { for_association }, as: :entity
-    has_many :hierarchical_schema_version_ranks, -> { for_association }, as: :entity
+    has_many_readonly :entity_inherited_orderings, as: :entity, inverse_of: :entity
 
-    has_many :link_target_candidates, as: :source
+    has_many_readonly :hierarchical_schema_ranks, -> { for_association }, as: :entity
+    has_many_readonly :hierarchical_schema_version_ranks, -> { for_association }, as: :entity
+
+    has_many_readonly :link_target_candidates, as: :source
 
     has_many :orderings, dependent: :destroy, as: :entity
 
     has_many :ordering_entries, dependent: :destroy, as: :entity
 
-    has_many :parent_orderings, through: :ordering_entries, source: :ordering
+    has_many_readonly :parent_orderings, through: :ordering_entries, source: :ordering
 
-    has_many :pages, -> { in_default_order }, as: :entity, dependent: :destroy
+    has_many :pages, -> { in_default_order }, as: :entity, dependent: :destroy, inverse_of: :entity
 
     scope :sans_thumbnail, -> { where(arel_json_get(:thumbnail_data, :storage).eq(nil)) }
 
@@ -57,6 +57,8 @@ module HierarchicalEntity
     scope :with_schema_name_asc, -> { joins(:schema_definition).merge(SchemaDefinition.order(name: :asc)) }
 
     scope :with_schema_name_desc, -> { joins(:schema_definition).merge(SchemaDefinition.order(name: :desc)) }
+
+    delegate :auth_path, to: :contextual_parent, allow_nil: true, prefix: :contextual
 
     before_validation :inherit_hierarchical_parent!
 
@@ -326,4 +328,3 @@ module HierarchicalEntity
     end
   end
 end
-# rubocop:enable Rails/HasManyOrHasOneDependent, Rails/InverseOf

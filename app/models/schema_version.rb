@@ -19,13 +19,13 @@ class SchemaVersion < ApplicationRecord
   has_many :collections, dependent: :restrict_with_error, inverse_of: :schema_version
   has_many :items, dependent: :restrict_with_error, inverse_of: :schema_version
 
+  has_many_readonly :entity_descendants, inverse_of: :schema_version
+
   has_many :schema_version_ancestors, dependent: :delete_all, inverse_of: :schema_version
   has_many :schema_version_descendants, dependent: :delete_all, inverse_of: :target_version, class_name: "SchemaVersionAncestor"
   has_many :schema_version_properties, dependent: :delete_all, inverse_of: :schema_version
 
-  # rubocop:disable Rails/HasManyOrHasOneDependent
-  has_many :schema_version_orderings, inverse_of: :schema_version
-  # rubocop:enable Rails/HasManyOrHasOneDependent
+  has_many_readonly :schema_version_orderings, inverse_of: :schema_version
 
   has_many :entity_links, dependent: :destroy
 

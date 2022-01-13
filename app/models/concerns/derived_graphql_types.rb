@@ -7,25 +7,22 @@ module DerivedGraphqlTypes
 
   included do
     delegate :graphql_node_type, :graphql_node_type_name,
+      :graphql_connection_type, :graphql_edge_type,
       to: :class
   end
 
-  # @return [Class, nil]
-  def graphql_connection_type
-    graphql_node_type&.connection_type
-  end
-
-  # @return [Class, nil]
-  def graphql_edge_type
-    graphql_node_type&.edge_type
-  end
-
-  module ClassMethods
+  class_methods do
+    # The connection type to use for this model, derived
+    # by default from {.graphql_node_type}.
+    #
     # @return [Class, nil]
     def graphql_connection_type
       graphql_node_type&.connection_type
     end
 
+    # The edge type to use for this model, derived
+    # by default from {.graphql_node_type}.
+    #
     # @return [Class, nil]
     def graphql_edge_type
       graphql_node_type&.edge_type
@@ -37,12 +34,15 @@ module DerivedGraphqlTypes
     #
     # Used to possibly derive {.graphql_connection_type} and {.graphql_edge_type}.
     #
+    # @api private
     # @return [Class, nil]
     def graphql_node_type
       @graphql_node_type ||= graphql_node_type_name.safe_constantize
     end
 
     # Overridable type used to derive {.graphql_node_type}.
+    #
+    # @api private
     # @return [String]
     def graphql_node_type_name
       @graphql_node_type_name ||= "Types::#{model_name}Type"
