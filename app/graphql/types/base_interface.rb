@@ -22,9 +22,9 @@ module Types
         # :nocov:
 
         define_method(:included) do |child_class|
-          super(child_class) if defined?(super)
+          super(child_class) if defined?(super) && !child_class.include?(Types::BaseInterface)
 
-          child_class.implements interface if child_class < GraphQL::Schema::Object
+          child_class.implements interface if child_class < GraphQL::Schema::Object || child_class.include?(Types::BaseInterface)
         end
       end
 

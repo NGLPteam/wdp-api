@@ -5,6 +5,7 @@ module Types
   module ChildEntityType
     include Types::BaseInterface
 
+    implements Types::EntityType
     implements Types::HasDefaultTimestamps
     implements Types::HasDOIType
     implements Types::HasISSNType

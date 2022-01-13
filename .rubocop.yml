@@ -204,7 +204,7 @@ Rails/MatchRoute:
   Enabled: true
 
 Rails/NegateInclude:
-  Enabled: true
+  Enabled: false
 
 Rails/Pluck:
   Enabled: true
