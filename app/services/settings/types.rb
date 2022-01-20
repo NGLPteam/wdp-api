@@ -6,7 +6,7 @@ module Settings
 
     extend Shared::EnhancedTypes
 
-    COLOR_SCHEMES = %w[cream blue].freeze
+    COLOR_SCHEMES = %w[cream blue gray].freeze
 
     FONT_SCHEMES = %w[style1 style2 style3].freeze
 
