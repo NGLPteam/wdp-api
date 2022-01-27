@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 module Mutations
+  # @see Mutations::Operations::ApplySchemaProperties
+  # @see Schemas::Instances::Apply
   class ApplySchemaProperties < Mutations::BaseMutation
     field :entity, Types::AnyEntityType, null: true
     field :community, Types::CommunityType, null: true

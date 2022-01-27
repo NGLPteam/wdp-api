@@ -4,7 +4,7 @@ module Mutations
   module Operations
     class AlterSchemaVersion
       include MutationOperations::Base
-      include MutationOperations::WithSchemaErrors
+      include Mutations::Shared::WithSchemaErrors
       include Mutations::Shared::AssignsSchemaVersion
       include Mutations::Shared::AttachesPolymorphicEntity
       include WDPAPI::Deps[alter: "schemas.instances.alter_version"]

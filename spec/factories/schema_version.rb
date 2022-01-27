@@ -42,6 +42,18 @@ FactoryBot.define do
           testing_schema_configuration_for simple, number
         end
       end
+
+      if type == :collection
+        required = :"required_#{type}"
+
+        trait required do
+          association :schema_definition, required
+
+          configuration do
+            testing_schema_configuration_for required, number
+          end
+        end
+      end
     end
 
     trait :v1 do

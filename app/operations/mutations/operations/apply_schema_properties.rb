@@ -2,21 +2,18 @@
 
 module Mutations
   module Operations
+    # @see Mutations::ApplySchemaProperties
+    # @see Schemas::Instances::Apply
     class ApplySchemaProperties
       include MutationOperations::Base
-      include MutationOperations::WithSchemaErrors
-      include Mutations::Shared::AttachesPolymorphicEntity
+      include Mutations::Shared::WithSchemaErrors
 
       include WDPAPI::Deps[apply: "schemas.instances.apply"]
 
       def call(entity:, property_values:)
         authorize entity, :update?
 
-        application = apply.call entity, property_values
-
-        with_applied_schema_values! application do |applied_entity|
-          attach_polymorphic_entity! applied_entity
-        end
+        apply_schema_properties! entity, property_values
       end
     end
   end

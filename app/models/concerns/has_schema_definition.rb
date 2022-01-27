@@ -128,6 +128,22 @@ module HasSchemaDefinition
     call_operation("schemas.instances.read_property", self, full_path, context: context)
   end
 
+  # @see #read_property
+  # @param [String] full_path
+  # @param [Schemas::Properties::Context, nil] context
+  # @return [Dry::Monads::Result]
+  def read_property_value(full_path, context: nil)
+    read_property(full_path, context: context).tee(&:must_be_scalar).fmap(&:value)
+  end
+
+  # @see #read_property_value
+  # @param [String] full_path
+  # @param [Schemas::Properties::Context, nil] context
+  # @return [Dry::Monads::Result]
+  def read_property_value!(full_path, context: nil)
+    read_property_value(full_path, context: context).value!
+  end
+
   # @note For testing use only
   # @api private
   # @see Schemas::Instances::ReadPropertyContext

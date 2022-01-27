@@ -7,11 +7,7 @@ module Schemas
     # to introspect the properties on a schema instance in a type-safe way.
     #
     # @see Types::Schematic::GroupPropertyType
-    class GroupReader
-      extend Dry::Initializer
-
-      include Dry::Core::Equalizer.new(:path)
-
+    class GroupReader < BaseReader
       option :group, AppTypes.Instance(Schemas::Properties::GroupDefinition)
       option :context, AppTypes.Instance(Schemas::Properties::Context), default: proc { Schemas::Properties::Context.new }
       option :properties, AppTypes::Array.of(AppTypes.Instance(Schemas::Properties::Reader)), default: proc { [] }
