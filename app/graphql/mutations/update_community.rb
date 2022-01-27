@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 module Mutations
+  # GraphQL mutation field for updating a {Community}.
+  #
+  # @see Mutations::Operations::UpdateCommunity
   class UpdateCommunity < Mutations::BaseMutation
     description "Update a community"
 

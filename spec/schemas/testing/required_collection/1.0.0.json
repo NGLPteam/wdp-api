@@ -1,0 +1,15 @@
+{
+  "namespace": "testing",
+  "identifier": "required_collection",
+  "name": "Collection (With Required Props)",
+  "version": "1.0.0",
+  "kind": "collection",
+  "ancestors": [],
+  "parents": [],
+  "children": [],
+  "orderings": [],
+  "properties": [
+    { "path": "required_field", "label": "Required Field", "type": "string", "function": "content", "required": true },
+    { "path": "optional_field", "label": "Optional Field", "type": "string", "function": "metadata", "required": false }
+  ]
+}

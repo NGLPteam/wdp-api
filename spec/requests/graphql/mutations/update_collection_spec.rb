@@ -27,7 +27,9 @@ RSpec.describe Mutations::UpdateCollection, type: :request, graphql: :mutation d
   context "as an admin" do
     let(:token) { token_helper.build_token has_global_admin: true }
 
-    let!(:collection) { FactoryBot.create :collection, :with_thumbnail, title: old_title }
+    let(:schema_version) { SchemaVersion["default:collection"] }
+
+    let!(:collection) { FactoryBot.create :collection, :with_thumbnail, schema: schema_version, title: old_title }
 
     let!(:old_title) { Faker::Lorem.unique.sentence }
 
@@ -47,7 +49,7 @@ RSpec.describe Mutations::UpdateCollection, type: :request, graphql: :mutation d
     let_mutation_input!(:clear_thumbnail) { false }
 
     let!(:expected_shape) do
-      gql.mutation(:update_collection) do |m|
+      gql.mutation(:update_collection, schema: true) do |m|
         m.prop :collection do |c|
           c[:title] = new_title
           c[:visibility] = new_visibility
@@ -65,7 +67,7 @@ RSpec.describe Mutations::UpdateCollection, type: :request, graphql: :mutation d
       let(:new_title) { "" }
 
       let!(:expected_shape) do
-        gql.mutation :update_collection, no_errors: false do |m|
+        gql.mutation :update_collection, schema: true, no_errors: false do |m|
           m[:collection] = be_blank
 
           m.errors do |e|
@@ -78,6 +80,89 @@ RSpec.describe Mutations::UpdateCollection, type: :request, graphql: :mutation d
         expect_the_default_request.to keep_the_same { collection.reload.title }
 
         expect_graphql_data expected_shape
+      end
+    end
+
+    context "when applying schema properties" do
+      mutation_query! <<~GRAPHQL
+      mutation updateCollection($input: UpdateCollectionInput!) {
+        updateCollection(input: $input) {
+          collection {
+            title
+            visibility
+            visibleAfterAt
+            visibleUntilAt
+
+            requiredField: schemaProperty(fullPath: "required_field") {
+              ... on StringProperty {
+                content
+              }
+            }
+          }
+
+          schemaErrors {
+            base
+            hint
+            path
+            message
+            metadata
+          }
+
+          ... ErrorFragment
+        }
+      }
+      GRAPHQL
+
+      let(:schema_version) { FactoryBot.create :schema_version, :required_collection, :v1 }
+
+      let(:required_field) { nil }
+      let(:optional_field) { nil }
+
+      let!(:expected_shape) do
+        gql.mutation :update_collection, schema: true do |m|
+          m.prop :collection do |c|
+            c[:title] = new_title
+
+            c.prop :required_field do |rf|
+              rf[:content] = required_field
+            end
+          end
+        end
+      end
+
+      let_mutation_input!(:schema_properties) do
+        {
+          required_field: required_field,
+          optional_field: optional_field,
+        }
+      end
+
+      context "with valid schema properties" do
+        let(:required_field) { "Some Required Text" }
+
+        it "updates the collection" do
+          expect_the_default_request.to change { collection.reload.read_property_value!("required_field") }.to(required_field)
+
+          expect_graphql_data expected_shape
+        end
+      end
+
+      context "with an invalid schema field" do
+        let!(:expected_shape) do
+          gql.mutation :update_collection, schema: true, no_errors: true, no_schema_errors: false do |m|
+            m[:collection] = be_blank
+
+            m.schema_errors do |se|
+              se.error "required_field", :filled?
+            end
+          end
+        end
+
+        it "does not update the collection" do
+          expect_the_default_request.to keep_the_same { collection.reload.title }
+
+          expect_graphql_data expected_shape
+        end
       end
     end
 
@@ -94,7 +179,7 @@ RSpec.describe Mutations::UpdateCollection, type: :request, graphql: :mutation d
         end
 
         let!(:expected_shape) do
-          gql.mutation :update_collection, no_errors: false do |m|
+          gql.mutation :update_collection, schema: true, no_errors: false do |m|
             m[:collection] = be_blank
 
             m.errors do |e|
@@ -129,7 +214,7 @@ RSpec.describe Mutations::UpdateCollection, type: :request, graphql: :mutation d
         let(:visible_until_at) { 1.day.from_now.iso8601 }
 
         let!(:expected_shape) do
-          gql.mutation(:update_collection) do |m|
+          gql.mutation :update_collection, schema: true do |m|
             m.prop :collection do |c|
               c[:title] = new_title
               c[:visibility] = new_visibility
@@ -151,7 +236,7 @@ RSpec.describe Mutations::UpdateCollection, type: :request, graphql: :mutation d
         let(:visible_after_at) { 1.day.from_now.iso8601 }
 
         let!(:expected_shape) do
-          gql.mutation :update_collection, no_errors: false do |m|
+          gql.mutation :update_collection, schema: true, no_errors: false do |m|
             m[:collection] = be_blank
 
             m.errors do |e|
@@ -169,7 +254,7 @@ RSpec.describe Mutations::UpdateCollection, type: :request, graphql: :mutation d
 
       context "with an empty range" do
         let!(:expected_shape) do
-          gql.mutation :update_collection, no_errors: false do |m|
+          gql.mutation :update_collection, schema: true, no_errors: false do |m|
             m[:collection] = be_blank
 
             m.errors do |e|

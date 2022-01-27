@@ -24,6 +24,16 @@ FactoryBot.define do
       kind { "item" }
     end
 
+    trait :required_collection do
+      for_collection
+
+      testing
+
+      identifier { "required_collection" }
+
+      name { "Collection (with Required Props)" }
+    end
+
     trait :simple_community do
       for_community
 

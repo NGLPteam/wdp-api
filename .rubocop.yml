@@ -373,6 +373,9 @@ Style/MultilineIfModifier:
 Style/NegatedIfElseCondition:
   Enabled: true
 
+Style/Next:
+  Enabled: false
+
 Style/NilLambda:
   Enabled: true
 
