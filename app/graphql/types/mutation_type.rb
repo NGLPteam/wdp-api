@@ -62,6 +62,10 @@ module Types
 
     field :update_announcement, mutation: Mutations::UpdateAnnouncement
 
+    field :update_asset, mutation: Mutations::UpdateAsset
+
+    field :update_asset_attachment, mutation: Mutations::UpdateAssetAttachment
+
     field :update_collection, mutation: Mutations::UpdateCollection
 
     field :update_community, mutation: Mutations::UpdateCommunity

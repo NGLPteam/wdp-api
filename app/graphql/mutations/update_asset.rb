@@ -1,7 +1,12 @@
 # frozen_string_literal: true
 
 module Mutations
+  # @see Mutations::Operations::UpdateAsset
   class UpdateAsset < Mutations::BaseMutation
+    description <<~TEXT
+    Update an asset by ID.
+    TEXT
+
     field :asset, Types::AnyAssetType, null: true
 
     argument :asset_id, ID, loads: Types::AnyAssetType, description: "The ID for the asset to update", required: true
