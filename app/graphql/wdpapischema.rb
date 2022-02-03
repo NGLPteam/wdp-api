@@ -34,7 +34,7 @@ class WDPAPISchema < GraphQL::Schema
         end
 
         m.failure do
-          GraphQL::ExecutionError.new("Cannot derive ID")
+          raise GraphQL::ExecutionError.new("Cannot derive ID")
         end
       end
     end
@@ -46,7 +46,7 @@ class WDPAPISchema < GraphQL::Schema
         end
 
         m.failure do
-          GraphQL::ExecutionError.new("Cannot find id for #{id.inspect}")
+          raise GraphQL::ExecutionError.new("Cannot find model for ID: #{id.inspect}")
         end
       end
     end
@@ -62,7 +62,7 @@ class WDPAPISchema < GraphQL::Schema
         when GraphQL::ExecutionError then reason
         when String then GraphQL::ExecutionError.new(reason, opts)
         else
-          GraphQL::ExecutionError.new("Unexpected object: #{object.inspect}", opts)
+          raise GraphQL::ExecutionError.new("Unexpected object: #{object.inspect}", opts)
         end
       end
     end
