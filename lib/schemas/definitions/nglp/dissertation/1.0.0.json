@@ -6,106 +6,82 @@
   "kind": "item",
   "orderings": [],
   "properties": [
+    { "path": "abstract", "label": "Abstract", "type": "full_text", "required": false, "wide": true, "function": "content" },
+    { "path": "citation", "label": "How to Cite", "type": "markdown", "required": false, "function": "content" },
+    { "path": "pdf_version", "label": "PDF Version", "type": "asset", "required": false, "function": "content" },
+    {"path": "publisher", "type": "string", "required": true, "function": "metadata"},
+    {"path": "advisor", "type": "string", "required": true, "function": "metadata"},
+    { "path": "language", "label": "language", "type": "string", "required": false, "function": "metadata" },
+    { "path": "graduation_date", "label": "Graduation Date", "type": "variable_date", "function": "metadata" },
+    { "path": "streaming_media", "label": "Streaming Media", "type": "url", "function": "metadata" },
+    { "path":  "keywords", "label":  "keywords", "type": "tags", "required":  true, "function": "metadata"},
     {
-      "path": "title", "type": "string", "required": true
+      "path": "access",
+      "options": [
+        { "label": "metadata only access", "value": "metadata only access" },
+        { "label": "restricted access", "value": "restricted access" },
+        { "label": "embargoed access", "value": "embargoed access" },
+        { "label": "open access", "value": "open access" }
+      ],
+      "type": "select",
+      "required": true,
+      "function": "metadata"
     },
     {
-      "path": "subtitle", "type": "string", "required": false
-    },
-    {
-      "path": "degree_grantor",
-      "type": "group",
-      "legend": "Degree Grantor",
-      "properties": [
+      "type": "select",
+      "path": "cc_license",
+      "label": "CC License",
+      "options": [
         {
-          "label": "University",
-          "path": "university",
-          "type": "string",
-          "required": true
+          "label": "CC BY",
+          "value": "CC BY"
         },
         {
-          "label": "Department", "path": "department", "type": "select",
-          "required": true, "options": [
-            {"label": "English", "value": "english"},
-            {"label": "Physics", "value": "physics"},
-            {"label": "Math", "value": "math"},
-            {"label": "Classics", "value": "classics"}
-          ]
+          "label": "CC BY-SA",
+          "value": "CC BY-SA"
+        },
+        {
+          "label": "CC BY-NC",
+          "value": "CC BY-NC"
+        },
+        {
+          "label": "CC BY-NC-SA",
+          "value": "CC BY-NC-SA"
+        },
+        {
+          "label": "CC BY-ND",
+          "value": "CC BY-ND"
+        },
+        {
+          "label": "CC BY-NC-ND",
+          "value": "CC BY-NC-ND"
         }
       ]
     },
+    { "path": "rights_statement", "label": "Rights Statement", "type": "full_text", "required": false, "wide": true, "function": "metadata" },
+    { "path": "peer_review", "label": "Peer Reviewed", "type": "boolean", "function": "metadata" },
+
     {
-      "label": "Type of Resource", "path": "type_of_resource", "type": "select",
-      "required": true, "options": [{"label": "Text", "value": "text"}]
-    },
-    {
-      "label": "Genre", "path": "genre", "type": "select",
-      "required": true, "options": [{"label": "Thesis", "value": "thesis"}]
-    },
-    {
-      "path": "origin_information",
-      "legend": "Origin Information",
+      "path": "degree",
       "type": "group",
+      "legend": "Degree Details",
       "properties": [
         {
-          "label": "Date Created", "path": "date_created", "type": "date",
-          "required": true
+          "label": "Degree Name", "path": "name", "type": "string", "function": "metadata"
         },
         {
-          "label": "Date Issued", "path": "date_issued", "type": "date",
-          "required": true
-        }
-      ]
-    },
-    {
-      "label": "Language", "path": "language", "type": "select",
-      "required": true, "options": [
-        {"label": "English", "value": "en"},
-        {"label": "Spanish", "value": "es"}
-      ]
-    },
-    {
-      "path": "physical_description",
-      "legend": "Physical Description",
-      "type": "group",
-      "properties": [
-        {
-          "label": "Form", "path": "form", "type": "select",
-          "required": true,
-          "options": [
-            {"label": "Electronic", "value": "electronic"}
-          ]
+          "label": "Degree Level", "path": "level", "type": "string", "required": true, "function": "metadata"
         },
         {
-          "label": "Digital Origin", "path": "digital_origin", "type": "select",
-          "required": true,
-          "options": [
-            {"label": "Born Digital", "value": "born digital"}
-          ]
-        }
-      ]
-    },
-    {
-      "path": "abstract", "type": "markdown", "required": true
-    },
-    {
-      "path": "subject", "type": "string", "required": false
-    },
-    {
-      "path": "degree_information",
-      "legend": "Degree Information",
-      "type": "group",
-      "properties": [
-        {
-          "label": "Degree Name", "path": "name", "type": "select",
-          "required": true, "options": [{"label": "Doctor of Philosophy", "value": "Doctor of Philosophy"}]
+          "label": "Degree Department", "path": "program", "type": "string", "function": "metadata"
         },
         {
-          "label": "Degree Level", "path": "level", "type": "select",
-          "required": true, "options": [{"label": "Doctoral", "value": "Doctoral"}]
+          "label": "Degree Grantor", "path": "grantor", "type": "string", "required": true, "function": "metadata"
+        },
+        {
+          "label": "Degree Awarded Date", "path": "date", "type": "variable_date", "required": true, "function": "metadata"
         }
       ]
-    },
-    {"label": "PDF Version", "path": "pdf", "type": "asset"}
+    }
   ]
 }
