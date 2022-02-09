@@ -318,6 +318,21 @@ GEM
     keycloak-admin (0.7.9)
       http-cookie (~> 1.0, >= 1.0.3)
       rest-client (~> 2.0)
+    keycloak_rack (1.1.0)
+      activesupport (>= 4.2)
+      anyway_config (>= 2.1.0, < 3)
+      dry-auto_inject
+      dry-container
+      dry-effects (>= 0.0.1)
+      dry-initializer
+      dry-matcher
+      dry-monads (>= 1.3.5, < 2)
+      dry-struct (>= 1, < 2)
+      dry-types (>= 1, < 2)
+      dry-validation
+      jwt (>= 2.2.0, < 3)
+      rack (>= 2.0.0, < 3)
+      zeitwerk (>= 2.0.0, < 3)
     kramdown (2.3.1)
       rexml
     listen (3.5.1)
@@ -654,7 +669,7 @@ DEPENDENCIES
   json_schemer (~> 0.2.18)
   jwt (~> 2.2.3)
   keycloak-admin (~> 0.7.9)
-  keycloak_rack
+  keycloak_rack (= 1.1.0)
   kramdown (~> 2.3.1)
   listen (~> 3.3)
   marcel (~> 1.0.1)
