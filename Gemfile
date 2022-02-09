@@ -49,7 +49,7 @@ gem "dry-validation", "~> 1.6.0"
 
 # Keycloak
 gem "keycloak-admin", "~> 0.7.9"
-gem "keycloak_rack"
+gem "keycloak_rack", "1.1.0"
 
 # Misc
 gem "acts_as_list", "~> 1.0.4"
