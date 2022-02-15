@@ -7,6 +7,7 @@ FactoryBot.define do
     email { Faker::Internet.safe_email }
     url { Faker::Internet.url }
     bio { Faker::Lorem.paragraphs(number: 4).join("\n") }
+    orcid { nil }
 
     links do
       [{ url: Faker::Internet.url, title: Faker::Lorem.sentence }]

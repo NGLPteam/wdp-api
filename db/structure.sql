@@ -2906,7 +2906,8 @@ CREATE TABLE public.contributors (
     contribution_count bigint GENERATED ALWAYS AS ((GREATEST(collection_contribution_count, (0)::bigint) + GREATEST(item_contribution_count, (0)::bigint))) STORED,
     name text GENERATED ALWAYS AS (public.derive_contributor_name(kind, properties)) STORED,
     sort_name public.citext GENERATED ALWAYS AS (public.derive_contributor_sort_name(kind, properties)) STORED,
-    affiliation text GENERATED ALWAYS AS (public.derive_contributor_affiliation(kind, properties)) STORED
+    affiliation text GENERATED ALWAYS AS (public.derive_contributor_affiliation(kind, properties)) STORED,
+    orcid public.citext
 );
 
 
@@ -5147,6 +5148,13 @@ CREATE UNIQUE INDEX index_contributors_on_identifier ON public.contributors USIN
 --
 
 CREATE INDEX index_contributors_on_name ON public.contributors USING btree (name);
+
+
+--
+-- Name: index_contributors_on_orcid; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_contributors_on_orcid ON public.contributors USING btree (orcid);
 
 
 --
@@ -8320,6 +8328,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20220110182540'),
 ('20220112215903'),
 ('20220112232400'),
-('20220113044849');
+('20220113044849'),
+('20220214202309');
 
 

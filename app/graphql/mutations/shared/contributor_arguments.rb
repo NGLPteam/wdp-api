@@ -12,6 +12,12 @@ module Mutations
 
         argument :links, [Types::ContributorLinkInputType], required: false, attribute: true
 
+        argument :orcid, String, required: false, attribute: true do
+          description <<~TEXT
+          An optional, unique [**O**pen **R**esearcher and **C**ontributor **ID**](https://orcid.org) associated with this contributor.
+          TEXT
+        end
+
         image_attachment! :image
       end
     end

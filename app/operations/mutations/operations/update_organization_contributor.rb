@@ -5,6 +5,7 @@ module Mutations
     class UpdateOrganizationContributor
       include MutationOperations::Base
 
+      use_contract! :update_contributor
       use_contract! :organization_contributor
 
       attachment! :image, image: true

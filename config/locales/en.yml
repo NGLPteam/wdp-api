@@ -52,6 +52,7 @@ en:
       must_be_slug: "must be a valid slug (all lowercase, no whitespace)"
       must_be_unique_doi: "must be a unique DOI"
       must_be_unique_identifier: "must be a unique slug for the entity"
+      must_be_unique_orcid: "has already been assigned to another contributor"
       must_be_unique_slug: "must be a unique slug for the entity"
       must_be_url: "must be a valid HTTP URL"
       range_required_when_limited_visibility: "must be set when visibility is limited"
