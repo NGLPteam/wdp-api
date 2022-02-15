@@ -15,6 +15,11 @@ module Types
     field :suffix, String, null: true
     field :bio, String, null: true
     field :url, String, null: true
+    field :orcid, String, null: true do
+      description <<~TEXT
+      An optional, unique [**O**pen **R**esearcher and **C**ontributor **ID**](https://orcid.org) associated with this contributor.
+      TEXT
+    end
 
     field :name, String, null: false,
       method: :safe_name,

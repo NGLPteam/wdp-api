@@ -5,6 +5,7 @@ module Mutations
     class CreateOrganizationContributor
       include MutationOperations::Base
 
+      use_contract! :create_contributor
       use_contract! :organization_contributor
 
       def call(links: [], legal_name: nil, location: nil, **args)

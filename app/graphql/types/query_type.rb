@@ -59,6 +59,33 @@ module Types
       argument :slug, Types::SlugType, required: true
     end
 
+    field :contributor_lookup, Types::AnyContributorType, null: true do
+      description <<~TEXT
+      Look up a contributor `by` a certain `value`.
+      TEXT
+
+      argument :by, Types::ContributorLookupFieldType, required: true, as: :field do
+        description <<~TEXT
+        The field to search a contributor with. Unless otherwise specified, the provided
+        `value` will be an exact match.
+        TEXT
+      end
+
+      argument :value, String, required: true do
+        description <<~TEXT
+        The actual value to look a contributor up `by`.
+        TEXT
+      end
+
+      argument :order, Types::SimpleOrderType, required: true, default_value: "RECENT" do
+        description <<~TEXT
+        For certain fields, the values are not guaranteed to be unique. In these instances,
+        the *most recently* created contributor will be selected by default. If the first
+        is preferred, specify `order: OLDEST`.
+        TEXT
+      end
+    end
+
     field :contributors, resolver: Resolvers::ContributorResolver do
       description "A list of all contributors in the system"
     end
@@ -134,6 +161,24 @@ module Types
 
     def contributor(slug:)
       Loaders::RecordLoader.for(Contributor).load(slug)
+    end
+
+    def contributor_lookup(**options)
+      call_operation "contributors.lookup", options do |m|
+        m.success do |contributor|
+          contributor
+        end
+
+        m.failure(:invalid) do |_, reason|
+          raise GraphQL::ExecutionError, "An error occurred when looking up a contributor: #{reason}"
+        end
+
+        m.failure do
+          # :nocov:
+          raise GraphQL::ExecutionError, "Something went wrong with contributor lookup"
+          # :nocov:
+        end
+      end
     end
 
     # @return [GlobalConfiguration]

@@ -2,6 +2,7 @@
 
 class Contributor < ApplicationRecord
   include HasEphemeralSystemSlug
+  include HasUniqueORCID
   include ImageUploader::Attachment.new(:image)
   include SchematicReferent
   include ScopesForIdentifier

@@ -8,8 +8,8 @@ module Types
 
     field_class Types::BaseField
 
-    def call_operation(name, *args)
-      WDPAPI::Container[name].call(*args)
+    def call_operation(name, *args, &block)
+      WDPAPI::Container[name].call(*args, &block)
     end
 
     def call_operation!(name, *args)

@@ -23,6 +23,7 @@ ActiveSupport::Inflector.inflections(:en) do |inflect|
   inflect.acronym "MODS"
   inflect.acronym "OAIPMH"
   inflect.acronym "OAI"
+  inflect.acronym "ORCID"
   inflect.acronym "NGLP"
   inflect.acronym "PDF"
   inflect.acronym "URL"
