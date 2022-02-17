@@ -8,6 +8,7 @@ module Types
 
     description "A generic asset type, implemented by all the more specific kinds"
 
+    field :alt_text, String, null: true
     field :attachable, Types::AnyAttachableType, null: false
     field :name, String, null: false
     field :caption, String, null: true
@@ -15,6 +16,7 @@ module Types
     field :file_size, Integer, null: false
     field :content_type, String, null: false
     field :download_url, String, null: true
+
     image_attachment_field :preview
   end
 end

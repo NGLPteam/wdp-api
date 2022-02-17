@@ -5,7 +5,7 @@ module Mutations
     class UpdateAsset
       include MutationOperations::Base
 
-      def call(asset:, attachment:, **args)
+      def call(asset:, attachment: nil, **args)
         authorize asset, :update?
 
         asset.assign_attributes args
