@@ -27,7 +27,13 @@ module ImageAttachments
     private
 
     def derivative_wrapper(format)
-      DerivativeWrapper.new self, format, attacher.get(name, format)
+      DerivativeWrapper.new self, format, uploaded_file_for(format)
+    end
+
+    def uploaded_file_for(format)
+      return nil if attacher.blank?
+
+      attacher.get name, format
     end
   end
 end
