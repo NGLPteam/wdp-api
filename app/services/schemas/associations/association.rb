@@ -37,6 +37,13 @@ module Schemas
         version.none?
       end
 
+      # @see Schemas::Associations::Operations#require_matching_versions_for
+      # @return [Dry::Monads::Success<SchemaVersion>]
+      # @return [Dry::Monads::Failure(:no_match)]
+      def require_matching_versions
+        require_matching_versions_for self
+      end
+
       # @!attribute [r] requirement
       # @return [String]
       def requirement

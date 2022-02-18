@@ -11,6 +11,8 @@ module Types
     value "CONTRIBUTORS", value: "contributors", description: "A reference to multiple contributors in the system. See `ContributorsProperty`"
     value "DATE", value: "date", description: "An ISO8601-formatted date. See `DateProperty`"
     value "EMAIL", value: "email", description: "An email address. See `EmailProperty`"
+    value "ENTITIES", value: "entities", description: "A reference to multiple entities. See `EntitiesProperty`"
+    value "ENTITY", value: "entity", description: "A reference to a single entity. See `EntityProperty`"
     value "FLOAT", value: "float", description: "A decimal / floating-point number. See `FloatProperty`"
     value "FULL_TEXT", value: "full_text", description: "A complex type representing textual content. See `FullTextProperty`"
     value "GROUP", value: "group", description: "A type composed of other properties. See `GroupProperty`"

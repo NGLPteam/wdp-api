@@ -119,4 +119,34 @@ class EntityLink < ApplicationRecord
   def refresh_source_orderings!
     source.refresh_orderings!
   end
+
+  class << self
+    # @param [HierarchicalEntity] origin
+    # @return [Arel::Nodes::SqlLiteral]
+    def sources_and_targets_for(origin)
+      sources = sources_for origin
+
+      targets = targets_for origin
+
+      Arel::Nodes::UnionAll.new(sources, targets)
+    end
+
+    # @param [HierarchicalEntity] target
+    # @return [Arel::Nodes::SqlLiteral]
+    def sources_for(target)
+      hierarchical_type = arel_table[:source_type].as("hierarchical_type")
+      hierarchical_id = arel_table[:source_id].as("hierarchical_id")
+
+      arel_quote_query unscoped.by_target(target).select(hierarchical_type, hierarchical_id)
+    end
+
+    # @param [HierarchicalEntity] source
+    # @return [Arel::Nodes::SqlLiteral]
+    def targets_for(source)
+      hierarchical_type = arel_table[:source_type].as("hierarchical_type")
+      hierarchical_id = arel_table[:source_id].as("hierarchical_id")
+
+      arel_quote_query unscoped.by_source(source).select(hierarchical_type, hierarchical_id)
+    end
+  end
 end

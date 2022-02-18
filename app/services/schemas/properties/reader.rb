@@ -14,6 +14,13 @@ module Schemas
       delegate :function, :label, :full_path, :path, :required, :type, to: :property
       delegate_missing_to :property
 
+      # @return [Dry::Monads::Result]
+      def available_entities
+        Dry::Monads.Try(NoMethodError) do
+          property.available_entities_for context.instance
+        end.to_result.flatten
+      end
+
       def default
         property.default if property.has_default?
       end

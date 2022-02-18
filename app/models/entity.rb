@@ -10,6 +10,8 @@ class Entity < ApplicationRecord
   include ScopesForHierarchical
   include ReferencesEntityVisibility
   include ReferencesNamedVariableDates
+  include EntityReferent
+  include ScopesForAuthPath
 
   belongs_to :entity, polymorphic: true
   belongs_to :hierarchical, polymorphic: true
@@ -28,6 +30,7 @@ class Entity < ApplicationRecord
   has_many_readonly :named_variable_dates, primary_key: CONTEXTUAL_TUPLE, foreign_key: ENTITY_TUPLE
 
   scope :with_missing_orderings, -> { non_link.where(entity_id: EntityInheritedOrdering.missing.select(:entity_id)) }
+  scope :except_hierarchical, ->(hierarchical) { where.not(hierarchical: hierarchical) if hierarchical.present? }
 
   scope :actual, -> { where(scope: %w[communities items collections]) }
   scope :non_link, -> { where(link_operator: nil) }
@@ -38,7 +41,32 @@ class Entity < ApplicationRecord
     hierarchical_type&.underscore
   end
 
+  # We want to send the ID for the actual {HierarchicalEntity} this maps to.
+  def to_schematic_referent_value
+    hierarchical.to_encoded_id
+  end
+
   class << self
+    # @see Schemas::Properties::References::Entities::Scopes::Links
+    # @param [HierarchicalEntity] hierarchical
+    # @param [:both, :outgoing, :incoming] direction
+    # @return [ActiveRecord::Relation<EntityLink>]
+    def links_for(hierarchical, direction: :both)
+      subquery =
+        case direction
+        when /incoming/ then EntityLink.sources_for(hierarchical)
+        when /outgoing/ then EntityLink.targets_for(hierarchical)
+        else
+          EntityLink.sources_and_targets_for(hierarchical)
+        end
+
+      left = Arel::Nodes::GroupingElement.new([arel_table[:hierarchical_type], arel_table[:hierarchical_id]])
+
+      expr = left.in(subquery)
+
+      where(expr).where(link_operator: nil)
+    end
+
     # @return [void]
     def resync!
       Entities::SynchronizeAllJob.perform_later

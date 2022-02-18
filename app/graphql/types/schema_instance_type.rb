@@ -11,6 +11,15 @@ module Types
     and the necessary context.
     TEXT
 
+    field :available_entities_for, [Types::EntitySelectOptionType, { null: false }], null: false do
+      description <<~TEXT
+      Expose all available entities for this schema property.
+      TEXT
+
+      argument :full_path, String, required: true,
+        description: "The full path to the schema property. Please note, paths are snake_case, not camelCase."
+    end
+
     field :schema_instance_context, Types::SchemaInstanceContextType, null: false,
       description: "The context for our schema instance. Includes form values and necessary referents."
 
@@ -21,6 +30,14 @@ module Types
 
       argument :full_path, String, required: true,
         description: "The full path to the schema property. Please note, paths are snake_case, not camelCase."
+    end
+
+    def available_entities_for(full_path:)
+      with_schema_associations_loaded.then do |(context, *)|
+        object.read_property(full_path, context: context).bind do |prop|
+          prop.available_entities
+        end.value_or([])
+      end
     end
 
     # @see Loaders::SchemaPropertyContextLoader

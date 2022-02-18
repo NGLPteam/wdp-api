@@ -3,6 +3,8 @@
 module HasSchemaDefinition
   extend ActiveSupport::Concern
 
+  include EntityReferent
+
   included do
     belongs_to :schema_definition
     belongs_to :schema_version
