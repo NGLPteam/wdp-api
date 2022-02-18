@@ -66,6 +66,17 @@
     { "path": "sortable_number", "label": "Sortable Issue Number", "type": "integer", "function": "sorting" },
     { "path": "id", "label": "Harvesting Issue Identifier", "type": "string", "function": "metadata" },
     {
+      "path": "featured_articles",
+      "label": "Featured Articles",
+      "type": "entities",
+      "function": "presentation",
+      "scope": {
+        "origin": "self",
+        "target": "descendants",
+        "schemas": [{ "namespace": "nglp", "identifier": "journal_article" }]
+      }
+    },
+    {
       "path": "volume",
       "legend": "Volume Metadata",
       "type": "group",
