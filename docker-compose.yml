@@ -10,7 +10,7 @@ services:
     restart: unless-stopped
     shm_size: 2g
   db:
-    image: "postgres:13.1-alpine"
+    image: "postgres:13.4-alpine"
     shm_size: 2g
     environment:
       POSTGRES_PASSWORD: password
