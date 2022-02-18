@@ -399,8 +399,9 @@ module Schemas
             array.present?
           end
 
+          # Detect whether this property type implements {Schemas::Properties::References::Collected}.
           def collected_reference?
-            self < CollectedReference
+            self < Schemas::Properties::References::Collected
           end
 
           # @see {.complex}
@@ -446,8 +447,9 @@ module Schemas
             reference.present?
           end
 
+          # Detect whether this property type implements {Schemas::Properties::References::Scalar}.
           def scalar_reference?
-            self < ScalarReference
+            self < Schemas::Properties::References::Scalar
           end
 
           def simple?

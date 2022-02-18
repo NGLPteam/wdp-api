@@ -4,7 +4,7 @@ module Schemas
   module Properties
     module Scalar
       class Contributors < Base
-        include CollectedReference
+        include Schemas::Properties::References::Collected
 
         model_type! ::Contributor
       end

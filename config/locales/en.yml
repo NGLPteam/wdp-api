@@ -56,6 +56,11 @@ en:
       must_be_unique_slug: "must be a unique slug for the entity"
       must_be_url: "must be a valid HTTP URL"
       range_required_when_limited_visibility: "must be set when visibility is limited"
+      schematic_references:
+        collected:
+          must_match: "received an instance of %{actual} at the %{ord} position, but expected %{models}"
+        scalar:
+          must_match: "received an instance of %{actual}, but expected %{models}"
       unacceptable_edge: "An entity of type '%{parent}' cannot be a direct parent of '%{child}'"
       update_and_clear_attachment: "cannot receive a new attachment while also clearing it"
   frozen:
