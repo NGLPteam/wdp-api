@@ -1,0 +1,32 @@
+# custom predicates implemented for dry-logic
+en:
+  custom_predicates: &custom
+    global_id?: "must be a GlobalID"
+
+    http_uri?: "must be a valid HTTP or HTTPS url"
+
+    https_uri?: "must be a valid HTTPS url"
+
+    model?: "must be a model"
+
+    model_list?: "must be an array of models"
+
+    model_class?: "must be a model class"
+
+    model_class_list?: "must be an array of model classes"
+
+    opaque_id?: "must be an opaque Relay Node ID"
+
+    schematic_collected_references?: "must resolve to an array of models"
+
+    schematic_scalar_reference?: "must resolve to a model"
+
+    uri?: "must be a valid URI"
+
+en:
+  dry_schema:
+    errors:
+      <<: *custom
+  dry_validation:
+    errors:
+      <<: *custom

@@ -8,11 +8,15 @@ module Schemas
     module CompilesToSchema
       extend ActiveSupport::Concern
 
-      # @return [Dry::Schema]
-      def to_dry_schema
-        result = WDPAPI::Container["schemas.properties.compile_schema"].call(properties)
+      # @return [Schemas::BaseContract]
+      def to_dry_validation
+        WDPAPI::Container["schemas.properties.compile_contract"].call(self).value!
+      end
 
-        result.value!
+      # @see Schemas::Properties::CompileSchema
+      # @return [Dry::Schema::Params]
+      def to_dry_schema
+        WDPAPI::Container["schemas.properties.compile_schema"].call(properties)
       end
     end
   end

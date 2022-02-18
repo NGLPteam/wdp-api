@@ -8,7 +8,7 @@ module Harvesting
 
       include Redis::Objects
 
-      param :model, AppTypes::Model
+      param :model, Models::Types::Model
 
       delegate :id, to: :model, prefix: true
 

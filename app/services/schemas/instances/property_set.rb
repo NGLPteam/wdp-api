@@ -15,9 +15,7 @@ module Schemas
       attribute :schema, Schemas::Header.to_type, default: proc { {} }
 
       # @!attribute [rw] values
-      # The authoritative source for property values that are not
-      # a {Schemas::Properties::Scalar::Reference reference} or a
-      # {Schemas::Properties::Scalar::FullText} property.
+      # The authoritative source for non-reference property values.
       # @return [PropertyHash]
       attribute :values, :property_hash, default: proc { {} }
 

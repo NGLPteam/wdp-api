@@ -7,41 +7,129 @@ module Schemas
       class Base < Schemas::Properties::BaseDefinition
         include ActiveSupport::Configurable
 
+        extend Dry::Core::ClassAttributes
+
         KNOWN_FUNCTIONS = %w[content metadata presentation sorting unspecified].freeze
 
+        # @!scope class
+        # @!attribute [r] always_wide
+        # Declare whether this property type should always be rendered wide,
+        # irrespective of its configured {#wide} property.
+        # @return [Boolean]
+        defines :always_wide, type: Dry::Types["bool"]
+
+        always_wide false
+
+        # @!scope class
+        # @!attribute [r] array
+        # Declare whether this property represents an `Array` of values, rather
+        # than a single discrete type.
+        #
+        # When validating values, the truthiness of this value is taken into account
+        # alongside {.base_type} / {.schema_type}.
+        # @return [Boolean]
+        defines :array, type: Dry::Types["bool"]
+
+        array false
+
+        # @!scope class
+        # @!attribute [r] base_type
+        # @return [Schemas::Properties::Types::BaseType]
+        defines :base_type, type: Schemas::Properties::Types::BaseType
+
+        base_type :any
+
+        # @!scope class
+        # @!attribute [r] complex
+        # @return [Boolean]
+        defines :complex, type: Dry::Types["bool"]
+
+        complex false
+
+        # @!scope class
+        # @!attribute [r] fillable
+        # Declare that this schema property type is _fillable_, per dry-schema's definition.
+        #
+        # @see https://dry-rb.org/gems/dry-schema/1.9/basics/macros/#filled
+        # @return [Boolean]
+        defines :fillable, type: Dry::Types["bool"]
+
+        fillable false
+
+        # @!scope class
+        # @!attribute [r] kind
+        # Declare the logical grouping _kind_ of property that this is. This is used for
+        # introspection via the API.
+        #
+        # @return [Schemas::Properties::Types::Kind]
+        defines :kind, type: Schemas::Properties::Types::Kind
+
+        kind :simple
+
+        # @!scope class
+        # @!attribute [r] orderable
+        # @return [Boolean]
+        defines :orderable, type: Dry::Types["bool"]
+
+        orderable false
+
+        # @!scope class
+        # @!attribute [r] reference
+        # Declare whether this property type is a reference of some sort.
+        #
+        # @note A truthy value also implies {.complex}.
+        # @return [Boolean]
+        defines :reference, type: Dry::Types["bool"]
+
+        reference false
+
+        # @!scope class
+        # @!attribute [r] schema_type
+        # @return [Schemas::Properties::Types::SchemaType]
+        defines :schema_type, type: Schemas::Properties::Types::SchemaType
+
+        schema_type :any
+
+        # @!attribute [rw] label
+        # @return [String]
         attribute :label, :string
+
+        # @!attribute [rw] function
+        # @return [Schemas::Properties::Types::Function]
         attribute :function, :string, default: "unspecified"
+
+        # @!attribute [rw] mappings
+        # @return [<Schemas::Properties::MappingDefinition>]
         attribute :mappings, Schemas::Properties::MappingDefinition.to_array_type
+
+        # @!attribute [rw] required
+        # @return [Boolean]
         attribute :required, :boolean, default: proc { false }
+
+        # @!attribute [rw] wide
+        # @return [Boolean]
         attribute :wide, :boolean, default: proc { false }
+
+        alias wide? wide
+
+        # @!attribute [rw] unorderable
+        # @return [Boolean]
         attribute :unorderable, :boolean, default: proc { false }
-
-        config.array = false
-        config.base_type = Dry::Types["any"]
-        config.schema_predicates = {}
-        config.always_wide = false
-        config.complex = false
-        config.orderable = false
-        config.graphql_value_key = :content
-
-        validates :function, presence: true, inclusion: { in: KNOWN_FUNCTIONS }
 
         alias unorderable? unorderable
 
-        delegate :array?, :complex?, :simple?, :scalar_reference?, :collected_reference?, to: :class
+        config.graphql_value_key = :content
+        config.schema_predicates = {}
 
-        def add_to_schema!(context)
-          return if exclude_from_schema?
+        validates :function, presence: true, inclusion: { in: Schemas::Properties::Types::Function.values }
 
-          apply_schema_type_to build_schema_macro context
-        end
+        delegate :always_wide?, :array?, :complex?, :kind, :reference?, :simple?,
+          :scalar_reference?, :collected_reference?,
+          :base_type, :schema_type,
+          to: :class
 
         def actually_required?
           !exclude_from_schema? && required
-        end
-
-        def always_wide?
-          config.always_wide
         end
 
         # @!attribute [r] dig_path
@@ -52,12 +140,6 @@ module Schemas
           nested? ? [parent.path, path] : [path]
         end
 
-        # @!attribute [r] dry_type
-        # @return [Dry::Types::Type]
-        memoize def dry_type
-          build_dry_type
-        end
-
         # @!attribute [r] full_path
         # The full `"dot.path"` for the property, based on whether the property is {#nested? nested}.
         # @return [String]
@@ -65,7 +147,7 @@ module Schemas
           nested? ? "#{parent.path}.#{path}" : path
         end
 
-        # Whether this property
+        # Determine whether this property has a `default`.
         def has_default?
           respond_to?(:default) && !default.nil?
         end
@@ -75,6 +157,11 @@ module Schemas
           parent.kind_of?(Schemas::Properties::GroupDefinition)
         end
 
+        # Determine if this specific property is orderable based on its type
+        # as well as if the schema author expressed it should not be.
+        #
+        # @see .orderable
+        # @see #unorderable?
         def orderable?
           self.class.orderable? && !unorderable?
         end
@@ -87,32 +174,25 @@ module Schemas
           "props.#{full_path}##{type}" if orderable?
         end
 
-        # A predicate to detect if we should try to coerce a value
-        # in the `before(:value_coercer)` processing step of dry-schema.
-        #
-        # @see Schemas::Properties::CompileSchema
-        # @see #normalize_schema_value_before_coercer
-        def might_normalize_value_before_coercion?
-          return false if exclude_from_schema?
+        # @!group Schema / Contract compilation
 
-          return true if has_default?
+        def add_to_schema!(context)
+          return if exclude_from_schema?
+
+          apply_schema_type_to build_schema_macro context
+        end
+
+        # Determine if a property should be excluded because of some type of invalidity.
+        def exclude_from_schema?
+          return true if schema_type.blank? || type == "unknown"
 
           false
         end
 
-        # A hook method used to calculate the default if no value is provided, or if
-        # necessary, perform more complex coercions than dry-schema supports. Chiefly,
-        # it's used by {Schemas::Properties::Scalar::Reference reference properties}
-        # to perform model lookups with a variety of supported input types.
-        #
-        # @abstract
-        # @see Schemas::Properties::CompileSchema
-        def normalize_schema_value_before_coercer(context)
-          if has_default? && context[:raw].nil?
-            default
-          else
-            context[:raw]
-          end
+        # @api private
+        # @see {.fillable}
+        def fillable_schema_type?
+          self.class.fillable?
         end
 
         # @!attribute [r] schema_predicates
@@ -121,13 +201,9 @@ module Schemas
           build_schema_predicates
         end
 
-        # Determine if a property should be excluded
-        # because of some type of invalidity.
-        def exclude_from_schema?
-          return true if config.schema_type.blank?
+        # @!endgroup
 
-          false
-        end
+        # @!group Context / Value Extraction
 
         # @param [Schemas::Properties::Context] context
         # @return [Dry::Monads::Result]
@@ -137,10 +213,6 @@ module Schemas
           validated_value = validate_raw_value extracted_value
 
           normalize_read_value validated_value
-        end
-
-        def wide?
-          wide
         end
 
         # @api private
@@ -155,35 +227,27 @@ module Schemas
         # @abstract
         # @return [Object]
         def validate_raw_value(extracted_value)
-          case extracted_value
-          when config.base_type, Dry::Types["array"].of(config.base_type) then extracted_value
-          end
+          return extracted_value if base_type.valid?(extracted_value)
+
+          return unless array? && Dry::Types["array"].of(base_type)
+
+          extracted_value
         end
 
         # @api private
         # @abstract
         # @return [Object]
         def normalize_read_value(value)
-          config.array ? Array(value) : value
+          array? ? Array(value) : value
         end
 
         def write_values_within!(context)
           context.copy_value! path
         end
 
-        def reference?
-          scalar_reference? || collected_reference? || type == "full_text"
-        end
+        # @!endgroup
 
-        def kind
-          if reference?
-            "reference"
-          elsif complex?
-            "complex"
-          else
-            "simple"
-          end
-        end
+        # @!group Version Property Hooks
 
         def version_property_label
           label.presence || super
@@ -201,29 +265,13 @@ module Schemas
           end.compact
         end
 
+        # @!endgroup
+
         private
-
-        def apply_nil_coercion(type)
-          if type.default?
-            type.constructor do |value|
-              value.nil? ? Dry::Types::Undefined : value
-            end
-          else
-            type
-          end
-        end
-
-        def apply_schema_default(type)
-          if has_default?
-            type.default { default }
-          else
-            type
-          end
-        end
 
         # @abstract
         def apply_schema_type_to(macro)
-          return apply_schema_type_for_array_to(macro) if config.array
+          return apply_schema_type_for_array_to(macro) if array?
 
           apply_schema_type_for_default_to(macro)
         end
@@ -232,7 +280,7 @@ module Schemas
           array_element_macros = build_array_element_macros
 
           if actually_required?
-            macro.array(config.schema_type, **schema_predicates) do
+            macro.array(schema_type, **schema_predicates) do
               array? > each(*array_element_macros)
             end
           else
@@ -244,11 +292,11 @@ module Schemas
 
         def apply_schema_type_for_default_to(macro)
           if actually_required? && fillable_schema_type?
-            macro.filled(config.schema_type, **schema_predicates)
+            macro.filled(schema_type, **schema_predicates)
           elsif actually_required?
-            macro.value(config.schema_type, **schema_predicates)
+            macro.value(schema_type, **schema_predicates)
           else
-            macro.maybe(config.schema_type, **schema_predicates)
+            macro.maybe(schema_type, **schema_predicates)
           end
         end
 
@@ -270,15 +318,6 @@ module Schemas
           end
         end
 
-        # @return [Object]
-        def build_dry_type
-          apply_nil_coercion apply_schema_default config.base_type
-        end
-
-        def fillable_schema_type?
-          config.schema_type == :string
-        end
-
         # @abstract
         # @return [{ Symbol => Object }]
         def build_schema_predicates
@@ -292,49 +331,119 @@ module Schemas
         end
 
         class << self
+          # Declare that this schema property type should {.always_wide always be wide}.
+          #
+          # @return [void]
+          def always_wide!
+            always_wide true
+          end
+
+          # Declare this schema property type to be an {.array}.
+          #
+          # @param [Array] array_element_macros
+          # @return [void]
           def array!(*array_element_macros)
-            config.array = true
+            array true
 
             config.array_element_macros = array_element_macros.flatten
           end
 
-          def orderable!
-            config.orderable = true
+          # Declare this schema property type to be {.fillable}.
+          #
+          # @return [void]
+          def fillable!
+            fillable true
           end
 
+          # Declare that this schema property type is {.orderable}.
+          #
+          # @return [void]
+          def orderable!
+            orderable true
+          end
+
+          # Declare that this schema property type is a {.reference}.
+          #
+          # @note This hook will also redetect the {.kind}, if necessary.
+          # @return [void]
+          def reference!
+            reference true
+
+            redetect_kind!
+          end
+
+          # Declare the {.schema_type} and {.base_type} for this property type.
+          #
+          # @note This hook will also redetect the {.kind}, if necessary.
+          # @param [String, Symbol, Dry::Types::Type] value
+          # @return [void]
           def schema_type!(value)
-            config.complex = !(value.kind_of?(Symbol) || value.kind_of?(String))
+            complex !(value.kind_of?(Symbol) || value.kind_of?(String))
 
-            config.schema_type = value
+            schema_type Schemas::Properties::Types::SchemaType[value]
 
-            config.base_type = AppTypes::PropertyType[value]
+            base_type Schemas::Properties::Types::BaseType[value]
+
+            redetect_kind!
           end
 
           # @!group Introspection
 
+          # @see {.always_wide}
+          def always_wide?
+            always_wide.present?
+          end
+
+          # @see {.array}
           def array?
-            config.array
+            array.present?
           end
 
           def collected_reference?
             self < CollectedReference
           end
 
+          # @see {.complex}
           def complex?
-            config.complex
+            complex.present?
           end
 
+          # @see {.fillable}
+          def fillable?
+            fillable.present?
+          end
+
+          # @!attribute [r] graphql_value_key
+          # The key used to access the GraphQL value for this specific property type.
+          #
+          # @api private
+          # @note This attribute is primarily used for testing.
+          # @return [Symbol]
           def graphql_value_key
             config.graphql_value_key
           end
 
+          # @!attribute [r] graphql_typename
+          # The type name for this schema property.
+          #
+          # @api private
+          # @see Types::Schematic
+          # @note This attribute is primarily used for testing.
+          # @return [String]
           def graphql_typename
             "#{name.demodulize}Property"
           end
 
           # Whether or not this property type is orderable.
+          #
+          # @see {.orderable}
           def orderable?
-            config.orderable
+            orderable.present?
+          end
+
+          # @see {.reference}
+          def reference?
+            reference.present?
           end
 
           def scalar_reference?
@@ -342,14 +451,41 @@ module Schemas
           end
 
           def simple?
-            !config.complex
+            !complex? && !reference?
           end
 
+          # @!attribute [r] type_reference
+          # The type of the schema property expressed in a format suitable to use
+          # as a method or hash key.
+          #
+          # @api private
+          # @note This attribute is primarily used for testing.
+          # @return [Symbol]
           def type_reference
             name.demodulize.underscore.to_sym
           end
 
           # @!endgroup
+
+          private
+
+          # @return [Schemas::Properties::Types::Kind]
+          def detect_kind
+            if reference?
+              "reference"
+            elsif complex?
+              "complex"
+            else
+              "simple"
+            end
+          end
+
+          # Set the {.kind}.
+          #
+          # @return [void]
+          def redetect_kind!
+            kind detect_kind
+          end
         end
       end
     end

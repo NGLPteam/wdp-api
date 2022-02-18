@@ -9,11 +9,11 @@ module Schemas
 
       EMPTY_HASH = proc { {} }
 
-      option :instance, AppTypes.Instance(HasSchemaDefinition).optional, default: proc { nil }
-      option :values, AppTypes::ValueHash, default: EMPTY_HASH
-      option :full_texts, AppTypes::FullTextMap, default: EMPTY_HASH
-      option :collected_references, AppTypes::CollectedReferenceMap, default: EMPTY_HASH
-      option :scalar_references, AppTypes::ScalarReferenceMap, default: EMPTY_HASH
+      option :instance, Schemas::Types::SchemaInstance.optional, default: proc { nil }
+      option :values, Schemas::Types::ValueHash, default: EMPTY_HASH
+      option :full_texts, FullText::Types::Map, default: EMPTY_HASH
+      option :collected_references, Schemas::References::Types::CollectedMap, default: EMPTY_HASH
+      option :scalar_references, Schemas::References::Types::ScalarMap, default: EMPTY_HASH
 
       def default_values
         @default_values ||= {}

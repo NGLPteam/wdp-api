@@ -128,6 +128,18 @@ module HasSchemaDefinition
     call_operation("schemas.instances.read_property", self, full_path, context: context)
   end
 
+  def read_property!(full_path, context: nil)
+    read_property(full_path, context: context).value!
+  end
+
+  # @note For testing use only
+  # @api private
+  # @see Schemas::Instances::ReadPropertyContext
+  # @return [Schema::Properties::Context]
+  def read_property_context
+    call_operation("schemas.instances.read_property_context", self).value!
+  end
+
   # @see #read_property
   # @param [String] full_path
   # @param [Schemas::Properties::Context, nil] context
@@ -144,12 +156,10 @@ module HasSchemaDefinition
     read_property_value(full_path, context: context).value!
   end
 
-  # @note For testing use only
-  # @api private
-  # @see Schemas::Instances::ReadPropertyContext
-  # @return [Schema::Properties::Context]
-  def read_property_context
-    call_operation("schemas.instances.read_property_context", self).value!
+  # @see Schema::Properties::Context#field_values
+  # @return [Hash]
+  def read_property_values!
+    read_property_context.field_values
   end
 
   # @see Schemas::Instances::Validate

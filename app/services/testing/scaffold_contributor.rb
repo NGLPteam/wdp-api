@@ -6,7 +6,7 @@ module Testing
 
     include InitializerOptions
 
-    option :kind, AppTypes::ContributorKind, default: proc { :organization }
+    option :kind, Contributors::Types::Kind, default: proc { :organization }
 
     def call
       contributor = FactoryBot.create :contributor, kind

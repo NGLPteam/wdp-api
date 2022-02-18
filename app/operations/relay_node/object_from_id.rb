@@ -1,21 +1,23 @@
 # frozen_string_literal: true
 
 module RelayNode
+  # Decode an opaque relay ID and load the associated model.
   class ObjectFromId
-    include Dry::Monads[:result]
     include Dry::Matcher.for(:call, with: Dry::Matcher::ResultMatcher)
-    include WDPAPI::Deps[:node_verifier]
+    include Dry::Monads[:result]
+    include WDPAPI::Deps[
+      decode: "relay_node.decode",
+      find: "models.locate",
+    ]
 
+    # @param [RelayNode::Types::OpaqueID] id
+    # @param [GraphQL::Query::Context] query_context
+    # @return [Dry::Monads::Success(ApplicationRecord)]
+    # @return [Dry::Monads::Failure(:not_found, GlobalID)]
     def call(id, query_context: nil)
-      global_id = node_verifier.verify id, purpose: :node
-
-      model = GlobalID.find global_id
-
-      return Failure[:not_found] if model.blank?
-
-      Success model
-    rescue ActiveSupport::MessageVerifier::InvalidSignature
-      Failure[:invalid_signature, "invalid id"]
+      decode.call(id).bind do |global_id|
+        find.call global_id
+      end
     end
   end
 end

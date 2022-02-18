@@ -9,9 +9,9 @@ module Schemas
       include Dry::Monads[:result]
 
       include Dry::Initializer.define -> do
-        param :entity, AppTypes.Instance(HasSchemaDefinition)
-        param :version, AppTypes.Instance(SchemaVersion)
-        param :input_values, AppTypes::ValueHash
+        param :entity, Schemas::Types::SchemaInstance
+        param :version, Schemas::Types.Instance(SchemaVersion)
+        param :input_values, Schemas::Types::ValueHash
       end
 
       # @return [Dry::Monads::Result]

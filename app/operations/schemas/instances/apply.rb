@@ -29,7 +29,7 @@ module Schemas
 
         yield check_and_assign_version! target, version
 
-        validated_values = yield validate_properties! version, values
+        validated_values = yield validate_properties! version, values, target
 
         yield write_values! target, version, validated_values
 
@@ -66,10 +66,11 @@ module Schemas
       # @see Schemas::Properties::Validate
       # @param [SchemaVersion] version
       # @param [Hash] values
+      # @param [HasSchemaDefinition] entity
       # @return [Dry::Monads::Result::Success(Dry::Validation::Result)]
-      # @return [Dry::Mondas::Result::Failure(:invalid_values, Dry::Validation::Result)]
-      def validate_properties!(version, values)
-        validate_properties.call version, values
+      # @return [Dry::Monads::Result::Failure(:invalid_values, Dry::Validation::Result)]
+      def validate_properties!(version, values, entity)
+        validate_properties.call version, values, instance: entity
       end
 
       # @see Schemas::Instances::ApplyValueContext

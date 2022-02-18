@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module FullText
-  # Normalize a value for a full-text property and turn it into a hash that matches {AppTypes::FullTextReference}.
+  # Normalize a value for a full-text property and turn it into a hash that matches {FullText::Types::Reference}.
   #
   # @see SchematicText
   class Normalizer
@@ -11,15 +11,15 @@ module FullText
     # if unspecified). It will _always_ return a `Hash`, regardless of input.
     #
     # @param [Hash, SchematicText, String] value
-    # @return [{ Symbol => Object }] (@see AppTypes::FullTextReference)
+    # @return [{ Symbol => Object }] (@see FullText::Types::Reference)
     def call(value)
       case value
       when ::SchematicText
         value.to_reference
       when String
         { content: value, lang: nil, kind: "text" }
-      when AppTypes::FullTextReference
-        AppTypes::FullTextReference[value]
+      when FullText::Types::Reference
+        FullText::Types::Reference[value]
       else
         { content: nil, lang: nil, kind: "text" }
       end.tap do |h|

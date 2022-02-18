@@ -6,7 +6,12 @@ module Schemas
       include CompilesToSchema
       include Dry::Core::Equalizer.new(:path, inspect: false)
 
+      # @!attribute [rw] legend
+      # @return [String]
       attribute :legend, :string
+
+      # @!attribute [rw] properties
+      # @return [<Schemas::Properties::Scalar::Base>]
       attribute :properties, ScalarDefinition.to_array_type, default: proc { [] }
 
       validates :properties, presence: true, unique_items: true
@@ -15,19 +20,12 @@ module Schemas
       def add_to_schema!(context)
         return if exclude_from_schema?
 
-        schema = to_dry_schema
+        contract = to_dry_validation
 
         if required?
-          context.required(key).filled(schema)
+          context.required(key).filled(contract.schema)
         else
-          context.optional(key).maybe(schema)
-        end
-      end
-
-      # @return [void]
-      def add_to_rules!(context)
-        properties.each do |property|
-          property.add_to_rules! context
+          context.optional(key).maybe(contract.schema)
         end
       end
 
