@@ -2,11 +2,14 @@
 
 module Schemas
   module Properties
-    module Scalar
-      module ScalarReference
+    module References
+      # A schematic reference to a single model.
+      #
+      # @see SchematicScalarReference
+      module Scalar
         extend ActiveSupport::Concern
 
-        include Reference
+        include Schemas::Properties::References::Model
 
         def extract_raw_value_from(context)
           context.scalar_reference(full_path)

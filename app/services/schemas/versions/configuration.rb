@@ -170,21 +170,21 @@ module Schemas
         properties.each_with_object([], &build_paths)
       end
 
-      # Retrieve a list of all paths for properties that are {Schemas::Properties::Scalar::CollectedReference a collected reference}.
+      # Retrieve a list of all paths for properties that are {Schemas::Properties::References::Collected a collected reference}.
       #
       # @return [<String>]
       def collected_reference_paths
         property_paths do |prop|
-          prop.kind_of?(Schemas::Properties::Scalar::CollectedReference)
+          prop.kind_of?(Schemas::Properties::References::Collected)
         end
       end
 
-      # Retrieve a list of all paths for properties that are {Schemas::Properties::Scalar::ScalarReference a scalar reference}.
+      # Retrieve a list of all paths for properties that are {Schemas::Properties::References::Scalar a scalar reference}.
       #
       # @return [<String>]
       def scalar_reference_paths
         property_paths do |prop|
-          prop.kind_of?(Schemas::Properties::Scalar::ScalarReference)
+          prop.kind_of?(Schemas::Properties::References::Scalar)
         end
       end
 

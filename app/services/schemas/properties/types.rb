@@ -35,6 +35,10 @@ module Schemas
 
       Registry = Dry::Schema::TypeContainer.new
 
+      Registry.register "params.collected_reference", Schemas::References::Types::Collected
+
+      Registry.register "params.scalar_reference", Schemas::References::Types::Scalar
+
       Registry.register "params.full_text", FullText::Types::NormalizedReference
 
       Registry.register "params.variable_date", VariablePrecisionDate::ParseType

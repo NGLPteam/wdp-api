@@ -4,7 +4,7 @@ module Schemas
   module Properties
     module Scalar
       class Asset < Base
-        include ScalarReference
+        include Schemas::Properties::References::Scalar
 
         model_type! ::Asset
       end
