@@ -6,6 +6,7 @@ module Types
 
     implements Types::AccessibleType
     implements Types::ExposesPermissionsType
+    implements Types::HasEntityBreadcrumbs
     implements Types::HasSchemaPropertiesType
 
     description "An entity that exists in the hierarchy."
@@ -38,10 +39,6 @@ module Types
 
     field :assigned_users, resolver: Resolvers::ContextualPermissionResolver do
       description "Retrieve a list of user & role assignments for this entity"
-    end
-
-    field :breadcrumbs, [Types::EntityBreadcrumbType], null: false do
-      description "Previous entries in the hierarchy"
     end
 
     field :descendants, resolver: Resolvers::EntityDescendantResolver
@@ -88,13 +85,6 @@ module Types
 
     image_attachment_field :thumbnail,
       description: "A representative thumbnail for the entity, suitable for displaying in lists, tables, grids, etc."
-
-    # @see HierarchicalEntity#entity_breadcrumbs
-    # @see Loaders::AssociationLoader
-    # @return [<EntityBreadcrumb>]
-    def breadcrumbs
-      Loaders::AssociationLoader.for(object.class, :entity_breadcrumbs).load(object)
-    end
 
     # @see HierarchicalEntity#entity_links
     # @see Loaders::AssociationLoader
