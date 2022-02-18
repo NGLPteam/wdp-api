@@ -5,5 +5,45 @@
   "version": "1.0.0",
   "kind": "community",
   "orderings": [],
-  "properties": []
+  "properties": [
+    {
+      "type": "group", "path": "featured",
+      "legend": "Featured",
+      "properties": [
+        {
+          "path": "series", "type": "entities",
+          "label": "Series",
+          "scope": {
+            "origin": "self",
+            "target": "descendants",
+            "schemas": [
+              { "namespace": "nglp", "identifier": "series" }
+            ]
+          }
+        },
+        {
+          "path": "journals", "type": "entities",
+          "label": "Journals",
+          "scope": {
+            "origin": "self",
+            "target": "descendants",
+            "schemas": [
+              { "namespace": "nglp", "identifier": "journal" }
+            ]
+          }
+        },
+        {
+          "path": "issue", "type": "entity",
+          "label": "Issue",
+          "scope": {
+            "origin": "self",
+            "target": "descendants",
+            "schemas": [
+              { "namespace": "nglp", "identifier": "journal_issue" }
+            ]
+          }
+        }
+      ]
+    }
+  ]
 }
