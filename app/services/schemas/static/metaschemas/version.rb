@@ -14,7 +14,12 @@ module Schemas
 
           return Success(value) if errors.blank?
 
-          Failure[:invalid_schema, { schema: value, errors: errors }]
+          Invalid.new(
+            metaschema: { name: name, version: version },
+            target: value,
+            schema: value,
+            errors: errors
+          )
         end
       end
     end

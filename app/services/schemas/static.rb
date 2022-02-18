@@ -8,13 +8,13 @@ module Schemas
     extend Dry::Container::Mixin
 
     namespace "definitions" do
-      register "map" do
+      register "map", memoize: true do
         Schemas::Static::Definitions::Map.new
       end
     end
 
     namespace "metaschemas" do
-      register "map" do
+      register "map", memoize: true do
         Schemas::Static::Metaschemas::Map.new
       end
     end

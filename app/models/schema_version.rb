@@ -177,45 +177,24 @@ class SchemaVersion < ApplicationRecord
 
   # @!endgroup
 
-  # @!group Static Definition Methods
-
   # @api private
-  # Reload the {#static_definition} for this schema if applicable.
+  # Reload the static version if applicable.
   #
-  # @note Intended for debugging and quick testing. To properly reload static schemas,
-  #   see Schemas::Static::LoadDefinitions
-  # @return [void]
-  def reload_static_version!
-    raw_configuration = static_definition&.raw_data
-
-    return if raw_configuration.blank?
-
-    self.configuration = raw_configuration
-
-    configuration_will_change!
-
-    save!
+  # @see Schemas::Versions::Reload
+  # @return [Dry::Monads::Result]
+  def reload_static
+    call_operation("schemas.versions.reload", self)
   end
 
   # @api private
-  # @!attribute [r] static_definition
-  # @see #static_definition_key
-  # @return [Schemas::Static::Definitions::Version, nil]
-  def static_definition
-    ::Schemas::Static["definitions.map"][static_definition_key][number.to_s]
-  rescue Dry::Container::Error
-    return nil
+  # Reload the static version if applicable.
+  #
+  # @see Schemas::Versions::Reload
+  # @see #reload_static
+  # @return [SchemaVersion]
+  def reload_static!
+    reload_static.value!
   end
-
-  # @api private
-  # @!attribute [r] static_definition_key
-  # The key used to look up a static definition for this schema version.
-  # @return [String]
-  def static_definition_key
-    "#{namespace}.#{identifier}"
-  end
-
-  # @!endgroup
 
   private
 
