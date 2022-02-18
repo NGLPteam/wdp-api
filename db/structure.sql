@@ -257,6 +257,8 @@ CREATE TYPE public.schema_property_type AS ENUM (
     'contributors',
     'date',
     'email',
+    'entities',
+    'entity',
     'float',
     'full_text',
     'integer',
@@ -428,6 +430,94 @@ SELECT
     ),
     ''
   );
+$_$;
+
+
+--
+-- Name: generate_boolean_value(public.schema_property_type, jsonb); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.generate_boolean_value(public.schema_property_type, jsonb) RETURNS boolean
+    LANGUAGE sql IMMUTABLE STRICT PARALLEL SAFE
+    AS $_$
+SELECT CASE WHEN $1 = 'boolean' THEN jsonb_to_boolean($2) ELSE NULL END;
+$_$;
+
+
+--
+-- Name: generate_date_value(public.schema_property_type, jsonb); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.generate_date_value(public.schema_property_type, jsonb) RETURNS date
+    LANGUAGE sql IMMUTABLE STRICT PARALLEL SAFE
+    AS $_$
+SELECT CASE WHEN $1 = 'date' THEN jsonb_to_date($2) ELSE NULL END;
+$_$;
+
+
+--
+-- Name: generate_email_value(public.schema_property_type, jsonb); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.generate_email_value(public.schema_property_type, jsonb) RETURNS public.citext
+    LANGUAGE sql IMMUTABLE STRICT PARALLEL SAFE
+    AS $_$
+SELECT CASE WHEN $1 = 'email' THEN jsonb_to_citext($2) ELSE NULL END;
+$_$;
+
+
+--
+-- Name: generate_float_value(public.schema_property_type, jsonb); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.generate_float_value(public.schema_property_type, jsonb) RETURNS numeric
+    LANGUAGE sql IMMUTABLE STRICT PARALLEL SAFE
+    AS $_$
+SELECT CASE WHEN $1 = 'float' THEN jsonb_to_numeric($2) ELSE NULL END;
+$_$;
+
+
+--
+-- Name: generate_integer_value(public.schema_property_type, jsonb); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.generate_integer_value(public.schema_property_type, jsonb) RETURNS bigint
+    LANGUAGE sql IMMUTABLE STRICT PARALLEL SAFE
+    AS $_$
+SELECT CASE WHEN $1 = 'integer' THEN jsonb_to_bigint($2) ELSE NULL END;
+$_$;
+
+
+--
+-- Name: generate_string_value(public.schema_property_type, jsonb); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.generate_string_value(public.schema_property_type, jsonb) RETURNS text
+    LANGUAGE sql IMMUTABLE STRICT PARALLEL SAFE
+    AS $_$
+SELECT CASE WHEN $1 = 'string' THEN jsonb_to_text($2) ELSE NULL END;
+$_$;
+
+
+--
+-- Name: generate_timestamp_value(public.schema_property_type, jsonb); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.generate_timestamp_value(public.schema_property_type, jsonb) RETURNS timestamp with time zone
+    LANGUAGE sql IMMUTABLE STRICT PARALLEL SAFE
+    AS $_$
+SELECT CASE WHEN $1 = 'timestamp' THEN jsonb_to_timestamptz($2) ELSE NULL END;
+$_$;
+
+
+--
+-- Name: generate_variable_date_value(public.schema_property_type, jsonb); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.generate_variable_date_value(public.schema_property_type, jsonb) RETURNS public.variable_precision_date
+    LANGUAGE sql IMMUTABLE STRICT PARALLEL SAFE
+    AS $_$
+SELECT CASE WHEN $1 = 'variable_date' THEN jsonb_to_variable_precision_date($2) ELSE NULL END;
 $_$;
 
 
@@ -3114,47 +3204,7 @@ CREATE TABLE public.entity_orderable_properties (
     fixed_position bigint,
     raw_value jsonb,
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    boolean_value boolean GENERATED ALWAYS AS (
-CASE
-    WHEN (type = 'boolean'::public.schema_property_type) THEN public.jsonb_to_boolean(raw_value)
-    ELSE NULL::boolean
-END) STORED,
-    date_value date GENERATED ALWAYS AS (
-CASE
-    WHEN (type = 'date'::public.schema_property_type) THEN public.jsonb_to_date(raw_value)
-    ELSE NULL::date
-END) STORED,
-    email_value public.citext GENERATED ALWAYS AS (
-CASE
-    WHEN (type = 'email'::public.schema_property_type) THEN public.jsonb_to_citext(raw_value)
-    ELSE NULL::public.citext
-END) STORED,
-    float_value numeric GENERATED ALWAYS AS (
-CASE
-    WHEN (type = 'float'::public.schema_property_type) THEN public.jsonb_to_numeric(raw_value)
-    ELSE NULL::numeric
-END) STORED,
-    integer_value bigint GENERATED ALWAYS AS (
-CASE
-    WHEN (type = 'integer'::public.schema_property_type) THEN public.jsonb_to_bigint(raw_value)
-    ELSE NULL::bigint
-END) STORED,
-    string_value text GENERATED ALWAYS AS (
-CASE
-    WHEN (type = 'string'::public.schema_property_type) THEN public.jsonb_to_text(raw_value)
-    ELSE NULL::text
-END) STORED,
-    timestamp_value timestamp with time zone GENERATED ALWAYS AS (
-CASE
-    WHEN (type = 'timestamp'::public.schema_property_type) THEN public.jsonb_to_timestamptz(raw_value)
-    ELSE NULL::timestamp with time zone
-END) STORED,
-    variable_date_value public.variable_precision_date GENERATED ALWAYS AS (
-CASE
-    WHEN (type = 'variable_date'::public.schema_property_type) THEN public.jsonb_to_variable_precision_date(raw_value)
-    ELSE NULL::public.variable_precision_date
-END) STORED
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
 
@@ -3936,7 +3986,7 @@ CREATE TABLE public.schema_version_properties (
     orderable boolean DEFAULT false NOT NULL,
     required boolean DEFAULT false NOT NULL,
     kind public.schema_property_kind DEFAULT 'simple'::public.schema_property_kind NOT NULL,
-    type public.schema_property_type DEFAULT 'unknown'::public.schema_property_type NOT NULL,
+    type public.schema_property_type NOT NULL,
     path text NOT NULL,
     label text NOT NULL,
     extract_path text[] NOT NULL,
@@ -3972,7 +4022,6 @@ CREATE MATERIALIZED VIEW public.schema_definition_properties AS
             svp.type,
             svp.kind,
             svp.label,
-            svp.function,
             svp."array",
             svp.nested,
             svp.orderable,
@@ -3989,7 +4038,6 @@ CREATE MATERIALIZED VIEW public.schema_definition_properties AS
     dp.type,
     dp.kind,
     dp.label,
-    dp.function,
     dp."array",
     dp.nested,
     dp.orderable,
@@ -5426,48 +5474,6 @@ ALTER TABLE public.entity_visibilities CLUSTER ON index_entity_visibilities_visi
 
 
 --
--- Name: index_eop_boolean; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_eop_boolean ON public.entity_orderable_properties USING btree (entity_type, entity_id, path, boolean_value) WHERE (type = 'boolean'::public.schema_property_type);
-
-
---
--- Name: index_eop_boolean_inverted; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_eop_boolean_inverted ON public.entity_orderable_properties USING btree (entity_type, entity_id, path, boolean_value DESC NULLS LAST) WHERE (type = 'boolean'::public.schema_property_type);
-
-
---
--- Name: index_eop_date; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_eop_date ON public.entity_orderable_properties USING btree (entity_type, entity_id, path, date_value) WHERE (type = 'date'::public.schema_property_type);
-
-
---
--- Name: index_eop_date_inverted; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_eop_date_inverted ON public.entity_orderable_properties USING btree (entity_type, entity_id, path, date_value DESC NULLS LAST) WHERE (type = 'date'::public.schema_property_type);
-
-
---
--- Name: index_eop_email; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_eop_email ON public.entity_orderable_properties USING btree (entity_type, entity_id, path, email_value) WHERE (type = 'email'::public.schema_property_type);
-
-
---
--- Name: index_eop_email_inverted; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_eop_email_inverted ON public.entity_orderable_properties USING btree (entity_type, entity_id, path, email_value DESC NULLS LAST) WHERE (type = 'email'::public.schema_property_type);
-
-
---
 -- Name: index_eop_fixed_position; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -5482,80 +5488,10 @@ CREATE INDEX index_eop_fixed_position_inverted ON public.entity_orderable_proper
 
 
 --
--- Name: index_eop_float; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_eop_float ON public.entity_orderable_properties USING btree (entity_type, entity_id, path, float_value) WHERE (type = 'float'::public.schema_property_type);
-
-
---
--- Name: index_eop_float_inverted; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_eop_float_inverted ON public.entity_orderable_properties USING btree (entity_type, entity_id, path, float_value DESC NULLS LAST) WHERE (type = 'float'::public.schema_property_type);
-
-
---
--- Name: index_eop_integer; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_eop_integer ON public.entity_orderable_properties USING btree (entity_type, entity_id, path, integer_value) WHERE (type = 'integer'::public.schema_property_type);
-
-
---
--- Name: index_eop_integer_inverted; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_eop_integer_inverted ON public.entity_orderable_properties USING btree (entity_type, entity_id, path, integer_value DESC NULLS LAST) WHERE (type = 'integer'::public.schema_property_type);
-
-
---
--- Name: index_eop_string; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_eop_string ON public.entity_orderable_properties USING btree (entity_type, entity_id, path, string_value) WHERE (type = 'string'::public.schema_property_type);
-
-
---
--- Name: index_eop_string_inverted; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_eop_string_inverted ON public.entity_orderable_properties USING btree (entity_type, entity_id, path, string_value DESC NULLS LAST) WHERE (type = 'string'::public.schema_property_type);
-
-
---
--- Name: index_eop_timestamp; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_eop_timestamp ON public.entity_orderable_properties USING btree (entity_type, entity_id, path, timestamp_value) WHERE (type = 'timestamp'::public.schema_property_type);
-
-
---
--- Name: index_eop_timestamp_inverted; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_eop_timestamp_inverted ON public.entity_orderable_properties USING btree (entity_type, entity_id, path, timestamp_value DESC NULLS LAST) WHERE (type = 'timestamp'::public.schema_property_type);
-
-
---
 -- Name: index_eop_uniqueness; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE UNIQUE INDEX index_eop_uniqueness ON public.entity_orderable_properties USING btree (entity_type, entity_id, path);
-
-
---
--- Name: index_eop_variable_date; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_eop_variable_date ON public.entity_orderable_properties USING btree (entity_type, entity_id, path, variable_date_value) WHERE (type = 'variable_date'::public.schema_property_type);
-
-
---
--- Name: index_eop_variable_date_inverted; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_eop_variable_date_inverted ON public.entity_orderable_properties USING btree (entity_type, entity_id, path, variable_date_value DESC NULLS LAST) WHERE (type = 'variable_date'::public.schema_property_type);
 
 
 --
@@ -8329,6 +8265,8 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20220112215903'),
 ('20220112232400'),
 ('20220113044849'),
-('20220214202309');
+('20220214202309'),
+('20220216150516'),
+('20220216203224');
 
 

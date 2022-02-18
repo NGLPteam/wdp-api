@@ -13,6 +13,8 @@ module Schemas
       when "contributor" then Schemas::Properties::Scalar::Contributor
       when "contributors" then Schemas::Properties::Scalar::Contributors
       when "date" then Schemas::Properties::Scalar::Date
+      when "entities" then Schemas::Properties::Scalar::Entities
+      when "entity" then Schemas::Properties::Scalar::Entity
       when "email" then Schemas::Properties::Scalar::Email
       when "float" then Schemas::Properties::Scalar::Float
       when "full_text" then Schemas::Properties::Scalar::FullText

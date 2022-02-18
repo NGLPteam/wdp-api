@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module Types
+  # @see Schemas::Properties::Scalar::Base
   class AnyScalarPropertyType < Types::BaseUnion
     possible_types(
       Types::Schematic::AssetPropertyType,
@@ -10,6 +11,8 @@ module Types
       Types::Schematic::ContributorsPropertyType,
       Types::Schematic::DatePropertyType,
       Types::Schematic::EmailPropertyType,
+      Types::Schematic::EntitiesPropertyType,
+      Types::Schematic::EntityPropertyType,
       Types::Schematic::FloatPropertyType,
       Types::Schematic::FullTextPropertyType,
       Types::Schematic::IntegerPropertyType,

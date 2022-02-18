@@ -58,8 +58,10 @@ en:
       range_required_when_limited_visibility: "must be set when visibility is limited"
       schematic_references:
         collected:
+          invalid_entity: "received an out-of-scope entity at the %{ord} position"
           must_match: "received an instance of %{actual} at the %{ord} position, but expected %{models}"
         scalar:
+          invalid_entity: "received an out-of-scope entity"
           must_match: "received an instance of %{actual}, but expected %{models}"
       unacceptable_edge: "An entity of type '%{parent}' cannot be a direct parent of '%{child}'"
       update_and_clear_attachment: "cannot receive a new attachment while also clearing it"

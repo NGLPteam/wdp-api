@@ -10,7 +10,7 @@ module Schemas
       include Dry::Monads[:result]
       include WDPAPI::Deps[find_matching_versions: "schemas.associations.find_matching_versions"]
 
-      # @param [<Schemas::Associations::Association>] association
+      # @param [<Schemas::Associations::Association>] associations
       # @return [Dry::Monads::Success<SchemaVersion>]
       def call(associations)
         versions = Types::Associations[associations].reduce [] do |acc, association|

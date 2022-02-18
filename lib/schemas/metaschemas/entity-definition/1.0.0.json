@@ -1,6 +1,5 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://api.staging.nglp.org/schemas/entity-definition/1.0.0.json",
   "title": "WDP Entity Definition Schema",
   "description": "A meta-schema used by the NGLP Web Delivery Platform for validating its entity schemas.",
   "$defs": {
@@ -36,10 +35,200 @@
         "$ref": "#/$defs/Association"
       }
     },
+    "CollectedReferenceProperties": {
+      "description": "Shared properties for collected reference property types",
+      "type": "object",
+      "properties": {
+        "required": { "type": "boolean" },
+        "min_size": {
+          "title": "Minimum Reference Count",
+          "type": "integer",
+          "default": 0,
+          "minimum": 0,
+          "exclusiveMaximum": 20
+        },
+        "max_size": {
+          "$comment": "We want to enforce a limitation on how many references can be assigned in practice. This number may change",
+          "title": "Maximum Reference Count",
+          "type": "integer",
+          "exclusiveMinimum": 1,
+          "default": 20,
+          "maximum": 20
+        }
+      }
+    },
+    "EntityReferenceScopeProperties": {
+      "title": "Entity Reference Scoping",
+      "type": "object",
+      "properties": {
+        "scope": { "$ref": "#/$defs/EntityReferenceSelectionScope" }
+      },
+      "required": ["scope"]
+    },
+    "EntityReferenceSelectionScope": {
+      "title": "Selection Scope",
+      "description": "When referencing an entity, we need to be able to declare a scope to select from",
+      "type": "object",
+      "properties": {
+        "origin": { "$ref": "#/$defs/EntityReferenceSelectionScopeOrigin" },
+        "schemas": { "$ref": "#/$defs/EntityReferenceSelectionSchemas"  },
+        "target": { "$ref": "#/$defs/EntityReferenceSelectionScopeTarget" }
+      },
+      "required": ["origin", "target"],
+      "dependencies": {
+        "target": {
+          "oneOf": [
+            { "$ref": "#/$defs/EntityReferenceSelectionScopeTargets/Any" },
+            { "$ref": "#/$defs/EntityReferenceSelectionScopeTargets/Descendants" },
+            { "$ref": "#/$defs/EntityReferenceSelectionScopeTargets/Links" },
+            { "$ref": "#/$defs/EntityReferenceSelectionScopeTargets/Siblings" }
+          ]
+        }
+      }
+    },
+    "EntityReferenceSelectionScopes": {
+      "type": "array",
+      "items": {
+        "description": "What scopes are available to the entity reference",
+        "$ref": "#/$defs/EntityReferenceSelectionScope"
+      },
+      "minItems": 1
+    },
+    "EntityReferenceSelectionScopeOrigin": {
+      "type": "string",
+      "title": "Selection Scope Origin",
+      "description": "The originating schema instance to combine with the target and any other options",
+      "default": "self",
+      "oneOf": [
+        { "$ref": "#/$defs/EntityReferenceSelectionScopeOrigins/Ancestor" },
+        { "$ref": "#/$defs/EntityReferenceSelectionScopeOrigins/Community" },
+        { "$ref": "#/$defs/EntityReferenceSelectionScopeOrigins/Parent" },
+        { "$ref": "#/$defs/EntityReferenceSelectionScopeOrigins/Self" }
+      ]
+    },
+    "EntityReferenceSelectionScopeOrigins": {
+      "Ancestor": {
+        "$ref": "#/$defs/NamedAncestorReference",
+        "title": "Ancestor Reference",
+        "description": "A named ancestor on the current schema instance"
+      },
+      "Community": {
+        "title": "Community",
+        "description": "The community for the current schema instance",
+        "type": "string",
+        "const": "community"
+      },
+      "Parent": {
+        "title": "Parent",
+        "description": "The parent of the current schema instance",
+        "type": "string",
+        "const": "parent"
+      },
+      "Self": {
+        "title": "Self",
+        "description": "The current schema instance itself",
+        "type": "string",
+        "const": "self"
+      }
+    },
+    "EntityReferenceSelectionSchemas": {
+      "type": "array",
+      "description": "Limit the selection to entities that implement these schemas",
+      "default": [],
+      "items": {
+        "description": "The acceptable schema(s) for this entity reference",
+        "$ref": "#/$defs/Association"
+      },
+      "maxItems": 5
+    },
+    "EntityReferenceSelectionScopeTarget": {
+      "title": "Selection Scope Target",
+      "description": "The target for an entity reference scope",
+      "type": "string",
+      "default": "descendants",
+      "enum": [
+        "any",
+        "descendants",
+        "links",
+        "siblings"
+      ]
+    },
+    "EntityReferenceSelectionScopeTargets": {
+      "Any": {
+        "title": "Any",
+        "description": "The referenced entity can come from literally anywhere in the system",
+        "type": "object",
+        "properties": {
+          "origin": {
+            "$comment": "We ignore the origin for any scopes.",
+            "const": "self"
+          },
+          "target": { "const": "any" }
+        }
+      },
+      "Descendants": {
+        "title": "Descendants",
+        "description": "The referenced entity must be a descendant of the schema instance",
+        "type": "object",
+        "properties": {
+          "target": { "const": "descendants" },
+          "depth": {
+            "title": "Relative Depth",
+            "oneOf": [
+              { "type": "null" },
+              { "type": "integer", "exclusiveMinimum": 0 }
+            ]
+          }
+        }
+      },
+      "Links": {
+        "title": "Links",
+        "description": "The referenced entity must be linked to or from the schema instance",
+        "properties": {
+          "target": { "const": "links" },
+          "direction": { "$ref": "#/$defs/LinkReferenceDirection" }
+        }
+      },
+      "Siblings": {
+        "title": "Descendants",
+        "description": "The referenced entity must be a descendant of the schema instance",
+        "type": "object",
+        "properties": {
+          "origin": {
+            "$comment": "We ignore the origin for sibling scopes.",
+            "const": "self"
+          },
+          "target": { "const": "siblings" }
+        }
+      }
+    },
     "Identifier": {
       "description": "An unqualified name that can identify something within a certain namespace in the WDP.",
       "pattern": "^[a-z][a-z0-9_]*[a-z]$",
       "type": "string"
+    },
+    "LinkReferenceDirection": {
+      "title": "Link Direction",
+      "type": "string",
+      "default": "both",
+      "anyOf": [
+        {
+          "type": "string",
+          "title": "Both",
+          "description": "This reference will target both incoming and outgoing links.",
+          "enum": ["both"]
+        },
+        {
+          "type": "string",
+          "title": "Incoming",
+          "enum": ["incoming"]
+        },
+        {
+          "type": "string",
+          "title": "Outgoing",
+          "enum": ["outgoing"]
+        }
+      ]
     },
     "NamedAncestor": {
       "type": "object",
@@ -65,6 +254,10 @@
         { "$ref": "#/$defs/Association" }
       ]
     },
+    "NamedAncestorReference": {
+      "type": "string",
+      "pattern": "^ancestor\\.[a-z][a-z0-9_]*[a-z]$"
+    },
     "NamedAncestors": {
       "type": "array",
       "items": {
@@ -89,8 +282,7 @@
       "description": "Order by a specified field or schema property.",
       "required": [
         "path",
-        "direction",
-        "nulls"
+        "direction"
       ],
       "properties": {
         "path": {
@@ -365,9 +557,7 @@
       "title": "Property Group",
       "description": "A logical grouping of properties both in the form and within the persisted data. Only one level of nesting is permitted.",
       "type": "object",
-      "required": [
-        "type", "path", "properties"
-      ],
+      "required": ["type", "path", "properties"],
       "properties": {
         "type": {
           "title": "Type (fixed)",
@@ -378,8 +568,8 @@
         },
         "path": {
           "title": "Path",
-          "description": "The name of this property",
-          "$ref": "#/$defs/PropertyName"
+          "description": "The machine-readable name of this property",
+          "$ref": "#/$defs/PropertyPath"
         },
         "legend": {
           "title": "Form Legend",
@@ -428,12 +618,9 @@
       "uniqueItems": true,
       "items": { "$ref": "#/$defs/PropertyMapping" }
     },
-    "PropertyName": {
-      "pattern": "^[a-z][a-z0-9_]*[a-z]$",
-      "type": "string"
-    },
     "PropertyPath": {
       "description": "A path can reference a schema property",
+      "pattern": "^[a-z][a-z0-9_]*[a-z]$",
       "type": "string"
     },
     "ScalarProperty": {
@@ -454,9 +641,8 @@
           "description": "The human-readable label for this property. The path will be titlecased if this value is not provided.",
           "type": "string"
         },
-        "description": {
-          "$ref": "#/$defs/PropertyDescription"
-        },
+        "description": { "$ref": "#/$defs/PropertyDescription" },
+        "mappings": { "$ref": "#/$defs/PropertyMappings" },
         "required": {
           "title": "Required?",
           "description": "Whether the property is required for base validity",
@@ -481,496 +667,410 @@
         "type": {
           "oneOf": [
             {
-              "properties": {
-                "type": {
-                  "enum": [
-                    "asset"
-                  ]
-                },
-                "mappings": {
-                  "$ref": "#/$defs/PropertyMappings"
-                }
-              },
-              "required": [
-                "path",
-                "type"
-              ],
-              "title": "Asset",
-              "description": "A value that references a single asset"
+              "$ref": "#/$defs/ScalarPropertyDefinitions/Asset"
             },
             {
-              "properties": {
-                "type": {
-                  "enum": [
-                    "assets"
-                  ]
-                },
-                "mappings": {
-                  "$ref": "#/$defs/PropertyMappings"
-                }
-              },
-              "required": [
-                "path",
-                "type"
-              ],
-              "title": "Assets",
-              "description": "A value that references multiple assets"
+              "$ref": "#/$defs/ScalarPropertyDefinitions/Assets"
             },
             {
-              "properties": {
-                "type": {
-                  "enum": [
-                    "boolean"
-                  ]
-                },
-                "mappings": {
-                  "$ref": "#/$defs/PropertyMappings"
-                }
-              },
-              "required": [
-                "path",
-                "type"
-              ],
-              "title": "Boolean",
-              "description": "A boolean value (True / False)"
+              "$ref": "#/$defs/ScalarPropertyDefinitions/Boolean"
             },
             {
-              "properties": {
-                "type": {
-                  "enum": [
-                    "contributor"
-                  ]
-                },
-                "mappings": {
-                  "$ref": "#/$defs/PropertyMappings"
-                }
-              },
-              "required": [
-                "path",
-                "type"
-              ],
-              "title": "Contributor",
-              "description": "A value that references a single contributor"
+              "$ref": "#/$defs/ScalarPropertyDefinitions/Contributor"
             },
             {
-              "properties": {
-                "type": {
-                  "enum": [
-                    "contributors"
-                  ]
-                },
-                "mappings": {
-                  "$ref": "#/$defs/PropertyMappings"
-                }
-              },
-              "required": [
-                "path",
-                "type"
-              ],
-              "title": "Contributors",
-              "description": "A value that references multiple contributors"
+              "$ref": "#/$defs/ScalarPropertyDefinitions/Contributors"
             },
             {
-              "properties": {
-                "type": {
-                  "enum": [
-                    "date"
-                  ]
-                },
-                "mappings": {
-                  "$ref": "#/$defs/PropertyMappings"
-                }
-              },
-              "required": [
-                "path",
-                "type"
-              ],
-              "title": "Date",
-              "description": "An ISO8601 Date that represents a single calendar date"
+              "$ref": "#/$defs/ScalarPropertyDefinitions/Date"
             },
             {
-              "properties": {
-                "type": {
-                  "enum": [
-                    "email"
-                  ]
-                },
-                "default": {
-                  "title": "Default Value",
-                  "type": "string",
-                  "format": "email"
-                },
-                "mappings": {
-                  "$ref": "#/$defs/PropertyMappings"
-                }
-              },
-              "required": [
-                "path",
-                "type"
-              ],
-              "title": "Email",
-              "description": "A value that references an email address"
+              "$ref": "#/$defs/ScalarPropertyDefinitions/Email"
             },
             {
-              "properties": {
-                "type": {
-                  "enum": [
-                    "float"
-                  ]
-                },
-                "default": {
-                  "title": "Default Value",
-                  "type": "number"
-                },
-                "gt": {
-                  "title": "Greater Than (>)",
-                  "description": "The property's value must be greater than this, if provided",
-                  "type": "number"
-                },
-                "gte": {
-                  "title": "Greater Than Or Equal To (≥)",
-                  "description": "The property's value must be greater than or equal to this, if provided",
-                  "type": "number"
-                },
-                "lt": {
-                  "title": "Less Than (<)",
-                  "description": "The property's value must be less than this, if provided",
-                  "type": "number"
-                },
-                "lte": {
-                  "title": "Less Than Or Equal To (≤)",
-                  "description": "The property's value must be less than or equal to this, if provided",
-                  "type": "number"
-                },
-                "mappings": {
-                  "$ref": "#/$defs/PropertyMappings"
-                }
-              },
-              "required": [
-                "path",
-                "type"
-              ],
-              "title": "Float",
-              "description": "A floating point numeral (uses decimal types for maximum precision)"
+              "$ref": "#/$defs/ScalarPropertyDefinitions/Entities"
             },
             {
-              "properties": {
-                "type": {
-                  "enum": [
-                    "full_text"
-                  ]
-                },
-                "mappings": {
-                  "$ref": "#/$defs/PropertyMappings"
-                }
-              },
-              "required": [
-                "path",
-                "type"
-              ],
-              "title": "Full Text",
-              "description": "A reference to a full-text value (with search capabilities)"
+              "$ref": "#/$defs/ScalarPropertyDefinitions/Entity"
             },
             {
-              "properties": {
-                "type": {
-                  "enum": [
-                    "integer"
-                  ]
-                },
-                "default": {
-                  "title": "Default Value",
-                  "type": "integer"
-                },
-                "gt": {
-                  "title": "Greater Than (>)",
-                  "description": "The property's value must be greater than this, if provided",
-                  "type": "integer"
-                },
-                "gte": {
-                  "title": "Greater Than Or Equal To (≥)",
-                  "description": "The property's value must be greater than or equal to this, if provided",
-                  "type": "integer"
-                },
-                "lt": {
-                  "title": "Less Than (<)",
-                  "description": "The property's value must be less than this, if provided",
-                  "type": "integer"
-                },
-                "lte": {
-                  "title": "Less Than Or Equal To (≤)",
-                  "description": "The property's value must be less than or equal to this, if provided",
-                  "type": "integer"
-                },
-                "mappings": {
-                  "$ref": "#/$defs/PropertyMappings"
-                }
-              },
-              "required": [
-                "path",
-                "type"
-              ],
-              "title": "Integer",
-              "description": "An integer (or whole number)"
+              "$ref": "#/$defs/ScalarPropertyDefinitions/Float"
             },
             {
-              "properties": {
-                "type": {
-                  "enum": [
-                    "markdown"
-                  ]
-                },
-                "default": {
-                  "title": "Default Value",
-                  "type": "string"
-                },
-                "min_size": {
-                  "title": "Minimum Size",
-                  "description": "The length cannot be less than this value.",
-                  "minimum": 0,
-                  "type": "integer"
-                },
-                "max_size": {
-                  "title": "Maximum Size",
-                  "description": "The length cannot be greater than this value.",
-                  "type": "integer"
-                },
-                "mappings": {
-                  "$ref": "#/$defs/PropertyMappings"
-                }
-              },
-              "required": [
-                "path",
-                "type"
-              ],
-              "title": "Markdown",
-              "description": "Markdown-formatted text"
+              "$ref": "#/$defs/ScalarPropertyDefinitions/FullText"
             },
             {
-              "properties": {
-                "type": {
-                  "enum": [
-                    "multiselect"
-                  ]
-                },
-                "options": {
-                  "title": "Select Options",
-                  "items": {
-                    "$ref": "#/$defs/SelectOption"
-                  },
-                  "minItems": 1,
-                  "type": "array",
-                  "uniqueItems": true
-                },
-                "default": {
-                  "title": "Default Value",
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  },
-                  "uniqueItems": true
-                },
-                "min_size": {
-                  "title": "Minimum Size",
-                  "description": "The size cannot be less than this value.",
-                  "minimum": 0,
-                  "type": "integer"
-                },
-                "max_size": {
-                  "title": "Maximum Size",
-                  "description": "The size cannot be greater than this value.",
-                  "type": "integer"
-                },
-                "mappings": {
-                  "$ref": "#/$defs/PropertyMappings"
-                }
-              },
-              "required": [
-                "path",
-                "type",
-                "options"
-              ],
-              "title": "Multiselect",
-              "description": "A select dropdown that supports selecting multiple options"
+              "$ref": "#/$defs/ScalarPropertyDefinitions/Integer"
             },
             {
-              "properties": {
-                "type": {
-                  "enum": [
-                    "select"
-                  ]
-                },
-                "options": {
-                  "title": "Select Options",
-                  "items": {
-                    "$ref": "#/$defs/SelectOption"
-                  },
-                  "minItems": 1,
-                  "type": "array",
-                  "uniqueItems": true
-                },
-                "default": {
-                  "title": "Default Value",
-                  "type": "string"
-                },
-                "mappings": {
-                  "$ref": "#/$defs/PropertyMappings"
-                }
-              },
-              "required": [
-                "path",
-                "type",
-                "options"
-              ],
-              "title": "Select",
-              "description": "A select dropdown that supports selecting a single option"
+              "$ref": "#/$defs/ScalarPropertyDefinitions/Markdown"
             },
             {
-              "properties": {
-                "type": {
-                  "enum": [
-                    "string"
-                  ]
-                },
-                "default": {
-                  "title": "Default Value",
-                  "type": "string"
-                },
-                "pattern": {
-                  "type": "string",
-                  "format": "regexp"
-                },
-                "min_size": {
-                  "title": "Minimum Size",
-                  "description": "The length cannot be less than this value.",
-                  "minimum": 0,
-                  "type": "integer"
-                },
-                "max_size": {
-                  "title": "Maximum Size",
-                  "description": "The length cannot be greater than this value.",
-                  "type": "integer"
-                },
-                "mappings": {
-                  "$ref": "#/$defs/PropertyMappings"
-                }
-              },
-              "required": [
-                "path",
-                "type"
-              ],
-              "title": "String",
-              "description": "A simple text value"
+              "$ref": "#/$defs/ScalarPropertyDefinitions/Multiselect"
             },
             {
-              "properties": {
-                "type": {
-                  "enum": [
-                    "tags"
-                  ]
-                },
-                "min_size": {
-                  "title": "Minimum Size",
-                  "description": "The size cannot be less than this value.",
-                  "minimum": 0,
-                  "type": "integer"
-                },
-                "max_size": {
-                  "title": "Maximum Size",
-                  "description": "The size cannot be greater than this value.",
-                  "type": "integer"
-                },
-                "mappings": {
-                  "$ref": "#/$defs/PropertyMappings"
-                }
-              },
-              "required": [
-                "path",
-                "type"
-              ],
-              "title": "Tags",
-              "description": "A value that represents multiple unique string inputs"
+              "$ref": "#/$defs/ScalarPropertyDefinitions/Select"
             },
             {
-              "properties": {
-                "type": {
-                  "enum": [
-                    "timestamp"
-                  ]
-                },
-                "mappings": {
-                  "$ref": "#/$defs/PropertyMappings"
-                }
-              },
-              "required": [
-                "path",
-                "type"
-              ],
-              "title": "Timestamp",
-              "description": "An ISO8601 Timestamp that represents a single point in time"
+              "$ref": "#/$defs/ScalarPropertyDefinitions/String"
             },
             {
-              "properties": {
-                "type": {
-                  "enum": [
-                    "url"
-                  ]
-                },
-                "mappings": {
-                  "$ref": "#/$defs/PropertyMappings"
-                }
-              },
-              "required": [
-                "path",
-                "type"
-              ],
-              "title": "URL",
-              "description": "A representation of a URL"
+              "$ref": "#/$defs/ScalarPropertyDefinitions/Tags"
             },
             {
-              "properties": {
-                "type": {
-                  "enum": [
-                    "variable_date"
-                  ]
-                },
-                "mappings": {
-                  "$ref": "#/$defs/PropertyMappings"
-                }
-              },
-              "required": [
-                "path",
-                "type"
-              ],
-              "title": "Variable Date",
-              "description": "A date with variable precision"
+              "$ref": "#/$defs/ScalarPropertyDefinitions/Timestamp"
+            },
+            {
+              "$ref": "#/$defs/ScalarPropertyDefinitions/URL"
+            },
+            {
+              "$ref": "#/$defs/ScalarPropertyDefinitions/VariableDate"
             }
           ]
         }
-
+      }
+    },
+    "ScalarPropertyDefinitions": {
+      "Asset": {
+        "title": "Asset",
+        "description": "A value that references a single asset",
+        "properties": {
+          "type": { "enum": ["asset"] }
+        },
+        "required": ["path", "type"]
+      },
+      "Assets": {
+        "title": "Assets",
+        "description": "A value that references multiple deterministically-ordered assets",
+        "properties": {
+          "type": { "enum": ["assets"] }
+        },
+        "required": ["path", "type"],
+        "allOf": [
+          { "$ref": "#/$defs/CollectedReferenceProperties" }
+        ]
+      },
+      "Boolean": {
+        "title": "Boolean",
+        "description": "A boolean value (True / False)",
+        "properties": {
+          "type": { "enum": ["boolean"] }
+        },
+        "required": ["path", "type"]
+      },
+      "Contributor": {
+        "title": "Contributor",
+        "description": "A value that references a single contributor",
+        "properties": {
+          "type": { "enum": ["contributor"] }
+        },
+        "required": ["path", "type"]
+      },
+      "Contributors": {
+        "title": "Contributors",
+        "description": "A value that references multiple deterministically-ordered contributors",
+        "properties": {
+          "type": { "enum": ["contributors"] }
+        },
+        "required": ["path", "type"],
+        "allOf": [
+          { "$ref": "#/$defs/CollectedReferenceProperties" }
+        ]
+      },
+      "Date": {
+        "title": "Date",
+        "description": "An ISO8601 Date that represents a single calendar date",
+        "properties": {
+          "type": { "enum": ["date"] }
+        },
+        "required": ["path","type"]
+      },
+      "Email": {
+        "title": "Email",
+        "description": "A value that references an email address",
+        "properties": {
+          "type": { "enum": ["email"] },
+          "default": {
+            "title": "Default Value",
+            "type": "string",
+            "format": "email"
+          }
+        },
+        "required": ["path", "type"]
+      },
+      "Entities": {
+        "title": "Entities",
+        "description": "An optionally-scoped, deterministically-ordered collection of references to other entities in the system",
+        "properties": {
+          "type": { "enum": ["entities"] }
+        },
+        "required": ["path", "type"],
+        "allOf": [
+          { "$ref": "#/$defs/EntityReferenceScopeProperties" },
+          { "$ref": "#/$defs/CollectedReferenceProperties" }
+        ]
+      },
+      "Entity": {
+        "title": "Entity",
+        "description": "An optionally-scoped reference to another entity in the system",
+        "properties": {
+          "type": { "enum": ["entity"] }
+        },
+        "required": ["path", "type"],
+        "allOf": [
+          { "$ref": "#/$defs/EntityReferenceScopeProperties" }
+        ]
+      },
+      "Float": {
+        "title": "Float",
+        "description": "A floating point numeral (uses decimal types for maximum precision)",
+        "properties": {
+          "type": { "enum": ["float"] },
+          "default": {
+            "title": "Default Value",
+            "type": "number"
+          },
+          "gt": {
+            "title": "Greater Than (>)",
+            "description": "The property's value must be greater than this, if provided",
+            "type": "number"
+          },
+          "gte": {
+            "title": "Greater Than Or Equal To (≥)",
+            "description": "The property's value must be greater than or equal to this, if provided",
+            "type": "number"
+          },
+          "lt": {
+            "title": "Less Than (<)",
+            "description": "The property's value must be less than this, if provided",
+            "type": "number"
+          },
+          "lte": {
+            "title": "Less Than Or Equal To (≤)",
+            "description": "The property's value must be less than or equal to this, if provided",
+            "type": "number"
+          }
+        },
+        "required": ["path", "type"]
+      },
+      "FullText": {
+        "title": "Full Text",
+        "description": "A reference to a full-text value (with search capabilities)",
+        "properties": {
+          "type": { "enum": ["full_text"] }
+        },
+        "required": ["path", "type"]
+      },
+      "Integer": {
+        "title": "Integer",
+        "description": "An integer (or whole number)",
+        "properties": {
+          "type": {
+            "enum": [
+              "integer"
+            ]
+          },
+          "default": {
+            "title": "Default Value",
+            "type": "integer"
+          },
+          "gt": {
+            "title": "Greater Than (>)",
+            "description": "The property's value must be greater than this, if provided",
+            "type": "integer"
+          },
+          "gte": {
+            "title": "Greater Than Or Equal To (≥)",
+            "description": "The property's value must be greater than or equal to this, if provided",
+            "type": "integer"
+          },
+          "lt": {
+            "title": "Less Than (<)",
+            "description": "The property's value must be less than this, if provided",
+            "type": "integer"
+          },
+          "lte": {
+            "title": "Less Than Or Equal To (≤)",
+            "description": "The property's value must be less than or equal to this, if provided",
+            "type": "integer"
+          }
+        },
+        "required": ["path", "type"]
+      },
+      "Markdown": {
+        "title": "Markdown",
+        "description": "Markdown-formatted text",
+        "properties": {
+          "type": { "enum": ["markdown"] },
+          "default": {
+            "title": "Default Value",
+            "type": "string"
+          },
+          "min_size": {
+            "title": "Minimum Size",
+            "description": "The length cannot be less than this value.",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "max_size": {
+            "title": "Maximum Size",
+            "description": "The length cannot be greater than this value.",
+            "type": "integer"
+          }
+        },
+        "required": ["path", "type"]
+      },
+      "Multiselect": {
+        "title": "Multiselect",
+        "description": "A select dropdown that supports selecting multiple options",
+        "properties": {
+          "type": { "enum": ["multiselect"] },
+          "options": {
+            "title": "Select Options",
+            "items": {
+              "$ref": "#/$defs/SelectOption"
+            },
+            "minItems": 1,
+            "type": "array",
+            "uniqueItems": true
+          },
+          "default": {
+            "title": "Default Value",
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "uniqueItems": true
+          },
+          "min_size": {
+            "title": "Minimum Size",
+            "description": "The size cannot be less than this value.",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "max_size": {
+            "title": "Maximum Size",
+            "description": "The size cannot be greater than this value.",
+            "type": "integer"
+          }
+        },
+        "required": ["path", "type", "options"]
+      },
+      "Select": {
+        "title": "Select",
+        "description": "A select dropdown that supports selecting a single option",
+        "properties": {
+          "type": {"enum": ["select"] },
+          "options": {
+            "title": "Select Options",
+            "items": {
+              "$ref": "#/$defs/SelectOption"
+            },
+            "minItems": 1,
+            "type": "array",
+            "uniqueItems": true
+          },
+          "default": {
+            "title": "Default Value",
+            "type": "string"
+          }
+        },
+        "required": ["path", "type", "options"]
+      },
+      "String": {
+        "title": "String",
+        "description": "A simple text value",
+        "properties": {
+          "type": { "enum": ["string"] },
+          "default": {
+            "title": "Default Value",
+            "type": "string"
+          },
+          "pattern": {
+            "type": "string",
+            "format": "regex"
+          },
+          "min_size": {
+            "title": "Minimum Size",
+            "description": "The length cannot be less than this value.",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "max_size": {
+            "title": "Maximum Size",
+            "description": "The length cannot be greater than this value.",
+            "type": "integer"
+          }
+        },
+        "required": ["path", "type"]
+      },
+      "Tags": {
+        "title": "Tags",
+        "description": "A value that represents multiple unique string inputs",
+        "properties": {
+          "type": { "enum": ["tags"] },
+          "min_size": {
+            "title": "Minimum Size",
+            "description": "The size cannot be less than this value.",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "max_size": {
+            "title": "Maximum Size",
+            "description": "The size cannot be greater than this value.",
+            "type": "integer"
+          }
+        },
+        "required": ["path", "type"]
+      },
+      "Timestamp": {
+        "title": "Timestamp",
+        "description": "An ISO8601 Timestamp that represents a single point in time",
+        "properties": {
+          "type": { "enum": ["timestamp"] }
+        },
+        "required": ["path", "type"]
+      },
+      "URL": {
+        "title": "URL",
+        "description": "A representation of a URL",
+        "properties": {
+          "type": { "enum": ["url"] }
+        },
+        "required": ["path", "type"]
+      },
+      "VariableDate": {
+        "title": "Variable Date",
+        "description": "A date with variable precision",
+        "properties": {
+          "type": { "enum": ["variable_date"] }
+        },
+        "required": ["path", "type"]
       }
     },
     "ScalarPropertyType": {
-      "description": "The type of the property. This ensures type-safety.",
+      "description": "A type for any property that is not a group",
       "enum": [
-        "string",
-        "email",
-        "markdown",
-        "integer",
-        "float",
-        "full_text",
-        "boolean",
-        "date",
-        "variable_date",
-        "timestamp",
-        "contributor",
-        "contributors",
-        "select",
-        "multiselect",
         "asset",
         "assets",
+        "boolean",
+        "contributor",
+        "contributors",
+        "date",
+        "email",
+        "entities",
+        "entity",
+        "float",
+        "full_text",
+        "integer",
+        "markdown",
+        "multiselect",
+        "select",
+        "string",
         "tags",
-        "url"
+        "timestamp",
+        "url",
+        "variable_date"
       ],
       "type": "string"
     },
@@ -1143,7 +1243,7 @@
     "VersionRequirement": {
       "type": "string",
       "description": "A declaration for matching semantic version requirements",
-      "format": "^\\s*(=|!=|>|<|>=|<=|~>)?\\s*([0-9]+(?>\\.[0-9a-zA-Z]+)*(-[0-9A-Za-z-]+(\\.[0-9A-Za-z-]+)*)?)\\s*$"
+      "pattern": "\\s*(=|!=|\u003e|\u003c|\u003e=|\u003c=|~\u003e)?\\s*([0-9]+(\\.[0-9a-zA-Z]+)*(-[0-9A-Za-z-]+(\\.[0-9A-Za-z-]+)*)?)\\s*"
     },
     "VersionRequirements": {
       "type": "array",
