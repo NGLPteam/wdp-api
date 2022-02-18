@@ -7,20 +7,22 @@ module Schemas
         include HasSelectOptions
         include ValidatesSize
 
-        attribute :default, :string_array
-
         array! :str?
+
+        fillable!
 
         schema_type! :string
 
         config.graphql_value_key = :selections
+
+        attribute :default, :string_array
 
         def add_to_rules!(context)
           super
 
           prop = self
 
-          context.rule(full_path).each do
+          context.rule(path).each do
             key.failure("must be a known option") unless (!prop.actually_required? && value.blank?) || value.in?(prop.option_values)
           end
         end

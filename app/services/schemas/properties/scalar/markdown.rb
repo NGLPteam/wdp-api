@@ -6,11 +6,13 @@ module Schemas
       class Markdown < Base
         include ValidatesSize
 
-        attribute :default, :string
+        always_wide!
+
+        fillable!
 
         schema_type! :string
 
-        config.always_wide = true
+        attribute :default, :string
       end
     end
   end

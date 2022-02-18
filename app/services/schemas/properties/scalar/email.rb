@@ -6,6 +6,8 @@ module Schemas
       class Email < Base
         attribute :default, :string
 
+        fillable!
+
         orderable!
 
         schema_type! :string

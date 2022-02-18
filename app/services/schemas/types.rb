@@ -71,6 +71,25 @@ module Schemas
       end
     end
 
+    # A type that matches either a scalar property or a property group.
+    #
+    # @see Schemas::Properties::GroupDefinition
+    # @see Schemas::Properties::Scalar::Base
+    Property = Instance(Schemas::Properties::Scalar::Base) | Instance(Schemas::Properties::GroupDefinition)
+
+    # A list of property instances.
+    #
+    # @see Property
+    PropertyList = Array.of(Property)
+
+    ValueHash = Instance(ActiveSupport::HashWithIndifferentAccess).constructor do |value|
+      maybe_value = value.respond_to?(:to_h) ? value.to_h : value
+
+      maybe_hash = Coercible::Hash.try maybe_value
+
+      maybe_hash.to_monad.value_or({}).with_indifferent_access
+    end
+
     # A type for matching a fully qualified, versioned schema declaration.
     VersionDeclaration = String.constrained(format: VERSION_DECLARATION_PATTERN).constructor do |value|
       case value

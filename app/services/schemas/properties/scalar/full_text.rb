@@ -3,23 +3,18 @@
 module Schemas
   module Properties
     module Scalar
+      # @see FullText::Types
       # @see SchematicText
       class FullText < Base
-        schema_type! AppTypes::FullTextReference
+        always_wide!
 
-        config.always_wide = true
+        schema_type! :full_text
+
         config.graphql_value_key = :full_text
 
+        # @see Schemas::Properties::Context#full_text
         def extract_raw_value_from(context)
           context.full_text(full_path)
-        end
-
-        def might_normalize_value_before_coercion?
-          true unless exclude_from_schema?
-        end
-
-        def normalize_schema_value_before_coercer(raw:, **)
-          WDPAPI::Container["full_text.normalizer"].call raw
         end
 
         def write_values_within!(context)

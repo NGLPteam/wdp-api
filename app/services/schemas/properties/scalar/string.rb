@@ -6,19 +6,21 @@ module Schemas
       class String < Base
         include ValidatesSize
 
-        attribute :pattern, :string
-        attribute :default, :string
+        fillable true
 
         orderable!
 
         schema_type! :string
+
+        attribute :pattern, :string
+        attribute :default, :string
 
         def add_to_rules!(context)
           super
 
           prop = self
 
-          context.rule(full_path) do
+          context.rule(path) do
             key.failure(:filled?) if prop.actually_required? && value.blank?
           end
         end

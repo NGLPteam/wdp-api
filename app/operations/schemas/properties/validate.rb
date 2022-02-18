@@ -12,16 +12,21 @@ module Schemas
 
       # @param [SchemaVersion] version
       # @param [Hash] values
+      # @param [HasSchemaDefinition] instance
       # @return [Dry::Monads::Result::Success(Dry::Validation::Result)]
-      # @return [Dry::Mondas::Result::Failure(:invalid_values, Dry::Validation::Result)]
-      def call(schema_version, values)
-        contract_klass = yield compile_contract.call schema_version
-
-        contract = contract_klass.new
+      # @return [Dry::Monads::Result::Failure(:invalid_values, Dry::Validation::Result)]
+      def call(schema_version, values, instance: nil)
+        contract = yield compile_contract.call schema_version
 
         corrected_values = decamelize_hash.call(values)
 
-        contract.call(corrected_values).to_monad.or do |result|
+        validation_context = {
+          instance: instance,
+        }
+
+        response = contract.call(corrected_values, validation_context).to_monad
+
+        response.or do |result|
           Failure[:invalid_values, result]
         end
       end

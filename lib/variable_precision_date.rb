@@ -258,4 +258,6 @@ class VariablePrecisionDate
       end
     end
   end
+
+  ParseType = Dry::Types::Constructor.new(self, fn: method(:parse))
 end

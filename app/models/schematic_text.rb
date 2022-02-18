@@ -4,7 +4,7 @@
 # contents of an article, issue, or any other entity type. It differs from more typical text content
 # in that it is intended to be full-text searchable (with stemming, etc)
 #
-# @see AppTypes::FullTextReference
+# @see FullText::Types::Reference
 # @see Schemas::Properties::Scalar::FullText
 # @see Types::Schematic::FullTextPropertyType
 class SchematicText < ApplicationRecord
@@ -31,10 +31,10 @@ class SchematicText < ApplicationRecord
   # Turn this model into a reference suitable for use with schema values
   # directly.
   #
-  # @see AppTypes::FullTextReference
+  # @see FullText::Types::Reference
   # @return [{ Symbol => String }]
   def to_reference
-    AppTypes::FullTextReference[slice(:content, :kind, :lang)]
+    FullText::Types::Reference[slice(:content, :kind, :lang)]
   end
 
   # @api private

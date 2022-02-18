@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# @abstract
 class ApplicationContract < Dry::Validation::Contract
   import_predicates_as_macros
 
@@ -20,7 +21,7 @@ class ApplicationContract < Dry::Validation::Contract
   end
 
   register_macro :maybe_url_format do
-    key.failure(:must_be_url) unless value.blank? || URI::DEFAULT_PARSER.make_regexp(%w[http https]).match?(value)
+    key.failure(:must_be_url) unless value.blank? || AppTypes::URL_PATTERN.match?(value)
   end
 
   register_macro :tag_format do
@@ -28,6 +29,6 @@ class ApplicationContract < Dry::Validation::Contract
   end
 
   register_macro :url_format do
-    key.failure(:must_be_url) unless URI::DEFAULT_PARSER.make_regexp(%w[http https]).match?(value)
+    key.failure(:must_be_url) unless AppTypes::URL_PATTERN.match?(value)
   end
 end

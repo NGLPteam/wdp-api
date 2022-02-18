@@ -3,23 +3,14 @@
 module Schemas
   module Properties
     module Scalar
+      # A schema property that wraps a URL with label and an optional title.
+      #
+      # @see Schemas::Properties::Types::NormalizedURL
+      # @see Schemas::Properties::Types::URLShape
       class URL < Base
-        schema_type! AppTypes::SchemaURL
+        schema_type! :url
 
         config.graphql_value_key = :url
-
-        def might_normalize_value_before_coercion?
-          true unless exclude_from_schema?
-        end
-
-        def normalize_schema_value_before_coercer(raw:, **)
-          case raw
-          when AppTypes::SchemaURL
-            AppTypes::SchemaURL[raw]
-          when String
-            { href: raw, label: "URL", title: "" }
-          end
-        end
       end
     end
   end

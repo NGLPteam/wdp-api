@@ -6,6 +6,8 @@ module Contributors
 
     extend Shared::EnhancedTypes
 
+    Kind = Coercible::Symbol.enum(:organization, :person)
+
     # @see Types::ContributorLookupFieldType
     LookupField = Symbol.enum(:email, :name, :orcid)
 

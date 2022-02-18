@@ -5,7 +5,7 @@ module Schemas
     module Operations
       extend ActiveSupport::Concern
 
-      # @see Schemas::Associations::FindMatchingVersions
+      # @see Schemas::Associations::FindAllMatchingVersions
       # @param [<Schemas::Associations::Association>] associations
       # @return [<SchemaVersion>]
       def find_all_matching_versions_for(associations)

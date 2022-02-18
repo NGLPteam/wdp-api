@@ -7,6 +7,8 @@
 # @see Schemas::Versions::Configuration
 # @subsystem Schema
 class SchemaVersion < ApplicationRecord
+  include Schemas::Properties::CompilesToSchema
+
   # @!attribute [r] kind
   # @return ["community", "collection", "item"]
   pg_enum! :kind, as: "schema_kind"

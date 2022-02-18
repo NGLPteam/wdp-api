@@ -6,18 +6,20 @@ module Schemas
       class Tags < Base
         include ValidatesSize
 
-        attribute :default, :string_array
-
         array! :str?
+
+        fillable!
 
         schema_type! :string
 
         config.graphql_value_key = :tags
 
+        attribute :default, :string_array
+
         def add_to_rules!(context)
           super
 
-          context.rule(full_path).each(:tag_format)
+          context.rule(path).each(:tag_format)
         end
       end
     end

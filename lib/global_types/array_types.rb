@@ -35,7 +35,7 @@ module GlobalTypes
     # @!attribute [r] type
     # A computer-readable type name.
     # @return [:any_array]
-    # @see {.type}
+    # @see .type
     def type
       self.class.type
     end

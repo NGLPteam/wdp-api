@@ -12,11 +12,15 @@ module Schemas
 
       # @param [HasSchemaDefinition] entity
       def call(entity, context: nil)
-        contract = contract_for entity
+        contract = yield contract_for entity
 
         values = values_for entity, context
 
-        result = contract.call(values)
+        validation_context = {
+          instance: entity,
+        }
+
+        result = contract.call(values, validation_context)
 
         validity = {}.tap do |h|
           h[:valid] = result.success?
@@ -30,9 +34,7 @@ module Schemas
       private
 
       def contract_for(entity)
-        contract_klass = yield compile_contract.call entity.schema_version
-
-        contract_klass.new
+        compile_contract.call entity.schema_version
       end
 
       def context_for(entity, context)
