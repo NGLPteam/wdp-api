@@ -3,6 +3,8 @@
 module Types
   # A polymorphic way of accessing {HierarchicalEntity an entity}.
   class EntitySelectOptionType < Types::BaseObject
+    implements Types::HasEntityBreadcrumbs
+
     description "A select option for a single entity"
 
     field :label, String, null: false, method: :to_schematic_referent_label

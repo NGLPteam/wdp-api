@@ -23,6 +23,8 @@ class Entity < ApplicationRecord
 
   has_many_readonly :contextual_permissions, primary_key: CONTEXTUAL_TUPLE, foreign_key: CONTEXTUAL_TUPLE
 
+  has_many_readonly :entity_breadcrumbs, primary_key: ENTITY_TUPLE, foreign_key: ENTITY_TUPLE
+
   has_many_readonly :entity_inherited_orderings, primary_key: ENTITY_TUPLE, foreign_key: ENTITY_TUPLE
 
   has_one_readonly :entity_visibility, primary_key: CONTEXTUAL_TUPLE, foreign_key: ENTITY_TUPLE
