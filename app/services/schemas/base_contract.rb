@@ -21,7 +21,7 @@ module Schemas
       parent_key = index ? keys[0][0...-1] : nil
 
       prop.available_entities_for(context[:instance]).bind do |available|
-        unless available.exists?(hierarchical: context[:instance])
+        unless available.exists?(hierarchical: value)
           tokens = {}
 
           i18n_key = :"schematic_references.#{index ? :collected : :scalar}.invalid_entity"
