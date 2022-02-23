@@ -3,7 +3,7 @@
 Dry::Rails.container do
   config.features = %i[application_contract safe_params controller_helpers]
 
-  auto_register! "app/operations"
+  config.component_dirs.add "app/operations"
 
   register :filesystem, memoize: !Rails.env.test? do
     Dry::Files.new memory: Rails.env.test?
