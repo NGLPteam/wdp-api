@@ -14,6 +14,8 @@ module Mutations
       rule(:orcid) do
         key.failure(:must_be_unique_orcid) if Contributor.has_existing_orcid?(values[:orcid])
       end
+
+      rule(:orcid).validate(:orcid_format)
     end
   end
 end

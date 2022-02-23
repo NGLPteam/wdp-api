@@ -33,7 +33,7 @@ RSpec.describe "Query.contributorLookup", type: :request do
 
   let(:known_email) { Faker::Internet.safe_email }
   let(:known_name) { Faker::Company.name }
-  let(:known_orcid) { SecureRandom.uuid }
+  let(:known_orcid) { Testing::ORCID.random }
 
   let!(:contributor) { FactoryBot.create :contributor, :organization, email: known_email, orcid: known_orcid, legal_name: known_name }
 

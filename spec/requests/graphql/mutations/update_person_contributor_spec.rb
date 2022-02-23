@@ -73,12 +73,32 @@ RSpec.describe Mutations::UpdatePersonContributor, type: :request, graphql: :mut
     end
 
     context "when updating an ORCID" do
-      let(:orcid_value) { SecureRandom.uuid }
+      let(:orcid_value) { Testing::ORCID.random }
 
       let_mutation_input!(:orcid) { orcid_value }
 
       it "updates the contributor" do
         expect_the_default_request.to change { contributor.reload.orcid }.from(nil).to(orcid_value)
+      end
+
+      context "with an invalid format" do
+        let(:orcid_value) { SecureRandom.uuid }
+
+        let!(:expected_shape) do
+          gql.mutation(:update_person_contributor, no_errors: false) do |m|
+            m[:contributor] = nil
+
+            m.attribute_errors do |eb|
+              eb.error :orcid, :must_be_orcid
+            end
+          end
+        end
+
+        it "fails to update the contributor" do
+          expect_the_default_request.to keep_the_same { contributor.reload.orcid }
+
+          expect_graphql_data expected_shape
+        end
       end
 
       context "with an already-assigned contributor" do

@@ -54,6 +54,9 @@ Layout/LineLength:
 Layout/MultilineMethodCallBraceLayout:
   Enabled: false
 
+Layout/MultilineOperationIndentation:
+  Enabled: false
+
 Layout/MultilineMethodCallIndentation:
   Enabled: false
 

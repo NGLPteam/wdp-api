@@ -68,7 +68,7 @@ RSpec.describe Mutations::CreatePersonContributor, type: :request, graphql: :mut
     end
 
     context "with an already existing ORCID" do
-      let(:orcid_value) { SecureRandom.uuid }
+      let(:orcid_value) { Testing::ORCID.random }
 
       let_mutation_input!(:orcid) { orcid_value }
 

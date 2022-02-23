@@ -6,6 +6,10 @@ module Contributors
 
     extend Shared::EnhancedTypes
 
+    ORCID_FORMAT = %r,\Ahttps://orcid.org/(?<identifier>\d{4}(?:-\d{4}){3})\z,.freeze
+
+    ORCID = String.constrained(format: ORCID_FORMAT)
+
     Kind = Coercible::Symbol.enum(:organization, :person)
 
     # @see Types::ContributorLookupFieldType
