@@ -2,14 +2,16 @@
 
 module WDPAPI
   class TestContainer < Dry::System::Container
+    use :zeitwerk
+
     configure do |config|
       config.root = Pathname(__dir__)
 
-      config.auto_register << "lib"
+      config.component_dirs.auto_register = true
 
-      config.default_namespace = "testing"
+      config.component_dirs.add "lib" do |dir|
+        dir.namespaces.add "testing", key: nil
+      end
     end
-
-    load_paths!("lib")
   end
 end
