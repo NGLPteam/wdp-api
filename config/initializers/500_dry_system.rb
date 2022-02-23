@@ -5,6 +5,10 @@ Dry::Rails.container do
 
   auto_register! "app/operations"
 
+  register :filesystem, memoize: !Rails.env.test? do
+    Dry::Files.new memory: Rails.env.test?
+  end
+
   namespace :keycloak do
     register :config, memoize: true do
       KeycloakRack::Config.new

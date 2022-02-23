@@ -21,9 +21,18 @@ class Community < ApplicationRecord
 
   alias_attribute :name, :title
 
+  after_create :grant_system_roles!
+
   def hierarchical_parent
     nil
   end
 
   alias contextual_parent hierarchical_parent
+
+  # @api private
+  # @see Communities::GrantSystemRoles
+  # @return [void]
+  def grant_system_roles!
+    call_operation("communities.grant_system_roles", self).value!
+  end
 end

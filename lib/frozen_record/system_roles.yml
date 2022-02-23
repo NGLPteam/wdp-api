@@ -1,0 +1,166 @@
+---
+- access_control_list:
+    :self:
+      :read: true
+      :create: true
+      :update: true
+      :delete: true
+      :manage_access: true
+      :assets:
+        :read: true
+        :create: true
+        :update: true
+        :delete: true
+    :collections:
+      :read: true
+      :create: true
+      :update: true
+      :delete: true
+      :manage_access: true
+      :assets:
+        :read: true
+        :create: true
+        :update: true
+        :delete: true
+    :items:
+      :read: true
+      :create: true
+      :update: true
+      :delete: true
+      :manage_access: true
+      :assets:
+        :read: true
+        :create: true
+        :update: true
+        :delete: true
+  global_access_control_list:
+    :admin:
+      :access: true
+    :communities:
+      :read: true
+      :create: true
+      :update: true
+      :delete: true
+      :manage_access: true
+      :assets:
+        :read: true
+        :create: true
+        :update: true
+        :delete: true
+    :contributors:
+      :read: true
+      :create: true
+      :update: true
+      :delete: true
+    :roles:
+      :read: true
+      :create: true
+      :update: true
+      :delete: true
+    :users:
+      :read: true
+      :create: true
+      :update: true
+      :delete: true
+    :settings:
+      :update: true
+  identifier: admin
+  name: Admin
+- access_control_list:
+    :self:
+      :read: true
+      :create: true
+      :update: true
+      :delete: false
+      :manage_access: true
+      :assets:
+        :read: true
+        :create: true
+        :update: true
+        :delete: true
+    :collections:
+      :read: true
+      :create: true
+      :update: true
+      :delete: true
+      :manage_access: true
+      :assets:
+        :read: true
+        :create: true
+        :update: true
+        :delete: true
+    :items:
+      :read: true
+      :create: true
+      :update: true
+      :delete: true
+      :manage_access: true
+      :assets:
+        :read: true
+        :create: true
+        :update: true
+        :delete: true
+  global_access_control_list:
+    :admin:
+      :access: true
+    :contributors:
+      :read: true
+      :create: true
+      :update: true
+      :delete: true
+    :users:
+      :read: true
+    :roles:
+      :read: true
+  identifier: manager
+  name: Manager
+- access_control_list:
+    :self:
+      :read: true
+      :assets:
+        :read: true
+        :update: true
+      :update: true
+    :collections:
+      :read: true
+      :assets:
+        :read: true
+        :update: true
+      :update: true
+    :items:
+      :read: true
+      :assets:
+        :read: true
+        :update: true
+      :update: true
+  global_access_control_list:
+    :admin:
+      :access: true
+    :contributors:
+      :read: true
+      :create: true
+      :update: true
+    :roles:
+      :read: true
+  identifier: editor
+  name: Editor
+- access_control_list:
+    :self:
+      :read: true
+      :assets:
+        :read: true
+    :collections:
+      :read: true
+      :assets:
+        :read: true
+    :items:
+      :read: true
+      :assets:
+        :read: true
+  global_access_control_list:
+    :contributors:
+      :read: true
+    :roles:
+      :read: true
+  identifier: reader
+  name: Reader

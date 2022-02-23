@@ -2,23 +2,28 @@
 
 module Mutations
   module Operations
+    # @see Access::Revoke
+    # @see Mutations::RevokeAccess
+    # @see Mutations::Contracts::RevokeAccess
     class RevokeAccess
       include MutationOperations::Base
       include WDPAPI::Deps[revoke_access: "access.revoke"]
 
+      use_contract! :revoke_access
+
+      # @param [Role] role
+      # @param [User] user
+      # @param [HierarchicalEntity] entity
+      # @return [void]
       def call(role:, user:, entity:)
         authorize entity, :manage_access?
 
         attempt = revoke_access.call role, on: entity, to: user
 
-        revokeed = attempt.success?
+        revoked = attempt.success?
 
-        attach! :entity, entity if revokeed
-        attach! :revoked, revokeed
-      end
-
-      def validate!(user:, **args)
-        add_error! "You cannot revoke a role from yourself.", path: "user" if user == current_user
+        attach! :entity, entity if revoked
+        attach! :revoked, revoked
       end
     end
   end

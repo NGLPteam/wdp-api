@@ -2,12 +2,19 @@
 
 module Mutations
   module Operations
+    # @see Access::Grant
+    # @see Mutations::GrantAccess
+    # @see Mutations::Contracts::GrantAccess
     class GrantAccess
       include MutationOperations::Base
       include WDPAPI::Deps[grant_access: "access.grant"]
 
       use_contract! :grant_access
 
+      # @param [Role] role
+      # @param [User] user
+      # @param [HierarchicalEntity] entity
+      # @return [void]
       def call(role:, user:, entity:)
         authorize entity, :manage_access?
 

@@ -4,6 +4,15 @@
 #
 # @abstract
 class ApplicationPolicy
+  extend Dry::Core::ClassAttributes
+
+  # @!scope class
+  # @!attribute [rw] effective_permission_map
+  # @return [Roles::Types::EffectivePermissionMap]
+  defines :effective_permission_map, type: Roles::Types::EffectivePermissionMap
+
+  effective_permission_map({})
+
   # @return [ApplicationRecord]
   attr_reader :record
 
@@ -20,8 +29,10 @@ class ApplicationPolicy
   # This permission determines whether a given {#user}
   # has been granted read-access to the {#record}.
   #
-  # @note `read?` is distinct from `show?` for distinguishing
-  #   between
+  # Specifically, it means the user can read a fuller representation
+  # of the record, as opposed to simply being able to {#show? view it}
+  # in the frontend.
+  #
   #
   # @abstract
   # @see #show?
@@ -82,6 +93,21 @@ class ApplicationPolicy
     end
   end
 
+  # @!group Effective Permission Grids
+
+  # @return [Roles::AnonymousGrid]
+  def effective_access
+    Roles::PermissionGridDefiner.new(self.class.effective_available_actions).call do |acl|
+      self.class.effective_permission_map.each do |path, predicate|
+        allowed = public_send(predicate)
+
+        allowed ? acl.allow!(path) : acl.deny!(path)
+      end
+    end
+  end
+
+  # @!endgroup
+
   # @!group Hierarchical permissions
 
   # @abstract
@@ -140,6 +166,39 @@ class ApplicationPolicy
   # @return [{ (ApplicationRecord, User) => ApplicationPolicy }]
   def subpolicies
     @subpolicies ||= {}
+  end
+
+  class << self
+    # @return [<String>]
+    def effective_available_actions
+      effective_permission_map.keys
+    end
+
+    # @param [Roles::Types::PermissionName] path
+    # @param [Roles::Types::PolicyPredicate] predicate
+    # @return [void]
+    def effective_permission!(path, predicate)
+      merged = effective_permission_map.merge(path => predicate)
+
+      effective_permission_map merged
+    end
+
+    def effective_crud_permissions!(scope: "self", read: :read?, create: :create?, update: :update?, delete: :destroy?)
+      scopify = ->(name) do
+        [scope.presence, name].compact.join(".")
+      end
+
+      actions = {}.tap do |h|
+        h[scopify["read"]] = read
+        h[scopify["create"]] = create
+        h[scopify["update"]] = update
+        h[scopify["delete"]] = delete
+      end.transform_values(&:presence).compact
+
+      actions.each do |path, predicate|
+        effective_permission! path, predicate
+      end
+    end
   end
 
   # @abstract

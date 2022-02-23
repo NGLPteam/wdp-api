@@ -19,17 +19,17 @@ class AccessGrant < ApplicationRecord
   has_many :grouped_users, through: :user_group, source: :users
   has_many :permissions, through: :role
 
-  # rubocop:disable Rails/HasManyOrHasOneDependent
-  has_many :management_links, class_name: "AccessGrantManagementLink", inverse_of: :access_grant
+  has_many_readonly :management_links, class_name: "AccessGrantManagementLink", inverse_of: :access_grant
 
-  has_many :contextually_assigned_access_grants, inverse_of: :access_grant
-  # rubocop:enable Rails/HasManyOrHasOneDependent
+  has_many_readonly :contextually_assigned_access_grants, inverse_of: :access_grant
 
   has_many :managers, -> { distinct }, through: :management_links, source: :user
 
+  scope :for_system_role, ->(identifier) { where(role: Role.for_identifier(identifier)) }
   scope :for_accessible_type, ->(type) { where(accessible_type: type) }
   scope :for_subject, ->(subject) { where(subject: subject) }
   scope :for_subject_type, ->(type) { where(subject_type: type) }
+  scope :for_possible_subject, ->(subject) { for_subject(subject) if subject.present? }
 
   scope :for_communities, -> { for_accessible_type("Community") }
   scope :for_collections, -> { for_accessible_type("Collection") }
@@ -44,6 +44,13 @@ class AccessGrant < ApplicationRecord
   scope :managed_by, ->(user) { where(id: AccessGrantManagementLink.for_user(user).select(:access_grant_id)) }
 
   scope :with_preloads, -> { preload(:accessible, :subject, :role, :user, :user_group, :community, :collection, :item) }
+
+  scope :admin, -> { for_system_role :admin }
+
+  scope :to_global_admins, -> { for_users.where(subject_id: User.global_admins.select(:id)) }
+  scope :to_non_global_admins, -> { for_users.where.not(subject_id: User.global_admins.select(:id)) }
+
+  scope :invalid_admin_assignments, -> { admin.to_non_global_admins }
 
   assign_polymorphic_foreign_key! :accessible, :community, :collection, :item
   assign_polymorphic_foreign_key! :subject, :user, :user_group

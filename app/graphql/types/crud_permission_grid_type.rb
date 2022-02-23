@@ -2,7 +2,9 @@
 
 module Types
   # @see Roles::PermissionGrid
-  class CRUDPermissionGridType < Types::BaseObject
+  module CRUDPermissionGridType
+    include Types::BaseInterface
+
     implements Types::PermissionGridType
 
     description "A grid of permissions for creating, retrieving, updating, and deleting a model"

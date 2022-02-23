@@ -311,7 +311,7 @@ module HierarchicalEntity
     self.auth_path = system_slug
   end
 
-  module ClassMethods
+  class_methods do
     # @param [User] user
     # @return [ActiveRecord::Relation<HierarchicalEntity>]
     def readable_by(user)

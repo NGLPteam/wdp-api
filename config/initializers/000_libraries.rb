@@ -2,6 +2,7 @@
 
 require "base64"
 require "i18n"
+require "dry/core/class_builder"
 require "dry/core/equalizer"
 require "dry/core/memoizable"
 require "dry/matcher/result_matcher"

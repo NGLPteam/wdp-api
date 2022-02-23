@@ -4,13 +4,23 @@
 module AnonymousInterface
   extend ActiveSupport::Concern
 
+  include ActiveSupport::Configurable
   include GlobalID::Identification
+
+  # @see {#allowed_actions}
+  ALLOWED_ACTIONS = [].freeze
 
   # @note For anonymous users, this is always an empty array.
   # @see User#allowed_actions
   # @return [<String>]
   def allowed_actions
-    []
+    ALLOWED_ACTIONS
+  end
+
+  # @see User#assignable_roles
+  # @return [ActiveRecord::Relation<Role>]
+  def assignable_roles
+    Role.none
   end
 
   # @note Always true for an {AnonymousUser}.

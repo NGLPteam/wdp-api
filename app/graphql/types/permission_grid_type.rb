@@ -4,7 +4,8 @@ module Types
   # @see Roles::Grid
   module PermissionGridType
     include Types::BaseInterface
-    include Types::ExposesPermissionsType
+
+    implements Types::ExposesPermissionsType
 
     description "A mapping of permissions specific to a certain scope"
   end

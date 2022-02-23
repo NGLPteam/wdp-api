@@ -2,21 +2,27 @@
 
 module Resolvers
   # A concern for resolvers that order {Role} models with {Types::RoleOrderType}.
+  #
+  # @see Types::RoleOrderType
   module OrderedAsRole
     extend ActiveSupport::Concern
 
     include ScopeUtilities
 
     included do
-      option :order, type: Types::RoleOrderType, default: "NAME_ASCENDING"
+      option :order, type: Types::RoleOrderType, default: "DEFAULT"
+    end
+
+    def apply_order_with_default(scope)
+      scope.in_default_order
     end
 
     def apply_order_with_recent(scope)
-      scope.order(created_at: :desc)
+      apply_order_with_name_ascending scope.order(created_at: :desc)
     end
 
     def apply_order_with_oldest(scope)
-      scope.order(created_at: :asc)
+      apply_order_with_name_ascending scope.order(created_at: :asc)
     end
 
     def apply_order_with_name_ascending(scope)

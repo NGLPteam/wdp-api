@@ -209,6 +209,39 @@ CREATE TYPE public.permission_kind AS ENUM (
 
 
 --
+-- Name: role_identifier; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.role_identifier AS ENUM (
+    'admin',
+    'manager',
+    'editor',
+    'reader'
+);
+
+
+--
+-- Name: role_kind; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.role_kind AS ENUM (
+    'system',
+    'custom'
+);
+
+
+--
+-- Name: role_primacy; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.role_primacy AS ENUM (
+    'high',
+    'default',
+    'low'
+);
+
+
+--
 -- Name: schema_kind; Type: TYPE; Schema: public; Owner: -
 --
 
@@ -317,6 +350,123 @@ CREATE FUNCTION public._jsonb_auth_path_final(public.jsonb_auth_path_state[]) RE
 CREATE FUNCTION public.array_distinct(anyarray) RETURNS anyarray
     LANGUAGE sql IMMUTABLE
     AS $_$ SELECT array_agg(DISTINCT x) FILTER (WHERE x IS NOT NULL) FROM unnest($1) t(x); $_$;
+
+
+--
+-- Name: calculate_action(public.ltree, jsonb); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.calculate_action(action public.ltree, value jsonb) RETURNS TABLE(action public.ltree, allowed boolean)
+    LANGUAGE sql IMMUTABLE STRICT PARALLEL SAFE
+    AS $_$
+SELECT
+  $1 AS action,
+  $2 = 'true'::jsonb AS allowed
+  WHERE jsonb_typeof($2) = 'boolean';
+$_$;
+
+
+--
+-- Name: calculate_actions(jsonb); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.calculate_actions(jsonb) RETURNS TABLE(action public.ltree, allowed boolean)
+    LANGUAGE sql IMMUTABLE STRICT PARALLEL SAFE
+    AS $_$
+WITH RECURSIVE flattened (scope, value) AS (
+  SELECT
+    grid.scope::ltree AS scope,
+    grid.value AS value
+    FROM jsonb_each($1) AS grid(scope, value)
+    WHERE jsonb_typeof($1) = 'object'
+  UNION ALL
+  SELECT
+    flattened.scope || COALESCE(grid.scope, '') AS scope,
+    grid.value AS value
+  FROM
+    flattened, jsonb_each(flattened.value) AS grid(scope, value)
+  WHERE jsonb_typeof(flattened.value) = 'object'
+), actions AS (
+  SELECT action.action, action.allowed FROM flattened, calculate_action(flattened.scope, flattened.value) AS action(action, allowed) WHERE jsonb_typeof(flattened.value) = 'boolean'
+) SELECT DISTINCT ON (action) action, allowed FROM actions WHERE action IS NOT NULL;
+$_$;
+
+
+--
+-- Name: calculate_allowed_actions(jsonb); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.calculate_allowed_actions(jsonb) RETURNS public.ltree[]
+    LANGUAGE sql IMMUTABLE PARALLEL SAFE
+    AS $_$
+SELECT COALESCE(
+  array_agg(action ORDER BY action) FILTER (WHERE allowed),
+  '{}'::ltree[]
+) FROM calculate_actions($1) AS t(action, allowed)
+$_$;
+
+
+--
+-- Name: calculate_role_kind(public.role_identifier); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.calculate_role_kind(public.role_identifier) RETURNS public.role_kind
+    LANGUAGE sql IMMUTABLE PARALLEL SAFE
+    AS $_$
+SELECT CASE
+WHEN $1 IS NOT NULL THEN 'system'
+ELSE
+  'custom'
+END::role_kind;
+$_$;
+
+
+--
+-- Name: calculate_role_primacy(public.role_identifier); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.calculate_role_primacy(public.role_identifier) RETURNS public.role_primacy
+    LANGUAGE sql IMMUTABLE PARALLEL SAFE
+    AS $_$
+SELECT CASE $1
+WHEN 'admin' THEN 'high'
+WHEN 'reader' THEN 'low'
+ELSE
+  'default'
+END::role_primacy;
+$_$;
+
+
+--
+-- Name: calculate_role_priority(public.role_identifier); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.calculate_role_priority(public.role_identifier) RETURNS integer
+    LANGUAGE sql IMMUTABLE PARALLEL SAFE
+    AS $_$
+SELECT CASE $1
+WHEN 'admin' THEN 40000
+WHEN 'manager' THEN 20000
+WHEN 'editor' THEN -20000
+WHEN 'reader' THEN -40000
+END;
+$_$;
+
+
+--
+-- Name: calculate_role_priority(public.role_identifier, smallint); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.calculate_role_priority(public.role_identifier, smallint) RETURNS integer
+    LANGUAGE sql IMMUTABLE PARALLEL SAFE
+    AS $_$
+SELECT CASE
+WHEN $1 IS NULL AND $2 IS NULL THEN NULL
+WHEN $1 IS NOT NULL THEN calculate_role_priority($1)
+ELSE
+  $2::int
+END;
+$_$;
 
 
 --
@@ -2558,6 +2708,20 @@ CREATE CAST (date AS public.variable_precision_date) WITH FUNCTION public.variab
 
 
 --
+-- Name: CAST (public.role_identifier AS public.role_kind); Type: CAST; Schema: -; Owner: -
+--
+
+CREATE CAST (public.role_identifier AS public.role_kind) WITH FUNCTION public.calculate_role_kind(public.role_identifier) AS ASSIGNMENT;
+
+
+--
+-- Name: CAST (public.role_identifier AS public.role_primacy); Type: CAST; Schema: -; Owner: -
+--
+
+CREATE CAST (public.role_identifier AS public.role_primacy) WITH FUNCTION public.calculate_role_primacy(public.role_identifier) AS ASSIGNMENT;
+
+
+--
 -- Name: CAST (public.variable_precision_date AS date); Type: CAST; Schema: -; Owner: -
 --
 
@@ -2769,6 +2933,56 @@ CREATE TABLE public.assets (
 
 
 --
+-- Name: roles; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.roles (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    name public.citext NOT NULL,
+    access_control_list jsonb DEFAULT '{}'::jsonb NOT NULL,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    identifier public.role_identifier,
+    custom_priority smallint,
+    global_access_control_list jsonb DEFAULT '{}'::jsonb NOT NULL,
+    primacy public.role_primacy GENERATED ALWAYS AS (public.calculate_role_primacy(identifier)) STORED NOT NULL,
+    kind public.role_kind GENERATED ALWAYS AS (public.calculate_role_kind(identifier)) STORED NOT NULL,
+    priority integer GENERATED ALWAYS AS (public.calculate_role_priority(identifier, custom_priority)) STORED NOT NULL,
+    allowed_actions public.ltree[] GENERATED ALWAYS AS (public.calculate_allowed_actions(access_control_list)) STORED NOT NULL,
+    global_allowed_actions public.ltree[] GENERATED ALWAYS AS (public.calculate_allowed_actions(global_access_control_list)) STORED NOT NULL,
+    CONSTRAINT custom_roles_have_priority_set CHECK (
+CASE kind
+    WHEN 'custom'::public.role_kind THEN (custom_priority IS NOT NULL)
+    ELSE true
+END),
+    CONSTRAINT system_roles_have_no_custom_priority CHECK (
+CASE kind
+    WHEN 'system'::public.role_kind THEN (custom_priority IS NULL)
+    ELSE true
+END)
+);
+
+
+--
+-- Name: assignable_role_targets; Type: MATERIALIZED VIEW; Schema: public; Owner: -
+--
+
+CREATE MATERIALIZED VIEW public.assignable_role_targets AS
+ SELECT source.id AS source_role_id,
+    row_number() OVER target_w AS priority,
+    target.id AS target_role_id,
+    row_number() OVER source_w AS source_priority,
+    source.name AS source_name,
+    target.name AS target_name
+   FROM (public.roles source
+     JOIN public.roles target ON ((target.priority < source.priority)))
+  WHERE (source.allowed_actions OPERATOR(public.~) '*.manage_access'::public.lquery)
+  WINDOW source_w AS (ORDER BY source.primacy, source.priority DESC, source.kind, target.primacy, target.priority DESC, target.kind), target_w AS (PARTITION BY source.id ORDER BY target.primacy, target.priority DESC, target.kind)
+  ORDER BY (row_number() OVER source_w)
+  WITH NO DATA;
+
+
+--
 -- Name: collections; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -2939,6 +3153,31 @@ CREATE VIEW public.contextual_permissions AS
      LEFT JOIN LATERAL ( SELECT ((gp.accessible_type = ent.hierarchical_type) AND (gp.accessible_id = ent.hierarchical_id)) AS directly_assigned) info ON (true))
   WHERE ((NOT info.directly_assigned) OR (NOT gp.inferred))
   GROUP BY ent.hierarchical_id, ent.hierarchical_type, gp.user_id;
+
+
+--
+-- Name: contextually_assignable_roles; Type: VIEW; Schema: public; Owner: -
+--
+
+CREATE VIEW public.contextually_assignable_roles AS
+ SELECT DISTINCT ON (ent.hierarchical_id, ent.hierarchical_type, gp.user_id, ar.target_role_id) ent.hierarchical_id,
+    ent.hierarchical_type,
+    gp.user_id,
+    ar.target_role_id AS role_id,
+    ar.priority
+   FROM (((( SELECT DISTINCT granted_permissions.user_id,
+            granted_permissions.accessible_id,
+            granted_permissions.accessible_type,
+            granted_permissions.role_id,
+            granted_permissions.auth_path,
+            granted_permissions.scope,
+            granted_permissions.inferred
+           FROM public.granted_permissions
+          WHERE (granted_permissions.action OPERATOR(public.=) 'self.manage_access'::public.ltree)) gp
+     JOIN public.assignable_role_targets ar ON ((ar.source_role_id = gp.role_id)))
+     JOIN public.authorizing_entities ent USING (auth_path, scope))
+     LEFT JOIN LATERAL ( SELECT ((gp.accessible_type = ent.hierarchical_type) AND (gp.accessible_id = ent.hierarchical_id)) AS directly_assigned) info ON (true))
+  WHERE ((NOT info.directly_assigned) OR (NOT gp.inferred));
 
 
 --
@@ -3913,6 +4152,66 @@ CREATE TABLE public.pages (
 
 
 --
+-- Name: users; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.users (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    keycloak_id uuid NOT NULL,
+    system_slug public.citext NOT NULL,
+    email_verified boolean DEFAULT false NOT NULL,
+    email public.citext NOT NULL,
+    username public.citext NOT NULL,
+    name text DEFAULT ''::text NOT NULL,
+    given_name text DEFAULT ''::text NOT NULL,
+    family_name text DEFAULT ''::text NOT NULL,
+    roles text[] DEFAULT '{}'::text[] NOT NULL,
+    resource_roles jsonb DEFAULT '{}'::jsonb NOT NULL,
+    metadata jsonb DEFAULT '{}'::jsonb NOT NULL,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    global_access_control_list jsonb DEFAULT '{}'::jsonb NOT NULL,
+    allowed_actions public.ltree[] DEFAULT '{}'::public.ltree[] NOT NULL,
+    avatar_data jsonb,
+    role_priority integer GENERATED ALWAYS AS (public.user_role_priority(roles, metadata, allowed_actions)) STORED
+);
+
+
+--
+-- Name: pending_role_assignments; Type: VIEW; Schema: public; Owner: -
+--
+
+CREATE VIEW public.pending_role_assignments AS
+ SELECT 'Community'::text AS accessible_type,
+    c.id AS accessible_id,
+    r.id AS role_id,
+    'User'::text AS subject_type,
+    u.id AS subject_id
+   FROM ((public.communities c
+     CROSS JOIN public.users u)
+     CROSS JOIN public.roles r)
+  WHERE (('global_admin'::text = ANY (u.roles)) AND (r.identifier = 'admin'::public.role_identifier) AND (NOT (EXISTS ( SELECT 1
+           FROM public.access_grants
+          WHERE (((access_grants.accessible_type)::text = 'Community'::text) AND (access_grants.accessible_id = c.id) AND (access_grants.role_id = r.id) AND ((access_grants.subject_type)::text = 'User'::text) AND (access_grants.subject_id = u.id))))));
+
+
+--
+-- Name: primary_role_assignments; Type: VIEW; Schema: public; Owner: -
+--
+
+CREATE VIEW public.primary_role_assignments AS
+ SELECT DISTINCT ON (ag.subject_id, ag.subject_type, ag.role_id) ag.subject_id,
+    ag.subject_type,
+    ag.role_id
+   FROM (( SELECT DISTINCT access_grants.subject_id,
+            access_grants.subject_type,
+            access_grants.role_id
+           FROM public.access_grants) ag
+     JOIN public.roles r ON ((r.id = ag.role_id)))
+  ORDER BY ag.subject_id, ag.subject_type, ag.role_id, r.primacy, r.priority DESC, r.kind;
+
+
+--
 -- Name: related_collection_links; Type: VIEW; Schema: public; Owner: -
 --
 
@@ -3954,21 +4253,6 @@ CREATE TABLE public.role_permissions (
     inferred boolean DEFAULT false NOT NULL,
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
-);
-
-
---
--- Name: roles; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.roles (
-    id uuid DEFAULT gen_random_uuid() NOT NULL,
-    name public.citext NOT NULL,
-    system_slug public.citext NOT NULL,
-    access_control_list jsonb DEFAULT '{}'::jsonb NOT NULL,
-    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    allowed_actions public.ltree[] DEFAULT '{}'::public.ltree[] NOT NULL
 );
 
 
@@ -4168,32 +4452,6 @@ CREATE TABLE public.user_groups (
     metadata jsonb DEFAULT '{}'::jsonb NOT NULL,
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
-);
-
-
---
--- Name: users; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.users (
-    id uuid DEFAULT gen_random_uuid() NOT NULL,
-    keycloak_id uuid NOT NULL,
-    system_slug public.citext NOT NULL,
-    email_verified boolean DEFAULT false NOT NULL,
-    email public.citext NOT NULL,
-    username public.citext NOT NULL,
-    name text DEFAULT ''::text NOT NULL,
-    given_name text DEFAULT ''::text NOT NULL,
-    family_name text DEFAULT ''::text NOT NULL,
-    roles text[] DEFAULT '{}'::text[] NOT NULL,
-    resource_roles jsonb DEFAULT '{}'::jsonb NOT NULL,
-    metadata jsonb DEFAULT '{}'::jsonb NOT NULL,
-    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    global_access_control_list jsonb DEFAULT '{}'::jsonb NOT NULL,
-    allowed_actions public.ltree[] DEFAULT '{}'::public.ltree[] NOT NULL,
-    avatar_data jsonb,
-    role_priority integer GENERATED ALWAYS AS (public.user_role_priority(roles, metadata, allowed_actions)) STORED
 );
 
 
@@ -4660,6 +4918,13 @@ CREATE INDEX asset_desc_idx ON public.asset_hierarchies USING btree (descendant_
 
 
 --
+-- Name: assignable_role_targets_pkey; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX assignable_role_targets_pkey ON public.assignable_role_targets USING btree (source_role_id, target_role_id);
+
+
+--
 -- Name: authorizing_entities_pkey; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -4762,6 +5027,13 @@ CREATE INDEX index_access_grants_on_user_id ON public.access_grants USING btree 
 --
 
 CREATE UNIQUE INDEX index_access_grants_role_check ON public.access_grants USING btree (accessible_type, accessible_id, role_id, subject_type, subject_id);
+
+
+--
+-- Name: index_access_grants_subject_roles; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_access_grants_subject_roles ON public.access_grants USING btree (subject_id, subject_type, role_id);
 
 
 --
@@ -4881,6 +5153,13 @@ CREATE INDEX index_assets_on_preview_data ON public.assets USING gin (preview_da
 --
 
 CREATE UNIQUE INDEX index_assets_uniqueness ON public.assets USING btree (attachable_type, attachable_id, identifier) WHERE (identifier IS NOT NULL);
+
+
+--
+-- Name: index_assignable_role_targets_ordering; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_assignable_role_targets_ordering ON public.assignable_role_targets USING btree (source_role_id, priority, target_role_id);
 
 
 --
@@ -6174,10 +6453,31 @@ CREATE INDEX index_roles_on_allowed_actions ON public.roles USING gist (allowed_
 
 
 --
--- Name: index_roles_on_system_slug; Type: INDEX; Schema: public; Owner: -
+-- Name: index_roles_on_custom_priority; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE UNIQUE INDEX index_roles_on_system_slug ON public.roles USING btree (system_slug);
+CREATE UNIQUE INDEX index_roles_on_custom_priority ON public.roles USING btree (custom_priority);
+
+
+--
+-- Name: index_roles_on_global_allowed_actions; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_roles_on_global_allowed_actions ON public.roles USING gist (global_allowed_actions);
+
+
+--
+-- Name: index_roles_on_identifier; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_roles_on_identifier ON public.roles USING btree (identifier);
+
+
+--
+-- Name: index_roles_sort_order; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_roles_sort_order ON public.roles USING btree (primacy, priority DESC, kind);
 
 
 --
@@ -6948,6 +7248,13 @@ CREATE UNIQUE INDEX role_permissions_uniqueness ON public.role_permissions USING
 --
 
 CREATE UNIQUE INDEX schema_definition_properties_pkey ON public.schema_definition_properties USING btree (schema_definition_id, path, type);
+
+
+--
+-- Name: tst_gp_managed; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX tst_gp_managed ON public.granted_permissions USING btree (user_id, accessible_id, accessible_type, role_id, auth_path, scope, inferred) WHERE (action OPERATOR(public.=) 'self.manage_access'::public.ltree);
 
 
 --
@@ -8267,6 +8574,12 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20220113044849'),
 ('20220214202309'),
 ('20220216150516'),
-('20220216203224');
+('20220216203224'),
+('20220218193540'),
+('20220218194143'),
+('20220221150645'),
+('20220221151923'),
+('20220221160509'),
+('20220221184512');
 
 

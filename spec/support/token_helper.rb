@@ -77,4 +77,22 @@ class TokenHelper
     @rsa_key ||= OpenSSL::PKey::RSA.new File.read pem_path
   end
 end
+
+module TestHelpers
+  module UserTokenGenerator
+    extend ActiveSupport::Concern
+
+    TOKEN_HELPER = TokenHelper.new
+
+    # @see TokenHelper#build_token
+    # @return [String]
+    def build_fake_token(**options)
+      options[:from_user] = self
+
+      TOKEN_HELPER.build_token options
+    end
+  end
+end
+
+::User.include TestHelpers::UserTokenGenerator
 # rubocop:enable Layout/LineLength
