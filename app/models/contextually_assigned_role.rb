@@ -1,14 +1,12 @@
 # frozen_string_literal: true
 
+# An inferred connection between a {ContextualPermission} and a {Role}.
 class ContextuallyAssignedRole < ApplicationRecord
-  self.primary_key = %i[user_id hierarchical_type hierarchical_id role_id]
+  include ContextuallyDerivedConnection
 
-  CONTEXT_KEY = %i[user_id hierarchical_type hierarchical_id].freeze
+  contextual_primary_key! :role_id
 
-  belongs_to :contextual_permission,
-    primary_key: CONTEXT_KEY,
-    foreign_key: CONTEXT_KEY,
-    inverse_of: :contextually_assigned_roles
+  belongs_to_contextual_permission inverse_of: :contextually_assigned_roles
 
-  belongs_to :role, inverse_of: :contextually_assigned_roles
+  belongs_to_readonly :role, inverse_of: :contextually_assigned_roles
 end

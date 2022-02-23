@@ -49,6 +49,31 @@ class Entity < ApplicationRecord
   end
 
   class << self
+    # @param [User] user
+    # @return [ActiveRecord::Relation<HierarchicalEntity>]
+    def readable_by(user)
+      with_permitted_actions_for(user, "self.read")
+    end
+
+    # @param [User] user
+    # @param [<String>] actions
+    # @return [ActiveRecord::Relation<HierarchicalEntity>]
+    def with_permitted_actions_for(user, *actions)
+      constraint = ContextualSinglePermission.with_permitted_actions_for(user, *actions).select(:hierarchical_type, :hierarchical_id)
+
+      subquery = arel_quote_query constraint
+
+      left = Arel::Nodes::GroupingElement.new([arel_table[:hierarchical_type], arel_table[:hierarchical_id]])
+
+      expr = left.in(subquery)
+
+      where(expr).where(link_operator: nil)
+    end
+
+    def sample_entities(count = nil)
+      preload(:hierarchical).actual.scoped_sample(count).map(&:hierarchical)
+    end
+
     # @see Schemas::Properties::References::Entities::Scopes::Links
     # @param [HierarchicalEntity] hierarchical
     # @param [:both, :outgoing, :incoming] direction

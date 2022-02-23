@@ -57,7 +57,7 @@ RSpec.describe "GraphQL Query", type: :request do
         }
         GRAPHQL
 
-        expect(graphql_response(:data, :roles, :nodes)).to have(4).items
+        expect(graphql_response(:data, :roles, :nodes)).to have(Role.count).items
       end
     end
 

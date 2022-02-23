@@ -21,18 +21,6 @@ RSpec.describe UserPolicy, type: :policy do
     end
   end
 
-  context "as a user with users.* access" do
-    let!(:user) { FactoryBot.create :user, :users_access }
-
-    permissions ".scope" do
-      subject { scope.resolve }
-
-      it "includes everything" do
-        is_expected.to include user, *other_users
-      end
-    end
-  end
-
   context "as a user with no special access" do
     let!(:user) { FactoryBot.create :user }
 

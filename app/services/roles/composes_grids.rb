@@ -11,8 +11,8 @@ module Roles
 
       delegate :scope, to: :class
 
-      config.base_scope = nil
       config.permission_grids = {}
+      config.permission_paths = []
 
       config_accessor :scope_parent
       config_accessor :scope_name
@@ -26,18 +26,9 @@ module Roles
 
     # @param [#to_s, nil] scope
     # @return [<String>]
-    def calculate_allowed_actions(scope: config.base_scope)
-      attributes.reduce([]) do |actions, (name, value)|
-        scoped_name = compose_scope(scope, name)
-
-        case value
-        when true
-          actions.concat([scoped_name])
-        when Roles::Grid
-          actions.concat(value.calculate_allowed_actions(scope: scoped_name))
-        else
-          actions
-        end
+    def calculate_allowed_actions
+      permissions.reduce [] do |actions, grant|
+        actions | grant.allowed_actions
       end
     end
 
@@ -50,16 +41,11 @@ module Roles
       end
     end
 
-    # @param [#to_s, nil] scope
-    # @return [{ Symbol => { Symbol => Boolean, { Symbol => Boolean } } }]
-    def permissions(scope: config.base_scope)
-      own_permissions = kind_of?(Roles::Grid) ? to_permissions(scope: scope) : []
-
-      nested_permissions = permission_grids.flat_map do |name, grid|
-        grid.to_permissions(scope: compose_scope(scope, name))
+    # @return [<Permission::Grant>]
+    def permissions
+      permission_grids.flat_map do |_, grid|
+        grid.permissions
       end
-
-      own_permissions + nested_permissions
     end
 
     private
@@ -76,6 +62,13 @@ module Roles
       # @return [Roles::ComposesGrids]
       def allow_everything
         build_with true
+      end
+
+      # @!scope class
+      # @!attribute [r] available_actions
+      # @return [<String>]
+      def available_actions
+        @available_actions ||= calculate_available_actions
       end
 
       # @param [Boolean, { Symbol => Boolean }, <String>] initial_value
@@ -96,6 +89,22 @@ module Roles
         end
       end
 
+      # Instantiate a new ACL based on the definer block.
+      #
+      # @yield [acl] Yield the definer class
+      # @yieldparam [Roles::PermissionGridDefiner] acl
+      # @yieldreturn [void]
+      # @return [Roles::ComposesGrids]
+      def define(*roles)
+        raw = Roles::PermissionGridDefiner.new(self).call do |acl|
+          acl.allow!(*roles) if roles.any?
+
+          yield acl if block_given?
+        end
+
+        new raw[:acl]
+      end
+
       # @param [#to_sym] name
       # @param [Class] type must implement {Roles::Grid}
       # @param [Boolean, { Symbol => Boolean }] default (@see Roles::Grid::ClassMethods#build_params_for)
@@ -112,18 +121,18 @@ module Roles
         define_grid! name, type: type, default: default_value
       end
 
+      # @return [{ Symbol => Roles::Grid }]
       def permission_grids
         config.permission_grids
       end
 
+      # @return [<String>]
       def permission_grid_names
         config.permission_grids.keys
       end
 
-      def permission_paths
-        permission_grids.flat_map do |(name, definition)|
-          definition[:type].allow_everything.allowed_actions(scope: name)
-        end
+      def permission_grid_types
+        config.permission_grids.values.pluck(:type)
       end
 
       # @return [String]
@@ -133,8 +142,22 @@ module Roles
 
       private
 
+      # @return [<String>]
+      def calculate_available_actions
+        permission_grid_types.flat_map do |grid_type|
+          grid_type.__send__ :calculate_available_actions
+        end
+      end
+
       def define_grid!(name, **options)
         config.permission_grids = config.permission_grids.merge(name => options)
+
+        recalculate_available_actions!
+      end
+
+      # @return [void]
+      def recalculate_available_actions!
+        @available_actions = calculate_available_actions
       end
     end
   end

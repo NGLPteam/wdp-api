@@ -9,16 +9,15 @@ module Loaders
     attr_reader :user
 
     def initialize(user)
-      @user = user
+      @user = user || AnonymousUser.new
     end
 
+    # @see ContextualPermission.scope_to
     # @param [<HierarchicalEntity>] entities
     # @return [void]
     def perform(entities)
-      if @user.present? && !@user.anonymous?
-        ContextualPermission.for_user(@user).for_hierarchical(entities).find_each do |record|
-          fulfill(record, record)
-        end
+      ContextualPermission.scope_to(@user, entities).find_each do |record|
+        fulfill(record, record)
       end
 
       entities.each do |entity|

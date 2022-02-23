@@ -6,14 +6,12 @@ module Testing
   class InitializeTestDatabase
     include Dry::Monads[:do, :result]
     include WDPAPI::Deps[
-      permission_sync: "permissions.sync",
-      load_default_schemas: "schemas.load_default",
+      role_sync: "roles.sync",
       load_static_schemas: "schemas.static.load_definitions"
     ]
 
     def call
-      yield permission_sync.call
-      yield load_default_schemas.call
+      yield role_sync.call
       yield load_static_schemas.call
 
       Success nil

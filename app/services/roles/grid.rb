@@ -12,30 +12,23 @@ module Roles
       config_accessor :permission_names, instance_reader: false, instance_writer: false
     end
 
-    INHERITED = AppTypes.Inherits(self)
+    INHERITED = Dry::Types["class"].constrained(lt: self)
 
     # @param [#to_s] scope
-    # @return [{ Symbol => String, Boolean }]
-    def to_permissions(scope: nil)
-      base = scope.present? ? { scope: scope.to_s } : {}
+    # @return [<Permission::Grant>]
+    def permissions
+      base = { scope: scope.presence }.compact
 
-      attributes.flat_map do |name, value|
-        case value
-        when AppTypes::Bool
-          base.merge({ name: name, allowed: value })
-        when Roles::Grid
-          value.to_permissions scope: compose_scope(scope, name)
-        else
-          raise TypeError
-        end
+      own_permissions = self.class.permission_names.map do |name|
+        attrs = base.merge(name: name, allowed: public_send(name))
+
+        Permissions::Grant.new attrs
       end
+
+      own_permissions + super
     end
 
     module ClassMethods
-      def action_names
-        permission_names
-      end
-
       # @param [Boolean, { Symbol => Boolean }] initial_value
       # @return [{ Symbol => Boolean }]
       def build_params_from(initial_value)
@@ -56,26 +49,23 @@ module Roles
 
           config.permission_names |= [name]
         end
+
+        recalculate_available_actions!
       end
 
       # @api private
+      # @param [Class] parent
+      # @param [String] scope
+      # @return [Class]
       def with_scope(parent, scope)
-        Class.new(self).tap do |klass|
+        klass_name = "#{scope}_grid".classify
+
+        Dry::Core::ClassBuilder.new(parent: self, name: klass_name, namespace: parent).call.tap do |klass|
           klass.scope_parent = parent
           klass.scope_name = scope
 
-          klass.config.permission_grids = klass.permission_grids.each_with_object({}) do |(name, defn), h|
-            inherited_type = defn[:type].with_scope(klass, name)
-
-            new_definition = defn.merge(type: inherited_type)
-
-            h[name] = new_definition
-
-            klass.attribute_types[name.to_s].dup.then do |duped_type|
-              duped_type.instance_variable_set(:@model_klass, inherited_type)
-
-              klass.attribute_types = klass.attribute_types.merge(name.to_s => duped_type)
-            end
+          klass.permission_grids.each do |name, defn|
+            klass.grid name, defn[:type], default: defn[:default]
           end
         end
       end
@@ -91,6 +81,15 @@ module Roles
         else
           {}
         end
+      end
+
+      # @return [<String>]
+      def calculate_available_actions
+        own_actions = permission_names.map do |name|
+          [scope.presence, name].compact.join(?.)
+        end
+
+        own_actions + super
       end
     end
   end

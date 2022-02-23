@@ -70,8 +70,7 @@ This will eventually be better-automated, but for now
 
 ```ruby
 # One-time, as-needed tasks. These are idempotent and can be run repeatedly safely.
-Permissions::Sync.new.call
-Schemas::LoadDefault.new.call
+Roles::Sync.new.call
 Schemas::Static::LoadDefinitions.new.call
 
 # Additive tasks:

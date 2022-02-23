@@ -1,4 +1,6 @@
 ---
+- path: admin.access
+  kind: global
 - path: collections.assets.create
   kind: contextual
   inheritance:
@@ -45,58 +47,48 @@
   - communities
 - path: communities.read
   kind: global
-  inheritance: []
 - path: communities.create
   kind: global
-  inheritance: []
 - path: communities.update
   kind: global
-  inheritance: []
 - path: communities.delete
   kind: global
-  inheritance: []
 - path: communities.manage_access
   kind: global
-  inheritance: []
 - path: communities.assets.create
   kind: global
-  inheritance: []
 - path: communities.assets.delete
   kind: global
-  inheritance: []
 - path: communities.assets.read
   kind: global
-  inheritance: []
 - path: communities.assets.update
   kind: global
-  inheritance: []
 - path: contributors.read
   kind: global
-  inheritance: []
 - path: contributors.create
   kind: global
-  inheritance: []
 - path: contributors.update
   kind: global
-  inheritance: []
 - path: contributors.delete
   kind: global
-  inheritance: []
+- path: roles.read
+  kind: global
+- path: roles.create
+  kind: global
+- path: roles.update
+  kind: global
+- path: roles.delete
+  kind: global
 - path: users.read
   kind: global
-  inheritance: []
 - path: users.create
   kind: global
-  inheritance: []
 - path: users.update
   kind: global
-  inheritance: []
 - path: users.delete
   kind: global
-  inheritance: []
 - path: settings.update
   kind: global
-  inheritance: []
 - path: collections.update
   kind: contextual
   inheritance:

@@ -4,6 +4,9 @@ FactoryBot.define do
   factory :user do
     transient do
       acl { false }
+      manager_on { nil }
+      editor_on { nil }
+      reader_on { nil }
     end
 
     keycloak_id { SecureRandom.uuid }
@@ -27,27 +30,31 @@ FactoryBot.define do
 
     trait :admin do
       roles { ["global_admin"] }
-    end
 
-    trait :all_access do
-      acl { true }
-    end
+      after(:create) do |user, evaluator|
+        user.enforce_assignments!
 
-    trait :communities_access do
-      acl { { communities: true } }
-    end
-
-    trait :settings_access do
-      acl { { settings: true } }
-    end
-
-    trait :users_access do
-      acl { { users: true } }
+        user.assign_global_permissions!
+      end
     end
 
     trait :with_avatar do
       avatar do
         Rails.root.join("spec", "data", "lorempixel.jpg").open
+      end
+    end
+
+    after(:create) do |user, evaluator|
+      if evaluator.manager_on.present?
+        WDPAPI::Container["access.grant"].call(Role.fetch(:manager), on: evaluator.manager_on, to: user)
+      end
+
+      if evaluator.editor_on.present?
+        WDPAPI::Container["access.grant"].call(Role.fetch(:editor), on: evaluator.editor_on, to: user)
+      end
+
+      if evaluator.reader_on.present?
+        WDPAPI::Container["access.grant"].call(Role.fetch(:reader), on: evaluator.reader_on, to: user)
       end
     end
   end

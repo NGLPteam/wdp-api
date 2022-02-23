@@ -1,14 +1,12 @@
 # frozen_string_literal: true
 
+# An inferred connection between a {ContextualPermission} and an {AccessGrant}.
 class ContextuallyAssignedAccessGrant < ApplicationRecord
-  self.primary_key = %i[user_id hierarchical_type hierarchical_id access_grant_id]
+  include ContextuallyDerivedConnection
 
-  CONTEXT_KEY = %i[user_id hierarchical_type hierarchical_id].freeze
+  contextual_primary_key! :access_grant_id
 
-  belongs_to :contextual_permission,
-    primary_key: CONTEXT_KEY,
-    foreign_key: CONTEXT_KEY,
-    inverse_of: :contextually_assigned_access_grants
+  belongs_to_contextual_permission inverse_of: :contextually_assigned_access_grants
 
-  belongs_to :access_grant, inverse_of: :contextually_assigned_access_grants
+  belongs_to_readonly :access_grant, inverse_of: :contextually_assigned_access_grants
 end

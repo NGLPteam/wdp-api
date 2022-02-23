@@ -19,7 +19,9 @@ class User < ApplicationRecord
 
   before_validation :set_allowed_actions!
 
-  scope :global_admins, -> { where(arel_has_role(:global_admin)) }
+  after_create :assign_global_permissions!
+
+  scope :global_admins, -> { where(arel_has_realm_role(:global_admin)) }
   scope :testing, -> { where_contains(email: "@example.") }
   scope :by_role_priority, -> { order(role_priority: :desc) }
 
@@ -91,8 +93,32 @@ class User < ApplicationRecord
   end
 
   class << self
-    def arel_has_role(name)
-      Arel::Nodes.build_quoted(name).eq(Arel::Nodes::NamedFunction.new("ANY", [arel_table[:roles]]))
+    # Scope users that have *all* allowed actions matching the provided input.
+    #
+    # @param [<String>] actions
+    # @return [ActiveRecord::Relation<User>]
+    def with_all_allowed_actions(*actions)
+      actions.flatten.reduce(all) do |scope, action|
+        scope.with_allowed_actions(action)
+      end
+    end
+
+    # Scope users that have *any* allowed actions matching the provided input.
+    #
+    # @param [<String>] actions
+    # @return [ActiveRecord::Relation<User>]
+    def with_allowed_actions(*actions)
+      actions.flatten!
+
+      where(arel_ltree_matches_one_or_any(arel_table[:allowed_actions], actions))
+    end
+
+    # Check if the user has a string "realm" role from Keycloak.
+    #
+    # @api private
+    # @return [Arel::Nodes::Equality]
+    def arel_has_realm_role(name)
+      arel_quote(name).eq(arel_named_fn("ANY", arel_table[:roles]))
     end
   end
 end

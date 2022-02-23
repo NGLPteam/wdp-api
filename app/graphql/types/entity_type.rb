@@ -33,8 +33,12 @@ module Types
 
     field :announcements, resolver: Resolvers::AnnouncementResolver
 
-    field :applicable_roles, [Types::RoleType], null: true do
+    field :applicable_roles, [Types::RoleType, { null: false }], null: false do
       description "The role(s) that gave the permissions to access this resource, if any."
+    end
+
+    field :assignable_roles, [Types::RoleType, { null: false }], null: false do
+      description "The role(s) that the current user could assign to other users on this entity, if applicable."
     end
 
     field :assigned_users, resolver: Resolvers::ContextualPermissionResolver do
@@ -100,8 +104,10 @@ module Types
       Loaders::AssociationLoader.for(object.class, :hierarchical_schema_ranks).load(object)
     end
 
+    # @!group Contextual Permission Support
+
     # @see Loaders::ContextualPermissionLoader
-    # @return [ContextualPermission]
+    # @return [Promise(ContextualPermission)]
     def contextual_permission
       Loaders::ContextualPermissionLoader.for(context[:current_user]).load(object)
     end
@@ -112,28 +118,34 @@ module Types
     # @return [Roles::AccessControlList]
     def access_control_list
       contextual_permission.then do |permission|
-        permission&.access_control_list || Roles::AccessControlList.new
+        permission.access_control_list
       end
     end
 
     # This surfaces the `allowed_actions` from the associated {#contextual_permission}.
     #
     # @see ContextualPermission#allowed_actions
-    # @return [<String>]
+    # @return [Promise<String>]
     def allowed_actions
-      contextual_permission.then do |permission|
-        permission&.allowed_actions || []
-      end
+      contextual_permission.then(&:allowed_actions)
+    end
+
+    # @return [Promise<Role>]
+    def assignable_roles
+      contextual_permission.then(&:assignable_roles)
     end
 
     # @return [Promise(<Role>)]
     def applicable_roles
-      contextual_permission.then do |permission|
-        next [] if permission.blank? || permission.role_ids.blank?
-
-        Loaders::RecordLoader.for(::Role).load_many(permission.role_ids)
-      end
+      contextual_permission.then(&:roles)
     end
+
+    # @return [Promise<Permissions::Grant>]
+    def permissions
+      contextual_permission.then(&:permissions)
+    end
+
+    # @!endgroup
 
     # @param [String] identifier
     # @return [Ordering, nil]
@@ -151,14 +163,6 @@ module Types
     # @return [Announcement, nil]
     def announcement(slug:)
       Loaders::RecordLoader.for(Announcement).load(slug)
-    end
-
-    def permissions
-      contextual_permission.then do |permission|
-        next [] if permission.blank?
-
-        permission.permissions
-      end
     end
   end
 end

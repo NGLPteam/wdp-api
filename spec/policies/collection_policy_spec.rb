@@ -9,7 +9,7 @@ RSpec.describe CollectionPolicy, type: :policy do
 
   let!(:other_collection) { FactoryBot.create :collection }
 
-  let!(:editor_role) { FactoryBot.create :role, :editor }
+  let!(:contextual_role) { FactoryBot.create :role, :all_contextual }
 
   let!(:scope) { described_class::Scope.new(user, Collection.all) }
 
@@ -49,7 +49,7 @@ RSpec.describe CollectionPolicy, type: :policy do
 
   context "as a user with all contextual permissions" do
     before do
-      grant_access! editor_role, on: collection, to: user
+      grant_access! contextual_role, on: collection, to: user
     end
 
     permissions ".scope" do
@@ -71,6 +71,12 @@ RSpec.describe CollectionPolicy, type: :policy do
 
       it "is allowed on a subcollection" do
         is_expected.to permit(user, subcollection)
+      end
+    end
+
+    permissions :manage_access? do
+      it "is not allowed" do
+        is_expected.not_to permit(user, collection)
       end
     end
 

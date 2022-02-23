@@ -9,7 +9,7 @@ RSpec.describe ItemPolicy, type: :policy do
 
   let!(:other_item) { FactoryBot.create :item }
 
-  let!(:editor_role) { FactoryBot.create :role, :editor }
+  let!(:contextual_role) { FactoryBot.create :role, :all_contextual }
 
   let!(:scope) { described_class::Scope.new(user, Item.all) }
 
@@ -49,7 +49,7 @@ RSpec.describe ItemPolicy, type: :policy do
 
   context "as a user with all contextual permissions" do
     before do
-      grant_access! editor_role, on: item, to: user
+      grant_access! contextual_role, on: item, to: user
     end
 
     permissions ".scope" do
@@ -71,6 +71,12 @@ RSpec.describe ItemPolicy, type: :policy do
 
       it "is allowed on a subitem" do
         is_expected.to permit(user, subitem)
+      end
+    end
+
+    permissions :manage_access? do
+      it "is not allowed" do
+        is_expected.not_to permit(user, item)
       end
     end
 

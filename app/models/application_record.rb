@@ -4,7 +4,7 @@
 class ApplicationRecord < ActiveRecord::Base
   self.abstract_class = true
 
-  include ArelHelpers
+  extend ArelHelpers
   include AssociationHelpers
   include DerivedGraphqlTypes
   include LimitToOne
@@ -64,5 +64,7 @@ class ApplicationRecord < ActiveRecord::Base
         randomized.first
       end
     end
+
+    alias scoped_sample sample
   end
 end

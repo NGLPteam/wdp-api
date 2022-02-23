@@ -361,6 +361,9 @@ Style/HashExcept:
 Style/IfWithBooleanLiteralBranches:
   Enabled: true
 
+Style/IfUnlessModifier:
+  Enabled: false
+
 Style/Lambda:
   Enabled: false
 

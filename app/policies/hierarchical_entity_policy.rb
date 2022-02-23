@@ -3,6 +3,9 @@
 # @abstract
 # @see HierarchicalEntity
 class HierarchicalEntityPolicy < ApplicationPolicy
+  # @return [ContextualPermission, nil]
+  attr_reader :contextual_permission
+
   def initialize(user, record)
     super
 
@@ -67,6 +70,11 @@ class HierarchicalEntityPolicy < ApplicationPolicy
     has_hierarchical_scoped_permission? :items, :create
   end
 
+  # @param [Role] role
+  def can_assign_role?(role)
+    contextual_permission.try(:can_assign_role?, role)
+  end
+
   # @api private
   # @param [#to_s] name
   # @see Roles::PermissionGrid#[]
@@ -109,9 +117,9 @@ class HierarchicalEntityPolicy < ApplicationPolicy
   end
 
   def grid_for(user, record)
-    composed_role = ContextualPermission.fetch user, record
+    @contextual_permission = ContextualPermission.fetch user, record
 
-    composed_role&.grid || Roles::EntityPermissionGrid.new
+    @contextual_permission&.grid || Roles::EntityPermissionGrid.new
   end
 
   class Scope < Scope

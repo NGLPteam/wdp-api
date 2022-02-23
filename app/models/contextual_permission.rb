@@ -26,15 +26,23 @@ class ContextualPermission < ApplicationRecord
   belongs_to :hierarchical, polymorphic: true
   belongs_to :user
 
-  # rubocop:disable Rails/HasManyOrHasOneDependent
-  has_many :contextually_assigned_access_grants, primary_key: primary_key, foreign_key: primary_key, inverse_of: :contextual_permission
-  has_many :contextually_assigned_roles, primary_key: primary_key, foreign_key: primary_key, inverse_of: :contextual_permission
-  # rubocop:enable Rails/HasManyOrHasOneDependent
+  has_many_readonly :contextually_assignable_roles, -> { in_order }, primary_key: primary_key, foreign_key: primary_key, inverse_of: :contextual_permission
+  has_many_readonly :contextually_assigned_access_grants, primary_key: primary_key, foreign_key: primary_key, inverse_of: :contextual_permission
+  has_many_readonly :contextually_assigned_roles, primary_key: primary_key, foreign_key: primary_key, inverse_of: :contextual_permission
+
+  has_many :assignable_roles, through: :contextually_assignable_roles, source: :role
 
   has_many :access_grants, -> { distinct }, through: :contextually_assigned_access_grants
   has_many :roles, -> { distinct }, through: :contextually_assigned_roles
 
+  scope :with_associations, -> { preload(:assignable_roles, :roles) }
+
   delegate :permissions, to: :access_control_list
+
+  # @param [Role] role
+  def can_assign_role?(role)
+    assignable_roles.exists? id: role.try(:id)
+  end
 
   # @see Loaders::ContextualPermissionLoader
   # @return [String]
@@ -50,10 +58,30 @@ class ContextualPermission < ApplicationRecord
     # @param [HierarchicalEntity] entity
     # @return [ContextualPermission]
     def fetch(user, entity)
-      return nil if user.blank? || user.anonymous?
-      return nil unless entity.kind_of?(HierarchicalEntity)
+      scope_to(user, entity).first || empty_permission_for(user, entity)
+    end
 
-      for_user(user).for_hierarchical(entity).first || empty_permission_for(user, entity)
+    # @param [User, AnonymousUser, ActiveRecord::Relation<User>] user
+    # @param [HierarchicalEntity, <HierarchicalEntity>] entity
+    # @return [ActiveRecord::Relation<ContextualPermission>]
+    def scope_to(user, entity)
+      return none if user.kind_of?(AnonymousUser)
+
+      for_user(user).for_hierarchical(entity).with_associations
+    end
+
+    def sample(n = nil, base_users: User.all, base_entities: Entity.all)
+      Retryable.retryable(tries: 10, on: ActiveRecord::RecordNotFound, sleep: 0) do
+        actual_n = n.to_i.clamp(1..20)
+
+        users = base_users.where(id: AccessGrant.select(:subject_id)).scoped_sample(actual_n)
+
+        entities = base_entities.readable_by(users).sample_entities(actual_n)
+
+        query = scope_to users, entities
+
+        actual_n == 1 ? query.first! : query.take(actual_n)
+      end
     end
 
     # Calculate an empty permission set for a given user / entity combination.
@@ -66,6 +94,8 @@ class ContextualPermission < ApplicationRecord
         hierarchical: entity,
         user: user
       )
+
+      attrs.delete(:user) unless user.kind_of?(User)
 
       ContextualPermission.new(attrs)
     end

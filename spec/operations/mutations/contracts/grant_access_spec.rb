@@ -1,7 +1,11 @@
 # frozen_string_literal: true
 
 RSpec.describe Mutations::Contracts::GrantAccess, type: :mutation_contract do
-  let!(:current_user) { FactoryBot.create :user }
+  let!(:current_user) { FactoryBot.create :user, :admin }
+
+  let_contract_param!(:entity) { FactoryBot.create :item }
+
+  let_contract_param!(:role) { Role.fetch(:reader) }
 
   let_contract_param!(:user) { FactoryBot.create :user }
 
