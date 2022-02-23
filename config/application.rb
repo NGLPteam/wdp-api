@@ -22,6 +22,7 @@ require "action_cable/engine"
 Bundler.require(*Rails.groups)
 
 require_relative "../lib/patches/alter_store_model_mutation_tracking"
+require_relative "../lib/patches/parse_graphql_json"
 require_relative "../lib/patches/support_lquery"
 require_relative "../lib/patches/support_regconfig"
 require_relative "../lib/patches/support_semantic_version"
