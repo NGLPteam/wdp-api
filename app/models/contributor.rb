@@ -24,6 +24,7 @@ class Contributor < ApplicationRecord
 
   validates :identifier, :kind, presence: true
   validates :identifier, uniqueness: true
+  validates :orcid, orcid: { allow_blank: true }
 
   validates :properties, store_model: true
 

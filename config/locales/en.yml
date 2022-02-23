@@ -55,6 +55,7 @@ en:
       linked_to_itself: "cannot be linked to itself"
       must_be_email: "must be an email"
       must_be_entity: "must be an entity"
+      must_be_orcid: "must be a valid ORCID URL: https://orcid.org/xxxx-xxxx-xxxx-xxxx"
       must_be_slug: "must be a valid slug (all lowercase, no whitespace)"
       must_be_unique_doi: "must be a unique DOI"
       must_be_unique_identifier: "must be a unique slug for the entity"

@@ -24,6 +24,10 @@ class ApplicationContract < Dry::Validation::Contract
     key.failure(:must_be_url) unless value.blank? || AppTypes::URL_PATTERN.match?(value)
   end
 
+  register_macro :orcid_format do
+    key.failure(:must_be_orcid) unless value.nil? || Contributors::Types::ORCID_FORMAT.match?(value)
+  end
+
   register_macro :tag_format do
     key.failure("cannot contain a comma") if key? && value.include?(?,)
   end

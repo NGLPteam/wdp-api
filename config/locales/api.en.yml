@@ -7,6 +7,7 @@ en:
   activerecord:
     errors:
       messages:
+        must_be_orcid: "must be a valid ORCID URL: https://orcid.org/xxxx-xxxx-xxxx-xxxx"
         must_be_entity: "must be an entity"
         must_be_schema_component: "must be a valid schema component (starts with a letter, contains only alphanumeric characters and underscores, all lowercase)"
       models:
