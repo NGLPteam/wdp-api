@@ -258,6 +258,9 @@ RSpec/ExampleLength:
 RSpec/ExpectActual:
   Enabled: false
 
+RSpec/FilePath:
+  Enabled: false
+
 RSpec/IdenticalEqualityAssertion:
   Enabled: true
 
