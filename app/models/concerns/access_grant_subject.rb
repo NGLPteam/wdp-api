@@ -5,6 +5,8 @@
 module AccessGrantSubject
   extend ActiveSupport::Concern
 
+  include AssociationHelpers
+
   included do
     has_many :access_grants, as: :subject, dependent: :destroy
 
