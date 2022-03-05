@@ -13,6 +13,7 @@ module Harvesting
         @attributes = {}.with_indifferent_access
         @props = ::PropertyHash.new
         @assets = {}
+        @incoming_collections = []
         @scalar_assets = {}
         @collected_assets = {}
         @schema_version = nil
@@ -91,6 +92,15 @@ module Harvesting
 
       alias schema! schema_version!
 
+      # @param [String] identifier
+      # @param ["contains", "references"] operator
+      # @return [self]
+      def link_collection!(identifier, operator: "contains")
+        @incoming_collections << Harvesting::Links::Source.new(identifier: identifier, operator: operator)
+
+        return self
+      end
+
       # Assign multiple asset types at once from mappings and arrays
       #
       # @param [{ #to_s => <#to_assigner> }] collected
@@ -168,6 +178,7 @@ module Harvesting
           extracted_attributes: compile_attributes,
           extracted_properties: compile_properties,
           extracted_assets: compile_assets,
+          extracted_links: compile_links,
         }.tap do |h|
           h[:schema_version] = @schema_version if @schema_version.present?
         end
@@ -209,6 +220,12 @@ module Harvesting
           unassociated: @assets.values,
           scalar: scalar,
           collected: collected,
+        }
+      end
+
+      def compile_links
+        {
+          incoming_collections: @incoming_collections,
         }
       end
 
