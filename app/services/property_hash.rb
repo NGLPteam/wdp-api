@@ -8,6 +8,8 @@ class PropertyHash
   DOT_PATH = /\./.freeze
   SINGLE_PATH = /\A[^.]+\z/.freeze
 
+  delegate :size, :length, to: :@inner
+
   def initialize(base_hash = {})
     @inner = {}
 
@@ -82,6 +84,29 @@ class PropertyHash
     end
   end
 
+  # @param [#to_s] path
+  # @raise [KeyError]
+  # @return [Object]
+  def fetch(path)
+    raise KeyError, "Unable to fetch #{path.inspect}" unless key?(path)
+
+    self[path]
+  end
+
+  # @param [#to_s] key
+  def key?(key)
+    path = key.to_s
+
+    case path
+    when KEY_PATH
+      key.in?(paths)
+    when SINGLE_PATH
+      @inner.key? path
+    else
+      false
+    end
+  end
+
   def merge(other)
     other_hash = other.kind_of?(PropertyHash) ? other : PropertyHash.new(other)
 
@@ -112,6 +137,11 @@ class PropertyHash
 
   def paths
     derive_path_hash.keys
+  end
+
+  # @return [{ String => Object }]
+  def to_flat_hash
+    derive_path_hash
   end
 
   def to_h

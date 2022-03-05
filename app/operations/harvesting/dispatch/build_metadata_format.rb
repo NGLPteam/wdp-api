@@ -6,6 +6,7 @@ module Harvesting
       include Dry::Monads[:result]
       include WDPAPI::Deps[
         jats: "harvesting.metadata.formats.jats",
+        mets: "harvesting.metadata.formats.mets",
         mods: "harvesting.metadata.formats.mods",
       ]
 
@@ -21,6 +22,8 @@ module Harvesting
           case metadata_format
           when "jats"
             jats
+          when "mets"
+            mets
           when "mods"
             mods
           else

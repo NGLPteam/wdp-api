@@ -16,6 +16,7 @@
 ActiveSupport::Inflector.inflections(:en) do |inflect|
   inflect.acronym "CRUD"
   inflect.acronym "DOI"
+  inflect.acronym "DSL"
   inflect.acronym "ISBN"
   inflect.acronym "ISSN"
   inflect.acronym "JATS"
@@ -26,13 +27,18 @@ ActiveSupport::Inflector.inflections(:en) do |inflect|
   inflect.acronym "ORCID"
   inflect.acronym "NGLP"
   inflect.acronym "PDF"
+  inflect.acronym "PREMIS"
   inflect.acronym "URL"
   inflect.acronym "WDPAPISchema"
   inflect.acronym "WDPAPI"
+  inflect.acronym "XML"
+  inflect.acronym "XPath"
 
   inflect.uncountable "JATS"
   inflect.uncountable "METS"
   inflect.uncountable "MODS"
+  inflect.uncountable "PREMIS"
+  inflect.uncountable "XML"
 end
 
 URLValidator = ActiveModel::Validations::UrlValidator
