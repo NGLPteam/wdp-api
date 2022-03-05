@@ -15,6 +15,7 @@ module Harvesting
         apply_properties: "schemas.instances.apply",
         attach_assets: "harvesting.entities.attach_assets",
         attach_contribution: "harvesting.contributions.attach",
+        connect_link: "links.connect",
       ]
 
       # @param [HarvestEntity] entity
@@ -66,6 +67,8 @@ module Harvesting
         harvest_entity.children.find_each do |child|
           yield attach! child, parent: entity
         end
+
+        yield upsert_links! harvest_entity, entity
 
         Success entity
       end
@@ -238,6 +241,26 @@ module Harvesting
         else
           Success :item
         end
+      end
+
+      # @param [String, nil] identifier
+      # @return [Collection, nil]
+      def existing_collection_from!(identifier)
+        return nil if identifier.blank?
+
+        target_entity.descendant_collection_by! identifier
+      end
+
+      # @param [HarvestEntity] harvest_entity
+      # @param [ChildEntity] entity
+      def upsert_links!(harvest_entity, entity)
+        harvest_entity.extracted_links.incoming_collections.each do |source|
+          collection = existing_collection_from! source.identifier
+
+          yield connect_link.call(collection, entity, source.operator)
+        end
+
+        Success()
       end
     end
   end
