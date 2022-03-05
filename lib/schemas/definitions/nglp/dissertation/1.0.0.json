@@ -5,16 +5,20 @@
   "version": "1.0.0",
   "kind": "item",
   "orderings": [],
+  "core": {
+    "issn": true
+  },
   "properties": [
     { "path": "abstract", "label": "Abstract", "type": "full_text", "required": false, "wide": true, "function": "content" },
     { "path": "citation", "label": "How to Cite", "type": "markdown", "required": false, "function": "content" },
     { "path": "pdf_version", "label": "PDF Version", "type": "asset", "required": false, "function": "content" },
-    {"path": "publisher", "type": "string", "required": true, "function": "metadata"},
-    {"path": "advisor", "type": "string", "required": true, "function": "metadata"},
+    { "path": "text_version", "label": "Text Version", "type": "asset", "required": false, "function": "content" },
+    { "path": "publisher", "type": "string", "required": false, "function": "metadata" },
+    { "path": "advisor", "type": "string", "required": false, "function": "metadata" },
     { "path": "language", "label": "language", "type": "string", "required": false, "function": "metadata" },
     { "path": "graduation_date", "label": "Graduation Date", "type": "variable_date", "function": "metadata" },
     { "path": "streaming_media", "label": "Streaming Media", "type": "url", "function": "metadata" },
-    { "path":  "keywords", "label":  "keywords", "type": "tags", "required":  true, "function": "metadata"},
+    { "path": "keywords", "label":  "keywords", "type": "tags", "required": false, "function": "metadata"},
     {
       "path": "access",
       "options": [
@@ -24,7 +28,7 @@
         { "label": "open access", "value": "open access" }
       ],
       "type": "select",
-      "required": true,
+      "required": false,
       "function": "metadata"
     },
     {
@@ -60,7 +64,6 @@
     },
     { "path": "rights_statement", "label": "Rights Statement", "type": "full_text", "required": false, "wide": true, "function": "metadata" },
     { "path": "peer_review", "label": "Peer Reviewed", "type": "boolean", "function": "metadata" },
-
     {
       "path": "degree",
       "type": "group",
@@ -70,18 +73,21 @@
           "label": "Degree Name", "path": "name", "type": "string", "function": "metadata"
         },
         {
-          "label": "Degree Level", "path": "level", "type": "string", "required": true, "function": "metadata"
+          "label": "Degree Level", "path": "level", "type": "string", "required": false, "function": "metadata"
         },
         {
           "label": "Degree Department", "path": "program", "type": "string", "function": "metadata"
         },
         {
-          "label": "Degree Grantor", "path": "grantor", "type": "string", "required": true, "function": "metadata"
+          "label": "Degree Grantor", "path": "grantor", "type": "string", "required": false, "function": "metadata"
         },
         {
-          "label": "Degree Awarded Date", "path": "date", "type": "variable_date", "required": true, "function": "metadata"
+          "label": "Degree Awarded Date", "path": "date", "type": "variable_date", "required": false, "function": "metadata"
         }
       ]
-    }
+    },
+    { "path": "accessioned", "type": "variable_date", "label": "Accessioned", "description": "When the ETD was added to a collection", "function": "metadata" },
+    { "path": "available", "type": "variable_date", "label": "Available", "description": "When the ETD was made available", "function": "metadata" },
+    { "path": "issued", "type": "variable_date", "label": "issued", "description": "When the ETD was issued", "function": "metadata" }
   ]
 }
