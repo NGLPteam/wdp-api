@@ -25,7 +25,7 @@ module Harvesting
       def upsert_by_kind(kind, attributes, properties)
         props = yield props_for_kind kind, properties
 
-        identifier = attributes.delete(:identifier) || props.digest
+        identifier = attributes.delete(:identifier).presence || props.digest
 
         contributor = harvest_source.harvest_contributors.by_identifier(identifier).first_or_initialize
 
