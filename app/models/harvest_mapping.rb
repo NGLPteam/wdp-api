@@ -6,7 +6,7 @@ class HarvestMapping < ApplicationRecord
 
   belongs_to :harvest_source, inverse_of: :harvest_mappings
   belongs_to :harvest_set, inverse_of: :harvest_mappings, optional: true
-  belongs_to :collection, inverse_of: :harvest_mappings
+  belongs_to :target_entity, inverse_of: :harvest_mappings, polymorphic: true
 
   has_many :harvest_attempts, inverse_of: :harvest_mapping, dependent: :destroy
 

@@ -6,6 +6,7 @@ class Community < ApplicationRecord
   include HasHeroImageLayout
   include HasSchemaDefinition
   include HasSystemSlug
+  include HarvestTarget
   include HierarchicalEntity
   include ImageUploader::Attachment.new(:logo)
 

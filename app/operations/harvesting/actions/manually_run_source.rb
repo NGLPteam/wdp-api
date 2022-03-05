@@ -10,11 +10,11 @@ module Harvesting
       ]
 
       # @param [HarvestSource] harvest_source
-      # @param [Collection] collection
+      # @param [HarvestTarget] target_entity
       # @param [HarvestSet, nil] set
       # @return [Dry::Monads::Result]
-      def call(harvest_source, collection, set: nil)
-        attempt = yield create_manual_attempt.call harvest_source, collection, set: set
+      def call(harvest_source, target_entity, set: nil)
+        attempt = yield create_manual_attempt.call harvest_source, target_entity, set: set
 
         yield extract_records.call attempt
 

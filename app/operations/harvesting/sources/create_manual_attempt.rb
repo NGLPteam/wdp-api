@@ -8,11 +8,13 @@ module Harvesting
       include MonadicPersistence
 
       # @param [HarvestSource] harvest_source
+      # @param [HarvestTarget] target_entity
+      # @param [HarvestSet, nil] set
       # @return [HarvestAttempt]
-      def call(harvest_source, collection, set: nil)
+      def call(harvest_source, target_entity, set: nil)
         attributes = harvest_source.slice(:metadata_format)
 
-        attributes[:collection_id] = collection.id
+        attributes[:target_entity] = target_entity
 
         attributes[:harvest_source_id] = harvest_source.id
 

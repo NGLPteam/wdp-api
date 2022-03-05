@@ -5,6 +5,7 @@ class Collection < ApplicationRecord
   include Attachable
   include AutoIdentifier
   include Contributable
+  include HarvestTarget
   include HasEntityVisibility
   include HasSchemaDefinition
   include HasSystemSlug
@@ -23,14 +24,9 @@ class Collection < ApplicationRecord
 
   has_many :items, dependent: :destroy, inverse_of: :collection
 
-  # rubocop:disable Rails/HasManyOrHasOneDependent
-  has_many :related_collection_links, foreign_key: :source_id, inverse_of: :source
-  has_many :incoming_collection_links, foreign_key: :target_id, class_name: "RelatedCollectionLink", inverse_of: :target
-  has_many :related_collections, through: :related_collection_links, source: :target
-  # rubocop:enable Rails/HasManyOrHasOneDependent
-
-  has_many :harvest_attempts, inverse_of: :collection, dependent: :destroy
-  has_many :harvest_mappings, inverse_of: :collection, dependent: :destroy
+  has_many_readonly :related_collection_links, foreign_key: :source_id, inverse_of: :source
+  has_many_readonly :incoming_collection_links, foreign_key: :target_id, class_name: "RelatedCollectionLink", inverse_of: :target
+  has_many_readonly :related_collections, through: :related_collection_links, source: :target
 
   validates :identifier, :title, presence: true
   validates :identifier, uniqueness: { scope: %i[community_id parent_id] }

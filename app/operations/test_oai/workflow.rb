@@ -14,14 +14,16 @@ module TestOAI
       manually_run_source: "harvesting.actions.manually_run_source",
     ]
 
-    def call(community_options: {}, source_options: {}, single_collection: {}, set_identifiers: [])
+    def call(community_options: {}, source_options: {}, single_collection: {}, set_identifiers: [], on_community: false)
       community = yield scaffold_community.call(**community_options)
 
       source = yield scaffold_source.call(**source_options)
 
       yield maybe_extract_sets.call(source)
 
-      if set_identifiers.present?
+      if on_community
+        yield manually_run_source.call source, community
+      elsif set_identifiers.present?
         yield scaffold_collections_and_mappings.call(community, source, *set_identifiers)
 
         yield run_harvest_mappings.call source

@@ -3493,7 +3493,7 @@ CREATE TABLE public.harvest_attempts (
     harvest_source_id uuid NOT NULL,
     harvest_set_id uuid,
     harvest_mapping_id uuid,
-    collection_id uuid NOT NULL,
+    collection_id uuid,
     kind text NOT NULL,
     description text,
     metadata jsonb DEFAULT '{}'::jsonb NOT NULL,
@@ -3502,7 +3502,9 @@ CREATE TABLE public.harvest_attempts (
     ended_at timestamp without time zone,
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    metadata_format text NOT NULL
+    metadata_format text NOT NULL,
+    target_entity_type text NOT NULL,
+    target_entity_id uuid NOT NULL
 );
 
 
@@ -3593,7 +3595,9 @@ CREATE TABLE public.harvest_mappings (
     mapping_options jsonb DEFAULT '{}'::jsonb NOT NULL,
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    metadata_format text NOT NULL
+    metadata_format text NOT NULL,
+    target_entity_type text NOT NULL,
+    target_entity_id uuid NOT NULL
 );
 
 
@@ -5879,6 +5883,13 @@ CREATE INDEX index_harvest_attempts_on_harvest_source_id ON public.harvest_attem
 
 
 --
+-- Name: index_harvest_attempts_on_target_entity; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_harvest_attempts_on_target_entity ON public.harvest_attempts USING btree (target_entity_type, target_entity_id);
+
+
+--
 -- Name: index_harvest_contributions_on_harvest_contributor_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -5974,6 +5985,13 @@ CREATE INDEX index_harvest_mappings_on_harvest_set_id ON public.harvest_mappings
 --
 
 CREATE INDEX index_harvest_mappings_on_harvest_source_id ON public.harvest_mappings USING btree (harvest_source_id);
+
+
+--
+-- Name: index_harvest_mappings_on_target_entity; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_harvest_mappings_on_target_entity ON public.harvest_mappings USING btree (target_entity_type, target_entity_id);
 
 
 --
@@ -8580,6 +8598,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20220221150645'),
 ('20220221151923'),
 ('20220221160509'),
-('20220221184512');
+('20220221184512'),
+('20220303220515');
 
 
