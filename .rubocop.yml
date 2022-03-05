@@ -143,6 +143,7 @@ Metrics/CyclomaticComplexity:
   Exclude:
     - "app/operations/**/*.rb"
     - "app/services/**/*.rb"
+    - "lib/**/*.rb"
 
 Metrics/MethodLength:
   Max: 30
