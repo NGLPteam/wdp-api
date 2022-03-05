@@ -19,6 +19,8 @@ class HarvestEntity < ApplicationRecord
 
   attribute :extracted_assets, Harvesting::Assets::Mapping.to_type, default: proc { {} }
 
+  scope :latest_attempt, -> { where(harvest_record_id: HarvestRecord.latest_attempt.select(:id)) }
+
   scope :filtered_by_schema_version, ->(schemas) { where(schema_version: SchemaVersion.filtered_by(schemas)) }
   scope :by_metadata_kind, ->(kind) { where(metadata_kind: kind) }
   scope :for_metadata_format, ->(metadata_format) { joins(:harvest_record).merge(HarvestRecord.for_metadata_format(metadata_format)) }
