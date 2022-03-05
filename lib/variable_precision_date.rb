@@ -51,11 +51,39 @@ class VariablePrecisionDate
 
   private_constant :SQL_REPRESENTATION
 
+  ISO_8601 = /\A\d{4}\D\d{2}\D\d{2}\z/.freeze
+
+  YEAR_INT = ->(o) { o.kind_of?(Integer) && o.to_s.length == 4 }
+
+  YEAR_ONLY = /\A(?<year>\d{4})\z/.freeze
+
+  YEAR_MONTH = /\A(?<year>\d{4})\D(?<month>\d{2})\z/.freeze
+
+  XMLSCHEMA_TIME_FORMAT = /\A\s*
+  (-?\d+)-(\d\d)-(\d\d)
+  T
+  (\d\d):(\d\d):(\d\d)
+  (\.\d+)?
+  (Z|[+-]\d\d(?::?\d\d)?)?
+  \s*\z/ix.freeze
+
   # @api private
   # An array of `===`-comparable objects that represent something that can be parsed into a {VariablePrecisionDate}.
   #
   # @see VariablePrecisionDate.parse
-  PARSEABLE = [self.class, SQL_REPRESENTATION, HashSchema, Dry::Types["json.date"]].freeze
+  PARSEABLE = [
+    self.class,
+    ::Date,
+    ::DateTime,
+    Dry::Types["json.date"],
+    HashSchema,
+    SQL_REPRESENTATION,
+    ::Time,
+    XMLSCHEMA_TIME_FORMAT,
+    YEAR_INT,
+    YEAR_MONTH,
+    YEAR_ONLY,
+  ].freeze
 
   # An encoder to generate a proper composite record for SQL.
   #
@@ -170,16 +198,27 @@ class VariablePrecisionDate
       case value
       when ::VariablePrecisionDate
         value
+      when ::Time, ::DateTime
+        # It's important to try DateTime before Date, as DateTime < Date
+        new value.to_date, :day
       when SQL_REPRESENTATION
         parse_sql value
-      when Date, Dry::Types["json.date"]
+      when ::Date, Dry::Types["json.date"]
         new value, :day
+      when YEAR_INT
+        from_year value
+      when YEAR_MONTH
+        from_month Regexp.last_match[:year], Regexp.last_match[:month]
+      when YEAR_ONLY
+        from_year Regexp.last_match[:year]
+      when XMLSCHEMA_TIME_FORMAT
+        parse Time.xmlschema(value)
       when HashSchema
         validated = HashSchema[value]
 
         new validated[:value], validated[:precision]
       else
-        new nil, :none
+        none
       end
     end
 
