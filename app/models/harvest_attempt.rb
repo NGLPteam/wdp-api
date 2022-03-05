@@ -22,8 +22,19 @@ class HarvestAttempt < ApplicationRecord
     @logger ||= Harvesting::Logs::Attempt.new self
   end
 
+  # @see Harvesting::Actions::ExtractRecords
+  def extract_records!(skip_prepare: false)
+    call_operation("harvesting.actions.extract_records", self, skip_prepare: skip_prepare)
+  end
+
   def reprocess!(reprepare: true)
     call_operation("harvesting.actions.reprocess_attempt", self, reprepare: reprepare)
+  end
+
+  def asynchronously_reprocess!(reprepare: true)
+    harvest_records.find_each do |record|
+      Harvesting::UpsertEntitiesForRecordJob.perform_later record, reprepare: reprepare
+    end
   end
 
   private
