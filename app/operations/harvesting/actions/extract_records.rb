@@ -15,7 +15,7 @@ module Harvesting
 
       # @param [HarvestAttempt] harvest_attempt
       # @return [Integer] the count of records harvested
-      def call(harvest_attempt)
+      def call(harvest_attempt, skip_prepare: false)
         harvest_attempt.touch :began_at
 
         wrap_middleware.call harvest_attempt do
@@ -24,7 +24,7 @@ module Harvesting
 
             harvest_attempt.harvest_records.find_each do |harvest_record|
               yield prepare_entities_from_record.call harvest_record
-            end
+            end unless skip_prepare
           end
         end
 
