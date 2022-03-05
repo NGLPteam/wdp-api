@@ -10,7 +10,7 @@ module Harvesting
       # @param [HarvestMapping] harvest_mapping
       # @return [HarvestAttempt]
       def call(harvest_mapping)
-        attributes = harvest_mapping.slice(:harvest_source_id, :harvest_set_id, :collection_id, :metadata_format)
+        attributes = harvest_mapping.slice(:harvest_source_id, :harvest_set_id, :target_entity_id, :target_entity_type, :metadata_format)
 
         attributes[:harvest_mapping_id] = harvest_mapping.id
 

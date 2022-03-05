@@ -8,7 +8,7 @@ module Harvesting
     # it will fall back to an `default:item`.
     class Upsert
       include Dry::Monads[:do, :result]
-      include Dry::Effects.Resolve(:collection)
+      include Dry::Effects.Resolve(:target_entity)
       include Dry::Effects.Resolve(:schemas)
       include MonadicPersistence
       include WDPAPI::Deps[
@@ -18,14 +18,14 @@ module Harvesting
       ]
 
       # @note The provided harvest entity must be `root` or else it would cause incongruent
-      #   upsertions: something intended at the second level relative to the initial `Collection`
+      #   upsertions: something intended at the second level relative to the initial {HarvestTarget}
       #   would be right under it instead.
       # @param [HarvestEntity] entity
-      # @return [Collection, Item] the root HarvestEntity's associated entity
+      # @return [Collection, Item] the root {HarvestEntity}'s associated entity
       def call(harvest_entity)
         return Failure[:must_be_root, "The provided entity to upsert must be a root"] unless harvest_entity.root?
 
-        entity = yield attach! harvest_entity, parent: collection
+        entity = yield attach! harvest_entity, parent: target_entity
 
         Success entity
       end
@@ -160,6 +160,8 @@ module Harvesting
         child_type = yield type_for harvest_entity
 
         case [parent_type, child_type]
+        when [:community, :collection]
+          Success parent.collections
         when [:collection, :item]
           Success parent.items
         when [:collection, :collection], [:item, :item]
@@ -177,6 +179,8 @@ module Harvesting
       # @return [:collection, :item]
       def type_for(model)
         case model
+        when ::Community
+          Success :community
         when ::Collection
           Success :collection
         when ::Item

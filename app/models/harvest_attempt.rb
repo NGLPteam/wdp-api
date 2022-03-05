@@ -5,7 +5,7 @@ class HarvestAttempt < ApplicationRecord
   include ScopesForMetadataFormat
   include TimestampScopes
 
-  belongs_to :collection, inverse_of: :harvest_attempts
+  belongs_to :target_entity, inverse_of: :harvest_attempts, polymorphic: true
   belongs_to :harvest_source, inverse_of: :harvest_attempts
   belongs_to :harvest_set, inverse_of: :harvest_attempts, optional: true
   belongs_to :harvest_mapping, inverse_of: :harvest_attempts, optional: true

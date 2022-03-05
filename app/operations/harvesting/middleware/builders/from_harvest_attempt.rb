@@ -16,7 +16,7 @@ module Harvesting
 
           yield set! :harvest_set, harvest_attempt.harvest_set
           yield set! :harvest_mapping, harvest_attempt.harvest_mapping
-          yield set! :collection, harvest_attempt.collection
+          yield set! :target_entity, harvest_attempt.target_entity
 
           Success nil
         end
