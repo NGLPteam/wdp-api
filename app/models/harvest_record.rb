@@ -12,6 +12,8 @@ class HarvestRecord < ApplicationRecord
 
   has_many :harvest_entities, inverse_of: :harvest_record, dependent: :destroy
 
+  scope :latest_attempt, -> { where(harvest_attempt_id: ::HarvestAttempt.in_recent_order.limit(1).select(:id)) }
+
   # @return [void]
   def asynchronously_prepare_entities!
     Harvesting::PrepareEntitiesFromRecordJob.perform_later self
