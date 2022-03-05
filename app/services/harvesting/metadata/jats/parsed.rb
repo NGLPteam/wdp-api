@@ -3,37 +3,21 @@
 module Harvesting
   module Metadata
     module JATS
-      class Parsed
-        include Dry::Core::Memoizable
-        include Dry::Initializer[undefined: false].define -> do
-          param :raw_source, Dry::Types["coercible.string"]
-        end
-
-        MB_SPACE = " "
-
-        LOOKS_LIKE_INTEGER = /\A\d+\z/.freeze
-
+      # Metadata parser for the JATS metadata format
+      class Parsed < Harvesting::Metadata::BaseXMLExtractor
         # Some issue numbers are things like `2/3`. We'll parse them as 2 for sorting purposes.
         ODDLY_FORMATTED_ISSUE_NUMBER = %r,\A(\d+)/\d+\z,.freeze
 
         # @!attribute [r] front
         # @return [Nokogiri::XML::Element, nil]
-        attr_reader :front
+        memoize def front
+          root.at_xpath("/xmlns:article/xmlns:front")
+        end
 
         # @!attribute [r] article_meta
         # @return [Nokogiri::XML::Element, nil]
-        attr_reader :article_meta
-
-        # @!attribute [r] root
-        # @return [Nokogiri::XML::Document]
-        attr_reader :root
-
-        def initialize(*)
-          super
-
-          @root = Nokogiri::XML(raw_source)
-          @front = @root.at_xpath("/xmlns:article/xmlns:front")
-          @article_meta = @root.at_xpath("/xmlns:article/xmlns:front/xmlns:article-meta")
+        memoize def article_meta
+          root.at_xpath("/xmlns:article/xmlns:front/xmlns:article-meta")
         end
 
         def has_article_identifier?
@@ -41,7 +25,7 @@ module Harvesting
         end
 
         memoize def body
-          content = @root.xpath("/xmlns:article/xmlns:body/*")&.to_html
+          content = root.xpath("/xmlns:article/xmlns:body/*")&.to_html
 
           return if content.blank?
 
@@ -102,7 +86,7 @@ module Harvesting
 
         # @return [String]
         memoize def title
-          find_candidate_text_for(@article_meta, TITLE_CANDIDATES, fallback: "Unknown Article Title")
+          find_candidate_text_for(article_meta, TITLE_CANDIDATES, fallback: "Unknown Article Title")
         end
 
         memoize def fpage
@@ -155,7 +139,7 @@ module Harvesting
         #   They could be roman numerals, alphanumeric, etc.
         # @return [Integer, nil]
         memoize def issue_sortable_number
-          return issue_id.to_i if LOOKS_LIKE_INTEGER.match? issue_id
+          return issue_id.to_i if looks_like_integer?(issue_id)
 
           # :nocov:
           case issue_number
@@ -256,43 +240,13 @@ module Harvesting
           text_from from_article_meta(%,./xmlns:aff[@id="#{rid}"]/xmlns:institution/text(),)
         end
 
-        # @param [#xpath, nil] element
-        # @param [String] xpath
-        # @return [Nokogiri::XML::NodeSet, nil]
-        def all_from(element, xpath)
-          element&.xpath(xpath)
-        end
-
         def all_from_article_meta(xpath)
-          all_from @article_meta, xpath
+          all_from article_meta, xpath
         end
 
         # @api private
         def from_article_meta(xpath)
-          from @article_meta, xpath
-        end
-
-        # @param [#at_xpath, nil] element
-        # @param [String] xpath
-        # @return [Nokogiri::XML::Element, nil]
-        def from(element, xpath)
-          element&.at_xpath(xpath)
-        end
-
-        # @api private
-        # @param [Nokogiri::XML::Element, nil] element
-        # @param [Integer, nil] fallback
-        # @return [Integer, nil]
-        def int_from(element, fallback: nil)
-          element&.text&.to_i || fallback
-        end
-
-        # @api private
-        # @param [Nokogiri::XML::Element, nil] element
-        # @param [String, nil] fallback
-        # @return [String, nil]
-        def text_from(element, fallback: nil)
-          element&.text&.tr(MB_SPACE, " ")&.strip || fallback
+          from article_meta, xpath
         end
 
         def generate_affiliated_organization_contribution_from(aff)
@@ -348,16 +302,6 @@ module Harvesting
           find_candidate_text_for contrib, CONTRIB_ROLE_CANDIDATE_PATHS
         end
 
-        def find_candidate_text_for(element, paths, fallback: nil)
-          Array(paths).each do |path|
-            value = element.at_xpath(path)&.text
-
-            return value if value.present?
-          end
-
-          return fallback
-        end
-
         # @param [Nokogiri::XML::Element] contrib
         def generate_person_contributor_from(contrib)
           rid = contrib.at_xpath(%,./xmlns:xref[@ref-type="aff"][@rid]/@rid,)&.text
@@ -384,7 +328,7 @@ module Harvesting
           }
         end
 
-        # # @api private
+        # @api private
         # @param [Nokogiri::XML::Element] element
         # @return [VariablePrecisionDate]
         def parse_variable_pubdate(element)

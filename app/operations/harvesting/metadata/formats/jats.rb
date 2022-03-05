@@ -7,6 +7,7 @@ module Harvesting
         include WDPAPI::Deps[
           augment_middleware: "harvesting.metadata.jats.augment_middleware",
           extract_entities: "harvesting.metadata.jats.extract_entities",
+          validate_raw_metadata: "harvesting.metadata.jats.validate_raw_metadata",
         ]
       end
     end

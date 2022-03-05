@@ -341,6 +341,9 @@ Style/DocumentDynamicEvalDefinition:
 Style/DoubleNegation:
   Enabled: false
 
+Style/EmptyLiteral:
+  Enabled: false
+
 Style/EndlessMethod:
   Enabled: true
 

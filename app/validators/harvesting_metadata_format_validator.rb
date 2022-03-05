@@ -5,6 +5,7 @@ class HarvestingMetadataFormatValidator < ActiveModel::EachValidator
   # The currently supported metadata formats.
   SUPPORTED_FORMATS = %w[
     jats
+    mets
     mods
   ].freeze
 

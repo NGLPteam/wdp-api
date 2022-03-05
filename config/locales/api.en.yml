@@ -38,3 +38,10 @@ en:
           attributes:
             path:
               invalid: "is expected to start with '%{grouping}', got '%{value}'"
+  xml_validation:
+    namespace:
+      invalid: "%{namespace} should be %{expected}, but it is %{actual}"
+      missing: "%{namespace} should be %{expected}, but it is not present"
+    root_tag:
+      fragment: "must be '%{name}', but this is a fragment"
+      mismatch: "must be '%{name}', but it is '%{actual}'"
