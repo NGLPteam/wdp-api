@@ -37,6 +37,10 @@ class HarvestEntity < ApplicationRecord
   validates :identifier, presence: true, uniqueness: { scope: :harvest_record_id }
   validate :exclusive_parentage!
 
+  def inspect
+    "HarvestEntity(#{identifier.inspect}, metadata_kind=#{metadata_kind.inspect}, root: #{root?})"
+  end
+
   def has_existing_parent?
     existing_parent_id.present?
   end
@@ -51,7 +55,7 @@ class HarvestEntity < ApplicationRecord
   def to_failed_upsert(reason = nil)
     metadata = {
       harvest_entity_id: id,
-      reason: reason.as_json,
+      reason: flatten_reason(reason),
     }
 
     message = "Could not upsert HarvestEntity(#{id})"
@@ -60,6 +64,20 @@ class HarvestEntity < ApplicationRecord
   end
 
   private
+
+  def flatten_reason(reason)
+    case reason
+    in Failure[:invalid, ApplicationRecord => model]
+      {
+        code: :invalid,
+        model: model.model_name,
+        id: model.id,
+        errors: model.errors.as_json,
+      }
+    else
+      reason.as_json
+    end
+  end
 
   # @return [void]
   def exclusive_parentage!

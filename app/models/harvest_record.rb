@@ -13,7 +13,14 @@ class HarvestRecord < ApplicationRecord
 
   has_many :harvest_entities, inverse_of: :harvest_record, dependent: :destroy
 
+  has_many_readonly :collections, through: :harvest_entities, source: :entity, source_type: "Collection"
+  has_many_readonly :items, through: :harvest_entities, source: :entity, source_type: "Item"
+
   scope :latest_attempt, -> { where(harvest_attempt_id: ::HarvestAttempt.in_recent_order.limit(1).select(:id)) }
+
+  def inspect
+    "HarvestRecord[:#{metadata_format}](#{identifier.inspect})"
+  end
 
   # @return [void]
   def asynchronously_prepare_entities!
