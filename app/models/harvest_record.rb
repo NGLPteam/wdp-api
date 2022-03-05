@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class HarvestRecord < ApplicationRecord
+  include HasHarvestErrors
   include ScopesForIdentifier
   include ScopesForMetadataFormat
 

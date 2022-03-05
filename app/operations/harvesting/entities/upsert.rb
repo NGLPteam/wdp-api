@@ -17,20 +17,32 @@ module Harvesting
         attach_contribution: "harvesting.contributions.attach",
       ]
 
+      # @param [HarvestEntity] entity
+      # @return [Dry::Monads::Success(ChildEntity)] the root {HarvestEntity}'s associated entity
+      def call(harvest_entity)
+        harvest_entity.clear_harvest_errors!
+
+        upsert_root(harvest_entity).tap do |result|
+          result.or do |reason|
+            harvest_entity.log_harvest_error!(*harvest_entity.to_failed_upsert(reason))
+          end
+        end
+      end
+
+      private
+
       # @note The provided harvest entity must be `root` or else it would cause incongruent
       #   upsertions: something intended at the second level relative to the initial {HarvestTarget}
       #   would be right under it instead.
       # @param [HarvestEntity] entity
-      # @return [Collection, Item] the root {HarvestEntity}'s associated entity
-      def call(harvest_entity)
+      # @return [Dry::Monads::Success(ChildEntity)] the root {HarvestEntity}'s associated entity
+      def upsert_root(harvest_entity)
         return Failure[:must_be_root, "The provided entity to upsert must be a root"] unless harvest_entity.root?
 
         entity = yield attach! harvest_entity, parent: target_entity
 
         Success entity
       end
-
-      private
 
       def attach!(harvest_entity, parent:)
         entity = yield find_or_initialize_entity_for parent, harvest_entity
