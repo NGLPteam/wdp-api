@@ -25,6 +25,7 @@ class EntityDescendant < ApplicationRecord
   belongs_to :schema_version, inverse_of: :entity_descendants
 
   scope :by_max_depth, ->(value) { build_max_depth_scope_for(value) }
+  scope :collections, -> { filtered_by_scope :collection }
 
   # A pattern for matching "all" scopes.
   ALL = /\Aall\z/.freeze
@@ -62,6 +63,11 @@ class EntityDescendant < ApplicationRecord
       when ValidDepth
         where arel_table[:relative_depth].lteq(value)
       end
+    end
+
+    # @return [ActiveRecord::Relation]
+    def for_collection_filter
+      collections.select(:descendant_id)
     end
   end
 end
