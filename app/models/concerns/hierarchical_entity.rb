@@ -91,6 +91,19 @@ module HierarchicalEntity
     title
   end
 
+  # @param [String] identifier
+  # @return [Collection, nil]
+  def descendant_collection_by(identifier)
+    Collection.where(id: entity_descendants.for_collection_filter).by_identifier(identifier).first
+  end
+
+  # @param [String] identifier
+  # @raise [ActiveRecord::RecordNotFound]
+  # @return [Collection]
+  def descendant_collection_by!(identifier)
+    Collection.where(id: entity_descendants.for_collection_filter).by_identifier(identifier).first!
+  end
+
   # This potentially connects to another "layer" in the hierarchy.
   #
   # For items, it can be an item or a collection.
