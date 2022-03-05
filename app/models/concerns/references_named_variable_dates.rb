@@ -7,8 +7,6 @@
 module ReferencesNamedVariableDates
   extend ActiveSupport::Concern
 
-  include ArelHelpers
-
   included do
     delegate :named_variable_date_global_path_for, to: :class
 
