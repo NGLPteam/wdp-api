@@ -13,9 +13,13 @@ module Harvesting
       prepend Harvesting::HushActiveRecord
 
       def call(harvest_record)
+        harvest_record.clear_harvest_errors!
+
         wrap_middleware.call(harvest_record) do
           silence_activerecord do
             yield metadata_format.extract_entities.call harvest_record.raw_metadata_source if harvest_record.raw_metadata_source?
+          rescue Dry::Struct::Error, Harvesting::Error => e
+            harvest_record.log_harvest_error! :could_not_prepare_record, e.message, exception_klass: e.class.name, backtrace: e.backtrace
           end
         end
 

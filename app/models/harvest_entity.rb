@@ -3,6 +3,7 @@
 # A staging ground for an {Item} or a {Collection}, extracted
 # from metadata contained within a {HarvestRecord}.
 class HarvestEntity < ApplicationRecord
+  include HasHarvestErrors
   include ScopesForIdentifier
 
   has_closure_tree
@@ -34,5 +35,18 @@ class HarvestEntity < ApplicationRecord
   # @return [void]
   def upsert!
     call_operation("harvesting.actions.upsert_entity", self)
+  end
+
+  # @param [#as_json] reason
+  # @return [(Symbol, String, Hash)]
+  def to_failed_upsert(reason = nil)
+    metadata = {
+      harvest_entity_id: id,
+      reason: reason.as_json,
+    }
+
+    message = "Could not upsert HarvestEntity(#{id})"
+
+    [:failed_entity_upsert, message, metadata]
   end
 end

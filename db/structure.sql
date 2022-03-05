@@ -3578,6 +3578,22 @@ CREATE TABLE public.harvest_entity_hierarchies (
 
 
 --
+-- Name: harvest_errors; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.harvest_errors (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    source_type character varying NOT NULL,
+    source_id uuid NOT NULL,
+    code text,
+    message text,
+    metadata jsonb DEFAULT '{}'::jsonb NOT NULL,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+--
 -- Name: harvest_mappings; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -4625,6 +4641,14 @@ ALTER TABLE ONLY public.harvest_contributors
 
 ALTER TABLE ONLY public.harvest_entities
     ADD CONSTRAINT harvest_entities_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: harvest_errors harvest_errors_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.harvest_errors
+    ADD CONSTRAINT harvest_errors_pkey PRIMARY KEY (id);
 
 
 --
@@ -5964,6 +5988,13 @@ CREATE INDEX index_harvest_entities_on_schema_version_id ON public.harvest_entit
 --
 
 CREATE UNIQUE INDEX index_harvest_entities_uniqueness ON public.harvest_entities USING btree (harvest_record_id, identifier);
+
+
+--
+-- Name: index_harvest_errors_on_source; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_harvest_errors_on_source ON public.harvest_errors USING btree (source_type, source_id);
 
 
 --
@@ -8599,6 +8630,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20220221151923'),
 ('20220221160509'),
 ('20220221184512'),
-('20220303220515');
+('20220303220515'),
+('20220304214235');
 
 
