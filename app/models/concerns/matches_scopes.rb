@@ -3,8 +3,6 @@
 module MatchesScopes
   extend ActiveSupport::Concern
 
-  include ArelHelpers
-
   included do
     scope :matching_scopes, ->(*scopes) { build_matching_scopes_query_for(*scopes) }
   end

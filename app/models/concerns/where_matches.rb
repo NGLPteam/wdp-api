@@ -3,8 +3,6 @@
 module WhereMatches
   extend ActiveSupport::Concern
 
-  include ArelHelpers
-
   class_methods do
     def where_matches(_wildcard: false, _escape: true, **pairs)
       pairs.reduce(all) do |scope, (column, value)|
