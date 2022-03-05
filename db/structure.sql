@@ -3562,7 +3562,16 @@ CREATE TABLE public.harvest_entities (
     extracted_properties jsonb,
     extracted_assets jsonb,
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    existing_parent_type text,
+    existing_parent_id uuid,
+    extracted_links jsonb,
+    CONSTRAINT harvest_entity_exclusive_parentage CHECK (
+CASE
+    WHEN (existing_parent_id IS NOT NULL) THEN (parent_id IS NULL)
+    WHEN (parent_id IS NOT NULL) THEN (existing_parent_id IS NULL)
+    ELSE ((parent_id IS NULL) AND (existing_parent_id IS NULL))
+END)
 );
 
 
@@ -5960,6 +5969,13 @@ CREATE UNIQUE INDEX index_harvest_contributors_uniqueness ON public.harvest_cont
 --
 
 CREATE INDEX index_harvest_entities_on_entity ON public.harvest_entities USING btree (entity_type, entity_id);
+
+
+--
+-- Name: index_harvest_entities_on_existing_parent; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_harvest_entities_on_existing_parent ON public.harvest_entities USING btree (existing_parent_type, existing_parent_id);
 
 
 --
@@ -8631,6 +8647,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20220221160509'),
 ('20220221184512'),
 ('20220303220515'),
+('20220303221906'),
 ('20220304214235');
 
 

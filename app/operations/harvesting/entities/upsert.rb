@@ -39,7 +39,7 @@ module Harvesting
       def upsert_root(harvest_entity)
         return Failure[:must_be_root, "The provided entity to upsert must be a root"] unless harvest_entity.root?
 
-        entity = yield attach! harvest_entity, parent: target_entity
+        entity = yield attach! harvest_entity, parent: root_parent_for(harvest_entity)
 
         Success entity
       end
@@ -68,6 +68,12 @@ module Harvesting
         end
 
         Success entity
+      end
+
+      # @param [HarvestEntity] harvest_entity
+      # @return [HarvestTarget]
+      def root_parent_for(harvest_entity)
+        harvest_entity.has_existing_parent? ? harvest_entity.existing_parent : target_entity
       end
 
       # @!group Steps
