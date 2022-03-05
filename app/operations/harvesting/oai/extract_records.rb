@@ -5,7 +5,6 @@ module Harvesting
     # Extract records from an OAI-PMH feed.
     class ExtractRecords
       include Dry::Monads[:do, :result]
-      include Dry::Effects.Resolve(:collection)
       include Dry::Effects.Resolve(:harvest_set)
       include Dry::Effects.Resolve(:harvest_source)
       include Dry::Effects.Resolve(:harvest_attempt)
@@ -15,7 +14,7 @@ module Harvesting
       include Harvesting::WithLogger
       include WDPAPI::Deps[process_record: "harvesting.oai.process_record"]
 
-      SANITY_MAX = 4000
+      SANITY_MAX = 5000
 
       # @param [HarvestAttempt] harvest_attempt
       def call(harvest_attempt)
