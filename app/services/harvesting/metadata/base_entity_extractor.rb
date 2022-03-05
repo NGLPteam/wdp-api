@@ -24,10 +24,11 @@ module Harvesting
       # @param [String] identifier
       # @param [HarvestEntity, nil] parent
       # @return [HarvestEntity]
-      def find_or_create_entity(identifier, parent: nil)
+      def find_or_create_entity(identifier, parent: nil, existing_parent: nil)
         entity = harvest_record.harvest_entities.by_identifier(identifier).first_or_initialize
 
         entity.parent = parent
+        entity.existing_parent = existing_parent
 
         return entity
       end

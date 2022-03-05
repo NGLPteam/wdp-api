@@ -12,6 +12,8 @@ class HarvestEntity < ApplicationRecord
 
   belongs_to :entity, polymorphic: true, optional: true
 
+  belongs_to :existing_parent, polymorphic: true, optional: true
+
   belongs_to :schema_version, optional: true
 
   has_one :harvest_attempt, through: :harvest_record
@@ -19,6 +21,7 @@ class HarvestEntity < ApplicationRecord
   has_many :harvest_contributions, inverse_of: :harvest_entity, dependent: :destroy
 
   attribute :extracted_assets, Harvesting::Assets::Mapping.to_type, default: proc { {} }
+  attribute :extracted_links, Harvesting::Links::Mapping.to_type, default: proc { {} }
 
   scope :latest_attempt, -> { where(harvest_record_id: HarvestRecord.latest_attempt.select(:id)) }
 
@@ -29,8 +32,14 @@ class HarvestEntity < ApplicationRecord
   scope :with_mets_format, -> { for_metadata_format "mets" }
   scope :with_mods_format, -> { for_metadata_format "mods" }
   scope :with_extracted_properties, ->(props) { where(arel_json_contains(:extracted_properties, props)) }
+  scope :with_existing_parent, ->(parent) { where(existing_parent: parent) }
 
   validates :identifier, presence: true, uniqueness: { scope: :harvest_record_id }
+  validate :exclusive_parentage!
+
+  def has_existing_parent?
+    existing_parent_id.present?
+  end
 
   # @return [void]
   def upsert!
@@ -48,5 +57,12 @@ class HarvestEntity < ApplicationRecord
     message = "Could not upsert HarvestEntity(#{id})"
 
     [:failed_entity_upsert, message, metadata]
+  end
+
+  private
+
+  # @return [void]
+  def exclusive_parentage!
+    errors.add :base, "Child harvest entities cannot have an existing parent set" if !root? && has_existing_parent?
   end
 end
