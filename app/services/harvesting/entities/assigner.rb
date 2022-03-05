@@ -4,8 +4,11 @@ module Harvesting
   module Entities
     class Assigner
       include Dry::Monads::Do.for(:realize)
+      include WDPAPI::Deps[chain_method: "utility.chain_method"]
 
-      def initialize
+      def initialize(*)
+        super
+
         @metadata_kind = nil
         @attributes = {}.with_indifferent_access
         @props = ::PropertyHash.new
@@ -26,6 +29,16 @@ module Harvesting
 
       alias attr! attribute!
 
+      # @param [Object] origin
+      # @param [Hash] mapping
+      def attributes_from!(origin, mapping)
+        mapping.each do |target, source|
+          attr! target, chain_method.call(origin, source)
+        end
+      end
+
+      alias attrs_from! attributes_from!
+
       # @param [String] full_path The full path for the schema property. Supports dot notation.
       # @param [Object] value the value for the schema property
       # @return [self]
@@ -36,6 +49,26 @@ module Harvesting
       end
 
       alias prop! property!
+
+      # @param [Object] origin
+      # @param [Hash] mapping
+      # @return [self]
+      def properties_from!(origin, mapping)
+        mapping.each do |target, source|
+          prop! target, chain_method.call(origin, source)
+        end
+
+        return self
+      end
+
+      alias props_from! properties_from!
+
+      def attrs_and_props_from!(origin, attrs, props)
+        attrs_from! origin, attrs
+        props_from! origin, props
+
+        return self
+      end
 
       # @param [String] value
       # @return [self]
@@ -58,9 +91,35 @@ module Harvesting
 
       alias schema! schema_version!
 
+      # Assign multiple asset types at once from mappings and arrays
+      #
+      # @param [{ #to_s => <#to_assigner> }] collected
+      # @param [{ #to_s => #to_assigner, nil }] scalar
+      # @param [<#to_assigner>] unassociated
+      # @return [self]
+      def assets!(collected: {}, scalar: {}, unassociated: [])
+        collected_assets! collected
+
+        scalar_assets! scalar
+
+        unassociated_assets! unassociated
+
+        return self
+      end
+
       # @return [self]
       def unassociated_asset!(identifier, url, **props)
         @assets[identifier] = to_asset_source(identifier, url, props)
+
+        return self
+      end
+
+      # @param [<#to_assigner>] assets
+      # @return [self]
+      def unassociated_assets!(assets)
+        assets.each do |asset|
+          unassociated_asset!(*asset.to_assigner)
+        end
 
         return self
       end
@@ -72,11 +131,33 @@ module Harvesting
         return self
       end
 
+      # @param [{ #to_s => #to_assigner }] mapping
+      # @return [self]
+      def scalar_assets!(mapping)
+        mapping.each do |full_path, asset|
+          scalar_asset! full_path, *asset.to_assigner
+        end
+
+        return self
+      end
+
       # @return [self]
       def collected_asset!(full_path, identifier, url, **props)
         @collected_assets[full_path] ||= []
 
         @collected_assets[full_path].push(to_asset_source(identifier, url, props))
+
+        return self
+      end
+
+      # @param [{ #to_s => #to_assigner }] mapping
+      # @return [self]
+      def collected_assets!(mapping)
+        mapping.each do |full_path, assets|
+          assets.each do |asset|
+            collected_asset! full_path, *asset.to_assigner
+          end
+        end
 
         return self
       end
