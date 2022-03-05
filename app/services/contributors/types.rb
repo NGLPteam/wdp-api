@@ -17,5 +17,26 @@ module Contributors
 
     # @see Types::SimpleOrderType
     LookupOrder = String.enum("RECENT", "OLDEST").fallback("RECENT").default("RECENT")
+
+    PresentString = Coercible::String.constrained(present: true)
+
+    StrippedPresentString = String.constructor do |value|
+      PresentString.try(value).to_monad.fmap(&:strip).value_or(value)
+    end
+
+    OrganizationName = StrippedPresentString
+
+    PersonalName = Nominal(Namae::Name).constructor do |value|
+      case value
+      when PresentString
+        string = PresentString[value]
+
+        WDPAPI::Container["utility.parse_name"].(string).value_or(string)
+      else
+        value
+      end
+    end.constrained(type: Namae::Name)
+
+    AnyName = PersonalName | OrganizationName
   end
 end

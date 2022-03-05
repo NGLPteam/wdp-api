@@ -7,8 +7,10 @@ module Contributors
 
     attribute :given_name, :string
     attribute :family_name, :string
+    attribute :appellation, :string
     attribute :title, :string
     attribute :affiliation, :string
+    attribute :parsed, People::PersonalName.to_type, default: proc { {} }
 
     validates :given_name, :family_name, presence: true
 

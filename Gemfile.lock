@@ -367,6 +367,7 @@ GEM
       nom-xml (~> 1.0)
     msgpack (1.4.2)
     multipart-post (2.1.1)
+    namae (1.1.1)
     naught (1.1.0)
     netrc (0.11.0)
     nio4r (2.5.8)
@@ -679,6 +680,7 @@ DEPENDENCIES
   mediainfo
   memoist (~> 0.16.2)
   mods (~> 2.4.1)
+  namae (~> 1.1.1)
   naught (~> 1.1.0)
   nokogiri (~> 1.12.5)
   oai (~> 1.1.0)
