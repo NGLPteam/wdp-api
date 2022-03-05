@@ -92,7 +92,7 @@ gem "tus-server", "~> 2.3"
 
 # Servers / Rack
 gem "falcon", "~> 0.39.0", require: false
-gem "puma", "~> 5.5.1"
+gem "puma", "~> 5.6.2"
 gem "rack-cors", "~> 1.1.1"
 
 # Debugging / system-level things
