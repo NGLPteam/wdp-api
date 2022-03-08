@@ -3443,7 +3443,15 @@ CREATE TABLE public.entity_orderable_properties (
     fixed_position bigint,
     raw_value jsonb,
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    boolean_value boolean GENERATED ALWAYS AS (public.generate_boolean_value(type, raw_value)) STORED,
+    date_value date GENERATED ALWAYS AS (public.generate_date_value(type, raw_value)) STORED,
+    email_value public.citext GENERATED ALWAYS AS (public.generate_email_value(type, raw_value)) STORED,
+    float_value numeric GENERATED ALWAYS AS (public.generate_float_value(type, raw_value)) STORED,
+    integer_value bigint GENERATED ALWAYS AS (public.generate_integer_value(type, raw_value)) STORED,
+    string_value text GENERATED ALWAYS AS (public.generate_string_value(type, raw_value)) STORED,
+    timestamp_value timestamp with time zone GENERATED ALWAYS AS (public.generate_timestamp_value(type, raw_value)) STORED,
+    variable_date_value public.variable_precision_date GENERATED ALWAYS AS (public.generate_variable_date_value(type, raw_value)) STORED
 );
 
 
@@ -5790,6 +5798,48 @@ ALTER TABLE public.entity_visibilities CLUSTER ON index_entity_visibilities_visi
 
 
 --
+-- Name: index_eop_boolean; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_eop_boolean ON public.entity_orderable_properties USING btree (entity_type, entity_id, path, boolean_value);
+
+
+--
+-- Name: index_eop_boolean_inverted; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_eop_boolean_inverted ON public.entity_orderable_properties USING btree (entity_type, entity_id, path, boolean_value DESC NULLS LAST);
+
+
+--
+-- Name: index_eop_date; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_eop_date ON public.entity_orderable_properties USING btree (entity_type, entity_id, path, date_value);
+
+
+--
+-- Name: index_eop_date_inverted; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_eop_date_inverted ON public.entity_orderable_properties USING btree (entity_type, entity_id, path, date_value DESC NULLS LAST);
+
+
+--
+-- Name: index_eop_email; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_eop_email ON public.entity_orderable_properties USING btree (entity_type, entity_id, path, email_value);
+
+
+--
+-- Name: index_eop_email_inverted; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_eop_email_inverted ON public.entity_orderable_properties USING btree (entity_type, entity_id, path, email_value DESC NULLS LAST);
+
+
+--
 -- Name: index_eop_fixed_position; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -5804,10 +5854,80 @@ CREATE INDEX index_eop_fixed_position_inverted ON public.entity_orderable_proper
 
 
 --
+-- Name: index_eop_float; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_eop_float ON public.entity_orderable_properties USING btree (entity_type, entity_id, path, float_value);
+
+
+--
+-- Name: index_eop_float_inverted; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_eop_float_inverted ON public.entity_orderable_properties USING btree (entity_type, entity_id, path, float_value DESC NULLS LAST);
+
+
+--
+-- Name: index_eop_integer; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_eop_integer ON public.entity_orderable_properties USING btree (entity_type, entity_id, path, integer_value);
+
+
+--
+-- Name: index_eop_integer_inverted; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_eop_integer_inverted ON public.entity_orderable_properties USING btree (entity_type, entity_id, path, integer_value DESC NULLS LAST);
+
+
+--
+-- Name: index_eop_string; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_eop_string ON public.entity_orderable_properties USING btree (entity_type, entity_id, path, string_value);
+
+
+--
+-- Name: index_eop_string_inverted; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_eop_string_inverted ON public.entity_orderable_properties USING btree (entity_type, entity_id, path, string_value DESC NULLS LAST);
+
+
+--
+-- Name: index_eop_timestamp; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_eop_timestamp ON public.entity_orderable_properties USING btree (entity_type, entity_id, path, timestamp_value);
+
+
+--
+-- Name: index_eop_timestamp_inverted; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_eop_timestamp_inverted ON public.entity_orderable_properties USING btree (entity_type, entity_id, path, timestamp_value DESC NULLS LAST);
+
+
+--
 -- Name: index_eop_uniqueness; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE UNIQUE INDEX index_eop_uniqueness ON public.entity_orderable_properties USING btree (entity_type, entity_id, path);
+
+
+--
+-- Name: index_eop_variable_date; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_eop_variable_date ON public.entity_orderable_properties USING btree (entity_type, entity_id, path, variable_date_value);
+
+
+--
+-- Name: index_eop_variable_date_inverted; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_eop_variable_date_inverted ON public.entity_orderable_properties USING btree (entity_type, entity_id, path, variable_date_value DESC NULLS LAST);
 
 
 --
@@ -8648,6 +8768,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20220221184512'),
 ('20220303220515'),
 ('20220303221906'),
-('20220304214235');
+('20220304214235'),
+('20220308173141');
 
 
