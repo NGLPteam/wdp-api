@@ -20,7 +20,7 @@ module Harvesting
 
         DISSERTATION_PROPS = {
           abstract: "details.abstract_as_full_text",
-          peer_review: "details.peer_reviewed",
+          peer_reviewed: "details.peer_reviewed",
           accessioned: "details.accessioned",
           available: "details.available",
           issued: "details.issued",
