@@ -4,7 +4,75 @@
   "name": "Default Community",
   "version": "1.0.0",
   "kind": "community",
-  "orderings": [],
+  "orderings": [
+    {
+      "id": "series",
+      "name": "Series",
+      "filter": {
+        "schemas": [
+          {
+            "namespace": "nglp",
+            "identifier": "series"
+          }
+        ]
+      },
+      "select": {
+        "direct": "descendants"
+      },
+      "order": [
+        { "path": "entity.title", "direction": "asc" }
+      ],
+      "render": {
+        "mode": "tree"
+      },
+      "position": 1
+    },
+    {
+      "id": "units",
+      "name": "Units",
+      "filter": {
+        "schemas": [
+          {
+            "namespace": "nglp",
+            "identifier": "unit"
+          }
+        ]
+      },
+      "select": {
+        "direct": "descendants"
+      },
+      "order": [
+        { "path": "entity.title", "direction": "asc" }
+      ],
+      "render": {
+        "mode": "tree"
+      },
+      "position": 2
+    },
+    {
+      "id": "etd",
+      "name": "Electronic Theses and Dissertations",
+      "filter": {
+        "schemas": [
+          {
+            "namespace": "nglp",
+            "identifier": "dissertation"
+          }
+        ]
+      },
+      "select": {
+        "direct": "children",
+        "links": {
+          "contains": true
+        }
+      },
+      "order": [
+        { "path": "props.issued#variable_date", "direction": "desc", "nulls": "last" },
+        { "path": "entity.title", "direction": "asc" }
+      ],
+      "position": 3
+    }
+  ],
   "properties": [
     {
       "type": "group", "path": "featured",
