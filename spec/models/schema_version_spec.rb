@@ -1,6 +1,24 @@
 # frozen_string_literal: true
 
 RSpec.describe SchemaVersion, type: :model do
+  describe "operation fire tests" do
+    let!(:schema_version) { FactoryBot.create :schema_version, :simple_collection }
+
+    describe "#read_property_context" do
+      it "works as expected" do
+        expect(schema_version.read_property_context).to be_a_kind_of Schemas::Properties::Context
+      end
+    end
+
+    describe "#read_properties" do
+      it "works as expected" do
+        be_a_reader = satisfy("a reader") { |r| r.kind_of?(Schemas::Properties::Reader) || r.kind_of?(Schemas::Properties::GroupReader) }
+
+        expect(schema_version.read_properties).to succeed.with all(be_a_reader)
+      end
+    end
+  end
+
   specify "the factory upserts without issue" do
     expect do
       FactoryBot.create :schema_version, :simple_collection

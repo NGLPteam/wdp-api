@@ -14,7 +14,9 @@ module Schemas
       def call(entity, context: nil)
         contract = yield contract_for entity
 
-        values = values_for entity, context
+        context = context.kind_of?(Schemas::Properties::Context) ? context : read_context.call(entity)
+
+        values = context.field_values
 
         validation_context = {
           instance: entity,
@@ -35,16 +37,6 @@ module Schemas
 
       def contract_for(entity)
         compile_contract.call entity.schema_version
-      end
-
-      def context_for(entity, context)
-        return context if context.present?
-
-        yield read_context.call entity
-      end
-
-      def values_for(entity, context)
-        context_for(entity, context).field_values
       end
 
       def errors_for(result)

@@ -2,24 +2,17 @@
 
 module Schemas
   module Instances
+    # Build {Schemas::Properties::Reader a reader} (or {Schemas::Properties::GroupReader group reader})
+    # for a single schema property on {HasSchemaDefinition an instance}.
     class ReadProperty
-      include Dry::Monads[:do, :list, :result]
-      include WDPAPI::Deps[to_context: "schemas.instances.read_property_context", to_reader: "schemas.properties.to_reader"]
+      include WDPAPI::Deps[fetch_reader: "schemas.properties.fetch_reader"]
 
       # @param [HasSchemaDefinition] schema_instance
       # @param [String] full_path
       # @param [Schemas::Properties::Context, nil] context
       # @return [Schemas::Properties::Reader, Schemas::Properties::GroupReader]
       def call(schema_instance, full_path, context: nil)
-        options = {}
-
-        options[:context] = context.kind_of?(Schemas::Properties::Context) ? context : yield(to_context.call(schema_instance))
-
-        property = schema_instance.schema_version.configuration.property_for full_path
-
-        return Failure[:unknown_property, "#{full_path} is not a known property"] if property.blank?
-
-        to_reader.call property, options
+        fetch_reader.(schema_instance, full_path, context: context)
       end
     end
   end

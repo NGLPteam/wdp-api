@@ -213,6 +213,27 @@ module Schemas
           property.to_version_property.merge(position: index + 1)
         end
       end
+
+      # @return [Schemas::Properties::TypeMapping]
+      def type_mapping
+        map = {}
+        paths = SortedSet.new
+        set = SortedSet.new
+
+        each_property include_groups: true do |prop, h|
+          type_path = "#{prop.full_path}.$type"
+
+          type = prop.type.to_s
+
+          map[type_path] = type
+
+          paths << prop.full_path
+
+          set << type
+        end
+
+        Schemas::Properties::TypeMapping.new map, paths: paths, set: set
+      end
     end
   end
 end
