@@ -45,6 +45,45 @@ module Schemas
 
       Registry.register "params.url", URLShape
 
+      SCALAR_TYPES = %w[
+        asset
+        assets
+        boolean
+        contributor
+        contributors
+        date
+        email
+        entities
+        entity
+        float
+        full_text
+        integer
+        markdown
+        multiselect
+        select
+        string
+        tags
+        timestamp
+        url
+        variable_date
+      ].freeze
+
+      OTHER_TYPES = %w[group unknown].freeze
+
+      KNOWN_TYPES = (SCALAR_TYPES | OTHER_TYPES).sort.freeze
+
+      # An individual component of a property path. Matches the format
+      # expressed in the metaschema, and requires something that more
+      # or less resembles valid ruby property names (sans `!` / `?`).
+      PATH_PART = /[a-z][a-z0-9_]*[a-z]/.freeze
+
+      # A full path, composed of {PATH_PART} with an optional group key
+      # preceding it.
+      FULL_PATH = /#{PATH_PART}(?:\.#{PATH_PART})?/.freeze
+
+      # The path used to build type maps.
+      TYPE_PATH = /\A(?<full_path>#{FULL_PATH})\.\$type\z/.freeze
+
       # A meta type for matching dry-types, used to enforce setting a base type
       # within scalar property classes.
       #
@@ -57,6 +96,16 @@ module Schemas
         when PossibleParamTypeName then Registry["params.#{value}"]
         end
       end
+
+      # A type for matching the full path for a property
+      #
+      # @see FULL_PATH
+      FullPath = String.constrained(format: /\A#{FULL_PATH}\z/)
+
+      # A type for matching a list of paths
+      #
+      # @see FullPath
+      FullPathList = Coercible::Array.of(FullPath)
 
       # A defined function for the property.
       Function = String.enum(*KNOWN_FUNCTIONS)
@@ -80,6 +129,23 @@ module Schemas
       #
       # @see Schemas::Properties::Scalar::Base.base_type
       SchemaType = Instance(Dry::Types::Type) | String | Symbol
+
+      # A known schema property type name.
+      TypeName = Coercible::String.default("unknown").enum(*KNOWN_TYPES)
+
+      # A key for a type mapping
+      # @see Schemas::Properties::TypeMapping
+      TypeKey = String.constrained(format: TYPE_PATH)
+
+      # A mapping from a property configuration
+      #
+      # @see Schemas::Properties::TypeMapping
+      TypeMap = Hash.map(TypeKey, TypeName)
+
+      # A set of types
+      #
+      # @see Schemas::Properties::TypeMapping
+      TypeSet = Coercible::Array.of(TypeName)
     end
   end
 end

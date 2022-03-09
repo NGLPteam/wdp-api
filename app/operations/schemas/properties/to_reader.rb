@@ -2,14 +2,19 @@
 
 module Schemas
   module Properties
+    # Build an individual reader for a schema property, with optional context.
     class ToReader
       include Dry::Monads[:do, :result]
+      include WDPAPI::Deps[to_context: "schemas.properties.to_context"]
 
-      # @param [{ Symbol => Object }] base_options
+      # @param [Schemas::Properties::BaseDefinition] property
       # @option base_options [Schemas::Properties::Context] :context
-      # @return [Dry::Monads::Result(Schemas::Properties::Reader, Schemas::Properties::GroupReader)]
-      def call(property, **base_options)
-        options = {}.merge(base_options).compact
+      # @return [Dry::Monads::Success(Schemas::Properties::GroupReader)]
+      # @return [Dry::Monads::Success(Schemas::Properties::Reader)]
+      def call(property, context: nil)
+        options = {}
+
+        options[:context] = context if context.kind_of?(Schemas::Properties::Context)
 
         if property.group?
           compile_group property, options
@@ -20,6 +25,8 @@ module Schemas
 
       private
 
+      # @param [Schemas::Properties::GroupDefinition] group
+      # @return [Dry::Monads::Success(Schemas::Properties::GroupReader)]
       def compile_group(group, **base_options)
         options = base_options.merge(group: group)
 
@@ -30,6 +37,8 @@ module Schemas
         Success Schemas::Properties::GroupReader.new options
       end
 
+      # @param [Schemas::Properties::Scalar::Base] property
+      # @return [Dry::Monads::Success(Schemas::Properties::Reader)]
       def compile_property(property, **base_options)
         options = base_options.merge(property: property)
 

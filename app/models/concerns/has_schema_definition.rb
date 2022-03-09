@@ -1,9 +1,15 @@
 # frozen_string_literal: true
 
+# This represents an "instance" of a {SchemaVersion}.
+#
+# An instance can be a {Community}, a {Collection}, or an {Item}.
+#
+# @see Schemas::Types::SchemaInstance
 module HasSchemaDefinition
   extend ActiveSupport::Concern
 
   include EntityReferent
+  include ExposesSchemaProperties
 
   included do
     belongs_to :schema_definition
@@ -111,57 +117,6 @@ module HasSchemaDefinition
     schema_suffix = properties&.schema&.suffix
 
     "#<#{self.class}#{schema_suffix} (#{title.inspect})>"
-  end
-
-  # @see Schemas::Instances::ReadProperties
-  # @param [Schemas::Properties::Context, nil] context
-  # @return [<Schemas::Properties::Reader, Schemas::Properties::GroupReader>]
-  def read_properties(context: nil)
-    call_operation("schemas.instances.read_properties", self, context: context)
-  end
-
-  # @see Schemas::Instances::ReadProperty
-  # @param [String] full_path
-  # @param [Schemas::Properties::Context, nil] context
-  # @return [Dry::Monads::Success(Schemas::Properties::Reader)]
-  # @return [Dry::Monads::Success(Schemas::Properties::GroupReader)]
-  # @return [Dry::Monads::Failure(Symbol, String)]
-  def read_property(full_path, context: nil)
-    call_operation("schemas.instances.read_property", self, full_path, context: context)
-  end
-
-  def read_property!(full_path, context: nil)
-    read_property(full_path, context: context).value!
-  end
-
-  # @note For testing use only
-  # @api private
-  # @see Schemas::Instances::ReadPropertyContext
-  # @return [Schema::Properties::Context]
-  def read_property_context
-    call_operation("schemas.instances.read_property_context", self).value!
-  end
-
-  # @see #read_property
-  # @param [String] full_path
-  # @param [Schemas::Properties::Context, nil] context
-  # @return [Dry::Monads::Result]
-  def read_property_value(full_path, context: nil)
-    read_property(full_path, context: context).tee(&:must_be_scalar).fmap(&:value)
-  end
-
-  # @see #read_property_value
-  # @param [String] full_path
-  # @param [Schemas::Properties::Context, nil] context
-  # @return [Dry::Monads::Result]
-  def read_property_value!(full_path, context: nil)
-    read_property_value(full_path, context: context).value!
-  end
-
-  # @see Schema::Properties::Context#field_values
-  # @return [Hash]
-  def read_property_values!
-    read_property_context.field_values
   end
 
   # @see Schemas::Instances::Validate

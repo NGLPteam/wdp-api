@@ -8,6 +8,7 @@
 # @subsystem Schema
 class SchemaVersion < ApplicationRecord
   include Schemas::Properties::CompilesToSchema
+  include ExposesSchemaProperties
 
   # @!attribute [r] kind
   # @return ["community", "collection", "item"]
@@ -52,7 +53,7 @@ class SchemaVersion < ApplicationRecord
   scope :in_default_order, -> { joins(:schema_definition).merge(SchemaDefinition.in_default_order).order(parsed: :desc) }
   scope :by_position, -> { order(position: :desc) }
 
-  delegate :has_ordering?, :ordering_definition_for, :property_for, :property_paths, to: :configuration, allow_nil: true
+  delegate :has_ordering?, :ordering_definition_for, :property_for, :property_paths, :type_mapping, to: :configuration, allow_nil: true
   delegate :identifier, :namespace, :version, to: :configuration, allow_nil: true, prefix: :configured
 
   before_validation :extract_reference_paths!
@@ -86,21 +87,22 @@ class SchemaVersion < ApplicationRecord
     "#{name} v#{number}"
   end
 
-  # Transform the schema's properties into an array of readers that
-  # can be consumed by the GraphQL API in order to iterate over them
-  # in deterministic order.
-  #
-  # @see Schemas::Versions::ReadProperties
-  # @return [<Schemas::Properties::Reader, Schemas::Properties::GroupReader>]
-  def read_properties
-    call_operation("schemas.versions.read_properties", self)
-  end
-
   # @see Schemas::Instances::PropertySet#schema
   # @see Schemas::Header
   # @return [Hash]
   def to_header
     slice(:id, :identifier, :namespace).merge(version: number.to_s)
+  end
+
+  # Options to include when building a {Schemas::Properties::Context} for
+  # a version, or an entity that implements this version.
+  #
+  # @return [Hash]
+  def to_property_context
+    {
+      version: self,
+      type_mapping: type_mapping,
+    }
   end
 
   # Compute a validation contract for this schema.

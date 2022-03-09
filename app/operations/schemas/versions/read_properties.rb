@@ -2,24 +2,19 @@
 
 module Schemas
   module Versions
+    # Build an array of readers for schema properties on a {SchemaVersion}.
+    # They will have no instance, but can be used to iterate properties in
+    # the GraphQL API at the schema level.
+    #
+    # @see Schemas::Properties::ToReaders
     class ReadProperties
-      include Dry::Monads[:do, :list, :result]
-      include WDPAPI::Deps[to_reader: "schemas.properties.to_reader"]
+      include WDPAPI::Deps[to_readers: "schemas.properties.to_readers"]
 
       # @param [SchemaVersion] schema_version
-      # @return [<Schemas::Properties::Reader, Schemas::Properties::GroupReader>]
-      def call(schema_version)
-        options = {}
-
-        options[:context] = Schemas::Properties::Context.new
-
-        results = schema_version.configuration.properties.map do |property|
-          to_reader.call property, options
-        end
-
-        result = yield List::Result.coerce(results).traverse
-
-        Success result.to_a
+      # @return [Dry::Monads::Success<Schemas::Properties::Reader, Schemas::Properties::GroupReader>]
+      # @return [Dry::Monads::Failure]
+      def call(schema_version, context: nil)
+        to_readers.(schema_version, context: context)
       end
     end
   end

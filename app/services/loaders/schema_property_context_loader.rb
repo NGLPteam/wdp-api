@@ -1,30 +1,37 @@
 # frozen_string_literal: true
 
 module Loaders
+  # Load the property context for a schema instance.
+  #
+  # @see Schemas::Instances::ReadPropertyContext
+  # @see Schemas::Properties::Context
   class SchemaPropertyContextLoader < GraphQL::Batch::Loader
     include WDPAPI::Deps[to_context: "schemas.instances.read_property_context"]
 
-    include Dry::Monads::Do.for(:perform)
-
-    IsSchemaInstance = AppTypes.Instance(HasSchemaDefinition)
-
+    # @param [Class<HasSchemaDefinition>] model
     def initialize(model, **args)
       @model = model
       super(**args)
     end
 
+    # @param [HasSchemaDefinition] record
     def load(record)
-      super(IsSchemaInstance[record])
+      super(Schemas::Types::SchemaInstance[record])
     end
 
-    # We want to load the associations on all records, even if they have the same id
+    # @note We want to load the associations on all records, even if they have the same id
+    #
+    # @param [HasSchemaDefinition] record
+    # @return [String]
     def cache_key(record)
       record.object_id
     end
 
+    # @param [<HasSchemaDefinition>] records
+    # @return [void]
     def perform(records)
       records.each do |record|
-        context = yield to_context.call record
+        context = to_context.call record
 
         fulfill record, context
       end
