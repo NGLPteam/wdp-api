@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module Types
+  # @see Schemas::Properties::Context
   class SchemaInstanceContextType < Types::BaseObject
     description "A context that describes the current state of the form"
 
@@ -36,7 +37,11 @@ module Types
 
     # @return [<Hash>]
     def contributors
-      Contributor.all.map(&:to_schematic_referent_option)
+      if object.has_contributors?
+        Contributor.all.map(&:to_schematic_referent_option)
+      else
+        []
+      end
     end
 
     # @return [String]
