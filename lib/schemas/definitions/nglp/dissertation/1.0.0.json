@@ -63,7 +63,7 @@
       ]
     },
     { "path": "rights_statement", "label": "Rights Statement", "type": "full_text", "required": false, "wide": true, "function": "metadata" },
-    { "path": "peer_review", "label": "Peer Reviewed", "type": "boolean", "function": "metadata" },
+    { "path": "peer_reviewed", "label": "Peer Reviewed", "type": "boolean", "function": "metadata" },
     {
       "path": "degree",
       "type": "group",
