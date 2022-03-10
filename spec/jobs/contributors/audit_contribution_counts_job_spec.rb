@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Contributors::AuditContributionCountsJob, type: :job do
+RSpec.describe Contributors::AuditContributionCountsJob, type: :job, disable_ordering_refresh: true do
   it_behaves_like "a pass-through operation job", "contributors.audit_contribution_counts" do
     let!(:job_arg) do
       {

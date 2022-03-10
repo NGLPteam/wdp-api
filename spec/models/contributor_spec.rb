@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Contributor, type: :model do
+RSpec.describe Contributor, type: :model, disable_ordering_refresh: true do
   let!(:contributor) { FactoryBot.create :contributor, :person }
 
   let(:collection_count) { 2 }
