@@ -3033,7 +3033,8 @@ CREATE TABLE public.communities (
     hero_image_layout text DEFAULT 'one_column'::text NOT NULL,
     logo_data jsonb,
     summary text,
-    tagline text
+    tagline text,
+    identifier public.citext NOT NULL
 );
 
 
@@ -5436,6 +5437,13 @@ CREATE UNIQUE INDEX index_collections_unique_identifier ON public.collections US
 --
 
 CREATE INDEX index_communities_on_auth_path ON public.communities USING gist (auth_path);
+
+
+--
+-- Name: index_communities_on_identifier; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_communities_on_identifier ON public.communities USING btree (identifier);
 
 
 --
@@ -8769,6 +8777,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20220303220515'),
 ('20220303221906'),
 ('20220304214235'),
-('20220308173141');
+('20220308173141'),
+('20220309222458');
 
 

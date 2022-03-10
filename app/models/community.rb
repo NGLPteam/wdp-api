@@ -3,12 +3,14 @@
 class Community < ApplicationRecord
   include Accessible
   include Attachable
+  include AutoIdentifier
   include HasHeroImageLayout
   include HasSchemaDefinition
   include HasSystemSlug
   include HarvestTarget
   include HierarchicalEntity
   include ImageUploader::Attachment.new(:logo)
+  include ScopesForIdentifier
 
   has_many :collections, dependent: :destroy
 
