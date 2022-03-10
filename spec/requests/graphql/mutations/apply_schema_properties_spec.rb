@@ -1,72 +1,60 @@
 # frozen_string_literal: true
 
-RSpec.describe Mutations::ApplySchemaProperties, type: :request do
+RSpec.describe Mutations::ApplySchemaProperties, type: :request, simple_v1_hierarchy: true, graphql: :mutation do
+  mutation_query! <<~GRAPHQL
+  mutation applySchemaProperties($input: ApplySchemaPropertiesInput!) {
+    applySchemaProperties(input: $input) {
+      entity {
+        ... on Node { id }
+      }
+
+      collection { id }
+
+      schemaErrors {
+        base
+        hint
+        path
+        message
+        metadata
+      }
+
+      ...ErrorFragment
+    }
+  }
+  GRAPHQL
+
+  let!(:schema_version) { FactoryBot.create :schema_version, :required_collection }
+
+  let!(:entity) { FactoryBot.create(:collection, schema_version: schema_version) }
+
   context "as an admin" do
     let(:token) { token_helper.build_token has_global_admin: true }
 
-    context "for an item" do
-      let!(:schema_version) { SchemaVersion.by_tuple("nglp", "article").latest! }
-
-      let!(:entity) { FactoryBot.create(:item, schema_version: schema_version) }
-
-      let!(:property_values) do
-        FactoryBot.create_list :contributor, 5, :person
-
-        WDPAPI::Container["schemas.static.generate.nglp.article"].call
-      end
-
-      let!(:mutation_input) do
-        {
-          entityId: entity.to_encoded_id,
-          propertyValues: property_values,
-        }
-      end
-
-      let!(:graphql_variables) do
-        {
-          input: mutation_input
-        }
+    context "for a collection" do
+      let_mutation_input!(:entity_id) { entity.to_encoded_id }
+      let_mutation_input!(:property_values) do
+        { required_field: "text", optional_field: "text" }
       end
 
       let!(:expected_shape) do
-        {
-          applySchemaProperties: {
-            entity: { id: entity.to_encoded_id },
-            item: { id: entity.to_encoded_id },
-            schemaErrors: be_blank
-          }
-        }
-      end
+        gql.mutation(:apply_schema_properties) do |m|
+          m.prop :entity do |e|
+            e[:id] = entity_id
+          end
 
-      let!(:query) do
-        <<~GRAPHQL
-        mutation applySchemaProperties($input: ApplySchemaPropertiesInput!) {
-          applySchemaProperties(input: $input) {
-            entity {
-              ... on Node { id }
-            }
+          m.prop :collection do |c|
+            c[:id] = entity_id
+          end
 
-            item { id }
-
-            schemaErrors {
-              base
-              hint
-              path
-              message
-              metadata
-            }
-          }
-        }
-        GRAPHQL
+          m[:schema_errors] = be_blank
+        end
       end
 
       context "with valid properties" do
         it "will save them" do
-          expect do
-            make_graphql_request! query, token: token, variables: graphql_variables
-          end.to execute_safely
+          expect_the_default_request.to execute_safely
 
-          expect_graphql_response_data expected_shape
+          expect_graphql_data expected_shape
         end
       end
 
@@ -74,21 +62,18 @@ RSpec.describe Mutations::ApplySchemaProperties, type: :request do
         let!(:property_values) { {} }
 
         let!(:expected_shape) do
-          {
-            applySchemaProperties: {
-              entity: be_blank,
-              item: be_blank,
-              schemaErrors: be_present,
-            }
-          }
+          gql.mutation(:apply_schema_properties, no_errors: false) do |m|
+            m[:entity] = be_blank
+            m[:collection] = be_blank
+
+            m[:schema_errors] = be_present
+          end
         end
 
         it "will produce errors" do
-          expect do
-            make_graphql_request! query, token: token, variables: graphql_variables
-          end.to execute_safely
+          expect_the_default_request.to execute_safely
 
-          expect_graphql_response_data expected_shape
+          expect_graphql_data expected_shape
         end
       end
     end

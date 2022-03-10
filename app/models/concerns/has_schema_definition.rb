@@ -62,21 +62,6 @@ module HasSchemaDefinition
     validate :enforce_schema_kind!, if: :should_check_schema_kind?
   end
 
-  # Enqueues a {Schemas::Instances::AlterAndGenerateJob} to asynchronously
-  # alter the schema for a schema instance.
-  #
-  # @param [SchemaVersion] schema_version
-  # @return [void]
-  def asynchronously_alter_and_generate!(schema_version)
-    Schemas::Instances::AlterAndGenerateJob.perform_later self, schema_version
-  end
-
-  # @param [SchemaVersion] schema_version
-  # @return [Dry::Monads::Result]
-  def alter_and_generate!(schema_version)
-    call_operation("schemas.instances.alter_and_generate", self, schema_version)
-  end
-
   # @param [SchemaVersion] schema_version
   # @param [Hash] new_values
   # @return [Dry::Monads::Result]
@@ -96,13 +81,6 @@ module HasSchemaDefinition
   # @return [Dry::Monads::Result]
   def apply_properties!(values)
     call_operation("schemas.instances.apply", self, values)
-  end
-
-  # @api private
-  # @see Schemas::Instances::ApplyGenerated
-  # @return [void]
-  def apply_generated_properties!
-    call_operation("schemas.instances.apply_generated_properties", self)
   end
 
   # @see Schemas::Instances::ExtractOrderableProperties
