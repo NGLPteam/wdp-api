@@ -82,9 +82,3 @@ Testing::ScaffoldContributors.new.call
 # and test users (500 by default).
 Testing::ScaffoldSystem.new.call
 ```
-
-To randomly assign a non-default schema to items:
-
-```ruby
-Schemas::Instances::RandomizeDefaultItemsJob.perform_later
-```

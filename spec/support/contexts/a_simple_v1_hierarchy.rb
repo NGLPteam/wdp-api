@@ -42,7 +42,7 @@ RSpec.shared_context "a simple v1 hierarchy" do
 
   let!(:simple_community_v1) { FactoryBot.create :schema_version, :simple_community, :v1 }
   let!(:simple_collection_v1) { FactoryBot.create :schema_version, :simple_collection, :v1 }
-  let!(:simpole_item_v1) { FactoryBot.create :schema_version, :simple_item, :v1 }
+  let!(:simple_item_v1) { FactoryBot.create :schema_version, :simple_item, :v1 }
 
   let(:v1_schemas) do
     {
