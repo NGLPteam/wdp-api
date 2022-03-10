@@ -26,38 +26,47 @@ class OrderingEntryCandidate < ApplicationRecord
   # Recalculate ordering positions based on relative depth and
   # ancestral scores.
   SCORED_CANDIDATES_QUERY = <<~SQL
-  SELECT fc.entity_id, fc.entity_type,
+  WITH pseudo_tree AS (
+    SELECT fc.entity_id, fc.entity_type,
+      anc.auth_path,
+      anc.position AS position,
+      anc.inverse_position AS inverse_position
+      FROM flat_candidates fc
+      INNER JOIN flat_candidates AS anc ON
+        anc.auth_path @> fc.auth_path
+  ), hierarchies AS (
+    SELECT entity_id, entity_type, COUNT(DISTINCT auth_path) AS tree_depth
+    FROM pseudo_tree
+    GROUP BY 1, 2
+  )
+  SELECT pt.entity_id, pt.entity_type,
     SUM(
-      (1 + anc.position)
+      (1 + pt.position)
       *
       (
         stats.total_descendants
         ^
         (
-          stats.max_depth + 1 - depths.generations
+          stats.max_depth + 1 - hier.tree_depth
         )
       )
-    )::bigint AS position,
+    )::decimal AS position,
     SUM(
-      (1 + anc.inverse_position)
+      (1 + pt.inverse_position)
       *
       (
         stats.total_descendants
         ^
         (
-          stats.max_depth + 1 - depths.generations
+          stats.max_depth + 1 - hier.tree_depth
         )
       )
-    )::bigint AS inverse_position,
-    COUNT(DISTINCT anc.auth_path) AS tree_depth
-    FROM flat_candidates fc
-    CROSS JOIN stats
-    INNER JOIN flat_candidates AS anc ON
-      anc.auth_path @> fc.auth_path
-    LEFT JOIN LATERAL (
-      SELECT nlevel(anc.auth_path) - nlevel(stats.parent_path) AS generations
-    ) AS depths ON true
-    GROUP BY fc.entity_id, fc.entity_type
+    )::decimal AS inverse_position,
+    hier.tree_depth
+  FROM pseudo_tree AS pt
+  CROSS JOIN stats
+  INNER JOIN hierarchies hier USING (entity_id, entity_type)
+  GROUP BY entity_id, entity_type, hier.tree_depth
   SQL
 
   # For finalizing the tree-ordered {.query_for} by combining the recalculated
@@ -68,8 +77,8 @@ class OrderingEntryCandidate < ApplicationRecord
     fc.ordering_id,
     entity_id,
     entity_type,
-    sc.position AS position,
-    sc.inverse_position AS inverse_position,
+    row_number() OVER (ORDER BY sc.tree_depth ASC, td.position ASC NULLS FIRST, sc.position ASC) AS position,
+    row_number() OVER (ORDER BY sc.tree_depth ASC, td.inverse_position ASC NULLS FIRST, sc.inverse_position ASC) AS inverse_position,
     fc.link_operator,
     fc.auth_path,
     fc.scope,
@@ -81,7 +90,7 @@ class OrderingEntryCandidate < ApplicationRecord
   INNER JOIN scored_candidates AS sc USING (entity_id, entity_type)
   LEFT JOIN LATERAL (
     SELECT DISTINCT ON (p.entity_id, p.entity_type)
-      p.entity_id AS tree_parent_id, p.entity_type AS tree_parent_type
+      p.entity_id AS tree_parent_id, p.entity_type AS tree_parent_type, p.position, p.inverse_position, p.tree_depth
     FROM scored_candidates AS p
     INNER JOIN flat_candidates x ON p.entity_id = x.entity_id AND p.entity_type = x.entity_type
     WHERE
