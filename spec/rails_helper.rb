@@ -46,6 +46,8 @@ ActiveJob::Base.queue_adapter = :test
 
 Shrine.logger = Logger.new("/dev/null")
 
+Dry::Effects.load_extensions :rspec
+
 require_relative "./system/test_container"
 
 WDPAPI::TestContainer.finalize!
