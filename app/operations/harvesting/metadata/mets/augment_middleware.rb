@@ -3,7 +3,7 @@
 module Harvesting
   module Metadata
     module METS
-      # Attach dissertation SchemaVersion to states.
+      # Attach dissertation & paper {SchemaVersion}s to states.
       class AugmentMiddleware
         include Dry::Monads[:do, :result]
 
@@ -11,6 +11,7 @@ module Harvesting
           state[:schemas] ||= {}
 
           state[:schemas][:dissertation] = SchemaVersion["nglp:dissertation:1.0.0"]
+          state[:schemas][:paper] = SchemaVersion["nglp:paper:1.0.0"]
 
           Success state
         end
