@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe "Query.contributor", type: :request do
+RSpec.describe "Query.contributor", type: :request, disable_ordering_refresh: true do
   let!(:query) do
     <<~GRAPHQL
     query getContributor($orgSlug: Slug!, $personSlug: Slug!) {

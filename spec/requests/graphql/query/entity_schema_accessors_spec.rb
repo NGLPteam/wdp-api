@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe "Query.collection", type: :request do
+RSpec.describe "Query.collection", type: :request, disable_ordering_refresh: true do
   let(:token) { token_helper.build_token has_global_admin: true }
 
   let!(:graphql_variables) { {} }

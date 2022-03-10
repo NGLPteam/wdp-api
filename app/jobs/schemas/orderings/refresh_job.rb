@@ -5,7 +5,9 @@ module Schemas
     class RefreshJob < ApplicationJob
       queue_as :maintenance
 
-      unique :until_and_while_executing, lock_ttl: 5.minutes, on_conflict: :log
+      DO_NOTHING = proc { true }
+
+      unique :while_executing, lock_ttl: 1.minute, on_conflict: DO_NOTHING
 
       # @param [Ordering] ordering
       # @return [void]

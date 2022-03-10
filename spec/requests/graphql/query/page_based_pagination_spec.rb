@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe "Page-Based Pagination", type: :request do
+RSpec.describe "Page-Based Pagination", type: :request, disable_ordering_refresh: true do
   let!(:collection) { FactoryBot.create :collection }
 
   let!(:subcollections) do

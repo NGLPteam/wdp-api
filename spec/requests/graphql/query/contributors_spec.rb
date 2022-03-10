@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe "Query.contributors", type: :request do
+RSpec.describe "Query.contributors", type: :request, disable_ordering_refresh: true do
   include_context "sans entity sync"
 
   context "when ordering" do
