@@ -13,9 +13,7 @@ module Harvesting
         DISSERTATION_ATTRS = {
           title: "details.title",
           issn: "details.issn",
-          accessioned: "details.accessioned",
-          available: "details.available",
-          issued: "details.issued",
+          published: "details.issued"
         }.freeze
 
         DISSERTATION_PROPS = {
@@ -26,6 +24,22 @@ module Harvesting
           issued: "details.issued",
         }.freeze
 
+        PAPER_ATTRS = {
+          title: "details.title",
+          issn: "details.issn",
+          published: "details.issued"
+        }.freeze
+
+        PAPER_PROPS = {
+          abstract: "details.abstract_as_full_text",
+          accessioned: "details.accessioned",
+          available: "details.available",
+          issued: "details.issued",
+        }.freeze
+
+        MATCHES_PAPER = /\A\s*(Article|paper)\s*\z/i.freeze
+        MATCHES_DISSERTATION = /\AETD|dissertation\z/i.freeze
+
         # @param [String] raw_metadata
         # @return [Dry::Monads::Result(void)]
         def call(raw_metadata)
@@ -33,9 +47,11 @@ module Harvesting
 
           values = yield parsed.extracted_values
 
-          dissertation = yield upsert_dissertation_from values
+          root_options = options_for values
 
-          yield upsert_contributions_for dissertation, values
+          root = yield upsert_root_from values, **root_options
+
+          yield upsert_contributions_for root, values
 
           Success nil
         end
@@ -43,22 +59,43 @@ module Harvesting
         private
 
         # @param [Harvesting::Metadata::ValueExtraction::Struct] values
+        # @return [{ Symbol => Object }]
+        def options_for(values)
+          options = {}
+
+          case values.details.genre
+          when MATCHES_PAPER
+            options[:attrs] = PAPER_ATTRS
+            options[:props] = PAPER_PROPS
+            options[:schema] = :paper
+          when MATCHES_DISSERTATION
+            options[:attrs] = DISSERTATION_ATTRS
+            options[:props] = DISSERTATION_PROPS
+            options[:schema] = :dissertation
+          else
+            unsupported_metadata_kind! values.details.genre
+          end
+
+          return options
+        end
+
+        # @param [Harvesting::Metadata::ValueExtraction::Struct] values
         # @return [Dry::Monads::Result]
-        def upsert_dissertation_from(values)
+        def upsert_root_from(values, attrs:, props:, schema:)
           options = {}
 
           options[:existing_parent] = existing_collection_from! values.parent_collection_identifier
 
-          dissertation = find_or_create_entity harvest_record.identifier, **options
+          entity = find_or_create_entity harvest_record.identifier, **options
 
-          with_entity.(dissertation) do |assigner|
+          with_entity.(entity) do |assigner|
             assigner.metadata_kind! values.details.genre
 
-            assigner.attrs_and_props_from! values, DISSERTATION_ATTRS, DISSERTATION_PROPS
+            assigner.attrs_and_props_from! values, attrs, props
 
             assigner.assets! scalar: values.scalar_assets, unassociated: values.unassociated_assets
 
-            assigner.schema! schemas[:dissertation]
+            assigner.schema! schemas[schema]
 
             values.incoming_collection_identifiers.each do |id|
               assigner.link_collection! id, operator: "contains"
