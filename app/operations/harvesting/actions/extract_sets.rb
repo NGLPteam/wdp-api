@@ -5,14 +5,20 @@ module Harvesting
     # Populates a collection of {HarvestSet sets} for an individual {HarvestSource source},
     # based on the source's protocol.
     class ExtractSets < Harvesting::BaseAction
-      include Dry::Effects.Resolve(:protocol)
+      include WDPAPI::Deps[
+        extract_sets: "harvesting.sources.extract_sets"
+      ]
+
+      runner do
+        param :harvest_source, Harvesting::Types::Source
+      end
+
+      extract_middleware_from :harvest_source
 
       # @param [HarvestSource] harvest_source
-      # @return [Integer] the count of sets harvested
-      def call(harvest_source)
-        wrap_middleware.call(harvest_source) do
-          yield protocol.extract_sets.call(harvest_source)
-        end
+      # @return [Dry::Monads::Success(Integer)] the count of sets harvested
+      def perform(harvest_source)
+        yield extract_sets.(harvest_source)
 
         harvest_source.touch :sets_refreshed_at
 

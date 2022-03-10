@@ -11,14 +11,18 @@ module Harvesting
         upsert_entity: "harvesting.entities.upsert",
       ]
 
+      runner do
+        param :harvest_entity, Harvesting::Types::Entity
+      end
+
+      first_argument_provides_middleware!
+
+      defer_ordering_refresh!
+
       # @param [HarvestEntity] harvest_entity
       # @return [Dry::Monads::Result]
-      def call(harvest_entity)
-        wrap_middleware.call(harvest_entity) do
-          yield upsert_entity.call harvest_entity
-        end
-
-        Success nil
+      def perform(harvest_entity)
+        upsert_entity.(harvest_entity)
       end
     end
   end

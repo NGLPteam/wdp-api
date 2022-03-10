@@ -5,34 +5,53 @@ module Harvesting
     # Populates a collection of {HarvestRecord records} for an individual {HarvestAttempt attempt},
     # based on the protocol.
     class ExtractRecords < Harvesting::BaseAction
-      include Dry::Monads[:do, :result]
-      include Dry::Effects.Resolve(:protocol)
       include WDPAPI::Deps[
+        extract_records: "harvesting.attempts.extract_records",
         prepare_entities_from_record: "harvesting.actions.prepare_entities_from_record",
       ]
 
-      prepend Harvesting::HushActiveRecord
+      runner do
+        param :harvest_attempt, Harvesting::Types::Attempt
+
+        option :skip_prepare, Harvesting::Types::Bool, default: proc { false }
+
+        delegate :harvest_source, to: :harvest_attempt
+
+        # @return [void]
+        def track!
+          harvest_attempt.touch :began_at
+
+          yield
+
+          harvest_source.touch :last_harvested_at
+        ensure
+          harvest_attempt.touch :ended_at
+        end
+      end
+
+      extract_middleware_from :harvest_attempt
+
+      around_perform :track_attempt_time!
 
       # @param [HarvestAttempt] harvest_attempt
-      # @return [Integer] the count of records harvested
-      def call(harvest_attempt, skip_prepare: false)
-        harvest_attempt.touch :began_at
+      # @return [Dry::Monads::Success(Integer)] the count of records harvested
+      def perform(harvest_attempt, skip_prepare: false)
+        record_count = yield extract_records.(harvest_attempt)
 
-        wrap_middleware.call harvest_attempt do
-          silence_activerecord do
-            yield protocol.extract_records.call harvest_attempt
+        harvest_attempt.harvest_records.find_each do |harvest_record|
+          yield prepare_entities_from_record.call harvest_record
+        end unless skip_prepare
 
-            harvest_attempt.harvest_records.find_each do |harvest_record|
-              yield prepare_entities_from_record.call harvest_record
-            end unless skip_prepare
-          end
+        Success record_count
+      end
+
+      private
+
+      # @return [void]
+      def track_attempt_time!
+        runner.track! do
+          yield
         end
-
-        harvest_attempt.touch :ended_at
-
-        harvest_attempt.harvest_source.touch :last_harvested_at
-
-        Success harvest_attempt.harvest_records.count
       end
     end
   end

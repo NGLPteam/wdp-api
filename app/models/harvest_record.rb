@@ -16,8 +16,14 @@ class HarvestRecord < ApplicationRecord
   has_many_readonly :collections, through: :harvest_entities, source: :entity, source_type: "Collection"
   has_many_readonly :items, through: :harvest_entities, source: :entity, source_type: "Item"
 
+  attribute :skipped, Harvesting::Records::Skipped.to_type, default: proc { {} }
+
   scope :by_metadata_kind, ->(kind) { where(id: HarvestEntity.by_metadata_kind(kind).select(:harvest_record_id)) }
+  scope :filtered_by_schema_version, ->(version) { where(id: HarvestEntity.filtered_by_schema_version(version).select(:harvest_record_id)) }
   scope :latest_attempt, -> { where(harvest_attempt_id: ::HarvestAttempt.in_recent_order.limit(1).select(:id)) }
+  scope :skipped, -> { where(has_been_skipped: true) }
+  scope :unskipped, -> { where(has_been_skipped: false) }
+  scope :upsertable, -> { unskipped.sans_harvest_errors }
 
   def inspect
     "HarvestRecord[:#{metadata_format}](#{identifier.inspect})"

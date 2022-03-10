@@ -28,6 +28,10 @@ module Harvesting
             harvest_entity.log_harvest_error!(*harvest_entity.to_failed_upsert(reason))
           end
         end
+      rescue Harvesting::Error => e
+        harvest_entity.log_harvest_error! :could_not_upsert_entity, e.message, exception_klass: e.class.name, backtrace: e.backtrace
+
+        Failure[:failed_upsert, e.message]
       end
 
       private
@@ -249,6 +253,8 @@ module Harvesting
         return nil if identifier.blank?
 
         target_entity.descendant_collection_by! identifier
+      rescue ActiveRecord::RecordNotFound
+        raise Harvesting::Metadata::Error, "Unknown existing collection: #{identifier}"
       end
 
       # @param [HarvestEntity] harvest_entity

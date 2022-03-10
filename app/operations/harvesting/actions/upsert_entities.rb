@@ -9,29 +9,37 @@ module Harvesting
         upsert_entity: "harvesting.entities.upsert",
       ]
 
-      prepend Harvesting::HushActiveRecord
+      runner do
+        param :harvest_record, Harvesting::Types::Record
+
+        option :reprepare, Harvesting::Types::Bool, default: proc { false }
+
+        logs_errors_from! :harvest_record
+      end
+
+      before_perform :clear_harvest_errors!
+
+      first_argument_provides_middleware!
+
+      defer_ordering_refresh!
 
       # @param [HarvestRecord] harvest_record
       # @param [Boolean] reprepare
       # @return [Dry::Monads::Result]
-      def call(harvest_record, reprepare: false)
-        harvest_record.clear_harvest_errors!
+      def perform(harvest_record, reprepare: false)
+        if reprepare
+          yield prepare_entities.call(harvest_record)
 
-        wrap_middleware.call(harvest_record) do
-          silence_activerecord do
-            yield prepare_entities.call(harvest_record) if reprepare
+          return Success() if harvest_record.harvest_errors.any?
+        end
 
-            break if harvest_record.harvest_errors.any?
-
-            harvest_record.harvest_entities.roots.find_each do |root_entity|
-              upsert_entity.call(root_entity).or do |reason|
-                harvest_record.log_harvest_error!(*root_entity.to_failed_upsert(reason))
-              end
-            end
+        harvest_record.harvest_entities.roots.find_each do |root_entity|
+          upsert_entity.call(root_entity).or do |reason|
+            harvest_record.log_harvest_error!(*root_entity.to_failed_upsert(reason))
           end
         end
 
-        Success nil
+        return Success()
       end
     end
   end

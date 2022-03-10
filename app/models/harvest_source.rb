@@ -26,7 +26,7 @@ class HarvestSource < ApplicationRecord
 
   # @return [void]
   def extract_sets!
-    call_operation("harvesting.sources.extract_sets", self)
+    call_operation("harvesting.actions.extract_sets", self)
   end
 
   # @param [String] identifier

@@ -10,15 +10,19 @@ module Harvesting
         upsert_all_entities: "harvesting.actions.upsert_all_entities",
       ]
 
-      prepend Harvesting::HushActiveRecord
+      runner do
+        param :harvest_attempt, Harvesting::Types::Attempt
+
+        option :reprepare, Harvesting::Types::Bool, default: proc { true }
+      end
 
       # @param [HarvestAttempt] harvest_attempt
       # @param [Boolean] reprepare
       # @return [Dry::Monads::Result]
-      def call(harvest_attempt, reprepare: true)
+      def perform(harvest_attempt, reprepare: true)
         yield upsert_all_entities.call harvest_attempt, reprepare: reprepare
 
-        Success nil
+        return Success()
       end
     end
   end

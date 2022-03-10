@@ -9,11 +9,28 @@ module Harvesting
       include Dry::Monads[:result]
       include WDPAPI::Deps[
         augment_middleware: "harvesting.protocols.actions.augment_middleware",
+        process_record_batch: "harvesting.protocols.actions.process_record_batch",
       ]
 
-      defines :protocol_name, type: AppTypes::String
+      defines :protocol_name, type: Harvesting::Types::String
 
       protocol_name "Unknown"
+
+      # @abstract
+      # @return [#call]
+      def extract_raw_metadata
+        # :nocov:
+        Harvesting::Utility::UnavailableAction.new(:protocol, protocol_name, __method__)
+        # :nocov:
+      end
+
+      # @abstract
+      # @return [#call]
+      def extract_raw_source
+        # :nocov:
+        Harvesting::Utility::UnavailableAction.new(:protocol, protocol_name, __method__)
+        # :nocov:
+      end
 
       # @abstract
       # @return [#call]
@@ -31,10 +48,26 @@ module Harvesting
         # :nocov:
       end
 
+      # @abstract
+      # @return [#call]
+      def process_record
+        # :nocov:
+        Harvesting::Utility::UnavailableAction.new(:protocol, protocol_name, __method__)
+        # :nocov:
+      end
+
+      # @abstract
+      # @return [#call]
+      def record_identifier
+        # :nocov:
+        Harvesting::Utility::UnavailableAction.new(:protocol, protocol_name, __method__)
+        # :nocov:
+      end
+
       # @!attribute [r] protocol_name
       # @return [String]
       def protocol_name
-        self.class.protocol.name
+        self.class.protocol_name
       end
 
       def to_monad

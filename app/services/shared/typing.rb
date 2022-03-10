@@ -13,6 +13,10 @@ module Shared
       list = Dry::Types["array"].of(type)
 
       const_set :List, list
+
+      subclass = Dry::Types["class"].constrained(lteq: self)
+
+      const_set :Subclass, subclass
     end
 
     class_methods do

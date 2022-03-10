@@ -10,7 +10,13 @@ module Harvesting
 
     VALID_PATH = /\A(?<part>[a-z_][a-zA-Z_0-9]*)\.\g<part>\z/.freeze
 
+    # @see ::HarvestAttempt
+    Attempt = Instance(::HarvestAttempt)
+
     Callable = Interface(:call)
+
+    # @see ::HarvestEntity
+    Entity = Instance(::HarvestEntity)
 
     # A simple pass-through identity function
     Identity = proc { _1 }
@@ -32,9 +38,21 @@ module Harvesting
 
     Paths = Coercible::Array.of(Path)
 
+    # @see ::HarvestRecord
+    Record = Instance(::HarvestRecord)
+
     SectionTag = Coercible::Symbol
 
     SectionTags = Array.of(SectionTag)
+
+    # @see ::HarvestSet
+    Set = Instance(::HarvestSet)
+
+    # @see ::HarvestSource
+    Source = Instance(::HarvestSource)
+
+    # @see ::HarvestTarget
+    Target = Instance(::HarvestTarget)
 
     # Any dry type
     Type = Instance(Dry::Types::Type)

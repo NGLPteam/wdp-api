@@ -9,11 +9,18 @@ module Harvesting
         extract_records: "harvesting.actions.extract_records",
       ]
 
+      runner do
+        param :harvest_source, Harvesting::Types::Source
+        param :harvest_target, Harvesting::Types::Target
+
+        option :set, Harvesting::Types::Set.optional, default: proc { nil }
+      end
+
       # @param [HarvestSource] harvest_source
       # @param [HarvestTarget] target_entity
       # @param [HarvestSet, nil] set
-      # @return [Dry::Monads::Result]
-      def call(harvest_source, target_entity, set: nil)
+      # @return [Dry::Monads::Success(HarvestAttempt)]
+      def perform(harvest_source, target_entity, set: nil)
         attempt = yield create_manual_attempt.call harvest_source, target_entity, set: set
 
         yield extract_records.call attempt
