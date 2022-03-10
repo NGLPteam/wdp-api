@@ -896,6 +896,17 @@ $$;
 
 
 --
+-- Name: record_is_skipped(jsonb); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.record_is_skipped(jsonb) RETURNS boolean
+    LANGUAGE sql IMMUTABLE PARALLEL SAFE
+    AS $_$
+SELECT jsonb_extract_boolean($1, '{active}');
+$_$;
+
+
+--
 -- Name: to_schema_kind(text); Type: FUNCTION; Schema: public; Owner: -
 --
 
@@ -3654,7 +3665,9 @@ CREATE TABLE public.harvest_records (
     issued_at timestamp without time zone,
     available_at timestamp without time zone,
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    skipped jsonb DEFAULT '{"active": false}'::jsonb NOT NULL,
+    has_been_skipped boolean GENERATED ALWAYS AS (public.record_is_skipped(skipped)) STORED NOT NULL
 );
 
 
@@ -6181,6 +6194,13 @@ CREATE UNIQUE INDEX index_harvest_mappings_uniqueness ON public.harvest_mappings
 --
 
 CREATE INDEX index_harvest_records_on_harvest_attempt_id ON public.harvest_records USING btree (harvest_attempt_id);
+
+
+--
+-- Name: index_harvest_records_on_has_been_skipped; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_harvest_records_on_has_been_skipped ON public.harvest_records USING btree (has_been_skipped);
 
 
 --
@@ -8778,6 +8798,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20220303221906'),
 ('20220304214235'),
 ('20220308173141'),
+('20220309205537'),
 ('20220309222458');
 
 

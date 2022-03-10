@@ -2,6 +2,7 @@
 
 class HarvestAttempt < ApplicationRecord
   include HasEphemeralSystemSlug
+  include HasHarvestErrors
   include ScopesForMetadataFormat
   include TimestampScopes
 
@@ -16,6 +17,10 @@ class HarvestAttempt < ApplicationRecord
 
   validates :metadata_format, harvesting_metadata_format: true
 
+  attribute :metadata, Harvesting::Attempts::Metadata.to_type, default: proc { {} }
+
+  delegate :max_record_count, to: :metadata
+
   before_validation :inherit_metadata_format!
 
   def logger
@@ -27,14 +32,21 @@ class HarvestAttempt < ApplicationRecord
     call_operation("harvesting.actions.extract_records", self, skip_prepare: skip_prepare)
   end
 
-  def reprocess!(reprepare: true)
-    call_operation("harvesting.actions.reprocess_attempt", self, reprepare: reprepare)
+  # @see Harvesting::Actions::UpsertAllEntities
+  def reprocess!
+    call_operation("harvesting.actions.reprocess_attempt", self, reprepare: true)
   end
 
+  # @see Harvesting::UpsertEntitiesForRecordJob
   def asynchronously_reprocess!(reprepare: true)
     harvest_records.find_each do |record|
       Harvesting::UpsertEntitiesForRecordJob.perform_later record, reprepare: reprepare
     end
+  end
+
+  # @return [Harvesting::Attempts::RecordExtractionProgress]
+  def record_extraction_progress
+    @record_extraction_progress ||= Harvesting::Attempts::RecordExtractionProgress.new self
   end
 
   private

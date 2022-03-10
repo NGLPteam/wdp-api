@@ -2,30 +2,30 @@
 
 module Harvesting
   module Actions
-    # Extract a set of {HarvestEntity staged entities} from a {HarvestRecord},
-    # to be upserted later.
+    # Extract a set of {HarvestEntity staged entities} from a {HarvestRecord}, to be upserted later.
+    #
+    # @see Harvesting::Records::PrepareEntities
     class PrepareEntitiesFromRecord < Harvesting::BaseAction
-      include Dry::Effects.Resolve(:metadata_format)
       include WDPAPI::Deps[
-        update_entity_count: "harvesting.records.update_entity_count",
+        prepare_entities: "harvesting.records.prepare_entities",
       ]
 
-      prepend Harvesting::HushActiveRecord
+      runner do
+        param :harvest_record, Harvesting::Types::Record
 
-      def call(harvest_record)
-        harvest_record.clear_harvest_errors!
+        logs_errors_from! :harvest_record
+      end
 
-        wrap_middleware.call(harvest_record) do
-          silence_activerecord do
-            yield metadata_format.extract_entities.call harvest_record.raw_metadata_source if harvest_record.raw_metadata_source?
-          rescue Dry::Struct::Error, Harvesting::Error => e
-            harvest_record.log_harvest_error! :could_not_prepare_record, e.message, exception_klass: e.class.name, backtrace: e.backtrace
-          end
-        end
+      before_perform :clear_harvest_errors!
 
-        yield update_entity_count.call(harvest_record)
+      first_argument_provides_middleware!
 
-        Success nil
+      defer_ordering_refresh!
+
+      # @param [HarvestRecord] harvest_record
+      # @return [Dry::Monads::Result]
+      def perform(harvest_record)
+        prepare_entities.(harvest_record)
       end
     end
   end

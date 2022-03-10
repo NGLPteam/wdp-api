@@ -6,6 +6,7 @@ module Schemas
     #
     # @see Schemas::Orderings::RefreshStatus
     class RefreshOrderings
+      include Dry::Effects.Defer
       include Dry::Effects.Resolve(:refresh_status)
       include Dry::Monads[:do, :result]
       include MonadicPersistence

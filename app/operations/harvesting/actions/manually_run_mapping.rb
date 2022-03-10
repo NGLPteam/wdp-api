@@ -11,7 +11,7 @@ module Harvesting
 
       # @param [HarvestMapping] harvest_mapping
       # @return [Dry::Monads::Result]
-      def call(harvest_mapping)
+      def perform(harvest_mapping)
         attempt = yield create_manual_attempt.call harvest_mapping
 
         yield extract_records.call attempt

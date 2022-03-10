@@ -10,6 +10,7 @@ module Harvesting
       include Dry::Effects.Resolve(:metadata_format)
       include Dry::Effects.Resolve(:schemas)
       include Dry::Effects.Resolve(:target_entity)
+      include Dry::Effects.Interrupt(:skip_record)
       include MonadicPersistence
 
       include WDPAPI::Deps[
@@ -42,7 +43,33 @@ module Harvesting
 
         target_entity.descendant_collection_by! identifier
       rescue ActiveRecord::RecordNotFound
-        raise Harvesting::Error, "Expected existing collection with identifier: #{identifier}"
+        skip_record! "Expected existing collection with identifier: #{identifier}", code: :unknown_parent
+      end
+
+      # @see Harvesting::Records::Skipped.because
+      # @param [String] reason
+      # @param [Hash] options
+      # @return [void]
+      def skip_record!(reason, **options)
+        skipped = Harvesting::Records::Skipped.because reason, **options
+
+        skip_record skipped
+      end
+
+      # @see #skip_record!
+      # @param [String, nil] kind
+      # @param [Hash] options
+      # @return [void]
+      def unsupported_metadata_kind!(kind, **options)
+        base_code = kind.blank? ? :unknown_metadata_kind : :unsupported_metadata_kind
+
+        prefix = base_code.to_s.humanize
+
+        reason = [prefix, kind.presence].compact.join(": ")
+
+        options[:code] ||= base_code
+
+        skip_record! reason, options
       end
     end
   end

@@ -14,7 +14,7 @@ module Harvesting
 
       redis_id_field :model_id
 
-      list :messages, marshal: true, maxlength: 1000,
+      list :messages, marshal: true, maxlength: 10_000,
         expireat: proc { 1.day.from_now }
 
       def log(message, tags: [], level: nil)
