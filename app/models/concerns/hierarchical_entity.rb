@@ -44,6 +44,9 @@ module HierarchicalEntity
 
     has_many :ordering_entries, dependent: :destroy, as: :entity
 
+    # @return [Ordering, nil]
+    has_one_readonly :initial_ordering, -> { initial }, class_name: "Ordering"
+
     has_many_readonly :parent_orderings, through: :ordering_entries, source: :ordering
 
     has_many :pages, -> { in_default_order }, as: :entity, dependent: :destroy, inverse_of: :entity

@@ -11,6 +11,10 @@ module Types
 
     field :children, resolver: Resolvers::OrderingEntryResolver
 
+    field :count, Integer, null: false do
+      description "The number of entries currently visible within the ordering"
+    end
+
     field :identifier, String, null: false do
       description "A unique identifier for the ordering within the context of its parent entity."
     end
@@ -79,6 +83,12 @@ module Types
 
       This is effectively a shortcut for `Ordering.render.mode === "TREE"`.
       TEXT
+    end
+
+    # @see Loaders::OrderingEntryCountLoader
+    # @return [Integer]
+    def count
+      Loaders::OrderingEntryCountLoader.load object
     end
 
     # @see Schemas::Orderings::Definition#filter

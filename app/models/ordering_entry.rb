@@ -28,5 +28,11 @@ class OrderingEntry < ApplicationRecord
     def linking_to(entity)
       where(entity_type: "EntityLink", entity_id: entity.incoming_links.select(:id))
     end
+
+    # @param [<Ordering>] orderings
+    # @return [{ String => Integer }]
+    def visible_count_for(orderings)
+      currently_visible.by_ordering(orderings).group(:ordering_id).count
+    end
   end
 end
