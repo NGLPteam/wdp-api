@@ -31,13 +31,15 @@ class Ordering < ApplicationRecord
   scope :by_identifier, ->(identifier) { where(identifier: identifier) }
 
   scope :deterministically_ordered, -> { reorder(position: :asc, name: :asc, identifier: :asc) }
+  scope :initially_ordered, -> { reorder(entity_id: :asc, position: :asc, name: :asc, identifier: :asc) }
 
   scope :enabled, -> { where(disabled_at: nil) }
   scope :disabled, -> { where.not(disabled_at: nil) }
   scope :hidden, -> { where(hidden: true) }
   scope :visible, -> { where(hidden: false) }
+  scope :with_visible_entries, -> { where(id: OrderingEntry.currently_visible.select(:ordering_id)) }
 
-  scope :initial, -> { deterministically_ordered.enabled.visible }
+  scope :initial, -> { initially_ordered.enabled.visible.with_visible_entries.distinct_on(:entity_id) }
 
   delegate :header, :footer, :tree_mode?, to: :definition
 
