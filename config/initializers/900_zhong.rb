@@ -17,5 +17,9 @@ Zhong.schedule do
     every 10.minutes, "populate_missing_orderings" do
       Entities::PopulateMissingOrderingsJob.perform_later
     end
+
+    every 10.minutes, "populate_visibilities" do
+      Entities::PopulateVisibilitiesJob.perform_later
+    end
   end
 end
