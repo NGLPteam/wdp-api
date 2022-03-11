@@ -85,6 +85,29 @@
         { "path": "entity.title", "direction": "asc" }
       ],
       "position": 3
+    },
+    {
+      "id": "papers",
+      "name": "Papers",
+      "filter": {
+        "schemas": [
+          {
+            "namespace": "nglp",
+            "identifier": "paper"
+          }
+        ]
+      },
+      "select": {
+        "direct": "children",
+        "links": {
+          "contains": true
+        }
+      },
+      "order": [
+        { "path": "props.issued#variable_date", "direction": "desc", "nulls": "last" },
+        { "path": "entity.title", "direction": "asc" }
+      ],
+      "position": 4
     }
   ],
   "properties": [
