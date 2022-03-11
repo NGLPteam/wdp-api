@@ -20,6 +20,8 @@ module Entities
 
       yield upsert! attributes
 
+      yield maybe_upsert_visibility! source
+
       calculate_authorizing.call auth_path: source.entity_auth_path
     end
 
@@ -45,6 +47,19 @@ module Entities
     def upsert!(attributes)
       Try do
         Entity.upsert attributes, unique_by: UNIQUE_INDEX
+      end.to_monad
+    end
+
+    def maybe_upsert_visibility!(source)
+      return Success() unless source.kind_of?(ChildEntity)
+
+      tuple = {}
+
+      tuple[:entity_id] = source.id_for_entity
+      tuple[:entity_type] = source.entity_type
+
+      Try do
+        EntityVisibility.upsert tuple, unique_by: UNIQUE_INDEX
       end.to_monad
     end
   end
