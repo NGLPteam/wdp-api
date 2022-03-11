@@ -41,6 +41,12 @@ module Types
       argument :slug, Types::SlugType, required: true
     end
 
+    field :community_by_title, Types::CommunityType, null: true do
+      description "Look up a community by its title"
+
+      argument :title, String, required: true
+    end
+
     field :item, Types::ItemType, null: true do
       description "Look up an item by slug"
 
@@ -157,6 +163,12 @@ module Types
 
     def community(slug:)
       Loaders::RecordLoader.for(Community).load(slug)
+    end
+
+    # @param [String] title
+    # @return [Community, nil]
+    def community_by_title(title:)
+      Community.by_title(title).first
     end
 
     def contributor(slug:)

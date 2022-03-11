@@ -51,6 +51,7 @@ module HierarchicalEntity
 
     has_many :pages, -> { in_default_order }, as: :entity, dependent: :destroy, inverse_of: :entity
 
+    scope :by_title, ->(title) { where(title: title) }
     scope :sans_thumbnail, -> { where(arel_json_get(:thumbnail_data, :storage).eq(nil)) }
 
     scope :filtered_by_schema_version, ->(schemas) { where(schema_version: SchemaVersion.filtered_by(schemas)) }
