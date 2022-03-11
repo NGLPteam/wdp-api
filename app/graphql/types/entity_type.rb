@@ -64,6 +64,12 @@ module Types
 
     field :orderings, resolver: Resolvers::OrderingResolver
 
+    field :initial_ordering, Types::OrderingType, null: true do
+      description <<~TEXT
+      The initial ordering to display for this entity.
+      TEXT
+    end
+
     field :page, Types::PageType, null: true do
       description "Look up a page for this entity by slug"
 
@@ -150,7 +156,12 @@ module Types
     # @param [String] identifier
     # @return [Ordering, nil]
     def ordering(identifier:)
-      object.orderings.by_identifier(identifier).first
+      Loaders::OrderingByIdentifierLoader.for(identifier).load(object)
+    end
+
+    # @return [Ordering, nil]
+    def initial_ordering
+      Loaders::AssociationLoader.for(object.class, :initial_ordering).load(object)
     end
 
     # @param [String] slug

@@ -21,7 +21,7 @@ module Resolvers
 
     type Types::OrderingEntryType.connection_type, null: false
 
-    scope { object.ordering_entries }
+    scope { object.ordering_entries.currently_visible }
 
     def apply_order_with_default(scope)
       scope.in_default_order

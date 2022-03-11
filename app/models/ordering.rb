@@ -37,6 +37,8 @@ class Ordering < ApplicationRecord
   scope :hidden, -> { where(hidden: true) }
   scope :visible, -> { where(hidden: false) }
 
+  scope :initial, -> { deterministically_ordered.enabled.visible }
+
   delegate :header, :footer, :tree_mode?, to: :definition
 
   delegate :schemas, allow_nil: true, to: "definition.filter", prefix: :filter
