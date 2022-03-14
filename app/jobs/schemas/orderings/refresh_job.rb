@@ -2,6 +2,7 @@
 
 module Schemas
   module Orderings
+    # @see Schemas::Orderings::Refresh
     class RefreshJob < ApplicationJob
       queue_as :maintenance
 

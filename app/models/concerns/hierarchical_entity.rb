@@ -42,10 +42,20 @@ module HierarchicalEntity
 
     has_many :orderings, dependent: :destroy, as: :entity
 
-    has_many :ordering_entries, dependent: :destroy, as: :entity
+    has_many :ordering_entries, dependent: :delete_all, as: :entity
+
+    has_one_readonly :initial_ordering_derivation, as: :entity
+
+    has_one :initially_derived_ordering, through: :initial_ordering_derivation, source: :ordering
+
+    has_one :initial_ordering_selection, dependent: :destroy, as: :entity, autosave: true
+
+    has_one :initially_selected_ordering, through: :initial_ordering_selection, source: :ordering
+
+    has_one :initial_ordering_link, dependent: :destroy, as: :entity, autosave: true
 
     # @return [Ordering, nil]
-    has_one_readonly :initial_ordering, -> { initial }, class_name: "Ordering"
+    has_one :initial_ordering, through: :initial_ordering_link, source: :ordering
 
     has_many_readonly :parent_orderings, through: :ordering_entries, source: :ordering
 
@@ -61,6 +71,9 @@ module HierarchicalEntity
     scope :with_schema_name_asc, -> { joins(:schema_definition).merge(SchemaDefinition.order(name: :asc)) }
 
     scope :with_schema_name_desc, -> { joins(:schema_definition).merge(SchemaDefinition.order(name: :desc)) }
+
+    scope :with_orderings, -> { where(id: Ordering.select(:entity_id)) }
+    scope :sans_orderings, -> { where.not(id: Ordering.select(:entity_id)) }
 
     delegate :auth_path, to: :contextual_parent, allow_nil: true, prefix: :contextual
 
@@ -327,6 +340,23 @@ module HierarchicalEntity
   def set_temporary_auth_path!
     self.auth_path = system_slug
   end
+
+  # @!group Initial Orderings
+
+  # @see Schemas::Instances::ClearInitialOrdering
+  # @return [Dry::Monads::Result]
+  def clear_initial_ordering
+    call_operation("schemas.instances.clear_initial_ordering", self)
+  end
+
+  # @see Schemas::Instances::SelectInitialOrdering
+  # @param [Ordering] ordering
+  # @return [Dry::Monads::Result]
+  def select_initial_ordering(ordering)
+    call_operation("schemas.instances.select_initial_ordering", self, ordering)
+  end
+
+  # @!endgroup
 
   class_methods do
     # @param [User] user

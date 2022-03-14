@@ -10,6 +10,8 @@ module Types
 
     field :apply_schema_properties, mutation: Mutations::ApplySchemaProperties
 
+    field :clear_initial_ordering, mutation: Mutations::ClearInitialOrdering
+
     field :create_announcement, mutation: Mutations::CreateAnnouncement
 
     field :create_asset, mutation: Mutations::CreateAsset
@@ -59,6 +61,8 @@ module Types
     field :reset_ordering, mutation: Mutations::ResetOrdering
 
     field :revoke_access, mutation: Mutations::RevokeAccess
+
+    field :select_initial_ordering, mutation: Mutations::SelectInitialOrdering
 
     field :update_announcement, mutation: Mutations::UpdateAnnouncement
 
