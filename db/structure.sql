@@ -7581,13 +7581,6 @@ CREATE UNIQUE INDEX schema_definition_properties_pkey ON public.schema_definitio
 
 
 --
--- Name: tst_gp_managed; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX tst_gp_managed ON public.granted_permissions USING btree (user_id, accessible_id, accessible_type, role_id, auth_path, scope, inferred) WHERE (action OPERATOR(public.=) 'self.manage_access'::public.ltree);
-
-
---
 -- Name: ordering_entries_part_1_entity_type_entity_id_idx; Type: INDEX ATTACH; Schema: public; Owner: -
 --
 
