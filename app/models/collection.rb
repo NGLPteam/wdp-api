@@ -39,4 +39,9 @@ class Collection < ApplicationRecord
   def hierarchical_children
     items
   end
+
+  # @return [Collection, nil]
+  def largest_child_collection
+    children.preload(:entity_descendants).max_by { |c| c.entity_descendants.size }
+  end
 end
