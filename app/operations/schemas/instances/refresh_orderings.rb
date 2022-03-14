@@ -23,7 +23,7 @@ module Schemas
         Ordering.owned_by_or_ordering(entity).find_each do |ordering|
           next if status.skip?(ordering)
 
-          if status.harvesting?
+          if status.deferred?
             later do
               Schemas::Orderings::RefreshJob.perform_later ordering
             end
