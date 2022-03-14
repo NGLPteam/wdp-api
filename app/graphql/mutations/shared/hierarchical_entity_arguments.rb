@@ -8,18 +8,6 @@ module Mutations
       include Mutations::Shared::EntityArguments
 
       included do
-        argument :accessioned, Types::VariablePrecisionDateInputType, required: false,
-          description: "The date this entity was added to its parent",
-          attribute: true
-
-        argument :available, Types::VariablePrecisionDateInputType, required: false,
-          description: "The date this entity was made available",
-          attribute: true
-
-        argument :issued, Types::VariablePrecisionDateInputType, required: false,
-          description: "The date this entity was issued",
-          attribute: true
-
         argument :published, Types::VariablePrecisionDateInputType, required: false,
           description: "The date this entity was published",
           attribute: true

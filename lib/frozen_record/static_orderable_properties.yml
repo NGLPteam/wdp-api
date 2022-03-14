@@ -28,18 +28,6 @@
   grouping: entity
   builder: by_variable_date
   type: variable_date
-- path: entity.issued
-  grouping: entity
-  builder: by_variable_date
-  type: variable_date
-- path: entity.available
-  grouping: entity
-  builder: by_variable_date
-  type: variable_date
-- path: entity.accessioned
-  grouping: entity
-  builder: by_variable_date
-  type: variable_date
 - path: link.is_link
   grouping: link
   builder: by_is_link

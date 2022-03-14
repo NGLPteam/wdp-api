@@ -14,9 +14,6 @@ module WritesNamedVariableDates
 
   included do
     writes_named_variable_date! :published
-    writes_named_variable_date! :issued
-    writes_named_variable_date! :available
-    writes_named_variable_date! :accessioned
 
     before_create :create_shared_named_variable_date_records!
 

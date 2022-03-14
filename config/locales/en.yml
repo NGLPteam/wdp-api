@@ -96,18 +96,6 @@ en:
         label: Published
         description: >
           The variable precision date when the entity was published.
-      entity_issued:
-        label: Issued
-        description: >
-          The variable precision date when the entity was issued.
-      entity_available:
-        label: Available
-        description: >
-          The variable precision date when the entity was made available.
-      entity_accessioned:
-        label: Accessioned
-        description: >
-          The variable precision date when the entity was added to a collection, library, volume, etc.
       link_is_link:
         label: Is Link?
         description: >
