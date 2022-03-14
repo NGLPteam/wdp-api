@@ -87,7 +87,6 @@
       ]
     },
     { "path": "accessioned", "type": "variable_date", "label": "Accessioned", "description": "When the ETD was added to a collection", "function": "metadata" },
-    { "path": "available", "type": "variable_date", "label": "Available", "description": "When the ETD was made available", "function": "metadata" },
-    { "path": "issued", "type": "variable_date", "label": "issued", "description": "When the ETD was issued", "function": "metadata" }
+    { "path": "available", "type": "variable_date", "label": "Available", "description": "When the ETD was made available", "function": "metadata" }
   ]
 }

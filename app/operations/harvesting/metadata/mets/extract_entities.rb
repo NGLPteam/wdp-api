@@ -21,7 +21,6 @@ module Harvesting
           peer_reviewed: "details.peer_reviewed",
           accessioned: "details.accessioned",
           available: "details.available",
-          issued: "details.issued",
         }.freeze
 
         PAPER_ATTRS = {
@@ -34,7 +33,6 @@ module Harvesting
           abstract: "details.abstract_as_full_text",
           accessioned: "details.accessioned",
           available: "details.available",
-          issued: "details.issued",
         }.freeze
 
         MATCHES_PAPER = /\A\s*(Article|paper)\s*\z/i.freeze

@@ -13,7 +13,6 @@
     { "path": "pdf_version", "label": "PDF Version", "type": "asset", "required": false, "function": "content" },
     { "path": "text_version", "label": "Text Version", "type": "asset", "required": false, "function": "content" },
     { "path": "accessioned", "type": "variable_date", "label": "Accessioned", "description": "When the paper was added to a collection", "function": "metadata" },
-    { "path": "available", "type": "variable_date", "label": "Available", "description": "When the paper was made available", "function": "metadata" },
-    { "path": "issued", "type": "variable_date", "label": "issued", "description": "When the paper was issued", "function": "metadata" }
+    { "path": "available", "type": "variable_date", "label": "Available", "description": "When the paper was made available", "function": "metadata" }
   ]
 }
