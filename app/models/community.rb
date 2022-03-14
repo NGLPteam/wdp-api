@@ -38,4 +38,9 @@ class Community < ApplicationRecord
   def grant_system_roles!
     call_operation("communities.grant_system_roles", self).value!
   end
+
+  # @return [Collection, nil]
+  def largest_collection
+    collections.roots.where.not(identifier: "ucm").preload(:entity_descendants).max_by { |c| c.entity_descendants.size }
+  end
 end
