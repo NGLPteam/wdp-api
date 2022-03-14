@@ -22,4 +22,10 @@ Zhong.schedule do
       Entities::PopulateVisibilitiesJob.perform_later
     end
   end
+
+  category "orderings" do
+    every 10.minutes, "refresh_counts" do
+      Schemas::Orderings::RefreshEntryCountsJob.perform_later
+    end
+  end
 end

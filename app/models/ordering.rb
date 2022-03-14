@@ -21,6 +21,11 @@ class Ordering < ApplicationRecord
 
   has_one :schema_definition, through: :schema_version
 
+  has_one_readonly :ordering_entry_count, inverse_of: :ordering
+  has_one_readonly :initial_ordering_derivation, inverse_of: :ordering
+  has_one :initial_ordering_selection, dependent: :destroy, inverse_of: :ordering
+  has_one :initial_ordering_link, dependent: :destroy, inverse_of: :ordering
+
   has_many :ordering_entries, -> { preload(:entity) }, inverse_of: :ordering, dependent: :delete_all
 
   # @!attribute [rw] definition
@@ -57,6 +62,8 @@ class Ordering < ApplicationRecord
 
   after_save :refresh!
 
+  after_destroy :recalculate_initial_ordering!
+
   assign_polymorphic_foreign_key! :entity, :community, :collection, :item
 
   # @return [void]
@@ -86,6 +93,14 @@ class Ordering < ApplicationRecord
   # @return [<Schemas::Orderings::OrderDefinition>]
   def order_definitions
     Array(definition.order)
+  end
+
+  # @api private
+  # @return [void]
+  def recalculate_initial_ordering!
+    return unless !destroyed_by_association && entity.initial_ordering == self
+
+    WDPAPI["schemas.orderings.calculate_initial"].call(entity: entity)
   end
 
   # @see Schemas::Orderings::Refresh

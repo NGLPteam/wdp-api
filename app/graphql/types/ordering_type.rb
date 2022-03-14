@@ -19,6 +19,10 @@ module Types
       description "A unique identifier for the ordering within the context of its parent entity."
     end
 
+    field :initial, Boolean, null: false do
+      description "Whether this ordering serves as the initial ordering for its parent entity"
+    end
+
     field :disabled, Boolean, null: false, method: :disabled? do
       description "Whether the ordering has been disabled—orderings inherited from schemas will be disabled if deleted."
     end
@@ -95,6 +99,24 @@ module Types
     # @return [Schemas::Orderings::FilterDefinition]
     def filter
       object.definition.filter
+    end
+
+    # @return [Promise<HierarchicalEntity>]
+    def entity
+      if object.association(:entity).loaded?
+        Promise.resolve(object.entity)
+      else
+        Loaders::AssociationLoader.for(object.class, :entity).load(object)
+      end
+    end
+
+    # @return [Promise<Boolean>]
+    def initial
+      entity.then do |ent|
+        Loaders::AssociationLoader.for(ent.class, :initial_ordering).load(ent).then do |initial_ordering|
+          object == initial_ordering
+        end
+      end
     end
 
     # @see Schemas::Orderings::Definition#select

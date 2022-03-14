@@ -156,6 +156,16 @@ CREATE DOMAIN public.full_text_weight AS "char" DEFAULT 'D'::"char"
 
 
 --
+-- Name: initial_ordering_kind; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.initial_ordering_kind AS ENUM (
+    'selected',
+    'derived'
+);
+
+
+--
 -- Name: item_link_operator; Type: TYPE; Schema: public; Owner: -
 --
 
@@ -3748,6 +3758,96 @@ CREATE VIEW public.hierarchical_schema_version_ranks AS
 
 
 --
+-- Name: ordering_entries; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.ordering_entries (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    ordering_id uuid NOT NULL,
+    entity_id uuid NOT NULL,
+    entity_type text NOT NULL,
+    "position" bigint NOT NULL,
+    link_operator public.link_operator,
+    auth_path public.ltree NOT NULL,
+    scope public.ltree NOT NULL,
+    relative_depth integer NOT NULL,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    inverse_position bigint NOT NULL,
+    stale_at timestamp without time zone,
+    tree_depth bigint,
+    tree_parent_id uuid,
+    tree_parent_type text
+)
+PARTITION BY HASH (ordering_id);
+
+
+--
+-- Name: ordering_entry_counts; Type: MATERIALIZED VIEW; Schema: public; Owner: -
+--
+
+CREATE MATERIALIZED VIEW public.ordering_entry_counts AS
+ SELECT oe.ordering_id,
+    count(*) FILTER (WHERE visibility.visible) AS visible_count,
+    count(*) AS entries_count
+   FROM ((public.ordering_entries oe
+     LEFT JOIN public.entity_visibilities ev USING (entity_type, entity_id))
+     LEFT JOIN LATERAL ( SELECT
+                CASE ev.visibility
+                    WHEN 'visible'::public.entity_visibility THEN true
+                    WHEN 'hidden'::public.entity_visibility THEN false
+                    WHEN 'limited'::public.entity_visibility THEN (ev.visibility_range @> CURRENT_TIMESTAMP)
+                    ELSE false
+                END AS visible) visibility ON (true))
+  GROUP BY oe.ordering_id
+  WITH NO DATA;
+
+
+--
+-- Name: initial_ordering_derivations; Type: VIEW; Schema: public; Owner: -
+--
+
+CREATE VIEW public.initial_ordering_derivations AS
+ SELECT DISTINCT ON (ord.entity_id) ord.entity_id,
+    ord.entity_type,
+    ord.id AS ordering_id,
+    ord.identifier
+   FROM (public.orderings ord
+     LEFT JOIN public.ordering_entry_counts oec ON ((oec.ordering_id = ord.id)))
+  WHERE ((ord.disabled_at IS NULL) AND (NOT ord.hidden))
+  ORDER BY ord.entity_id, oec.visible_count DESC NULLS LAST, ord."position", ord.name, ord.identifier;
+
+
+--
+-- Name: initial_ordering_links; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.initial_ordering_links (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    entity_type text NOT NULL,
+    entity_id uuid NOT NULL,
+    ordering_id uuid NOT NULL,
+    kind public.initial_ordering_kind NOT NULL,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+--
+-- Name: initial_ordering_selections; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.initial_ordering_selections (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    entity_type character varying NOT NULL,
+    entity_id uuid NOT NULL,
+    ordering_id uuid NOT NULL,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+--
 -- Name: items; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -3911,31 +4011,6 @@ END) STORED,
     normalized public.variable_precision_date GENERATED ALWAYS AS ((OPERATOR(public.#) actual)) STORED,
     value date GENERATED ALWAYS AS ((OPERATOR(public.~^) actual)) STORED
 );
-
-
---
--- Name: ordering_entries; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.ordering_entries (
-    id uuid DEFAULT gen_random_uuid() NOT NULL,
-    ordering_id uuid NOT NULL,
-    entity_id uuid NOT NULL,
-    entity_type text NOT NULL,
-    "position" bigint NOT NULL,
-    link_operator public.link_operator,
-    auth_path public.ltree NOT NULL,
-    scope public.ltree NOT NULL,
-    relative_depth integer NOT NULL,
-    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    inverse_position bigint NOT NULL,
-    stale_at timestamp without time zone,
-    tree_depth bigint,
-    tree_parent_id uuid,
-    tree_parent_type text
-)
-PARTITION BY HASH (ordering_id);
 
 
 --
@@ -4712,6 +4787,22 @@ ALTER TABLE ONLY public.harvest_sets
 
 ALTER TABLE ONLY public.harvest_sources
     ADD CONSTRAINT harvest_sources_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: initial_ordering_links initial_ordering_links_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.initial_ordering_links
+    ADD CONSTRAINT initial_ordering_links_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: initial_ordering_selections initial_ordering_selections_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.initial_ordering_selections
+    ADD CONSTRAINT initial_ordering_selections_pkey PRIMARY KEY (id);
 
 
 --
@@ -6232,6 +6323,34 @@ CREATE UNIQUE INDEX index_harvest_sources_on_name ON public.harvest_sources USIN
 
 
 --
+-- Name: index_initial_ordering_links_on_entity; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_initial_ordering_links_on_entity ON public.initial_ordering_links USING btree (entity_type, entity_id);
+
+
+--
+-- Name: index_initial_ordering_links_on_ordering_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_initial_ordering_links_on_ordering_id ON public.initial_ordering_links USING btree (ordering_id);
+
+
+--
+-- Name: index_initial_ordering_selections_on_entity; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_initial_ordering_selections_on_entity ON public.initial_ordering_selections USING btree (entity_type, entity_id);
+
+
+--
+-- Name: index_initial_ordering_selections_on_ordering_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_initial_ordering_selections_on_ordering_id ON public.initial_ordering_selections USING btree (ordering_id);
+
+
+--
 -- Name: index_item_authorizations_on_auth_path; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -6516,6 +6635,13 @@ CREATE INDEX index_orderings_deterministic_by_schema_position ON public.ordering
 --
 
 CREATE INDEX index_orderings_enabled_by_entity ON public.orderings USING btree (entity_id, entity_type) WHERE (disabled_at IS NULL);
+
+
+--
+-- Name: index_orderings_for_initial; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_orderings_for_initial ON public.orderings USING btree (id, entity_id, entity_type, "position", name, identifier) WHERE ((disabled_at IS NULL) AND (NOT hidden));
 
 
 --
@@ -7443,6 +7569,13 @@ CREATE INDEX ordering_entries_part_8_ordering_id_tree_parent_id_tree_par_idx ON 
 
 
 --
+-- Name: ordering_entry_counts_pkey; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX ordering_entry_counts_pkey ON public.ordering_entry_counts USING btree (ordering_id);
+
+
+--
 -- Name: role_permissions_context; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -8280,6 +8413,14 @@ ALTER TABLE ONLY public.harvest_attempts
 
 
 --
+-- Name: initial_ordering_links fk_rails_725f496dff; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.initial_ordering_links
+    ADD CONSTRAINT fk_rails_725f496dff FOREIGN KEY (ordering_id) REFERENCES public.orderings(id) ON DELETE CASCADE;
+
+
+--
 -- Name: item_contributions fk_rails_73af22b63e; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -8624,6 +8765,14 @@ ALTER TABLE ONLY public.entity_links
 
 
 --
+-- Name: initial_ordering_selections fk_rails_fb3fc2b564; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.initial_ordering_selections
+    ADD CONSTRAINT fk_rails_fb3fc2b564 FOREIGN KEY (ordering_id) REFERENCES public.orderings(id) ON DELETE CASCADE;
+
+
+--
 -- Name: orderings fk_rails_fb64dd7c38; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -8799,6 +8948,10 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20220304214235'),
 ('20220308173141'),
 ('20220309205537'),
-('20220309222458');
+('20220309222458'),
+('20220312000402'),
+('20220312001049'),
+('20220312003650'),
+('20220312031343');
 
 

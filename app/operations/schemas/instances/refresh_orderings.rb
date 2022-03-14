@@ -11,7 +11,7 @@ module Schemas
       include Dry::Monads[:do, :result]
       include MonadicPersistence
 
-      include WDPAPI::Deps[refresh: "schemas.orderings.refresh"]
+      include WDPAPI::Deps[refresh: "schemas.orderings.refresh", calculate_initial: "schemas.orderings.calculate_initial"]
 
       # @param [HierarchicalEntity] entity
       # @return [Dry::Monads::Result]
@@ -30,8 +30,18 @@ module Schemas
           elsif status.async?
             Schemas::Orderings::RefreshJob.perform_later ordering
           else
-            yield refresh.call(ordering)
+            yield refresh.(ordering)
           end
+        end
+
+        if status.deferred? || status.async?
+          later do
+            Schemas::Orderings::CalculateInitialJob.set(wait: 2.minutes).perform_later(entity: entity)
+          end
+        elsif status.async?
+          Schemas::Orderings::CalculateInitialJob.set(wait: 2.minutes).perform_later(entity: entity)
+        else
+          yield calculate_initial.(entity: entity)
         end
 
         return Success()
