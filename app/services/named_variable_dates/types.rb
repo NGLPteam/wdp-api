@@ -5,7 +5,7 @@ module NamedVariableDates
     include Dry.Types
 
     # These variable precision dates are shared across all {ChildEntity} types.
-    SHARED = %i[published accessioned available issued].freeze
+    SHARED = %i[published].freeze
 
     # These are an extension of {Shared}, limited to {Collection}s.
     COLLECTION = SHARED.map { |name| :"last_#{name}" }.freeze
@@ -21,6 +21,12 @@ module NamedVariableDates
     GlobalName = Coercible::Symbol.enum(
       *SHARED,
       *COLLECTION
+    )
+
+    GLOBAL_PATHS = SHARED.map { |name| "$#{name}$" }
+
+    GlobalPath = Coercible::String.enum(
+      *GLOBAL_PATHS
     )
   end
 end

@@ -7,7 +7,7 @@ module Schemas
       #
       # @api private
       class ByVariableDate < Base
-        option :path, Schemas::Orderings::Types::VariableDatePath
+        option :path, NamedVariableDates::Types::GlobalPath
 
         def attributes_for(*)
           nvd = join_for_variable_date path

@@ -11,9 +11,6 @@ module ReferencesNamedVariableDates
     delegate :named_variable_date_global_path_for, to: :class
 
     reads_named_variable_date! :published
-    reads_named_variable_date! :issued
-    reads_named_variable_date! :available
-    reads_named_variable_date! :accessioned
   end
 
   # @param [String] name

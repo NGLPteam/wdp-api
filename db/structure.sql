@@ -3019,7 +3019,6 @@ CREATE TABLE public.collections (
     summary text DEFAULT ''::text,
     thumbnail_data jsonb,
     properties jsonb,
-    published_on date,
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     auth_path public.ltree NOT NULL,
@@ -3863,7 +3862,6 @@ CREATE TABLE public.items (
     summary text DEFAULT ''::text,
     thumbnail_data jsonb,
     properties jsonb,
-    published_on date,
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     auth_path public.ltree NOT NULL,
@@ -5495,13 +5493,6 @@ CREATE INDEX index_collections_on_properties ON public.collections USING gin (pr
 
 
 --
--- Name: index_collections_on_published_on; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_collections_on_published_on ON public.collections USING btree (published_on);
-
-
---
 -- Name: index_collections_on_schema_definition_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -6460,13 +6451,6 @@ CREATE INDEX index_items_on_parent_id ON public.items USING btree (parent_id);
 --
 
 CREATE INDEX index_items_on_properties ON public.items USING gin (properties);
-
-
---
--- Name: index_items_on_published_on; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_items_on_published_on ON public.items USING btree (published_on);
 
 
 --
@@ -8952,6 +8936,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20220312000402'),
 ('20220312001049'),
 ('20220312003650'),
-('20220312031343');
+('20220312031343'),
+('20220312044145');
 
 

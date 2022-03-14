@@ -16,8 +16,6 @@ FactoryBot.define do
     doi { SecureRandom.uuid }
     summary { Faker::Lorem.paragraph }
 
-    published_on { Faker::Date.backward }
-
     visibility { :visible }
 
     trait :hidden do

@@ -34,13 +34,6 @@ module Schemas
       }).with_key_transform(&:to_sym)
 
       OrderingFilters = Array.of(OrderingFilter)
-
-      VariableDatePath = String.enum(
-        "$published$",
-        "$issued$",
-        "$available$",
-        "$accessioned$",
-      )
     end
   end
 end

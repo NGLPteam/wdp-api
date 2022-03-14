@@ -475,9 +475,6 @@
           "entity.created_at",
           "entity.updated_at",
           "entity.published",
-          "entity.issued",
-          "entity.available",
-          "entity.accessioned",
           "entity.depth"
         ]
       },
