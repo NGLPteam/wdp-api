@@ -5,9 +5,13 @@ RSpec.describe Schemas::Orderings::RefreshEntryCountsJob, type: :job, simple_v1_
 
   it "runs without issue" do
     expect do
-      create_v1_item
+      described_class.perform_now
+    end.to execute_safely
+
+    expect do
+      create_v1_item collection: collection
 
       described_class.perform_now
-    end.to execute_safely.and change(OrderingEntryCount, :count).by(1)
+    end.to change(OrderingEntryCount, :count).by(2)
   end
 end
