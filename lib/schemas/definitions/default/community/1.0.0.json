@@ -133,6 +133,17 @@
               { "namespace": "nglp", "identifier": "journal_issue" }
             ]
           }
+        },
+        {
+          "path": "units", "type": "entities",
+          "label": "Units",
+          "scope": {
+            "origin": "self",
+            "target": "descendants",
+            "schemas": [
+              { "namespace": "nglp", "identifier": "unit" }
+            ]
+          }
         }
       ]
     }
