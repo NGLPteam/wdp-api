@@ -60,9 +60,9 @@ class Ordering < ApplicationRecord
   validates :identifier, presence: true, format: { with: IDENTIFIER_FORMAT }, uniqueness: { scope: %i[entity_type entity_id] }
   validates :definition, store_model: true
 
-  after_save :refresh!
-
   after_destroy :recalculate_initial_ordering!
+
+  after_save :refresh!
 
   assign_polymorphic_foreign_key! :entity, :community, :collection, :item
 
