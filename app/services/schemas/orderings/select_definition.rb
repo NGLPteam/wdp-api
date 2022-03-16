@@ -37,7 +37,7 @@ module Schemas
       # @return [String]
       def build_auth_query_for(auth_path)
         if limit_to_single_depth?
-          "#{auth_path}.*{1}"
+          links.any? ? "#{auth_path}._{,1}.*{1}" : "#{auth_path}.*{1}"
         else
           "#{auth_path}.*{1,}"
         end
