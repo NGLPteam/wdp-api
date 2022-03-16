@@ -67,7 +67,7 @@
         }
       },
       "order": [
-        { "path": "props.issued#variable_date", "direction": "desc", "nulls": "last" },
+        { "path": "entity.published", "direction": "desc", "nulls": "last" },
         { "path": "entity.title", "direction": "asc" }
       ],
       "position": 3
@@ -90,7 +90,7 @@
         }
       },
       "order": [
-        { "path": "props.issued#variable_date", "direction": "desc", "nulls": "last" },
+        { "path": "entity.published", "direction": "desc", "nulls": "last" },
         { "path": "entity.title", "direction": "asc" }
       ],
       "position": 4
