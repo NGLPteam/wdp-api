@@ -17,6 +17,7 @@ jobs:
     steps:
       - name: "Install Dependent libraries"
         run: |
+          sudo apt-get update
           sudo apt-get -yqq install libpq-dev libvips libvips-dev
 
       - name: "Checkout code"
@@ -62,6 +63,7 @@ jobs:
     steps:
       - name: "Install Dependent libraries"
         run: |
+          sudo apt-get update
           sudo apt-get -yqq install libpq-dev libvips libvips-dev
 
       - name: "Checkout code"
