@@ -198,8 +198,8 @@ class OrderingEntryCandidate < ApplicationRecord
 
       query = select(
         ordering_id_expr,
-        arel_table[:entity_id],
-        arel_table[:entity_type],
+        arel_table[:hierarchical_id].as("entity_id"),
+        arel_table[:hierarchical_type].as("entity_type"),
         default_position_expr.as("position"),
         inverse_position_expr.as("inverse_position"),
         arel_table[:link_operator],
@@ -209,11 +209,11 @@ class OrderingEntryCandidate < ApplicationRecord
         arel_quote(nil).as("tree_depth"),
         arel_quote(nil).as("tree_parent_id"),
         arel_quote(nil).as("tree_parent_type")
-      )
+      ).distinct_on(:hierarchical_type, :hierarchical_id)
 
       query.joins!(*compiled.joins.values) if compiled.joins.any?
 
-      query.order! default_position_expr.asc unless ordering.tree_mode?
+      query.order! arel_table[:hierarchical_type].asc, arel_table[:hierarchical_id].asc, arel_table[:link_operator].asc.nulls_last
 
       return query
     end
