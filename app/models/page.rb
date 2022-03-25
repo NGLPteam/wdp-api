@@ -9,11 +9,21 @@ class Page < ApplicationRecord
 
   validates :title, :slug, :body, presence: true
 
-  validates :slug, uniqueness: { scope: %i[entity_type entity_id] }
+  validates :slug, uniqueness: { scope: %i[entity_type entity_id] }, format: { with: AppTypes::SLUG_PATTERN }
 
   acts_as_list scope: :entity, add_new_at: :bottom
 
   scope :by_slug, ->(slug) { where(slug: slug) }
 
   scope :in_default_order, -> { order(position: :asc) }
+
+  before_validation :normalize_slug!
+
+  # @api private
+  # @return [void]
+  def normalize_slug!
+    return if AppTypes::SLUG_PATTERN.match? slug
+
+    self.slug = slug.to_s.underscore.dasherize
+  end
 end
