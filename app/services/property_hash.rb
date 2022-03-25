@@ -7,6 +7,7 @@ class PropertyHash
   KEY_PATH = /\A[^.]+(?:\.[^.]+)+\z/.freeze
   DOT_PATH = /\./.freeze
   SINGLE_PATH = /\A[^.]+\z/.freeze
+  DELETE = Object.new.freeze
 
   delegate :size, :length, to: :@inner
 
@@ -57,10 +58,19 @@ class PropertyHash
         # :nocov:
       end
 
-      target_hash[key] = value
+      if value == DELETE
+        target_hash.delete key
 
+        delete! parts.join(?.) if target_hash.blank? && parts.any?
+      else
+        target_hash[key] = value
+      end
     when SINGLE_PATH
-      @inner[path.to_s] = value
+      if value == DELETE
+        @inner.delete path.to_s
+      else
+        @inner[path.to_s] = value
+      end
     when DOT_PATH
       # :nocov:
       raise InvalidPath, "Confusing key: #{path.inspect}"
@@ -74,6 +84,12 @@ class PropertyHash
 
   def blank?
     @inner.blank?
+  end
+
+  def delete!(path)
+    self[path] = DELETE
+
+    return self
   end
 
   def each
