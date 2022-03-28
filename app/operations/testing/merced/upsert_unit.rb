@@ -20,6 +20,8 @@ module Testing
       def call(unit_definition, parent: nil)
         unit_id = unit_definition[:id]
 
+        return Success(community) if unit_id == "ucm"
+
         collection = parent_scope(parent).by_identifier(unit_id).first_or_initialize
 
         collection.schema_version = yield version_for unit_definition[:type]
@@ -43,8 +45,8 @@ module Testing
       # @param [ActiveSupport::HashWithIndifferentAccess] unit_definition
       # @return [void]
       def inject_core_attributes_into!(collection, unit_definition)
-        collection.hero_image_attacher.assign_remote_url unit_definition.dig(:hero, :asset_url)
-        collection.thumbnail_attacher.assign_remote_url unit_definition.dig(:logo, :asset_url)
+        # collection.hero_image_attacher.assign_remote_url unit_definition.dig(:hero, :asset_url)
+        # collection.thumbnail_attacher.assign_remote_url unit_definition.dig(:logo, :asset_url)
         collection.title = unit_definition[:name]
       end
 
@@ -61,7 +63,7 @@ module Testing
       end
 
       def parent_scope(parent)
-        if parent.present?
+        if parent.present? && parent.kind_of?(Collection)
           parent.children
         else
           community.collections
@@ -70,8 +72,6 @@ module Testing
 
       def version_for(type)
         case type
-        when "campus"
-          Success SchemaVersion["nglp:campus"]
         when "oru"
           Success SchemaVersion["nglp:unit"]
         when "series"
