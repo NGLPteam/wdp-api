@@ -62,6 +62,14 @@ module Types
       argument :identifier, String, required: true
     end
 
+    field :ordering_for_schema, Types::OrderingType, null: true do
+      description "Look up an ordering that is set up to handle a specific schema."
+
+      argument :slug, Types::SlugType, required: true do
+        description "This should be of the `namespace:identifier` format."
+      end
+    end
+
     field :orderings, resolver: Resolvers::OrderingResolver
 
     field :initial_ordering, Types::OrderingType, null: true do
@@ -157,6 +165,12 @@ module Types
     # @return [Ordering, nil]
     def ordering(identifier:)
       Loaders::OrderingByIdentifierLoader.for(identifier).load(object)
+    end
+
+    # @param [String] slug
+    # @return [Ordering, nil]
+    def ordering_for_schema(slug:)
+      Loaders::OrderingBySchemaLoader.for(slug).load(object)
     end
 
     # @return [Ordering, nil]

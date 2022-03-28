@@ -12,10 +12,6 @@
     {
       "namespace": "nglp",
       "identifier": "unit"
-    },
-    {
-      "namespace": "nglp",
-      "identifier": "series"
     }
   ],
   "orderings": [
@@ -51,6 +47,10 @@
             "identifier": "unit"
           }
         ]
+      },
+      "handles": {
+        "namespace": "nglp",
+        "identifier": "unit"
       },
       "select": {
         "direct": "descendants"

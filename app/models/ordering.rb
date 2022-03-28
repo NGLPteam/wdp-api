@@ -19,6 +19,9 @@ class Ordering < ApplicationRecord
   belongs_to :collection, optional: true
   belongs_to :item, optional: true
 
+  belongs_to :handled_schema_definition, class_name: "SchemaDefinition", optional: true,
+    inverse_of: :handling_orderings
+
   has_one :schema_definition, through: :schema_version
 
   has_one_readonly :ordering_entry_count, inverse_of: :ordering
@@ -26,7 +29,10 @@ class Ordering < ApplicationRecord
   has_one :initial_ordering_selection, dependent: :destroy, inverse_of: :ordering
   has_one :initial_ordering_link, dependent: :destroy, inverse_of: :ordering
 
-  has_many :ordering_entries, -> { preload(:entity) }, inverse_of: :ordering, dependent: :delete_all
+  has_many :ordering_entries, -> { to_preload }, inverse_of: :ordering, dependent: :delete_all
+
+  has_many :ordering_entry_ancestor_links, inverse_of: :ordering, dependent: :delete_all
+  has_many :ordering_entry_sibling_links, inverse_of: :ordering, dependent: :delete_all
 
   # @!attribute [rw] definition
   # @return [Schemas::Orderings::Definition]
@@ -50,6 +56,7 @@ class Ordering < ApplicationRecord
 
   delegate :schemas, allow_nil: true, to: "definition.filter", prefix: :filter
 
+  before_validation :set_handled_schema_definition!
   before_validation :sync_inherited!
   before_validation :track_pristine!
 
@@ -143,7 +150,32 @@ class Ordering < ApplicationRecord
     self.pristine = pristine_definition.as_json == definition.as_json
   end
 
+  # @api private
+  # @see Schemas::Orderings::Definition#handled_schema_definition
+  # @return [void]
+  def set_handled_schema_definition!
+    self.handled_schema_definition = definition.handled_schema_definition
+  end
+
   class << self
+    # @see Schemas::Definitions::Find
+    # @param [String] slug
+    # @return [ActiveRecord::Relation<Ordering>]
+    def by_handled_schema_definition(slug)
+      WDPAPI::Container["schemas.definitions.find"].(slug).fmap do |schema_definition|
+        where(handled_schema_definition: schema_definition)
+      end.value_or do
+        none
+      end
+    end
+
+    # @see .by_handled_schema_definition
+    # @param [String] slug
+    # @return [Ordering, nil]
+    def handling_schema(slug)
+      by_handled_schema_definition(slug).first
+    end
+
     # @param [HierarchicalEntity] entity
     # @return [ActiveRecord::Relation<Ordering>]
     def owned_by_or_ordering(entity)

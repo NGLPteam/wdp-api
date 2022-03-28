@@ -35,6 +35,10 @@
           }
         ]
       },
+      "handles": {
+        "namespace": "nglp",
+        "identifier": "unit"
+      },
       "select": {
         "direct": "descendants"
       },

@@ -48,6 +48,10 @@ module Schemas
       # @return [Schemas::Orderings::FilterDefinition]
       attribute :filter, Schemas::Orderings::FilterDefinition.to_type, default: proc { {} }
 
+      # @!attribute [r] handles
+      # @return [Schemas::Associations::HandledSchema]
+      attribute :handles, Schemas::Associations::HandledSchema.to_type, default: proc { nil }
+
       # @!attribute [r] order
       # @return [<Schemas::Orderings::OrderDefinition>]
       attribute :order, Schemas::Orderings::OrderDefinition.to_array_type, default: proc { [] }
@@ -67,6 +71,14 @@ module Schemas
       validates :order, length: { minimum: 1, maximum: 7 }, unique_items: true
 
       delegate :tree_mode?, to: :render
+
+      # @see Schemas::Associations::Association#find_schema_definition
+      # @return [SchemaDefinition, nil]
+      def handled_schema_definition
+        return nil if handles.blank?
+
+        handles.find_schema_definition
+      end
 
       # Boolean complement of {#constant}
       def invertable?
