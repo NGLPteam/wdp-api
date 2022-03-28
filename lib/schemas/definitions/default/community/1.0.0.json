@@ -22,9 +22,6 @@
       "order": [
         { "path": "entity.title", "direction": "asc" }
       ],
-      "render": {
-        "mode": "tree"
-      },
       "position": 1
     },
     {
