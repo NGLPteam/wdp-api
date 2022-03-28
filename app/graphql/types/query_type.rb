@@ -136,6 +136,10 @@ module Types
       description "List all options for schema versions"
     end
 
+    field :system_info, Types::SystemInfoType, null: false do
+      description "A helper field that is used to look up various details about the WDP-API ecosystem."
+    end
+
     field :user, Types::UserType, null: true do
       description "Look up a user by slug"
 
@@ -223,6 +227,10 @@ module Types
     # @return [SchemaVersion, nil]
     def schema_version(slug:)
       WDPAPI::Container["schemas.versions.find"].call(slug).value_or(nil)
+    end
+
+    def system_info
+      viewer
     end
 
     # @param [String] slug
