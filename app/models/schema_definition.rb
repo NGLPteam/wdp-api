@@ -22,6 +22,9 @@ class SchemaDefinition < ApplicationRecord
 
   has_many :schema_version_properties, dependent: :delete_all, inverse_of: :schema_definition
 
+  has_many :handling_orderings, class_name: "Ordering", inverse_of: :handled_schema_definition,
+    foreign_key: :handled_schema_definition_id, dependent: :restrict_with_error
+
   scope :by_namespace, ->(namespace) { where(namespace: namespace) }
   scope :by_identifier, ->(identifier) { where(identifier: identifier) }
   scope :by_kind, ->(kind) { where(kind: kind) }

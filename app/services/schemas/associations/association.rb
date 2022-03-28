@@ -29,6 +29,11 @@ module Schemas
         find_matching_versions_for self
       end
 
+      # @return [SchemaDefinition, nil]
+      def find_schema_definition
+        WDPAPI::Container["schemas.definitions.find"].(schema_definition_identifier).value_or(nil)
+      end
+
       def has_version_requirement?
         !has_no_version_requirement?
       end
@@ -53,6 +58,12 @@ module Schemas
       # @param [SchemaVersion] schema
       def satisfied_by?(schema)
         WDPAPI::Container["schemas.associations.satisfied_by"].call(self, schema).success?
+      end
+
+      # @!attribute [r] schema_definition_identifier
+      # @return [String]
+      def schema_definition_identifier
+        "#{namespace}:#{identifier}"
       end
     end
   end

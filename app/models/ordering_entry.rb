@@ -8,7 +8,22 @@ class OrderingEntry < ApplicationRecord
 
   belongs_to :ordering, inverse_of: :ordering_entries
 
+  has_many :ordering_entry_ancestor_links, -> { in_order },
+    foreign_key: %i[ordering_id child_id], inverse_of: :child, dependent: :delete_all
+
+  has_many_readonly :ordering_entry_descendant_links, class_name: "OrderingEntryAncestorLink",
+    foreign_key: %i[ordering_id ancestor_id], inverse_of: :ancestor, dependent: :delete_all
+
+  has_many :ancestors, through: :ordering_entry_ancestor_links
+
+  has_one :ordering_entry_sibling_link, foreign_key: %i[ordering_id sibling_id], dependent: :delete, inverse_of: :sibling
+
+  has_one :prev_sibling, through: :ordering_entry_sibling_link, source: :prev
+  has_one :next_sibling, through: :ordering_entry_sibling_link, source: :next
+
   belongs_to :entity, polymorphic: true, inverse_of: :ordering_entries
+
+  scope :to_preload, -> { preload(:entity, ancestors: %i[entity]) }
 
   scope :in_default_order, -> { reorder(position: :asc) }
   scope :in_inverse_order, -> { reorder(inverse_position: :asc) }

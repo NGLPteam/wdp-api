@@ -27,6 +27,20 @@
       },
       "required": ["namespace", "identifier"]
     },
+    "AssociationSansVersion": {
+      "type": "object",
+      "description": "A hierarchical declaration that determines what types of schemas can be above and below this schema.",
+      "additionalProperties": false,
+      "properties": {
+        "namespace": {
+          "$ref": "#/$defs/Namespace"
+        },
+        "identifier": {
+          "$ref": "#/$defs/Identifier"
+        }
+      },
+      "required": ["namespace", "identifier"]
+    },
     "Associations": {
       "type": "array",
       "description": "Limit the selection to entities that consume these schemas",
@@ -363,6 +377,11 @@
           "title": "Position",
           "description": "The (optional) deterministic position for an ordering when listing it",
           "type": "number"
+        },
+        "handles": {
+          "title": "Handles Schema",
+          "description": "An ordering can be set up to handle rendering certain schemas in the explore browser on the frontend.",
+          "$ref": "#/$defs/AssociationSansVersion"
         },
         "filter": {
           "type": "object",

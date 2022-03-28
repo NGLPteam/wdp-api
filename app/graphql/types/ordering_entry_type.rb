@@ -7,7 +7,47 @@ module Types
 
     field :ordering, "Types::OrderingType", null: false, description: "The parent ordering"
 
-    field :entry, "Types::AnyOrderingEntryType", null: false, method: :entity
+    field :ancestors, ["Types::OrderingEntryType", { null: false }], null: false do
+      description <<~TEXT
+      When the associated `Ordering` is a `TREE`, and the current entry is a leaf, this array can be used
+      to get the associated ancestors within the entry that
+      TEXT
+    end
+
+    field :entry, "Types::AnyOrderingEntryType", null: false do
+      description <<~TEXT
+      The actual element being ordered. At present, this will only be a `Community`, `Collection`, or `Item`,
+      but future implementations of orderings may include other content, such as presentation elements.
+      TEXT
+    end
+
+    field :entry_slug, Types::SlugType, null: true do
+      description <<~TEXT
+      The delegated `slug` from the associated `entry`.
+
+      This can be null because future entries may not implement it.
+      TEXT
+    end
+
+    field :entry_title, String, null: true do
+      description <<~TEXT
+      The delegated `title` from the associated `entry`.
+
+      This can be null because future entries may not implement it.
+      TEXT
+    end
+
+    field :prev_sibling, "Types::OrderingEntryType", null: true do
+      description <<~TEXT
+      The previous entry in the current ordering, if one exists. This will be null if this entry is the first.
+      TEXT
+    end
+
+    field :next_sibling, "Types::OrderingEntryType", null: true do
+      description <<~TEXT
+      The next entry in the current ordering, if one exists. This will be null if this entry is the last.
+      TEXT
+    end
 
     field :relative_depth, Integer, null: false do
       description <<~TEXT
@@ -21,5 +61,48 @@ module Types
       It is a normalized depth based on what other entities were accepted into the ordering.
       TEXT
     end
+
+    # @return [Promise<OrderingEntry>]
+    def ancestors
+      Loaders::AssociationLoader.for(OrderingEntry, :ancestors).load(object)
+    end
+
+    # @return [Promise(HierarchicalEntity)]
+    def entry
+      Loaders::AssociationLoader.for(OrderingEntry, :entity).load(object)
+    end
+
+    # @return [Promise(OrderingEntry)]
+    # @return [Promise(nil)]
+    def next_sibling
+      Loaders::AssociationLoader.for(OrderingEntry, :next_sibling).load(object)
+    end
+
+    # @return [Promise(Ordering)]
+    def ordering
+      Loaders::AssociationLoader.for(OrderingEntry, :ordering).load(object)
+    end
+
+    # @return [Promise(OrderingEntry)]
+    # @return [Promise(nil)]
+    def prev_sibling
+      Loaders::AssociationLoader.for(OrderingEntry, :prev_sibling).load(object)
+    end
+
+    # @!group Delegated Entity Methods
+
+    # @return [Promise(String)]
+    # @return [Promise(nil)]
+    def entry_slug
+      entry.then { |entity| entity.id if entity.kind_of?(HierarchicalEntity) }
+    end
+
+    # @return [Promise(String)]
+    # @return [Promise(nil)]
+    def entry_title
+      entry.then { |entity| entity.title if entity.respond_to?(:title) }
+    end
+
+    # @!endgroup
   end
 end

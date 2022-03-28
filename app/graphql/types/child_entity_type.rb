@@ -19,6 +19,10 @@ module Types
     In practice, this means a `Collection` or an `Item`, not a `Community`.
     TEXT
 
+    field :community, Types::CommunityType, null: false do
+      description "The community this entity belongs to"
+    end
+
     field :identifier, String, null: false do
       description <<~TEXT.strip_heredoc.squish
       A machine-readable identifier for the entity. Not presently used, but will be necessary
@@ -58,6 +62,12 @@ module Types
       TEXT
     end
 
+    field :in_community_ordering, "Types::OrderingEntryType", null: true do
+      argument :identifier, String, required: true do
+        description "The identifier of the community ordering to look for this entity within."
+      end
+    end
+
     # @todo Perhaps error on receiving an unknown association?
     # @param [String] name
     # @return [HierarchicalEntity, nil]
@@ -71,9 +81,23 @@ module Types
       object.ancestor_of_type(schema)
     end
 
+    # @return [Promise(Community)]
+    def community
+      Loaders::AssociationLoader.for(object.class, :community).load(object)
+    end
+
     # @return [Promise(ActiveRecord::Relation<EntityAncestor>)]
     def named_ancestors
       Loaders::AssociationLoader.for(object.class, :named_ancestors).load(object)
+    end
+
+    # @todo Ensure by_entry is properly wrapped in a loader
+    def in_community_ordering(identifier:)
+      community.then do |comm|
+        Loaders::OrderingByIdentifierLoader.for(identifier).load(comm).then do |ordering|
+          Loaders::OrderingEntryLoader.for(ordering).load(object)
+        end
+      end
     end
   end
 end

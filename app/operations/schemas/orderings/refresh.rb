@@ -60,6 +60,37 @@ module Schemas
           ELSE
           ordering_entries.updated_at
           END
+      RETURNING ordering_entries.updated_at = CURRENT_TIMESTAMP AS updated
+      SQL
+
+      ANCESTOR_LINK_QUERY = <<~SQL
+      INSERT INTO ordering_entry_ancestor_links (ordering_id, child_id, ancestor_id, inverse_depth)
+      SELECT oe.ordering_id, oe.id AS child_id, anc.id AS ancestor_id, oe.tree_depth - anc.tree_depth AS inverse_depth
+      FROM ordering_entries oe
+      INNER JOIN ordering_entries anc ON oe.ordering_id = anc.ordering_id AND oe.auth_path <@ anc.auth_path AND anc.tree_depth < oe.tree_depth
+      WHERE oe.tree_depth > 1 AND oe.ordering_id = %s
+      ON CONFLICT (ordering_id, child_id, inverse_depth) DO UPDATE SET
+        ancestor_id = EXCLUDED.ancestor_id,
+        updated_at = CASE WHEN ordering_entry_ancestor_links.ancestor_id IS DISTINCT FROM EXCLUDED.ancestor_id THEN CURRENT_TIMESTAMP ELSE ordering_entry_ancestor_links.updated_at END
+      RETURNING ordering_entry_ancestor_links.updated_at = CURRENT_TIMESTAMP AS updated
+      SQL
+
+      SIBLING_LINK_QUERY = <<~SQL
+      INSERT INTO ordering_entry_sibling_links (ordering_id, sibling_id, prev_id, next_id)
+      SELECT ordering_id, id AS sibling_id, lag(id) OVER w AS prev_id, lead(id) OVER w AS next_id
+      FROM ordering_entries
+      WHERE ordering_id = %s
+      WINDOW w AS (PARTITION BY ordering_id ORDER BY position ASC)
+      ON CONFLICT (ordering_id, sibling_id) DO UPDATE SET
+        prev_id = EXCLUDED.prev_id,
+        next_id = EXCLUDED.next_id,
+        updated_at = CASE WHEN
+          EXCLUDED.prev_id IS DISTINCT FROM ordering_entry_sibling_links.prev_id
+          OR
+          EXCLUDED.next_id IS DISTINCT FROM ordering_entry_sibling_links.next_id
+          THEN CURRENT_TIMESTAMP
+          ELSE ordering_entry_sibling_links.updated_at END
+      RETURNING ordering_entry_sibling_links.updated_at = CURRENT_TIMESTAMP AS updated
       SQL
 
       # @param [Ordering] ordering
@@ -69,13 +100,19 @@ module Schemas
 
         yield mark_stale! ordering
 
-        yield update! ordering
+        updated_count = yield update! ordering
 
         deleted_count = OrderingEntry.delete_stale_for(ordering)
 
+        updated_ancestor_count = yield update_ancestors! ordering
+
+        updated_sibling_count = yield update_siblings! ordering
+
         response = {
           deleted_count: deleted_count,
-          updated_count: ordering.ordering_entries.count,
+          updated_count: updated_count,
+          updated_ancestor_count: updated_ancestor_count,
+          updated_sibling_count: updated_sibling_count,
         }
 
         Success response
@@ -86,6 +123,7 @@ module Schemas
       # @!group Steps
 
       # @param [Ordering] ordering
+      # @return [Dry::Monads::Success(void)]
       def lock!(ordering)
         query = with_quoted_id_for ordering, LOCK_QUERY
 
@@ -95,6 +133,7 @@ module Schemas
       end
 
       # @param [Ordering] ordering
+      # @return [Dry::Monads::Success(void)]
       def mark_stale!(ordering)
         query = with_quoted_id_for ordering, <<~SQL
         UPDATE ordering_entries SET stale_at = CURRENT_TIMESTAMP
@@ -107,11 +146,36 @@ module Schemas
       end
 
       # @param [Ordering] ordering
+      # @return [Dry::Monads::Success(Integer)]
       def update!(ordering)
         select_query = build_select_statement ordering
 
         Try do
-          sql_insert! PREFIX, select_query, SUFFIX
+          result = sql_insert! PREFIX, select_query, SUFFIX
+
+          result.count { |row| row["updated"] }
+        end
+      end
+
+      # @param [Ordering] ordering
+      # @return [Dry::Monads::Success(Integer)]
+      def update_ancestors!(ordering)
+        update_query = with_quoted_id_for ordering, ANCESTOR_LINK_QUERY
+
+        Try do
+          result = sql_insert! update_query
+
+          result.count { |row| row["updated"] }
+        end
+      end
+
+      def update_siblings!(ordering)
+        update_query = with_quoted_id_for ordering, SIBLING_LINK_QUERY
+
+        Try do
+          result = sql_insert! update_query
+
+          result.count { |row| row["updated"] }
         end
       end
 
