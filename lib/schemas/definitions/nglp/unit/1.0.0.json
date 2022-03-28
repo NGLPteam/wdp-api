@@ -64,6 +64,9 @@
       "position": 2
     }
   ],
+  "render": {
+    "list_mode": "tree"
+  },
   "properties": [
     { "type": "markdown", "path": "about", "label": "About" }
   ]
