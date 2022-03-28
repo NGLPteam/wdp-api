@@ -4,6 +4,7 @@
 # optimized so that an {Item} can easily retrieve its ancestral {Collection}s
 # and {Community}.
 class EntityBreadcrumb < ApplicationRecord
+  include FiltersBySchemaVersion
   include View
 
   self.primary_key = %i[entity_id crumb_id]
@@ -14,6 +15,4 @@ class EntityBreadcrumb < ApplicationRecord
 
   belongs_to :schema_version
   has_one :schema_definition, through: :schema_version
-
-  scope :filtered_by_schema_version, ->(schemas) { where(schema_version: SchemaVersion.filtered_by(schemas)) }
 end
