@@ -5,12 +5,13 @@ module Testing
     # @api private
     # @operation
     class ScaffoldCommunity
-      include WDPAPI::Deps["communities.upsert_by_title"]
+      include Dry::Monads[:result]
+      include WDPAPI::Deps[upsert: "communities.upsert"]
       prepend HushActiveRecord
 
       # @return [Dry::Monads::Success(Community)]
       def call
-        upsert_by_title.call("UC Merced")
+        upsert "ucm", title: "UC Merced"
       end
     end
   end

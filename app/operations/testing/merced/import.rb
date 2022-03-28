@@ -20,6 +20,12 @@ module Testing
       prepend HushActiveRecord
 
       def call
+        Schemas::Orderings.with_deferred_refresh do
+          perform
+        end
+      end
+
+      def perform
         base_state = {}
 
         base_state[:community] = yield scaffold_community.call
