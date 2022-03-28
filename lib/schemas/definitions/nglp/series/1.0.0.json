@@ -20,28 +20,6 @@
   ],
   "orderings": [
     {
-      "id": "units",
-      "name": "Units",
-      "filter": {
-        "schemas": [
-          {
-            "namespace": "nglp",
-            "identifier": "unit"
-          }
-        ]
-      },
-      "select": {
-        "direct": "descendants"
-      },
-      "order": [
-        { "path": "entity.title", "direction": "asc" }
-      ],
-      "render": {
-        "mode": "tree"
-      },
-      "position": 1
-    },
-    {
       "id": "etd",
       "name": "Electronic Theses and Dissertations",
       "filter": {
@@ -62,7 +40,7 @@
         { "path": "entity.published", "direction": "desc", "nulls": "last" },
         { "path": "entity.title", "direction": "asc" }
       ],
-      "position": 2
+      "position": 1
     },
     {
       "id": "papers",
@@ -85,7 +63,7 @@
         { "path": "entity.published", "direction": "desc", "nulls": "last" },
         { "path": "entity.title", "direction": "asc" }
       ],
-      "position": 3
+      "position": 2
     }
   ],
   "properties": [
