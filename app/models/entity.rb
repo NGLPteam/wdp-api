@@ -33,6 +33,7 @@ class Entity < ApplicationRecord
 
   scope :with_missing_orderings, -> { non_link.where(entity_id: EntityInheritedOrdering.missing.select(:entity_id)) }
   scope :except_hierarchical, ->(hierarchical) { where.not(hierarchical: hierarchical) if hierarchical.present? }
+  scope :filtered_by_ancestor_schema, ->(schemas) { where(hierarchical_id: EntityBreadcrumb.filtered_by_schema_version(schemas).select(:entity_id)) }
 
   scope :actual, -> { where(scope: %w[communities items collections]) }
   scope :non_link, -> { where(link_operator: nil) }
@@ -49,6 +50,20 @@ class Entity < ApplicationRecord
   end
 
   class << self
+    # @param [String] base
+    # @param [String] ancestor
+    def of_type_with_ancestor_of_type?(base, ancestor)
+      filtered_by_schema_version(base).filtered_by_ancestor_schema(ancestor).exists?
+    end
+
+    def with_nested_type(base)
+      filtered_by_schema_version(base).filtered_by_ancestor_schema(base)
+    end
+
+    def with_nested_type?(base)
+      with_nested_type(base).exists?
+    end
+
     # @param [User] user
     # @return [ActiveRecord::Relation<HierarchicalEntity>]
     def readable_by(user)
