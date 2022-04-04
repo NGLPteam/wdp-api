@@ -319,7 +319,7 @@ GEM
     keycloak-admin (0.7.9)
       http-cookie (~> 1.0, >= 1.0.3)
       rest-client (~> 2.0)
-    keycloak_rack (1.1.0)
+    keycloak_rack (1.1.1)
       activesupport (>= 4.2)
       anyway_config (>= 2.1.0, < 3)
       dry-auto_inject
@@ -673,7 +673,7 @@ DEPENDENCIES
   json_schemer (~> 0.2.18)
   jwt (~> 2.2.3)
   keycloak-admin (~> 0.7.9)
-  keycloak_rack (= 1.1.0)
+  keycloak_rack (= 1.1.1)
   kramdown (~> 2.3.1)
   listen (~> 3.3)
   marcel (~> 1.0.1)

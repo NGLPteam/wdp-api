@@ -51,7 +51,7 @@ gem "dry-validation", "~> 1.8.0"
 
 # Keycloak
 gem "keycloak-admin", "~> 0.7.9"
-gem "keycloak_rack", "1.1.0"
+gem "keycloak_rack", "1.1.1"
 
 # Misc
 gem "acts_as_list", "~> 1.0.4"
