@@ -49,7 +49,7 @@ module Harvesting
 
         count = batch.count
 
-        total = harvest_attempt.record_count.nonzero? || "unknown"
+        total = harvest_attempt.record_count.to_i.nonzero? || "unknown"
 
         message = "Extracting #{count}/#{total} record(s)"
 
