@@ -15,6 +15,7 @@ module TestOAI
             title: "Cornell Testing",
           },
           source_options: {
+            identifier: "cornell",
             name: "Cornell DSpace",
             protocol: "oai",
             metadata_format: "mods",

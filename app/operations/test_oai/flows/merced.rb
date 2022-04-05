@@ -13,6 +13,7 @@ module TestOAI
             title: "UC Merced"
           },
           source_options: {
+            identifier: "merced",
             name: "UC Merced OAI Test",
             protocol: "oai",
             metadata_format: "mets",

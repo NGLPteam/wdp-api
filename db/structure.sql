@@ -3718,7 +3718,8 @@ CREATE TABLE public.harvest_sources (
     sets_refreshed_at timestamp without time zone,
     last_harvested_at timestamp without time zone,
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    identifier public.citext NOT NULL
 );
 
 
@@ -3955,6 +3956,19 @@ CREATE TABLE public.item_links (
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
+
+
+--
+-- Name: latest_harvest_attempt_links; Type: VIEW; Schema: public; Owner: -
+--
+
+CREATE VIEW public.latest_harvest_attempt_links AS
+ SELECT DISTINCT ON (harvest_attempts.harvest_source_id, harvest_attempts.harvest_set_id, harvest_attempts.harvest_mapping_id) harvest_attempts.harvest_source_id,
+    harvest_attempts.harvest_set_id,
+    harvest_attempts.harvest_mapping_id,
+    harvest_attempts.id AS harvest_attempt_id
+   FROM public.harvest_attempts
+  ORDER BY harvest_attempts.harvest_source_id, harvest_attempts.harvest_set_id, harvest_attempts.harvest_mapping_id, harvest_attempts.created_at DESC;
 
 
 --
@@ -6746,6 +6760,13 @@ CREATE INDEX index_harvest_sets_on_harvest_source_id ON public.harvest_sets USIN
 --
 
 CREATE UNIQUE INDEX index_harvest_sets_uniqueness ON public.harvest_sets USING btree (harvest_source_id, identifier);
+
+
+--
+-- Name: index_harvest_sources_on_identifier; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_harvest_sources_on_identifier ON public.harvest_sources USING btree (identifier);
 
 
 --
@@ -10517,6 +10538,8 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20220312044145'),
 ('20220325202253'),
 ('20220328181949'),
-('20220328194136');
+('20220328194136'),
+('20220405205111'),
+('20220405210816');
 
 

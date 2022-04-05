@@ -5,15 +5,10 @@ module TestOAI
     class ScaffoldSource
       include Dry::Monads[:do, :result]
       include MonadicPersistence
+      include WDPAPI::Deps[upsert: "harvesting.sources.upsert"]
 
-      def call(name:, base_url:, protocol: "oai", metadata_format: "mods")
-        source = HarvestSource.where(name: name).first_or_initialize do |hs|
-          hs.protocol = protocol
-          hs.metadata_format = metadata_format
-          hs.base_url = base_url
-        end
-
-        monadic_save source
+      def call(identifier:, name:, base_url:, protocol: "oai", metadata_format: "mods")
+        upsert.(identifier, name, base_url, protocol: protocol, metadata_format: metadata_format)
       end
     end
   end

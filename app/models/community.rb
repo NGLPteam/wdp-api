@@ -4,6 +4,7 @@ class Community < ApplicationRecord
   include Accessible
   include Attachable
   include AutoIdentifier
+  include GloballyUniqueIdentifier
   include HasHeroImageLayout
   include HasSchemaDefinition
   include HasSystemSlug

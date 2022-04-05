@@ -3,13 +3,13 @@
 module Harvesting
   module Sources
     class Upsert
-      include Dry::Monads[:do, :result]
       include MonadicPersistence
 
       # @return [Dry::Monads::Success(HarvestSource)]
-      def call(name, base_url, protocol: "oai", metadata_format: "mods")
-        source = HarvestSource.where(name: name).first_or_initialize
+      def call(identifier, name, base_url, protocol: "oai", metadata_format: "mods")
+        source = HarvestSource.to_upsert_by_identifier(identifier)
 
+        source.name = name
         source.base_url = base_url
         source.protocol = protocol
         source.metadata_format = metadata_format
