@@ -3,7 +3,6 @@
 module Harvesting
   module Metadata
     module JATS
-      # rubocop:disable Metrics/MethodLength
       class ExtractEntities < Harvesting::Metadata::BaseEntityExtractor
         include WDPAPI::Deps[
           upsert_contribution: "harvesting.metadata.jats.upsert_contribution",
@@ -14,112 +13,136 @@ module Harvesting
         def call(raw_metadata)
           parsed = Harvesting::Metadata::JATS::Parsed.new raw_metadata
 
-          return Success(nil) unless parsed.has_volume? && parsed.has_issue?
+          values = yield parsed.extracted_values
 
-          volume = yield upsert_volume_from parsed
+          return Success(nil) unless values.has_volume? && values.has_issue?
 
-          issue = yield upsert_issue_from parsed, volume: volume
+          volume = yield upsert_volume_from values
 
-          article = yield upsert_article_from parsed, issue: issue
+          issue = yield upsert_issue_from values, volume: volume
 
-          yield upsert_contributions_for article, parsed
+          article = yield upsert_article_from values, issue: issue
+
+          yield upsert_contributions_for article, values
 
           Success nil
         end
 
         private
 
-        def upsert_volume_from(parsed)
-          identifier = parsed.volume_identifier
+        VOLUME_ATTRS = {
+          title: "volume.title",
+        }.freeze
+
+        VOLUME_PROPS = {
+          id: "volume.id",
+          sortable_number: "volume.sortable_number",
+        }.freeze
+
+        # @param [Harvesting::Metadata::ValueExtraction::Struct] values
+        # @return [HarvestEntity]
+        def upsert_volume_from(values)
+          identifier = values.volume.identifier
 
           volume = find_or_create_entity identifier
 
           with_entity.(volume) do |assigner|
             assigner.metadata_kind! "volume"
 
-            assigner.attr! :title, parsed.volume_title
-
-            assigner.prop! "id", parsed.volume_id
-            assigner.prop! "sortable_number", parsed.volume_sortable_number
+            assigner.attrs_and_props_from! values, VOLUME_ATTRS, VOLUME_PROPS
 
             assigner.schema! schemas[:volume]
           end
         end
 
-        def upsert_issue_from(parsed, volume:)
-          identifier = parsed.issue_identifier
+        ISSUE_ATTRS = {
+          title: "issue.title",
+        }.freeze
+
+        ISSUE_PROPS = {
+          "volume.id" => "volume.id",
+          "volume.sortable_number" => "volume.sortable_number",
+          "volume.sequence" => "volume.sequence_number",
+          "number" => "issue.number",
+          "id" => "issue.id",
+          "sortable_number" => "issue.sortable_number",
+        }.freeze
+
+        # @param [Harvesting::Metadata::ValueExtraction::Struct] values
+        # @param [HarvestEntity] volume
+        # @return [HarvestEntity]
+        def upsert_issue_from(values, volume:)
+          identifier = values.issue.identifier
 
           issue = find_or_create_entity identifier, parent: volume
 
           with_entity.(issue) do |assigner|
             assigner.metadata_kind! "issue"
 
-            assigner.attr! :title, parsed.issue_title
-
-            assigner.prop! "volume.id", parsed.volume_id
-            assigner.prop! "volume.sortable_number", parsed.volume_sortable_number
-            assigner.prop! "volume.sequence", parsed.volume_sequence_number
-
-            assigner.prop! "number", parsed.issue_number
-            assigner.prop! "id", parsed.issue_id
-            assigner.prop! "sortable_number", parsed.issue_sortable_number
+            assigner.attrs_and_props_from! values, ISSUE_ATTRS, ISSUE_PROPS
 
             assigner.schema! schemas[:issue]
           end
         end
 
-        def upsert_article_from(parsed, issue:)
-          identifier = parsed.article_identifier
+        ARTICLE_ATTRS = {
+          title: "title",
+          published: "published",
+          doi: "doi",
+          summary: "summary",
+        }.freeze
+
+        ARTICLE_PROPS = {
+          body: "body",
+          abstract: "abstract",
+          online_version: "online_version",
+          "volume.id" => "volume.id",
+          "volume.sortable_number" => "volume.sortable_number",
+          "volume.sequence" => "volume.sequence_number",
+          "issue.title" => "issue.title",
+          "issue.number" => "issue.number",
+          "issue.sortable_number" => "issue.sortable_number",
+          "issue.id" => "issue.id",
+          "issue.fpage" => "fpage",
+          "issue.lpage" => "lpage",
+          "meta.collected" => "date_collected",
+          "meta.published" => "epub_published",
+          "meta.page_count" => "page_count",
+        }.freeze
+
+        # @param [Harvesting::Metadata::ValueExtraction::Struct] values
+        # @param [HarvestEntity] issue
+        def upsert_article_from(values, issue:)
+          identifier = harvest_record.identifier
 
           article = find_or_create_entity identifier, parent: issue
 
           with_entity.(article) do |assigner|
             assigner.metadata_kind! "article"
 
-            assigner.attr! :title, parsed.title
-            assigner.attr! :published, parsed.published
-            assigner.attr! :doi, parsed.doi
-            assigner.attr! :summary, parsed.summary
+            assigner.attrs_and_props_from! values, ARTICLE_ATTRS, ARTICLE_PROPS
 
-            assigner.prop! "body", parsed.body
-            assigner.prop! "abstract", parsed.abstract
-            assigner.prop! "online_version", parsed.online_version
-
-            if parsed.pdf_url.present?
+            if values.pdf_url.present?
               assigner.scalar_asset!(
-                "pdf_version", "pdf", parsed.pdf_url,
+                "pdf_version", "pdf", values.pdf_url,
                 name: "PDF Version", mime_type: "application/pdf"
               )
             end
-
-            assigner.prop! "volume.id", parsed.volume_id
-            assigner.prop! "volume.sortable_number", parsed.volume_sortable_number
-            assigner.prop! "volume.sequence", parsed.volume_sequence_number
-
-            assigner.prop! "issue.title", parsed.issue_title
-            assigner.prop! "issue.number", parsed.issue_number
-            assigner.prop! "issue.sortable_number", parsed.issue_sortable_number
-            assigner.prop! "issue.id", parsed.issue_id
-            assigner.prop! "issue.fpage", parsed.fpage
-            assigner.prop! "issue.lpage", parsed.lpage
-
-            assigner.prop! "meta.collected", parsed.date_collected
-            assigner.prop! "meta.published", parsed.epub_published
-            assigner.prop! "meta.page_count", parsed.page_count
 
             assigner.schema! schemas[:article]
           end
         end
 
-        def upsert_contributions_for(article, parsed)
-          parsed.contributions.each do |contribution|
-            yield upsert_contribution.call article, contribution
+        # @param [HarvestEntity] article
+        # @param [Harvesting::Metadata::ValueExtraction::Struct] values
+        def upsert_contributions_for(article, values)
+          values.contributions.each do |contribution|
+            yield upsert_contribution.call article, contribution.deep_symbolize_keys
           end
 
           Success nil
         end
       end
-      # rubocop:enable Metrics/MethodLength
     end
   end
 end

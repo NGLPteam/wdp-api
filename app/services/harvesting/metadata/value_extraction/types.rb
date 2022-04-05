@@ -58,13 +58,16 @@ module Harvesting
 
         # @api private
         EXTRA = {
+          contributions: Coercible::Array.of(Hash).fallback { [] },
           extracted_date: ExtractedDate,
           extracted_values: ExtractedValues,
           extracted_value_list: ExtractedValueList,
           extracted_value_map: ExtractedValueMap,
+          full_text: FullText::Types::NormalizedReference,
           present_string: PresentString,
           string_list: Coercible::Array.of(PresentString),
-          url: URL
+          url: URL,
+          variable_precision_date: Instance(::VariablePrecisionDate)
         }.freeze
 
         NS.product(EXTRA.to_a).each do |(ns, (key, type))|
