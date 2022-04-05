@@ -5,11 +5,14 @@ module System
   class ReloadEverything
     include Dry::Monads[:result, :do]
     include WDPAPI::Deps[
+      reload_roles: "roles.sync",
       reload_schemas: "schemas.static.load_definitions",
     ]
 
     def call
       now = Time.current
+
+      yield reload_roles.call
 
       yield reload_schemas.call
 
