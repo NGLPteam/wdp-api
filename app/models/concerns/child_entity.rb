@@ -12,6 +12,9 @@ module ChildEntity
 
   included do
     has_many :named_variable_dates, as: :entity, dependent: :destroy
+
+    has_many :harvest_entities, as: :entity, dependent: :nullify
+    has_many :harvest_records, through: :harvest_entities
   end
 
   def to_entity_properties
