@@ -42,7 +42,7 @@ module PilotHarvesting
     def upsert_source_for!(collection)
       return Success() if url.blank?
 
-      call_operation("harvesting.sources.upsert", title, url, metadata_format: metadata_format, protocol: protocol_name) do |source|
+      call_operation("harvesting.sources.upsert", identifier, title, url, metadata_format: metadata_format, protocol: protocol_name) do |source|
         call_operation("harvesting.actions.manually_run_source", source, collection).value!
 
         Success collection

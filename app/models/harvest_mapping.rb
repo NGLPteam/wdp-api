@@ -8,6 +8,8 @@ class HarvestMapping < ApplicationRecord
   belongs_to :harvest_set, inverse_of: :harvest_mappings, optional: true
   belongs_to :target_entity, inverse_of: :harvest_mappings, polymorphic: true
 
+  has_one_readonly :latest_harvest_attempt_link, inverse_of: :harvest_mapping
+
   has_many :harvest_attempts, inverse_of: :harvest_mapping, dependent: :destroy
 
   validates :metadata_format, harvesting_metadata_format: true

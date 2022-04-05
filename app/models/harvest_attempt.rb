@@ -11,9 +11,13 @@ class HarvestAttempt < ApplicationRecord
   belongs_to :harvest_set, inverse_of: :harvest_attempts, optional: true
   belongs_to :harvest_mapping, inverse_of: :harvest_attempts, optional: true
 
+  has_one_readonly :latest_harvest_attempt_link, inverse_of: :harvest_attempt
+
   has_many :harvest_records, inverse_of: :harvest_attempt, dependent: :destroy
 
   has_many :harvest_entities, through: :harvest_records
+
+  scope :previous, -> { where.not(id: LatestHarvestAttemptLink.select(:harvest_attempt_id)) }
 
   validates :metadata_format, harvesting_metadata_format: true
 
@@ -54,5 +58,19 @@ class HarvestAttempt < ApplicationRecord
   # @return [void]
   def inherit_metadata_format!
     self.metadata_format ||= harvest_mapping&.metadata_format || harvest_source&.metadata_format
+  end
+
+  class << self
+    # @param [String, HarvestSource] sourcelike
+    # @return [ActiveRecord::Relation<HarvestAttempt>]
+    def for_source(sourcelike)
+      where(harvest_source: HarvestSource.identified_by(sourcelike).select(:id))
+    end
+
+    # @param [String, HarvestSource] sourcelike
+    # @return [HarvestAttempt, nil]
+    def latest_for_source(sourcelike)
+      for_source(sourcelike).latest
+    end
   end
 end

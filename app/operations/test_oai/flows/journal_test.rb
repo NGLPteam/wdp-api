@@ -13,6 +13,7 @@ module TestOAI
             title: "JATS Testing"
           },
           source_options: {
+            identifier: "cjhe",
             name: "SFU CJHE",
             protocol: "oai",
             metadata_format: "jats",
