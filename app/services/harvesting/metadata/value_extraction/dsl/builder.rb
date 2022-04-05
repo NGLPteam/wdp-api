@@ -101,7 +101,7 @@ module Harvesting
             set_mods = @set_mods
 
             @sets.each_value do |set|
-              struct.attribute set.identifier do
+              struct.attribute set.identifier, Harvesting::Metadata::ValueExtraction::Struct do
                 set.each_value do |value|
                   collected[value.full_path] = value
 
