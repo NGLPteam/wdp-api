@@ -9,10 +9,12 @@ module Mutations
 
       use_contract! :update_global_configuration
 
-      def call(site: nil, theme: nil, **args)
+      def call(institution: nil, site: nil, theme: nil, **args)
         config = GlobalConfiguration.fetch
 
         authorize config, :update?
+
+        config.institution = institution if institution.present?
 
         config.site = site if site.present?
 
