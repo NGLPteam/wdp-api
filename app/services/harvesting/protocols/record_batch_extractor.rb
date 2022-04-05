@@ -42,6 +42,8 @@ module Harvesting
 
         halt_enumeration if batch.nil?
 
+        prev_cursor = nil
+
         loop do
           pre_process! batch
 
@@ -53,9 +55,17 @@ module Harvesting
 
           halt_enumeration if next_cursor.blank?
 
+          if prev_cursor.present? && prev_cursor == next_cursor
+            logger.log("cursor repeating infinitely: #{prev_cursor}")
+
+            halt_enumeration
+          end
+
           logger.log("next cursor: #{next_cursor.inspect}")
 
           batch = build_batch cursor: next_cursor
+
+          prev_cursor = next_cursor
         end
       end
 
