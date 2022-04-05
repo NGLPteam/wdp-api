@@ -25,6 +25,8 @@ module Harvesting
 
     Identifiers = Array.of(Identifier)
 
+    MetadataFormat = Coercible::String.enum("jats", "mets", "mods")
+
     # @see Harvesting::Metadata::Section
     MetadataSection = Instance(Harvesting::Metadata::Section)
 
@@ -37,6 +39,8 @@ module Harvesting
     Path = Coercible::String.constrained(format: VALID_PATH) | Coercible::String.constrained(format: VALID_NAME)
 
     Paths = Coercible::Array.of(Path)
+
+    ProtocolName = Coercible::String.enum("oai").fallback("oai")
 
     # @see ::HarvestRecord
     Record = Instance(::HarvestRecord)
