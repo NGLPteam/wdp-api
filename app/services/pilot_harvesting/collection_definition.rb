@@ -23,7 +23,6 @@ module PilotHarvesting
 
     def upsert
       call_operation("collections.upsert", identifier, title: title, parent: collection_parent, properties: properties) do |collection|
-        warn "COLL UPSERTED"
         upsert_source_for!(collection).value!
 
         Success collection
@@ -44,9 +43,7 @@ module PilotHarvesting
       return Success() if url.blank?
 
       call_operation("harvesting.sources.upsert", title, url, metadata_format: metadata_format, protocol: protocol_name) do |source|
-        warn "SOURCE UPSERTED"
         call_operation("harvesting.actions.manually_run_source", source, collection).value!
-        warn "SOURCE RUN"
 
         Success collection
       end
