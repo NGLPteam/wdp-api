@@ -9,6 +9,8 @@ module Harvesting
         extract_records: "harvesting.actions.extract_records",
       ]
 
+      deferred_ordering_refresh true
+
       runner do
         param :harvest_source, Harvesting::Types::Source
         param :harvest_target, Harvesting::Types::Target
