@@ -11,7 +11,7 @@ module Testing
 
       # @return [Dry::Monads::Success(Community)]
       def call
-        upsert "ucm", title: "UC Merced"
+        upsert.("ucm", title: "UC Merced")
       end
     end
   end
