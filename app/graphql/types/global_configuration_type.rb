@@ -8,6 +8,9 @@ module Types
 
     description "The global configuration for this installation of WDP."
 
+    field :institution, Types::Settings::InstitutionSettingsType, null: false,
+      description: "Settings specific to this institution."
+
     field :site, Types::Settings::SiteSettingsType, null: false,
       description: "Settings specific to this site"
 

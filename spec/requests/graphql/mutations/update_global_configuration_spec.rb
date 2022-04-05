@@ -1,27 +1,42 @@
 # frozen_string_literal: true
 
-RSpec.describe Mutations::UpdateGlobalConfiguration, type: :request do
+RSpec.describe Mutations::UpdateGlobalConfiguration, type: :request, graphql: :mutation do
+  mutation_query! <<~GRAPHQL
+  mutation updateGlobalConfiguration($input: UpdateGlobalConfigurationInput!) {
+    updateGlobalConfiguration(input: $input) {
+      globalConfiguration {
+        institution {
+          name
+        }
+
+        site {
+          installationName
+          providerName
+        }
+
+        theme {
+          color
+          font
+        }
+      }
+
+      ... ErrorFragment
+    }
+  }
+  GRAPHQL
+
   context "as an admin" do
     let(:token) { token_helper.build_token has_global_admin: true }
 
     let!(:color) { "blue" }
     let!(:font) { "style2" }
+    let!(:institution_name) { "Some Institution Name" }
     let!(:provider_name) { "Some Provider Name" }
+    let!(:installation_name) { "Some Installation Name" }
 
-    let!(:site) { { provider_name: provider_name } }
-
-    let!(:theme) { { color: color, font: font } }
-
-    let!(:mutation_input) do
-      {
-        site: site,
-        theme: theme,
-      }
-    end
-
-    let!(:graphql_variables) do
-      { input: mutation_input }
-    end
+    let_mutation_input!(:institution) { { name: institution_name } }
+    let_mutation_input!(:site) { { installation_name: installation_name, provider_name: provider_name } }
+    let_mutation_input!(:theme) { { color: color, font: font } }
 
     let(:expected_site) { site }
     let(:expected_theme) { theme }
@@ -43,41 +58,10 @@ RSpec.describe Mutations::UpdateGlobalConfiguration, type: :request do
       end
     end
 
-    let!(:query) do
-      <<~GRAPHQL
-      mutation updateGlobalConfiguration($input: UpdateGlobalConfigurationInput!) {
-        updateGlobalConfiguration(input: $input) {
-          globalConfiguration {
-            site {
-              providerName
-            }
-
-            theme {
-              color
-              font
-            }
-          }
-
-          attributeErrors {
-            path
-            messages
-          }
-
-          globalErrors {
-            type
-            message
-          }
-        }
-      }
-      GRAPHQL
-    end
-
     it "updates the config" do
-      expect do
-        make_default_request!
-      end.to change { GlobalConfiguration.fetch.site.as_json }.and change { GlobalConfiguration.fetch.theme.as_json }
+      expect_the_default_request.to change { GlobalConfiguration.fetch.site.as_json }.and change { GlobalConfiguration.fetch.theme.as_json }
 
-      expect_graphql_response_data expected_shape, decamelize: true
+      expect_graphql_data expected_shape
     end
 
     context "when omitting site but providing theme" do
@@ -88,11 +72,9 @@ RSpec.describe Mutations::UpdateGlobalConfiguration, type: :request do
       let(:expected_site) { GlobalConfiguration.fetch.site.as_json }
 
       it "partially updates the config" do
-        expect do
-          make_default_request!
-        end.to keep_the_same { GlobalConfiguration.fetch.site.as_json }.and change { GlobalConfiguration.fetch.theme.as_json }
+        expect_the_default_request.to keep_the_same { GlobalConfiguration.fetch.site.as_json }.and change { GlobalConfiguration.fetch.theme.as_json }
 
-        expect_graphql_response_data expected_shape, decamelize: true
+        expect_graphql_data expected_shape
       end
     end
 
@@ -105,7 +87,7 @@ RSpec.describe Mutations::UpdateGlobalConfiguration, type: :request do
           make_default_request!
         end.to change { GlobalConfiguration.fetch.site.as_json }.and keep_the_same { GlobalConfiguration.fetch.theme.as_json }
 
-        expect_graphql_response_data expected_shape, decamelize: true
+        expect_graphql_data expected_shape
       end
     end
 
@@ -117,7 +99,7 @@ RSpec.describe Mutations::UpdateGlobalConfiguration, type: :request do
           make_default_request!
         end.to keep_the_same { GlobalConfiguration.fetch.site.as_json }.and keep_the_same { GlobalConfiguration.fetch.theme.as_json }
 
-        expect_graphql_response_data expected_shape, decamelize: true
+        expect_graphql_data expected_shape
       end
     end
 

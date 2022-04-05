@@ -5,7 +5,12 @@ module Mutations
     # @see Mutations::Operations::UpdateGlobalConfiguration
     class UpdateGlobalConfiguration < ApplicationContract
       json do
+        optional(:institution).maybe(:hash) do
+          required(:name).filled(:string)
+        end
+
         optional(:site).maybe(:hash) do
+          required(:installation_name).filled(:string)
           required(:provider_name).filled(:string)
         end
 
