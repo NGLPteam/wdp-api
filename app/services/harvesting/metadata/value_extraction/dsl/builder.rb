@@ -107,10 +107,10 @@ module Harvesting
 
                   value.expose_on_struct! self
                 end
-              end
 
-              set_mods[set.identifier].each do |mod|
-                class_eval(&mod)
+                set_mods[set.identifier].each do |mod|
+                  class_eval(&mod)
+                end
               end
             end
 

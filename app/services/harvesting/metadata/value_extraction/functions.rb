@@ -60,6 +60,13 @@ module Harvesting
             raise PipelineError, e.message
           end
 
+          # @param [Object] left
+          # @param [Object] right
+          # @return [Boolean]
+          def equals(left, right)
+            left == right
+          end
+
           # Extract values from a source.
           #
           # @param [Harvesting::Metadata::ExtractsValues] source
@@ -74,7 +81,7 @@ module Harvesting
           end
 
           # @param [#fetch] fetch_key
-          # @param
+          # @param [Object] key
           # @return [Object]
           def fetch_key(fetchable, key)
             fetchable.fetch key
@@ -87,11 +94,42 @@ module Harvesting
             fetch_key dependencies.fetch(dependency_key), key
           end
 
+          def full_text_reference(kind, content)
+            {
+              lang: "en",
+              kind: kind,
+              content: content
+            }
+          end
+
+          def full_text_html(content)
+            full_text_reference("html", content)
+          end
+
+          def full_text_plain(content)
+            full_text_reference("text", content)
+          end
+
           # @param [Harvesting::Metadata::SectionMap] input
           # @param [<#to_sym>] tags
           # @return [Harvesting::Metadata::SectionMap]
           def funnel_section_map_by_tags(input, *tags)
             input.tagged_with(*tags)
+          end
+
+          def get_with_xpath(node, template, *parts)
+            compiled = parts.map do |part|
+              case part
+              when Symbol
+                dependencies.fetch(part)
+              else
+                part
+              end
+            end
+
+            query = compiled.present? ? template % compiled : template
+
+            node.at_xpath(query) || ::Utility::NullXMLElement.new
           end
 
           # @see https://api.rubyonrails.org/classes/Enumerable.html#method-i-index_by
@@ -114,6 +152,13 @@ module Harvesting
           # @return [String]
           def join_array(arr, sep)
             arr.join(sep)
+          end
+
+          # @param [#to_s] suffix
+          # @param [String] prefix
+          # @return [String, nil]
+          def maybe_prefix(suffix, prefix)
+            "#{prefix}#{suffix}" if suffix.present?
           end
 
           # A shorthand version of {.call_operation} for harvesting metadata operations.
@@ -207,6 +252,14 @@ module Harvesting
           # @return [String]
           def xml_text(node)
             node.text
+          end
+
+          # Extract the HTML from an XML node.
+          #
+          # @param [Nokogiri::XML::Node, #text] node
+          # @return [String]
+          def xml_to_html(node)
+            node.to_html
           end
         end
       end
