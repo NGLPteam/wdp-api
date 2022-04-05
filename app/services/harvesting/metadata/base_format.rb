@@ -42,6 +42,14 @@ module Harvesting
         self.class.oai_metadata_prefix
       end
 
+      # @abstract
+      # @return [#call]
+      def parse
+        # :nocov:
+        Harvesting::Utility::UnavailableAction.new(:metadata_format, format_name, __method__)
+        # :nocov:
+      end
+
       # @return [Dry::Monads::Result]
       def to_monad
         Success self

@@ -8,8 +8,15 @@ module Harvesting
         include WDPAPI::Deps[
           augment_middleware: "harvesting.metadata.mets.augment_middleware",
           extract_entities: "harvesting.metadata.mets.extract_entities",
+          parse: "harvesting.metadata.mets.parse",
           validate_raw_metadata: "harvesting.metadata.mets.validate_raw_metadata",
         ]
+
+        # @param [String] raw_metadata_source
+        # @return [Dry::Monads::Result]
+        def extract_values(raw_metadata_source)
+          parse.(raw_metadata_source).bind(&:extracted_values)
+        end
       end
     end
   end
