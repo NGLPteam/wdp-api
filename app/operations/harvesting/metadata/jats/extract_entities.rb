@@ -11,9 +11,7 @@ module Harvesting
         # @param [String] raw_metadata
         # @return [Dry::Monads::Result(void)]
         def call(raw_metadata)
-          parsed = Harvesting::Metadata::JATS::Parsed.new raw_metadata
-
-          values = yield parsed.extracted_values
+          values = yield metadata_format.extract_values(raw_metadata)
 
           return Success(nil) unless values.has_volume? && values.has_issue?
 

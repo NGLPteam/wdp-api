@@ -39,6 +39,12 @@ class HarvestRecord < ApplicationRecord
     Harvesting::UpsertEntitiesForRecordJob.perform_later self
   end
 
+  # @see Harvesting::Actions::ParseRecordMetadata
+  # @return [Dry::Monads::Result]
+  def parse_metadata
+    call_operation("harvesting.actions.parse_record_metadata", self)
+  end
+
   # @see Harvesting::Actions::PrepareEntitiesFromRecord
   # @return [Dry::Monads::Result]
   def prepare_entities!

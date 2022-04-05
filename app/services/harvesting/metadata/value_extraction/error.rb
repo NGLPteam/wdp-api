@@ -13,7 +13,7 @@ module Harvesting
         attribute? :message, Harvesting::Types::String.optional
         attribute :metadata, MetadataMap
 
-        delegate :or, to: :to_monad
+        delegate :or, :to_validated, to: :to_monad
 
         # @return [Dry::Monads::Failure(Symbol, Harvesting::Metadata::ValueExtraction::Error)]
         def to_monad
