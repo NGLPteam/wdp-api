@@ -11,12 +11,14 @@ module Harvesting
         # Some issue numbers are things like `2/3`. We'll parse them as 2 for sorting purposes.
         ODDLY_FORMATTED_ISSUE_NUMBER = %r,\A(<actual>\d+)/\d+\z,.freeze
 
-        def call(string)
-          case issue_number
+        # @param [String] input
+        # @return [Integer, nil]
+        def call(input)
+          case input
           when ODDLY_FORMATTED_ISSUE_NUMBER
             Regexp.last_match[:actual].to_i
           when LOOKS_LIKE_INTEGER
-            issue_number.to_i
+            input.to_i
           end
         end
       end

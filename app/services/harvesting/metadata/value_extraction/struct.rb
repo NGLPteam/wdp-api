@@ -5,6 +5,7 @@ module Harvesting
     module ValueExtraction
       # @abstract
       class Struct < Dry::Struct
+        include ActiveModel::Validations
         include Shared::Typing
         include Dry::Core::Memoizable
         include Dry::Monads[:result]

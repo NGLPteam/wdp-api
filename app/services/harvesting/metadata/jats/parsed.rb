@@ -109,11 +109,11 @@ module Harvesting
 
           on_struct do
             def has_issue?
-              issue.present? && issue.has_id?
+              issue.present? && issue.valid?
             end
 
             def has_volume?
-              volume.present? && volume.has_id?
+              volume.present? && volume.valid?
             end
 
             def online_version
@@ -134,17 +134,15 @@ module Harvesting
           set :issue do
             xpath :id, %,.//xmlns:issue-id/text(),, type: :present_string, require_match: false
 
-            compose_value :identifier, from: "issue.id", type: :present_string, require_match: false do
+            xpath :number, %,.//xmlns:issue/text(),, type: :present_string
+
+            compose_value :identifier, from: "issue.number", type: :present_string do
               pipeline! do
                 maybe_prefix "issue-"
               end
             end
 
-            xpath :number, %,.//xmlns:issue/text(),, type: :present_string, require_match: false
-
-            value :sortable_number, type: :integer, require_match: false do
-              from_value "issue.id"
-
+            value :sortable_number, type: :integer do
               from_value "issue.number" do
                 pipeline! do
                   metadata_operation "jats.parse_sortable_number"
@@ -152,10 +150,10 @@ module Harvesting
               end
             end
 
-            value :title, type: :present_string, require_match: true do
+            value :title, type: :present_string do
               xpath %,.//xmlns:issue-title/text(),
 
-              from_value "issue.id" do
+              from_value "issue.number" do
                 pipeline! do
                   maybe_prefix "Issue "
                 end
@@ -163,16 +161,16 @@ module Harvesting
             end
 
             on_struct do
-              def has_id?
-                id.present?
-              end
+              validates :number, :title, :identifier, presence: true
             end
           end
 
           set :volume do
-            xpath :id, %,.//xmlns:volume/text(),, type: :present_string, require_match: false
+            xpath :id, %,.//xmlns:volume/text(),, type: :present_string
 
-            compose_value :identifier, from: "volume.id", type: :present_string, require_match: false do
+            compose_value :number, from: "volume.id", type: :present_string
+
+            compose_value :identifier, from: "volume.id", type: :present_string do
               pipeline! do
                 maybe_prefix "volume-"
               end
@@ -182,26 +180,20 @@ module Harvesting
 
             compose_value :sequence_number, from: "volume.sequence", type: :integer, require_match: false
 
-            value :sortable_number, type: :integer, require_match: false do
+            value :sortable_number, type: :integer do
               from_value "volume.sequence_number"
 
               from_value "volume.id"
             end
 
-            compose_value :title, from: "volume.id", type: :present_string, require_match: false do
+            compose_value :title, from: "volume.id", type: :present_string do
               pipeline! do
                 maybe_prefix "Volume "
               end
             end
 
             on_struct do
-              def number
-                id
-              end
-
-              def has_id?
-                id.present?
-              end
+              validates :title, :id, :identifier, presence: true
             end
           end
         end
