@@ -16,7 +16,13 @@ module Mutations
 
         config.institution = institution if institution.present?
 
-        config.site = site if site.present?
+        if site.present?
+          footer = site.delete(:footer)
+
+          config.site = config.site.as_json.deep_symbolize_keys.merge(site)
+
+          config.site.footer = footer if footer.present?
+        end
 
         config.theme = theme if theme.present?
 

@@ -6,12 +6,16 @@ module Mutations
     class UpdateGlobalConfiguration < ApplicationContract
       json do
         optional(:institution).maybe(:hash) do
-          required(:name).filled(:string)
+          required(:name).value(:safe_string)
         end
 
         optional(:site).maybe(:hash) do
-          required(:installation_name).filled(:string)
-          required(:provider_name).filled(:string)
+          optional(:installation_name).value(:safe_string)
+          optional(:provider_name).value(:safe_string)
+          optional(:footer).maybe(:hash) do
+            optional(:copyright_statement).value(:safe_string)
+            optional(:description).value(:safe_string)
+          end
         end
 
         optional(:theme).maybe(:hash) do

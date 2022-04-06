@@ -23,6 +23,8 @@ module AppTypes
 
   StringList = AppTypes::Array.of(AppTypes::String)
 
+  CoercibleString = Coercible::String
+
   CoercibleStringList = AppTypes::Coercible::Array.of(AppTypes::Coercible::String)
 
   AttributePath = AppTypes::Array.of(AppTypes::Integer | AppTypes::Coercible::String)

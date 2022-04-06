@@ -12,6 +12,11 @@ RSpec.describe Mutations::UpdateGlobalConfiguration, type: :request, graphql: :m
         site {
           installationName
           providerName
+
+          footer {
+            copyrightStatement
+            description
+          }
         }
 
         theme {
@@ -33,15 +38,37 @@ RSpec.describe Mutations::UpdateGlobalConfiguration, type: :request, graphql: :m
     let!(:institution_name) { "Some Institution Name" }
     let!(:provider_name) { "Some Provider Name" }
     let!(:installation_name) { "Some Installation Name" }
+    let!(:footer_copyright_statement) { "Some Copyright Statement" }
+    let!(:footer_description) { "Some Footer Description" }
+    let!(:footer) do
+      {
+        copyright_statement: footer_copyright_statement,
+        description: footer_description,
+      }
+    end
 
     let_mutation_input!(:institution) { { name: institution_name } }
-    let_mutation_input!(:site) { { installation_name: installation_name, provider_name: provider_name } }
-    let_mutation_input!(:theme) { { color: color, font: font } }
 
-    let(:expected_site) { site }
+    let_mutation_input!(:site) do
+      {
+        installation_name: installation_name,
+        provider_name: provider_name,
+        footer: footer,
+      }
+    end
+
+    let_mutation_input!(:theme) do
+      { color: color, font: font }
+    end
+
+    let!(:expected_footer) { footer }
+
+    let(:expected_institution) { institution }
+    let(:expected_site) { site.merge(footer: expected_footer) }
     let(:expected_theme) { theme }
     let(:expected_global_configuration) do
       {
+        institution: expected_institution,
         site: expected_site,
         theme: expected_theme,
       }
@@ -64,10 +91,24 @@ RSpec.describe Mutations::UpdateGlobalConfiguration, type: :request, graphql: :m
       expect_graphql_data expected_shape
     end
 
+    context "when supplying a null value for certain fields" do
+      let!(:institution_name) { nil }
+
+      let(:expected_institution) { institution.merge(name: "") }
+
+      it "ensures it is always a string" do
+        expect_the_default_request.to keep_the_same { GlobalConfiguration.fetch.institution.name }
+
+        expect_graphql_data expected_shape
+      end
+    end
+
     context "when omitting site but providing theme" do
       let(:mutation_input) do
         { theme: theme }
       end
+
+      let(:expected_institution) { GlobalConfiguration.fetch.institution.as_json }
 
       let(:expected_site) { GlobalConfiguration.fetch.site.as_json }
 
@@ -78,14 +119,32 @@ RSpec.describe Mutations::UpdateGlobalConfiguration, type: :request, graphql: :m
       end
     end
 
+    context "when omitting footer" do
+      before do
+        config = GlobalConfiguration.fetch
+
+        config.site.footer.description = footer_description
+
+        config.save!
+      end
+
+      let!(:footer) { nil }
+
+      let(:expected_footer) { { description: footer_description } }
+
+      it "does not clobber existing values" do
+        expect_the_default_request.to keep_the_same { GlobalConfiguration.fetch.site.footer.as_json }
+
+        expect_graphql_data expected_shape
+      end
+    end
+
     context "when providing nil as a theme" do
       let(:theme) { nil }
       let(:expected_theme) { GlobalConfiguration.fetch.theme.as_json }
 
       it "partially updates the config" do
-        expect do
-          make_default_request!
-        end.to change { GlobalConfiguration.fetch.site.as_json }.and keep_the_same { GlobalConfiguration.fetch.theme.as_json }
+        expect_the_default_request.to change { GlobalConfiguration.fetch.site.as_json }.and keep_the_same { GlobalConfiguration.fetch.theme.as_json }
 
         expect_graphql_data expected_shape
       end
@@ -95,23 +154,9 @@ RSpec.describe Mutations::UpdateGlobalConfiguration, type: :request, graphql: :m
       let(:expected_global_configuration) { nil }
 
       it "fails to update" do
-        expect do
-          make_default_request!
-        end.to keep_the_same { GlobalConfiguration.fetch.site.as_json }.and keep_the_same { GlobalConfiguration.fetch.theme.as_json }
+        expect_the_default_request.to keep_the_same { GlobalConfiguration.fetch.site.as_json }.and keep_the_same { GlobalConfiguration.fetch.theme.as_json }
 
         expect_graphql_data expected_shape
-      end
-    end
-
-    context "when providing an empty service provider name" do
-      include_context "an invalid request"
-
-      let(:provider_name) { "" }
-
-      let(:expected_errors) do
-        gql.attribute_errors do |eb|
-          eb.error "site.providerName", :filled?
-        end
       end
     end
 

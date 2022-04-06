@@ -8,11 +8,14 @@ module Types
 
       description "A value for updating the site's configuration"
 
-      argument :installation_name, String, required: true, attribute: true,
+      argument :installation_name, String, required: false, attribute: true,
         description: "The name of the installation."
 
-      argument :provider_name, String, required: true, attribute: true,
+      argument :provider_name, String, required: false, attribute: true,
         description: "The name of the provider supporting and maintaining this installation."
+
+      argument :footer, SiteFooterInputType, required: false, attribute: true,
+        description: "Settings for the site's footer"
     end
   end
 end
