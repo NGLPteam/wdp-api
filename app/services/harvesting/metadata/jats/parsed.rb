@@ -127,7 +127,7 @@ module Harvesting
 
             # @return [<Hash>]
             memoize def contributions
-              Array(organization_contributions) + Array(person_contributions)
+              Array(person_contributions)
             end
           end
 
