@@ -3,11 +3,48 @@
 class KeycloakPasswordFlowConfig < ApplicationConfig
   include Dry::Core::Memoizable
 
+  attr_config :realm_id
   attr_config :client_id
   attr_config :client_secret
 
+  attr_config :admin_realm_id
+  attr_config :admin_client_id
+  attr_config :admin_client_secret
+
+  def client_args_for(id)
+    case id
+    when /admin/ then admin_client_args
+    else
+      client_args
+    end
+  end
+
   # @return [Hash]
   memoize def client_args
+    build_client_args realm_id, client_id, client_secret
+  end
+
+  memoize def admin_client_args
+    build_client_args admin_realm_id, admin_client_id, admin_client_secret
+  end
+
+  memoize def keycloak_config
+    KeycloakRack::Config.new
+  end
+
+  memoize def keycloak_url
+    URI.parse keycloak_config.server_url
+  end
+
+  private
+
+  # @param [String] realm_id
+  # @param [String] client_id
+  # @param [String] client_secret
+  # @return [Hash]
+  def build_client_args(realm_id, client_id, client_secret)
+    oidc_config = oidc_config_for realm_id
+
     {
       identifier: client_id,
       secret: client_secret,
@@ -21,19 +58,17 @@ class KeycloakPasswordFlowConfig < ApplicationConfig
     }
   end
 
-  memoize def keycloak_config
-    KeycloakRack::Config.new
+  # @param [String] realm_id
+  # @return [String]
+  def issuer_for(realm_id)
+    "#{keycloak_config.server_url}/realms/#{realm_id}"
   end
 
-  memoize def keycloak_url
-    URI.parse keycloak_config.server_url
-  end
+  # @param [String] realm_id
+  # @return [OpenIDConnect::Discovery::Provider::Config::Response]
+  def oidc_config_for(realm_id)
+    issuer = issuer_for realm_id
 
-  memoize def issuer
-    "#{keycloak_config.server_url}/realms/#{keycloak_config.realm_id}"
-  end
-
-  memoize def oidc_config
     OpenIDConnect::Discovery::Provider::Config.discover! issuer
   end
 end

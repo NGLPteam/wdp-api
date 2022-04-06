@@ -4,8 +4,8 @@ module PasswordFlow
   # Build an OIDC Client set up to authenticate against a password-flow client.
   class BuildClient
     # @return [OpenIDConnect::Client]
-    def call
-      OpenIDConnect::Client.new KeycloakPasswordFlowConfig.client_args
+    def call(client_id: nil)
+      OpenIDConnect::Client.new KeycloakPasswordFlowConfig.client_args_for client_id
     end
   end
 end
