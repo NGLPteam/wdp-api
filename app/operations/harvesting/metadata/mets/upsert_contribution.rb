@@ -8,13 +8,12 @@ module Harvesting
         include Dry::Monads[:do, :result]
         include WDPAPI::Deps[
           upsert_contributor: "harvesting.contributors.upsert",
+          upsert_contribution: "harvesting.contributions.upsert",
         ]
 
         # @param [HarvestEntity] harvest_entity
         # @param [Harvesting::Metadata::ValueExtraction::Struct] contribution
-        # @param [String, nil] kind
-        # @param [Hash] metadata
-        # @return [Dry::Monads::Result(void)]
+        # @return [Dry::Monads::Success(HarvestContribution)]
         def call(harvest_entity, contribution)
           harvest_contributor = yield upsert_contributor.call(
             contribution.contributor_kind,
@@ -22,16 +21,7 @@ module Harvesting
             contribution.contributor_properties
           )
 
-          attrs = {
-            harvest_entity_id: harvest_entity.id,
-            harvest_contributor_id: harvest_contributor.id,
-            kind: contribution.role,
-            metadata: contribution.contribution_metadata,
-          }
-
-          HarvestContribution.upsert attrs, unique_by: %i[harvest_contributor_id harvest_entity_id]
-
-          Success nil
+          upsert_contribution.(harvest_entity, harvest_contributor, kind: contribution.role, metadata: contribution.contribution_metadata)
         end
       end
     end

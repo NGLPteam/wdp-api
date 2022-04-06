@@ -21,6 +21,7 @@ class Contributor < ApplicationRecord
   has_many :items, through: :item_contributions
 
   scope :by_kind, ->(kind) { where(kind: kind) }
+  scope :unharvested, -> { where.not(id: HarvestContributor.harvested_ids) }
 
   validates :identifier, :kind, presence: true
   validates :identifier, uniqueness: true

@@ -5,6 +5,7 @@ module Harvesting
     class Upsert
       include Dry::Monads[:do, :result]
       include Dry::Effects.Resolve(:harvest_source)
+      include Dry::Effects.State(:extracted_contributor_ids)
       include MonadicPersistence
       include WDPAPI::Deps[
         connect_or_create: "harvesting.contributors.connect_or_create",
@@ -14,6 +15,8 @@ module Harvesting
 
       def call(kind, attributes, properties)
         harvest_contributor = yield upsert_by_kind kind, attributes, properties
+
+        extracted_contributor_ids << harvest_contributor.id
 
         yield connect_or_create.call harvest_contributor
 
