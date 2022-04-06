@@ -12,6 +12,8 @@ class HarvestRecord < ApplicationRecord
   has_one :harvest_set, through: :harvest_attempt
 
   has_many :harvest_entities, inverse_of: :harvest_record, dependent: :destroy
+  has_many :harvest_contributions, through: :harvest_entities
+  has_many :harvest_contributors, through: :harvest_contributions
 
   has_many_readonly :collections, through: :harvest_entities, source: :entity, source_type: "Collection"
   has_many_readonly :items, through: :harvest_entities, source: :entity, source_type: "Item"

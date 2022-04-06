@@ -9,10 +9,10 @@ module Harvesting
     class PrepareEntities
       include Dry::Monads[:result, :do]
       include Dry::Effects.Resolve(:metadata_format)
-      include Dry::Effects::Handler.State(:extracted_entity_ids)
       include Dry::Effects::Handler.Interrupt(:skip_record, as: :catch_record_skip)
       include WDPAPI::Deps[
         handle_skip: "harvesting.records.skip",
+        prune_extraction: "harvesting.records.prune_extraction",
         update_entity_count: "harvesting.records.update_entity_count",
       ]
 
@@ -47,20 +47,11 @@ module Harvesting
       # @param [HarvestRecord] harvest_record
       # @return [Dry::Monads::Result]
       def extract_and_prune_entities!(harvest_record)
-        ids, _ = with_extracted_entity_ids([]) do
+        prune_extraction.call(harvest_record) do
           yield metadata_format.extract_entities.(harvest_record.raw_metadata_source)
         end
 
-        prune_entities! harvest_record, ids
-
         update_entity_count.(harvest_record)
-      end
-
-      # @param [HarvestRecord] harvest_record
-      # @param [<String>] extracted_entity_ids
-      # @return [void]
-      def prune_entities!(harvest_record, extracted_entity_ids)
-        harvest_record.harvest_entities.where.not(id: extracted_entity_ids).destroy_all
       end
     end
   end
