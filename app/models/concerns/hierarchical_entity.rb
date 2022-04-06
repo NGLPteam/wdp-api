@@ -232,6 +232,17 @@ module HierarchicalEntity
     populate_orderings!.value!
   end
 
+  # @param [String] schema a selector to prune
+  # @see Entities::PruneUnharvested
+  def prune_unharvested(schema)
+    call_operation("entities.prune_unharvested", source: self)
+  end
+
+  # @see Entities::PruneUnharvestedJournals
+  def prune_unharvested_journals
+    call_operation("entities.prune_unharvested_journals", source: self)
+  end
+
   # @see Schemas::Instances::RefreshOrderings
   # @return [Dry::Monads::Result]
   def refresh_orderings

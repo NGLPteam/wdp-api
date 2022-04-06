@@ -26,6 +26,8 @@ class EntityDescendant < ApplicationRecord
 
   scope :by_max_depth, ->(value) { build_max_depth_scope_for(value) }
   scope :collections, -> { filtered_by_scope :collection }
+  scope :sans_links, -> { where(link_operator: nil) }
+  scope :unharvested, -> { where.not(descendant_id: HarvestEntity.existing_entity_ids) }
 
   # A pattern for matching "all" scopes.
   ALL = /\Aall\z/.freeze

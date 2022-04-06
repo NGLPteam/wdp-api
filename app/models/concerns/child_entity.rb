@@ -15,6 +15,8 @@ module ChildEntity
 
     has_many :harvest_entities, as: :entity, dependent: :nullify
     has_many :harvest_records, through: :harvest_entities
+
+    scope :unharvested, -> { where.not(id: HarvestEntity.existing_entity_ids) }
   end
 
   def to_entity_properties
