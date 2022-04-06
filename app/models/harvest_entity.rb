@@ -29,6 +29,7 @@ class HarvestEntity < ApplicationRecord
   scope :filtered_by_schema_version, ->(schemas) { where(schema_version: SchemaVersion.filtered_by(schemas)) }
   scope :by_metadata_kind, ->(kind) { where(metadata_kind: kind) }
   scope :for_metadata_format, ->(metadata_format) { joins(:harvest_record).merge(HarvestRecord.for_metadata_format(metadata_format)) }
+  scope :with_entity, -> { where.not(entity_id: nil) }
   scope :with_jats_format, -> { for_metadata_format "jats" }
   scope :with_mets_format, -> { for_metadata_format "mets" }
   scope :with_mods_format, -> { for_metadata_format "mods" }
@@ -83,5 +84,12 @@ class HarvestEntity < ApplicationRecord
   # @return [void]
   def exclusive_parentage!
     errors.add :base, "Child harvest entities cannot have an existing parent set" if !root? && has_existing_parent?
+  end
+
+  class << self
+    # @return [ActiveRecord::Relation]
+    def existing_entity_ids
+      with_entity.select(:entity_id)
+    end
   end
 end

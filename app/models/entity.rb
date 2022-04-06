@@ -39,6 +39,7 @@ class Entity < ApplicationRecord
   scope :non_link, -> { where(link_operator: nil) }
   scope :real, -> { preload(:entity).non_link }
   scope :sans_thumbnail, -> { real.where(arel_sans_thumbnail) }
+  scope :unharvested, -> { where.not(hierarchical_id: HarvestEntity.existing_entity_ids) }
 
   def schema_kind
     hierarchical_type&.underscore

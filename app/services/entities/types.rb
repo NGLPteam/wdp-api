@@ -18,6 +18,8 @@ module Entities
 
     AuthPath = String.constrained(format: AUTH_PATH_FORMAT)
 
+    Entity = Instance(::HierarchicalEntity)
+
     EntityScope = Coercible::String.enum(*ENTITY_SCOPES)
 
     EntityType = String.enum(*ENTITY_TYPES)
