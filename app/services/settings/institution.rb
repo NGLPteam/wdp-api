@@ -2,10 +2,18 @@
 
 module Settings
   class Institution
-    include StoreModel::Model
+    include Shared::EnhancedStoreModel
 
-    attribute :name, :string, default: "Institution Name"
+    strip_attributes collapse_spaces: true
 
-    validates :name, presence: true
+    attribute :name, :string, default: ""
+
+    validates :name, enforced_string: true
+
+    # @api private
+    # @return [void]
+    def reset!
+      self.name = ""
+    end
   end
 end

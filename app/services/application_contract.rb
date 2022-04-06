@@ -2,6 +2,8 @@
 
 # @abstract
 class ApplicationContract < Dry::Validation::Contract
+  config.types = Shared::TypeRegistry
+
   import_predicates_as_macros
 
   register_macro :entity do

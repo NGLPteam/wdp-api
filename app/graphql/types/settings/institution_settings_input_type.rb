@@ -8,7 +8,7 @@ module Types
 
       description "An object for updating the site's configuration"
 
-      argument :name, String, required: true, attribute: true,
+      argument :name, String, required: false, attribute: true,
         description: "The name of the institution."
     end
   end
