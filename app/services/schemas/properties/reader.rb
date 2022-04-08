@@ -11,7 +11,7 @@ module Schemas
       option :property, AppTypes.Instance(Schemas::Properties::Scalar::Base)
       option :context, AppTypes.Instance(Schemas::Properties::Context), default: proc { Schemas::Properties::Context.new({}) }
 
-      delegate :function, :label, :full_path, :path, :required, :type, to: :property
+      delegate :function, :label, :full_path, :path, :required, :search_path, :type, to: :property
       delegate_missing_to :property
 
       # @return [Dry::Monads::Result]
@@ -44,6 +44,15 @@ module Schemas
       def wide?
         property.always_wide? || property.wide?
       end
+
+      # @!group Search Stuff
+
+      # @return [<String>]
+      def search_operators
+        WDPAPI::Container["searching.operators.for_type"].(type)
+      end
+
+      # @!endgroup
     end
   end
 end

@@ -10,6 +10,8 @@ module Schemas
 
         fillable!
 
+        searchable!
+
         schema_type! :string
 
         attribute :default, :string

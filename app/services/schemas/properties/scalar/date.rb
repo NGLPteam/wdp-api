@@ -6,6 +6,8 @@ module Schemas
       class Date < Base
         orderable!
 
+        searchable!
+
         schema_type! :date
 
         config.graphql_value_key = :date

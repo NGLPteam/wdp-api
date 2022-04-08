@@ -18,11 +18,11 @@ module Schemas
       # @param [HasSchemaDefinition] entity
       # @param [String] path
       # @param [Hash, SchematicText] value
-      def call(entity, path, value)
+      def call(entity, path, value, weight: ?D)
         normalized = normalize.call value
 
         if normalized[:content].present?
-          yield upsert! entity, path, **normalized
+          yield upsert! entity, path, **normalized, weight: weight
         else
           yield clear! entity, path
         end
@@ -40,7 +40,7 @@ module Schemas
       # @param [String] path
       # @param [String] content
       # @param [String] lang
-      def upsert!(entity, path, content:, kind:, lang:, **)
+      def upsert!(entity, path, content:, kind:, lang:, weight:, **)
         attributes = {
           entity_type: entity.model_name.to_s,
           entity_id: entity.id,
@@ -48,13 +48,20 @@ module Schemas
           content: content,
           kind: kind,
           lang: lang,
+          weight: weight,
         }
+
+        attributes[:schema_version_property_id] = property_id_for entity, path
 
         attributes[:text_content] = extract_text_content.call(content: content, kind: kind)
 
         attributes[:dictionary] = derive_dictionary.call lang
 
         Success SchematicText.upsert(attributes, unique_by: UNIQUE_BY)
+      end
+
+      def property_id_for(entity, path)
+        entity.schema_version.schema_version_properties.by_path(path).first&.id
       end
     end
   end

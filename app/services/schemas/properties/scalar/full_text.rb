@@ -8,6 +8,8 @@ module Schemas
       class FullText < Base
         always_wide!
 
+        searchable!
+
         schema_type! :full_text
 
         config.graphql_value_key = :full_text

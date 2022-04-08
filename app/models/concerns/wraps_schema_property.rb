@@ -19,6 +19,16 @@ module WrapsSchemaProperty
 
     scope :orderable, -> { where(orderable: true) }
 
+    scope :searchable, -> { where(searchable: true) }
+
     scope :sans_paths, ->(paths) { where.not(path: paths) }
+  end
+
+  def citextual?
+    with_email_type?
+  end
+
+  def textual?
+    with_email_type? || with_select_type? || with_string_type?
   end
 end

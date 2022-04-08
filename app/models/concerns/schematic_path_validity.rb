@@ -6,6 +6,7 @@ module SchematicPathValidity
   included do
     scope :with_valid_path, -> { path_valid_with valid_paths_column }
     scope :sans_valid_path, -> { path_invalid_with valid_paths_column }
+    scope :sans_global_path, -> { where(arel_table[:path].does_not_match("$%$")) }
   end
 
   module ClassMethods
@@ -35,7 +36,7 @@ module SchematicPathValidity
         stmt.else(true)
       end
 
-      joins(:schema_version).where(expr)
+      joins(:schema_version).where(expr).sans_global_path
     end
 
     private

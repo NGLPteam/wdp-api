@@ -6,9 +6,11 @@ module Schemas
       class String < Base
         include ValidatesSize
 
-        fillable true
+        fillable!
 
         orderable!
+
+        searchable!
 
         schema_type! :string
 

@@ -7,6 +7,7 @@ module HierarchicalEntity
   include HasSystemSlug
   include SyncsEntities
   include TimestampScopes
+  include ScopesForEntityComposedText
 
   included do
     include ImageUploader::Attachment.new(:hero_image)
@@ -22,6 +23,8 @@ module HierarchicalEntity
 
     has_many :entity_links, -> { preload(:target) }, as: :source, dependent: :destroy, inverse_of: :source
     has_many :incoming_links, -> { preload(:source) }, as: :target, class_name: "EntityLink", dependent: :destroy, inverse_of: :target
+
+    has_one :entity_composed_text, as: :entity, dependent: :destroy
 
     has_many_readonly :contextual_permissions, as: :hierarchical
     has_many_readonly :contextual_single_permissions, as: :hierarchical
@@ -89,6 +92,10 @@ module HierarchicalEntity
     after_save :maintain_links!
 
     after_save :refresh_orderings!
+
+    after_save :write_core_texts!
+
+    after_save :extract_composed_text!
   end
 
   # @param [String] ancestor_name
@@ -251,6 +258,22 @@ module HierarchicalEntity
 
   def refresh_orderings!
     refresh_orderings.value!
+  end
+
+  def extract_composed_text
+    call_operation("schemas.instances.extract_composed_text", self)
+  end
+
+  def extract_composed_text!
+    extract_composed_text.value!
+  end
+
+  def write_core_texts
+    call_operation("schemas.instances.write_core_texts", self)
+  end
+
+  def write_core_texts!
+    write_core_texts.value!
   end
 
   # @return [<HierarchicalEntity>]

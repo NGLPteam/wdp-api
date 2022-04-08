@@ -8,6 +8,7 @@ module Types
     TEXT
 
     implements Types::DescribesSchemaType
+    implements Types::SearchableType
     implements HasSchemaPropertiesType
 
     field :schema_definition, Types::SchemaDefinitionType, null: false,
@@ -21,6 +22,10 @@ module Types
 
     field :render, Types::SchemaRenderDefinitionType, null: false,
       description: "Configuration for rendering schema instances outside of orderings"
+
+    field :searchable_properties, [Types::AnySearchablePropertyType, { null: false }], null: false do
+      description "A subset of properties that can be searched for this schema."
+    end
 
     # @see Schemas::Versions::Configuration#core
     # @return [Schemas::Versions::CoreDefinition]

@@ -10,9 +10,12 @@ module Schemas
       include Dry::Monads[:do, :result]
       include WDPAPI::Deps[
         apply_value_context: "schemas.instances.apply_value_context",
+        extract_composed_text: "schemas.instances.extract_composed_text",
         extract_orderable_properties: "schemas.instances.extract_orderable_properties",
+        extract_searchable_properties: "schemas.instances.extract_searchable_properties",
         validate_properties: "schemas.properties.validate",
       ]
+
       include MonadicPersistence
 
       prepend TransactionalCall
@@ -36,6 +39,10 @@ module Schemas
         yield monadic_save target
 
         yield extract_orderable_properties.call target
+
+        yield extract_searchable_properties.call target
+
+        yield extract_composed_text.(target)
 
         Success target
       end

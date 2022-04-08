@@ -11,6 +11,8 @@ module Schemas
 
         orderable!
 
+        searchable!
+
         config.graphql_value_key = :date_with_precision
 
         def normalize_schema_value_before_coercer(raw:, **)

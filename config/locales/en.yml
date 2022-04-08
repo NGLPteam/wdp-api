@@ -75,6 +75,31 @@ en:
       unacceptable_edge: "An entity of type '%{parent}' cannot be a direct parent of '%{child}'"
       update_and_clear_attachment: "cannot receive a new attachment while also clearing it"
   frozen:
+    static_property:
+      title:
+        label: Title
+        description: >
+          The title of the entity.
+      created_at:
+        label: Created
+        description: >
+          The time that the entity was first created in the WDP.
+      updated_at:
+        label: Updated
+        description: >
+          The time that the entity was last updated in the WDP.
+      published:
+        label: Published
+        description: >
+          The variable precision date when the entity was published.
+      doi:
+        label: DOI
+        description: >
+          The DOI of the entity
+      issn:
+        label: ISSN
+        description: >
+          The ISSN of the entity
     static_orderable_property:
       entity_title:
         label: Title

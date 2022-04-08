@@ -12,6 +12,8 @@ module Schemas
 
         orderable!
 
+        searchable!
+
         schema_type! :integer
 
         config.graphql_value_key = :integer_value

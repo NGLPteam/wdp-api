@@ -1891,6 +1891,17 @@ CREATE AGGREGATE public.min(public.variable_precision_date) (
 
 
 --
+-- Name: tsvector_agg(tsvector); Type: AGGREGATE; Schema: public; Owner: -
+--
+
+CREATE AGGREGATE public.tsvector_agg(tsvector) (
+    SFUNC = tsvector_concat,
+    STYPE = tsvector,
+    INITCOND = ''
+);
+
+
+--
 -- Name: #; Type: OPERATOR; Schema: public; Owner: -
 --
 
@@ -3340,6 +3351,20 @@ CREATE VIEW public.entity_breadcrumbs AS
 
 
 --
+-- Name: entity_composed_texts; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.entity_composed_texts (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    entity_type character varying NOT NULL,
+    entity_id uuid NOT NULL,
+    document tsvector DEFAULT ''::tsvector NOT NULL,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+--
 -- Name: entity_descendants; Type: VIEW; Schema: public; Owner: -
 --
 
@@ -3474,6 +3499,32 @@ CREATE TABLE public.entity_orderable_properties (
     string_value text GENERATED ALWAYS AS (public.generate_string_value(type, raw_value)) STORED,
     timestamp_value timestamp with time zone GENERATED ALWAYS AS (public.generate_timestamp_value(type, raw_value)) STORED,
     variable_date_value public.variable_precision_date GENERATED ALWAYS AS (public.generate_variable_date_value(type, raw_value)) STORED
+);
+
+
+--
+-- Name: entity_searchable_properties; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.entity_searchable_properties (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    entity_type text NOT NULL,
+    entity_id uuid NOT NULL,
+    schema_version_property_id uuid,
+    type public.schema_property_type NOT NULL,
+    path text NOT NULL,
+    raw_value jsonb,
+    boolean_value boolean,
+    citext_value public.citext,
+    date_value date,
+    float_value numeric,
+    integer_value bigint,
+    text_value text,
+    text_array_value text[] DEFAULT '{}'::text[] NOT NULL,
+    timestamp_value timestamp without time zone,
+    variable_date_value public.variable_precision_date DEFAULT '(,none)'::public.variable_precision_date,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
 
@@ -4714,7 +4765,8 @@ CREATE TABLE public.schema_version_properties (
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     default_value jsonb GENERATED ALWAYS AS ((metadata -> 'default'::text)) STORED,
-    function public.schema_property_function DEFAULT 'unspecified'::public.schema_property_function NOT NULL
+    function public.schema_property_function DEFAULT 'unspecified'::public.schema_property_function NOT NULL,
+    searchable boolean DEFAULT false NOT NULL
 );
 
 
@@ -4858,7 +4910,8 @@ CREATE TABLE public.schematic_texts (
     text_content text,
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    document tsvector GENERATED ALWAYS AS (setweight(to_tsvector(dictionary, text_content), (weight)::"char")) STORED
+    document tsvector GENERATED ALWAYS AS (setweight(to_tsvector(dictionary, text_content), (weight)::"char")) STORED,
+    schema_version_property_id uuid
 );
 
 
@@ -4988,6 +5041,14 @@ ALTER TABLE ONLY public.entities
 
 
 --
+-- Name: entity_composed_texts entity_composed_texts_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.entity_composed_texts
+    ADD CONSTRAINT entity_composed_texts_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: entity_links entity_links_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -5001,6 +5062,14 @@ ALTER TABLE ONLY public.entity_links
 
 ALTER TABLE ONLY public.entity_orderable_properties
     ADD CONSTRAINT entity_orderable_properties_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: entity_searchable_properties entity_searchable_properties_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.entity_searchable_properties
+    ADD CONSTRAINT entity_searchable_properties_pkey PRIMARY KEY (id);
 
 
 --
@@ -6222,6 +6291,20 @@ CREATE INDEX index_entities_staleness ON public.entities USING btree (stale);
 
 
 --
+-- Name: index_entity_composed_texts_on_document; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_entity_composed_texts_on_document ON public.entity_composed_texts USING gist (document);
+
+
+--
+-- Name: index_entity_composed_texts_uniqueness; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_entity_composed_texts_uniqueness ON public.entity_composed_texts USING btree (entity_type, entity_id);
+
+
+--
 -- Name: index_entity_links_on_auth_path; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -6338,6 +6421,13 @@ CREATE INDEX index_entity_orderable_properties_on_entity ON public.entity_ordera
 --
 
 CREATE INDEX index_entity_orderable_properties_on_schema_version_property_id ON public.entity_orderable_properties USING btree (schema_version_property_id);
+
+
+--
+-- Name: index_entity_searchable_properties_on_entity; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_entity_searchable_properties_on_entity ON public.entity_searchable_properties USING btree (entity_type, entity_id);
 
 
 --
@@ -6487,6 +6577,20 @@ CREATE INDEX index_eop_variable_date ON public.entity_orderable_properties USING
 --
 
 CREATE INDEX index_eop_variable_date_inverted ON public.entity_orderable_properties USING btree (entity_type, entity_id, path, variable_date_value DESC NULLS LAST);
+
+
+--
+-- Name: index_esp_on_svp; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_esp_on_svp ON public.entity_searchable_properties USING btree (schema_version_property_id);
+
+
+--
+-- Name: index_esp_uniqueness; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_esp_uniqueness ON public.entity_searchable_properties USING btree (entity_type, entity_id, path);
 
 
 --
@@ -7551,6 +7655,13 @@ CREATE INDEX index_schematic_texts_on_document ON public.schematic_texts USING g
 --
 
 CREATE INDEX index_schematic_texts_on_entity ON public.schematic_texts USING btree (entity_type, entity_id);
+
+
+--
+-- Name: index_schematic_texts_on_schema_version_property_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_schematic_texts_on_schema_version_property_id ON public.schematic_texts USING btree (schema_version_property_id);
 
 
 --
@@ -9963,6 +10074,14 @@ ALTER TABLE ONLY public.schema_version_ancestors
 
 
 --
+-- Name: entity_searchable_properties fk_rails_76fd135edc; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.entity_searchable_properties
+    ADD CONSTRAINT fk_rails_76fd135edc FOREIGN KEY (schema_version_property_id) REFERENCES public.schema_version_properties(id) ON DELETE CASCADE;
+
+
+--
 -- Name: schema_version_properties fk_rails_77d4155820; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -10216,6 +10335,14 @@ ALTER TABLE ONLY public.orderings
 
 ALTER TABLE ONLY public.access_grants
     ADD CONSTRAINT fk_rails_d9b8218fcb FOREIGN KEY (collection_id) REFERENCES public.collections(id) ON DELETE CASCADE;
+
+
+--
+-- Name: schematic_texts fk_rails_da1d1a5a10; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.schematic_texts
+    ADD CONSTRAINT fk_rails_da1d1a5a10 FOREIGN KEY (schema_version_property_id) REFERENCES public.schema_version_properties(id) ON DELETE CASCADE;
 
 
 --
@@ -10536,9 +10663,12 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20220312003650'),
 ('20220312031343'),
 ('20220312044145'),
+('20220323130711'),
+('20220325152848'),
 ('20220325202253'),
 ('20220328181949'),
 ('20220328194136'),
+('20220403150025'),
 ('20220405205111'),
 ('20220405210816');
 

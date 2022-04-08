@@ -10,6 +10,8 @@ module Types
 
     add_field GraphQL::Types::Relay::NodesField
 
+    implements Types::SearchableType
+
     field :access_grants, resolver: Resolvers::AccessGrantResolver,
       description: "Retrieve all access grants"
 
@@ -241,6 +243,10 @@ module Types
 
     def viewer
       context[:current_user] || AnonymousUser.new
+    end
+
+    def search_origin
+      :global
     end
   end
 end

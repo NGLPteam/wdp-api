@@ -84,6 +84,13 @@ module Schemas
         reference false
 
         # @!scope class
+        # @!attribute [r] searchable
+        # @return [Boolean]
+        defines :searchable, type: Dry::Types["bool"]
+
+        searchable false
+
+        # @!scope class
         # @!attribute [r] schema_type
         # @return [Schemas::Properties::Types::SchemaType]
         defines :schema_type, type: Schemas::Properties::Types::SchemaType
@@ -125,7 +132,7 @@ module Schemas
 
         delegate :always_wide?, :array?, :complex?, :kind, :reference?, :simple?,
           :scalar_reference?, :collected_reference?,
-          :base_type, :schema_type,
+          :base_type, :schema_type, :searchable?,
           to: :class
 
         def actually_required?
@@ -171,7 +178,17 @@ module Schemas
         # the value is properly converted when sorting.
         # @return [String, nil]
         def order_path
-          "props.#{full_path}##{type}" if orderable?
+          prefixed_path_with_type if orderable?
+        end
+
+        # @!attribute [r] search_path
+        # @return [String, nil]
+        def search_path
+          prefixed_path_with_type if searchable?
+        end
+
+        def prefixed_path_with_type
+          "props.#{full_path}##{type}"
         end
 
         # @!group Schema / Contract compilation
@@ -362,6 +379,11 @@ module Schemas
             orderable true
           end
 
+          # @return [void]
+          def searchable!
+            searchable true
+          end
+
           # Declare that this schema property type is a {.reference}.
           #
           # @note This hook will also redetect the {.kind}, if necessary.
@@ -450,6 +472,11 @@ module Schemas
           # Detect whether this property type implements {Schemas::Properties::References::Scalar}.
           def scalar_reference?
             self < Schemas::Properties::References::Scalar
+          end
+
+          # @see {.searchable}
+          def searchable?
+            searchable.present?
           end
 
           def simple?

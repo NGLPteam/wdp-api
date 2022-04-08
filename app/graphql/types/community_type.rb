@@ -8,6 +8,7 @@ module Types
     implements Types::HasSchemaPropertiesType
     implements Types::AttachableType
     implements Types::SchemaInstanceType
+    implements Types::SearchableType
 
     description "A community of users"
 
