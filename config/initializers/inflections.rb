@@ -34,6 +34,9 @@ ActiveSupport::Inflector.inflections(:en) do |inflect|
   inflect.acronym "XML"
   inflect.acronym "XPath"
 
+  inflect.acronym "GTE"
+  inflect.acronym "LTE"
+
   inflect.uncountable "JATS"
   inflect.uncountable "METS"
   inflect.uncountable "MODS"

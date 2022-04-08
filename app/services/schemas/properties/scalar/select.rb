@@ -8,6 +8,8 @@ module Schemas
 
         fillable!
 
+        searchable!
+
         schema_type! :string
 
         config.graphql_value_key = :selection

@@ -12,10 +12,13 @@ class Entity < ApplicationRecord
   include ReferencesNamedVariableDates
   include EntityReferent
   include ScopesForAuthPath
+  include ScopesForEntityComposedText
 
   belongs_to :entity, polymorphic: true
   belongs_to :hierarchical, polymorphic: true
   belongs_to :schema_version
+
+  has_one :schema_definition, through: :schema_version
 
   CONTEXTUAL_TUPLE = %i[hierarchical_type hierarchical_id].freeze
 
@@ -25,11 +28,16 @@ class Entity < ApplicationRecord
 
   has_many_readonly :entity_breadcrumbs, primary_key: ENTITY_TUPLE, foreign_key: ENTITY_TUPLE
 
+  has_one_readonly :entity_composed_text, primary_key: CONTEXTUAL_TUPLE, foreign_key: ENTITY_TUPLE
+
   has_many_readonly :entity_inherited_orderings, primary_key: ENTITY_TUPLE, foreign_key: ENTITY_TUPLE
 
   has_one_readonly :entity_visibility, primary_key: CONTEXTUAL_TUPLE, foreign_key: ENTITY_TUPLE
 
   has_many_readonly :named_variable_dates, primary_key: CONTEXTUAL_TUPLE, foreign_key: ENTITY_TUPLE
+
+  scope :with_schema_name_asc, -> { joins(:schema_definition).merge(SchemaDefinition.order(name: :asc)) }
+  scope :with_schema_name_desc, -> { joins(:schema_definition).merge(SchemaDefinition.order(name: :desc)) }
 
   scope :with_missing_orderings, -> { non_link.where(entity_id: EntityInheritedOrdering.missing.select(:entity_id)) }
   scope :except_hierarchical, ->(hierarchical) { where.not(hierarchical: hierarchical) if hierarchical.present? }
@@ -51,6 +59,37 @@ class Entity < ApplicationRecord
   end
 
   class << self
+    # @see Resolvers::SearchResultsResolver
+    # @param [String] text
+    # @return [ActiveRecord::Relation<Entity>]
+    def apply_query(text)
+      compiler = Searching::QueryCompiler.new text, scope: all
+
+      compiler.()
+    end
+
+    # @api private
+    # @see Resolvers::SearchResultsResolver
+    # @param [<Searching::Operator>] predicates
+    # @return [ActiveRecord::Relation<Entity>]
+    def apply_search_predicates(predicates)
+      return all if predicates.blank?
+
+      compiler = Searching::PredicateCompiler.new predicates
+
+      compiled = compiler.()
+
+      compiled.nil? ? all : where(id: compiled)
+    end
+
+    # @param [#auth_path] parent
+    # @return [ActiveRecord::Relation<Entity>]
+    def descending_from(parent)
+      return none unless parent.present? && parent.respond_to?(:auth_path) && parent.auth_path.present?
+
+      where arel_auth_path_contained_by parent.auth_path
+    end
+
     # @param [String] base
     # @param [String] ancestor
     def of_type_with_ancestor_of_type?(base, ancestor)
@@ -113,6 +152,18 @@ class Entity < ApplicationRecord
     # @return [void]
     def resync!
       Entities::SynchronizeAllJob.perform_later
+    end
+
+    # @param [String] containing_auth_path
+    # @return [Arel::Nodes::And(Arel::Nodes::Inequality, Arel::Nodes::InfixOperation("<@"))]
+    def arel_auth_path_contained_by(containing_auth_path)
+      auth_path = arel_table[:auth_path]
+
+      not_same = auth_path.not_eq(containing_auth_path)
+
+      contained = arel_infix("<@", auth_path, arel_quote(containing_auth_path))
+
+      not_same.and(contained)
     end
 
     # @api private

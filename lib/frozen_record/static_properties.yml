@@ -1,0 +1,31 @@
+---
+- path: title
+  searchable: true
+  type: string
+  search_strategy: text
+  search_operators:
+    - matches
+- path: doi
+  searchable: true
+  type: string
+  search_strategy: property
+  search_operators:
+    - equals
+- path: issn
+  searchable: false
+  type: string
+  search_strategy: property
+  search_operators:
+    - equals
+- path: summary
+  type: string
+  search_strategy: text
+  search_operators:
+    - matches
+- path: published
+  searchable: true
+  type: variable_date
+  search_strategy: named_variable_date
+  search_operators:
+    - date_gte
+    - date_lte

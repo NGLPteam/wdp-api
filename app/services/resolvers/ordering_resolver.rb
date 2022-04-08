@@ -22,7 +22,7 @@ module Resolvers
     option :availability, type: Types::OrderingAvailabilityFilterType, default: "ALL",
       description: "Optionally filter orderings by whether they are enabled or disabled."
 
-    option :visibility, type: Types::OrderingAvailabilityFilterType, default: "ALL",
+    option :visibility, type: Types::OrderingVisibilityFilterType, default: "ALL",
       description: "Optionally filter orderings by whether they are visible or hidden."
 
     # @!group Availability Handlers

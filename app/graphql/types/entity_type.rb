@@ -8,6 +8,7 @@ module Types
     implements Types::ExposesPermissionsType
     implements Types::HasEntityBreadcrumbs
     implements Types::HasSchemaPropertiesType
+    implements Types::SearchableType
 
     description "An entity that exists in the hierarchy."
 

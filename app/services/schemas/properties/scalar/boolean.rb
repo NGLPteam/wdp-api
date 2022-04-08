@@ -8,6 +8,8 @@ module Schemas
 
         orderable!
 
+        searchable!
+
         schema_type! :bool
 
         config.graphql_value_key = :checked

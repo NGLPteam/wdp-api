@@ -11,6 +11,7 @@ module Types
     implements Types::HasSchemaPropertiesType
     implements Types::AttachableType
     implements Types::SchemaInstanceType
+    implements Types::SearchableType
 
     use_direct_connection_and_edge!
 

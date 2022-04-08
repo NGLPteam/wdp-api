@@ -16,7 +16,7 @@ module FrozenSchema
 
       result = schema.call record
 
-      raise result if result.failure?
+      return result.to_monad.value! if result.failure?
 
       result.to_h.stringify_keys
     end

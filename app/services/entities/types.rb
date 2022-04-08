@@ -5,6 +5,8 @@ module Entities
   module Types
     include Dry.Types
 
+    extend Shared::EnhancedTypes
+
     # A pattern for matching an auth_path, composed of multiple slugs
     AUTH_PATH_FORMAT = /\A[a-z0-9]+(?:(?:\.[a-z0-9]+)|(?<!\._)\._(?!\z))*\z/i.freeze
 
@@ -29,5 +31,13 @@ module Entities
     Scope = EntityScope | ::Links::Types::Scope
 
     Slug = String.constrained(format: SLUG_FORMAT)
+
+    # @see ::Types::EntityVisibilityFilterType
+    Visibility = Symbol.enum(:all, :visible, :hidden).fallback(:visible)
+
+    # A type matching an ActiveRecord::Relation scope that {ReferencesEntityVisibility}.
+    #
+    # At minimum, it must respond to the mentioned scopes
+    VisibilityRelation = Interface(:all, :currently_visible, :currently_hidden)
   end
 end

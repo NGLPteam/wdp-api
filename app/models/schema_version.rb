@@ -22,6 +22,8 @@ class SchemaVersion < ApplicationRecord
   has_many :collections, dependent: :restrict_with_error, inverse_of: :schema_version
   has_many :items, dependent: :restrict_with_error, inverse_of: :schema_version
 
+  has_many_readonly :entities, inverse_of: :schema_version
+
   has_many_readonly :entity_descendants, inverse_of: :schema_version
 
   has_many :schema_version_ancestors, dependent: :delete_all, inverse_of: :schema_version
@@ -85,6 +87,18 @@ class SchemaVersion < ApplicationRecord
   # @return [String]
   def label
     "#{name} v#{number}"
+  end
+
+  def inspect
+    "<SchemaVersion[#{declaration.inspect}]>"
+  end
+
+  def read_searchable_properties
+    call_operation("schemas.versions.read_searchable_properties", self)
+  end
+
+  def searchable_properties
+    read_searchable_properties.value_or([])
   end
 
   # @see Schemas::Instances::PropertySet#schema

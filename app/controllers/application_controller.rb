@@ -22,7 +22,7 @@ class ApplicationController < ActionController::API
         render_server_message! "tokens.expired", status: :unauthorized
       end
 
-      m.failure do |code, errors|
+      m.failure do |code, *errors|
         render_server_message! "tokens.invalid", status: :forbidden
       end
     end
