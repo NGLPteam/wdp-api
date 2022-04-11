@@ -9,13 +9,30 @@ module Resolvers
 
     type Types::SearchResultType.connection_type, null: false
 
+    description <<~TEXT
+    The results of a search. Either `query` or `predicates` should be provided,
+    otherwise it will return as if everything matches.
+    TEXT
+
     scope { object.base_relation.all }
 
-    option :predicates, type: [Types::SearchPredicateInputType, { null: false }], default: [] do |scope, predicates|
+    PREDICATES_DESC = <<~TEXT
+    The predicates to search for, if any.
+    TEXT
+
+    option :predicates, type: [Types::SearchPredicateInputType, { null: false }], default: [], description: PREDICATES_DESC do |scope, predicates|
       scope.apply_search_predicates predicates.flatten
     end
 
-    option :query, type: String do |scope, value|
+    QUERY_DESC = <<~TEXT
+    Search all text associated with individual entities.
+
+    Basic quoting and similar features are supported. See
+    [websearch_to_tsquery](https://www.postgresql.org/docs/13/textsearch-controls.html) for
+    more information.
+    TEXT
+
+    option :query, type: String, description: QUERY_DESC do |scope, value|
       scope.apply_query value
     end
   end
