@@ -8,7 +8,10 @@ module Searching
     include Dry::Effects::Handler.Resolve
     include Dry::Initializer[undefined: false].define -> do
       param :predicates, Searching::Operator::List.optional, default: proc { [] }
+
       option :encode_join, Searching::Types::JoinEncoder, default: proc { WDPAPI::Container["searching.compilation.encode_join_name"] }
+
+      option :scope, Searching::Types::Interface(:all), default: proc { Entity.all }
     end
 
     # @return [ActiveRecord::Relation<::Entity>, nil]
@@ -19,13 +22,13 @@ module Searching
 
       return nil if compiled[:conditions].blank?
 
-      query = Entity.all.select(:id)
+      query = scope.select(:id)
 
       query.where! compiled[:conditions]
 
       query.joins!(*compiled[:joins].values) if compiled[:joins].any?
 
-      return query
+      return query.apply_order_to_exclude_duplicate_links
     end
 
     private

@@ -4,10 +4,12 @@ module Resolvers
   class SearchResultResolver < GraphQL::Schema::Resolver
     include SearchObject.module(:graphql)
 
+    include Resolvers::EnhancedResolver
+    include Resolvers::FinalizesResults
     include Resolvers::OrderedAsEntity
     include Resolvers::PageBasedPagination
 
-    type Types::SearchResultType.connection_type, null: false
+    type ::Types::SearchResultType.connection_type, null: false
 
     description <<~TEXT
     The results of a search. Either `query` or `predicates` should be provided,
@@ -34,6 +36,19 @@ module Resolvers
 
     option :query, type: String, description: QUERY_DESC do |scope, value|
       scope.apply_query value
+    end
+
+    def finalize(scope)
+      # If no search options are provided, we return an empty set.
+      return scope.none if predicates.blank? && query.blank?
+
+      scope.all
+
+      scope.apply_order_to_exclude_duplicate_links
+    end
+
+    def unfiltered_scope
+      super.apply_order_to_exclude_duplicate_links
     end
   end
 end
