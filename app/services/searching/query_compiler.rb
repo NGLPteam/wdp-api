@@ -14,11 +14,9 @@ module Searching
 
     # @return [ActiveRecord::Relation<::Entity>, nil]
     def call
-      base_scope = scope.apply_order_to_exclude_duplicate_links
+      return scope if text.blank?
 
-      return base_scope if text.blank?
-
-      base_scope.by_composed_text(text, dictionary: dictionary)
+      scope.by_composed_text(text, dictionary: dictionary)
     end
   end
 end

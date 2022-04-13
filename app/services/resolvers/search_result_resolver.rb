@@ -42,8 +42,6 @@ module Resolvers
       # If no search options are provided, we return an empty set.
       return scope.none if predicates.blank? && query.blank?
 
-      scope.all
-
       scope.apply_order_to_exclude_duplicate_links
     end
 
