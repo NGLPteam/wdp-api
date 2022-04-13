@@ -49,22 +49,12 @@ module Types
 
     # @return [Integer]
     def total_count
-      object.items.size
+      object.items.count_from_subquery
     end
 
     # @return [Integer]
     def total_unfiltered_count
-      object.context[:resolver].try(:raw_scope).try(:count).then do |value|
-        # rubocop:disable Rails/Presence
-        if value.present?
-          value
-        else
-          # :nocov:
-          total_count
-          # :nocov:
-        end
-        # rubocop:enable Rails/Presence
-      end
+      from_resolver(:unfiltered_count) { total_count }
     end
 
     private
@@ -76,6 +66,18 @@ module Types
         else
           # :nocov:
           object.arguments[key]
+          # :nocov:
+        end
+      end
+    end
+
+    def from_resolver(method_name, &fallback)
+      object.context[:resolver].try(method_name).then do |value|
+        if value.present?
+          value
+        elsif block_given?
+          # :nocov:
+          yield
           # :nocov:
         end
       end
