@@ -75,11 +75,19 @@ class Entity < ApplicationRecord
     def apply_search_predicates(predicates)
       return all if predicates.blank?
 
-      compiler = Searching::PredicateCompiler.new predicates
+      compiler = Searching::PredicateCompiler.new predicates, scope: all
 
       compiled = compiler.()
 
       compiled.nil? ? all : where(id: compiled)
+    end
+
+    # @api private
+    # @return [ActiveRecord::Relation]
+    def apply_order_to_exclude_duplicate_links
+      order(:hierarchical_id).
+        distinct_on_order_values.
+        order(arel_table[:link_operator].asc.nulls_first)
     end
 
     # @param [#auth_path] parent

@@ -8,6 +8,7 @@ class ApplicationRecord < ActiveRecord::Base
   include AssociationHelpers
   include CountFromSubquery
   include DerivedGraphqlTypes
+  include DistinctOnOrderValues
   include LimitToOne
   include PostgresEnums
   include StoreModelIntrospection
