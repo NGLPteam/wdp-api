@@ -21,6 +21,7 @@ module Entities
     # @param [Entity] entity
     # @return [void]
     def each_iteration(entity)
+      Schemas::Instances::ExtractComposedTextJob.perform_later entity.hierarchical
       Schemas::Instances::ExtractCoreTextsJob.perform_later entity.hierarchical
       Schemas::Instances::ExtractSearchablePropertiesJob.perform_later entity.hierarchical
     end
