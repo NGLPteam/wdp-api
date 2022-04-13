@@ -33,7 +33,7 @@ module Types
     def page_count
       return nil if per_page.nil?
 
-      size = object.items.size
+      size = total_count
 
       return 0 if size.zero?
 
