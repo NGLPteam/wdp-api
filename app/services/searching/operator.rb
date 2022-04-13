@@ -133,8 +133,8 @@ module Searching
     end
 
     def build_arel_join_for_entity_adjacent_table(table_alias)
-      on_condition = arel_table[:entity_type].eq(table_alias[:entity_type]).and(
-        arel_table[:entity_id].eq(table_alias[:entity_id])
+      on_condition = arel_table[:hierarchical_type].eq(table_alias[:entity_type]).and(
+        arel_table[:hierarchical_id].eq(table_alias[:entity_id])
       )
 
       on_condition = yield on_condition if block_given?
