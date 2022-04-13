@@ -6,6 +6,7 @@ class ApplicationRecord < ActiveRecord::Base
 
   extend ArelHelpers
   include AssociationHelpers
+  include CountFromSubquery
   include DerivedGraphqlTypes
   include LimitToOne
   include PostgresEnums
