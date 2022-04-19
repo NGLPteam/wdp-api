@@ -2,6 +2,8 @@
 
 module Mutations
   module Contracts
+    # @see Mutations::CreateCollection
+    # @see Mutations::Operations::CreateCollection
     class CreateCollection < MutationOperations::Contract
       json do
         required(:parent).filled(AppTypes.Instance(::Community) | AppTypes.Instance(::Collection))
