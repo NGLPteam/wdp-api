@@ -1,85 +1,84 @@
 # frozen_string_literal: true
 
-RSpec.describe Mutations::CreateCommunity, type: :request do
+RSpec.describe Mutations::CreateCommunity, type: :request, graphql: :mutation do
+  mutation_query! <<~GRAPHQL
+  mutation createCommunity($input: CreateCommunityInput!) {
+    createCommunity(input: $input) {
+      community {
+        title
+        subtitle
+        heroImageLayout
+
+        heroImage {
+          alt
+        }
+
+        logo {
+          alt
+        }
+      }
+
+      ... ErrorFragment
+    }
+  }
+  GRAPHQL
+
   context "as an admin" do
     let(:token) { token_helper.build_token has_global_admin: true }
 
-    let!(:title) { Faker::Lorem.sentence }
-    let!(:subtitle) { Faker::Lorem.sentence }
-    let(:hero_image_layout) { "ONE_COLUMN" }
+    let(:alt_text) { "Some Alt Text" }
 
-    let!(:mutation_input) do
-      {
-        title: title,
-        subtitle: subtitle,
-        hero_image_layout: hero_image_layout,
-      }
+    let_mutation_input!(:title) { Faker::Lorem.sentence }
+    let_mutation_input!(:subtitle) { Faker::Lorem.sentence }
+    let_mutation_input!(:hero_image_layout) { "ONE_COLUMN" }
+    let_mutation_input!(:hero_image) do
+      graphql_upload_from "spec", "data", "lorempixel.jpg", alt: alt_text
     end
-
-    let!(:graphql_variables) do
-      {
-        input: mutation_input
-      }
+    let_mutation_input!(:logo) do
+      graphql_upload_from "spec", "data", "lorempixel.jpg", alt: alt_text
     end
 
     let!(:expected_shape) do
-      {
-        createCommunity: {
-          community: {
-            title: title,
-            subtitle: subtitle,
-          },
-          attributeErrors: be_blank
-        }
-      }
-    end
+      gql.mutation(:create_community) do |m|
+        m.prop :community do |c|
+          c[:title] = title
+          c[:subtitle] = subtitle
+          c[:hero_image_layout] = hero_image_layout
 
-    let!(:query) do
-      <<~GRAPHQL
-      mutation createCommunity($input: CreateCommunityInput!) {
-        createCommunity(input: $input) {
-          community {
-            title
-            subtitle
-          }
+          c.prop :hero_image do |hi|
+            hi[:alt] = alt_text
+          end
 
-          attributeErrors {
-            path
-            messages
-          }
-        }
-      }
-      GRAPHQL
+          c.prop :logo do |l|
+            l[:alt] = alt_text
+          end
+        end
+      end
     end
 
     it "creates a community" do
-      expect do
-        make_graphql_request! query, token: token, variables: graphql_variables
-      end.to change(Community, :count).by(1)
+      expect_the_default_request.to change(Community, :count).by(1)
 
-      expect_graphql_response_data expected_shape
+      expect_graphql_data expected_shape
     end
 
     context "with a blank title" do
       let(:title) { "" }
 
       let!(:expected_shape) do
-        {
-          createCommunity: {
-            community: be_blank,
-            attributeErrors: [
-              { path: "title", messages: ["must be filled"] },
-            ]
-          }
-        }
+        gql.mutation(:create_community, no_errors: false) do |m|
+          m[:community] = be_blank
+
+          m.errors do |ae|
+            ae.error :title, :filled?
+          end
+        end
       end
 
       it "fails to create a community" do
-        expect do
-          make_graphql_request! query, token: token, variables: graphql_variables
-        end.to keep_the_same(Community, :count)
+        expect_the_default_request.to keep_the_same(Community, :count)
 
-        expect_graphql_response_data expected_shape
+        expect_graphql_data expected_shape
       end
     end
   end

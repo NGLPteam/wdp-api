@@ -2,11 +2,13 @@
 
 module Mutations
   module Operations
+    # Create a {Community}.
+    #
+    # @see Mutations::CreateCommunity
+    # @see Mutations::Contracts::EntityInput
     class CreateCommunity
       include MutationOperations::Base
-      include Mutations::Shared::AssignsSchemaVersion
-
-      use_contract! :entity_input
+      include Mutations::Shared::CreatesEntity
 
       attachment! :logo, image: true
 
@@ -15,13 +17,7 @@ module Mutations
 
         authorize community, :create?
 
-        attributes = args
-
-        attributes[:schema_version] = loaded_schema_version
-
-        community.assign_attributes attributes
-
-        persist_model! community, attach_to: :community
+        create_entity! community, args
       end
     end
   end

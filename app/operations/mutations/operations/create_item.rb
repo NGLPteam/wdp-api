@@ -2,12 +2,18 @@
 
 module Mutations
   module Operations
+    # Create an {Item}.
+    #
+    # @see Mutations::CreateItem
+    # @see Mutations::Contracts::CreateItem
+    # @see Mutations::Contracts::EntityInput
+    # @see Mutations::Contracts::EntityVisibility
     class CreateItem
       include MutationOperations::Base
       include Mutations::Shared::AssignsSchemaVersion
+      include Mutations::Shared::CreatesEntity
 
       use_contract! :create_item
-      use_contract! :entity_input
       use_contract! :entity_visibility
 
       derives_edge! child: :item, child_source: :static
@@ -17,11 +23,9 @@ module Mutations
 
         attributes = args.merge(child_attributes_for(parent))
 
-        attributes[:schema_version] = loaded_schema_version
+        item = Item.new
 
-        item = Item.new attributes
-
-        persist_model! item, attach_to: :item
+        create_entity! item, attributes
       end
     end
   end

@@ -2,12 +2,17 @@
 
 module Mutations
   module Operations
+    # Create a {Collection}.
+    #
+    # @see Mutations::CreateCollection
+    # @see Mutations::Contracts::CreateCollection
+    # @see Mutations::Contracts::EntityInput
+    # @see Mutations::Contracts::EntityVisibility
     class CreateCollection
       include MutationOperations::Base
-      include Mutations::Shared::AssignsSchemaVersion
+      include Mutations::Shared::CreatesEntity
 
       use_contract! :create_collection
-      use_contract! :entity_input
       use_contract! :entity_visibility
 
       derives_edge! child: :collection, child_source: :static
@@ -17,11 +22,9 @@ module Mutations
 
         attributes = args.merge(child_attributes_for(parent))
 
-        attributes[:schema_version] = loaded_schema_version
+        collection = Collection.new
 
-        collection = Collection.new attributes
-
-        persist_model! collection, attach_to: :collection
+        create_entity! collection, attributes
       end
     end
   end
