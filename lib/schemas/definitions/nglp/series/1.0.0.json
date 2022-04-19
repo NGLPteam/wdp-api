@@ -6,8 +6,8 @@
   "kind": "collection",
   "parents": [
     {
-      "namespace": "nglp",
-      "identifier": "campus"
+      "namespace": "default",
+      "identifier": "community"
     },
     {
       "namespace": "nglp",
