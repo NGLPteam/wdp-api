@@ -5,6 +5,7 @@ module Resolvers
     include SearchObject.module(:graphql)
 
     include Resolvers::EnhancedResolver
+    include Resolvers::FiltersBySchemaName
     include Resolvers::FinalizesResults
     include Resolvers::OrderedAsEntity
     include Resolvers::PageBasedPagination
