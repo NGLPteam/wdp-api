@@ -16,6 +16,8 @@ module ImageAttachments
 
     Dimension = Integer.constrained(gt: 0)
 
+    Purpose = String.enum("hero_image", "logo", "thumbnail", "other").fallback("other")
+
     UploadedFile = Instance(ImageUploader::UploadedFile)
 
     Metadata = Coercible::Hash.schema(

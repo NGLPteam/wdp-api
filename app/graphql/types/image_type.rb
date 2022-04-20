@@ -7,6 +7,8 @@ module Types
 
     description "An abstract image interface. It includes the minimum amount of data to render an image in the browser."
 
+    implements Types::ImageIdentificationType
+
     field :alt, String, null: true,
       description: "Alt text for accessible images"
 

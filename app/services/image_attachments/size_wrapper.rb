@@ -11,7 +11,7 @@ module ImageAttachments
       param :size, ImageAttachments::Size
     end
 
-    delegate :alt, :attacher, to: :image_wrapper
+    delegate :alt, :attacher, :original_filename, :purpose, to: :image_wrapper
     delegate :name, :width, :height, to: :size
 
     # @return [ImageAttachments::DerivativeWrapper]
