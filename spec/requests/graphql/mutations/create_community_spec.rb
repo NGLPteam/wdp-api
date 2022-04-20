@@ -11,15 +11,22 @@ RSpec.describe Mutations::CreateCommunity, type: :request, graphql: :mutation do
 
         heroImage {
           alt
+          ...IdentificationFragment
         }
 
         logo {
           alt
+          ...IdentificationFragment
         }
       }
 
       ... ErrorFragment
     }
+  }
+
+  fragment IdentificationFragment on ImageIdentification {
+    originalFilename
+    purpose
   }
   GRAPHQL
 
@@ -47,10 +54,14 @@ RSpec.describe Mutations::CreateCommunity, type: :request, graphql: :mutation do
 
           c.prop :hero_image do |hi|
             hi[:alt] = alt_text
+            hi[:original_filename] = "lorempixel.jpg"
+            hi[:purpose] = "HERO_IMAGE"
           end
 
           c.prop :logo do |l|
             l[:alt] = alt_text
+            l[:original_filename] = "lorempixel.jpg"
+            l[:purpose] = "LOGO"
           end
         end
       end

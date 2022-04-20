@@ -10,10 +10,11 @@ module ImageAttachments
     include Dry::Core::Memoizable
     include Dry::Initializer[undefined: false].define -> do
       param :attacher, ImageAttachments::Types::Attacher
+      option :purpose, ImageAttachments::Types::Purpose, default: proc { "other" }
     end
 
     delegate :file, to: :attacher, prefix: :original
-    delegate :alt, to: :original_file, allow_nil: true
+    delegate :alt, :original_filename, to: :original_file, allow_nil: true
 
     def metadata
       original_file&.graphql_metadata

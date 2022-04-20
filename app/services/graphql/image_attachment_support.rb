@@ -7,7 +7,7 @@ module Graphql
     def resolve_image_attachment(graphql_name:)
       attacher = object.public_send :"#{graphql_name.underscore}_attacher"
 
-      ImageAttachments::ImageWrapper.new attacher
+      ImageAttachments::ImageWrapper.new attacher, purpose: graphql_name.underscore
     end
 
     module ClassMethods

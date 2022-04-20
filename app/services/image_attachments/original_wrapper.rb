@@ -10,8 +10,8 @@ module ImageAttachments
       param :uploaded_file, ImageAttachments::Types::UploadedFile.optional, optional: true
     end
 
-    delegate :height, :width, :original_filename, to: :uploaded_file, allow_nil: true
-    delegate :alt, to: :image_wrapper
+    delegate :height, :width, to: :uploaded_file, allow_nil: true
+    delegate :alt, :original_filename, :purpose, to: :image_wrapper
 
     # @!attribute [r] storage
     # Returns the storage associated with the file.

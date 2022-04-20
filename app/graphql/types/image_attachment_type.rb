@@ -12,6 +12,7 @@ module Types
     description "An attached image with standardized derivatives."
 
     implements Types::HasAttachmentStorageType
+    implements Types::ImageIdentificationType
 
     field :alt, String, null: true,
       description: "Alt text for accessible images"

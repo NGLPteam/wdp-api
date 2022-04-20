@@ -11,6 +11,8 @@ module Types
     the WDP generates, presently WEBP and PNG.
     TEXT
 
+    implements Types::ImageIdentificationType
+
     field :size, Types::ImageDerivativeSizeType, null: false,
       method: :name
 
