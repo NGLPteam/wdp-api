@@ -12,6 +12,8 @@ require "dry/schema"
 require "dry/types"
 require "dry/validation"
 require "faraday_middleware"
+require "graphql/client"
+require "graphql/client/http"
 require "net/http"
 require "sidekiq/api"
 
