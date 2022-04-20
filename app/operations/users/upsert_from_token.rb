@@ -38,7 +38,12 @@ module Users
 
       user = User.find result[:id]
 
-      yield enforce_role_assignments.call(subject: user) if admin_changed || inserted
+      if admin_changed || inserted
+        yield enforce_role_assignments.call(subject: user)
+
+        user.reload
+        user.save!
+      end
 
       Success user
     end
