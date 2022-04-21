@@ -9,6 +9,7 @@ module Schemas
     class Context
       EMPTY_HASH = proc { {} }
 
+      include Dry::Core::Memoizable
       include Dry::Initializer[undefined: false].define -> do
         option :version, Schemas::Types.Instance(SchemaVersion).optional, default: proc { nil }
         option :instance, Schemas::Types::SchemaInstance.optional, default: proc { nil }
@@ -25,14 +26,20 @@ module Schemas
 
       # @!attribute [r] default_values
       # @return [Hash]
-      def default_values
-        @default_values ||= {}
+      memoize def default_values
+        {}
       end
 
       # @!attribute [r] field_values
       # @return [PropertyHash]
-      def field_values
-        @field_values ||= calculate_field_values
+      memoize def field_values
+        calculate_field_values
+      end
+
+      # @!attribute [r] filtered_values
+      # @return [PropertyHash]
+      memoize def filtered_values
+        filter_values
       end
 
       # @param [String] path
@@ -56,16 +63,14 @@ module Schemas
       # @param [String] path
       # @return [Object, nil]
       def value_at(path)
-        parts = path.split(?.)
-
-        values.dig(*parts)
+        filtered_values[path]
       end
 
       private
 
       # @return [PropertyHash]
       def calculate_field_values
-        property_hash = PropertyHash.new values
+        property_hash = filter_values
 
         encoded_collections = collected_references.transform_values do |value|
           value.map(&:to_encoded_id)
@@ -80,6 +85,14 @@ module Schemas
         property_hash.merge! full_texts
 
         property_hash.to_h
+      end
+
+      def filter_values
+        PropertyHash.new(values).tap do |v|
+          v.paths.each do |path|
+            v.delete! path unless path.in? type_mapping.paths
+          end
+        end
       end
     end
   end
