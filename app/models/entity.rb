@@ -6,6 +6,7 @@
 #
 # In future, it will also be used to insert linked entries into the hierarchy.
 class Entity < ApplicationRecord
+  include FiltersByEntityScope
   include FiltersBySchemaVersion
   include ScopesForHierarchical
   include ReferencesEntityVisibility
