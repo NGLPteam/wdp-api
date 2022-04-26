@@ -19,6 +19,12 @@ module Searching
       end
     end
 
+    # @!attribute [r] depth
+    # @return [Integer, nil]
+    def depth
+      entity? ? model.hierarchical_depth : 0
+    end
+
     # @!group Type Predicates
 
     def entity?
