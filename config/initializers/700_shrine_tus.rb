@@ -45,6 +45,8 @@ if Rails.env.test?
   end
 end
 
+Shrine.logger.level = Logger::WARN
+
 Shrine.plugin :activerecord
 Shrine.plugin :instrumentation
 Shrine.plugin :backgrounding
