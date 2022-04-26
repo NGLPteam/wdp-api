@@ -8,6 +8,7 @@ module Searching
       option :user, Users::Types::Current, default: Users::Types::DEFAULT
       option :origin, Searching::Types::Origin, default: proc { :global }
       option :visibility, Entities::Types::Visibility, default: proc { :visible }
+      option :max_depth, Searching::Types::Integer.constrained(gt: 0).optional, default: proc { nil }
 
       option :auth_state, Users::Types::State, default: proc { user }
     end
@@ -15,7 +16,7 @@ module Searching
     include Shared::Typing
 
     delegate :entity?, :global?, :schema?, prefix: :from, to: :origin
-    delegate :type, to: :origin, prefix: true
+    delegate :depth, :type, to: :origin, prefix: true
 
     # @return [<SchemaVersion>]
     memoize def available_schema_versions
@@ -24,7 +25,7 @@ module Searching
 
     # @return [ActiveRecord::Relation<Entity>]
     def base_relation
-      filter_by_visibility origin.relation
+      filter_by_depth filter_by_visibility origin.relation
     end
 
     private
@@ -33,6 +34,12 @@ module Searching
     # @return [ActiveRecord::Relation<Entity>]
     def filter_by_visibility(relation)
       Entities::VisibilityRestrictor.new(user: user, visibility: visibility, relation: relation).call
+    end
+
+    def filter_by_depth(relation)
+      return relation.all unless max_depth
+
+      relation.by_max_relative_depth(max_depth, origin_depth: origin_depth)
     end
   end
 end

@@ -91,6 +91,17 @@ class Entity < ApplicationRecord
         order(arel_table[:link_operator].asc.nulls_first)
     end
 
+    # @param [Integer] max_depth
+    # @param [Integer] origin_depth
+    # @return [void]
+    def by_max_relative_depth(max_depth, origin_depth: 0)
+      relative_depth = arel_table[:depth] - origin_depth
+
+      matches = relative_depth.lteq(max_depth).and(arel_table[:depth].gt(origin_depth))
+
+      where matches
+    end
+
     # @param [#auth_path] parent
     # @return [ActiveRecord::Relation<Entity>]
     def descending_from(parent)
