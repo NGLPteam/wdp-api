@@ -6,7 +6,7 @@
   search_operators:
     - matches
 - path: doi
-  searchable: true
+  searchable: false
   type: string
   search_strategy: property
   search_operators:
