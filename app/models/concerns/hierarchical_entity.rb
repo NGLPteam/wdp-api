@@ -2,6 +2,7 @@
 
 module HierarchicalEntity
   extend ActiveSupport::Concern
+  extend DefinesMonadicOperation
 
   include AssociationHelpers
   include HasSystemSlug
@@ -85,7 +86,7 @@ module HierarchicalEntity
     after_validation :set_temporary_auth_path!, on: :create
     after_validation :maybe_update_auth_path!, on: :update
 
-    after_create :populate_initial_orderings!
+    after_create :populate_orderings!
 
     after_save :track_parent_changes!
 
@@ -93,7 +94,7 @@ module HierarchicalEntity
 
     after_save :refresh_orderings!
 
-    after_save :write_core_texts!
+    after_save :extract_core_texts!
 
     after_save :extract_composed_text!
   end
@@ -228,17 +229,6 @@ module HierarchicalEntity
     orderings.by_identifier(identifier).first!
   end
 
-  # @see Schemas::Instances::PopulateOrderings
-  # @return [Dry::Monads::Result]
-  def populate_orderings!
-    call_operation("schemas.instances.populate_orderings", self)
-  end
-
-  # @return [void]
-  def populate_initial_orderings!
-    populate_orderings!.value!
-  end
-
   # @param [String] schema a selector to prune
   # @see Entities::PruneUnharvested
   def prune_unharvested(schema)
@@ -250,30 +240,28 @@ module HierarchicalEntity
     call_operation("entities.prune_unharvested_journals", source: self)
   end
 
+  # @see Schemas::Instances::PopulateOrderings
+  # @return [Dry::Monads::Result]
+  monadic_operation! def populate_orderings
+    call_operation("schemas.instances.populate_orderings", self)
+  end
+
   # @see Schemas::Instances::RefreshOrderings
   # @return [Dry::Monads::Result]
-  def refresh_orderings
+  monadic_operation! def refresh_orderings
     call_operation("schemas.instances.refresh_orderings", self)
   end
 
-  def refresh_orderings!
-    refresh_orderings.value!
-  end
-
-  def extract_composed_text
+  # @see Schemas::Instances::ExtractComposedText
+  # @return [Dry::Monads::Success]
+  monadic_operation! def extract_composed_text
     call_operation("schemas.instances.extract_composed_text", self)
   end
 
-  def extract_composed_text!
-    extract_composed_text.value!
-  end
-
-  def write_core_texts
+  # @see Schemas::Instances::WriteCoreTexts
+  # @return [Dry::Monads::Success]
+  monadic_operation! def extract_core_texts
     call_operation("schemas.instances.write_core_texts", self)
-  end
-
-  def write_core_texts!
-    write_core_texts.value!
   end
 
   # @return [<HierarchicalEntity>]

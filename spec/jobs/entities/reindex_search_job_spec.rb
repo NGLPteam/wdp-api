@@ -8,14 +8,6 @@ RSpec.describe Entities::ReindexSearchJob, type: :job, simple_v1_hierarchy: true
 
     expect do
       described_class.perform_now
-    end.to(
-      (
-        have_enqueued_job(Schemas::Instances::ExtractCoreTextsJob).exactly(real_entity_count).times
-      ).and(
-        have_enqueued_job(Schemas::Instances::ExtractSearchablePropertiesJob).exactly(real_entity_count).times
-      ).and(
-        have_enqueued_job(Schemas::Instances::ExtractComposedTextJob).exactly(real_entity_count).times
-      )
-    )
+    end.to have_enqueued_job(Schemas::Instances::ReindexJob).exactly(real_entity_count).times
   end
 end
