@@ -94,7 +94,9 @@ end
 #     end
 #
 Dry::Validation.register_macro(:contract) do |macro:, context:|
-  contract_instance = macro.args[0]
+  contract_instance = macro.args[0].then do |contract|
+    contract.kind_of?(Class) ? contract.new : contract
+  end
   contract_result = contract_instance.(value, context)
 
   unless contract_result.success?

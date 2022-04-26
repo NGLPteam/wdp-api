@@ -18,8 +18,16 @@ module Schemas
             metaschema: { name: name, version: version },
             target: value,
             schema: value,
-            errors: errors
+            errors: clean_up_errors(errors),
           )
+        end
+
+        private
+
+        def clean_up_errors(errors)
+          errors.map do |error|
+            error.without("root_schema")
+          end
         end
       end
     end

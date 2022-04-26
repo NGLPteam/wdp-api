@@ -45,6 +45,8 @@ module AppTypes
     raise Dry::Types::ConstraintError.new e.message, input
   end
 
+  Slug = String.constrained(format: SLUG_PATTERN)
+
   GraphQLTypeClass = Inherits(Types::BaseObject)
 
   GraphQLEdgeClass = Inherits(GraphQL::Types::Relay::BaseEdge)
@@ -52,18 +54,4 @@ module AppTypes
   GraphQLConnectionClass = Inherits(GraphQL::Types::Relay::BaseConnection)
 
   AnyUser = Instance(::User) | Instance(::AnonymousUser)
-
-  class FlexibleStruct < Dry::Struct
-    transform_keys(&:to_sym)
-
-    transform_types do |type|
-      if type.default?
-        type.constructor do |value|
-          value.nil? ? Dry::Types::Undefined : value
-        end
-      else
-        type
-      end
-    end
-  end
 end

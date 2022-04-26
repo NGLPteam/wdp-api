@@ -1,0 +1,409 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "WDP Entity Seed Schema",
+  "description": "A meta-schema used by the NGLP Web Delivery Platform for importing entities in a specific hierarchy",
+  "$defs": {
+    "AssetData": {
+      "description": "A Data URI that contains the actual asset encoded via Base64. Not recommended for very large assets.",
+      "type": "string",
+      "pattern": "^data:(([a-zA-Z-]+/[a-zA-Z+-]+)((;[a-zA-Z-]+=[a-zA-Z-]+)*))?(;base64)?,([a-zA-Z0-9!\\$&',\\(\\)\\*\\+,;=\\._~:@/?%\\s-]*)$"
+    },
+    "AssetURL": {
+      "title": "Asset URL",
+      "description": "A URL to download the asset and attach on the specified property.",
+      "type": "string",
+      "format": "uri"
+    },
+    "Collection": {
+      "title": "Collection",
+      "description": "A collection is an abstract grouping of items as well as other collections. A journal, a unit, or a series can be considered a collection.",
+      "type": "object",
+      "properties": {
+        "identifier": { "$ref": "#/$defs/Identifier" },
+        "title": { "$ref": "#/$defs/CoreProperties/Title" },
+        "subtitle": { "$ref": "#/$defs/CoreProperties/Subtitle" },
+        "schema": {
+          "title": "Schema",
+          "description": "The schema to use for this collection",
+          "type": "string",
+          "enum": [
+            "default:collection",
+            "nglp:journal",
+            "nglp:series",
+            "nglp:unit"
+          ],
+          "default": "default:collection"
+        },
+        "doi": { "$ref": "#/$defs/StringIdentifiers/DOI" },
+        "issn": { "$ref": "#/$defs/StringIdentifiers/ISSN" },
+        "hero_image": { "$ref": "#/$defs/CoreProperties/HeroImage" },
+        "thumbnail": { "$ref": "#/$defs/CoreProperties/Thumbnail" },
+        "properties": { "type": "object" },
+        "collections": { "$ref": "#/$defs/Collections" },
+        "pages": { "$ref": "#/$defs/Pages" }
+      },
+      "required": ["identifier", "title", "schema"],
+      "if": {
+        "properties": {
+          "schema": { "const": "nglp:journal" }
+        }
+      },
+      "then": {
+        "properties": {
+          "properties": { "$ref": "#/$defs/CollectionProperties/nglp:journal" }
+        }
+      },
+      "else": {
+        "if": {
+          "properties": {
+            "schema": { "const": "nglp:series" }
+          }
+        },
+        "then": {
+          "properties": {
+            "properties": { "$ref": "#/$defs/CollectionProperties/nglp:series" }
+          }
+        },
+        "else": {
+          "if": {
+            "properties": {
+              "schema": { "const": "nglp:unit" }
+            }
+          },
+          "then": {
+            "properties": {
+              "properties": { "$ref": "#/$defs/CollectionProperties/nglp:unit" }
+            }
+          }
+        }
+      }
+    },
+    "CollectionProperties": {
+      "nglp:journal": {
+        "type": "object",
+        "properties": {
+          "peer_reviewed": {
+            "type": "boolean",
+            "default": false,
+            "title": "Peer Reviewed?",
+            "description": "Whether or not articles published in this journal undergo peer review."
+          },
+          "open_access": {
+            "type": "boolean",
+            "default": false,
+            "title": "Open Access?",
+            "description": "Whether or not this journal should be considered open access."
+          },
+          "description": {
+            "$ref": "#/$defs/Content/FullText"
+          },
+          "cc_license": {
+            "title": "CC License",
+            "description": "An optional Creative Commons License to apply to the journal and its contents.",
+            "type": "string",
+            "enum": [
+              "CC BY",
+              "CC BY-SA",
+              "CC BY-NC",
+              "CC BY-NC-SA",
+              "CC BY-ND",
+              "CC BY-NC-ND"
+            ]
+          }
+        }
+      },
+      "nglp:series": {
+        "type": "object",
+        "properties": {
+          "about": {
+            "$ref": "#/$defs/Content/Markdown"
+          }
+        }
+      },
+      "nglp:unit": {
+        "type": "object",
+        "properties": {
+          "about": {
+            "$ref": "#/$defs/Content/Markdown"
+          }
+        }
+      }
+    },
+    "Collections": {
+      "title": "Collections",
+      "description": "A list of collections at the current hierarchical scope.",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/Collection"
+      }
+    },
+    "Community": {
+      "title": "Collection",
+      "description": "A community is a top-level organizational entity that acts as an entry point for accessing collections and their items within the WDP.",
+      "type": "object",
+      "properties": {
+        "identifier": { "$ref": "#/$defs/Identifier" },
+        "title": { "$ref": "#/$defs/CoreProperties/Title"},
+        "schema": {
+          "title": "Schema",
+          "description": "The schema to use for this community",
+          "type": "string",
+          "enum": [
+            "default:community"
+          ],
+          "default": "default:community"
+        },
+        "hero_image": {
+          "$ref": "#/$defs/CoreProperties/HeroImage"
+        },
+        "logo": { "$ref": "#/$defs/CoreProperties/Logo" },
+        "thumbnail": { "$ref": "#/$defs/CoreProperties/Thumbnail" },
+        "properties": { "$ref": "#/$defs/CommunityProperties/default:community" },
+        "collections": { "$ref": "#/$defs/Collections" },
+        "pages": { "$ref": "#/$defs/Pages" }
+      },
+      "required": ["identifier", "title", "schema"]
+    },
+    "CommunityProperties": {
+      "default:community": {
+        "additionalProperties": false,
+        "title": "Default Community Properties",
+        "type": "object",
+        "properties": {
+          "featured": {
+            "title": "Featured Entities",
+            "description": "Communities can optionally feature certain entities on their landing page.",
+            "type": "object",
+            "properties": {
+              "journals": {
+                "title": "Journals",
+                "$ref": "#/$defs/Identifiers"
+              },
+              "series": {
+                "title": "Series",
+                "$ref": "#/$defs/Identifiers"
+              },
+              "units": {
+                "title": "Units",
+                "$ref": "#/$defs/Identifiers"
+              }
+            }
+          }
+        }
+      }
+    },
+    "Communities": {
+      "title": "Communities",
+      "description": "A list of communities to define at the top level of the WDP installation.",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/Community"
+      }
+    },
+    "Content": {
+      "FullText": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "title": "Kind",
+            "description": "This option affects how the text is processed on the server for searching, as well as how it gets rendered in the frontend.",
+            "type": "string",
+            "enum": ["markdown", "html", "text"],
+            "default": "text"
+          },
+          "content": {
+            "title": "Content",
+            "description": "Depending on the kind, this might be HTML, Markdown, or plain text.",
+            "type": "string"
+          },
+          "lang": {
+            "title": "Language",
+            "description": "The language of the text. This affects stemming and searching.",
+            "type": "string",
+            "enum": [
+              "ar",
+              "da",
+              "nl",
+              "en",
+              "fi",
+              "de",
+              "el",
+              "hu",
+              "id",
+              "ga",
+              "it",
+              "lt",
+              "ne",
+              "no",
+              "pt",
+              "ro",
+              "ru",
+              "es",
+              "sv",
+              "ta",
+              "tr"
+            ],
+            "default": "en"
+          }
+        },
+        "required": ["kind", "content"]
+      },
+      "Markdown": {
+        "type": "string",
+        "description": "Markdown Content. Supports a limited subset of HTML as well."
+      }
+    },
+    "CoreProperties": {
+      "Title": {
+        "type": "string",
+        "title": "Title",
+        "description": "The title to use for this entity. It should be plain-text with no HTML formatting."
+      },
+      "Subtitle": {
+        "type": "string",
+        "title": "Subtitle",
+        "description": "A subtitle for the entity. It should be plain-text with no HTML formatting."
+      },
+      "HeroImage": {
+        "title": "Hero Image",
+        "description": "This image is displayed on the landing page for the entity.",
+        "allOf": [
+          { "$ref": "#/$defs/OptionalRawAsset" }
+        ]
+      },
+      "Logo": {
+        "title": "Logo",
+        "description": "A community-specific image that acts as its logo.",
+        "allOf": [
+          { "$ref": "#/$defs/OptionalRawAsset" }
+        ]
+      },
+      "Thumbnail": {
+        "title": "Thumbnail",
+        "description": "A representative image for the entity that is used when rendering in a list, search results, etc.",
+        "allOf": [
+          { "$ref": "#/$defs/OptionalRawAsset" }
+        ]
+      }
+    },
+    "Identifier": {
+      "type": "string",
+      "title": "Identifier",
+      "description": "An identifier that is used to ensure that imports are idempotent, as well as for targeting entities to harvest. It must be unique for the scope of the hierarchy that it's in, based on its parent. For communities, it is unique at the top level."
+    },
+    "IdentifierPath": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/Identifier"
+      }
+    },
+    "Identifiers": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/IdentifierPath"
+      }
+    },
+    "Page": {
+      "title": "Page",
+      "description": "A markdown-based element that will appear as additional pages of arbitrary information on the associated entity.",
+      "properties": {
+        "slug": { "$ref": "#/$defs/Slug" },
+        "title": { "type": "string" },
+        "body": { "$ref": "#/$defs/Content/Markdown" },
+        "hero_image": { "$ref": "#/$defs/CoreProperties/HeroImage" }
+      },
+      "required": ["slug", "title", "body"]
+    },
+    "Pages": {
+      "title": "Pages",
+      "description": "A listing of pages for the associated entity. They will be deterministically ordered based on the order defined in this import.",
+      "type": "array",
+      "items": { "$ref": "#/$defs/Page" }
+    },
+    "RawAsset": {
+      "type": "object",
+      "oneOf": [
+        {
+          "title": "Asset From URL",
+          "properties": {
+            "format": {
+              "title": "Format (URL)",
+              "description": "This is a fixed value and cannot be changed.",
+              "type": "string",
+              "enum": ["url"],
+              "default": "url"
+            },
+            "url": { "$ref": "#/$defs/AssetURL" }
+          },
+          "required": ["format", "url"]
+        },
+        {
+          "title": "Asset From Data",
+          "properties": {
+            "format": {
+              "title": "Format (Data)",
+              "description": "This is a fixed value and cannot be changed.",
+              "type": "string",
+              "enum": ["data"],
+              "default": "data"
+            },
+            "data": { "$ref": "#/$defs/AssetData" }
+          },
+          "required": ["format", "data"]
+        }
+      ]
+    },
+    "OptionalRawAsset": {
+      "default": null,
+      "anyOf": [
+        {
+          "title": "Not Provided",
+          "description": "This property will be skipped",
+          "type": "null",
+          "default": null
+        },
+        {
+          "title": "Provided",
+          "$ref": "#/$defs/RawAsset"
+        }
+      ]
+    },
+    "SchemaProperties": {
+      "title": "Schema Properties",
+      "description": "Specific schema properties that should be applied to the entity. Consult the docs to know which should be applied",
+      "type": "object",
+      "additionalProperties": true,
+      "propertyNames": {
+        "pattern": "^[a-z][a-z0-9_]*[a-z]$"
+      }
+    },
+    "Seed": {
+      "Root": {
+        "title": "A WDP Seeding Definition",
+        "type": "object",
+        "properties": {
+          "version": { "$ref": "#/$defs/Seed/Version" },
+          "communities": { "$ref": "#/$defs/Communities" }
+        },
+        "additionalProperties": false
+      },
+      "Version": {
+        "title": "Seed Version",
+        "type": "string",
+        "enum": ["1.0.0"],
+        "default": "1.0.0"
+      }
+    },
+    "Slug": {
+      "title": "Slug",
+      "description": "A slug acts as part of a URL as well as providing a unique identifier for an element. It therefore must be URL safe, as well as unique within the same scope on the associated entity.",
+      "type": "string",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+    },
+    "StringIdentifiers": {
+      "DOI": { "type": "string" },
+      "ISSN": { "type": "string" }
+    }
+  },
+  "$ref": "#/$defs/Seed/Root"
+}

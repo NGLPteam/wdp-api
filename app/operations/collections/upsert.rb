@@ -2,7 +2,10 @@
 
 module Collections
   class Upsert
-    include Dry::Monads[:result, :do]
+    include Dry::Effects::Handler.Resolve
+    include Dry::Monads[:result]
+    include Dry::Monads::Do.for(:call)
+    include Dry::Monads::Do.for(:scope_for)
     include Dry::Effects.Resolve(:default_collection_schema)
     include WDPAPI::Deps[
       apply_properties: "schemas.instances.apply",
@@ -27,6 +30,13 @@ module Collections
       yield apply_properties.call(collection, properties) if properties.present?
 
       Success collection
+    end
+
+    # @param [SchemaVersion]
+    def with_schema(schema_version)
+      provide default_collection_schema: schema_version do
+        yield
+      end
     end
 
     private

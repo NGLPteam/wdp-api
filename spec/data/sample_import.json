@@ -1,0 +1,47 @@
+{
+  "version": "1.0.0",
+  "communities": [
+    {
+      "title": "Sample community",
+      "identifier": "sample-community",
+      "schema": "default:community",
+      "hero_image": {
+        "format": "url",
+        "url": "http://www.sample.com/hero_image.jpg"
+      },
+      "collections": [
+        {
+          "identifier": "foo",
+          "title": "Foo",
+          "schema": "nglp:series",
+          "collections": [
+            {
+              "identifier": "bar",
+              "title": "Bar",
+              "schema": "nglp:unit",
+              "pages": [
+                {
+                  "title": "Bar Page",
+                  "slug": "bar-page",
+                  "body": "Bar page content"
+                }
+              ]
+            },
+            {
+              "identifier": "baz",
+              "title": "Baz",
+              "schema": "nglp:unit",
+              "pages": [
+                {
+                  "title": "Empty Page",
+                  "slug": "empty-page",
+                  "body": ""
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

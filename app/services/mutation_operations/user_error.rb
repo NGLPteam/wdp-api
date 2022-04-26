@@ -2,7 +2,7 @@
 
 module MutationOperations
   # @api private
-  class UserError < AppTypes::FlexibleStruct
+  class UserError < Shared::FlexibleStruct
     attribute :message, AppTypes::String
     attribute :code, AppTypes::Coercible::String.optional
     attribute :path, AppTypes::AttributePath

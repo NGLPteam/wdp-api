@@ -19,10 +19,10 @@ module Schemas
         end
 
         attribute :target do
-          attribute :namespace, Dry::Types["string"].fallback("$unknown_ns$")
-          attribute :identifier, Dry::Types["string"].fallback("$unknown_id$")
-          attribute :version, Dry::Types["string"].fallback("$unknown_version$")
-          attribute :kind, Dry::Types["string"].fallback("$unknown$")
+          attribute? :namespace, Dry::Types["string"].fallback("$unknown_ns$")
+          attribute? :identifier, Dry::Types["string"].fallback("$unknown_id$")
+          attribute? :version, Dry::Types["string"].fallback("$unknown_version$")
+          attribute? :kind, Dry::Types["string"].fallback("$unknown$")
 
           def inspect
             %[#{kind}("#{namespace}:#{identifier}:#{version}")]
