@@ -39,4 +39,10 @@ module HasSystemSlug
 
     set_system_slug_with! SecureRandom.uuid
   end
+
+  class_methods do
+    def fetch_by_slug(slug)
+      where(system_slug: slug).first
+    end
+  end
 end
