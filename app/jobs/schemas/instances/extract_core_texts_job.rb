@@ -10,6 +10,8 @@ module Schemas
       # @return [void]
       def perform(entity)
         call_operation! "schemas.instances.write_core_texts", entity
+
+        Schemas::Instances::ExtractComposedTextJob.perform_later entity
       end
     end
   end

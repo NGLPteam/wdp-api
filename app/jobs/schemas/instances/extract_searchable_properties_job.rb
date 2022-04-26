@@ -9,6 +9,8 @@ module Schemas
       # @return [void]
       def perform(entity)
         call_operation! "schemas.instances.extract_searchable_properties", entity
+
+        Schemas::Instances::ExtractComposedTextJob.perform_later entity
       end
     end
   end

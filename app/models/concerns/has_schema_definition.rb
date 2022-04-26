@@ -7,6 +7,7 @@
 # @see Schemas::Types::SchemaInstance
 module HasSchemaDefinition
   extend ActiveSupport::Concern
+  extend DefinesMonadicOperation
 
   include EntityReferent
   include ExposesSchemaProperties
@@ -83,23 +84,24 @@ module HasSchemaDefinition
     call_operation("schemas.instances.apply", self, values)
   end
 
-  # @return [Dry::Monads::Result]
-  def write_core_texts!
-    call_operation("schemas.instances.write_core_texts", self)
-  end
-
   # @see Schemas::Instances::ExtractOrderableProperties
   # @param [Schemas::Properties::Context, nil] context
   # @return [void]
-  def extract_orderable_properties!(context: nil)
-    call_operation("schemas.instances.extract_orderable_properties", self, context: context).value!
+  monadic_operation! def extract_orderable_properties(context: nil)
+    call_operation("schemas.instances.extract_orderable_properties", self, context: context)
   end
 
   # @see Schemas::Instances::ExtractSearchableProperties
   # @param [Schemas::Properties::Context, nil] context
   # @return [void]
-  def extract_searchable_properties!(context: nil)
-    call_operation("schemas.instances.extract_searchable_properties", self, context: context).value!
+  monadic_operation! def extract_searchable_properties(context: nil)
+    call_operation("schemas.instances.extract_searchable_properties", self, context: context)
+  end
+
+  # @see Schemas::Instances::Reindex
+  # @return [void]
+  monadic_operation! def reindex
+    call_operation("schemas.instances.reindex", self)
   end
 
   # @return [String]

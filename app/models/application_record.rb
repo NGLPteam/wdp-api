@@ -5,6 +5,7 @@ class ApplicationRecord < ActiveRecord::Base
   self.abstract_class = true
 
   extend ArelHelpers
+  extend DefinesMonadicOperation
   include AssociationHelpers
   include CountFromSubquery
   include DerivedGraphqlTypes

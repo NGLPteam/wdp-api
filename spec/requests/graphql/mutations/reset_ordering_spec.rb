@@ -18,11 +18,7 @@ RSpec.describe Mutations::ResetOrdering, type: :request, graphql: :mutation do
 
     let!(:collection) { FactoryBot.create(:collection, schema_version: schema_version) }
 
-    let!(:ordering) do
-      collection.populate_orderings!.value!
-
-      collection.orderings.by_identifier("items").first!
-    end
+    let!(:ordering) { collection.ordering!("items") }
 
     let_mutation_input!(:ordering_id) { ordering.to_encoded_id }
 
