@@ -13,7 +13,9 @@ module Harvesting
         def call(raw_metadata)
           values = yield metadata_format.extract_values(raw_metadata)
 
-          return Success(nil) unless values.has_volume? && values.has_issue?
+          unless values.has_volume? && values.has_issue?
+            skip_record! "article is missing volume or issue"
+          end
 
           volume = yield upsert_volume_from values
 
