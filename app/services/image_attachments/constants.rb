@@ -12,6 +12,7 @@ module ImageAttachments
       small:    [250, 250],
       medium:   [500, 500],
       large:    [750, 750],
+      hero:     [2880, nil],
     }.freeze
   end
 end

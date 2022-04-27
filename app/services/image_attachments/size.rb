@@ -5,7 +5,7 @@ module ImageAttachments
   class Size < Dry::Struct
     attribute :name, ImageAttachments::Types::Size
     attribute :width, ImageAttachments::Types::Dimension
-    attribute :height, ImageAttachments::Types::Dimension
+    attribute :height, ImageAttachments::Types::Dimension.optional
 
     # @return [(Integer, Integer)]
     def dimensions
