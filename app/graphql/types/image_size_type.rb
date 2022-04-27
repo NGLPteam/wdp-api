@@ -19,7 +19,7 @@ module Types
     field :alt, String, null: true,
       description: "Alt text for accessible images"
 
-    field :height, Int, null: false,
+    field :height, Int, null: true,
       description: "The (maximum) height for this size."
 
     field :width, Int, null: false,
