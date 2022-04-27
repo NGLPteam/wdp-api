@@ -129,7 +129,7 @@ module PilotHarvesting
     }.freeze
 
     def call(key)
-      definition = DEFINITIONS.fetch key
+      definition = DEFINITIONS.fetch key.to_sym
 
       root = PilotHarvesting::Root.new(definition)
 
