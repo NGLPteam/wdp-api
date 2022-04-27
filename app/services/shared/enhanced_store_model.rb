@@ -24,5 +24,15 @@ module Shared
     def []=(attr, value)
       public_send(:"#{attr}=", value)
     end
+
+    # @param [{ Symbol => Object }] attrs
+    # @return [void]
+    def merge!(attrs)
+      return unless attrs.kind_of?(Hash)
+
+      attrs.each do |attr, value|
+        self[attr] = value
+      end
+    end
   end
 end

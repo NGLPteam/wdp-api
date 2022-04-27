@@ -23,6 +23,11 @@ module Harvesting
         def because(reason, at: Time.current, code: nil, **metadata)
           new(active: true, reason: reason, at: at, code: code, metadata: metadata)
         end
+
+        # @return [Harvesting::Records::Skipped]
+        def blank
+          new(active: false)
+        end
       end
     end
   end

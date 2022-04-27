@@ -2,14 +2,23 @@
 
 module PilotHarvesting
   class Root < Struct
-    attribute :communities, (Types::Array.of(CommunityDefinition).default { [] })
+    attribute :communities, CommunityDefinition.for_array_option
+    attribute :seeds, PilotHarvesting::Types::SeedList
 
     def call
+      with_cache do
+        upsert
+      end
+    end
+
+    def upsert
       retval = {}
 
-      retval[:communities] = communities.map do |community|
-        community.upsert.value!
+      retval[:seeds] = seeds.map do |seed|
+        yield WDPAPI::Container["seeding.import_vendored"].(seed)
       end
+
+      retval[:communities] = yield upsert_each communities
 
       Success retval
     end

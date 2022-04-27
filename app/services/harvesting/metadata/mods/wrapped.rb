@@ -62,20 +62,8 @@ module Harvesting
           xpath :record_identifier, "//mods:recordIdentifier/text()", type: :present_string, require_match: false
           xpath :record_identifier_source, "//mods:recordIdentifier/@source", type: :present_string, require_match: false
 
-          # It should be this:
-          # xpath :primary_collection_identifier, "//mods:recordContentSource[position() = 1]/text()", type: :present_string, require_match: false
-          # xpath_list :supplementary_collection_identifiers, "//mods:recordContentSource[position() > 1]/text()", type: :string_list, require_match: false
-
-          # But we have to post-process instead:
-          xpath_list :collection_identifiers, "//mods:recordContentSource/text()", type: :string_list, require_match: false do
-            pipeline! do
-              map_array do
-                xml_text
-              end
-
-              ucm_workaround_split!
-            end
-          end
+          xpath :primary_collection_identifier, "//mods:recordContentSource[position() = 1]/text()", type: :present_string, require_match: false
+          xpath_list :supplementary_collection_identifiers, "//mods:recordContentSource[position() > 1]/text()", type: :string_list, require_match: false
 
           on_struct do
             include Dry::Core::Equalizer.new(:title, :record_identifier)

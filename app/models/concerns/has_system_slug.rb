@@ -42,7 +42,7 @@ module HasSystemSlug
 
   class_methods do
     def fetch_by_slug(slug)
-      where(system_slug: slug).first
+      find_by system_slug: slug
     end
   end
 end

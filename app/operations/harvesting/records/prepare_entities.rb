@@ -34,6 +34,8 @@ module Harvesting
         if skipped
           handle_skip.(harvest_record, result)
         else
+          harvest_record.clear_skip!
+
           Success result
         end
       rescue Dry::Struct::Error, Harvesting::Error => e
