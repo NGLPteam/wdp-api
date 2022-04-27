@@ -4,6 +4,18 @@ module Processing
   class PromoteAttachmentJob < ApplicationJob
     queue_as :processing
 
+    discard_on ActiveRecord::RecordNotFound
+
+    discard_on Shrine::AttachmentChanged
+
+    retry_on ActiveRecord::StatementInvalid, wait: :exponentially_longer, attempts: 10
+
+    around_perform do |job, block|
+      Schemas::Orderings.with_disabled_refresh do
+        block.call
+      end
+    end
+
     # @return [void]
     def perform(attacher_class, record_class, record_id, name, file_data)
       attacher_class = Object.const_get(attacher_class)
@@ -18,8 +30,6 @@ module Processing
       end
 
       attacher.atomic_promote
-    rescue Shrine::AttachmentChanged, ActiveRecord::RecordNotFound
-      # attachment has changed or record has been deleted, nothing to do
     end
   end
 end
