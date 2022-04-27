@@ -53,10 +53,7 @@
         "direct": "children"
       },
       "order": [
-        { "path": "entity.published", "direction": "desc" },
-        { "path": "props.meta.collected#variable_date", "direction": "desc" },
-        { "path": "props.issue.fpage#integer", "direction": "asc" },
-        { "path": "props.issue.lpage#integer", "direction": "asc" }
+        { "path": "entity.published", "direction": "desc" }
       ],
       "position": 1
     }
