@@ -42,9 +42,9 @@
       "path": "volume",
       "legend": "Volume Metadata",
       "properties": [
-        { "path": "id", "label": "ID", "type": "string", "function": "metadata" },
-        { "path": "sequence", "label": "Sequence", "type": "integer", "function": "metadata" },
-        { "path": "sortable_number", "label": "Sortable Number", "type": "integer", "function": "sorting" }
+        { "path": "id", "label": "ID", "type": "string", "function": "metadata", "unorderable": true },
+        { "path": "sequence", "label": "Sequence", "type": "integer", "function": "metadata", "unorderable": true },
+        { "path": "sortable_number", "label": "Sortable Number", "type": "integer", "function": "sorting", "unorderable": true }
       ],
       "type": "group"
     },
@@ -52,12 +52,12 @@
       "path": "issue",
       "legend": "Issue Metadata",
       "properties": [
-        { "path": "title", "label": "Title", "type": "string", "wide": true, "function": "metadata", "required": true },
-        { "path": "number", "label": "Number", "type": "string", "function": "metadata", "required": true },
-        { "path": "sortable_number", "label": "Sortable Number", "type": "integer", "function": "sorting", "required": true },
-        { "path": "id", "label": "ID", "type": "string", "function": "metadata", "required": true },
+        { "path": "title", "label": "Title", "type": "string", "wide": true, "function": "metadata", "required": true, "unorderable": true },
+        { "path": "number", "label": "Number", "type": "string", "function": "metadata", "required": true, "unorderable": true },
+        { "path": "sortable_number", "label": "Sortable Number", "type": "integer", "function": "sorting", "required": true, "unorderable": true },
+        { "path": "id", "label": "ID", "type": "string", "function": "metadata", "required": true, "unorderable": true },
         { "path": "fpage", "label": "Start Page (of Issue)", "type": "integer", "function": "metadata" },
-        { "path": "lpage", "label": "Ending Page (of Issue)", "type": "integer", "function": "metadata" }
+        { "path": "lpage", "label": "Ending Page (of Issue)", "type": "integer", "function": "metadata", "unorderable": true }
       ],
       "type": "group"
     },
@@ -67,7 +67,7 @@
       "properties": [
         { "path": "collected", "label": "Collected", "type": "variable_date", "function": "metadata" },
         { "path": "published", "label": "Published", "type": "variable_date", "function": "metadata" },
-        { "path": "page_count", "label": "Page Count", "type": "integer", "function": "metadata" }
+        { "path": "page_count", "label": "Page Count", "type": "integer", "function": "metadata", "unorderable": true }
       ],
       "type": "group"
     }
