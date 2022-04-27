@@ -73,12 +73,12 @@ module Harvesting
 
             # @return [String]
             memoize def parent_collection_identifier
-              details.collection_identifiers&.first
+              details.primary_collection_identifier
             end
 
             # @return [<String>]
             memoize def incoming_collection_identifiers
-              Array(details.collection_identifiers).drop 1
+              details.supplementary_collection_identifiers
             end
 
             memoize def pdf_version
@@ -94,6 +94,15 @@ module Harvesting
 
             memoize def text_version
               assets.detect(&:text_version?)
+            end
+
+            memoize def thumbnail
+              assets.detect(&:thumbnail?)
+            end
+
+            # @return [String, nil]
+            memoize def thumbnail_remote_url
+              thumbnail&.location&.url
             end
 
             memoize def unassociated_assets

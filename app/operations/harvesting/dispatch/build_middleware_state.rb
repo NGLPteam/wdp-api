@@ -10,6 +10,7 @@ module Harvesting
       include Dry::Monads[:result]
       include WDPAPI::Deps[
         from_harvest_attempt: "harvesting.middleware.builders.from_harvest_attempt",
+        from_harvest_mapping: "harvesting.middleware.builders.from_harvest_mapping",
         from_harvest_record: "harvesting.middleware.builders.from_harvest_record",
         from_harvest_source: "harvesting.middleware.builders.from_harvest_source",
       ]
@@ -24,6 +25,8 @@ module Harvesting
         when HarvestEntity
           # HarvestEntity middleware defers to its parent record
           from_harvest_record.call origin.harvest_record
+        when HarvestMapping
+          from_harvest_mapping.call origin
         when HarvestRecord
           from_harvest_record.call(origin)
         when HarvestSource

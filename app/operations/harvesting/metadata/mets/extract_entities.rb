@@ -13,7 +13,8 @@ module Harvesting
         DISSERTATION_ATTRS = {
           title: "details.title",
           issn: "details.issn",
-          published: "details.issued"
+          published: "details.issued",
+          thumbnail_remote_url: "thumbnail_remote_url",
         }.freeze
 
         DISSERTATION_PROPS = {
@@ -26,7 +27,8 @@ module Harvesting
         PAPER_ATTRS = {
           title: "details.title",
           issn: "details.issn",
-          published: "details.issued"
+          published: "details.issued",
+          thumbnail_remote_url: "thumbnail_remote_url",
         }.freeze
 
         PAPER_PROPS = {
@@ -36,7 +38,7 @@ module Harvesting
         }.freeze
 
         MATCHES_PAPER = /\A\s*(Article|paper)\s*\z/i.freeze
-        MATCHES_DISSERTATION = /\AETD|dissertation\z/i.freeze
+        MATCHES_DISSERTATION = /\AETD|dissertation|Electronic Thesis|text\z/i.freeze
 
         # @param [String] raw_metadata
         # @return [Dry::Monads::Result(void)]

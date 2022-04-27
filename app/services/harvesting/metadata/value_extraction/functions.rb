@@ -82,16 +82,33 @@ module Harvesting
 
           # @param [#fetch] fetch_key
           # @param [Object] key
+          # @raise [KeyError]
           # @return [Object]
           def fetch_key(fetchable, key)
             fetchable.fetch key
+          end
+
+          def fetch_dependency(key)
+            dependencies.fetch key
+          rescue KeyError
+            raise PipelineError, "dependencies[#{key.inspect}] not found"
           end
 
           # @param [Object] key
           # @param [#to_s] dependency_key
           # @return [Object]
           def fetch_from_dependency(key, dependency_key)
-            fetch_key dependencies.fetch(dependency_key), key
+            dependency = fetch_dependency dependency_key
+
+            fetch_key dependency, key
+          rescue KeyError
+            raise PipelineError, "dependencies[#{dependency_key.inspect}][#{key.inspect}] not found"
+          end
+
+          def maybe_fetch_from_dependency(key, dependency_key)
+            fetch_from_dependency key, dependency_key
+          rescue PipelineError
+            nil
           end
 
           def full_text_reference(kind, content)

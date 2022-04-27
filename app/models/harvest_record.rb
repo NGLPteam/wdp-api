@@ -15,6 +15,8 @@ class HarvestRecord < ApplicationRecord
   has_many :harvest_contributions, through: :harvest_entities
   has_many :harvest_contributors, through: :harvest_contributions
 
+  has_many :entities, through: :harvest_entities
+
   has_many_readonly :collections, through: :harvest_entities, source: :entity, source_type: "Collection"
   has_many_readonly :items, through: :harvest_entities, source: :entity, source_type: "Item"
 
@@ -26,6 +28,14 @@ class HarvestRecord < ApplicationRecord
   scope :skipped, -> { where(has_been_skipped: true) }
   scope :unskipped, -> { where(has_been_skipped: false) }
   scope :upsertable, -> { unskipped.sans_harvest_errors }
+
+  # @api private
+  # @return [void]
+  def clear_skip!
+    self.skipped = Harvesting::Records::Skipped.blank
+
+    save!
+  end
 
   def inspect
     "HarvestRecord[:#{metadata_format}](#{identifier.inspect})"

@@ -23,7 +23,7 @@ RSpec.describe Utility::ReadOrParseJSON, type: :operation do
   end
 
   it "fails with a non-existing path string" do
-    expect_calling_with(invalid_path).to be_a_monadic_failure
+    expect_calling_with(invalid_path.to_s).to be_a_monadic_failure
   end
 
   it "succeeds with encoded JSON" do

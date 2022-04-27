@@ -42,18 +42,28 @@ module Harvesting
             end
           end
 
-          compose_value :premis, from: :wrapper_id, type: :extracted_values do
+          compose_value :premis, from: :wrapper_id, type: :extracted_values, require_match: false do
             depends_on :premis_items
 
             pipeline! do
-              fetch_from_dependency :premis_items
+              maybe_fetch_from_dependency :premis_items
             end
           end
 
           on_struct do
-            delegate :original_filename, to: :premis
+            delegate :original_filename, to: :premis, allow_nil: true
 
-            alias_method :name, :original_filename
+            def default_name
+              use.humanize
+            end
+
+            def has_specific_use?
+              schema_property? || thumbnail?
+            end
+
+            def name
+              original_filename.presence || default_name
+            end
 
             def schema_property?
               original_pdf? || text_version?
@@ -79,6 +89,10 @@ module Harvesting
               use == "TEXT" && text?
             end
 
+            def thumbnail?
+              use == "THUMBNAIL"
+            end
+
             # A tuple for use with {Harvesting::Entities::Assigner}
             #
             # @return [(String, String, Hash)]
@@ -87,7 +101,7 @@ module Harvesting
             end
 
             def unassociated?
-              !schema_property?
+              !has_specific_use?
             end
 
             def video?

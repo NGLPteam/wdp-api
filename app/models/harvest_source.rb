@@ -3,6 +3,7 @@
 class HarvestSource < ApplicationRecord
   include GloballyUniqueIdentifier
   include HasEphemeralSystemSlug
+  include HasHarvestingOptions
   include ScopesForMetadataFormat
   include TimestampScopes
 

@@ -20,6 +20,8 @@ module Harvesting
 
         attempt = HarvestAttempt.new attributes
 
+        harvest_mapping.modify_attempt_metadata! attempt.metadata
+
         monadic_save attempt
       end
     end

@@ -2,19 +2,24 @@
 
 module PilotHarvesting
   class CommunityDefinition < Struct
+    include PilotHarvesting::Harvestable
+
     attribute :identifier, Types::String
 
     attribute :title, Types::String
 
-    attribute :journals, (Types::Array.of(PilotHarvesting::JournalDefinition).default { [] })
+    attribute :journals, PilotHarvesting::JournalDefinition.for_array_option
+
+    attribute :series, PilotHarvesting::SeriesDefinition.for_array_option
 
     def upsert
       call_operation("communities.upsert", identifier, title: title) do |community|
-        provide community: community, default_collection_schema: SchemaVersion["nglp:journal"] do
-          journals.each do |journal|
-            journal.upsert.value!
-          end
+        provide community: community do
+          yield upsert_each journals
+          yield upsert_each series
         end
+
+        yield upsert_source_for! community
 
         Success community
       end

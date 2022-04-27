@@ -25,6 +25,8 @@ module Harvesting
 
     Identifiers = Array.of(Identifier)
 
+    Mapping = Instance(::HarvestMapping)
+
     MetadataFormat = Coercible::String.enum("jats", "mets", "mods")
 
     # @see Harvesting::Metadata::Section

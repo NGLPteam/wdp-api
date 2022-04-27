@@ -19,6 +19,15 @@ module PilotHarvesting
                 title: "Lymphology",
                 url: "https://journals.librarypublishing.arizona.edu/lymph/api/oai/",
               }
+            ],
+            series: [
+              {
+                identifier: "mt",
+                title: "Masters' Theses",
+                url: "https://repository.arizona.edu/oai/request",
+                set_identifier: "col_10150_129651",
+                max_records: 100,
+              }
             ]
           }
         ],
@@ -28,6 +37,18 @@ module PilotHarvesting
           {
             identifier: "claremont",
             title: "Claremont",
+            journals: [
+              {
+                identifier: "codee",
+                title: "CODEE",
+                url: "https://claremont.nglp.olh.pub/codee/api/oai",
+              },
+              {
+                identifier: "envirolabasia",
+                title: "Envirolab Asia",
+                url: "https://claremont.nglp.olh.pub/envirolabasia/api/oai",
+              },
+            ],
           },
         ],
       },
@@ -41,10 +62,29 @@ module PilotHarvesting
                 identifier: "joe",
                 title: "Journal of Extension",
                 url: "https://demo.janeway.systems/joe/api/oai/",
-              }
-            ]
-          }
+              },
+            ],
+          },
         ],
+      },
+      escholarship: {
+        communities: [
+          {
+            identifier: "uci",
+            title: "UC Irvine",
+            url: "https://dspace-pilot.escholarship.org/server/oai/request",
+            set_identifier: "com_123456789_5906",
+            metadata_format: "mets",
+          },
+          {
+            identifier: "ucm",
+            title: "UC Merced",
+            url: "https://dspace-pilot.escholarship.org/server/oai/request",
+            set_identifier: "com_123456789_8",
+            metadata_format: "mets",
+          },
+        ],
+        seeds: %w[ucm_units uci_units],
       },
       umassamherst: {
         communities: [
@@ -73,9 +113,14 @@ module PilotHarvesting
             title: "University of New Orleans",
             journals: [
               {
-                identifier: "neworleans",
-                title: "New Orleans",
-                url: "https://demo.janeway.systems/neworleans/api/oai/",
+                identifier: "ellipsis",
+                title: "Ellipsis",
+                url: "https://neworleans.nglp.olh.pub/ellipsis/api/oai/",
+              },
+              {
+                identifier: "beyondthemargins",
+                title: "Beyond The Margins",
+                url: "https://neworleans.nglp.olh.pub/beyondthemargins/api/oai/",
               },
             ],
           },
