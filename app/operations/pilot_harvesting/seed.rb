@@ -84,7 +84,6 @@ module PilotHarvesting
             metadata_format: "mets",
           },
         ],
-        seeds: %w[ucm_units uci_units],
       },
       umassamherst: {
         communities: [

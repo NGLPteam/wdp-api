@@ -25,11 +25,9 @@ module Harvesting
       def perform(harvest_source, target_entity, set: nil)
         attempt = yield create_manual_attempt.call harvest_source, target_entity, set: set
 
-        yield extract_records.call attempt
+        yield extract_records.call attempt, skip_prepare: true
 
-        attempt.harvest_records.find_each do |record|
-          Harvesting::UpsertEntitiesForRecordJob.perform_later record
-        end
+        Harvesting::ReprocessAttemptJob.perform_later attempt
 
         Success attempt
       end

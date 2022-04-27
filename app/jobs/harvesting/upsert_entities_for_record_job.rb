@@ -5,6 +5,8 @@ module Harvesting
   class UpsertEntitiesForRecordJob < ApplicationJob
     queue_as :harvesting
 
+    unique :until_and_while_executing, lock_ttl: 1.hour, on_conflict: :log
+
     # @param [HarvestRecord] harvest_record
     # @param [Boolean] reprepare
     # @return [void]
