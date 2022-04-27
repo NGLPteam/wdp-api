@@ -134,15 +134,15 @@ module Harvesting
           set :issue do
             xpath :id, %,.//xmlns:issue-id/text(),, type: :present_string, require_match: false
 
-            xpath :number, %,.//xmlns:issue/text(),, type: :present_string
+            xpath :number, %,.//xmlns:issue/text(),, type: :present_string, require_match: false
 
-            compose_value :identifier, from: "issue.number", type: :present_string do
+            compose_value :identifier, from: "issue.number", type: :present_string, require_match: false do
               pipeline! do
                 maybe_prefix "issue-"
               end
             end
 
-            value :sortable_number, type: :integer do
+            value :sortable_number, type: :integer, require_match: false do
               from_value "issue.number" do
                 pipeline! do
                   metadata_operation "jats.parse_sortable_number"
@@ -150,7 +150,7 @@ module Harvesting
               end
             end
 
-            value :title, type: :present_string do
+            value :title, type: :present_string, require_match: false do
               xpath %,.//xmlns:issue-title/text(),
 
               from_value "issue.number" do
@@ -166,11 +166,11 @@ module Harvesting
           end
 
           set :volume do
-            xpath :id, %,.//xmlns:volume/text(),, type: :present_string
+            xpath :id, %,.//xmlns:volume/text(),, type: :present_string, require_match: false
 
-            compose_value :number, from: "volume.id", type: :present_string
+            compose_value :number, from: "volume.id", type: :present_string, require_match: false
 
-            compose_value :identifier, from: "volume.id", type: :present_string do
+            compose_value :identifier, from: "volume.id", type: :present_string, require_match: false do
               pipeline! do
                 maybe_prefix "volume-"
               end
@@ -180,13 +180,13 @@ module Harvesting
 
             compose_value :sequence_number, from: "volume.sequence", type: :integer, require_match: false
 
-            value :sortable_number, type: :integer do
+            value :sortable_number, type: :integer, require_match: false do
               from_value "volume.sequence_number"
 
               from_value "volume.id"
             end
 
-            compose_value :title, from: "volume.id", type: :present_string do
+            compose_value :title, from: "volume.id", type: :present_string, require_match: false do
               pipeline! do
                 maybe_prefix "Volume "
               end
