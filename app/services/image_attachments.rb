@@ -50,5 +50,9 @@ module ImageAttachments
     def size(name)
       self[:sizes].fetch name
     end
+
+    def size?(name)
+      self[:sizes].key? name
+    end
   end
 end
