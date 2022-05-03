@@ -25,26 +25,6 @@ module ImageAttachments
       OriginalWrapper.new self, original_file
     end
 
-    # @return [ImageAttachments::SizeWrapper]
-    memoize def large
-      size_wrapper __method__
-    end
-
-    # @return [ImageAttachments::SizeWrapper]
-    memoize def medium
-      size_wrapper __method__
-    end
-
-    # @return [ImageAttachments::SizeWrapper]
-    memoize def small
-      size_wrapper __method__
-    end
-
-    # @return [ImageAttachments::SizeWrapper]
-    memoize def thumb
-      size_wrapper __method__
-    end
-
     # @!attribute [r] storage
     # Returns the storage associated with the file.
     # @return [:cache, :store, :derivatives, :remote, nil]
@@ -52,9 +32,23 @@ module ImageAttachments
       original_file&.storage_key
     end
 
+    def method_missing(meth, *args, &block)
+      if ImageAttachments.size(meth) && args.empty?
+        size_wrapper meth
+      else
+        # :nocov:
+        super
+        # :nocov:
+      end
+    end
+
+    def respond_to_missing?(meth, include_private = false)
+      ImageAttachments.size?(meth) || super
+    end
+
     private
 
-    def size_wrapper(size)
+    memoize def size_wrapper(size)
       SizeWrapper.new self, ImageAttachments.size(size)
     end
   end
