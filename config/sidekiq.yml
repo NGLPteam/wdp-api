@@ -7,7 +7,7 @@ production:
 :queues:
   - default
   - permissions
-  - maintenance
   - harvesting
   - processing
+  - maintenance
   - mailers
