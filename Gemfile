@@ -21,8 +21,7 @@ gem "store_model", "~> 0.12.0"
 # Redis / Jobs
 gem "activejob-uniqueness"
 gem "dalli", "~> 2.7.11"
-gem "hiredis", "~> 0.6.3"
-gem "redis", "~> 4.2.5", require: %w[redis redis/connection/hiredis]
+gem "redis", "~> 4.2.5"
 gem "sidekiq", "~> 6.4.0"
 gem "redis-objects", "~> 1.5.1"
 gem "job-iteration"

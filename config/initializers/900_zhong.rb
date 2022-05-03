@@ -1,6 +1,11 @@
 # frozen_string_literal: true
 
-Zhong.redis = Redis.new(url: ENV["REDIS_URL"], db: 1)
+Zhong.redis = Redis.new(
+  url: ENV["REDIS_URL"],
+  db: 1,
+  driver: :ruby,
+  ssl_params: { verify_mode: OpenSSL::SSL::VERIFY_NONE }
+)
 
 Zhong.schedule do
   category "contributors" do

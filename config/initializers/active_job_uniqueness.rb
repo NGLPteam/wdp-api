@@ -28,6 +28,14 @@ ActiveJob::Uniqueness.configure do |config|
   # Read more at https://github.com/leandromoreira/redlock-rb#redis-client-configuration
   #
   # config.redlock_servers = [ENV.fetch('REDIS_URL', 'redis://localhost:6379')]
+  config.redlock_servers = [
+    Redis.new(
+      url: ENV["REDIS_URL"],
+      db: 1,
+      driver: :ruby,
+      ssl_params: { verify_mode: OpenSSL::SSL::VERIFY_NONE }
+    )
+  ]
 
   # Custom options for Redlock.
   # Read more at https://github.com/leandromoreira/redlock-rb#redlock-configuration
