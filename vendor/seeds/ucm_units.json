@@ -30,7 +30,7 @@
           "title": "Center for Embedded Network Sensing",
           "identifier": "cens",
           "schema": "nglp:unit",
-          "logo": {
+          "thumbnail": {
             "format": "url",
             "url": "https://escholarship.org/cms-assets/22c48cb88f2358207f600f420d62f16711729a2da811bc66e66a180faf95df1e"
           },
@@ -54,7 +54,7 @@
               "title": "Data Practices",
               "identifier": "cens_dp",
               "schema": "nglp:series",
-              "logo": {
+              "thumbnail": {
                 "format": "url",
                 "url": "https://escholarship.org/cms-assets/22c48cb88f2358207f600f420d62f16711729a2da811bc66e66a180faf95df1e"
               },
@@ -78,7 +78,7 @@
               "title": "Posters",
               "identifier": "cens_Posters",
               "schema": "nglp:series",
-              "logo": {
+              "thumbnail": {
                 "format": "url",
                 "url": "https://escholarship.org/cms-assets/22c48cb88f2358207f600f420d62f16711729a2da811bc66e66a180faf95df1e"
               },
@@ -102,7 +102,7 @@
               "title": "Presentations",
               "identifier": "cens_pres",
               "schema": "nglp:series",
-              "logo": {
+              "thumbnail": {
                 "format": "url",
                 "url": "https://escholarship.org/cms-assets/22c48cb88f2358207f600f420d62f16711729a2da811bc66e66a180faf95df1e"
               },
@@ -126,7 +126,7 @@
               "title": "Other Recent Work",
               "identifier": "cens_rw",
               "schema": "nglp:series",
-              "logo": {
+              "thumbnail": {
                 "format": "url",
                 "url": "https://escholarship.org/cms-assets/22c48cb88f2358207f600f420d62f16711729a2da811bc66e66a180faf95df1e"
               },
@@ -150,7 +150,7 @@
               "title": "Technologies",
               "identifier": "cens_tech",
               "schema": "nglp:series",
-              "logo": {
+              "thumbnail": {
                 "format": "url",
                 "url": "https://escholarship.org/cms-assets/22c48cb88f2358207f600f420d62f16711729a2da811bc66e66a180faf95df1e"
               },
@@ -174,7 +174,7 @@
               "title": "Technical Reports",
               "identifier": "cens_techrep",
               "schema": "nglp:series",
-              "logo": {
+              "thumbnail": {
                 "format": "url",
                 "url": "https://escholarship.org/cms-assets/22c48cb88f2358207f600f420d62f16711729a2da811bc66e66a180faf95df1e"
               },
@@ -198,7 +198,7 @@
               "title": "Papers",
               "identifier": "cens_wps",
               "schema": "nglp:series",
-              "logo": {
+              "thumbnail": {
                 "format": "url",
                 "url": "https://escholarship.org/cms-assets/22c48cb88f2358207f600f420d62f16711729a2da811bc66e66a180faf95df1e"
               },
@@ -224,7 +224,7 @@
           "title": "Center for Information Technology Research in the Interest of Society (CITRIS)",
           "identifier": "citris",
           "schema": "nglp:unit",
-          "logo": {
+          "thumbnail": {
             "format": "url",
             "url": "https://escholarship.org/cms-assets/bcfdf1e717dd056654c9c7c5b7355a5723f2faf9111ebdfdb04b4b07d1458f63"
           },
@@ -258,7 +258,7 @@
               "title": "Connected Communities",
               "identifier": "citris_cc",
               "schema": "nglp:series",
-              "logo": {
+              "thumbnail": {
                 "format": "url",
                 "url": "https://escholarship.org/cms-assets/bcfdf1e717dd056654c9c7c5b7355a5723f2faf9111ebdfdb04b4b07d1458f63"
               },
@@ -292,7 +292,7 @@
               "title": "Health",
               "identifier": "citris_health",
               "schema": "nglp:series",
-              "logo": {
+              "thumbnail": {
                 "format": "url",
                 "url": "https://escholarship.org/cms-assets/bcfdf1e717dd056654c9c7c5b7355a5723f2faf9111ebdfdb04b4b07d1458f63"
               },
@@ -326,7 +326,7 @@
               "title": "People and Robots",
               "identifier": "citris_pr",
               "schema": "nglp:series",
-              "logo": {
+              "thumbnail": {
                 "format": "url",
                 "url": "https://escholarship.org/cms-assets/bcfdf1e717dd056654c9c7c5b7355a5723f2faf9111ebdfdb04b4b07d1458f63"
               },
@@ -360,7 +360,7 @@
               "title": "Sustainable Infrastructures ",
               "identifier": "citris_si",
               "schema": "nglp:series",
-              "logo": {
+              "thumbnail": {
                 "format": "url",
                 "url": "https://escholarship.org/cms-assets/bcfdf1e717dd056654c9c7c5b7355a5723f2faf9111ebdfdb04b4b07d1458f63"
               },
@@ -438,7 +438,7 @@
           "title": "Center for Research on Teaching Excellence",
           "identifier": "crte",
           "schema": "nglp:unit",
-          "logo": {
+          "thumbnail": {
             "format": "url",
             "url": "https://escholarship.org/cms-assets/8e34ac9dbb03a73d15868f0fe05714fb383823adad9007821feff7e09e6a64e5"
           },
@@ -467,7 +467,7 @@
               "title": "Creating Academic Community for First-Generation College Students: A Graduate Student Instructor Guidebook",
               "identifier": "crte_gsiguidebook",
               "schema": "nglp:series",
-              "logo": {
+              "thumbnail": {
                 "format": "url",
                 "url": "https://escholarship.org/cms-assets/8e34ac9dbb03a73d15868f0fe05714fb383823adad9007821feff7e09e6a64e5"
               },
@@ -496,7 +496,7 @@
               "title": "Undergraduate Learning Outcomes and Assessment: Pedagogy and Program Planning",
               "identifier": "crte_undergradlearning",
               "schema": "nglp:series",
-              "logo": {
+              "thumbnail": {
                 "format": "url",
                 "url": "https://escholarship.org/cms-assets/8e34ac9dbb03a73d15868f0fe05714fb383823adad9007821feff7e09e6a64e5"
               },
@@ -524,7 +524,7 @@
           "title": "University of California Institute for Labor and Employment",
           "identifier": "ile",
           "schema": "nglp:unit",
-          "logo": {
+          "thumbnail": {
             "format": "url",
             "url": "https://escholarship.org/cms-assets/82ee2a8611852e847ec98ad1bedff657af282d9b22a991fcd1c955fc4bcec94c"
           },
@@ -548,7 +548,7 @@
               "title": "The State of California Labor, 2001",
               "identifier": "ile_scl2001",
               "schema": "nglp:series",
-              "logo": {
+              "thumbnail": {
                 "format": "url",
                 "url": "https://escholarship.org/cms-assets/82ee2a8611852e847ec98ad1bedff657af282d9b22a991fcd1c955fc4bcec94c"
               },
@@ -572,7 +572,7 @@
               "title": "The State of California Labor, 2002",
               "identifier": "ile_scl2002",
               "schema": "nglp:series",
-              "logo": {
+              "thumbnail": {
                 "format": "url",
                 "url": "https://escholarship.org/cms-assets/82ee2a8611852e847ec98ad1bedff657af282d9b22a991fcd1c955fc4bcec94c"
               },
@@ -596,7 +596,7 @@
               "title": "The State of California Labor, 2003",
               "identifier": "ile_scl2003",
               "schema": "nglp:series",
-              "logo": {
+              "thumbnail": {
                 "format": "url",
                 "url": "https://escholarship.org/cms-assets/82ee2a8611852e847ec98ad1bedff657af282d9b22a991fcd1c955fc4bcec94c"
               },
@@ -620,7 +620,7 @@
               "title": "The State of California Labor, 2004",
               "identifier": "ile_scl2004",
               "schema": "nglp:series",
-              "logo": {
+              "thumbnail": {
                 "format": "url",
                 "url": "https://escholarship.org/cms-assets/82ee2a8611852e847ec98ad1bedff657af282d9b22a991fcd1c955fc4bcec94c"
               },
@@ -646,7 +646,7 @@
           "title": "University of California Linguistic Minority Research Institute",
           "identifier": "lmri",
           "schema": "nglp:unit",
-          "logo": {
+          "thumbnail": {
             "format": "url",
             "url": "https://escholarship.org/cms-assets/50d618a4c0d688beb8df6d8b260ddb7389c52e2b5a8c95348d8acb30cc60f986"
           },
@@ -670,7 +670,7 @@
               "title": "EL Facts",
               "identifier": "lmri_el",
               "schema": "nglp:series",
-              "logo": {
+              "thumbnail": {
                 "format": "url",
                 "url": "https://escholarship.org/cms-assets/50d618a4c0d688beb8df6d8b260ddb7389c52e2b5a8c95348d8acb30cc60f986"
               },
@@ -694,7 +694,7 @@
               "title": "Joint Publications",
               "identifier": "lmri_jp",
               "schema": "nglp:series",
-              "logo": {
+              "thumbnail": {
                 "format": "url",
                 "url": "https://escholarship.org/cms-assets/50d618a4c0d688beb8df6d8b260ddb7389c52e2b5a8c95348d8acb30cc60f986"
               },
@@ -718,7 +718,7 @@
               "title": "Newsletters",
               "identifier": "lmri_nl",
               "schema": "nglp:series",
-              "logo": {
+              "thumbnail": {
                 "format": "url",
                 "url": "https://escholarship.org/cms-assets/50d618a4c0d688beb8df6d8b260ddb7389c52e2b5a8c95348d8acb30cc60f986"
               },
@@ -742,7 +742,7 @@
               "title": "Policy Reports",
               "identifier": "lmri_pr",
               "schema": "nglp:series",
-              "logo": {
+              "thumbnail": {
                 "format": "url",
                 "url": "https://escholarship.org/cms-assets/50d618a4c0d688beb8df6d8b260ddb7389c52e2b5a8c95348d8acb30cc60f986"
               },
@@ -766,7 +766,7 @@
               "title": "Postdoc Reports",
               "identifier": "lmri_td",
               "schema": "nglp:series",
-              "logo": {
+              "thumbnail": {
                 "format": "url",
                 "url": "https://escholarship.org/cms-assets/50d618a4c0d688beb8df6d8b260ddb7389c52e2b5a8c95348d8acb30cc60f986"
               },
@@ -790,7 +790,7 @@
               "title": "Technical Reports",
               "identifier": "lmri_tr",
               "schema": "nglp:series",
-              "logo": {
+              "thumbnail": {
                 "format": "url",
                 "url": "https://escholarship.org/cms-assets/50d618a4c0d688beb8df6d8b260ddb7389c52e2b5a8c95348d8acb30cc60f986"
               },
@@ -814,7 +814,7 @@
               "title": "Working Papers",
               "identifier": "lmri_wp",
               "schema": "nglp:series",
-              "logo": {
+              "thumbnail": {
                 "format": "url",
                 "url": "https://escholarship.org/cms-assets/50d618a4c0d688beb8df6d8b260ddb7389c52e2b5a8c95348d8acb30cc60f986"
               },
@@ -840,7 +840,7 @@
           "title": "Pacific Rim Research Program",
           "identifier": "pacrim",
           "schema": "nglp:unit",
-          "logo": {
+          "thumbnail": {
             "format": "url",
             "url": "https://escholarship.org/cms-assets/878b3bd51b752049fb6a1eaf689c5386c6f8918f8f27925ad578266982b4c818"
           },
@@ -864,7 +864,7 @@
               "title": "PACRIM Program Bibliography and Archive",
               "identifier": "pacrim_pba",
               "schema": "nglp:series",
-              "logo": {
+              "thumbnail": {
                 "format": "url",
                 "url": "https://escholarship.org/cms-assets/878b3bd51b752049fb6a1eaf689c5386c6f8918f8f27925ad578266982b4c818"
               },
@@ -888,7 +888,7 @@
               "title": "Other Recent Work",
               "identifier": "pacrim_rw",
               "schema": "nglp:series",
-              "logo": {
+              "thumbnail": {
                 "format": "url",
                 "url": "https://escholarship.org/cms-assets/878b3bd51b752049fb6a1eaf689c5386c6f8918f8f27925ad578266982b4c818"
               },
@@ -1073,7 +1073,7 @@
           "title": "University of California All Campus Consortium on Research for Diversity",
           "identifier": "ucaccord",
           "schema": "nglp:unit",
-          "logo": {
+          "thumbnail": {
             "format": "url",
             "url": "https://escholarship.org/cms-assets/a556f771b5487031269d4d8c217d713a71e1d202f0dbdce8149b963cc5d5576e"
           },
@@ -1097,7 +1097,7 @@
               "title": "Papers",
               "identifier": "ucaccord_papers",
               "schema": "nglp:series",
-              "logo": {
+              "thumbnail": {
                 "format": "url",
                 "url": "https://escholarship.org/cms-assets/a556f771b5487031269d4d8c217d713a71e1d202f0dbdce8149b963cc5d5576e"
               },
@@ -1121,7 +1121,7 @@
               "title": "Policy Briefs",
               "identifier": "ucaccord_pb",
               "schema": "nglp:series",
-              "logo": {
+              "thumbnail": {
                 "format": "url",
                 "url": "https://escholarship.org/cms-assets/a556f771b5487031269d4d8c217d713a71e1d202f0dbdce8149b963cc5d5576e"
               },
@@ -1147,7 +1147,7 @@
           "title": "UC Consortium for Language Learning & Teaching",
           "identifier": "uccllt",
           "schema": "nglp:unit",
-          "logo": {
+          "thumbnail": {
             "format": "url",
             "url": "https://escholarship.org/cms-assets/386edd92ae9628c42917cd38b0a575e410fd0560712e4b64886e7aa6cf4b2247"
           },
@@ -1163,7 +1163,7 @@
           "title": "UCEAP Mexico",
           "identifier": "uceap",
           "schema": "nglp:unit",
-          "logo": {
+          "thumbnail": {
             "format": "url",
             "url": "https://escholarship.org/cms-assets/27c77bf38dee57f870d4591bb299b9af95f1df78d48f477489cc8990cc5359a1"
           },
@@ -1202,7 +1202,7 @@
               "title": "Diarios de campo/Experiences in multicultural Mexico",
               "identifier": "uceap_diariosdecampo_fieldworkdiaries",
               "schema": "nglp:series",
-              "logo": {
+              "thumbnail": {
                 "format": "url",
                 "url": "https://escholarship.org/cms-assets/27c77bf38dee57f870d4591bb299b9af95f1df78d48f477489cc8990cc5359a1"
               },
@@ -1387,7 +1387,7 @@
           "title": "UC Global Health Institute",
           "identifier": "ucghi",
           "schema": "nglp:unit",
-          "logo": {
+          "thumbnail": {
             "format": "url",
             "url": "https://escholarship.org/cms-assets/e8b21492652261a3e8e27a02193e018c94205e6caf0ba13adaab54825e97027c"
           },
@@ -1411,7 +1411,7 @@
               "title": "Recent Work",
               "identifier": "ucghi_rw",
               "schema": "nglp:series",
-              "logo": {
+              "thumbnail": {
                 "format": "url",
                 "url": "https://escholarship.org/cms-assets/e8b21492652261a3e8e27a02193e018c94205e6caf0ba13adaab54825e97027c"
               },
@@ -1437,7 +1437,7 @@
           "title": "UC Merced Office of the Chancellor",
           "identifier": "ucmchancellor",
           "schema": "nglp:unit",
-          "logo": {
+          "thumbnail": {
             "format": "url",
             "url": "https://escholarship.org/cms-assets/96ab436d9cf63efc377054ff141533eb01223be8e1862a07d332720407677196"
           },
@@ -1461,7 +1461,7 @@
               "title": "Academic Innovation and the American Research University",
               "identifier": "ucmchancellor_aiaru",
               "schema": "nglp:unit",
-              "logo": {
+              "thumbnail": {
                 "format": "url",
                 "url": "https://escholarship.org/cms-assets/96ab436d9cf63efc377054ff141533eb01223be8e1862a07d332720407677196"
               },
@@ -1485,7 +1485,7 @@
                   "title": "Introduction: Historical Overview of American Research Universities",
                   "identifier": "ucmchancellor_aiaru_introduction",
                   "schema": "nglp:series",
-                  "logo": {
+                  "thumbnail": {
                     "format": "url",
                     "url": "https://escholarship.org/cms-assets/96ab436d9cf63efc377054ff141533eb01223be8e1862a07d332720407677196"
                   },
@@ -1509,7 +1509,7 @@
                   "title": "AIARU: Panel 1 - Undergraduate Education and the Research University",
                   "identifier": "ucmchancellor_aiaru_panel1",
                   "schema": "nglp:series",
-                  "logo": {
+                  "thumbnail": {
                     "format": "url",
                     "url": "https://escholarship.org/cms-assets/96ab436d9cf63efc377054ff141533eb01223be8e1862a07d332720407677196"
                   },
@@ -1533,7 +1533,7 @@
                   "title": "AIARU: Panel 2 - Organization and Structure of the Modern Research University",
                   "identifier": "ucmchancellor_aiaru_panel2",
                   "schema": "nglp:series",
-                  "logo": {
+                  "thumbnail": {
                     "format": "url",
                     "url": "https://escholarship.org/cms-assets/96ab436d9cf63efc377054ff141533eb01223be8e1862a07d332720407677196"
                   },
@@ -1557,7 +1557,7 @@
                   "title": "AIARU: Panel 3 - General Education and the Research University",
                   "identifier": "ucmchancellor_aiaru_panel3",
                   "schema": "nglp:series",
-                  "logo": {
+                  "thumbnail": {
                     "format": "url",
                     "url": "https://escholarship.org/cms-assets/96ab436d9cf63efc377054ff141533eb01223be8e1862a07d332720407677196"
                   },
@@ -1581,7 +1581,7 @@
                   "title": "AIARU: Executive Summary",
                   "identifier": "ucmchancellor_aiaru_summary",
                   "schema": "nglp:series",
-                  "logo": {
+                  "thumbnail": {
                     "format": "url",
                     "url": "https://escholarship.org/cms-assets/96ab436d9cf63efc377054ff141533eb01223be8e1862a07d332720407677196"
                   },
@@ -1609,7 +1609,7 @@
           "title": "Center for the Humanities",
           "identifier": "ucmercedcenterforthehumanities",
           "schema": "nglp:unit",
-          "logo": {
+          "thumbnail": {
             "format": "url",
             "url": "https://escholarship.org/cms-assets/ce12443ed7b811cfb52dc50d21390f18e98e46f28664ad5d6bd21733d20e0272"
           },
@@ -1648,7 +1648,7 @@
           "title": "UC Merced Library",
           "identifier": "ucmercedlibrary",
           "schema": "nglp:unit",
-          "logo": {
+          "thumbnail": {
             "format": "url",
             "url": "https://escholarship.org/cms-assets/57501fb79144af101097b8afaba703b0ad5b173dec393dbc4e79b4dec421b6c5"
           },
@@ -1676,7 +1676,7 @@
               "title": "Other Recent Work",
               "identifier": "ucmercedlibrary_rw",
               "schema": "nglp:series",
-              "logo": {
+              "thumbnail": {
                 "format": "url",
                 "url": "https://escholarship.org/cms-assets/57501fb79144af101097b8afaba703b0ad5b173dec393dbc4e79b4dec421b6c5"
               },
@@ -1737,7 +1737,7 @@
           "title": "Merritt Writing Program",
           "identifier": "ucm_mwp",
           "schema": "nglp:unit",
-          "logo": {
+          "thumbnail": {
             "format": "url",
             "url": "https://escholarship.org/cms-assets/79b0c3e3b34c450fd44ada96617ec14835e01c4c9d17a7e1e891941d0c86b4f9"
           },
@@ -1867,7 +1867,7 @@
           "title": "University of California Water Resources Center",
           "identifier": "wrc",
           "schema": "nglp:unit",
-          "logo": {
+          "thumbnail": {
             "format": "url",
             "url": "https://escholarship.org/cms-assets/b379f2b82c15a7c7af69d6c818b2a153062b421121d9a150bf7524a0a36ea2f0"
           },
@@ -1891,7 +1891,7 @@
               "title": "Water Resources Collections and Archives",
               "identifier": "wrca",
               "schema": "nglp:unit",
-              "logo": {
+              "thumbnail": {
                 "format": "url",
                 "url": "https://escholarship.org/cms-assets/ce61592329708959a5d02afab8dc3ed3f0a2c87d293f53b47beeedad6c8c1786"
               },
@@ -1915,7 +1915,7 @@
                   "title": "Hydraulic Engineering Laboratory Reports",
                   "identifier": "wrca_hel",
                   "schema": "nglp:series",
-                  "logo": {
+                  "thumbnail": {
                     "format": "url",
                     "url": "https://escholarship.org/cms-assets/ce61592329708959a5d02afab8dc3ed3f0a2c87d293f53b47beeedad6c8c1786"
                   },
@@ -1939,7 +1939,7 @@
                   "title": "Hydrology",
                   "identifier": "wrca_hydrology",
                   "schema": "nglp:series",
-                  "logo": {
+                  "thumbnail": {
                     "format": "url",
                     "url": "https://escholarship.org/cms-assets/ce61592329708959a5d02afab8dc3ed3f0a2c87d293f53b47beeedad6c8c1786"
                   },
@@ -1963,7 +1963,7 @@
                   "title": "Restoration of Rivers and Streams (LA 227)",
                   "identifier": "wrca_restoration",
                   "schema": "nglp:series",
-                  "logo": {
+                  "thumbnail": {
                     "format": "url",
                     "url": "https://escholarship.org/cms-assets/ce61592329708959a5d02afab8dc3ed3f0a2c87d293f53b47beeedad6c8c1786"
                   },
@@ -1987,7 +1987,7 @@
                   "title": "Other Recent Work",
                   "identifier": "wrca_rw",
                   "schema": "nglp:series",
-                  "logo": {
+                  "thumbnail": {
                     "format": "url",
                     "url": "https://escholarship.org/cms-assets/ce61592329708959a5d02afab8dc3ed3f0a2c87d293f53b47beeedad6c8c1786"
                   },
@@ -2011,7 +2011,7 @@
                   "title": "Working Papers",
                   "identifier": "wrca_wp",
                   "schema": "nglp:series",
-                  "logo": {
+                  "thumbnail": {
                     "format": "url",
                     "url": "https://escholarship.org/cms-assets/ce61592329708959a5d02afab8dc3ed3f0a2c87d293f53b47beeedad6c8c1786"
                   },
@@ -2037,7 +2037,7 @@
               "title": "Contributions",
               "identifier": "wrc_contributions",
               "schema": "nglp:series",
-              "logo": {
+              "thumbnail": {
                 "format": "url",
                 "url": "https://escholarship.org/cms-assets/b379f2b82c15a7c7af69d6c818b2a153062b421121d9a150bf7524a0a36ea2f0"
               },
@@ -2061,7 +2061,7 @@
               "title": "Other Recent Work",
               "identifier": "wrc_rw",
               "schema": "nglp:series",
-              "logo": {
+              "thumbnail": {
                 "format": "url",
                 "url": "https://escholarship.org/cms-assets/b379f2b82c15a7c7af69d6c818b2a153062b421121d9a150bf7524a0a36ea2f0"
               },
@@ -2085,7 +2085,7 @@
               "title": "Technical Completion Reports",
               "identifier": "wrc_tcr",
               "schema": "nglp:series",
-              "logo": {
+              "thumbnail": {
                 "format": "url",
                 "url": "https://escholarship.org/cms-assets/b379f2b82c15a7c7af69d6c818b2a153062b421121d9a150bf7524a0a36ea2f0"
               },
