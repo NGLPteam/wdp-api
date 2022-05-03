@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
 module PilotHarvesting
+  # @see PilotHarvesting::Seed
   class SeedJob < ApplicationJob
-    queue_as :maintenance
+    queue_as :harvesting
 
     unique :until_and_while_executing, lock_ttl: 1.hour, on_conflict: :log
 
