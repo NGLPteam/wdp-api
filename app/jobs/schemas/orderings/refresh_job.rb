@@ -4,11 +4,10 @@ module Schemas
   module Orderings
     # @see Schemas::Orderings::Refresh
     class RefreshJob < ApplicationJob
-      queue_as :maintenance
+      queue_as :orderings
 
-      DO_NOTHING = proc { true }
-
-      unique :while_executing, lock_ttl: 1.minute, on_conflict: DO_NOTHING
+      unique :until_and_while_executing, lock_ttl: 1.hour, runtime_lock_ttl: 1.minute, on_conflict: :log,
+        on_runtime_conflict: :log
 
       # @param [Ordering] ordering
       # @return [void]

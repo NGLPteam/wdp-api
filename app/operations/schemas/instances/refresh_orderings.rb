@@ -34,14 +34,16 @@ module Schemas
           end
         end
 
-        if status.deferred? || status.async?
-          later do
+        if entity.orderings.exists?
+          if status.deferred?
+            later do
+              Schemas::Orderings::CalculateInitialJob.set(wait: 2.minutes).perform_later(entity: entity)
+            end
+          elsif status.async?
             Schemas::Orderings::CalculateInitialJob.set(wait: 2.minutes).perform_later(entity: entity)
+          else
+            yield calculate_initial.(entity: entity)
           end
-        elsif status.async?
-          Schemas::Orderings::CalculateInitialJob.set(wait: 2.minutes).perform_later(entity: entity)
-        else
-          yield calculate_initial.(entity: entity)
         end
 
         return Success()
