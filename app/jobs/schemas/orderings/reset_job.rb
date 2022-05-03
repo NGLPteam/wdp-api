@@ -3,7 +3,7 @@
 module Schemas
   module Orderings
     class ResetJob < ApplicationJob
-      queue_as :maintenance
+      queue_as :orderings
 
       unique :until_and_while_executing, lock_ttl: 5.minutes, on_conflict: :log
 

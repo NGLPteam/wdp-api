@@ -11,3 +11,4 @@ production:
   - processing
   - maintenance
   - mailers
+  - orderings
