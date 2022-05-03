@@ -72,5 +72,17 @@ class HarvestAttempt < ApplicationRecord
     def latest_for_source(sourcelike)
       for_source(sourcelike).latest
     end
+
+    def latest_for_each_source
+      return enum_for(__method__) unless block_given?
+
+      HarvestSource.find_each do |source|
+        attempt = latest_for_source source
+
+        next if attempt.blank?
+
+        yield attempt
+      end
+    end
   end
 end
