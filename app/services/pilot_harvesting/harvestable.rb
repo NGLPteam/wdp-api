@@ -25,6 +25,8 @@ module PilotHarvesting
 
       attribute? :set_identifier, PilotHarvesting::Types::String.optional
 
+      attribute? :link_identifiers_globally, PilotHarvesting::Types::Bool.default(false)
+
       attribute? :max_records, PilotHarvesting::Types::Integer.constrained(gt: 0, lteq: 5000).default(5000)
 
       attribute? :metadata_format, Harvesting::Types::MetadataFormat.optional
@@ -64,6 +66,9 @@ module PilotHarvesting
       return Success(entity) if url.blank?
 
       options = {
+        mapping_options: {
+          link_identifiers_globally: link_identifiers_globally,
+        },
         read_options: {
           max_records: max_records,
         },

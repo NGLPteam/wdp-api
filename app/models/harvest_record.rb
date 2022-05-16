@@ -69,4 +69,13 @@ class HarvestRecord < ApplicationRecord
   def upsert_entities!(reprepare: false)
     call_operation("harvesting.actions.upsert_entities", self, reprepare: reprepare)
   end
+
+  class << self
+    # @see HarvestAttempt.latest_for_source
+    # @param [String, HarvestSource] sourcelike
+    # @return [ActiveRecord::Relation<HarvestRecord>]
+    def latest_for_source(sourcelike)
+      where(harvest_attempt: HarvestAttempt.latest_for_source(sourcelike))
+    end
+  end
 end

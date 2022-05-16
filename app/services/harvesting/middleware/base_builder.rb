@@ -18,6 +18,10 @@ module Harvesting
       def call(model)
         @state = yield initial_state_from(model)
 
+        parent = parent_for model
+
+        yield inherit_middleware_from! parent if parent.present?
+
         yield build_from model
 
         Success(@state.symbolize_keys)
@@ -34,6 +38,12 @@ module Harvesting
         Success(nil)
         # :nocov:
       end
+
+      # @api private
+      # @abstract
+      # @param [ApplicationRecord] model
+      # @return [ApplicationRecord, nil]
+      def parent_for(model); end
 
       # @api private
       # @note We have to set this manually to avoid a stack lover

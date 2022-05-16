@@ -7,8 +7,6 @@ module Harvesting
       class FromHarvestAttempt < Harvesting::Middleware::BaseBuilder
         # @param [HarvestAttempt] harvest_attempt
         def build_from(harvest_attempt)
-          yield inherit_middleware_from! harvest_attempt.harvest_source
-
           yield set_metadata_format! harvest_attempt
 
           yield set_schema! :default_item, "default:item"
@@ -20,6 +18,13 @@ module Harvesting
           yield set! :record_extraction_progress, harvest_attempt.record_extraction_progress
 
           Success nil
+        end
+
+        # @see HarvestAttempt#middleware_parent
+        # @param [HarvestAttempt] harvest_attempt
+        # @return [HarvestMapping, HarvestSource]
+        def parent_for(harvest_attempt)
+          harvest_attempt.middleware_parent
         end
       end
     end
