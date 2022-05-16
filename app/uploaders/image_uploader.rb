@@ -7,7 +7,7 @@ class ImageUploader < Shrine
   plugin :derivatives, create_on_promote: false
   plugin :add_metadata
   plugin :refresh_metadata
-  plugin :remote_url, max_size: 20.megabytes
+  plugin :remote_url, max_size: 100.megabytes
   plugin :store_dimensions, analyzer: :ruby_vips
   plugin :signature
   plugin :validation_helpers
