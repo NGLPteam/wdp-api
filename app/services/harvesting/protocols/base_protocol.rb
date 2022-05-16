@@ -34,6 +34,14 @@ module Harvesting
 
       # @abstract
       # @return [#call]
+      def extract_record
+        # :nocov:
+        Harvesting::Utility::UnavailableAction.new(:protocol, protocol_name, __method__)
+        # :nocov:
+      end
+
+      # @abstract
+      # @return [#call]
       def extract_records
         # :nocov:
         Harvesting::Utility::UnavailableAction.new(:protocol, protocol_name, __method__)

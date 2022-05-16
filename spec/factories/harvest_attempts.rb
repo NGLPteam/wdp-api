@@ -2,15 +2,36 @@
 
 FactoryBot.define do
   factory :harvest_attempt do
-    harvest_source { nil }
+    transient do
+      max_records { 5000 }
+    end
+
+    association :harvest_source
+    target_entity { create :collection }
     harvest_set { nil }
     harvest_mapping { nil }
-    collection { nil }
-    system_slug { "MyText" }
-    kind { "MyText" }
-    description { "MyText" }
-    record_count { "" }
-    started_at { "2021-10-15 15:48:54" }
-    completed_at { "2021-10-15 15:48:54" }
+
+    kind { "manual" }
+    metadata_format { "mods" }
+
+    description { "A test harvesting attempt" }
+
+    metadata do
+      {
+        max_records: max_records,
+      }
+    end
+
+    trait :jats do
+      metadata_format { "jats" }
+    end
+
+    trait :mets do
+      metadata_format { "mets" }
+    end
+
+    trait :mods do
+      metadata_format { "mods" }
+    end
   end
 end
