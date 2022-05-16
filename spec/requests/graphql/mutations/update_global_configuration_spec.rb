@@ -11,6 +11,7 @@ RSpec.describe Mutations::UpdateGlobalConfiguration, type: :request, graphql: :m
 
         site {
           installationName
+          installationHomePageCopy
           providerName
 
           footer {
@@ -38,6 +39,7 @@ RSpec.describe Mutations::UpdateGlobalConfiguration, type: :request, graphql: :m
     let!(:institution_name) { "Some Institution Name" }
     let!(:provider_name) { "Some Provider Name" }
     let!(:installation_name) { "Some Installation Name" }
+    let!(:installation_home_page_copy) { "Some installation copy that appears on the home page." }
     let!(:footer_copyright_statement) { "Some Copyright Statement" }
     let!(:footer_description) { "Some Footer Description" }
     let!(:footer) do
@@ -52,6 +54,7 @@ RSpec.describe Mutations::UpdateGlobalConfiguration, type: :request, graphql: :m
     let_mutation_input!(:site) do
       {
         installation_name: installation_name,
+        installation_home_page_copy: installation_home_page_copy,
         provider_name: provider_name,
         footer: footer,
       }
