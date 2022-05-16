@@ -11,6 +11,9 @@ module Types
       argument :installation_name, String, required: false, attribute: true,
         description: "The name of the installation."
 
+      argument :installation_home_page_copy, String, required: false, attribute: true,
+        description: "The text that appears on the root page of the frontend. Supports basic markdown."
+
       argument :provider_name, String, required: false, attribute: true,
         description: "The name of the provider supporting and maintaining this installation."
 

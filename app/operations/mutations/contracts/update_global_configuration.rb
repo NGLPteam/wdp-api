@@ -11,6 +11,7 @@ module Mutations
 
         optional(:site).maybe(:hash) do
           optional(:installation_name).value(:safe_string)
+          optional(:installation_home_page_copy).value(:safe_string)
           optional(:provider_name).value(:safe_string)
           optional(:footer).maybe(:hash) do
             optional(:copyright_statement).value(:safe_string)
