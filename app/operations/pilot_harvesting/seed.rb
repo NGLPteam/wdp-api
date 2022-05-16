@@ -75,6 +75,7 @@ module PilotHarvesting
             url: "https://dspace-pilot.escholarship.org/server/oai/request",
             set_identifier: "com_123456789_5906",
             metadata_format: "mets",
+            link_identifiers_globally: true,
           },
           {
             identifier: "ucm",
@@ -82,6 +83,7 @@ module PilotHarvesting
             url: "https://dspace-pilot.escholarship.org/server/oai/request",
             set_identifier: "com_123456789_8",
             metadata_format: "mets",
+            link_identifiers_globally: true,
           },
         ],
       },

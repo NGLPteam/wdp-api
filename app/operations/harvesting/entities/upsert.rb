@@ -16,6 +16,7 @@ module Harvesting
         attach_assets: "harvesting.entities.attach_assets",
         attach_contribution: "harvesting.contributions.attach",
         connect_link: "links.connect",
+        find_existing_collection: "harvesting.utility.find_existing_collection",
       ]
 
       # @param [HarvestEntity] entity
@@ -250,11 +251,11 @@ module Harvesting
       # @param [String, nil] identifier
       # @return [Collection, nil]
       def existing_collection_from!(identifier)
-        return nil if identifier.blank?
-
-        target_entity.descendant_collection_by! identifier
+        find_existing_collection.(identifier)
       rescue ActiveRecord::RecordNotFound
         raise Harvesting::Metadata::Error, "Unknown existing collection: #{identifier}"
+      rescue LimitToOne::TooManyMatches
+        raise Harvesting::Metadata::Error, "Tried to link non-global identifier: #{identifier}"
       end
 
       # @param [HarvestEntity] harvest_entity

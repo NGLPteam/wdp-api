@@ -14,6 +14,7 @@ module Harvesting
       include MonadicPersistence
 
       include WDPAPI::Deps[
+        find_existing_collection: "harvesting.utility.find_existing_collection",
         parse_variable_precision_date: "variable_precision.parse_date",
         with_entity: "harvesting.entities.with_assigner",
       ]
@@ -39,11 +40,11 @@ module Harvesting
       # @param [String, nil] identifier
       # @return [Collection, nil]
       def existing_collection_from!(identifier)
-        return nil if identifier.blank?
-
-        target_entity.descendant_collection_by! identifier
+        find_existing_collection.(identifier)
       rescue ActiveRecord::RecordNotFound
         skip_record! "Expected existing collection with identifier: #{identifier}", code: :unknown_parent
+      rescue LimitToOne::TooManyMatches
+        skip_record! "Identifier is not globally unique: #{identifier}", code: :unmatchable_parent
       end
 
       # @see Harvesting::Records::Skipped.because

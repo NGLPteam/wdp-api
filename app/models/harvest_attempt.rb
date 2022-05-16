@@ -53,6 +53,16 @@ class HarvestAttempt < ApplicationRecord
     @record_extraction_progress ||= Harvesting::Attempts::RecordExtractionProgress.new self
   end
 
+  # @!attribute [r] middleware_parent
+  # @return [HarvestMapping, HarvestSource]
+  def middleware_parent
+    if harvest_mapping.present?
+      harvest_mapping
+    else
+      harvest_source
+    end
+  end
+
   private
 
   # @return [void]
