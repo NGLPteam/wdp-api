@@ -13,6 +13,12 @@ SimpleCov.start "rails" do
   groups.delete "Mailers"
 
   add_group "GraphQL", "app/graphql"
+  add_group "Harvesting", [
+    %r|app/models/harvest|,
+    %r|app/models/concerns/[^/]*harvest|,
+    "app/operations/harvesting",
+    "app/services/harvesting",
+  ]
   add_group "Operations", "app/operations"
   add_group "Policies", "app/policies"
   add_group "Services", "app/services"
@@ -41,6 +47,8 @@ require "webmock/rspec"
 Rails.application.eager_load!
 
 ActiveJob::Base.queue_adapter = :test
+
+ActiveJob::Uniqueness.test_mode!
 
 Shrine.logger = Logger.new("/dev/null")
 
