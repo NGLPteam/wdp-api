@@ -4,11 +4,7 @@ module Harvesting
   module OAI
     # Extract records from an OAI-PMH feed.
     class ExtractRecords < Harvesting::Protocols::RecordBatchExtractor
-      include Dry::Monads[:result, :do]
       include Harvesting::OAI::WithClient
-      include WDPAPI::Deps[
-        process_record: "harvesting.oai.process_record"
-      ]
 
       private
 

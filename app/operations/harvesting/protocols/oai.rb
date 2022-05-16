@@ -7,6 +7,7 @@ module Harvesting
         augment_middleware: "harvesting.oai.augment_middleware",
         extract_raw_metadata: "harvesting.oai.extract_raw_metadata",
         extract_raw_source: "harvesting.oai.extract_raw_source",
+        extract_record: "harvesting.oai.extract_record",
         extract_records: "harvesting.oai.extract_records",
         extract_sets: "harvesting.oai.extract_sets",
         process_record: "harvesting.oai.process_record",

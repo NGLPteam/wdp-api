@@ -17,6 +17,7 @@ class HarvestAttempt < ApplicationRecord
 
   has_many :harvest_entities, through: :harvest_records
 
+  scope :current, -> { where(id: LatestHarvestAttemptLink.select(:harvest_attempt_id)) }
   scope :previous, -> { where.not(id: LatestHarvestAttemptLink.select(:harvest_attempt_id)) }
 
   validates :metadata_format, harvesting_metadata_format: true
@@ -56,11 +57,7 @@ class HarvestAttempt < ApplicationRecord
   # @!attribute [r] middleware_parent
   # @return [HarvestMapping, HarvestSource]
   def middleware_parent
-    if harvest_mapping.present?
-      harvest_mapping
-    else
-      harvest_source
-    end
+    harvest_mapping.presence || harvest_source
   end
 
   private
@@ -71,18 +68,44 @@ class HarvestAttempt < ApplicationRecord
   end
 
   class << self
+    # Fetch the current attempts for a given {HarvestSource}.
+    #
+    # A source can have multiple current attempts, based on whether or not the
+    # attempt(s) are also associated with {HarvestMapping}s or {HarvestSet}s.
+    #
+    # @see .latest_for_source
+    # @param [String, HarvestSource] sourcelike
+    # @return [ActiveRecord::Relation<HarvestAttempt>]
+    def current_for_source(sourcelike)
+      for_source(sourcelike).current
+    end
+
+    # Fetch all attempts for a given {HavestSource}.
+    #
     # @param [String, HarvestSource] sourcelike
     # @return [ActiveRecord::Relation<HarvestAttempt>]
     def for_source(sourcelike)
       where(harvest_source: HarvestSource.identified_by(sourcelike).select(:id))
     end
 
+    # Fetch the latest attempt for a given {HarvestSource}.
+    #
+    # It will be whichever attempt is created most recently,
+    # irrespective of any mapping or set associations.
+    #
+    # @see .current_for_source
     # @param [String, HarvestSource] sourcelike
     # @return [HarvestAttempt, nil]
     def latest_for_source(sourcelike)
       for_source(sourcelike).latest
     end
 
+    # Iterate over each {HarvestSource}'s latest attempt.
+    #
+    # @yield [attempt]
+    # @yieldparam [HarvestAttempt] attempt
+    # @yieldreturn [void]
+    # @return [void]
     def latest_for_each_source
       return enum_for(__method__) unless block_given?
 

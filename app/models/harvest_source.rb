@@ -40,4 +40,15 @@ class HarvestSource < ApplicationRecord
   def set_by_identifier(identifier)
     call_operation("harvesting.sources.find_set_by_identifier", self, identifier).value_or(nil)
   end
+
+  class << self
+    # @param [HarvestSource, String] identifier
+    # @raise [Harvesting::Sources::Unknown]
+    # @return [HarvestSource]
+    def fetch!(identifier)
+      identified_by(identifier).first!
+    rescue ActiveRecord::RecordNotFound
+      raise Harvesting::Sources::Unknown, identifier
+    end
+  end
 end

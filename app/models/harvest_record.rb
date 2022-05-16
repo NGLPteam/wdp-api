@@ -4,6 +4,7 @@ class HarvestRecord < ApplicationRecord
   include HasHarvestErrors
   include ScopesForIdentifier
   include ScopesForMetadataFormat
+  include TimestampScopes
 
   belongs_to :harvest_attempt, inverse_of: :harvest_records
 
@@ -21,6 +22,9 @@ class HarvestRecord < ApplicationRecord
   has_many_readonly :items, through: :harvest_entities, source: :entity, source_type: "Item"
 
   attribute :skipped, Harvesting::Records::Skipped.to_type, default: proc { {} }
+
+  scope :current, -> { where(harvest_attempt: HarvestAttempt.current) }
+  scope :previous, -> { where(harvest_attempt: HarvestAttempt.previous) }
 
   scope :by_metadata_kind, ->(kind) { where(id: HarvestEntity.by_metadata_kind(kind).select(:harvest_record_id)) }
   scope :filtered_by_schema_version, ->(version) { where(id: HarvestEntity.filtered_by_schema_version(version).select(:harvest_record_id)) }
@@ -41,14 +45,29 @@ class HarvestRecord < ApplicationRecord
     "HarvestRecord[:#{metadata_format}](#{identifier.inspect})"
   end
 
+  # Perform {#prepare_entities!} asynchronously.
+  #
+  # @see Harvesting::PrepareEntitiesFromRecordJob
   # @return [void]
   def asynchronously_prepare_entities!
     Harvesting::PrepareEntitiesFromRecordJob.perform_later self
   end
 
+  # Perform {#reextract!} asynchronously.
+  #
+  # @see Harvesting::ReextractRecordJob
   # @return [void]
-  def asynchronously_upsert_entities!
-    Harvesting::UpsertEntitiesForRecordJob.perform_later self
+  def asynchronously_reextract!
+    Harvesting::ReextractRecordJob.perform_later self
+  end
+
+  # Perform {#upsert_entities!} asynchronously.
+  #
+  # @see Harvesting::UpsertEntitiesForRecordJob
+  # @param [Boolean] reprepare
+  # @return [void]
+  def asynchronously_upsert_entities!(reprepare: false)
+    Harvesting::UpsertEntitiesForRecordJob.perform_later self, reprepare: reprepare
   end
 
   # @see Harvesting::Actions::ParseRecordMetadata
@@ -63,6 +82,17 @@ class HarvestRecord < ApplicationRecord
     call_operation("harvesting.actions.prepare_entities_from_record", self)
   end
 
+  # Re-extract the record based on the defined protocol and metadata format.
+  #
+  # This will also {#prepare_entities! re-prepare} and {#upsert_entities! re-upsert}
+  # the entity, since it's assumed the underlying data might have changed.
+  #
+  # @see Harvesting::Actions::ReextractRecord
+  # @return [Dry::Monads::Result]
+  def reextract!
+    call_operation("harvesting.actions.reextract_record", self)
+  end
+
   # @see Harvesting::Actions::UpsertEntities
   # @param [Boolean] reprepare
   # @return [Dry::Monads::Result]
@@ -71,11 +101,55 @@ class HarvestRecord < ApplicationRecord
   end
 
   class << self
-    # @see HarvestAttempt.latest_for_source
+    # Return the most recent {HarvestRecord} instance from the current attempts
+    # for a given `sourcelike` that is identified by `identifier`.
+    #
+    # @param [String, HarvestSource] sourcelike
+    # @param [String] identifier
+    # @return [HarvestRecord]
+    def fetch_for_source(sourcelike, identifier)
+      for_source_by_identifier(sourcelike, identifier).first
+    end
+
+    # Return the most recent {HarvestRecord} instance from the current attempts
+    # for a given `sourcelike` that is identified by `identifier`.
+    #
+    # Raise an error if one is not found.
+    #
+    # @param [String, HarvestSource] sourcelike
+    # @param [String] identifier
+    # @raise [Harvesting::Records::Unknown]
+    # @return [HarvestRecord]
+    def fetch_for_source!(sourcelike, identifier)
+      for_source_by_identifier(sourcelike, identifier).first!
+    rescue ActiveRecord::RecordNotFound
+      raise Harvesting::Records::Unknown, identifier
+    end
+
+    # @see HarvestAttempt.for_source
+    # @param [String, HarvestSource] sourcelike
+    # @return [ActiveRecord::Relation<HarvestRecord>]
+    def for_source(sourcelike)
+      where(harvest_attempt: HarvestAttempt.for_source(sourcelike))
+    end
+
+    # @api private
+    # @see .fetch_for_source
+    # @see .fetch_for_source!
+    # @param [String, HarvestSource] sourcelike
+    # @param [String] identifier
+    # @return [ActiveRecord::Relation<HarvestRecord>]
+    def for_source_by_identifier(sourcelike, identifier)
+      current_for_source(sourcelike).identified_by(identifier).in_recent_order
+    end
+
+    # @see HarvestAttempt.current_for_source
     # @param [String, HarvestSource] sourcelike
     # @return [ActiveRecord::Relation<HarvestRecord>]
     def latest_for_source(sourcelike)
-      where(harvest_attempt: HarvestAttempt.latest_for_source(sourcelike))
+      where(harvest_attempt: HarvestAttempt.current_for_source(sourcelike))
     end
+
+    alias current_for_source latest_for_source
   end
 end

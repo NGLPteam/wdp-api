@@ -2,11 +2,35 @@
 
 FactoryBot.define do
   factory :harvest_source do
-    name { "A Harvest Source" }
-    description { "A Harvest Source" }
-    base_url { "https://example.com" }
+    transient do
+      link_identifiers_globally { false }
+      max_records { 5000 }
+    end
+
+    sequence(:identifier) do |n|
+      "source-#{n}"
+    end
+
+    sequence(:name) do |n|
+      "Harvest Source #{n}"
+    end
+
+    description { "A Test Harvest Source" }
+    base_url { "https://example.com/oai" }
     protocol { "oai" }
     metadata_format { "mods" }
+
+    mapping_options do
+      {
+        link_identifiers_globally: link_identifiers_globally,
+      }
+    end
+
+    read_options do
+      {
+        max_records: max_records,
+      }
+    end
 
     trait :oai do
       protocol { "oai" }
@@ -16,8 +40,16 @@ FactoryBot.define do
       metadata_format { "jats" }
     end
 
+    trait :mets do
+      metadata_format { "mets" }
+    end
+
     trait :mods do
       metadata_format { "mods" }
+    end
+
+    trait :global_identifiers do
+      link_identifiers_globally { true }
     end
   end
 end

@@ -6,6 +6,10 @@ require_relative "../helpers/test_operation"
 # them along to the wrapped operation. They validate that the operation
 # was a monadic success and do no other processing on the return value.
 RSpec.shared_examples_for "a pass-through operation job" do |operation_path|
+  let(:job_args) do
+    nil
+  end
+
   let(:job_arg) do
     raise "Must set job args"
   end
@@ -14,8 +18,12 @@ RSpec.shared_examples_for "a pass-through operation job" do |operation_path|
     instance_double(TestHelpers::TestOperation, call: operation_result)
   end
 
-  let(:operation_arg) do
-    job_arg
+  let(:operation_args) do
+    if job_args.kind_of?(Array)
+      job_args
+    else
+      [job_arg]
+    end
   end
 
   let(:operation_path) do
@@ -42,7 +50,7 @@ RSpec.shared_examples_for "a pass-through operation job" do |operation_path|
     it "calls the operation as expected" do
       expect_running_the_job.to execute_safely
 
-      expect(operation).to have_received(:call).with(operation_arg).once
+      expect(operation).to have_received(:call).with(*operation_args).once
     end
   end
 
@@ -52,7 +60,7 @@ RSpec.shared_examples_for "a pass-through operation job" do |operation_path|
     it "fails (re-enqueuing the job)" do
       expect_running_the_job.to raise_error Dry::Monads::UnwrapError
 
-      expect(operation).to have_received(:call).with(operation_arg).once
+      expect(operation).to have_received(:call).with(*operation_args).once
     end
   end
 end

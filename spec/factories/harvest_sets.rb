@@ -3,10 +3,13 @@
 FactoryBot.define do
   factory :harvest_set do
     harvest_source { nil }
-    system_slug { "" }
-    identifier { "MyText" }
-    name { "" }
-    description { "MyText" }
-    metadata { "" }
+    sequence(:identifier) do |n|
+      "hs-#{n}"
+    end
+
+    name { Faker::Lorem.word }
+    description { Faker::Lorem.sentence }
+    raw_source { "" }
+    metadata { {} }
   end
 end

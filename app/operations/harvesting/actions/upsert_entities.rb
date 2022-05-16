@@ -6,7 +6,7 @@ module Harvesting
     class UpsertEntities < Harvesting::BaseAction
       include WDPAPI::Deps[
         prepare_entities: "harvesting.actions.prepare_entities_from_record",
-        upsert_entity: "harvesting.entities.upsert",
+        upsert_entities: "harvesting.records.upsert_entities",
       ]
 
       runner do
@@ -33,13 +33,7 @@ module Harvesting
           return Success() if harvest_record.harvest_errors.any?
         end
 
-        harvest_record.harvest_entities.roots.find_each do |root_entity|
-          upsert_entity.call(root_entity).or do |reason|
-            harvest_record.log_harvest_error!(*root_entity.to_failed_upsert(reason))
-          end
-        end
-
-        return Success()
+        upsert_entities.(harvest_record)
       end
     end
   end

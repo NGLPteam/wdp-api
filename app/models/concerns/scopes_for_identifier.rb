@@ -21,7 +21,7 @@ module ScopesForIdentifier
       case identifier_or_record
       when self, AppTypes::UUID
         where(primary_key => identifier_or_record)
-      when String
+      when String, Symbol
         by_identifier(identifier_or_record)
       else
         none
