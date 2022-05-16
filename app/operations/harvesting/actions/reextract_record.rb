@@ -27,17 +27,16 @@ module Harvesting
       # @param [HarvestRecord] harvest_record
       # @return [Dry::Monads::Result]
       def perform(harvest_record)
-        yield reextract.(harvest_record)
+        harvest_record = yield reextract.(harvest_record)
+
+        # if skipped / deleted, this will be blank
+        return Success() if harvest_record.blank?
 
         yield prepare_entities.(harvest_record)
 
-        return Success() if harvest_record.harvest_entities.any?
+        return Success() unless harvest_record.harvest_entities.any?
 
-        harvest_record.harvest_entities.roots.find_each do |root_entity|
-          upsert_entity.call(root_entity).or do |reason|
-            harvest_record.log_harvest_error!(*root_entity.to_failed_upsert(reason))
-          end
-        end
+        upsert_entities.(harvest_record)
       end
     end
   end

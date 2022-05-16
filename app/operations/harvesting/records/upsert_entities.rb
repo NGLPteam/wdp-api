@@ -5,6 +5,7 @@ module Harvesting
     # Upsert root entities for a {HarvestRecord}
     # and merge in errors (if any).
     class UpsertEntities
+      include Dry::Monads[:result]
       include WDPAPI::Deps[
         upsert_entity: "harvesting.entities.upsert",
       ]

@@ -15,6 +15,14 @@ module Harvesting
         response = oai_client.get_record options
 
         Success response.record
+      rescue ::OAI::Exception => e
+        if e.message =~ /given id does not exist/i
+          harvest_attempt.harvest_records.by_identifier(identifier).destroy_all
+
+          return Success(nil)
+        end
+
+        raise e
       end
     end
   end

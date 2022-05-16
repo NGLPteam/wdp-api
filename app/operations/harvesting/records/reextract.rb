@@ -9,7 +9,7 @@ module Harvesting
       # @param [HarvestRecord] harvest_record
       # @return [Dry::Monads::Result]
       def call(harvest_record)
-        _extracted = yield protocol.extract_record.call harvest_record.identifier
+        yield protocol.extract_record.call harvest_record.identifier
 
         harvest_record.reload
 

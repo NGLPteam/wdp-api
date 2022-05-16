@@ -8,7 +8,7 @@ module Harvesting
       # @param [::OAI::Record] oai_record
       # @return [Dry::Monads::String]
       def call(oai_record)
-        Success oai_record.header.identifier
+        Success oai_record&.header&.identifier
       end
     end
   end

@@ -30,7 +30,7 @@ module Harvesting
 
       # @param [OAI::Record] oai_record
       def skip?(oai_record)
-        oai_record.metadata.blank?
+        oai_record.blank? || oai_record.metadata.blank?
       end
     end
   end

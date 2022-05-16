@@ -20,6 +20,8 @@ module Harvesting
       def call(identifier)
         extracted = yield extract identifier
 
+        return Success(nil) if extracted.blank?
+
         protocol.process_record.(extracted)
       end
 
