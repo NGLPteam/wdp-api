@@ -27,7 +27,7 @@ module PilotHarvesting
 
       attribute? :link_identifiers_globally, PilotHarvesting::Types::Bool.default(false)
 
-      attribute? :max_records, PilotHarvesting::Types::Integer.constrained(gt: 0, lteq: 5000).default(5000)
+      attribute? :max_records, Harvesting::Types::MaxRecordCount
 
       attribute? :metadata_format, Harvesting::Types::MetadataFormat.optional
 

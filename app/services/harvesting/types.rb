@@ -27,6 +27,10 @@ module Harvesting
 
     Mapping = Instance(::HarvestMapping)
 
+    MaxRecordCount = Integer.constrained(gt: 0, lteq: Harvesting::ABSOLUTE_MAX_RECORD_COUNT).
+      default(Harvesting::ABSOLUTE_MAX_RECORD_COUNT).
+      fallback(Harvesting::ABSOLUTE_MAX_RECORD_COUNT)
+
     MetadataFormat = Coercible::String.enum("jats", "mets", "mods")
 
     # @see Harvesting::Metadata::Section
