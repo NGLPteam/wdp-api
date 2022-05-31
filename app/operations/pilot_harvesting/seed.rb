@@ -26,7 +26,6 @@ module PilotHarvesting
                 title: "Masters' Theses",
                 url: "https://repository.arizona.edu/oai/request",
                 set_identifier: "col_10150_129651",
-                max_records: 100,
               }
             ]
           }
