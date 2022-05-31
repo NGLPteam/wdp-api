@@ -35,6 +35,7 @@ class HarvestEntity < ApplicationRecord
   scope :with_mods_format, -> { for_metadata_format "mods" }
   scope :with_extracted_properties, ->(props) { where(arel_json_contains(:extracted_properties, props)) }
   scope :with_existing_parent, ->(parent) { where(existing_parent: parent) }
+  scope :with_extracted_scalar_asset, ->(full_path) { where(arel_has_extracted_scalar_asset(full_path)) }
 
   validates :identifier, presence: true, uniqueness: { scope: :harvest_record_id }
   validate :exclusive_parentage!
@@ -90,6 +91,14 @@ class HarvestEntity < ApplicationRecord
     # @return [ActiveRecord::Relation]
     def existing_entity_ids
       with_entity.select(:entity_id)
+    end
+
+    # @param [String] full_path
+    # @return [Arel::Nodes::InfixOperation]
+    def arel_has_extracted_scalar_asset(full_path)
+      expr = arel_quote %{$.scalar[*].full_path ? (@ == #{full_path.to_s.inspect})}
+
+      arel_infix "@?", arel_table[:extracted_assets], expr
     end
   end
 end
