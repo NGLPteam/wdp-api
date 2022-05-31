@@ -4,7 +4,7 @@ FactoryBot.define do
   factory :harvest_source do
     transient do
       link_identifiers_globally { false }
-      max_records { 5000 }
+      max_records { Harvesting::ABSOLUTE_MAX_RECORD_COUNT }
     end
 
     sequence(:identifier) do |n|

@@ -3,7 +3,7 @@
 FactoryBot.define do
   factory :harvest_attempt do
     transient do
-      max_records { 5000 }
+      max_records { Harvesting::ABSOLUTE_MAX_RECORD_COUNT }
     end
 
     association :harvest_source
