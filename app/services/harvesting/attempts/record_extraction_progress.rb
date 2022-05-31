@@ -24,6 +24,18 @@ module Harvesting
       counter :processed, expireat: EXPIRATION
       counter :records, expireat: EXPIRATION
 
+      value :current_cursor, expireat: EXPIRATION
+
+      def can_resume?
+        return false if done? || should_stop?
+
+        current_cursor.value.present?
+      end
+
+      def done?
+        processed.value >= attempt.record_count
+      end
+
       def exceeded_max_records?
         processed.value >= max_record_count
       end
@@ -31,6 +43,8 @@ module Harvesting
       # @return [void]
       def reset!
         counters.each(&:reset)
+
+        current_cursor.clear
       end
 
       def batches!

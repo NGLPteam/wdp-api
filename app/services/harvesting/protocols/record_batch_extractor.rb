@@ -23,11 +23,15 @@ module Harvesting
       alias_method :progress, :record_extraction_progress
       # rubocop:enable Style/Alias
 
-      def call(*)
-        progress.reset!
+      def call(_harvest_attempt, async: false, cursor: nil)
+        progress.reset! if !async || cursor.nil?
 
         wrap_batch_enumeration do
-          enumerate!
+          if async
+            async_enumerate!(cursor)
+          else
+            enumerate!
+          end
         end
 
         Success()
@@ -35,6 +39,27 @@ module Harvesting
 
       private
 
+      # @param [String, nil] initial_cursor
+      # @return [void]
+      def async_enumerate!(initial_cursor)
+        batch = build_batch(cursor: initial_cursor)
+
+        on_initial_batch(batch) if initial_cursor.nil?
+
+        pre_process! batch
+
+        processed = process_batch batch
+
+        post_process! processed
+
+        next_cursor = next_cursor_from batch
+
+        check_cursor! initial_cursor, next_cursor
+
+        ::Harvesting::ExtractRecordsJob.perform_later(harvest_attempt, cursor: next_cursor)
+      end
+
+      # @return [void]
       def enumerate!
         batch = build_batch(cursor: nil)
 
@@ -53,19 +78,25 @@ module Harvesting
 
           next_cursor = next_cursor_from batch
 
-          halt_enumeration if next_cursor.blank?
-
-          if prev_cursor.present? && prev_cursor == next_cursor
-            logger.log("cursor repeating infinitely: #{prev_cursor}")
-
-            halt_enumeration
-          end
-
-          logger.log("next cursor: #{next_cursor.inspect}")
+          check_cursor! prev_cursor, next_cursor
 
           batch = build_batch cursor: next_cursor
 
           prev_cursor = next_cursor
+        end
+      end
+
+      def check_cursor!(prev_cursor, next_cursor)
+        if next_cursor.blank?
+          halt_enumeration
+        elsif prev_cursor.present? && prev_cursor == next_cursor
+          logger.log("cursor repeating infinitely: #{prev_cursor}")
+
+          halt_enumeration
+        else
+          progress.current_cursor = next_cursor
+
+          logger.log("next cursor: #{next_cursor.inspect}")
         end
       end
 

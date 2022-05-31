@@ -12,11 +12,11 @@ module Harvesting
 
       # @param [HarvestAttempt] harvest_attempt
       # @return [Dry::Monads::Success(Integer)] the count of records harvested
-      def call(harvest_attempt)
+      def call(harvest_attempt, async: false, cursor: nil)
         harvest_attempt.clear_harvest_errors!
 
         with_stack do
-          yield protocol.extract_records.(harvest_attempt)
+          yield protocol.extract_records.(harvest_attempt, async: async, cursor: cursor)
         end
 
         Success harvest_attempt.harvest_records.count

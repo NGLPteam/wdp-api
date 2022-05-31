@@ -54,6 +54,13 @@ class HarvestAttempt < ApplicationRecord
     @record_extraction_progress ||= Harvesting::Attempts::RecordExtractionProgress.new self
   end
 
+  # @return [void]
+  def resume!
+    return unless record_extraction_progress.can_resume?
+
+    Harvesting::ExtractRecordsJob.perform_later self, cursor: record_extraction_progress.current_cursor.value
+  end
+
   # @!attribute [r] middleware_parent
   # @return [HarvestMapping, HarvestSource]
   def middleware_parent
