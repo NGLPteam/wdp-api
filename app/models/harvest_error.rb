@@ -2,6 +2,8 @@
 
 # A polymorphic record of harvest errors
 class HarvestError < ApplicationRecord
+  include TimestampScopes
+
   belongs_to :source, polymorphic: true
 
   UNKNOWN_COLLECTIONS = "existing collection with identifier"
