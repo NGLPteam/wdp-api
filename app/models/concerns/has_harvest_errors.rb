@@ -8,6 +8,7 @@ module HasHarvestErrors
 
     scope :sans_harvest_errors, -> { where.not(id: HarvestError.distinct.select(:source_id)) }
     scope :with_harvest_errors, -> { where(id: HarvestError.distinct.select(:source_id)) }
+    scope :with_coded_harvest_errors, ->(code) { where(id: HarvestError.distinct.by_code(code).select(:source_id)) }
   end
 
   # @return [void]
