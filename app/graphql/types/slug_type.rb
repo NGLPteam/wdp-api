@@ -12,6 +12,7 @@ module Types
       def coerce_input(input_value, context)
         case input_value
         when SCHEMA_SLUG_PATTERN then input_value
+        when AnonymousUser::ID then AnonymousUser::ID
         else
           WDPAPI::Container["slugs.decode_id"].call(input_value).value_or(nil)
         end
@@ -20,6 +21,7 @@ module Types
       def coerce_result(ruby_value, context)
         case ruby_value
         when SCHEMA_SLUG_PATTERN then ruby_value
+        when AnonymousUser::ID then AnonymousUser::ID
         else
           WDPAPI::Container["slugs.encode_id"].call(ruby_value).value_or(nil)
         end
