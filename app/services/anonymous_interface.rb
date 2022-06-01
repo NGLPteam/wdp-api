@@ -6,9 +6,12 @@ module AnonymousInterface
 
   include ActiveSupport::Configurable
   include GlobalID::Identification
+  include ImageUploader::Attachment.new(:avatar)
 
   # @see {#allowed_actions}
   ALLOWED_ACTIONS = [].freeze
+
+  ID = "ANONYMOUS"
 
   # @note For anonymous users, this is always an empty array.
   # @see User#allowed_actions
@@ -36,11 +39,21 @@ module AnonymousInterface
     false
   end
 
+  def avatar_data
+    nil
+  end
+
+  def avatar_data=(*); end
+
   # @!attribute [r] created_at
   # @note An anonymous user's created time is always at the time of the request.
   # @return [ActiveSupport::TimeWithZone]
   def created_at
     Time.current
+  end
+
+  def email
+    nil
   end
 
   # @!attribute [r] email_verified
@@ -49,6 +62,8 @@ module AnonymousInterface
   def email_verified
     false
   end
+
+  alias email_verified? email_verified
 
   # @see User#has_global_admin_access?
   def has_global_admin_access?
@@ -64,8 +79,11 @@ module AnonymousInterface
   # A static ID to allow {AnonymousUser} to be encoded as a GlobalID.
   # @return ["ANONYMOUS"]
   def id
-    "ANONYMOUS"
+    ID
   end
+
+  alias system_slug_id id
+  alias system_slug id
 
   # @!attribute [r] name
   # @see User#name
@@ -80,6 +98,12 @@ module AnonymousInterface
   #   unless subsequently overridden.
   def present?
     true
+  end
+
+  # @see RelayNode::IdFromObject
+  # @return [String, nil]
+  def to_encoded_id
+    WDPAPI::Container["relay_node.id_from_object"].(self).value!
   end
 
   # @see IdentitiesController#show
