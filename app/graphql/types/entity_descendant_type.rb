@@ -16,5 +16,10 @@ module Types
     field :scope, Types::EntityScopeType, null: false do
       description "The scope of this entity relative to its ancestor"
     end
+
+    # @return [HierarchicalEntity]
+    def descendant
+      Loaders::AssociationLoader.for(object.class, :descendant).load(object)
+    end
   end
 end

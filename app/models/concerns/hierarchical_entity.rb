@@ -35,7 +35,7 @@ module HierarchicalEntity
     has_many_readonly :entity_breadcrumbs, -> { preload(:crumb).order(depth: :asc) }, as: :entity
     has_many_readonly :entity_breadcrumb_entries, class_name: "EntityBreadcrumb", as: :crumb
 
-    has_many_readonly :entity_descendants, -> { preload(:descendant) }, as: :parent, inverse_of: :parent
+    has_many_readonly :entity_descendants, as: :parent, inverse_of: :parent
 
     has_many_readonly :entity_inherited_orderings, as: :entity, inverse_of: :entity
 
