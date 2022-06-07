@@ -11,7 +11,8 @@ module Schemas
       include WDPAPI::Deps[
         apply: "schemas.instances.apply",
         find_version: "schemas.versions.find",
-        populate_orderings: "schemas.instances.populate_orderings"
+        populate_orderings: "schemas.instances.populate_orderings",
+        sync_entity: "entities.sync",
       ]
       include MonadicPersistence
 
@@ -27,6 +28,8 @@ module Schemas
         yield apply.call entity, new_values unless strategy == :skip
 
         yield populate_orderings.call entity
+
+        yield sync_entity.(entity)
 
         Success entity
       end

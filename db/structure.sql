@@ -3070,6 +3070,93 @@ CREATE TABLE public.communities (
 
 
 --
+-- Name: entities; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.entities (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    entity_type text NOT NULL,
+    entity_id uuid NOT NULL,
+    hierarchical_type text NOT NULL,
+    hierarchical_id uuid NOT NULL,
+    system_slug public.citext NOT NULL,
+    auth_path public.ltree NOT NULL,
+    scope public.ltree NOT NULL,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    depth integer GENERATED ALWAYS AS (public.nlevel(auth_path)) STORED,
+    schema_version_id uuid NOT NULL,
+    link_operator public.link_operator,
+    title public.citext DEFAULT ''::public.citext NOT NULL,
+    properties jsonb DEFAULT '{}'::jsonb NOT NULL,
+    stale_at timestamp without time zone,
+    refreshed_at timestamp without time zone,
+    stale boolean GENERATED ALWAYS AS (((stale_at IS NOT NULL) AND ((refreshed_at IS NULL) OR (refreshed_at < stale_at)))) STORED NOT NULL
+);
+
+
+--
+-- Name: items; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.items (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    collection_id uuid NOT NULL,
+    schema_definition_id uuid NOT NULL,
+    parent_id uuid,
+    identifier public.citext NOT NULL,
+    system_slug public.citext NOT NULL,
+    title public.citext NOT NULL,
+    doi public.citext,
+    summary text DEFAULT ''::text,
+    thumbnail_data jsonb,
+    properties jsonb,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    auth_path public.ltree NOT NULL,
+    hierarchical_depth integer GENERATED ALWAYS AS (public.nlevel(auth_path)) STORED,
+    schema_version_id uuid NOT NULL,
+    hero_image_data jsonb,
+    subtitle text,
+    issn text
+);
+
+
+--
+-- Name: audits_mismatched_entity_schemas; Type: VIEW; Schema: public; Owner: -
+--
+
+CREATE VIEW public.audits_mismatched_entity_schemas AS
+ WITH actual AS (
+         SELECT 'Community'::text AS hierarchical_type,
+            communities.id AS hierarchical_id,
+            communities.schema_version_id
+           FROM public.communities
+        UNION ALL
+         SELECT 'Collection'::text AS hierarchical_type,
+            collections.id AS hierarchical_id,
+            collections.schema_version_id
+           FROM public.collections
+        UNION ALL
+         SELECT 'Item'::text AS hierarchical_type,
+            items.id AS hierarchical_id,
+            items.schema_version_id
+           FROM public.items
+        )
+ SELECT ent.id AS synced_entity_id,
+    (ent.link_operator IS NULL) AS "real",
+    ent.entity_id AS source_id,
+    ent.entity_type AS source_type,
+    ent.hierarchical_id,
+    ent.hierarchical_type,
+    ent.schema_version_id AS synced_schema_version_id,
+    actual.schema_version_id AS actual_schema_version_id
+   FROM (public.entities ent
+     JOIN actual USING (hierarchical_type, hierarchical_id))
+  WHERE (actual.schema_version_id <> ent.schema_version_id);
+
+
+--
 -- Name: collection_authorizations; Type: MATERIALIZED VIEW; Schema: public; Owner: -
 --
 
@@ -3269,32 +3356,6 @@ CREATE TABLE public.contributors (
     sort_name public.citext GENERATED ALWAYS AS (public.derive_contributor_sort_name(kind, properties)) STORED,
     affiliation text GENERATED ALWAYS AS (public.derive_contributor_affiliation(kind, properties)) STORED,
     orcid public.citext
-);
-
-
---
--- Name: entities; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.entities (
-    id uuid DEFAULT gen_random_uuid() NOT NULL,
-    entity_type text NOT NULL,
-    entity_id uuid NOT NULL,
-    hierarchical_type text NOT NULL,
-    hierarchical_id uuid NOT NULL,
-    system_slug public.citext NOT NULL,
-    auth_path public.ltree NOT NULL,
-    scope public.ltree NOT NULL,
-    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    depth integer GENERATED ALWAYS AS (public.nlevel(auth_path)) STORED,
-    schema_version_id uuid NOT NULL,
-    link_operator public.link_operator,
-    title public.citext DEFAULT ''::public.citext NOT NULL,
-    properties jsonb DEFAULT '{}'::jsonb NOT NULL,
-    stale_at timestamp without time zone,
-    refreshed_at timestamp without time zone,
-    stale boolean GENERATED ALWAYS AS (((stale_at IS NOT NULL) AND ((refreshed_at IS NULL) OR (refreshed_at < stale_at)))) STORED NOT NULL
 );
 
 
@@ -3896,33 +3957,6 @@ CREATE TABLE public.initial_ordering_selections (
     ordering_id uuid NOT NULL,
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
-);
-
-
---
--- Name: items; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.items (
-    id uuid DEFAULT gen_random_uuid() NOT NULL,
-    collection_id uuid NOT NULL,
-    schema_definition_id uuid NOT NULL,
-    parent_id uuid,
-    identifier public.citext NOT NULL,
-    system_slug public.citext NOT NULL,
-    title public.citext NOT NULL,
-    doi public.citext,
-    summary text DEFAULT ''::text,
-    thumbnail_data jsonb,
-    properties jsonb,
-    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    auth_path public.ltree NOT NULL,
-    hierarchical_depth integer GENERATED ALWAYS AS (public.nlevel(auth_path)) STORED,
-    schema_version_id uuid NOT NULL,
-    hero_image_data jsonb,
-    subtitle text,
-    issn text
 );
 
 
@@ -6053,6 +6087,13 @@ CREATE UNIQUE INDEX index_collections_unique_identifier ON public.collections US
 
 
 --
+-- Name: index_collections_versioned_ids; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_collections_versioned_ids ON public.collections USING btree (id, schema_version_id);
+
+
+--
 -- Name: index_communities_on_auth_path; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -6092,6 +6133,13 @@ CREATE INDEX index_communities_on_schema_version_id ON public.communities USING 
 --
 
 CREATE UNIQUE INDEX index_communities_on_system_slug ON public.communities USING btree (system_slug);
+
+
+--
+-- Name: index_communities_versioned_ids; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_communities_versioned_ids ON public.communities USING btree (id, schema_version_id);
 
 
 --
@@ -7053,6 +7101,13 @@ CREATE INDEX index_items_related_by_schema ON public.items USING btree (id, sche
 --
 
 CREATE UNIQUE INDEX index_items_unique_identifier ON public.items USING btree (identifier, collection_id, parent_id);
+
+
+--
+-- Name: index_items_versioned_ids; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_items_versioned_ids ON public.items USING btree (id, schema_version_id);
 
 
 --
@@ -10670,6 +10725,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20220328194136'),
 ('20220403150025'),
 ('20220405205111'),
-('20220405210816');
+('20220405210816'),
+('20220607175341');
 
 
