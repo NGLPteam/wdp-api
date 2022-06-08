@@ -6,11 +6,11 @@ production:
   :concurrency: <%= ENV.fetch("SIDEKIQ_CONCURRENCY") { 10 } %>
 :queues:
   - default
+  - mailers
   - permissions
-  - harvesting
   - processing
   - maintenance
-  - mailers
   - entities
   - hierarchies
   - orderings
+  - harvesting
