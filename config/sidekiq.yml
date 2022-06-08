@@ -11,4 +11,6 @@ production:
   - processing
   - maintenance
   - mailers
+  - entities
+  - hierarchies
   - orderings

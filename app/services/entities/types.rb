@@ -26,11 +26,17 @@ module Entities
 
     EntityType = String.enum(*ENTITY_TYPES)
 
+    Entities = Array.of(Entity)
+
     HierarchicalType = String.enum(*HIERARCHICAL_TYPES)
 
     Scope = EntityScope | ::Links::Types::Scope
 
     Slug = String.constrained(format: SLUG_FORMAT)
+
+    Syncable = Instance(::SyncsEntities)
+
+    Syncables = Array.of(Syncable)
 
     # @see ::Types::EntityVisibilityFilterType
     Visibility = Symbol.enum(:all, :visible, :hidden).fallback(:visible)

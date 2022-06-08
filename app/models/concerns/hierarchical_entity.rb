@@ -240,6 +240,16 @@ module HierarchicalEntity
     call_operation("entities.prune_unharvested_journals", source: self)
   end
 
+  # @see Entities::CalculateAncestors
+  monadic_operation! def calculate_ancestors
+    call_operation("entities.calculate_ancestors", self)
+  end
+
+  # @see Entities::SyncHierarchies
+  monadic_operation! def sync_hierarchies
+    call_operation("entities.sync_hierarchies", self)
+  end
+
   # @see Schemas::Instances::PopulateOrderings
   # @return [Dry::Monads::Result]
   monadic_operation! def populate_orderings

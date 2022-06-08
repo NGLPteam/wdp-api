@@ -26,6 +26,8 @@ require_relative Rails.root.join("lib", "global_types", "version_requirement")
 
 I18n.backend.eager_load!
 
+Oj.optimize_rails
+
 [Dry::Schema, Dry::Validation::Contract].each do |lib|
   lib.config.messages.backend = :i18n
   lib.config.messages.load_paths << Rails.root.join("config", "locales", "en.yml").realpath

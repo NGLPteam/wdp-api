@@ -16,6 +16,8 @@ class EntityLink < ApplicationRecord
   belongs_to :target, polymorphic: true
   belongs_to :schema_version, inverse_of: :entity_links
 
+  has_one :schema_definition, through: :schema_version
+
   has_many :ordering_entries, as: :entity, dependent: :destroy
 
   belongs_to :source_community, optional: true

@@ -13,8 +13,8 @@ RSpec.describe "Query.collection", type: :request, disable_ordering_refresh: tru
 
   let!(:article) { FactoryBot.create :item, collection: issue, schema: "nglp:journal_article" }
 
-  def make_default_request!
-    make_graphql_request! query, token: token, variables: graphql_variables
+  before do
+    perform_enqueued_jobs
   end
 
   context "when fetching ancestors and children of a specific type" do
@@ -81,9 +81,9 @@ RSpec.describe "Query.collection", type: :request, disable_ordering_refresh: tru
     end
 
     it "finds the right relatives" do
-      make_default_request!
+      expect_the_default_request.to execute_safely
 
-      expect_graphql_response_data expected_shape, decamelize: true
+      expect_graphql_data expected_shape
     end
   end
 
@@ -117,9 +117,9 @@ RSpec.describe "Query.collection", type: :request, disable_ordering_refresh: tru
     end
 
     it "calculates the right ranks" do
-      make_default_request!
+      expect_the_default_request.to execute_safely
 
-      expect_graphql_response_data expected_shape, decamelize: true
+      expect_graphql_data expected_shape
     end
   end
 end

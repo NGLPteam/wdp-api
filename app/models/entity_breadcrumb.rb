@@ -5,6 +5,7 @@
 # and {Community}.
 class EntityBreadcrumb < ApplicationRecord
   include FiltersBySchemaVersion
+  include ScopesForEntity
   include View
 
   self.primary_key = %i[entity_id crumb_id]
@@ -15,4 +16,14 @@ class EntityBreadcrumb < ApplicationRecord
 
   belongs_to :schema_version
   has_one :schema_definition, through: :schema_version
+
+  class << self
+    def for_ancestor_of_type(schema, *entities)
+      entities.flatten!
+
+      query = for_entity(entities).filtered_by_schema_version(schema)
+
+      query.distinct_on(:entity_id).order(entity_id: :asc, depth: :asc)
+    end
+  end
 end
