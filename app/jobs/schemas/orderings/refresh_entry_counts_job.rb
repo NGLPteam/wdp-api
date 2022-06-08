@@ -11,7 +11,7 @@ module Schemas
     #
     # @see Schemas::Orderings::CalculateInitialJob
     class RefreshEntryCountsJob < ApplicationJob
-      queue_as :orderings
+      queue_as :maintenance
 
       # @return [void]
       def perform

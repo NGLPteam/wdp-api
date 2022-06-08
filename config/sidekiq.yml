@@ -10,7 +10,7 @@ production:
   - permissions
   - processing
   - maintenance
-  - entities
   - hierarchies
+  - entities
   - orderings
   - harvesting
