@@ -859,6 +859,23 @@ $_$;
 
 
 --
+-- Name: ltree_generations(public.ltree, public.ltree, public.ltree); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.ltree_generations(public.ltree, public.ltree, public.ltree) RETURNS bigint
+    LANGUAGE sql IMMUTABLE STRICT PARALLEL SAFE
+    AS $_$
+SELECT nlevel(
+  subltree(
+    $1,
+    index($1, $2),
+    index($1, $3, index($1, $2))
+  )
+);
+$_$;
+
+
+--
 -- Name: parse_semver(text); Type: FUNCTION; Schema: public; Owner: -
 --
 
@@ -3426,27 +3443,53 @@ CREATE TABLE public.entity_composed_texts (
 
 
 --
+-- Name: entity_hierarchies; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.entity_hierarchies (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    ancestor_type character varying NOT NULL,
+    ancestor_id uuid NOT NULL,
+    descendant_type character varying NOT NULL,
+    descendant_id uuid NOT NULL,
+    hierarchical_type character varying NOT NULL,
+    hierarchical_id uuid NOT NULL,
+    schema_definition_id uuid NOT NULL,
+    schema_version_id uuid NOT NULL,
+    link_operator public.link_operator,
+    ancestor_scope public.ltree NOT NULL,
+    descendant_scope public.ltree NOT NULL,
+    auth_path public.ltree NOT NULL,
+    ancestor_slug public.ltree NOT NULL,
+    descendant_slug public.ltree NOT NULL,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    depth bigint GENERATED ALWAYS AS (public.nlevel(auth_path)) STORED NOT NULL,
+    generations bigint GENERATED ALWAYS AS (public.ltree_generations(auth_path, ancestor_slug, descendant_slug)) STORED NOT NULL,
+    title text NOT NULL
+);
+
+
+--
 -- Name: entity_descendants; Type: VIEW; Schema: public; Owner: -
 --
 
 CREATE VIEW public.entity_descendants AS
- SELECT ent.entity_type AS parent_type,
-    ent.entity_id AS parent_id,
-    descendant.hierarchical_type AS descendant_type,
-    descendant.hierarchical_id AS descendant_id,
-    descendant.id AS entity_reference_id,
-    descendant.schema_version_id,
-    descendant.link_operator,
-    descendant.auth_path,
-    descendant.scope,
-    descendant.title,
-    descendant.depth AS actual_depth,
-    (descendant.depth - ent.depth) AS relative_depth,
-    descendant.created_at,
-    descendant.updated_at
-   FROM (public.entities ent
-     JOIN public.entities descendant ON (((ent.auth_path OPERATOR(public.<>) descendant.auth_path) AND (ent.auth_path OPERATOR(public.@>) descendant.auth_path))))
-  WHERE (ent.link_operator IS NULL);
+ SELECT hier.ancestor_type AS parent_type,
+    hier.ancestor_id AS parent_id,
+    hier.hierarchical_type AS descendant_type,
+    hier.hierarchical_id AS descendant_id,
+    hier.schema_version_id,
+    hier.link_operator,
+    hier.auth_path,
+    hier.descendant_scope AS scope,
+    hier.title,
+    hier.depth AS actual_depth,
+    hier.generations AS relative_depth,
+    hier.created_at,
+    hier.updated_at
+   FROM public.entity_hierarchies hier
+  WHERE (hier.ancestor_id <> hier.descendant_id);
 
 
 --
@@ -3840,17 +3883,15 @@ CREATE TABLE public.harvest_sources (
 --
 
 CREATE VIEW public.hierarchical_schema_ranks AS
- SELECT ent.entity_type,
-    ent.entity_id,
-    sv.schema_definition_id,
-    count(DISTINCT crumb.schema_version_id) AS distinct_version_count,
+ SELECT hier.ancestor_type AS entity_type,
+    hier.ancestor_id AS entity_id,
+    hier.schema_definition_id,
+    count(DISTINCT hier.schema_version_id) AS distinct_version_count,
     count(*) AS schema_count,
-    mode() WITHIN GROUP (ORDER BY crumb.depth) AS schema_rank
-   FROM ((public.entities ent
-     JOIN public.entities crumb ON (((ent.auth_path OPERATOR(public.@>) crumb.auth_path) AND (crumb.entity_id <> ent.entity_id) AND (crumb.link_operator IS NULL))))
-     JOIN public.schema_versions sv ON ((crumb.schema_version_id = sv.id)))
-  GROUP BY ent.entity_type, ent.entity_id, sv.schema_definition_id
-  ORDER BY (mode() WITHIN GROUP (ORDER BY crumb.depth)), (count(*)) DESC;
+    mode() WITHIN GROUP (ORDER BY hier.depth) AS schema_rank
+   FROM public.entity_hierarchies hier
+  WHERE (hier.ancestor_id <> hier.descendant_id)
+  GROUP BY hier.ancestor_type, hier.ancestor_id, hier.schema_definition_id;
 
 
 --
@@ -3858,16 +3899,15 @@ CREATE VIEW public.hierarchical_schema_ranks AS
 --
 
 CREATE VIEW public.hierarchical_schema_version_ranks AS
- SELECT ent.entity_type,
-    ent.entity_id,
-    sv.schema_definition_id,
-    crumb.schema_version_id,
+ SELECT hier.ancestor_type AS entity_type,
+    hier.ancestor_id AS entity_id,
+    hier.schema_definition_id,
+    hier.schema_version_id,
     count(*) AS schema_count,
-    mode() WITHIN GROUP (ORDER BY crumb.depth) AS schema_rank
-   FROM ((public.entities ent
-     JOIN public.entities crumb ON (((ent.auth_path OPERATOR(public.@>) crumb.auth_path) AND (crumb.entity_id <> ent.entity_id) AND (crumb.link_operator IS NULL))))
-     JOIN public.schema_versions sv ON ((crumb.schema_version_id = sv.id)))
-  GROUP BY ent.entity_type, ent.entity_id, sv.schema_definition_id, crumb.schema_version_id;
+    mode() WITHIN GROUP (ORDER BY hier.depth) AS schema_rank
+   FROM public.entity_hierarchies hier
+  WHERE (hier.ancestor_id <> hier.descendant_id)
+  GROUP BY hier.ancestor_type, hier.ancestor_id, hier.schema_definition_id, hier.schema_version_id;
 
 
 --
@@ -5080,6 +5120,14 @@ ALTER TABLE ONLY public.entities
 
 ALTER TABLE ONLY public.entity_composed_texts
     ADD CONSTRAINT entity_composed_texts_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: entity_hierarchies entity_hierarchies_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.entity_hierarchies
+    ADD CONSTRAINT entity_hierarchies_pkey PRIMARY KEY (id);
 
 
 --
@@ -6353,6 +6401,69 @@ CREATE UNIQUE INDEX index_entity_composed_texts_uniqueness ON public.entity_comp
 
 
 --
+-- Name: index_entity_hierarchies_by_descendant_title_asc; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_entity_hierarchies_by_descendant_title_asc ON public.entity_hierarchies USING btree (title, ancestor_type, ancestor_id);
+
+
+--
+-- Name: index_entity_hierarchies_by_descendant_title_desc; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_entity_hierarchies_by_descendant_title_desc ON public.entity_hierarchies USING btree (title DESC, ancestor_type, ancestor_id);
+
+
+--
+-- Name: index_entity_hierarchies_on_ancestor; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_entity_hierarchies_on_ancestor ON public.entity_hierarchies USING btree (ancestor_type, ancestor_id);
+
+
+--
+-- Name: index_entity_hierarchies_on_descendant; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_entity_hierarchies_on_descendant ON public.entity_hierarchies USING btree (descendant_type, descendant_id);
+
+
+--
+-- Name: index_entity_hierarchies_on_hierarchical; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_entity_hierarchies_on_hierarchical ON public.entity_hierarchies USING btree (hierarchical_type, hierarchical_id);
+
+
+--
+-- Name: index_entity_hierarchies_on_schema_definition_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_entity_hierarchies_on_schema_definition_id ON public.entity_hierarchies USING btree (schema_definition_id);
+
+
+--
+-- Name: index_entity_hierarchies_on_schema_version_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_entity_hierarchies_on_schema_version_id ON public.entity_hierarchies USING btree (schema_version_id);
+
+
+--
+-- Name: index_entity_hierarchies_ranking; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_entity_hierarchies_ranking ON public.entity_hierarchies USING btree (ancestor_type, ancestor_id, schema_definition_id, schema_version_id, depth) WHERE (ancestor_id <> descendant_id);
+
+
+--
+-- Name: index_entity_hierarchies_uniqueness; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_entity_hierarchies_uniqueness ON public.entity_hierarchies USING btree (ancestor_id, descendant_id);
+
+
+--
 -- Name: index_entity_links_on_auth_path; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -7164,6 +7275,20 @@ CREATE INDEX index_named_variable_dates_on_schema_version_property_id ON public.
 --
 
 CREATE UNIQUE INDEX index_named_variable_dates_uniqueness ON public.named_variable_dates USING btree (entity_type, entity_id, path);
+
+
+--
+-- Name: index_nvd_join_asc; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_nvd_join_asc ON public.named_variable_dates USING btree (entity_type, entity_id, path, value, "precision");
+
+
+--
+-- Name: index_nvd_join_desc; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_nvd_join_desc ON public.named_variable_dates USING btree (entity_type, entity_id, path, value DESC NULLS LAST, "precision" DESC NULLS LAST);
 
 
 --
@@ -9929,6 +10054,14 @@ ALTER TABLE ONLY public.community_memberships
 
 
 --
+-- Name: entity_hierarchies fk_rails_352d828388; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.entity_hierarchies
+    ADD CONSTRAINT fk_rails_352d828388 FOREIGN KEY (schema_version_id) REFERENCES public.schema_versions(id) ON DELETE CASCADE;
+
+
+--
 -- Name: items fk_rails_382f073cd8; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -10337,6 +10470,14 @@ ALTER TABLE ONLY public.orderings
 
 
 --
+-- Name: entity_hierarchies fk_rails_c2be56f2ad; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.entity_hierarchies
+    ADD CONSTRAINT fk_rails_c2be56f2ad FOREIGN KEY (schema_definition_id) REFERENCES public.schema_definitions(id) ON DELETE CASCADE;
+
+
+--
 -- Name: harvest_contributors fk_rails_cbaeac6363; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -10726,6 +10867,11 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20220403150025'),
 ('20220405205111'),
 ('20220405210816'),
-('20220607175341');
+('20220607175341'),
+('20220607211431'),
+('20220607230041'),
+('20220607230810'),
+('20220608001957'),
+('20220608003418');
 
 

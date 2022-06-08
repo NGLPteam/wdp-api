@@ -27,11 +27,11 @@ module Resolvers
     private
 
     def fetch_count
-      fetch_results.count_from_subquery
+      fetch_results.count_from_subquery(strip_order: true)
     end
 
     def fetch_unfiltered_count
-      unfiltered_scope.count_from_subquery
+      unfiltered_scope.count_from_subquery(strip_order: true)
     end
   end
 end

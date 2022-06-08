@@ -29,7 +29,14 @@ module Types
       method: :schema_slug
 
     field :version_ranks, [Types::HierarchicalSchemaVersionRankType, { null: false }], null: false,
-      description: "A reference to the schema versions from this ranking",
-      method: :hierarchical_schema_version_ranks
+      description: "A reference to the schema versions from this ranking"
+
+    def schema_definition
+      Loaders::AssociationLoader.for(object.class, :schema_definition).load(object)
+    end
+
+    def version_ranks
+      Loaders::AssociationLoader.for(object.class, :hierarchical_schema_version_ranks).load(object)
+    end
   end
 end

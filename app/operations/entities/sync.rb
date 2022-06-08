@@ -22,6 +22,8 @@ module Entities
 
       yield maybe_upsert_visibility! source
 
+      Entities::SyncHierarchiesJob.perform_later source
+
       calculate_authorizing.call auth_path: source.entity_auth_path
     end
 

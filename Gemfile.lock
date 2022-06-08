@@ -390,6 +390,7 @@ GEM
       faraday_middleware
     oily_png (1.2.1)
       chunky_png (~> 1.3.7)
+    oj (3.13.14)
     openid_connect (1.3.0)
       activemodel
       attr_required (>= 1.0.0)
@@ -696,6 +697,7 @@ DEPENDENCIES
   nokogiri (~> 1.13.2)
   oai (~> 1.1.0)
   oily_png (~> 1.2.1)
+  oj (= 3.13.14)
   openid_connect
   pg (~> 1.2.3)
   pg_query (~> 2.1.3)

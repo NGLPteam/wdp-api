@@ -11,8 +11,9 @@ module ScopesForEntity
   module ClassMethods
     def recognized_entity_entity?(value)
       case value
-      when HierarchicalEntity then true
-      when AppTypes::Array.of(AppTypes.Instance(HierarchicalEntity)) then true
+      when HierarchicalEntity, Entities::Types::Entities then true
+      when ActiveRecord::Relation
+        value.model < ::HierarchicalEntity
       else
         false
       end

@@ -6,9 +6,14 @@ module CountFromSubquery
   extend ActiveSupport::Concern
 
   class_methods do
+    # @param [Boolean] strip_order
     # @return [Integer]
-    def count_from_subquery
-      unscoped.from(all).count
+    def count_from_subquery(strip_order: false)
+      subquery = all
+
+      subquery = subquery.reorder(nil) if strip_order
+
+      unscoped.from(subquery).count
     end
   end
 end

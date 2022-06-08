@@ -10,4 +10,9 @@ namespace :entities do
   task reprocess_derivatives: :environment do
     Entities::ReprocessAllDerivativesJob.perform_later
   end
+
+  desc "Synchronize all"
+  task sync_all: :environment do
+    Entities::SynchronizeAllJob.perform_later
+  end
 end

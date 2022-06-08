@@ -49,7 +49,7 @@ module Types
 
     # @return [Integer]
     def total_count
-      object.items.count_from_subquery
+      object.items.count_from_subquery(strip_order: true)
     end
 
     # @return [Integer]

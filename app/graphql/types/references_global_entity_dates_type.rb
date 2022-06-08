@@ -11,7 +11,20 @@ module Types
     of an entity.
     TEXT
 
-    field :published, Types::VariablePrecisionDateType, null: false,
-      description: "The date this entity was published"
+    field :published, Types::VariablePrecisionDateType, null: false do
+      description "The date this entity was published"
+    end
+
+    def load_named_variable_dates
+      Loaders::AssociationLoader.for(object.class, :named_variable_dates)
+    end
+
+    def published
+      load_named_variable_dates.then do
+        Promise.resolve object.published
+      end.then do |value|
+        VariablePrecisionDate.parse value
+      end
+    end
   end
 end

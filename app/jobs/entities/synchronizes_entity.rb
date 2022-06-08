@@ -13,7 +13,7 @@ module Entities
     included do
       extend Dry::Core::ClassAttributes
 
-      unique :until_and_while_executing, lock_ttl: 3.hours, on_conflict: :log
+      unique :while_executing, lock_ttl: 3.hours, on_conflict: :log
 
       # @!scope class
       # @!attribute [r] model
@@ -38,7 +38,7 @@ module Entities
     # @param [SyncsEntity] entity
     # @return [void]
     def each_iteration(entity)
-      call_operation! "entities.sync", entity
+      Entities::SynchronizeJob.perform_later entity
     end
 
     class_methods do

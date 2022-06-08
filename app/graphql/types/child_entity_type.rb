@@ -78,7 +78,7 @@ module Types
     # @param [String] schema
     # @return [HierarchicalEntity, nil]
     def ancestor_of_type(schema:)
-      object.ancestor_of_type(schema)
+      Loaders::AncestorOfTypeLoader.for(schema).load(object)
     end
 
     # @return [Promise(Community)]
