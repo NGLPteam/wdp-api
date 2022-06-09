@@ -4757,6 +4757,36 @@ CREATE VIEW public.pending_role_assignments AS
 
 
 --
+-- Name: pghero_query_stats; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.pghero_query_stats (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    database text,
+    "user" text,
+    query text,
+    query_hash bigint,
+    total_time double precision,
+    calls bigint,
+    captured_at timestamp without time zone
+);
+
+
+--
+-- Name: pghero_space_stats; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.pghero_space_stats (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    database text,
+    schema text,
+    relation text,
+    size bigint,
+    captured_at timestamp without time zone
+);
+
+
+--
 -- Name: primary_role_assignments; Type: VIEW; Schema: public; Owner: -
 --
 
@@ -5536,6 +5566,22 @@ ALTER TABLE ONLY public.pages
 
 ALTER TABLE ONLY public.permissions
     ADD CONSTRAINT permissions_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: pghero_query_stats pghero_query_stats_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.pghero_query_stats
+    ADD CONSTRAINT pghero_query_stats_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: pghero_space_stats pghero_space_stats_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.pghero_space_stats
+    ADD CONSTRAINT pghero_space_stats_pkey PRIMARY KEY (id);
 
 
 --
@@ -7569,6 +7615,20 @@ CREATE INDEX index_permissions_on_scope ON public.permissions USING btree (scope
 --
 
 CREATE UNIQUE INDEX index_permissions_uniqueness ON public.permissions USING btree (path);
+
+
+--
+-- Name: index_pghero_query_stats_on_database_and_captured_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_pghero_query_stats_on_database_and_captured_at ON public.pghero_query_stats USING btree (database, captured_at);
+
+
+--
+-- Name: index_pghero_space_stats_on_database_and_captured_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_pghero_space_stats_on_database_and_captured_at ON public.pghero_space_stats USING btree (database, captured_at);
 
 
 --
@@ -10872,6 +10932,8 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20220607230041'),
 ('20220607230810'),
 ('20220608001957'),
-('20220608003418');
+('20220608003418'),
+('20220609161857'),
+('20220609161910');
 
 

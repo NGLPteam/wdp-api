@@ -1,9 +1,11 @@
 # frozen_string_literal: true
 
 Rails.application.routes.draw do
-  mount WDPAPI::TusUploader, at: "/files"
+  mount Middleware::TusUploader, at: "/files"
 
-  mount WDPAPI::SidekiqFrontend, at: "/sekrit/sidekiq"
+  mount Middleware::PGHeroFrontend, at: "/sekrit/pghero"
+
+  mount Middleware::SidekiqFrontend, at: "/sekrit/sidekiq"
 
   resource :identity, path: "whoami", only: %i[show]
 
