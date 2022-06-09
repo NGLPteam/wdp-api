@@ -38,6 +38,7 @@ abort("The Rails environment is running in production mode!") if Rails.env.produ
 
 require "rspec/rails"
 require "rspec/json_expectations"
+require "test_prof/recipes/rspec/let_it_be"
 require "dry/container/stub"
 require "pundit/rspec"
 require "webmock/rspec"
