@@ -17,7 +17,7 @@ module Schemas
       include Dry::Monads[:do, :result]
       include MonadicPersistence
       include WDPAPI::Deps[
-        calculate_edge: "schemas.edges.calculate"
+        build_child_attributes: "schemas.edges.build_child_attributes",
       ]
 
       # @param [HasSchemaDefinition] parent
@@ -27,9 +27,7 @@ module Schemas
       def call(parent, child)
         yield valid_instances! parent, child
 
-        edge = yield calculate_edge.call parent.schema_kind, child.schema_kind
-
-        attributes = Schemas::Edges::ChildAttributesBuilder.new(parent, edge).call
+        attributes = yield build_child_attributes.(parent, child)
 
         child.assign_attributes attributes
 
