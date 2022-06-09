@@ -1,13 +1,17 @@
 # frozen_string_literal: true
 
+require_relative "../helpers/test_operation"
+
 RSpec.shared_context "sans entity sync" do
-  let(:fake_entity_sync) do
-    proc { Dry::Monads.Success() }
+  def fake_entity_sync
+    TestHelpers::TestOperation.new
   end
 
-  around do |example|
-    WDPAPI::Container.stub("entities.sync", fake_entity_sync) do
-      example.run
-    end
+  before(:all) do
+    WDPAPI::Container.stub("entities.sync", fake_entity_sync)
+  end
+
+  after(:all) do
+    WDPAPI::Container.unstub("entities.sync")
   end
 end

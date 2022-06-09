@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative "../helpers/test_operation"
+
 RSpec.shared_context "skipped orderings by schema" do |*declarations|
   around do |example|
     declarations.flatten!
@@ -13,26 +15,19 @@ RSpec.shared_context "skipped orderings by schema" do |*declarations|
 end
 
 RSpec.shared_context "disable ordering refreshes" do
-  around do |example|
-    Schemas::Orderings.with_disabled_refresh do
-      example.run
-    end
-  end
-end
-
-RSpec.shared_context "default skipped orderings" do
-  let(:default_skipped_schemas) do
-    [SchemaVersion["default:community:1.0.0"]]
+  before(:all) do
+    WDPAPI::Container.stub("schemas.instances.refresh_orderings", stubbed_ordering_refresh)
   end
 
-  around do |example|
-    Schemas::Orderings.skip_refresh_for(*default_skipped_schemas) do
-      example.run
-    end
+  def stubbed_ordering_refresh
+    TestHelpers::TestOperation.new
+  end
+
+  after(:all) do
+    WDPAPI::Container.unstub("schemas.instances.refresh_orderings")
   end
 end
 
 RSpec.configure do |config|
-  config.include_context "default skipped orderings"
   config.include_context "disable ordering refreshes", disable_ordering_refreshes: true
 end

@@ -110,6 +110,8 @@ gem "factory_bot_rails", "~> 6.2.0"
 group :development, :test do
   gem "rspec", "~> 3.10.0"
   gem "rspec-rails", "~> 5.0.1"
+  gem "ruby-prof", "~> 1.4.3", require: false
+  gem "stackprof", "~> 0.2.19", require: false
   gem "yard", "~> 0.9.27"
   gem "yard-activerecord", "~> 0.0.16"
   gem "yard-activesupport-concern", "~> 0.0.1"
@@ -128,6 +130,7 @@ group :test do
   gem "rspec-collection_matchers", "~> 1.2.0"
   gem "rspec-json_expectations", "~> 2.2.0"
   gem "simplecov", "~> 0.21.2", require: false
+  gem "test-prof", "~> 1.0"
   gem "timecop", "~> 0.9.4"
   gem "webmock", "3.12.2"
 end
