@@ -13,6 +13,7 @@ gem "active_record_distinct_on", "~> 1.3.0"
 gem "closure_tree", "~> 7.2.0"
 gem "composite_primary_keys", "13.0.0"
 gem "frozen_record"
+gem "pghero", "~> 2.8.3"
 gem "pg_query", "~> 2.1.3"
 gem "retryable", "~> 3.0.5"
 gem "scenic", "~> 1.5.4"
@@ -49,7 +50,8 @@ gem "dry-transformer", "~> 0.1.1"
 gem "dry-types", "~> 1.5.1"
 gem "dry-validation", "~> 1.8.0"
 
-# Keycloak
+# Keycloak / Auth
+gem "bcrypt", "~> 3.1.18"
 gem "keycloak-admin", "~> 0.7.9"
 gem "keycloak_rack", "1.1.1"
 

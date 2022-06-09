@@ -37,4 +37,22 @@ Zhong.schedule do
       Schemas::Orderings::RefreshEntryCountsJob.perform_later
     end
   end
+
+  category "system" do
+    every 5.minutes, "collect_pg_hero_query_stats" do
+      System::CollectPgHeroQueryStatsJob.perform_later
+    end
+
+    every 1.day, "collect_pg_hero_space_stats" do
+      System::CollectPgHeroSpaceStatsJob.perform_later
+    end
+
+    every 1.week, "clean_pg_hero_query_stats", at: ["sat 22:45"] do
+      System::CollectPgHeroQueryStatsJob.perform_later
+    end
+
+    every 1.week, "clean_pg_hero_space_stats", at: ["sat 22:45"] do
+      System::CollectPgHeroSpaceStatsJob.perform_later
+    end
+  end
 end

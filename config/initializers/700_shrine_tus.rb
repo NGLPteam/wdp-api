@@ -5,6 +5,8 @@ require "shrine/storage/s3"
 require "shrine/storage/url"
 require "tus/storage/s3"
 
+require Rails.root.join("lib", "middleware", "tus_uploader")
+
 aws_credentials = S3Config.to_h
 
 bucket = UploadConfig.bucket
@@ -69,59 +71,4 @@ end
 
 Shrine::Attacher.destroy_block do
   Processing::DestroyAttachmentJob.perform_later(self.class.name, data)
-end
-
-class UploadAuthMiddleware
-  include Dry::Matcher.for(:authorize, with: Dry::Matcher::ResultMatcher)
-  include Dry::Monads[:result]
-
-  def initialize(app)
-    @app = app
-  end
-
-  def call(env)
-    req = Rack::Request.new(env)
-
-    return @app.call(env) if req.options?
-
-    authorize(env) do |m|
-      m.success do
-        @app.call(env)
-      end
-
-      m.failure do
-        build_forbidden_response
-      end
-    end
-  end
-
-  private
-
-  def authorize(env)
-    WDPAPI::Container["uploads.authorize"].call(env)
-  end
-
-  def build_forbidden_response
-    headers = {
-      "Content-Type" => "application/json"
-    }
-
-    body = {
-      errors: [
-        { message: "Not Authorized For Uploads" }
-      ]
-    }
-
-    [
-      403,
-      headers,
-      [body.to_json]
-    ]
-  end
-end
-
-WDPAPI::TusUploader = Rack::Builder.app do
-  use UploadAuthMiddleware
-
-  run Tus::Server
 end
