@@ -971,6 +971,10 @@ CREATE TABLE public.schema_versions (
     declaration text GENERATED ALWAYS AS ((((((configuration ->> 'namespace'::text) || ':'::text) || (configuration ->> 'identifier'::text)) || ':'::text) || (configuration ->> 'version'::text))) STORED NOT NULL,
     parsed public.parsed_semver GENERATED ALWAYS AS (public.parse_semver((configuration ->> 'version'::text))) STORED NOT NULL,
     ordering_identifiers text[] GENERATED ALWAYS AS (public.jsonb_to_text_array(jsonb_path_query_array(configuration, '$."orderings"[*]."id"'::jsonpath))) STORED,
+    enforces_parent boolean DEFAULT false NOT NULL,
+    enforces_children boolean DEFAULT false NOT NULL,
+    enforced_parent_declarations text[] DEFAULT '{}'::text[] NOT NULL,
+    enforced_child_declarations text[] DEFAULT '{}'::text[] NOT NULL,
     CONSTRAINT configuration_has_identifier CHECK (((configuration ? 'identifier'::text) AND (jsonb_typeof((configuration -> 'identifier'::text)) = 'string'::text))),
     CONSTRAINT configuration_has_name CHECK (((configuration ? 'name'::text) AND (jsonb_typeof((configuration -> 'name'::text)) = 'string'::text))),
     CONSTRAINT configuration_has_namespace CHECK (((configuration ? 'namespace'::text) AND (jsonb_typeof((configuration -> 'namespace'::text)) = 'string'::text))),
@@ -4942,6 +4946,20 @@ CREATE TABLE public.schema_migrations (
 
 
 --
+-- Name: schema_version_associations; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.schema_version_associations (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    source_id uuid NOT NULL,
+    target_id uuid NOT NULL,
+    name public.citext NOT NULL,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+--
 -- Name: schema_version_orderings; Type: VIEW; Schema: public; Owner: -
 --
 
@@ -5630,6 +5648,14 @@ ALTER TABLE ONLY public.schema_migrations
 
 ALTER TABLE ONLY public.schema_version_ancestors
     ADD CONSTRAINT schema_version_ancestors_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: schema_version_associations schema_version_associations_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.schema_version_associations
+    ADD CONSTRAINT schema_version_associations_pkey PRIMARY KEY (id);
 
 
 --
@@ -7741,6 +7767,27 @@ CREATE INDEX index_schema_version_ancestors_on_target_version_id ON public.schem
 --
 
 CREATE UNIQUE INDEX index_schema_version_ancestors_uniqueness ON public.schema_version_ancestors USING btree (schema_version_id, target_version_id, name);
+
+
+--
+-- Name: index_schema_version_associations_on_source_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_schema_version_associations_on_source_id ON public.schema_version_associations USING btree (source_id);
+
+
+--
+-- Name: index_schema_version_associations_on_target_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_schema_version_associations_on_target_id ON public.schema_version_associations USING btree (target_id);
+
+
+--
+-- Name: index_schema_version_associations_uniqueness; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_schema_version_associations_uniqueness ON public.schema_version_associations USING btree (source_id, target_id, name);
 
 
 --
@@ -10490,6 +10537,14 @@ ALTER TABLE ONLY public.user_group_memberships
 
 
 --
+-- Name: schema_version_associations fk_rails_b2a9ef07e9; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.schema_version_associations
+    ADD CONSTRAINT fk_rails_b2a9ef07e9 FOREIGN KEY (source_id) REFERENCES public.schema_versions(id) ON DELETE CASCADE;
+
+
+--
 -- Name: harvest_entities fk_rails_b601edda92; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -10535,6 +10590,14 @@ ALTER TABLE ONLY public.orderings
 
 ALTER TABLE ONLY public.entity_hierarchies
     ADD CONSTRAINT fk_rails_c2be56f2ad FOREIGN KEY (schema_definition_id) REFERENCES public.schema_definitions(id) ON DELETE CASCADE;
+
+
+--
+-- Name: schema_version_associations fk_rails_c9a308a9e8; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.schema_version_associations
+    ADD CONSTRAINT fk_rails_c9a308a9e8 FOREIGN KEY (target_id) REFERENCES public.schema_versions(id) ON DELETE CASCADE;
 
 
 --
@@ -10934,6 +10997,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20220608001957'),
 ('20220608003418'),
 ('20220609161857'),
-('20220609161910');
+('20220609161910'),
+('20220609224200');
 
 

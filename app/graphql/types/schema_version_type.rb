@@ -27,6 +27,50 @@ module Types
       description "A subset of properties that can be searched for this schema."
     end
 
+    field :enforced_parent_declarations, [Types::SlugType, { null: false }], null: false do
+      description <<~TEXT
+      Declarations / slugs for `enforcedParentVersions`.
+      TEXT
+    end
+
+    field :enforced_parent_versions, [Types::SchemaVersionType, { null: false }], null: false do
+      description <<~TEXT
+      The versions that are allowed to parent this schema.
+
+      If there are no schemas, then this schema does not enforce its parentage.
+      TEXT
+    end
+
+    field :enforced_child_declarations, [Types::SlugType, { null: false }], null: false do
+      description <<~TEXT
+      Declarations / slugs for `enforcedChildVersions`.
+      TEXT
+    end
+
+    field :enforced_child_versions, [Types::SchemaVersionType, { null: false }], null: false do
+      description <<~TEXT
+      The versions that this schema accepts as a child.
+
+      If there are no schemas, then this schema does not enforce its children.
+      TEXT
+    end
+
+    field :enforces_parent, Boolean, null: false do
+      description "A boolean for the logic on `enforcedParentVersions`."
+    end
+
+    field :enforces_children, Boolean, null: false do
+      description "A boolean for the logic on `enforcedChildVersions`."
+    end
+
+    def enforced_parent_versions
+      Loaders::AssociationLoader.for(object.class, :enforced_parent_versions).load(object)
+    end
+
+    def enforced_child_versions
+      Loaders::AssociationLoader.for(object.class, :enforced_child_versions).load(object)
+    end
+
     # @see Schemas::Versions::Configuration#core
     # @return [Schemas::Versions::CoreDefinition]
     def core

@@ -12,6 +12,8 @@ module Schemas
           definitions.each_definition do |identifier, map|
             yield load_definition.call identifier, map
           end
+
+          SchemaVersion.find_each(&:maintain_associations!)
         end
 
         Success true
