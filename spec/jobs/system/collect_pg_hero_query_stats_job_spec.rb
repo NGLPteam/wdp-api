@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe System::CollectPgHeroQueryStatsJob, type: :job do
+RSpec.describe System::CollectPgHeroQueryStatsJob, skip_ci: true, type: :job do
   it "performs without issue" do
     expect do
       described_class.perform_now
