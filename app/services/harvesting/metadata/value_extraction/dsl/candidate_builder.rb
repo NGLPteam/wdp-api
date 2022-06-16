@@ -105,6 +105,12 @@ module Harvesting
             @pipelines.push pipe
           end
 
+          def parse_journal_source!
+            pipeline! do
+              call_operation "harvesting.utility.parse_journal_source"
+            end
+          end
+
           # If set, this will use implication (`>>`) to compose the value's type.
           #
           # Useful for candidates that should only be permitted if they meet
