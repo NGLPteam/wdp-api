@@ -86,6 +86,117 @@ module PilotHarvesting
           },
         ],
       },
+      longleaf: {
+        communities: [
+          {
+            identifier: "ecu",
+            title: "East Carolina University",
+            journals: [
+              {
+                identifier: "ncl",
+                title: "North Carolina Libraries",
+                url: "http://www.ncl.ecu.edu/index.php/NCL/oai",
+                metadata_format: "oaidc",
+              },
+            ],
+          },
+          {
+            identifier: "nccu",
+            title: "North Carolina Central University",
+            journals: [
+              {
+                identifier: "tpre",
+                title: "Theory & Practice in Rural Education",
+                url: "https://tpre.ecu.edu/index.php/tpre/oai",
+                metadata_format: "oaidc",
+                skip_harvest: true,
+              },
+            ]
+          },
+          {
+            identifier: "ncsu",
+            title: "North Carolina State University",
+            journals: [
+              {
+                identifier: "acontracorriente",
+                title: "A Contracorriente: una revista de estudios latinoamericanos",
+                url: "https://acontracorriente.chass.ncsu.edu/index.php/acontracorriente/oai",
+                metadata_format: "oaidc",
+              }
+            ]
+          },
+          {
+            identifier: "unc-charlotte",
+            title: "UNC Charlotte",
+            journals: [
+              {
+                identifier: "dsj",
+                title: "Dialogues in Social Justice: An Adult Education Journal",
+                url: "https://journals.charlotte.edu/dsj/oai",
+                metadata_format: "oaidc",
+              },
+              {
+                identifier: "jaepr",
+                title: "Journal of Applied Educational and Policy Research",
+                url: "https://journals.charlotte.edu/jaepr/oai",
+                metadata_format: "oaidc",
+              },
+              {
+                identifier: "dialog",
+                title: "HS Dialog: The Research to Practice Journal for the Early Childhood Field",
+                url: "https://journals.charlotte.edu/dialog/oai",
+                metadata_format: "oaidc",
+              },
+            ],
+          },
+          {
+            identifier: "unc-greensboro",
+            title: "UNC Greensboro",
+            journals: [
+              {
+                identifier: "ccj",
+                title: "Communication Center Journal",
+                url: "https://libjournal.uncg.edu/ccj/oai",
+                metadata_format: "oaidc",
+              },
+              {
+                identifier: "fsm",
+                title: "Found Sounds: UNCG Musicology Journal",
+                url: "https://libjournal.uncg.edu/fsm/oai",
+                metadata_format: "oaidc",
+              },
+              {
+                identifier: "ijcp",
+                title: "The International Journal of Critical Pedagogy",
+                url: "https://libjournal.uncg.edu/ijcp/oai",
+                metadata_format: "oaidc",
+              },
+              {
+                identifier: "wpe",
+                title: "Working Papers in Education",
+                url: "https://libjournal.uncg.edu/wpe/oai",
+                metadata_format: "oaidc",
+              },
+            ],
+          },
+          {
+            identifier: "unc-wilmington",
+            title: "UNC Wilmington",
+            journals: [
+              {
+                identifier: "jethe",
+                title: "Journal of Effective Teaching in Higher Education",
+                url: "https://jethe.org/index.php/jethe/oai",
+                metadata_format: "oaidc",
+              },
+            ],
+          },
+          {
+            identifier: "education-research",
+            title: "Education Research",
+          },
+        ],
+      },
       umassamherst: {
         communities: [
           {
