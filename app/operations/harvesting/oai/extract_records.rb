@@ -77,7 +77,7 @@ module Harvesting
       def total_record_count_for(batch)
         token = resumption_token_for batch
 
-        return nil if token.blank?
+        return batch.count if token.blank?
 
         token["completeListSize"]&.to_i
       end
