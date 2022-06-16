@@ -220,6 +220,38 @@ module Harvesting
 
           alias filter_array select_array
 
+          # @param [String] name
+          # @param [#to_s] kind the kind of contribution
+          # @return [Harvesting::Contributions::Proxy]
+          def parse_organization_contribution(name, kind: "organization")
+            unwrap_or_nil! WDPAPI::Container["harvesting.contributions.simple_parse"].call(name, kind: kind, contributor_kind: :organization)
+          end
+
+          # @param [<String>] arr
+          # @param [#to_s] kind the kind of contribution
+          # @return [<Harvesting::Contributions::Proxy>]
+          def parse_organization_contributions(arr, kind: "organization")
+            arr.map do |name|
+              parse_organization_contribution name, kind: kind
+            end
+          end
+
+          # @param [String] name
+          # @param [#to_s] kind the kind of contribution
+          # @return [Harvesting::Contributions::Proxy]
+          def parse_person_contribution(name, kind: "author")
+            unwrap_or_nil! WDPAPI::Container["harvesting.contributions.simple_parse"].call(name, kind: kind, contributor_kind: :person)
+          end
+
+          # @param [<String>] arr
+          # @param [#to_s] kind the kind of contribution
+          # @return [<Harvesting::Contributions::Proxy>]
+          def parse_people_contributions(arr, kind: "author")
+            arr.map do |name|
+              parse_person_contribution name, kind: kind
+            end
+          end
+
           # @param [Array] arr
           # @return [Array]
           def sort_array(arr)
@@ -250,6 +282,14 @@ module Harvesting
             result.value!
           rescue Dry::Monads::UnwrapError => e
             raise PipelineError, e.message
+          end
+
+          # Unwrap a result monad and raise a pipeline error if it fails.
+          #
+          # @param [Dry::Monads::Result] result
+          # @return [Object, nil]
+          def unwrap_or_nil!(result)
+            result.value_or(nil)
           end
 
           # Wrap the dependencies property hash around the pipeline.

@@ -16,6 +16,8 @@ module Harvesting
       include WDPAPI::Deps[
         find_existing_collection: "harvesting.utility.find_existing_collection",
         parse_variable_precision_date: "variable_precision.parse_date",
+        upsert_contribution_proxies: "harvesting.metadata.upsert_contribution_proxies",
+        upsert_contribution_proxy: "harvesting.metadata.upsert_contribution_proxy",
         with_entity: "harvesting.entities.with_assigner",
       ]
 

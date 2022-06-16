@@ -59,6 +59,8 @@ module Harvesting
         # @api private
         EXTRA = {
           contributions: Coercible::Array.of(Hash).fallback { [] },
+          contribution_proxy: Harvesting::Contributions::Proxy::Type,
+          contribution_proxies: Harvesting::Contributions::Proxy::List,
           extracted_date: ExtractedDate,
           extracted_values: ExtractedValues,
           extracted_value_list: ExtractedValueList,

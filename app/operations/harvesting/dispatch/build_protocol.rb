@@ -3,6 +3,8 @@
 module Harvesting
   module Dispatch
     class BuildProtocol
+      include Dry::Monads[:result]
+
       include WDPAPI::Deps[
         oai: "harvesting.protocols.oai",
       ]
@@ -17,11 +19,9 @@ module Harvesting
         when HarvestSource
           case origin.protocol
           when "oai"
-            oai
+            Success oai
           else
-            # :nocov:
             Failure[:unknown_protocol, "Cannot build protocol class from #{origin.protocol}"]
-            # :nocov:
           end
         when HAS_HARVEST_SOURCE
           call origin.harvest_source
