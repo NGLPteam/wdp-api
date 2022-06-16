@@ -8,6 +8,10 @@ module Harvesting
     module Namespaces
       extend Dry::Container::Mixin
 
+      DC = "http://purl.org/dc/elements/1.1/"
+
+      register(:dc, DC)
+
       # @see https://jats.nlm.nih.gov/publishing/1.2/
       JATS_12 = "https://jats.nlm.nih.gov/publishing/1.2/"
 
@@ -22,6 +26,10 @@ module Harvesting
       MODS = ::Mods::MODS_NS
 
       register(:mods, MODS)
+
+      OAIDC = "http://www.openarchives.org/OAI/2.0/oai_dc/"
+
+      register(:oaidc, OAIDC)
 
       # @see http://www.loc.gov/standards/premis
       PREMIS = "http://www.loc.gov/standards/premis"

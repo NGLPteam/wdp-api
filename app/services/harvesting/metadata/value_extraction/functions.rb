@@ -26,6 +26,10 @@ module Harvesting
         Bool = Harvesting::Types::Params::Bool.fallback(false)
 
         class << self
+          # Transform some input into a boolean.
+          #
+          # @param [Object] input
+          # @return [Boolean]
           def booleanize(input)
             Bool[input]
           end
@@ -41,6 +45,19 @@ module Harvesting
           # @return [Object] the return value of the operation (probably a monad)
           def call_operation(input, operation_name)
             WDPAPI::Container[operation_name].call(input)
+          end
+
+          # Attempt to call a method chain in the provided `input`.
+          #
+          # @see ::Utility::ChainMethod
+          # @param [Object] input
+          # @param [String, Symbol] method_chain
+          # @raise [PipelineError]
+          # @return [Object]
+          def chain(input, method_chain)
+            WDPAPI::Container["utility.chain_method"].call(input, method_chain)
+          rescue NoMethodError => e
+            raise PipelineError, e.message
           end
 
           # @param [#compact] compactable
@@ -109,6 +126,22 @@ module Harvesting
             fetch_from_dependency key, dependency_key
           rescue PipelineError
             nil
+          end
+
+          # Given an array of values, return the first one that matches a provided type,
+          # or return nil.
+          #
+          # @param [<Object>] arr
+          # @param [Dry::Types::Type] type
+          # @return [Object, nil]
+          def first_conforming_to(arr, type)
+            arr.each do |value|
+              result = type.try value
+
+              return result.input if result.success?
+            end
+
+            return nil
           end
 
           def full_text_reference(kind, content)

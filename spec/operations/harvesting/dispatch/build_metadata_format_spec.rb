@@ -22,6 +22,7 @@ RSpec.describe Harvesting::Dispatch::BuildMetadataFormat, type: :operation do
       expect_lookup! :jats
       expect_lookup! :mets
       expect_lookup! :mods
+      expect_lookup! :oaidc
     end
   end
 
