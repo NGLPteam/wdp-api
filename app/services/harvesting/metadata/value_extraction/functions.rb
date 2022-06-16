@@ -291,14 +291,6 @@ module Harvesting
             arr.sort
           end
 
-          # @todo This should be removed if the MODS xml for UCM comes back as expected
-          #
-          # @param [<String>] input
-          # @return [<String>]
-          def ucm_workaround_split!(input)
-            WDPAPI::Container["testing.merced.split_identifiers"].(input)
-          end
-
           # Remove all duplicates
           # @param [Array] arr
           # @return [Array]
