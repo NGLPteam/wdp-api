@@ -33,6 +33,7 @@ class HarvestRecord < ApplicationRecord
   scope :unskipped, -> { where(has_been_skipped: false) }
   scope :upsertable, -> { unskipped.sans_harvest_errors }
   scope :with_entities, -> { where(id: HarvestEntity.select(:harvest_record_id)) }
+  scope :unprepared, -> { where.not(id: HarvestEntity.select(:harvest_record_id)) }
 
   scope :sans_extracted_scalar_asset, ->(full_path) { with_entities.where.not(id: unscoped.with_extracted_scalar_asset(full_path)) }
   scope :with_extracted_scalar_asset, ->(full_path) { where(id: HarvestEntity.with_extracted_scalar_asset(full_path).select(:harvest_record_id)) }

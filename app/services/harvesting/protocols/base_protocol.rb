@@ -6,6 +6,8 @@ module Harvesting
     class BaseProtocol
       extend Dry::Core::ClassAttributes
 
+      include Dry::Core::Equalizer.new(:protocol_name)
+
       include Dry::Monads[:result]
       include WDPAPI::Deps[
         augment_middleware: "harvesting.protocols.actions.augment_middleware",

@@ -8,6 +8,7 @@ module Harvesting
         jats: "harvesting.metadata.formats.jats",
         mets: "harvesting.metadata.formats.mets",
         mods: "harvesting.metadata.formats.mods",
+        oaidc: "harvesting.metadata.formats.oaidc",
       ]
 
       HAS_METADATA_FORMAT = AppTypes.Interface(:metadata_format)
@@ -21,20 +22,18 @@ module Harvesting
 
           case metadata_format
           when "jats"
-            jats
+            Success jats
           when "mets"
-            mets
+            Success mets
           when "mods"
-            mods
+            Success mods
+          when "oaidc"
+            Success oaidc
           else
-            # :nocov:
             Failure[:unknown_metadata_format, "Cannot process metadata format: #{metadata_format}"]
-            # :nocov:
           end
         else
-          # :nocov:
           Failure[:invalid_formatter, "Cannot derive metadata format from #{formattable.inspect}"]
-          # :nocov:
         end
       end
     end
