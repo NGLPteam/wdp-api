@@ -66,6 +66,8 @@ RSpec.describe "nglp:journal_article", type: :request do
 
             sp.asset :pdf_version
 
+            sp.tags :keywords
+
             sp.group :volume do |vp|
               vp.string :id do |vid|
                 vid.prop :content, volume_id
