@@ -37,9 +37,9 @@ class HarvestAttempt < ApplicationRecord
     call_operation("harvesting.actions.extract_records", self, skip_prepare: skip_prepare)
   end
 
-  # @see Harvesting::Actions::UpsertAllEntities
-  def reprocess!
-    call_operation("harvesting.actions.reprocess_attempt", self, reprepare: true)
+  # @see Harvesting::Actions::ReprocessAttempt
+  def reprocess!(reprepare: true)
+    call_operation("harvesting.actions.reprocess_attempt", self, reprepare: reprepare)
   end
 
   # @see Harvesting::UpsertEntitiesForRecordJob

@@ -2,11 +2,14 @@
 
 FactoryBot.define do
   factory :harvest_entity do
-    harvest_record { nil }
+    association :harvest_record
+    schema_version { SchemaVersion.default_collection }
+    sequence(:identifier) { |i| "ent-#{i}" }
+
     entity { nil }
-    schema_version { nil }
-    identifier { "MyText" }
-    metadata_kind { "MyText" }
-    extracted_properties { "" }
+
+    metadata_kind { "anything" }
+
+    extracted_properties { {} }
   end
 end

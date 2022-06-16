@@ -6,6 +6,8 @@ module Harvesting
     class BaseFormat
       extend Dry::Core::ClassAttributes
 
+      include Dry::Core::Equalizer.new(:format)
+
       include Dry::Monads[:result]
       include WDPAPI::Deps[
         augment_middleware: "harvesting.metadata.actions.augment_middleware",
@@ -32,6 +34,13 @@ module Harvesting
       # @return [String]
       def format_name
         self.class.format_name
+      end
+
+      # @return [String]
+      def inspect
+        # :nocov:
+        "Harvesting::Metadata::Formats[#{format.inspect}]"
+        # :nocov:
       end
 
       # The prefix to use with OAI.

@@ -129,13 +129,15 @@ module Harvesting
         # @param [String] value
         # @return [void]
         def default_namespace!(value)
-          required_namespace! :xmlns, value
+          required_namespace! :xmlns, value, prefix: false
         end
 
         # @param [#to_sym] name
         # @param [String] value
         # @return [void]
-        def required_namespace!(name, value)
+        def required_namespace!(name, value, prefix: true)
+          name = name.to_s.sub(/\A(?<!xmlns:)(.+)\z/, 'xmlns:\1') if prefix
+
           required_namespaces! name => value
         end
 
