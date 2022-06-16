@@ -3,6 +3,24 @@
 module TestHelpers
   module GraphQLRequest
     module ExampleHelpers
+      def expect_request!(**options, &block)
+        tester = RequestTesterBuilder.new(&block).call
+
+        options[:no_top_level_errors] = !tester.has_top_level_errors?
+
+        req_expectation = tester.has_expectation? ? tester.expectation : execute_safely
+
+        expect_the_default_request(**options).to req_expectation
+
+        if tester.has_data? || tester.has_top_level_errors?
+          aggregate_failures do
+            expect_graphql_data tester.data if tester.has_data?
+
+            expect_graphql_response_errors tester.top_level_errors if tester.has_top_level_errors?
+          end
+        end
+      end
+
       def expect_the_default_request(**options)
         expect do
           make_default_request!(**options)
@@ -108,6 +126,12 @@ module TestHelpers
         MutationShaper.build(...)
       end
 
+      def empty_mutation(name)
+        query do |q|
+          q[name] = nil
+        end
+      end
+
       def named(...)
         NamedObjectShaper.build(...)
       end
@@ -117,6 +141,18 @@ module TestHelpers
       end
 
       alias query object
+
+      def top_level_unauthorized
+        array do |a|
+          a.item do |o|
+            o.prop :extensions do |ext|
+              ext[:code] = "FORBIDDEN"
+            end
+
+            o[:message] = I18n.t("server_messages.auth.forbidden")
+          end
+        end
+      end
 
       def attribute_errors(...)
         AttributeErrorsBuilder.build(...)
@@ -561,6 +597,70 @@ module TestHelpers
             yield eb if block_given?
           end
         end
+      end
+    end
+
+    class RequestTester < Dry::Struct
+      attribute :effects, Dry::Types["array"].optional
+      attribute :expectation, Dry::Types["any"].optional
+      attribute :data, Dry::Types["any"].optional
+      attribute :top_level_errors, Dry::Types["any"].optional
+
+      def has_data?
+        data.present?
+      end
+
+      def has_expectation?
+        !expectation.nil?
+      end
+
+      def has_top_level_errors?
+        top_level_errors.present?
+      end
+    end
+
+    class RequestTesterBuilder
+      def initialize
+        @gql = GQLShaper.new
+
+        @effects = []
+
+        @data = nil
+        @top_level_errors = nil
+
+        yield self if block_given?
+      end
+
+      # @return [RequestTester]
+      def call
+        expectation = @effects.reduce(&:and) if @effects.any?
+
+        attrs = {
+          data: @data,
+          expectation: expectation,
+          effects: @effects.presence,
+          top_level_errors: @top_level_errors,
+        }
+
+        RequestTester.new attrs
+      end
+
+      def effect!(matcher)
+        @effects << matcher
+      end
+
+      def data!(value)
+        @data = value
+      end
+
+      def top_level_errors!(value)
+        @top_level_errors = value
+      end
+
+      alias errors! top_level_errors!
+
+      def unauthorized!
+        top_level_errors! @gql.top_level_unauthorized
       end
     end
   end

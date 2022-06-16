@@ -132,6 +132,10 @@ en:
         label: Schema Name
         description: "For multi-schema orderings, sort by the name of the schema."
   server_messages:
+    auth:
+      forbidden: "You are not authorized to perform this action."
+    errors:
+      something_went_wrong: "Something went wrong."
     tokens:
       expired: "Token is Expired"
       invalid: "Failed to Authenticate"

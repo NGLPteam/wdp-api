@@ -41,7 +41,7 @@ module MutationOperations
         end
 
         m.failure(:throw_unauthorized) do
-          GraphQL::ExecutionError.new("You are not authorized to perform this action",
+          GraphQL::ExecutionError.new(I18n.t("server_messages.auth.forbidden"),
             extensions: {
               code: "FORBIDDEN"
             }
@@ -57,7 +57,7 @@ module MutationOperations
         m.failure do |*reason|
           # TODO: Rollbar this.
 
-          GraphQL::ExecutionError.new "Something went wrong", extensions: { code: "INTERNAL_SERVER_ERROR" }
+          GraphQL::ExecutionError.new I18n.t("server_messages.errors.something_went_wrong"), extensions: { code: "INTERNAL_SERVER_ERROR" }
         end
       end
     end
