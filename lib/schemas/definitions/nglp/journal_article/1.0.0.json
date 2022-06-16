@@ -38,6 +38,7 @@
     { "path": "preprint_version", "type": "boolean", "label": "Pre-Print Version", "function": "metadata" },
     { "path": "online_version", "label": "Online Version", "type": "url", "required": false, "function": "content" },
     { "path": "pdf_version", "label": "PDF Version", "type": "asset", "required": false, "function": "content" },
+    { "path": "keywords", "label": "Keywords", "type": "tags", "required": false, "function": "metadata", "default": [] },
     {
       "path": "volume",
       "legend": "Volume Metadata",
