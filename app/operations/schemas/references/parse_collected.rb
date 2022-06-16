@@ -25,7 +25,7 @@ module Schemas
       # @param [Array] input
       # @return [Dry::Monads::Result<ApplicationRecord>]
       def call(input)
-        values = cast input
+        values = cast(input).map(&:presence).compact
 
         return Success(values) if values.empty?
 
