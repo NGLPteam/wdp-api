@@ -13,11 +13,13 @@ module Harvesting
 
       runner do
         param :harvest_mapping, Harvesting::Types::Mapping
+
+        option :skip_harvest, Harvesting::Types::Bool, default: proc { false }
       end
 
       # @param [HarvestMapping] harvest_mapping
       # @return [Dry::Monads::Result]
-      def perform(harvest_mapping)
+      def perform(harvest_mapping, skip_harvest: false)
         attempt = yield create_manual_attempt.call harvest_mapping
 
         Harvesting::ExtractRecordsJob.perform_later attempt

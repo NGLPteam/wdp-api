@@ -16,16 +16,18 @@ module Harvesting
         param :harvest_target, Harvesting::Types::Target
 
         option :set, Harvesting::Types::Set.optional, default: proc {}
+
+        option :skip_harvest, Harvesting::Types::Bool, default: proc { false }
       end
 
       # @param [HarvestSource] harvest_source
       # @param [HarvestTarget] target_entity
       # @param [HarvestSet, nil] set
       # @return [Dry::Monads::Success(HarvestAttempt)]
-      def perform(harvest_source, target_entity, set: nil)
+      def perform(harvest_source, target_entity, set: nil, skip_harvest: false)
         attempt = yield create_manual_attempt.call harvest_source, target_entity, set: set
 
-        Harvesting::ExtractRecordsJob.perform_later attempt
+        Harvesting::ExtractRecordsJob.perform_later attempt unless skip_harvest
 
         Success attempt
       end
