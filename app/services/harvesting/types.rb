@@ -15,6 +15,9 @@ module Harvesting
 
     Callable = Interface(:call)
 
+    # Something that enforces an always-default hash
+    EmptyDefaultHash = Coercible::Hash.default { {} }.fallback { {} }
+
     # @see ::HarvestEntity
     Entity = Instance(::HarvestEntity)
 
