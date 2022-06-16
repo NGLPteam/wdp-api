@@ -34,12 +34,4 @@ Dry::Rails.container do
   register :node_verifier, memoize: true do
     ActiveSupport::MessageVerifier.new SecurityConfig.node_salt, digest: "SHA256"
   end
-
-  namespace :hacks do
-    register :ucm_units, memoize: true do
-      JSON.parse(Rails.root.join("vendor/ucm/ucm_units.json").read).pluck("id").sort.uniq.sort_by do |unit|
-        [unit.size, unit]
-      end.reverse
-    end
-  end
 end
