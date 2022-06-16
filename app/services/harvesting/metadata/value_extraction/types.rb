@@ -66,6 +66,7 @@ module Harvesting
           extracted_value_list: ExtractedValueList,
           extracted_value_map: ExtractedValueMap,
           full_text: FullText::Types::NormalizedReference,
+          journal_source: Instance(Harvesting::Utility::ParsedJournalSource),
           present_string: PresentString,
           string_list: Coercible::Array.of(PresentString),
           url: URL,
