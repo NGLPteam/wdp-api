@@ -78,7 +78,7 @@ RSpec.describe VariablePrecisionDate do
 
     describe "#to_date" do
       it "returns nothing" do
-        expect(variable_precision_date.to_date).to eq nil
+        expect(variable_precision_date.to_date).to be_nil
       end
     end
   end

@@ -16,7 +16,7 @@ module Schemas
 
       start_new_transaction true
 
-      LOCK_QUERY = <<~SQL.strip_heredoc
+      LOCK_QUERY = <<~SQL
       SELECT * FROM ordering_entries
       WHERE ordering_id = %s
       FOR UPDATE;

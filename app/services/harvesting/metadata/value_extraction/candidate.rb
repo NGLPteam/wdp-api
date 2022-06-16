@@ -14,7 +14,7 @@ module Harvesting
 
           option :subtype, Harvesting::Metadata::ValueExtraction::Types::Type.optional
 
-          option :set_id, Harvesting::Types::Identifier.optional, default: proc { nil }
+          option :set_id, Harvesting::Types::Identifier.optional, default: proc {}
           option :value_id, Harvesting::Types::Identifier
           option :full_path, Harvesting::Types::Path, default: proc { [set_id, value_id].compact.join(?.) }
         end

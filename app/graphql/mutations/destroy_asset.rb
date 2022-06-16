@@ -2,7 +2,7 @@
 
 module Mutations
   class DestroyAsset < Mutations::BaseMutation
-    description <<~TEXT.strip_heredoc
+    description <<~TEXT
     Destroy an asset by ID.
     TEXT
 

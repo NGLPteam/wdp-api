@@ -34,7 +34,7 @@ module Models
           ->(result, *) { result.failure? && result.failure.first == code }
         end
 
-        resolve_failure = proc { nil }
+        resolve_failure = proc {}
 
         cases = {}
 

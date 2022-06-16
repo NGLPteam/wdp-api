@@ -14,7 +14,7 @@ module Schemas
       include QueryOperation
 
       # A query to perform the update lock on the selected rows.
-      LOCK_QUERY = <<~SQL.strip_heredoc
+      LOCK_QUERY = <<~SQL
       SELECT * FROM schema_versions
       WHERE schema_definition_id = %s
       FOR UPDATE;

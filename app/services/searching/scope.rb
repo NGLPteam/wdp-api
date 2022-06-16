@@ -8,7 +8,7 @@ module Searching
       option :user, Users::Types::Current, default: Users::Types::DEFAULT
       option :origin, Searching::Types::Origin, default: proc { :global }
       option :visibility, Entities::Types::Visibility, default: proc { :visible }
-      option :max_depth, Searching::Types::Integer.constrained(gt: 0).optional, default: proc { nil }
+      option :max_depth, Searching::Types::Integer.constrained(gt: 0).optional, default: proc {}
 
       option :auth_state, Users::Types::State, default: proc { user }
     end

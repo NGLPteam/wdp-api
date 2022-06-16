@@ -2,7 +2,7 @@
 
 module Mutations
   class UpdateRole < Mutations::BaseMutation
-    description <<~TEXT.strip_heredoc
+    description <<~TEXT
     Update the name or permissions for a given role.
     TEXT
 

@@ -23,6 +23,12 @@ Bundler/OrderedGems:
 Gemspec/DateAssignment:
   Enabled: true
 
+Gemspec/DeprecatedAttributeAssignment: # new in 1.30
+  Enabled: false
+
+Gemspec/RequireMFA: # new in 1.23
+  Enabled: false
+
 Layout/ArgumentAlignment:
   Enabled: false
 
@@ -41,6 +47,9 @@ Layout/HashAlignment:
 
 Layout/HeredocIndentation:
   Enabled: false
+
+Layout/LineEndStringConcatenationIndentation: # new in 1.18
+  Enabled: true
 
 Layout/SpaceAroundOperators:
   AllowForAlignment: true
@@ -70,6 +79,12 @@ Lint/AmbiguousBlockAssociation:
   Exclude:
     - "spec/**/*.rb"
 
+Lint/AmbiguousOperatorPrecedence: # new in 1.21
+  Enabled: false
+
+Lint/AmbiguousRange: # new in 1.19
+  Enabled: true
+
 Lint/DeprecatedConstants:
   Enabled: true
 
@@ -83,6 +98,12 @@ Lint/EmptyBlock:
   Enabled: true
 
 Lint/EmptyClass:
+  Enabled: true
+
+Lint/EmptyInPattern: # new in 1.16
+  Enabled: true
+
+Lint/IncompatibleIoSelectWithFiberScheduler: # new in 1.21
   Enabled: true
 
 Lint/LambdaWithoutLiteralBlock:
@@ -101,6 +122,12 @@ Lint/OrAssignmentToConstant:
   Enabled: true
 
 Lint/RedundantDirGlobSort:
+  Enabled: true
+
+Lint/RefinementImportMethods: # new in 1.27
+  Enabled: true
+
+Lint/RequireRelativeSelfPath: # new in 1.22
   Enabled: true
 
 Lint/SymbolConversion:
@@ -126,6 +153,9 @@ Lint/UnusedBlockArgument:
 
 Lint/UnusedMethodArgument:
   Enabled: false
+
+Lint/UselessRuby2Keywords: # new in 1.23
+  Enabled: true
 
 Metrics/AbcSize:
   Exclude:
@@ -162,6 +192,9 @@ Metrics/PerceivedComplexity:
 Naming/AccessorMethodName:
   Enabled: false
 
+Naming/BlockForwarding: # new in 1.24
+  Enabled: true
+
 Naming/ConstantName:
   Enabled: false
 
@@ -180,7 +213,13 @@ Naming/PredicateName:
 Naming/VariableNumber:
   Enabled: false
 
+Rails/ActionControllerTestCase: # new in 2.14
+  Enabled: true
+
 Rails/ActiveRecordCallbacksOrder:
+  Enabled: true
+
+Rails/AddColumnIndex: # new in 2.11
   Enabled: true
 
 Rails/AfterCommitOverride:
@@ -189,16 +228,52 @@ Rails/AfterCommitOverride:
 Rails/AttributeDefaultBlockValue:
   Enabled: true
 
+Rails/CompactBlank: # new in 2.13
+  Enabled: true
+
 Rails/Date:
   Enabled: false
 
 Rails/Delegate:
   Enabled: false
 
+Rails/DeprecatedActiveModelErrorsMethods: # new in 2.14
+  Enabled: true
+
+Rails/DotSeparatedKeys: # new in 2.15
+  Enabled: true
+
+Rails/DuplicateAssociation: # new in 2.14
+  Enabled: true
+
+Rails/DuplicateScope: # new in 2.14
+  Enabled: true
+
+Rails/DurationArithmetic: # new in 2.13
+  Enabled: true
+
+Rails/EagerEvaluationLogMessage: # new in 2.11
+  Enabled: true
+
+Rails/ExpandedDateRange: # new in 2.11
+  Enabled: true
+
 Rails/FilePath:
   Enabled: false
 
 Rails/FindById:
+  Enabled: true
+
+Rails/HasManyOrHasOneDependent:
+  Enabled: true
+
+Rails/I18nLazyLookup: # new in 2.14
+  Enabled: true
+
+Rails/I18nLocaleAssignment: # new in 2.11
+  Enabled: true
+
+Rails/I18nLocaleTexts: # new in 2.14
   Enabled: true
 
 Rails/Inquiry:
@@ -210,6 +285,9 @@ Rails/MailerName:
 Rails/MatchRoute:
   Enabled: true
 
+Rails/MigrationClassName: # new in 2.14
+  Enabled: true
+
 Rails/NegateInclude:
   Enabled: false
 
@@ -219,10 +297,22 @@ Rails/Pluck:
 Rails/PluckInWhere:
   Enabled: true
 
+Rails/RedundantPresenceValidationOnBelongsTo: # new in 2.13
+  Enabled: true
+
+Rails/RedundantTravelBack: # new in 2.12
+  Enabled: true
+
 Rails/RenderInline:
   Enabled: true
 
 Rails/RenderPlainText:
+  Enabled: true
+
+Rails/RootJoinChain: # new in 2.13
+  Enabled: true
+
+Rails/RootPublicPath: # new in 2.15
   Enabled: true
 
 Rails/ShortI18n:
@@ -234,6 +324,21 @@ Rails/SkipsModelValidations:
 Rails/SquishedSQLHeredocs:
   Enabled: false
 
+Rails/StripHeredoc: # new in 2.15
+  Enabled: true
+
+Rails/TimeZoneAssignment: # new in 2.10
+  Enabled: true
+
+Rails/ToFormattedS: # new in 2.15
+  Enabled: true
+
+Rails/TransactionExitStatement: # new in 2.14
+  Enabled: true
+
+Rails/UnusedIgnoredColumns: # new in 2.11
+  Enabled: true
+
 Rails/WhereEquals:
   Enabled: true
 
@@ -241,6 +346,15 @@ Rails/WhereExists:
   Enabled: true
 
 Rails/WhereNot:
+  Enabled: true
+
+RSpec/BeEq: # new in 2.9.0
+  Enabled: true
+
+RSpec/BeNil: # new in 2.9.0
+  Enabled: true
+
+RSpec/ChangeByZero: # new in 2.11.0
   Enabled: true
 
 RSpec/ContextWording:
@@ -256,7 +370,13 @@ RSpec/EmptyLineAfterFinalLet:
 RSpec/ExampleLength:
   Enabled: false
 
+RSpec/ExcessiveDocstringSpacing: # new in 2.5
+  Enabled: true
+
 RSpec/ExpectActual:
+  Enabled: false
+
+RSpec/FactoryBot/SyntaxMethods: # new in 2.7
   Enabled: false
 
 RSpec/FilePath:
@@ -305,8 +425,24 @@ RSpec/RepeatedExample:
   Exclude:
     - "spec/policies/**/*.rb"
 
+RSpec/SubjectDeclaration: # new in 2.5
+  Enabled: true
+
+RSpec/VerifiedDoubles:
+  IgnoreNameless: true
+  IgnoreSymbolicNames: true
+
+RSpec/VerifiedDoubleReference: # new in 2.10.0
+  Enabled: true
+
 RSpec/ScatteredLet:
   Enabled: false
+
+Security/CompoundHash: # new in 1.28
+  Enabled: true
+
+Security/IoMethods: # new in 1.22
+  Enabled: true
 
 Style/ArgumentsForwarding:
   Enabled: true
@@ -347,8 +483,20 @@ Style/EmptyLiteral:
 Style/EndlessMethod:
   Enabled: true
 
+Style/EnvHome: # new in 1.29
+  Enabled: true
+
 Style/ExplicitBlockArgument:
   Enabled: false
+
+Style/FetchEnvVar: # new in 1.28
+  Enabled: false
+
+Style/FileRead: # new in 1.24
+  Enabled: true
+
+Style/FileWrite: # new in 1.24
+  Enabled: true
 
 Style/FormatString:
   Enabled: false
@@ -374,11 +522,20 @@ Style/IfWithBooleanLiteralBranches:
 Style/IfUnlessModifier:
   Enabled: false
 
+Style/InPatternThen: # new in 1.16
+  Enabled: true
+
 Style/Lambda:
   Enabled: false
 
 Style/LambdaCall:
   Enabled: false
+
+Style/MapCompactWithConditionalBlock: # new in 1.30
+  Enabled: true
+
+Style/MapToHash: # new in 1.24
+  Enabled: true
 
 Style/MultilineBlockChain:
   Enabled: false
@@ -386,7 +543,13 @@ Style/MultilineBlockChain:
 Style/MultilineIfModifier:
   Enabled: false
 
+Style/MultilineInPatternThen: # new in 1.16
+  Enabled: true
+
 Style/NegatedIfElseCondition:
+  Enabled: true
+
+Style/NestedFileDirname: # new in 1.26
   Enabled: true
 
 Style/Next:
@@ -395,8 +558,20 @@ Style/Next:
 Style/NilLambda:
   Enabled: true
 
+Style/NumberedParameters: # new in 1.22
+  Enabled: true
+
+Style/NumberedParametersLimit: # new in 1.22
+  Enabled: true
+
 Style/NumericPredicate:
   Enabled: false
+
+Style/ObjectThen: # new in 1.28
+  Enabled: true
+
+Style/OpenStructUse: # new in 1.23
+  Enabled: true
 
 Style/PercentLiteralDelimiters:
   Enabled: false
@@ -404,6 +579,10 @@ Style/PercentLiteralDelimiters:
 # This clobbers unexpected method calls
 Style/PreferredHashMethods:
   Enabled: false
+
+Style/QuotedSymbols: # new in 1.16
+  Enabled: true
+  EnforcedStyle: double_quotes
 
 Style/RaiseArgs:
   Enabled: false
@@ -414,7 +593,17 @@ Style/RedundantArgument:
 Style/RedundantFetchBlock:
   Enabled: false
 
+Style/RedundantInitialize: # new in 1.27
+  Enabled: true
+
 Style/RedundantReturn:
+  Enabled: false
+
+Style/RedundantSelfAssignmentBranch: # new in 1.19
+  Enabled: true
+
+# Enumerable#grep is not always equivalent to x.select { |y| y.match? z }
+Style/SelectByRegexp: # new in 1.22
   Enabled: false
 
 Style/SoleNestedConditional:

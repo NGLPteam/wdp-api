@@ -2,7 +2,7 @@
 
 module Mutations
   class ReparentEntity < Mutations::BaseMutation
-    description <<~TEXT.strip_heredoc
+    description <<~TEXT
     A polymorphic mutation to reassign an entity to another point in the hierarchy.
 
     It performs validations to make sure that the parent entity can accept the child.
@@ -13,13 +13,13 @@ module Mutations
     end
 
     argument :child_id, ID, loads: Types::AnyChildEntityType, required: true, attribute: true do
-      description <<~TEXT.strip_heredoc
+      description <<~TEXT
       The collection in need of a new parent
       TEXT
     end
 
     argument :parent_id, ID, loads: Types::AnyEntityType, required: true, attribute: true do
-      description <<~TEXT.strip_heredoc
+      description <<~TEXT
       The ID for the new parent entity. For children of the collection type, this
       must be a community or another collection. For children of the item type,
       this must be a collection or another item.

@@ -59,7 +59,7 @@ module Mutations
         options[:required] = false
         options[:default_value] = false
 
-        options[:description] ||= <<~TEXT.strip_heredoc
+        options[:description] ||= <<~TEXT
         If set to true, this will clear the attachment #{attachment_name} on this model.
         TEXT
 
@@ -99,7 +99,7 @@ module Mutations
       # @return [void]
       def image_attachment!(attachment_name, required: false, has_metadata: true)
         argument attachment_name, Types::UploadedFileInputType, required: required, attribute: true do
-          description <<~TEXT.strip_heredoc
+          description <<~TEXT
           A reference to an uploaded image in Tus.
           TEXT
         end

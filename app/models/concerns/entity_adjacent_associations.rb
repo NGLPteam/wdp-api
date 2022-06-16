@@ -43,7 +43,7 @@ module EntityAdjacentAssociations
       options[:primary_key] = primary_key
       options[:foreign_key] = foreign_key
 
-      has_many name, *args, **options
+      has_many name, *args, **options # rubocop:disable Rails/HasManyOrHasOneDependent
     end
 
     # @!macro [attach] has_one_entity_adjacent
@@ -53,7 +53,7 @@ module EntityAdjacentAssociations
       options[:primary_key] = primary_key
       options[:foreign_key] = foreign_key
 
-      has_one name, *args, **options
+      has_one name, *args, **options # rubocop:disable Rails/HasManyOrHasOneDependent
     end
   end
 end

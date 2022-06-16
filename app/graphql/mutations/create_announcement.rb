@@ -5,7 +5,7 @@ module Mutations
   # @see Mutations::Operations::CreateAnnouncement
   # @see Types::AnnouncementType
   class CreateAnnouncement < Mutations::BaseMutation
-    description <<~TEXT.strip_heredoc
+    description <<~TEXT
     Create an announcement on an entity.
     TEXT
 

@@ -50,7 +50,7 @@ module Schemas
 
       # @!attribute [r] handles
       # @return [Schemas::Associations::HandledSchema]
-      attribute :handles, Schemas::Associations::HandledSchema.to_type, default: proc { nil }
+      attribute :handles, Schemas::Associations::HandledSchema.to_type, default: proc {}
 
       # @!attribute [r] order
       # @return [<Schemas::Orderings::OrderDefinition>]

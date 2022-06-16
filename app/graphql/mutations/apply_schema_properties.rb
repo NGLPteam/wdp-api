@@ -13,7 +13,7 @@ module Mutations
 
     argument :entity_id, ID, loads: Types::AnyEntityType, description: "The entity that owns the attachment", required: true
     argument :property_values, GraphQL::Types::JSON, required: true do
-      description <<~TEXT.strip_heredoc
+      description <<~TEXT
       An arbitrary set of property values. Owing to the dynamic nature, they do not have a specific GraphQL input type
       associated with them. Validation will be performed within the application and returned as errors if not valid.
       TEXT

@@ -120,7 +120,7 @@ class VariablePrecisionDate
   #   attr_reader :raw_precision
 
   include Dry::Initializer[undefined: false].define -> do
-    param :raw_value, Dry::Types["json.date"].optional, default: proc { nil }, reader: :private
+    param :raw_value, Dry::Types["json.date"].optional, default: proc {}, reader: :private
     param :raw_precision, Precision, default: proc { :none }, reader: :private
   end
 

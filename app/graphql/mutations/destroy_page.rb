@@ -2,7 +2,7 @@
 
 module Mutations
   class DestroyPage < Mutations::BaseMutation
-    description <<~TEXT.strip_heredoc
+    description <<~TEXT
     Destroy a page by ID.
     TEXT
 

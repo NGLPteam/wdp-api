@@ -2,7 +2,7 @@
 
 module Mutations
   class DestroyOrdering < Mutations::BaseMutation
-    description <<~TEXT.strip_heredoc
+    description <<~TEXT
     Destroy (or disable a schema-inherited) ordering.
     TEXT
 

@@ -3,7 +3,7 @@
 module Types
   # @see ImageAttachments::OriginalWrapper
   class ImageOriginalType < Types::BaseObject
-    description <<~TEXT.strip_heredoc
+    description <<~TEXT
     The original source for the image. While derivatives are processing, it could be useful
     for a temporary preview in the admin section, or for troubleshooting.
 

@@ -2,7 +2,7 @@
 
 module Mutations
   class DestroyCommunity < Mutations::BaseMutation
-    description <<~TEXT.strip_heredoc
+    description <<~TEXT
     Destroy a community by ID.
     TEXT
 

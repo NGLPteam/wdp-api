@@ -18,9 +18,9 @@ module Harvesting
 
           option :dependencies, Harvesting::Types::Paths
           option :require_match, Harvesting::Types::Bool, default: proc { true }
-          option :set_id, Harvesting::Types::Identifier.optional, default: proc { nil }
+          option :set_id, Harvesting::Types::Identifier.optional, default: proc {}
           option :type, Harvesting::Metadata::ValueExtraction::Types::Type, default: proc { Harvesting::Types::Any }
-          option :default, Harvesting::Types::Any, default: proc { nil }
+          option :default, Harvesting::Types::Any, default: proc {}
 
           option :full_path, Harvesting::Types::Path, default: proc { [set_id, identifier].compact.join(?.) }
         end

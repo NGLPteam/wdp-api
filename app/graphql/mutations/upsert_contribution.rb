@@ -2,7 +2,7 @@
 
 module Mutations
   class UpsertContribution < Mutations::BaseMutation
-    description <<~TEXT.strip_heredoc
+    description <<~TEXT
     Upsert a Contribution by contributable & contributor ID. It will override any
     existing contributions for the same contributor on the same entity.
     TEXT

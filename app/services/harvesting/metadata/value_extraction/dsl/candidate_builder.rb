@@ -19,7 +19,7 @@ module Harvesting
 
           include Dry::Effects::Handler.Resolve
           include Dry::Initializer[undefined: false].define -> do
-            option :type, Type.optional, default: proc { nil }
+            option :type, Type.optional, default: proc {}
           end
 
           delegate :identifier, to: :value, prefix: true

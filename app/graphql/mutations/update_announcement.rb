@@ -5,7 +5,7 @@ module Mutations
   # @see Mutations::Operations::UpdateAnnouncement
   # @see Types::AnnouncementType
   class UpdateAnnouncement < Mutations::BaseMutation
-    description <<~TEXT.strip_heredoc
+    description <<~TEXT
     Update an announcement by its ID.
     TEXT
 

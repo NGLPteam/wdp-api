@@ -7,7 +7,7 @@ module Mutations
     field :item, Types::ItemType, null: true, description: "A representation of a successfully created item"
 
     argument :parent_id, ID, loads: Types::ItemParentType, required: true do
-      description <<~TEXT.strip_heredoc
+      description <<~TEXT
       The parent of the item. This can be the encoded ID of a collection or another item.
       TEXT
     end

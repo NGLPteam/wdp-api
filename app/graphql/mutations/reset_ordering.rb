@@ -2,7 +2,7 @@
 
 module Mutations
   class ResetOrdering < Mutations::BaseMutation
-    description <<~TEXT.strip_heredoc
+    description <<~TEXT
     Reset an ordering to "factory" settings. For schema-inherited orderings,
     this will reload its definition from the schema definition. For custom
     orderings, this will load minimal defaults.

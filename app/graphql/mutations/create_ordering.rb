@@ -7,7 +7,7 @@ module Mutations
     field :ordering, Types::OrderingType, null: true, description: "The created ordering"
 
     argument :entity_id, ID, loads: Types::AnyEntityType, required: true do
-      description <<~TEXT.strip_heredoc
+      description <<~TEXT
       The entity to create the ordering for.
       TEXT
     end

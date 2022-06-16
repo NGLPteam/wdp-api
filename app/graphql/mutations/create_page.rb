@@ -2,7 +2,7 @@
 
 module Mutations
   class CreatePage < Mutations::BaseMutation
-    description <<~TEXT.strip_heredoc
+    description <<~TEXT
     Create a page on an entity.
     TEXT
 

@@ -17,7 +17,7 @@ module Mutations
         field :schema_errors, [Types::SchemaValueErrorType, { null: false } ], null: false
 
         argument :schema_properties, GraphQL::Types::JSON, required: false, transient: true do
-          description <<~TEXT.strip_heredoc
+          description <<~TEXT
           An arbitrary set of property values. Owing to the dynamic nature, they do not have a specific GraphQL input type
           associated with them. Validation will be performed within the application and returned as errors if not valid.
           TEXT

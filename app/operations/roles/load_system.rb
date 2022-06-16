@@ -9,11 +9,11 @@ module Roles
       calculate_role_permissions: "roles.calculate_role_permissions"
     ]
 
-    PREFIX = <<~SQL.strip_heredoc.freeze
+    PREFIX = <<~SQL
     INSERT INTO roles (identifier, name, access_control_list, global_access_control_list)
     SQL
 
-    SUFFIX = <<~SQL.strip_heredoc.freeze
+    SUFFIX = <<~SQL
     ON CONFLICT (identifier) DO UPDATE SET
       name = EXCLUDED.name,
       access_control_list = EXCLUDED.access_control_list,

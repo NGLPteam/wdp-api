@@ -2,7 +2,7 @@
 
 module Mutations
   class UpdatePage < Mutations::BaseMutation
-    description <<~TEXT.strip_heredoc
+    description <<~TEXT
     Update a page.
     TEXT
 

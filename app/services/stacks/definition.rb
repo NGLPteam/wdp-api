@@ -10,8 +10,8 @@ module Stacks
 
       param :name, Stacks::Types::Name
 
-      option :default, Stacks::Types::Evaluable.optional, default: proc { nil }
-      option :coercer, Stacks::Types::Evaluable.optional, default: proc { nil }
+      option :default, Stacks::Types::Evaluable.optional, default: proc {}
+      option :coercer, Stacks::Types::Evaluable.optional, default: proc {}
     end
 
     def initialize(*)

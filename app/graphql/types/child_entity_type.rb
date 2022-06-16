@@ -24,7 +24,7 @@ module Types
     end
 
     field :identifier, String, null: false do
-      description <<~TEXT.strip_heredoc.squish
+      description <<~TEXT.squish
       A machine-readable identifier for the entity. Not presently used, but will be necessary
       for synchronizing with upstream providers.
       TEXT
