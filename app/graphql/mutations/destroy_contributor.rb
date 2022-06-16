@@ -2,7 +2,7 @@
 
 module Mutations
   class DestroyContributor < Mutations::BaseMutation
-    description <<~TEXT.strip_heredoc
+    description <<~TEXT
     Destroy a contributor by ID.
     TEXT
 

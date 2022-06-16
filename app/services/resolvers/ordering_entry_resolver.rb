@@ -14,7 +14,7 @@ module Resolvers
     include Resolvers::PageBasedPagination
 
     option :order, type: Types::OrderingEntrySortModeType, default: "default",
-      description: <<~TEXT.strip_heredoc
+      description: <<~TEXT
       You can specify the direction to retrieve entries for an ordering.
       INVERSE will be identical to DEFAULT if the ordering is marked constant.
       TEXT

@@ -15,7 +15,7 @@ module Mutations
     argument :asset_id, ID, loads: Types::AnyAssetType, description: "The ID for the asset to update", required: true
 
     argument :attachment, Types::UploadedFileInputType, required: true do
-      description <<~TEXT.strip_heredoc
+      description <<~TEXT
       A reference to an upload in Tus.
       TEXT
     end

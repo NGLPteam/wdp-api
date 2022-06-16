@@ -6,8 +6,8 @@ module Stacks
       param :parent, Stacks::Types::Parent
       param :name, Stacks::Types::Name
 
-      option :coercer, Stacks::Types::Evaluable.optional, default: proc { nil }
-      option :default, Stacks::Types::Evaluable.optional, default: proc { nil }
+      option :coercer, Stacks::Types::Evaluable.optional, default: proc {}
+      option :default, Stacks::Types::Evaluable.optional, default: proc {}
     end
 
     # @!attribute [r] current

@@ -6,7 +6,7 @@ module Mutations
   # @see Announcement
   # @see Types::AnnouncementType
   class DestroyAnnouncement < Mutations::BaseMutation
-    description <<~TEXT.strip_heredoc
+    description <<~TEXT
     Destroy a announcement by ID.
     TEXT
 

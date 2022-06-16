@@ -7,7 +7,7 @@ module Mutations
     field :ordering, Types::OrderingType, null: true, description: "The updated ordering"
 
     argument :ordering_id, ID, loads: Types::OrderingType, required: true do
-      description <<~TEXT.strip_heredoc
+      description <<~TEXT
       The ID for the ordering to update
       TEXT
     end

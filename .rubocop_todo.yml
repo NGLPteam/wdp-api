@@ -6,5 +6,11 @@
 # Note that changes in the inspected code, or installation of new
 # versions of RuboCop, may require this file to be generated again.
 
+Lint/AmbiguousOperatorPrecedence: # new in 1.21
+  Enabled: false
+
 Style/Documentation:
+  Enabled: false
+
+Style/FetchEnvVar:
   Enabled: false

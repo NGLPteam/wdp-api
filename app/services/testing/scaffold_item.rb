@@ -8,7 +8,7 @@ module Testing
     prepend HushActiveRecord
 
     option :collection, AppTypes.Instance(Collection)
-    option :parent, AppTypes.Instance(Item).optional, default: proc { nil }
+    option :parent, AppTypes.Instance(Item).optional, default: proc {}
     option :schema_definition, AppTypes.Instance(SchemaDefinition).optional, default: proc { SchemaDefinition.default_item }
     option :child_count, AppTypes::Integer, default: proc { 3 }
     option :grandchild_count, AppTypes::Integer, default: proc { 2 }

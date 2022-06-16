@@ -7,8 +7,8 @@ module Testing
     include InitializerOptions
     prepend HushActiveRecord
 
-    option :community, AppTypes.Instance(Community).optional, default: proc { nil }
-    option :parent, AppTypes.Instance(Collection).optional, default: proc { nil }
+    option :community, AppTypes.Instance(Community).optional, default: proc {}
+    option :parent, AppTypes.Instance(Collection).optional, default: proc {}
     option :schema_definition, AppTypes.Instance(SchemaDefinition).optional, default: proc { SchemaDefinition.default_collection }
     option :child_count, AppTypes::Integer, default: proc { 3 }
     option :grandchild_count, AppTypes::Integer, default: proc { 2 }

@@ -10,7 +10,7 @@ module Mutations
 
     argument :entity_id, ID, loads: Types::AnyEntityType, description: "The entity that owns the attachment", required: true
     argument :attachment, Types::UploadedFileInputType, required: true, attribute: true do
-      description <<~TEXT.strip_heredoc
+      description <<~TEXT
       A reference to an upload in Tus.
       TEXT
     end

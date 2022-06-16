@@ -2,7 +2,7 @@
 
 module Mutations
   class DestroyCollection < Mutations::BaseMutation
-    description <<~TEXT.strip_heredoc
+    description <<~TEXT
     Destroy a collection by ID.
     TEXT
 

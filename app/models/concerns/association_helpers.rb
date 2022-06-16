@@ -32,7 +32,7 @@ module AssociationHelpers
     #     # @note This association is read-only (likely against a database view).
     #     has_many $1, -> { readonly }, ${2--1}
     def has_many_readonly(name, *args, **kwargs, &block)
-      has_many name, *args, **kwargs, &block
+      has_many name, *args, **kwargs, &block # rubocop:disable Rails/HasManyOrHasOneDependent
     end
 
     # Define a read-only `has_one` association
@@ -47,7 +47,7 @@ module AssociationHelpers
     #     # @note This association is read-only (likely against a database view).
     #     has_one $1, -> { readonly }, ${2--1}
     def has_one_readonly(name, *args, **kwargs, &block)
-      has_one name, *args, **kwargs, &block
+      has_one name, *args, **kwargs, &block # rubocop:disable Rails/HasManyOrHasOneDependent
     end
   end
 end

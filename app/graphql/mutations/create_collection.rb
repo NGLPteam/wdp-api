@@ -5,7 +5,7 @@ module Mutations
     field :collection, Types::CollectionType, null: true
 
     argument :parent_id, ID, loads: Types::CollectionParentType, required: true do
-      description <<~TEXT.strip_heredoc
+      description <<~TEXT
       The parent of the new collection. This can be the encoded ID of a community or another collection.
       TEXT
     end

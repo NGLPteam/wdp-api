@@ -15,7 +15,7 @@ module Harvesting
         param :harvest_source, Harvesting::Types::Source
         param :harvest_target, Harvesting::Types::Target
 
-        option :set, Harvesting::Types::Set.optional, default: proc { nil }
+        option :set, Harvesting::Types::Set.optional, default: proc {}
       end
 
       # @param [HarvestSource] harvest_source

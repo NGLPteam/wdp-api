@@ -13,7 +13,7 @@ module Types
     end
 
     argument :mime_type, String, required: false, default_value: "application/octet-stream" do
-      description <<~TEXT.strip_heredoc
+      description <<~TEXT
       The original content type. WDP will detect a real content type, so this can't be spoofed, but it can be helpful with generating
       an initial asset with the correct kind.
       TEXT

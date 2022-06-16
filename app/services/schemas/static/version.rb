@@ -15,7 +15,7 @@ module Schemas
       param :version, AppTypes::SemanticVersion
       param :path, AppTypes.Instance(Pathname)
 
-      option :namespace, AppTypes::String.optional, default: proc { nil }
+      option :namespace, AppTypes::String.optional, default: proc {}
 
       delegate :[], :dig, :slice, to: :raw_data
 

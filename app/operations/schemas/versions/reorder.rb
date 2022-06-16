@@ -18,7 +18,7 @@ module Schemas
       # The first half of the reorder query, that lets the operation
       # optionally (preferably) filter the update by {SchemaDefinition}.
       # @api private
-      PREFIX = <<~SQL.strip_heredoc.strip
+      PREFIX = <<~SQL.strip
       WITH new_positions AS (
         SELECT
           id AS schema_version_id,
@@ -30,7 +30,7 @@ module Schemas
 
       # The latter half of the reorder query
       # @api private
-      SUFFIX = <<~SQL.strip_heredoc.strip
+      SUFFIX = <<~SQL.strip
         WINDOW w AS (
           PARTITION BY schema_definition_id
           ORDER BY parsed DESC

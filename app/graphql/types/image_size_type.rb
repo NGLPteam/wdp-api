@@ -3,7 +3,7 @@
 module Types
   # @see ImageAttachments::SizeWrapper
   class ImageSizeType < Types::BaseObject
-    description <<~TEXT.strip_heredoc
+    description <<~TEXT
     This describes a specific derivative style
     for an attachment, e.g. small, medium, thumb.
 

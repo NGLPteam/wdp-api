@@ -122,9 +122,9 @@ end
 
 group :development do
   gem "listen", "~> 3.3"
-  gem "rubocop", "~> 1.13.0"
-  gem "rubocop-rails", "~> 2.9.1", require: false
-  gem "rubocop-rspec", "~> 2.4.0", require: false
+  gem "rubocop", "~> 1.30.1"
+  gem "rubocop-rails", "~> 2.15.0", require: false
+  gem "rubocop-rspec", "~> 2.11.1", require: false
 end
 
 group :test do

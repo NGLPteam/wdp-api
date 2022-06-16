@@ -2,7 +2,7 @@
 
 module Mutations
   class DestroyEntityLink < Mutations::BaseMutation
-    description <<~TEXT.strip_heredoc
+    description <<~TEXT
     Destroy an EntityLink by ID.
     TEXT
 

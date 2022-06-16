@@ -13,7 +13,7 @@ class StatusController < ApplicationController
   #
   # @return [void]
   def root
-    render plain: <<~TEXT.strip_heredoc
+    render plain: <<~TEXT
     WDP-API
     TEXT
   end

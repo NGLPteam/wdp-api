@@ -2,7 +2,7 @@
 
 module Mutations
   class CreateRole < Mutations::BaseMutation
-    description <<~TEXT.strip_heredoc
+    description <<~TEXT
     Create a global role, with a set of permissions, that can be used to grant access to various parts of the hierarchy
     in a granular fashion.
     TEXT

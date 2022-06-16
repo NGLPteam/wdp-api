@@ -4,12 +4,12 @@ RSpec.describe FullText::ExtractTextContent, type: :operation do
   let!(:operation) { described_class.new }
 
   it "returns nil with an unknown content type" do
-    expect_calling_with(kind: "anything else", content: "some content").to eq nil
+    expect_calling_with(kind: "anything else", content: "some content").to be_nil
   end
 
   context "with kind = 'text'" do
     it "returns nil with a bunch of whitespace" do
-      expect_calling_with(kind: "text", content: "   \t \n \n \n").to eq nil
+      expect_calling_with(kind: "text", content: "   \t \n \n \n").to be_nil
     end
 
     it "strips and squishes extra white space" do
@@ -28,11 +28,11 @@ RSpec.describe FullText::ExtractTextContent, type: :operation do
     end
 
     it "returns nil when there is no text content" do
-      expect_calling_with(kind: "html", content: "<br />").to eq nil
+      expect_calling_with(kind: "html", content: "<br />").to be_nil
     end
 
     it "returns nil with empty content" do
-      expect_calling_with(kind: "html", content: "").to eq nil
+      expect_calling_with(kind: "html", content: "").to be_nil
     end
   end
 
@@ -48,7 +48,7 @@ RSpec.describe FullText::ExtractTextContent, type: :operation do
     end
 
     it "returns nil with empty content" do
-      expect_calling_with(kind: "markdown", content: "").to eq nil
+      expect_calling_with(kind: "markdown", content: "").to be_nil
     end
   end
 end

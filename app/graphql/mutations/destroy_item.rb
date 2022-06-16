@@ -2,7 +2,7 @@
 
 module Mutations
   class DestroyItem < Mutations::BaseMutation
-    description <<~TEXT.strip_heredoc
+    description <<~TEXT
     Destroy an item by ID.
     TEXT
 

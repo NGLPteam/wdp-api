@@ -15,7 +15,7 @@ module Mutations
     clearable_attachment! :avatar
 
     argument :profile, Types::UserProfileInputType, required: true, attribute: true do
-      description <<~TEXT.strip_heredoc
+      description <<~TEXT
       Attributes for the user that correspond to attributes in Keycloak.
       TEXT
     end

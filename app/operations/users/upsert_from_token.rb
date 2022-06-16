@@ -8,7 +8,7 @@ module Users
       transform_token: "users.transform_token",
     ]
 
-    RETURNING_EXPR = <<~SQL.strip_heredoc.squish
+    RETURNING_EXPR = <<~SQL.squish
     "id",
     'global_admin' = ANY(roles) AS global_admin,
     (xmax = 0) AS inserted

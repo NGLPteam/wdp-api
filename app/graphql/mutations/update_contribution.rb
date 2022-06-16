@@ -2,7 +2,7 @@
 
 module Mutations
   class UpdateContribution < Mutations::BaseMutation
-    description <<~TEXT.strip_heredoc
+    description <<~TEXT
     Update a Contribution by ID.
     TEXT
 

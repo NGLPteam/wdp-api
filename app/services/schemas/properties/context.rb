@@ -11,8 +11,8 @@ module Schemas
 
       include Dry::Core::Memoizable
       include Dry::Initializer[undefined: false].define -> do
-        option :version, Schemas::Types.Instance(SchemaVersion).optional, default: proc { nil }
-        option :instance, Schemas::Types::SchemaInstance.optional, default: proc { nil }
+        option :version, Schemas::Types.Instance(SchemaVersion).optional, default: proc {}
+        option :instance, Schemas::Types::SchemaInstance.optional, default: proc {}
 
         option :type_mapping, Schemas::Properties::TypeMapping::Type, default: proc { version&.type_mapping || Schemas::Properties::TypeMapping.new }
 

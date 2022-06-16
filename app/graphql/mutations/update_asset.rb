@@ -12,7 +12,7 @@ module Mutations
     argument :asset_id, ID, loads: Types::AnyAssetType, description: "The ID for the asset to update", required: true
 
     argument :attachment, Types::UploadedFileInputType, required: false, attribute: true do
-      description <<~TEXT.strip_heredoc
+      description <<~TEXT
       An optional reference to an upload in Tus. It will replace the current file if provided.
       Note: Unlike other attachments in the API, there is no way to clear an attachment from
       an existing asset. If you wish to do that, simply call destroyAsset.

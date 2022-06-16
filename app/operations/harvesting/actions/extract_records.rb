@@ -15,7 +15,7 @@ module Harvesting
 
         option :async, Harvesting::Types::Bool, default: proc { false }
 
-        option :cursor, Harvesting::Types::String.optional, default: proc { nil }
+        option :cursor, Harvesting::Types::String.optional, default: proc {}
 
         option :skip_prepare, Harvesting::Types::Bool, default: proc { false }
 

@@ -18,14 +18,14 @@ module Mutations
     end
 
     argument :property_values, GraphQL::Types::JSON, required: true do
-      description <<~TEXT.strip_heredoc
+      description <<~TEXT
       An arbitrary set of property values. Owing to the dynamic nature, they do not have a specific GraphQL input type
       associated with them. Validation will be performed within the application and returned as errors if not valid.
       TEXT
     end
 
     argument :strategy, Types::PropertyApplicationStrategyType, required: false, default_value: :apply do
-      description <<~TEXT.strip_heredoc
+      description <<~TEXT
       This argument dictates how the mutation should handle received property values.
       If set to `SKIP`, it will alter the schema version without setting any new properties.
       TEXT
