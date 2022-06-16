@@ -49,6 +49,10 @@ class Asset < ApplicationRecord
     )
   end
 
+  def has_attachment?
+    persisted? && attachment.present?
+  end
+
   # @return [Class]
   def graphql_node_type
     if image?
@@ -71,6 +75,12 @@ class Asset < ApplicationRecord
     attachment_attacher.refresh_metadata!
 
     save!
+  end
+
+  # @!attribute [r] signature
+  # @return [String, nil]
+  def signature
+    attachment&.metadata&.[]("sha256")
   end
 
   def to_schematic_referent_label

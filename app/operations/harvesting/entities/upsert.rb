@@ -13,7 +13,6 @@ module Harvesting
       include MonadicPersistence
       include WDPAPI::Deps[
         apply_properties: "schemas.instances.apply",
-        attach_assets: "harvesting.entities.attach_assets",
         attach_contribution: "harvesting.contributions.attach",
         connect_link: "links.connect",
         find_existing_collection: "harvesting.utility.find_existing_collection",
@@ -51,17 +50,22 @@ module Harvesting
       end
 
       def attach!(harvest_entity, parent:)
-        entity = yield find_or_initialize_entity_for parent, harvest_entity
+        advisory_key = [parent.identifier, harvest_entity.identifier].join(":")
 
-        yield apply_attributes! harvest_entity, entity
+        entity = nil
 
-        yield assign_schema_version! harvest_entity, entity
+        ApplicationRecord.with_advisory_lock advisory_key do
+          entity = yield find_or_initialize_entity_for parent, harvest_entity
 
-        asset_properties = yield apply_assets! harvest_entity, entity
+          yield apply_attributes! harvest_entity, entity
 
-        yield apply_schema_version_and_properties!(harvest_entity, entity, assets: asset_properties)
+          yield assign_schema_version! harvest_entity, entity
 
-        yield finalize! harvest_entity, entity
+          # This will not include asset properties.
+          yield apply_schema_version_and_properties!(harvest_entity, entity)
+
+          yield finalize! harvest_entity, entity
+        end
 
         harvest_entity.harvest_contributions.find_each do |harvest_contribution|
           yield attach_contribution.call(harvest_contribution, entity)
@@ -74,6 +78,8 @@ module Harvesting
         end
 
         yield upsert_links! harvest_entity, entity
+
+        Harvesting::UpsertEntityAssetsJob.perform_later harvest_entity if harvest_entity.has_assets?
 
         Success entity
       end
@@ -117,27 +123,16 @@ module Harvesting
         end
       end
 
-      # @see Harvesting::Entities::AttachAssets
-      # @param [HarvestEntity] harvest_entity
-      # @param [Collection, Item] entity
-      # @return [Dry::Monads::Success(PropertyHash)]
-      def apply_assets!(harvest_entity, entity)
-        # Entities must be saved in order to apply assets. It should save safely here.
-        yield monadic_save entity
-
-        attach_assets.call entity, harvest_entity.extracted_assets
-      end
-
       # @see Schemas::Instances::Apply
       # @param [HarvestEntity] harvest_entity
       # @param [Collection, Item] entity
       # @param [PropertyHash] assets
       # @return [Dry::Monads::Result]
-      def apply_schema_version_and_properties!(harvest_entity, entity, assets: PropertyHash.new)
+      def apply_schema_version_and_properties!(harvest_entity, entity)
         # We need the schema version and everything else to be applied
         yield monadic_save entity
 
-        props = PropertyHash.new(harvest_entity.extracted_properties) | assets
+        props = PropertyHash.new(harvest_entity.extracted_properties)
 
         apply_properties.call entity, props.to_h
       end
