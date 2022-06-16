@@ -24,6 +24,7 @@ ActiveSupport::Inflector.inflections(:en) do |inflect|
   inflect.acronym "JSON"
   inflect.acronym "METS"
   inflect.acronym "MODS"
+  inflect.acronym "OAIDC"
   inflect.acronym "OAIPMH"
   inflect.acronym "OAI"
   inflect.acronym "ORCID"

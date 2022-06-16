@@ -5,6 +5,11 @@ module AppTypes
 
   extend Shared::EnhancedTypes
 
+  # @see https://www.crossref.org/blog/dois-and-matching-regular-expressions/
+  DOI_PATTERN = %r|\A10\.\d{4,9}/[-._;()/:A-Z0-9]+\z|i.freeze
+
+  ISSN_PATTERN = /\A\d{4}-\d{4}\z/.freeze
+
   UUID_PATTERN = /\A[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\z/i.freeze
 
   UUID = AppTypes::String.constrained(format: UUID_PATTERN)
@@ -23,6 +28,8 @@ module AppTypes
 
   StringList = AppTypes::Array.of(AppTypes::String)
 
+  DOI = String.constrained(format: DOI_PATTERN)
+
   CoercibleString = Coercible::String
 
   CoercibleStringList = AppTypes::Coercible::Array.of(AppTypes::Coercible::String)
@@ -30,6 +37,8 @@ module AppTypes
   AttributePath = AppTypes::Array.of(AppTypes::Integer | AppTypes::Coercible::String)
 
   ContributorKind = AppTypes::Coercible::Symbol.enum(:organization, :person)
+
+  ISSN = String.constrained(format: ISSN_PATTERN)
 
   MIME = Instance(::MIME::Type).constructor do |input|
     case input

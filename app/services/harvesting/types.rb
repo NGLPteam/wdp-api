@@ -6,6 +6,8 @@ module Harvesting
 
     extend Shared::EnhancedTypes
 
+    METADATA_FORMATS = %w[jats mets mods oaidc].freeze
+
     VALID_NAME = /\A([a-z_][a-zA-Z_0-9]*)\z/.freeze
 
     VALID_PATH = /\A(?<part>[a-z_][a-zA-Z_0-9]*)\.\g<part>\z/.freeze
@@ -34,7 +36,7 @@ module Harvesting
       default(Harvesting::ABSOLUTE_MAX_RECORD_COUNT).
       fallback(Harvesting::ABSOLUTE_MAX_RECORD_COUNT)
 
-    MetadataFormat = Coercible::String.enum("jats", "mets", "mods")
+    MetadataFormat = Coercible::String.enum(*METADATA_FORMATS)
 
     # @see Harvesting::Metadata::Section
     MetadataSection = Instance(Harvesting::Metadata::Section)
