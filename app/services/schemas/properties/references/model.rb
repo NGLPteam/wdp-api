@@ -32,7 +32,11 @@ module Schemas
         end
 
         def apply_schema_type_to(macro)
-          macro.value(schema_type)
+          if !actually_required? && scalar_reference?
+            macro.maybe(schema_type)
+          else
+            macro.value(schema_type)
+          end
         end
 
         def add_to_rules!(context)
