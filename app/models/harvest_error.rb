@@ -13,6 +13,7 @@ class HarvestError < ApplicationRecord
   scope :harvest_entities, -> { by_source_type "HarvestEntity" }
   scope :harvest_records, -> { by_source_type "HarvestRecord" }
   scope :latest_attempt, -> { build_latest_attempt_scope }
+  scope :maybe_by_code, ->(*codes) { by_code(codes.flatten) if codes.any? }
   scope :message_contains, ->(needle) { where_contains(message: needle) }
   scope :sans_message, ->(needle) { where.not(id: message_contains(needle)) }
   scope :unknown_collections, -> { message_contains(UNKNOWN_COLLECTIONS) }

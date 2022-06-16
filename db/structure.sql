@@ -3712,6 +3712,40 @@ CREATE TABLE public.harvest_attempts (
 
 
 --
+-- Name: harvest_cached_asset_references; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.harvest_cached_asset_references (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    harvest_cached_asset_id uuid NOT NULL,
+    cacheable_type character varying NOT NULL,
+    cacheable_id uuid NOT NULL,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+--
+-- Name: harvest_cached_assets; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.harvest_cached_assets (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    url public.citext NOT NULL,
+    fetched_at timestamp with time zone,
+    touched_at timestamp with time zone,
+    file_size bigint,
+    file_name public.citext,
+    content_type public.citext,
+    signature public.citext,
+    asset_data jsonb,
+    metadata jsonb DEFAULT '{}'::jsonb NOT NULL,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+--
 -- Name: harvest_contributions; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -5246,6 +5280,22 @@ ALTER TABLE ONLY public.granted_permissions
 
 ALTER TABLE ONLY public.harvest_attempts
     ADD CONSTRAINT harvest_attempts_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: harvest_cached_asset_references harvest_cached_asset_references_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.harvest_cached_asset_references
+    ADD CONSTRAINT harvest_cached_asset_references_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: harvest_cached_assets harvest_cached_assets_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.harvest_cached_assets
+    ADD CONSTRAINT harvest_cached_assets_pkey PRIMARY KEY (id);
 
 
 --
@@ -6951,6 +7001,13 @@ CREATE INDEX index_harvest_attempts_on_target_entity ON public.harvest_attempts 
 
 
 --
+-- Name: index_harvest_cached_assets_on_url; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_harvest_cached_assets_on_url ON public.harvest_cached_assets USING btree (url);
+
+
+--
 -- Name: index_harvest_contributions_on_harvest_contributor_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -7123,6 +7180,13 @@ CREATE UNIQUE INDEX index_harvest_sources_on_identifier ON public.harvest_source
 --
 
 CREATE UNIQUE INDEX index_harvest_sources_on_name ON public.harvest_sources USING btree (name);
+
+
+--
+-- Name: index_hcar_uniqueness; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_hcar_uniqueness ON public.harvest_cached_asset_references USING btree (harvest_cached_asset_id, cacheable_id);
 
 
 --
@@ -10695,6 +10759,14 @@ ALTER TABLE ONLY public.granted_permissions
 
 
 --
+-- Name: harvest_cached_asset_references fk_rails_e10303fa2f; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.harvest_cached_asset_references
+    ADD CONSTRAINT fk_rails_e10303fa2f FOREIGN KEY (harvest_cached_asset_id) REFERENCES public.harvest_cached_assets(id) ON DELETE CASCADE;
+
+
+--
 -- Name: authorizing_entities fk_rails_e81ba90b04; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -11013,6 +11085,8 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20220609161857'),
 ('20220609161910'),
 ('20220609224200'),
-('20220609235453');
+('20220609235453'),
+('20220615234049'),
+('20220616001209');
 
 

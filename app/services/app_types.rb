@@ -31,6 +31,19 @@ module AppTypes
 
   ContributorKind = AppTypes::Coercible::Symbol.enum(:organization, :person)
 
+  MIME = Instance(::MIME::Type).constructor do |input|
+    case input
+    when "audio/mp3"
+      ::MIME::Types["audio/mpeg"].first
+    when String
+      ::MIME::Types[input].first
+    else
+      input
+    end
+  end.fallback do
+    MIME::Types["application/octet-stream"].first
+  end
+
   Path = Instance(::Pathname)
 
   Position = Coercible::Integer.constrained(gteq: 0)

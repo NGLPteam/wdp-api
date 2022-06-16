@@ -40,22 +40,42 @@ class HarvestEntity < ApplicationRecord
   validates :identifier, presence: true, uniqueness: { scope: :harvest_record_id }
   validate :exclusive_parentage!
 
+  # @see Harvesting::UpsertEntityAssetsJob
+  # @return [void]
+  def asynchronously_upsert_assets!
+    Harvesting::UpsertEntityAssetsJob.perform_later self
+  end
+
   def inspect
     "HarvestEntity(#{identifier.inspect}, metadata_kind=#{metadata_kind.inspect}, root: #{root?})"
+  end
+
+  def has_assets?
+    extracted_assets.present?
+  end
+
+  def has_entity?
+    entity.present?
   end
 
   def has_existing_parent?
     existing_parent_id.present?
   end
 
+  # @see Harvesting::Actions::UpsertEntity
   # @return [void]
-  def upsert!
+  monadic_operation! def upsert
     call_operation("harvesting.actions.upsert_entity", self)
+  end
+
+  # @see Harvesting::Actions::UpsertEntityAssets
+  monadic_operation! def upsert_assets
+    call_operation("harvesting.actions.upsert_entity_assets", self)
   end
 
   # @param [#as_json] reason
   # @return [(Symbol, String, Hash)]
-  def to_failed_upsert(reason = nil)
+  def to_failed_upsert(reason = nil, code: :failed_entity_upsert)
     metadata = {
       harvest_entity_id: id,
       reason: flatten_reason(reason),
@@ -63,7 +83,7 @@ class HarvestEntity < ApplicationRecord
 
     message = "Could not upsert HarvestEntity(#{id})"
 
-    [:failed_entity_upsert, message, metadata]
+    [code, message, metadata]
   end
 
   private
