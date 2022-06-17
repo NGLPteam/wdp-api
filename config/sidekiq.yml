@@ -13,4 +13,6 @@ production:
   - hierarchies
   - entities
   - orderings
+  - extraction
   - harvesting
+  - asset_fetching

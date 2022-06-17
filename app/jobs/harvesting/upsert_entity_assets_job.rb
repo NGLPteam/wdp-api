@@ -3,7 +3,7 @@
 module Harvesting
   # @see Harvesting::Actions::UpsertEntityAssets
   class UpsertEntityAssetsJob < ApplicationJob
-    queue_as :harvesting
+    queue_as :asset_fetching
 
     # @param [HarvestEntity] harvest_entity
     # @return [void]
