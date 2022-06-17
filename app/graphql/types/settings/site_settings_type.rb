@@ -6,17 +6,25 @@ module Types
     class SiteSettingsType < Types::BaseObject
       description "Configuration settings for information about this installation."
 
-      field :installation_name, String, null: false,
-        description: "The name of the installation."
+      field :installation_name, String, null: false do
+        description "The name of the installation."
+      end
 
-      field :installation_home_page_copy, String, null: false,
-        description: "The text that appears on the root page of the frontend. Supports basic markdown."
+      field :installation_home_page_copy, String, null: false do
+        description "The text that appears on the root page of the frontend. Supports basic markdown."
+      end
 
-      field :provider_name, String, null: false,
-        description: "The name of the provider supporting and maintaining this installation."
+      field :logo_mode, Types::SiteLogoModeType, null: false do
+        description "How the logo should be rendered"
+      end
 
-      field :footer, SiteFooterType, null: false,
-        description: "Settings related to the site's footer"
+      field :provider_name, String, null: false do
+        description "The name of the provider supporting and maintaining this installation."
+      end
+
+      field :footer, SiteFooterType, null: false do
+        description "Settings related to the site's footer"
+      end
     end
   end
 end

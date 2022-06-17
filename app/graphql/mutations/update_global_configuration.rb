@@ -1,22 +1,31 @@
 # frozen_string_literal: true
 
 module Mutations
+  # @see Mutations::Operations::UpdateGlobalConfiguration
   class UpdateGlobalConfiguration < Mutations::BaseMutation
     description <<~TEXT
     Update the global configuration for this site.
     TEXT
 
-    field :global_configuration, Types::GlobalConfigurationType, null: true,
-      description: "Though a global configuration always exists, this will be null if it fails to apply for some reason."
+    field :global_configuration, Types::GlobalConfigurationType, null: true do
+      description "Though a global configuration always exists, this will be null if it fails to apply for some reason."
+    end
 
-    argument :institution, Types::Settings::InstitutionSettingsInputType, required: false, attribute: true,
-      description: "Possible new settings for the institution"
+    argument :institution, Types::Settings::InstitutionSettingsInputType, required: false, attribute: true do
+      description "Possible new settings for the institution"
+    end
 
-    argument :site, Types::Settings::SiteSettingsInputType, required: false, attribute: true,
-      description: "Possible new settings for the site"
+    image_attachment! :logo
 
-    argument :theme, Types::Settings::ThemeSettingsInputType, required: false, attribute: true,
-      description: "Possible new settings for the theme"
+    clearable_attachment! :logo
+
+    argument :site, Types::Settings::SiteSettingsInputType, required: false, attribute: true do
+      description "Possible new settings for the site"
+    end
+
+    argument :theme, Types::Settings::ThemeSettingsInputType, required: false, attribute: true do
+      description "Possible new settings for the theme"
+    end
 
     performs_operation! "mutations.operations.update_global_configuration"
   end

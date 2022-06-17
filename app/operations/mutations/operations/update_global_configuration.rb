@@ -9,6 +9,8 @@ module Mutations
 
       use_contract! :update_global_configuration
 
+      attachment! :logo, image: true
+
       def call(institution: nil, site: nil, theme: nil, **args)
         config = GlobalConfiguration.fetch
 
@@ -25,6 +27,8 @@ module Mutations
         end
 
         config.theme = theme if theme.present?
+
+        assign_attributes!(config, **args)
 
         persist_model! config, attach_to: :global_configuration
       end

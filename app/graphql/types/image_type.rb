@@ -9,20 +9,23 @@ module Types
 
     implements Types::ImageIdentificationType
 
-    field :alt, String, null: true,
-      description: "Alt text for accessible images"
+    field :alt, String, null: true do
+      description "Alt text for accessible images"
+    end
 
-    field :dimensions, [Int], null: true,
-      deprecation_reason: "Use width and height directly."
+    field :dimensions, [Int], null: true, deprecation_reason: "Use width and height directly."
 
-    field :height, Int, null: true,
-      description: "The height of the image, if present"
+    field :height, Int, null: true do
+      description "The height of the image, if present"
+    end
 
-    field :width, Int, null: true,
-      description: "The width of the image, if present"
+    field :width, Int, null: true do
+      description "The width of the image, if present"
+    end
 
-    field :url, String, null: true,
-      description: "The URL for the image, if present."
+    field :url, String, null: true do
+      description "The URL for the image, if present."
+    end
 
     # @return [(Integer, Integer)]
     def dimensions

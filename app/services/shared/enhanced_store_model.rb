@@ -34,5 +34,44 @@ module Shared
         self[attr] = value
       end
     end
+
+    class_methods do
+      # A better method for generating enums that does not store numeric values.
+      #
+      # We want to store the actual strings.
+      #
+      # @param [Symbol] attr_name
+      # @param [<#to_s>] values
+      # @param [{ Symbol => Object }] options
+      def actual_enum(attr_name, *values, suffix: nil, prefix: nil, default: nil, allow_blank: false, **options)
+        values.flatten!
+
+        mapped = values.index_with(&:to_s)
+
+        options[:in] = mapped
+        options[:_suffix] = suffix if suffix
+        options[:_prefix] = prefix if prefix
+        options[:default] = default
+
+        enum attr_name, **options
+
+        prepend EnumNullifier.new(attr_name) if allow_blank
+      end
+    end
+
+    # We need to allow enum fields to optionally be `nil`.
+    #
+    # @api private
+    class EnumNullifier < Module
+      def initialize(enum_name)
+        @enum_name = enum_name
+
+        class_eval <<~RUBY, __FILE__, __LINE__ + 1
+        def #{@enum_name}
+          super.presence
+        end
+        RUBY
+      end
+    end
   end
 end

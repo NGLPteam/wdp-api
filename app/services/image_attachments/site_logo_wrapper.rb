@@ -1,19 +1,19 @@
 # frozen_string_literal: true
 
 module ImageAttachments
-  # This class wraps an {ImageUploader::Attacher} and presents it in a way
+  # This class wraps an {SiteLogoUploader::Attacher} and presents it in a way
   # suitable for consumption by the GraphQL API.
   #
-  # @see ImageUploader
-  # @see Types::ImageAttachmentType
-  class ImageWrapper
-    include Shared::Typing
+  # @see SiteLogoUploader
+  # @see Types::SiteLogoAttachmentType
+  class SiteLogoWrapper
     include Dry::Core::Memoizable
     include Dry::Initializer[undefined: false].define -> do
       param :attacher, ImageAttachments::Types::Attacher
 
-      option :purpose, ImageAttachments::Types::Purpose, default: proc { "other" }
+      option :purpose, ImageAttachments::Types::Purpose, default: proc { "site_logo" }
     end
+    include Shared::Typing
 
     delegate :file, to: :attacher, prefix: :original
     delegate :alt, :original_filename, to: :original_file, allow_nil: true
@@ -35,7 +35,7 @@ module ImageAttachments
     end
 
     def method_missing(meth, *args, &block)
-      if ImageAttachments.image_size?(meth) && args.empty?
+      if ImageAttachments.site_logo_size?(meth) && args.empty?
         size_wrapper meth
       else
         # :nocov:
@@ -45,13 +45,13 @@ module ImageAttachments
     end
 
     def respond_to_missing?(meth, include_private = false)
-      ImageAttachments.image_size?(meth) || super
+      ImageAttachments.site_logo_size?(meth) || super
     end
 
     private
 
     memoize def size_wrapper(size)
-      SizeWrapper.new self, ImageAttachments.image_size(size)
+      SizeWrapper.new self, ImageAttachments.site_logo_size(size)
     end
   end
 end

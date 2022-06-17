@@ -23,9 +23,10 @@ module Types
     field :original, Types::ImageOriginalType, null: false,
       description: "The original source for the image"
 
-    ImageAttachments.each_size do |size|
-      field size.name, Types::ImageSizeType, null: false,
-        description: "A #{size.name}-sized mapping for derivative formats"
+    ImageAttachments.each_image_size do |size|
+      field size.name, Types::ImageSizeType, null: false do
+        description "A #{size.name}-sized mapping for derivative formats"
+      end
     end
   end
 end

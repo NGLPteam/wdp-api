@@ -6,7 +6,7 @@ module ImageAttachments
   # @see Types::ImageOriginalType
   class OriginalWrapper
     include Dry::Initializer[undefined: false].define -> do
-      param :image_wrapper, ImageAttachments::Types.Instance(ImageAttachments::ImageWrapper)
+      param :image_wrapper, AnyImageWrapper
       param :uploaded_file, ImageAttachments::Types::UploadedFile.optional, optional: true
     end
 

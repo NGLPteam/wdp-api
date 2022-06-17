@@ -7,7 +7,7 @@ module ImageAttachments
   # @see Types::ImageDerivativeType
   class DerivativeWrapper
     include Dry::Initializer[undefined: false].define -> do
-      param :size_wrapper, ImageAttachments::Types.Instance(ImageAttachments::SizeWrapper)
+      param :size_wrapper, ImageAttachments::SizeWrapper::Type
       param :format, ImageAttachments::Types::Format
       param :uploaded_file, ImageAttachments::Types::UploadedFile.optional, optional: true
     end
@@ -15,6 +15,7 @@ module ImageAttachments
     delegate :height, :width, to: :uploaded_file, allow_nil: true
     delegate :height, :width, to: :size_wrapper, prefix: :max
     delegate :size, :image_wrapper, to: :size_wrapper
+    delegate :name, to: :size, prefix: true
     delegate :alt, :original_filename, :purpose, to: :image_wrapper
 
     # @return [String]
