@@ -3,13 +3,13 @@
 RSpec.describe ItemPolicy, type: :policy do
   let!(:user) { FactoryBot.create :user }
 
-  let!(:item) { FactoryBot.create :item }
+  let_it_be(:item) { FactoryBot.create :item }
 
-  let!(:subitem) { FactoryBot.create :item, parent: item }
+  let_it_be(:subitem) { FactoryBot.create :item, parent: item }
 
-  let!(:other_item) { FactoryBot.create :item }
+  let_it_be(:other_item) { FactoryBot.create :item }
 
-  let!(:contextual_role) { FactoryBot.create :role, :all_contextual }
+  let_it_be(:contextual_role) { FactoryBot.create :role, :all_contextual }
 
   let!(:scope) { described_class::Scope.new(user, Item.all) }
 

@@ -1,9 +1,13 @@
 # frozen_string_literal: true
 
 RSpec.describe "Page-Based Pagination", type: :request, disable_ordering_refresh: true do
-  let!(:collection) { FactoryBot.create :collection }
+  let_it_be(:test_schema) { FactoryBot.create :schema_version, :collection }
 
-  let!(:subcollections) do
+  let_it_be(:collection) { FactoryBot.create :collection }
+
+  let_it_be(:special_collection) { FactoryBot.create :collection, title: ?D, parent: collection, schema_version: test_schema }
+
+  let_it_be(:subcollections) do
     ?a.upto(?c).each_with_object({}) do |title, h|
       key = title.to_sym
 
@@ -12,10 +16,6 @@ RSpec.describe "Page-Based Pagination", type: :request, disable_ordering_refresh
       h[:d] = special_collection
     end
   end
-
-  let!(:test_schema) { FactoryBot.create :schema_version, :collection }
-
-  let!(:special_collection) { FactoryBot.create :collection, title: ?D, parent: collection, schema_version: test_schema }
 
   let!(:order) { "TITLE_ASCENDING" }
   let!(:page) { nil }
@@ -38,7 +38,7 @@ RSpec.describe "Page-Based Pagination", type: :request, disable_ordering_refresh
     }.compact
   end
 
-  let!(:subcollection_count) { collection.children.count }
+  let_it_be(:subcollection_count) { collection.children.count }
 
   let!(:derived_page) { page || 1 if page || per_page }
   let!(:derived_per_page) { per_page || Graphql::Constants::DEFAULT_PER_PAGE_SIZE if page || per_page }
