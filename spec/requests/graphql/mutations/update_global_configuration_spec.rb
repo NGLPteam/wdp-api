@@ -9,9 +9,24 @@ RSpec.describe Mutations::UpdateGlobalConfiguration, type: :request, graphql: :m
           name
         }
 
+        logo {
+          original {
+            ... ImageFragment
+          }
+
+          sansText {
+            ... ImageSizeFragment
+          }
+
+          withText {
+            ... ImageSizeFragment
+          }
+        }
+
         site {
           installationName
           installationHomePageCopy
+          logoMode
           providerName
 
           footer {
@@ -29,6 +44,42 @@ RSpec.describe Mutations::UpdateGlobalConfiguration, type: :request, graphql: :m
       ... ErrorFragment
     }
   }
+
+  fragment ImageSizeFragment on ImageSize {
+    size
+
+    alt
+
+    height
+
+    width
+
+    webp {
+      ... ImageDerivativeFragment
+    }
+
+    png {
+      ... ImageDerivativeFragment
+    }
+  }
+
+  fragment ImageDerivativeFragment on ImageDerivative {
+    ... ImageFragment
+
+    format
+
+    size
+
+    maxHeight
+    maxWidth
+  }
+
+  fragment ImageFragment on Image {
+    alt
+    height
+    width
+    url
+  }
   GRAPHQL
 
   context "as an admin" do
@@ -37,6 +88,7 @@ RSpec.describe Mutations::UpdateGlobalConfiguration, type: :request, graphql: :m
     let!(:color) { "blue" }
     let!(:font) { "style2" }
     let!(:institution_name) { "Some Institution Name" }
+    let(:site_logo_mode) { "NONE" }
     let!(:provider_name) { "Some Provider Name" }
     let!(:installation_name) { "Some Installation Name" }
     let!(:installation_home_page_copy) { "Some installation copy that appears on the home page." }
@@ -49,12 +101,18 @@ RSpec.describe Mutations::UpdateGlobalConfiguration, type: :request, graphql: :m
       }
     end
 
+    let_mutation_input!(:clear_logo) { false }
+
     let_mutation_input!(:institution) { { name: institution_name } }
+
+    let_mutation_input!(:logo) { nil }
+    let_mutation_input!(:logo_metadata) { { alt: "some text" } }
 
     let_mutation_input!(:site) do
       {
         installation_name: installation_name,
         installation_home_page_copy: installation_home_page_copy,
+        logo_mode: site_logo_mode,
         provider_name: provider_name,
         footer: footer,
       }
@@ -89,9 +147,60 @@ RSpec.describe Mutations::UpdateGlobalConfiguration, type: :request, graphql: :m
     end
 
     it "updates the config" do
-      expect_the_default_request.to change { GlobalConfiguration.fetch.site.as_json }.and change { GlobalConfiguration.fetch.theme.as_json }
+      expect_request! do |req|
+        req.effect! keep_the_same { GlobalConfiguration.fetch.logo }
+        req.effect! keep_the_same { GlobalConfiguration.fetch.logo_metadata }
+        req.effect! change { GlobalConfiguration.fetch.site.as_json }
+        req.effect! change { GlobalConfiguration.fetch.theme.as_json }
 
-      expect_graphql_data expected_shape
+        req.data! expected_shape
+      end
+    end
+
+    context "when providing a logo" do
+      let(:logo) { graphql_upload_from "spec", "data", "lorempixel.jpg" }
+
+      let(:expected_logo_mode) { "WITH_TEXT" }
+
+      let(:expected_shape) do
+        gql.mutation :update_global_configuration do |m|
+          m.prop :global_configuration do |gc|
+            gc.prop :logo do |l|
+              l.prop :original do |o|
+                o[:url] = be_present
+              end
+            end
+
+            gc.prop :site do |s|
+              s[:logo_mode] = expected_logo_mode
+            end
+          end
+        end
+      end
+
+      it "uploads the logo and sets the mode" do
+        expect_request! do |req|
+          req.effect! change { GlobalConfiguration.fetch.logo.present? }.from(false).to(true)
+          req.effect! change { GlobalConfiguration.fetch.site.logo_mode }.from("none").to("with_text")
+
+          req.data! expected_shape
+        end
+      end
+
+      context "when also providing a mode" do
+        let(:site_logo_mode) { "SANS_TEXT" }
+
+        let(:expected_logo_mode) { site_logo_mode }
+
+        it "uploads the logo and sets the mode" do
+          expect_request! do |req|
+            req.effect! change { GlobalConfiguration.fetch.logo.present? }.from(false).to(true)
+            req.effect! change { GlobalConfiguration.fetch.site.logo_mode }.from("none").to("sans_text")
+
+            req.data! expected_shape
+          end
+        end
+      end
     end
 
     context "when supplying a null value for certain fields" do
@@ -100,9 +209,11 @@ RSpec.describe Mutations::UpdateGlobalConfiguration, type: :request, graphql: :m
       let(:expected_institution) { institution.merge(name: "") }
 
       it "ensures it is always a string" do
-        expect_the_default_request.to keep_the_same { GlobalConfiguration.fetch.institution.name }
+        expect_request! do |req|
+          req.effect! keep_the_same { GlobalConfiguration.fetch.institution.name }
 
-        expect_graphql_data expected_shape
+          req.data! expected_shape
+        end
       end
     end
 
@@ -113,12 +224,19 @@ RSpec.describe Mutations::UpdateGlobalConfiguration, type: :request, graphql: :m
 
       let(:expected_institution) { GlobalConfiguration.fetch.institution.as_json }
 
-      let(:expected_site) { GlobalConfiguration.fetch.site.as_json }
+      let(:expected_site) do
+        GlobalConfiguration.fetch.site.then do |site|
+          site.as_json.merge("logo_mode" => "NONE")
+        end
+      end
 
       it "partially updates the config" do
-        expect_the_default_request.to keep_the_same { GlobalConfiguration.fetch.site.as_json }.and change { GlobalConfiguration.fetch.theme.as_json }
+        expect_request! do |req|
+          req.effect! keep_the_same { GlobalConfiguration.fetch.site.as_json }
+          req.effect! change { GlobalConfiguration.fetch.theme.as_json }
 
-        expect_graphql_data expected_shape
+          req.data! expected_shape
+        end
       end
     end
 

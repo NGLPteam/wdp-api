@@ -7,16 +7,20 @@ module Types
 
     implements Types::ImageType
 
-    field :format, Types::ImageDerivativeFormatType, null: false,
-      description: "The format of this derivative"
+    field :format, Types::ImageDerivativeFormatType, null: false do
+      description "The format of this derivative"
+    end
 
-    field :size, Types::ImageDerivativeSizeType, null: false,
-      description: "The size of this derivative"
+    field :size, Types::ImageDerivativeSizeType, null: false, method: :size_name do
+      description "The size of this derivative"
+    end
 
-    field :max_height, Int, null: false,
-      description: "The maximum height this size can occupy"
+    field :max_height, Int, null: true do
+      description "The maximum height this size can occupy"
+    end
 
-    field :max_width, Int, null: false,
-      description: "The maximum width this size can occupy"
+    field :max_width, Int, null: true do
+      description "The maximum width this size can occupy"
+    end
   end
 end

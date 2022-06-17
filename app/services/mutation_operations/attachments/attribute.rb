@@ -36,7 +36,7 @@ module MutationOperations
         elsif should_clear
           # Clear the file, ignore metadata
           attacher.assign nil
-        elsif new_metadata.present?
+        elsif attacher.attached? && new_metadata.present?
           # Update metadata only
           attacher.add_metadata new_metadata
         end

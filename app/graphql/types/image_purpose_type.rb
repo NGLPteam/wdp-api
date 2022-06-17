@@ -10,6 +10,7 @@ module Types
 
     value "HERO_IMAGE", value: "hero_image", description: "A hero image."
     value "LOGO", value: "logo", description: "A logo (on a Community)."
+    value "SITE_LOGO", value: "site_logo", description: "The logo for the site."
     value "THUMBNAIL", value: "thumbnail", description: "A thumbnail that appears next to the entity in lists, grids, etc."
     value "OTHER", value: "other", description: "A fallback for otherwise-unspecified images."
   end

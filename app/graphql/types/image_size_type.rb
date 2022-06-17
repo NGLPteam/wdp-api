@@ -16,18 +16,22 @@ module Types
     field :size, Types::ImageDerivativeSizeType, null: false,
       method: :name
 
-    field :alt, String, null: true,
-      description: "Alt text for accessible images"
+    field :alt, String, null: true do
+      description "Alt text for accessible images"
+    end
 
-    field :height, Int, null: true,
-      description: "The (maximum) height for this size."
+    field :height, Int, null: true do
+      description "The (maximum) height for this size."
+    end
 
-    field :width, Int, null: false,
-      description: "The (maximum) width for this size."
+    field :width, Int, null: true do
+      description "The (maximum) width for this size."
+    end
 
     ImageAttachments.each_format do |format|
-      field format, Types::ImageDerivativeType, null: false,
-        description: "A #{format}-formatted image derivative for this particular size."
+      field format, Types::ImageDerivativeType, null: false do
+        description "A #{format}-formatted image derivative for this particular size."
+      end
     end
   end
 end
