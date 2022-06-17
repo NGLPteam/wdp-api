@@ -23,8 +23,8 @@ module ImageAttachments
     #
     # @see ImageAttachments::SiteLogoWrapper
     SITE_LOGO_SIZES = {
-      sans_text: [nil, 40],
-      with_text: [40, 40],
+      sans_text: [nil, 80],
+      with_text: [80, 80],
     }.freeze
   end
 end
