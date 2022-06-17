@@ -5851,13 +5851,6 @@ CREATE INDEX harvest_entity_desc_idx ON public.harvest_entity_hierarchies USING 
 
 
 --
--- Name: index_access_grants_on_accessible; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_access_grants_on_accessible ON public.access_grants USING btree (accessible_type, accessible_id);
-
-
---
 -- Name: index_access_grants_on_auth_path; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -6019,13 +6012,6 @@ CREATE INDEX index_assets_on_name ON public.assets USING btree (name);
 
 
 --
--- Name: index_assets_on_parent_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_assets_on_parent_id ON public.assets USING btree (parent_id);
-
-
---
 -- Name: index_assets_on_parent_id_and_position; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -6082,13 +6068,6 @@ CREATE INDEX index_authorizing_entities_match_scope ON public.authorizing_entiti
 
 
 --
--- Name: index_authorizing_entities_on_auth_path_btree; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_authorizing_entities_on_auth_path_btree ON public.authorizing_entities USING btree (auth_path);
-
-
---
 -- Name: index_authorizing_entities_on_entity_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -6138,24 +6117,10 @@ CREATE INDEX index_collection_contributions_on_collection_id ON public.collectio
 
 
 --
--- Name: index_collection_contributions_on_contributor_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_collection_contributions_on_contributor_id ON public.collection_contributions USING btree (contributor_id);
-
-
---
 -- Name: index_collection_contributions_uniqueness; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE UNIQUE INDEX index_collection_contributions_uniqueness ON public.collection_contributions USING btree (contributor_id, collection_id);
-
-
---
--- Name: index_collection_linked_items_on_source_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_collection_linked_items_on_source_id ON public.collection_linked_items USING btree (source_id);
 
 
 --
@@ -6170,13 +6135,6 @@ CREATE INDEX index_collection_linked_items_on_target_id ON public.collection_lin
 --
 
 CREATE UNIQUE INDEX index_collection_linked_items_uniqueness ON public.collection_linked_items USING btree (source_id, target_id);
-
-
---
--- Name: index_collection_links_on_source_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_collection_links_on_source_id ON public.collection_links USING btree (source_id);
 
 
 --
@@ -6257,13 +6215,6 @@ CREATE UNIQUE INDEX index_collections_on_system_slug ON public.collections USING
 
 
 --
--- Name: index_collections_related_by_schema; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_collections_related_by_schema ON public.collections USING btree (id, schema_version_id);
-
-
---
 -- Name: index_collections_unique_identifier; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -6324,13 +6275,6 @@ CREATE UNIQUE INDEX index_communities_on_system_slug ON public.communities USING
 --
 
 CREATE UNIQUE INDEX index_communities_versioned_ids ON public.communities USING btree (id, schema_version_id);
-
-
---
--- Name: index_community_memberships_on_community_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_community_memberships_on_community_id ON public.community_memberships USING btree (community_id);
 
 
 --
@@ -6411,13 +6355,6 @@ CREATE INDEX index_entities_crumb_source ON public.entities USING gist (depth, a
 
 
 --
--- Name: index_entities_crumb_target; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_entities_crumb_target ON public.entities USING btree (auth_path, entity_id, entity_type, system_slug);
-
-
---
 -- Name: index_entities_for_descendant_parents; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -6492,13 +6429,6 @@ CREATE INDEX index_entities_on_schema_version_id ON public.entities USING btree 
 --
 
 CREATE UNIQUE INDEX index_entities_on_system_slug ON public.entities USING btree (system_slug);
-
-
---
--- Name: index_entities_on_title; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_entities_on_title ON public.entities USING btree (title);
 
 
 --
@@ -6621,13 +6551,6 @@ CREATE INDEX index_entity_links_on_scope ON public.entity_links USING gist (scop
 
 
 --
--- Name: index_entity_links_on_source; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_entity_links_on_source ON public.entity_links USING btree (source_type, source_id);
-
-
---
 -- Name: index_entity_links_on_source_collection_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -6705,24 +6628,10 @@ CREATE UNIQUE INDEX index_entity_links_uniqueness ON public.entity_links USING b
 
 
 --
--- Name: index_entity_orderable_properties_on_entity; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_entity_orderable_properties_on_entity ON public.entity_orderable_properties USING btree (entity_type, entity_id);
-
-
---
 -- Name: index_entity_orderable_properties_on_schema_version_property_id; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_entity_orderable_properties_on_schema_version_property_id ON public.entity_orderable_properties USING btree (schema_version_property_id);
-
-
---
--- Name: index_entity_searchable_properties_on_entity; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_entity_searchable_properties_on_entity ON public.entity_searchable_properties USING btree (entity_type, entity_id);
 
 
 --
@@ -7008,13 +6917,6 @@ CREATE UNIQUE INDEX index_harvest_cached_assets_on_url ON public.harvest_cached_
 
 
 --
--- Name: index_harvest_contributions_on_harvest_contributor_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_harvest_contributions_on_harvest_contributor_id ON public.harvest_contributions USING btree (harvest_contributor_id);
-
-
---
 -- Name: index_harvest_contributions_on_harvest_entity_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -7036,13 +6938,6 @@ CREATE INDEX index_harvest_contributors_on_contributor_id ON public.harvest_cont
 
 
 --
--- Name: index_harvest_contributors_on_harvest_source_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_harvest_contributors_on_harvest_source_id ON public.harvest_contributors USING btree (harvest_source_id);
-
-
---
 -- Name: index_harvest_contributors_uniqueness; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -7061,13 +6956,6 @@ CREATE INDEX index_harvest_entities_on_entity ON public.harvest_entities USING b
 --
 
 CREATE INDEX index_harvest_entities_on_existing_parent ON public.harvest_entities USING btree (existing_parent_type, existing_parent_id);
-
-
---
--- Name: index_harvest_entities_on_harvest_record_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_harvest_entities_on_harvest_record_id ON public.harvest_entities USING btree (harvest_record_id);
 
 
 --
@@ -7113,13 +7001,6 @@ CREATE INDEX index_harvest_mappings_on_harvest_set_id ON public.harvest_mappings
 
 
 --
--- Name: index_harvest_mappings_on_harvest_source_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_harvest_mappings_on_harvest_source_id ON public.harvest_mappings USING btree (harvest_source_id);
-
-
---
 -- Name: index_harvest_mappings_on_target_entity; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -7134,13 +7015,6 @@ CREATE UNIQUE INDEX index_harvest_mappings_uniqueness ON public.harvest_mappings
 
 
 --
--- Name: index_harvest_records_on_harvest_attempt_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_harvest_records_on_harvest_attempt_id ON public.harvest_records USING btree (harvest_attempt_id);
-
-
---
 -- Name: index_harvest_records_on_has_been_skipped; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -7152,13 +7026,6 @@ CREATE INDEX index_harvest_records_on_has_been_skipped ON public.harvest_records
 --
 
 CREATE UNIQUE INDEX index_harvest_records_uniqueness ON public.harvest_records USING btree (harvest_attempt_id, identifier);
-
-
---
--- Name: index_harvest_sets_on_harvest_source_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_harvest_sets_on_harvest_source_id ON public.harvest_sets USING btree (harvest_source_id);
 
 
 --
@@ -7246,13 +7113,6 @@ CREATE UNIQUE INDEX index_item_authorizations_on_item_id ON public.item_authoriz
 
 
 --
--- Name: index_item_contributions_on_contributor_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_item_contributions_on_contributor_id ON public.item_contributions USING btree (contributor_id);
-
-
---
 -- Name: index_item_contributions_on_item_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -7264,13 +7124,6 @@ CREATE INDEX index_item_contributions_on_item_id ON public.item_contributions US
 --
 
 CREATE UNIQUE INDEX index_item_contributions_uniqueness ON public.item_contributions USING btree (contributor_id, item_id);
-
-
---
--- Name: index_item_links_on_source_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_item_links_on_source_id ON public.item_links USING btree (source_id);
 
 
 --
@@ -7351,13 +7204,6 @@ CREATE UNIQUE INDEX index_items_on_system_slug ON public.items USING btree (syst
 
 
 --
--- Name: index_items_related_by_schema; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_items_related_by_schema ON public.items USING btree (id, schema_version_id);
-
-
---
 -- Name: index_items_unique_identifier; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -7400,13 +7246,6 @@ CREATE INDEX index_named_variable_dates_on_actual_precision ON public.named_vari
 
 
 --
--- Name: index_named_variable_dates_on_entity; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_named_variable_dates_on_entity ON public.named_variable_dates USING btree (entity_type, entity_id);
-
-
---
 -- Name: index_named_variable_dates_on_precision; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -7439,13 +7278,6 @@ CREATE INDEX index_nvd_join_asc ON public.named_variable_dates USING btree (enti
 --
 
 CREATE INDEX index_nvd_join_desc ON public.named_variable_dates USING btree (entity_type, entity_id, path, value DESC NULLS LAST, "precision" DESC NULLS LAST);
-
-
---
--- Name: index_ordering_entries_on_ordering_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_ordering_entries_on_ordering_id ON ONLY public.ordering_entries USING btree (ordering_id);
 
 
 --
@@ -7526,13 +7358,6 @@ CREATE INDEX index_ordering_entry_ancestor_links_on_child_id ON ONLY public.orde
 
 
 --
--- Name: index_ordering_entry_ancestor_links_on_ordering_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_ordering_entry_ancestor_links_on_ordering_id ON ONLY public.ordering_entry_ancestor_links USING btree (ordering_id);
-
-
---
 -- Name: index_ordering_entry_ancestor_links_sorting; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -7544,13 +7369,6 @@ CREATE INDEX index_ordering_entry_ancestor_links_sorting ON ONLY public.ordering
 --
 
 CREATE UNIQUE INDEX index_ordering_entry_ancestor_links_uniqueness ON ONLY public.ordering_entry_ancestor_links USING btree (ordering_id, child_id, inverse_depth);
-
-
---
--- Name: index_ordering_entry_sibling_links_on_ordering_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_ordering_entry_sibling_links_on_ordering_id ON ONLY public.ordering_entry_sibling_links USING btree (ordering_id);
 
 
 --
@@ -7596,13 +7414,6 @@ CREATE INDEX index_orderings_on_community_id ON public.orderings USING btree (co
 
 
 --
--- Name: index_orderings_on_entity; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_orderings_on_entity ON public.orderings USING btree (entity_type, entity_id);
-
-
---
 -- Name: index_orderings_on_handled_schema_definition_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -7642,13 +7453,6 @@ CREATE UNIQUE INDEX index_orderings_unique_handler ON public.orderings USING btr
 --
 
 CREATE UNIQUE INDEX index_orderings_uniqueness ON public.orderings USING btree (entity_id, entity_type, identifier);
-
-
---
--- Name: index_pages_on_entity; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_pages_on_entity ON public.pages USING btree (entity_type, entity_id);
 
 
 --
@@ -7743,13 +7547,6 @@ CREATE INDEX index_role_permissions_on_permission_id ON public.role_permissions 
 
 
 --
--- Name: index_role_permissions_on_role_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_role_permissions_on_role_id ON public.role_permissions USING btree (role_id);
-
-
---
 -- Name: index_roles_on_allowed_actions; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -7827,13 +7624,6 @@ CREATE UNIQUE INDEX index_schema_definitions_uniqueness ON public.schema_definit
 
 
 --
--- Name: index_schema_version_ancestors_on_schema_version_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_schema_version_ancestors_on_schema_version_id ON public.schema_version_ancestors USING btree (schema_version_id);
-
-
---
 -- Name: index_schema_version_ancestors_on_target_version_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -7845,13 +7635,6 @@ CREATE INDEX index_schema_version_ancestors_on_target_version_id ON public.schem
 --
 
 CREATE UNIQUE INDEX index_schema_version_ancestors_uniqueness ON public.schema_version_ancestors USING btree (schema_version_id, target_version_id, name);
-
-
---
--- Name: index_schema_version_associations_on_source_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_schema_version_associations_on_source_id ON public.schema_version_associations USING btree (source_id);
 
 
 --
@@ -7897,13 +7680,6 @@ CREATE INDEX index_schema_version_properties_on_schema_definition_id ON public.s
 
 
 --
--- Name: index_schema_version_properties_on_schema_version_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_schema_version_properties_on_schema_version_id ON public.schema_version_properties USING btree (schema_version_id);
-
-
---
 -- Name: index_schema_version_properties_uniqueness; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -7932,13 +7708,6 @@ CREATE INDEX index_schema_versions_on_kind ON public.schema_versions USING btree
 
 
 --
--- Name: index_schema_versions_on_schema_definition_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_schema_versions_on_schema_definition_id ON public.schema_versions USING btree (schema_definition_id);
-
-
---
 -- Name: index_schema_versions_on_schema_definition_id_and_position; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -7957,13 +7726,6 @@ CREATE UNIQUE INDEX index_schema_versions_uniqueness ON public.schema_versions U
 --
 
 CREATE INDEX index_schematic_collected_references_on_referent ON public.schematic_collected_references USING btree (referent_type, referent_id);
-
-
---
--- Name: index_schematic_collected_references_on_referrer; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_schematic_collected_references_on_referrer ON public.schematic_collected_references USING btree (referrer_type, referrer_id);
 
 
 --
@@ -7988,13 +7750,6 @@ CREATE INDEX index_schematic_scalar_references_on_referent ON public.schematic_s
 
 
 --
--- Name: index_schematic_scalar_references_on_referrer; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_schematic_scalar_references_on_referrer ON public.schematic_scalar_references USING btree (referrer_type, referrer_id);
-
-
---
 -- Name: index_schematic_scalar_references_uniqueness; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -8016,13 +7771,6 @@ CREATE INDEX index_schematic_texts_on_document ON public.schematic_texts USING g
 
 
 --
--- Name: index_schematic_texts_on_entity; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_schematic_texts_on_entity ON public.schematic_texts USING btree (entity_type, entity_id);
-
-
---
 -- Name: index_schematic_texts_on_schema_version_property_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -8034,13 +7782,6 @@ CREATE INDEX index_schematic_texts_on_schema_version_property_id ON public.schem
 --
 
 CREATE INDEX index_user_group_memberships_on_user_group_id ON public.user_group_memberships USING btree (user_group_id);
-
-
---
--- Name: index_user_group_memberships_on_user_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_user_group_memberships_on_user_id ON public.user_group_memberships USING btree (user_id);
 
 
 --
@@ -8142,13 +7883,6 @@ CREATE UNIQUE INDEX ordering_entries_part_1_ordering_id_entity_type_entity_id_id
 
 
 --
--- Name: ordering_entries_part_1_ordering_id_idx; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX ordering_entries_part_1_ordering_id_idx ON public.ordering_entries_part_1 USING btree (ordering_id);
-
-
---
 -- Name: ordering_entries_part_1_ordering_id_inverse_position_idx; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -8209,13 +7943,6 @@ CREATE INDEX ordering_entries_part_2_ordering_id_auth_path_tree_depth_id_idx ON 
 --
 
 CREATE UNIQUE INDEX ordering_entries_part_2_ordering_id_entity_type_entity_id_idx ON public.ordering_entries_part_2 USING btree (ordering_id, entity_type, entity_id);
-
-
---
--- Name: ordering_entries_part_2_ordering_id_idx; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX ordering_entries_part_2_ordering_id_idx ON public.ordering_entries_part_2 USING btree (ordering_id);
 
 
 --
@@ -8282,13 +8009,6 @@ CREATE UNIQUE INDEX ordering_entries_part_3_ordering_id_entity_type_entity_id_id
 
 
 --
--- Name: ordering_entries_part_3_ordering_id_idx; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX ordering_entries_part_3_ordering_id_idx ON public.ordering_entries_part_3 USING btree (ordering_id);
-
-
---
 -- Name: ordering_entries_part_3_ordering_id_inverse_position_idx; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -8349,13 +8069,6 @@ CREATE INDEX ordering_entries_part_4_ordering_id_auth_path_tree_depth_id_idx ON 
 --
 
 CREATE UNIQUE INDEX ordering_entries_part_4_ordering_id_entity_type_entity_id_idx ON public.ordering_entries_part_4 USING btree (ordering_id, entity_type, entity_id);
-
-
---
--- Name: ordering_entries_part_4_ordering_id_idx; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX ordering_entries_part_4_ordering_id_idx ON public.ordering_entries_part_4 USING btree (ordering_id);
 
 
 --
@@ -8422,13 +8135,6 @@ CREATE UNIQUE INDEX ordering_entries_part_5_ordering_id_entity_type_entity_id_id
 
 
 --
--- Name: ordering_entries_part_5_ordering_id_idx; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX ordering_entries_part_5_ordering_id_idx ON public.ordering_entries_part_5 USING btree (ordering_id);
-
-
---
 -- Name: ordering_entries_part_5_ordering_id_inverse_position_idx; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -8489,13 +8195,6 @@ CREATE INDEX ordering_entries_part_6_ordering_id_auth_path_tree_depth_id_idx ON 
 --
 
 CREATE UNIQUE INDEX ordering_entries_part_6_ordering_id_entity_type_entity_id_idx ON public.ordering_entries_part_6 USING btree (ordering_id, entity_type, entity_id);
-
-
---
--- Name: ordering_entries_part_6_ordering_id_idx; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX ordering_entries_part_6_ordering_id_idx ON public.ordering_entries_part_6 USING btree (ordering_id);
 
 
 --
@@ -8562,13 +8261,6 @@ CREATE UNIQUE INDEX ordering_entries_part_7_ordering_id_entity_type_entity_id_id
 
 
 --
--- Name: ordering_entries_part_7_ordering_id_idx; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX ordering_entries_part_7_ordering_id_idx ON public.ordering_entries_part_7 USING btree (ordering_id);
-
-
---
 -- Name: ordering_entries_part_7_ordering_id_inverse_position_idx; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -8629,13 +8321,6 @@ CREATE INDEX ordering_entries_part_8_ordering_id_auth_path_tree_depth_id_idx ON 
 --
 
 CREATE UNIQUE INDEX ordering_entries_part_8_ordering_id_entity_type_entity_id_idx ON public.ordering_entries_part_8 USING btree (ordering_id, entity_type, entity_id);
-
-
---
--- Name: ordering_entries_part_8_ordering_id_idx; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX ordering_entries_part_8_ordering_id_idx ON public.ordering_entries_part_8 USING btree (ordering_id);
 
 
 --
@@ -8800,13 +8485,6 @@ CREATE INDEX ordering_entry_ancestor_links_part_1_child_id_idx ON public.orderin
 
 
 --
--- Name: ordering_entry_ancestor_links_part_1_ordering_id_idx; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX ordering_entry_ancestor_links_part_1_ordering_id_idx ON public.ordering_entry_ancestor_links_part_1 USING btree (ordering_id);
-
-
---
 -- Name: ordering_entry_ancestor_links_part_2_ancestor_id_idx; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -8818,13 +8496,6 @@ CREATE INDEX ordering_entry_ancestor_links_part_2_ancestor_id_idx ON public.orde
 --
 
 CREATE INDEX ordering_entry_ancestor_links_part_2_child_id_idx ON public.ordering_entry_ancestor_links_part_2 USING btree (child_id);
-
-
---
--- Name: ordering_entry_ancestor_links_part_2_ordering_id_idx; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX ordering_entry_ancestor_links_part_2_ordering_id_idx ON public.ordering_entry_ancestor_links_part_2 USING btree (ordering_id);
 
 
 --
@@ -8842,13 +8513,6 @@ CREATE INDEX ordering_entry_ancestor_links_part_3_child_id_idx ON public.orderin
 
 
 --
--- Name: ordering_entry_ancestor_links_part_3_ordering_id_idx; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX ordering_entry_ancestor_links_part_3_ordering_id_idx ON public.ordering_entry_ancestor_links_part_3 USING btree (ordering_id);
-
-
---
 -- Name: ordering_entry_ancestor_links_part_4_ancestor_id_idx; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -8860,13 +8524,6 @@ CREATE INDEX ordering_entry_ancestor_links_part_4_ancestor_id_idx ON public.orde
 --
 
 CREATE INDEX ordering_entry_ancestor_links_part_4_child_id_idx ON public.ordering_entry_ancestor_links_part_4 USING btree (child_id);
-
-
---
--- Name: ordering_entry_ancestor_links_part_4_ordering_id_idx; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX ordering_entry_ancestor_links_part_4_ordering_id_idx ON public.ordering_entry_ancestor_links_part_4 USING btree (ordering_id);
 
 
 --
@@ -8884,13 +8541,6 @@ CREATE INDEX ordering_entry_ancestor_links_part_5_child_id_idx ON public.orderin
 
 
 --
--- Name: ordering_entry_ancestor_links_part_5_ordering_id_idx; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX ordering_entry_ancestor_links_part_5_ordering_id_idx ON public.ordering_entry_ancestor_links_part_5 USING btree (ordering_id);
-
-
---
 -- Name: ordering_entry_ancestor_links_part_6_ancestor_id_idx; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -8902,13 +8552,6 @@ CREATE INDEX ordering_entry_ancestor_links_part_6_ancestor_id_idx ON public.orde
 --
 
 CREATE INDEX ordering_entry_ancestor_links_part_6_child_id_idx ON public.ordering_entry_ancestor_links_part_6 USING btree (child_id);
-
-
---
--- Name: ordering_entry_ancestor_links_part_6_ordering_id_idx; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX ordering_entry_ancestor_links_part_6_ordering_id_idx ON public.ordering_entry_ancestor_links_part_6 USING btree (ordering_id);
 
 
 --
@@ -8926,13 +8569,6 @@ CREATE INDEX ordering_entry_ancestor_links_part_7_child_id_idx ON public.orderin
 
 
 --
--- Name: ordering_entry_ancestor_links_part_7_ordering_id_idx; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX ordering_entry_ancestor_links_part_7_ordering_id_idx ON public.ordering_entry_ancestor_links_part_7 USING btree (ordering_id);
-
-
---
 -- Name: ordering_entry_ancestor_links_part_8_ancestor_id_idx; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -8947,73 +8583,10 @@ CREATE INDEX ordering_entry_ancestor_links_part_8_child_id_idx ON public.orderin
 
 
 --
--- Name: ordering_entry_ancestor_links_part_8_ordering_id_idx; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX ordering_entry_ancestor_links_part_8_ordering_id_idx ON public.ordering_entry_ancestor_links_part_8 USING btree (ordering_id);
-
-
---
 -- Name: ordering_entry_counts_pkey; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE UNIQUE INDEX ordering_entry_counts_pkey ON public.ordering_entry_counts USING btree (ordering_id);
-
-
---
--- Name: ordering_entry_sibling_links_part_1_ordering_id_idx; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX ordering_entry_sibling_links_part_1_ordering_id_idx ON public.ordering_entry_sibling_links_part_1 USING btree (ordering_id);
-
-
---
--- Name: ordering_entry_sibling_links_part_2_ordering_id_idx; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX ordering_entry_sibling_links_part_2_ordering_id_idx ON public.ordering_entry_sibling_links_part_2 USING btree (ordering_id);
-
-
---
--- Name: ordering_entry_sibling_links_part_3_ordering_id_idx; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX ordering_entry_sibling_links_part_3_ordering_id_idx ON public.ordering_entry_sibling_links_part_3 USING btree (ordering_id);
-
-
---
--- Name: ordering_entry_sibling_links_part_4_ordering_id_idx; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX ordering_entry_sibling_links_part_4_ordering_id_idx ON public.ordering_entry_sibling_links_part_4 USING btree (ordering_id);
-
-
---
--- Name: ordering_entry_sibling_links_part_5_ordering_id_idx; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX ordering_entry_sibling_links_part_5_ordering_id_idx ON public.ordering_entry_sibling_links_part_5 USING btree (ordering_id);
-
-
---
--- Name: ordering_entry_sibling_links_part_6_ordering_id_idx; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX ordering_entry_sibling_links_part_6_ordering_id_idx ON public.ordering_entry_sibling_links_part_6 USING btree (ordering_id);
-
-
---
--- Name: ordering_entry_sibling_links_part_7_ordering_id_idx; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX ordering_entry_sibling_links_part_7_ordering_id_idx ON public.ordering_entry_sibling_links_part_7 USING btree (ordering_id);
-
-
---
--- Name: ordering_entry_sibling_links_part_8_ordering_id_idx; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX ordering_entry_sibling_links_part_8_ordering_id_idx ON public.ordering_entry_sibling_links_part_8 USING btree (ordering_id);
 
 
 --
@@ -9063,13 +8636,6 @@ ALTER INDEX public.index_ordering_entries_tree_ancestry_lookup ATTACH PARTITION 
 --
 
 ALTER INDEX public.index_ordering_entries_uniqueness ATTACH PARTITION public.ordering_entries_part_1_ordering_id_entity_type_entity_id_idx;
-
-
---
--- Name: ordering_entries_part_1_ordering_id_idx; Type: INDEX ATTACH; Schema: public; Owner: -
---
-
-ALTER INDEX public.index_ordering_entries_on_ordering_id ATTACH PARTITION public.ordering_entries_part_1_ordering_id_idx;
 
 
 --
@@ -9143,13 +8709,6 @@ ALTER INDEX public.index_ordering_entries_uniqueness ATTACH PARTITION public.ord
 
 
 --
--- Name: ordering_entries_part_2_ordering_id_idx; Type: INDEX ATTACH; Schema: public; Owner: -
---
-
-ALTER INDEX public.index_ordering_entries_on_ordering_id ATTACH PARTITION public.ordering_entries_part_2_ordering_id_idx;
-
-
---
 -- Name: ordering_entries_part_2_ordering_id_inverse_position_idx; Type: INDEX ATTACH; Schema: public; Owner: -
 --
 
@@ -9217,13 +8776,6 @@ ALTER INDEX public.index_ordering_entries_tree_ancestry_lookup ATTACH PARTITION 
 --
 
 ALTER INDEX public.index_ordering_entries_uniqueness ATTACH PARTITION public.ordering_entries_part_3_ordering_id_entity_type_entity_id_idx;
-
-
---
--- Name: ordering_entries_part_3_ordering_id_idx; Type: INDEX ATTACH; Schema: public; Owner: -
---
-
-ALTER INDEX public.index_ordering_entries_on_ordering_id ATTACH PARTITION public.ordering_entries_part_3_ordering_id_idx;
 
 
 --
@@ -9297,13 +8849,6 @@ ALTER INDEX public.index_ordering_entries_uniqueness ATTACH PARTITION public.ord
 
 
 --
--- Name: ordering_entries_part_4_ordering_id_idx; Type: INDEX ATTACH; Schema: public; Owner: -
---
-
-ALTER INDEX public.index_ordering_entries_on_ordering_id ATTACH PARTITION public.ordering_entries_part_4_ordering_id_idx;
-
-
---
 -- Name: ordering_entries_part_4_ordering_id_inverse_position_idx; Type: INDEX ATTACH; Schema: public; Owner: -
 --
 
@@ -9371,13 +8916,6 @@ ALTER INDEX public.index_ordering_entries_tree_ancestry_lookup ATTACH PARTITION 
 --
 
 ALTER INDEX public.index_ordering_entries_uniqueness ATTACH PARTITION public.ordering_entries_part_5_ordering_id_entity_type_entity_id_idx;
-
-
---
--- Name: ordering_entries_part_5_ordering_id_idx; Type: INDEX ATTACH; Schema: public; Owner: -
---
-
-ALTER INDEX public.index_ordering_entries_on_ordering_id ATTACH PARTITION public.ordering_entries_part_5_ordering_id_idx;
 
 
 --
@@ -9451,13 +8989,6 @@ ALTER INDEX public.index_ordering_entries_uniqueness ATTACH PARTITION public.ord
 
 
 --
--- Name: ordering_entries_part_6_ordering_id_idx; Type: INDEX ATTACH; Schema: public; Owner: -
---
-
-ALTER INDEX public.index_ordering_entries_on_ordering_id ATTACH PARTITION public.ordering_entries_part_6_ordering_id_idx;
-
-
---
 -- Name: ordering_entries_part_6_ordering_id_inverse_position_idx; Type: INDEX ATTACH; Schema: public; Owner: -
 --
 
@@ -9528,13 +9059,6 @@ ALTER INDEX public.index_ordering_entries_uniqueness ATTACH PARTITION public.ord
 
 
 --
--- Name: ordering_entries_part_7_ordering_id_idx; Type: INDEX ATTACH; Schema: public; Owner: -
---
-
-ALTER INDEX public.index_ordering_entries_on_ordering_id ATTACH PARTITION public.ordering_entries_part_7_ordering_id_idx;
-
-
---
 -- Name: ordering_entries_part_7_ordering_id_inverse_position_idx; Type: INDEX ATTACH; Schema: public; Owner: -
 --
 
@@ -9602,13 +9126,6 @@ ALTER INDEX public.index_ordering_entries_tree_ancestry_lookup ATTACH PARTITION 
 --
 
 ALTER INDEX public.index_ordering_entries_uniqueness ATTACH PARTITION public.ordering_entries_part_8_ordering_id_entity_type_entity_id_idx;
-
-
---
--- Name: ordering_entries_part_8_ordering_id_idx; Type: INDEX ATTACH; Schema: public; Owner: -
---
-
-ALTER INDEX public.index_ordering_entries_on_ordering_id ATTACH PARTITION public.ordering_entries_part_8_ordering_id_idx;
 
 
 --
@@ -9780,13 +9297,6 @@ ALTER INDEX public.index_ordering_entry_ancestor_links_on_child_id ATTACH PARTIT
 
 
 --
--- Name: ordering_entry_ancestor_links_part_1_ordering_id_idx; Type: INDEX ATTACH; Schema: public; Owner: -
---
-
-ALTER INDEX public.index_ordering_entry_ancestor_links_on_ordering_id ATTACH PARTITION public.ordering_entry_ancestor_links_part_1_ordering_id_idx;
-
-
---
 -- Name: ordering_entry_ancestor_links_part_1_pkey; Type: INDEX ATTACH; Schema: public; Owner: -
 --
 
@@ -9805,13 +9315,6 @@ ALTER INDEX public.index_ordering_entry_ancestor_links_on_ancestor_id ATTACH PAR
 --
 
 ALTER INDEX public.index_ordering_entry_ancestor_links_on_child_id ATTACH PARTITION public.ordering_entry_ancestor_links_part_2_child_id_idx;
-
-
---
--- Name: ordering_entry_ancestor_links_part_2_ordering_id_idx; Type: INDEX ATTACH; Schema: public; Owner: -
---
-
-ALTER INDEX public.index_ordering_entry_ancestor_links_on_ordering_id ATTACH PARTITION public.ordering_entry_ancestor_links_part_2_ordering_id_idx;
 
 
 --
@@ -9836,13 +9339,6 @@ ALTER INDEX public.index_ordering_entry_ancestor_links_on_child_id ATTACH PARTIT
 
 
 --
--- Name: ordering_entry_ancestor_links_part_3_ordering_id_idx; Type: INDEX ATTACH; Schema: public; Owner: -
---
-
-ALTER INDEX public.index_ordering_entry_ancestor_links_on_ordering_id ATTACH PARTITION public.ordering_entry_ancestor_links_part_3_ordering_id_idx;
-
-
---
 -- Name: ordering_entry_ancestor_links_part_3_pkey; Type: INDEX ATTACH; Schema: public; Owner: -
 --
 
@@ -9861,13 +9357,6 @@ ALTER INDEX public.index_ordering_entry_ancestor_links_on_ancestor_id ATTACH PAR
 --
 
 ALTER INDEX public.index_ordering_entry_ancestor_links_on_child_id ATTACH PARTITION public.ordering_entry_ancestor_links_part_4_child_id_idx;
-
-
---
--- Name: ordering_entry_ancestor_links_part_4_ordering_id_idx; Type: INDEX ATTACH; Schema: public; Owner: -
---
-
-ALTER INDEX public.index_ordering_entry_ancestor_links_on_ordering_id ATTACH PARTITION public.ordering_entry_ancestor_links_part_4_ordering_id_idx;
 
 
 --
@@ -9892,13 +9381,6 @@ ALTER INDEX public.index_ordering_entry_ancestor_links_on_child_id ATTACH PARTIT
 
 
 --
--- Name: ordering_entry_ancestor_links_part_5_ordering_id_idx; Type: INDEX ATTACH; Schema: public; Owner: -
---
-
-ALTER INDEX public.index_ordering_entry_ancestor_links_on_ordering_id ATTACH PARTITION public.ordering_entry_ancestor_links_part_5_ordering_id_idx;
-
-
---
 -- Name: ordering_entry_ancestor_links_part_5_pkey; Type: INDEX ATTACH; Schema: public; Owner: -
 --
 
@@ -9917,13 +9399,6 @@ ALTER INDEX public.index_ordering_entry_ancestor_links_on_ancestor_id ATTACH PAR
 --
 
 ALTER INDEX public.index_ordering_entry_ancestor_links_on_child_id ATTACH PARTITION public.ordering_entry_ancestor_links_part_6_child_id_idx;
-
-
---
--- Name: ordering_entry_ancestor_links_part_6_ordering_id_idx; Type: INDEX ATTACH; Schema: public; Owner: -
---
-
-ALTER INDEX public.index_ordering_entry_ancestor_links_on_ordering_id ATTACH PARTITION public.ordering_entry_ancestor_links_part_6_ordering_id_idx;
 
 
 --
@@ -9948,13 +9423,6 @@ ALTER INDEX public.index_ordering_entry_ancestor_links_on_child_id ATTACH PARTIT
 
 
 --
--- Name: ordering_entry_ancestor_links_part_7_ordering_id_idx; Type: INDEX ATTACH; Schema: public; Owner: -
---
-
-ALTER INDEX public.index_ordering_entry_ancestor_links_on_ordering_id ATTACH PARTITION public.ordering_entry_ancestor_links_part_7_ordering_id_idx;
-
-
---
 -- Name: ordering_entry_ancestor_links_part_7_pkey; Type: INDEX ATTACH; Schema: public; Owner: -
 --
 
@@ -9976,24 +9444,10 @@ ALTER INDEX public.index_ordering_entry_ancestor_links_on_child_id ATTACH PARTIT
 
 
 --
--- Name: ordering_entry_ancestor_links_part_8_ordering_id_idx; Type: INDEX ATTACH; Schema: public; Owner: -
---
-
-ALTER INDEX public.index_ordering_entry_ancestor_links_on_ordering_id ATTACH PARTITION public.ordering_entry_ancestor_links_part_8_ordering_id_idx;
-
-
---
 -- Name: ordering_entry_ancestor_links_part_8_pkey; Type: INDEX ATTACH; Schema: public; Owner: -
 --
 
 ALTER INDEX public.ordering_entry_ancestor_links_pkey ATTACH PARTITION public.ordering_entry_ancestor_links_part_8_pkey;
-
-
---
--- Name: ordering_entry_sibling_links_part_1_ordering_id_idx; Type: INDEX ATTACH; Schema: public; Owner: -
---
-
-ALTER INDEX public.index_ordering_entry_sibling_links_on_ordering_id ATTACH PARTITION public.ordering_entry_sibling_links_part_1_ordering_id_idx;
 
 
 --
@@ -10004,24 +9458,10 @@ ALTER INDEX public.ordering_entry_sibling_links_pkey ATTACH PARTITION public.ord
 
 
 --
--- Name: ordering_entry_sibling_links_part_2_ordering_id_idx; Type: INDEX ATTACH; Schema: public; Owner: -
---
-
-ALTER INDEX public.index_ordering_entry_sibling_links_on_ordering_id ATTACH PARTITION public.ordering_entry_sibling_links_part_2_ordering_id_idx;
-
-
---
 -- Name: ordering_entry_sibling_links_part_2_pkey; Type: INDEX ATTACH; Schema: public; Owner: -
 --
 
 ALTER INDEX public.ordering_entry_sibling_links_pkey ATTACH PARTITION public.ordering_entry_sibling_links_part_2_pkey;
-
-
---
--- Name: ordering_entry_sibling_links_part_3_ordering_id_idx; Type: INDEX ATTACH; Schema: public; Owner: -
---
-
-ALTER INDEX public.index_ordering_entry_sibling_links_on_ordering_id ATTACH PARTITION public.ordering_entry_sibling_links_part_3_ordering_id_idx;
 
 
 --
@@ -10032,24 +9472,10 @@ ALTER INDEX public.ordering_entry_sibling_links_pkey ATTACH PARTITION public.ord
 
 
 --
--- Name: ordering_entry_sibling_links_part_4_ordering_id_idx; Type: INDEX ATTACH; Schema: public; Owner: -
---
-
-ALTER INDEX public.index_ordering_entry_sibling_links_on_ordering_id ATTACH PARTITION public.ordering_entry_sibling_links_part_4_ordering_id_idx;
-
-
---
 -- Name: ordering_entry_sibling_links_part_4_pkey; Type: INDEX ATTACH; Schema: public; Owner: -
 --
 
 ALTER INDEX public.ordering_entry_sibling_links_pkey ATTACH PARTITION public.ordering_entry_sibling_links_part_4_pkey;
-
-
---
--- Name: ordering_entry_sibling_links_part_5_ordering_id_idx; Type: INDEX ATTACH; Schema: public; Owner: -
---
-
-ALTER INDEX public.index_ordering_entry_sibling_links_on_ordering_id ATTACH PARTITION public.ordering_entry_sibling_links_part_5_ordering_id_idx;
 
 
 --
@@ -10060,13 +9486,6 @@ ALTER INDEX public.ordering_entry_sibling_links_pkey ATTACH PARTITION public.ord
 
 
 --
--- Name: ordering_entry_sibling_links_part_6_ordering_id_idx; Type: INDEX ATTACH; Schema: public; Owner: -
---
-
-ALTER INDEX public.index_ordering_entry_sibling_links_on_ordering_id ATTACH PARTITION public.ordering_entry_sibling_links_part_6_ordering_id_idx;
-
-
---
 -- Name: ordering_entry_sibling_links_part_6_pkey; Type: INDEX ATTACH; Schema: public; Owner: -
 --
 
@@ -10074,24 +9493,10 @@ ALTER INDEX public.ordering_entry_sibling_links_pkey ATTACH PARTITION public.ord
 
 
 --
--- Name: ordering_entry_sibling_links_part_7_ordering_id_idx; Type: INDEX ATTACH; Schema: public; Owner: -
---
-
-ALTER INDEX public.index_ordering_entry_sibling_links_on_ordering_id ATTACH PARTITION public.ordering_entry_sibling_links_part_7_ordering_id_idx;
-
-
---
 -- Name: ordering_entry_sibling_links_part_7_pkey; Type: INDEX ATTACH; Schema: public; Owner: -
 --
 
 ALTER INDEX public.ordering_entry_sibling_links_pkey ATTACH PARTITION public.ordering_entry_sibling_links_part_7_pkey;
-
-
---
--- Name: ordering_entry_sibling_links_part_8_ordering_id_idx; Type: INDEX ATTACH; Schema: public; Owner: -
---
-
-ALTER INDEX public.index_ordering_entry_sibling_links_on_ordering_id ATTACH PARTITION public.ordering_entry_sibling_links_part_8_ordering_id_idx;
 
 
 --
@@ -11087,6 +10492,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20220609224200'),
 ('20220609235453'),
 ('20220615234049'),
-('20220616001209');
+('20220616001209'),
+('20220617164554');
 
 
