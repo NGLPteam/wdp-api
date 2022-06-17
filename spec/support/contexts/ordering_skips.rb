@@ -29,5 +29,5 @@ RSpec.shared_context "disable ordering refreshes" do
 end
 
 RSpec.configure do |config|
-  config.include_context "disable ordering refreshes", disable_ordering_refreshes: true
+  config.include_context "disable ordering refreshes", disable_ordering_refresh: true
 end

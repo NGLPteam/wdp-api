@@ -3,17 +3,26 @@
 require_relative "../token_helper"
 
 RSpec.shared_context "with mocked keycloak" do
-  let(:config_server_url) { KeycloakRack::Config.new.server_url }
-  let(:config_realm_id) { KeycloakRack::Config.new.realm_id }
+  let_it_be(:default_admin_user) { FactoryBot.create :user, :admin }
+  let_it_be(:default_user) { FactoryBot.create :user }
 
-  let(:token_helper) { TokenHelper.new }
-  let(:jwks_response) { token_helper.jwks.as_json }
+  let_it_be(:token_helper) do
+    TokenHelper.new(
+      admin_user: default_admin_user,
+      regular_user: default_user,
+    )
+  end
 
-  let(:public_key_url) do
+  let_it_be(:config_server_url) { KeycloakRack::Config.new.server_url }
+  let_it_be(:config_realm_id) { KeycloakRack::Config.new.realm_id }
+
+  let_it_be(:jwks_response) { token_helper.jwks.as_json }
+
+  let_it_be(:public_key_url) do
     "#{config_server_url}/realms/#{config_realm_id}/protocol/openid-connect/certs"
   end
 
-  let(:mocked_public_key_response) do
+  let_it_be(:mocked_public_key_response) do
     {
       body: jwks_response.to_json,
       status: 200

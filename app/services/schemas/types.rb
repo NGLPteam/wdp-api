@@ -50,6 +50,8 @@ module Schemas
       end
     end
 
+    HasSchemaVersion = Interface(:schema_version)
+
     SchemaInstance = Instance(::Community) | Instance(::Collection) | Instance(::Item)
 
     ChildAssociation = Symbol.enum(:collections, :children, :items)

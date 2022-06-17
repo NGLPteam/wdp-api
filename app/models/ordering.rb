@@ -52,7 +52,7 @@ class Ordering < ApplicationRecord
 
   scope :initial, -> { initially_ordered.enabled.visible.with_visible_entries.distinct_on(:entity_id) }
 
-  delegate :header, :footer, :tree_mode?, to: :definition
+  delegate :header, :footer, :covers_schema?, :tree_mode?, to: :definition
 
   delegate :schemas, allow_nil: true, to: "definition.filter", prefix: :filter
 
@@ -110,19 +110,20 @@ class Ordering < ApplicationRecord
     WDPAPI["schemas.orderings.calculate_initial"].call(entity: entity)
   end
 
-  # @see Schemas::Orderings::Refresh
-  # @return [Dry::Monads::Result]
-  def refresh
-    call_operation("schemas.orderings.refresh", self)
+  # @param [HierarchicalEntity] refreshing_entity
+  def refreshes_for?(refreshing_entity)
+    entity == refreshing_entity || covers_schema?(refreshing_entity)
   end
 
-  def refresh!
-    refresh.value!
+  # @see Schemas::Orderings::Refresh
+  # @return [Dry::Monads::Result]
+  monadic_operation! def refresh
+    call_operation("schemas.orderings.refresh", self)
   end
 
   # @see Schemas::Orderings::Reset
   # @return [Dry::Monads::Result]
-  def reset!
+  monadic_operation! def reset
     call_operation("schemas.orderings.reset", self)
   end
 
@@ -133,6 +134,7 @@ class Ordering < ApplicationRecord
     schema_version.ordering_definition_for identifier
   end
 
+  # @api private
   # @return [void]
   def sync_inherited!
     self.inherited_from_schema = schema_version ? schema_version.has_ordering?(identifier) : false

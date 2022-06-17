@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 # @api private
-# rubocop:disable Layout/LineLength
 class TokenHelper
   extend Dry::Initializer
 
@@ -9,12 +8,24 @@ class TokenHelper
 
   option :pem_path, Dry::Types["coercible.string"], default: proc { "#{__dir__}/test_key.pem" }
 
-  def build_token(data: {}, from_user: nil, has_global_admin: nil, realm_roles: [], issued_at: Time.current, expires_at: 3.hours.from_now, jti: SecureRandom.uuid, with_random_jwk: false)
+  option :admin_user, Dry::Types["any"], optional: true
+  option :regular_user, Dry::Types["any"], optional: true
+
+  def build_token(
+    data: {},
+    from_user: nil,
+    has_global_admin: nil,
+    realm_roles: [],
+    issued_at: Time.current,
+    expires_at: 3.hours.from_now,
+    jti: SecureRandom.uuid,
+    with_random_jwk: false
+  )
     data[:realm_roles] = [*realm_roles].tap do |rr|
       rr << "global_admin" if has_global_admin.nil? ? from_user&.has_global_admin_access? : has_global_admin.present?
     end.uniq
 
-    data[:user] = from_user
+    data[:user] = use_user(from_user: from_user, has_global_admin: has_global_admin)
 
     enriched_data = FactoryBot.attributes_for(:token_payload, data)
 
@@ -76,6 +87,18 @@ class TokenHelper
   def rsa_key
     @rsa_key ||= OpenSSL::PKey::RSA.new File.read pem_path
   end
+
+  private
+
+  def use_user(from_user:, has_global_admin:)
+    if from_user
+      from_user
+    elsif has_global_admin
+      admin_user
+    else
+      regular_user
+    end
+  end
 end
 
 module TestHelpers
@@ -95,4 +118,3 @@ module TestHelpers
 end
 
 ::User.include TestHelpers::UserTokenGenerator
-# rubocop:enable Layout/LineLength

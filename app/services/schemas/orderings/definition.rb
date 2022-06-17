@@ -70,6 +70,7 @@ module Schemas
 
       validates :order, length: { minimum: 1, maximum: 7 }, unique_items: true
 
+      delegate :covers_schema?, to: :filter
       delegate :tree_mode?, to: :render
 
       # @see Schemas::Associations::Association#find_schema_definition

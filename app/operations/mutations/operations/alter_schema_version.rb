@@ -7,6 +7,7 @@ module Mutations
       include Mutations::Shared::WithSchemaErrors
       include Mutations::Shared::AssignsSchemaVersion
       include Mutations::Shared::AttachesPolymorphicEntity
+      include Mutations::Shared::RefreshesOrderingsAsynchronously
       include WDPAPI::Deps[alter: "schemas.instances.alter_version"]
 
       use_contract! :alter_schema_version

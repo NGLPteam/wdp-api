@@ -4,7 +4,6 @@ module Entities
   class CalculateComposedTexts
     include Dry::Monads[:do, :result]
     include QueryOperation
-    include WDPAPI::Deps[audit: "entities.audit_authorizing"]
 
     prepend TransactionalCall
 

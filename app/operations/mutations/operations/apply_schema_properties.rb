@@ -6,6 +6,7 @@ module Mutations
     # @see Schemas::Instances::Apply
     class ApplySchemaProperties
       include MutationOperations::Base
+      include Mutations::Shared::RefreshesOrderingsAsynchronously
       include Mutations::Shared::WithSchemaErrors
 
       include WDPAPI::Deps[apply: "schemas.instances.apply"]
