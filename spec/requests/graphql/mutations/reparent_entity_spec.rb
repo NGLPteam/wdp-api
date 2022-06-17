@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Mutations::ReparentEntity, type: :request, graphql: :mutation do
+RSpec.describe Mutations::ReparentEntity, type: :request, graphql: :mutation, disable_ordering_refresh: true do
   mutation_query! <<~GRAPHQL
   mutation reparentEntity($input: ReparentEntityInput!) {
     reparentEntity(input: $input) {
@@ -34,7 +34,7 @@ RSpec.describe Mutations::ReparentEntity, type: :request, graphql: :mutation do
   context "as an admin" do
     let(:token) { token_helper.build_token has_global_admin: true }
 
-    let!(:community) { FactoryBot.create :community }
+    let_it_be(:community) { FactoryBot.create :community }
 
     let!(:expected_shape) do
       gql.mutation :reparent_entity, no_errors: true do |m|
@@ -48,22 +48,26 @@ RSpec.describe Mutations::ReparentEntity, type: :request, graphql: :mutation do
 
     shared_examples_for "a valid mutation" do
       it "changes the contextual parent" do
-        expect_the_default_request.to change { child.reload.contextual_parent }.from(old_parent).to(new_parent)
+        expect_request! do |req|
+          req.effect! change { child.reload.contextual_parent }.from(old_parent).to(new_parent)
 
-        expect_graphql_data expected_shape
+          req.data! expected_shape
+        end
       end
     end
 
     shared_examples_for "moving a leaf to a root" do
       it "clears the old parent" do
-        expect_the_default_request.to change { child.reload.parent_id }.from(old_parent.id).to(nil)
+        expect_request! do |req|
+          req.effect! change { child.reload.parent_id }.from(old_parent.id).to(nil)
 
-        expect_graphql_data expected_shape
+          req.data! expected_shape
+        end
       end
     end
 
     context "when moving a subcollection to the top level in a new community" do
-      let!(:old_parent) { FactoryBot.create :collection, community: community }
+      let_it_be(:old_parent) { FactoryBot.create :collection, community: community }
 
       let!(:child) { FactoryBot.create :collection, parent: old_parent }
 
@@ -74,7 +78,7 @@ RSpec.describe Mutations::ReparentEntity, type: :request, graphql: :mutation do
     end
 
     context "when moving to another collection" do
-      let!(:old_parent) { FactoryBot.create :collection, community: community }
+      let_it_be(:old_parent) { FactoryBot.create :collection, community: community }
 
       let!(:child) { FactoryBot.create :collection, parent: old_parent }
 
@@ -90,8 +94,8 @@ RSpec.describe Mutations::ReparentEntity, type: :request, graphql: :mutation do
     end
 
     context "when moving an item to another collection" do
-      let!(:old_collection) { FactoryBot.create :collection }
-      let!(:old_parent) { FactoryBot.create :item, collection: old_collection }
+      let_it_be(:old_collection) { FactoryBot.create :collection }
+      let_it_be(:old_parent) { FactoryBot.create :item, collection: old_collection }
 
       let!(:child) { FactoryBot.create :item, parent: old_parent }
 

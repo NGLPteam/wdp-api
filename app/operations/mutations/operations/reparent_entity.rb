@@ -8,6 +8,7 @@ module Mutations
     # @see Schemas::Instances::ReparentEntity
     class ReparentEntity
       include MutationOperations::Base
+      include Mutations::Shared::RefreshesOrderingsAsynchronously
 
       derives_edge!
 

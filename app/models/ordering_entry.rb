@@ -23,7 +23,7 @@ class OrderingEntry < ApplicationRecord
 
   belongs_to :entity, polymorphic: true, inverse_of: :ordering_entries
 
-  scope :to_preload, -> { preload(:entity, ancestors: %i[entity]) }
+  scope :to_preload, -> { includes(:entity, ancestors: %i[entity]) }
 
   scope :in_default_order, -> { reorder(position: :asc) }
   scope :in_inverse_order, -> { reorder(inverse_position: :asc) }

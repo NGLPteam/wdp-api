@@ -1,40 +1,35 @@
 # frozen_string_literal: true
 
 RSpec.describe "Query.users", type: :request do
-  let!(:token) { nil }
-
-  let!(:graphql_variables) { {} }
-
-  def make_default_request!
-    make_graphql_request! query, token: token, variables: graphql_variables
-  end
-
   context "when ordering" do
     let(:token) { token_helper.build_token from_user: user_admin }
 
-    let!(:user_admin) do
+    let_it_be(:user_admin) do
       Timecop.freeze(4.days.ago) do
         FactoryBot.create :user, :admin, given_name: "Admin", family_name: "User", email: "admin@example.com", metadata: { testing: false }
       end
     end
 
-    let!(:user_aa) do
+    let_it_be(:user_aa) do
       Timecop.freeze(3.days.ago) do
         FactoryBot.create :user, given_name: "AA", family_name: "AA", email: "aa@example.com", metadata: { testing: false }
       end
     end
 
-    let!(:user_zz) do
+    let_it_be(:user_zz) do
       Timecop.freeze(2.days.ago) do
         FactoryBot.create :user, given_name: "ZZ", family_name: "ZZ", email: "zz@example.com", metadata: { testing: false }
       end
     end
 
-    let!(:user_test) do
+    let_it_be(:user_test) do
       Timecop.freeze(1.day.ago) do
         FactoryBot.create :user, given_name: "Test", family_name: "User", email: "test@example.com", metadata: { testing: true }
       end
     end
+
+    let_it_be(:default_admin_user) { user_admin }
+    let_it_be(:default_user) { user_test }
 
     let!(:keyed_users) do
       {
@@ -71,22 +66,33 @@ RSpec.describe "Query.users", type: :request do
       GRAPHQL
     end
 
+    # We gotta make sure our keycloak default users are not present
+    before do
+      User.where.not(id: [user_admin, user_aa, user_test, user_zz]).destroy_all
+    end
+
     shared_examples_for "an ordered list of users" do |order_value, *keys|
       let!(:order) { order_value }
 
       let!(:expected_shape) do
-        {
-          users: {
-            edges: keys.map { |k| { node: keyed_users.fetch(k) } },
-            page_info: { total_count: keyed_users.size },
-          }
-        }
+        gql.query do |q|
+          q.prop :users do |u|
+            u.array :edges do |e|
+              keys.each do |k|
+                e.item do |n|
+                  n[:node] = keyed_users.fetch k
+                end
+              end
+            end
+            u[:page_info] = { total_count: keyed_users.size }
+          end
+        end
       end
 
       it "returns users in the expected order" do
-        make_default_request!
-
-        expect_graphql_response_data expected_shape, decamelize: true
+        expect_request! do |req|
+          req.data! expected_shape
+        end
       end
     end
 

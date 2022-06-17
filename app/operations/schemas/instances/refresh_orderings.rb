@@ -23,6 +23,8 @@ module Schemas
         Ordering.owned_by_or_ordering(entity).find_each do |ordering|
           next if status.skip?(ordering)
 
+          next unless ordering.refreshes_for? entity
+
           if status.deferred?
             later do
               Schemas::Orderings::RefreshJob.perform_later ordering
@@ -34,17 +36,7 @@ module Schemas
           end
         end
 
-        if entity.orderings.exists?
-          if status.deferred?
-            later do
-              Schemas::Orderings::CalculateInitialJob.set(wait: 2.minutes).perform_later(entity: entity)
-            end
-          elsif status.async?
-            Schemas::Orderings::CalculateInitialJob.set(wait: 2.minutes).perform_later(entity: entity)
-          else
-            yield calculate_initial.(entity: entity)
-          end
-        end
+        yield calculate_initial.(entity: entity) if entity.orderings.exists?
 
         return Success()
       end

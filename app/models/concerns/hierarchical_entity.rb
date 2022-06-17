@@ -119,14 +119,20 @@ module HierarchicalEntity
   # @param [String] identifier
   # @return [Collection, nil]
   def descendant_collection_by(identifier)
-    Collection.where(id: entity_descendants.for_collection_filter).by_identifier(identifier).first
+    descendant_collections_by(identifier).first
   end
 
   # @param [String] identifier
   # @raise [ActiveRecord::RecordNotFound]
   # @return [Collection]
   def descendant_collection_by!(identifier)
-    Collection.where(id: entity_descendants.for_collection_filter).by_identifier(identifier).first!
+    descendant_collections_by(identifier).first!
+  end
+
+  # @param [String] identifier
+  # @return [ActiveRecord::Relation<Collection>]
+  def descendant_collections_by(identifier)
+    Collection.where(id: entity_descendants.for_collection_filter).by_identifier(identifier)
   end
 
   # This potentially connects to another "layer" in the hierarchy.
@@ -204,12 +210,9 @@ module HierarchicalEntity
     incoming_links.map(&:source)
   end
 
-  def maintain_links
+  # @see Links::Maintain
+  monadic_operation! def maintain_links
     call_operation("links.maintain", self)
-  end
-
-  def maintain_links!
-    maintain_links.value!
   end
 
   # @param [String] identifier
@@ -359,13 +362,15 @@ module HierarchicalEntity
 
     return unless should_update_hierarchical_children_after_save?
 
-    # This will have a cascading effect on all descendants, as they should each inherit
-    # the updated parent, triggering this method at their depth, and then doing the same
-    # for each of their children, and so on.
-    children.find_each(&:save!)
+    Schemas::Orderings.with_asynchronous_refresh do
+      # This will have a cascading effect on all descendants, as they should each inherit
+      # the updated parent, triggering this method at their depth, and then doing the same
+      # for each of their children, and so on.
+      children.find_each(&:save!)
 
-    # For collections, this will make sure that items update their auth_paths
-    hierarchical_children.find_each(&:save!)
+      # For collections, this will make sure that items update their auth_paths
+      hierarchical_children.find_each(&:save!)
+    end
   end
 
   # @return [void]

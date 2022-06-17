@@ -3,7 +3,8 @@
 module Entities
   # Synchronizes a {SyncsEntities model} into an {Entity} representation.
   class Sync
-    include Dry::Monads[:try, :do, :result]
+    include Dry::Monads[:do, :result]
+    include MonadicPersistence
     include WDPAPI::Deps[
       calculate_authorizing: "entities.calculate_authorizing",
       validate_sync: "entities.validate_sync",
@@ -13,10 +14,9 @@ module Entities
     UNIQUE_INDEX = %i[entity_type entity_id].freeze
 
     # @param [SyncsEntities] source
+    # @return [Dry::Monads::Result]
     def call(source)
-      result = yield attributes_from source
-
-      attributes = result.to_h
+      attributes = yield attributes_from source
 
       yield upsert! attributes
 
@@ -24,13 +24,16 @@ module Entities
 
       Entities::SyncHierarchiesJob.perform_later source
 
-      calculate_authorizing.call auth_path: source.entity_auth_path
+      yield calculate_authorizing! source
+
+      Success()
     end
 
     private
 
     # @param [SyncsEntities] source
-    # @return [Dry::Validation::Result]
+    # @return [Dry::Monads::Success(Hash)]
+    # @return [Dry::Monads::Failure(Dry::Validation::Result)]
     def attributes_from(source)
       tuple = source.to_entity_tuple.symbolize_keys
 
@@ -42,16 +45,17 @@ module Entities
       tuple[:scope] = source.entity_scope
       tuple[:system_slug] = source.entity_slug
 
-      validate_sync.call(tuple).to_monad
+      validate_sync.call(tuple).to_monad.fmap(&:to_h)
     end
 
     # @param [{ Symbol => Object }] attributes
+    # @return [Dry::Monads::Result]
     def upsert!(attributes)
-      Try do
-        Entity.upsert attributes, unique_by: UNIQUE_INDEX
-      end.to_monad
+      monadic_upsert Entity, attributes, unique_by: UNIQUE_INDEX, skip_find: true
     end
 
+    # @param [SyncsEntities] source
+    # @return [Dry::Monads::Result]
     def maybe_upsert_visibility!(source)
       return Success() unless source.kind_of?(ChildEntity)
 
@@ -60,9 +64,13 @@ module Entities
       tuple[:entity_id] = source.id_for_entity
       tuple[:entity_type] = source.entity_type
 
-      Try do
-        EntityVisibility.upsert tuple, unique_by: UNIQUE_INDEX
-      end.to_monad
+      monadic_upsert EntityVisibility, tuple, unique_by: UNIQUE_INDEX, skip_find: true
+    end
+
+    # @param [SyncsEntities] source
+    # @return [Dry::Monads::Result]
+    def calculate_authorizing!(source)
+      calculate_authorizing.call auth_path: source.entity_auth_path
     end
   end
 end
