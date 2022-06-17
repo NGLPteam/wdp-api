@@ -13,6 +13,10 @@ module Types
       description "Alt text for accessible images"
     end
 
+    field :content_type, String, null: true, method: :mime_type do
+      description "The MIME type of the image, if present"
+    end
+
     field :dimensions, [Int], null: true, deprecation_reason: "Use width and height directly."
 
     field :height, Int, null: true do
