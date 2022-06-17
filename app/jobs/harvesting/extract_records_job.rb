@@ -3,9 +3,9 @@
 module Harvesting
   # @see Harvesting::Actions::ExtractRecords
   class ExtractRecordsJob < ApplicationJob
-    queue_as :harvesting
+    queue_as :extraction
 
-    unique :until_and_while_executing, lock_ttl: 1.hour, on_conflict: :log
+    unique :until_and_while_executing, lock_ttl: 1.minute, on_conflict: :log
 
     # @param [HarvestAttempt] harvest_attempt
     # @param [String, nil] cursor
