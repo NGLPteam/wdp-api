@@ -19,6 +19,10 @@ Zhong.schedule do
       Entities::AuditAuthorizingJob.perform_later
     end
 
+    every 5.minutes, "audit_hierarchies" do
+      Entities::AuditHierarchies.perform_later
+    end
+
     every 5.minutes, "audit_mismatched_schemas" do
       Entities::AuditMismatchedSchemasJob.perform_later
     end

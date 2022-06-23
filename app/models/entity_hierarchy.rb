@@ -7,8 +7,9 @@
 class EntityHierarchy < ApplicationRecord
   self.primary_key = %i[ancestor_id descendant_id]
 
-  belongs_to_readonly :ancestor, polymorphic: true
-  belongs_to_readonly :descendant, polymorphic: true
-  belongs_to_readonly :schema_definition
-  belongs_to_readonly :schema_version
+  belongs_to :ancestor, polymorphic: true
+  belongs_to :descendant, polymorphic: true
+  belongs_to :hierarchical, polymorphic: true
+  belongs_to :schema_definition
+  belongs_to :schema_version
 end
