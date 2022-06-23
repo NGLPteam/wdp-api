@@ -22,6 +22,8 @@ class SchemaVersion < ApplicationRecord
   has_many :collections, dependent: :restrict_with_error, inverse_of: :schema_version
   has_many :items, dependent: :restrict_with_error, inverse_of: :schema_version
 
+  has_many :entity_hierarchies, dependent: :delete_all, inverse_of: :schema_version
+
   has_many_readonly :entities, inverse_of: :schema_version
 
   has_many_readonly :entity_descendants, inverse_of: :schema_version

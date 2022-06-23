@@ -44,6 +44,10 @@ module HierarchicalEntity
 
     has_many_readonly :link_target_candidates, as: :source
 
+    has_many :entity_hierarchies, as: :ancestor, dependent: :delete_all
+    has_many :entity_descendant_ancestries, as: :descendant, dependent: :delete_all, class_name: "EntityHierarchy"
+    has_many :entity_ancestries, as: :hierarchical, dependent: :delete_all, class_name: "EntityHierarchy"
+
     has_many :orderings, dependent: :destroy, as: :entity
 
     has_many :ordering_entries, dependent: :delete_all, as: :entity
