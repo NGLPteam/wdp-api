@@ -141,11 +141,9 @@ class OrderingEntryCandidate < ApplicationRecord
 
       auth_path = arel_table[:auth_path]
 
-      raw_query = selection.build_auth_query_for(ordering.entity.auth_path)
+      lqueries = selection.build_auth_query_for(ordering.entity.auth_path)
 
-      auth_query = arel_cast(arel_quote(raw_query), "lquery")
-
-      expr = arel_infix ?~, auth_path, auth_query
+      expr = arel_ltree_matches_one_or_any(auth_path, lqueries)
 
       where(expr)
     end
