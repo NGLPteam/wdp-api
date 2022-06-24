@@ -34,12 +34,15 @@ module Schemas
       delegate :tree_mode?, to: :parent, allow_nil: true
 
       # @param [String] auth_path
-      # @return [String]
+      # @return [<String>]
       def build_auth_query_for(auth_path)
-        if limit_to_single_depth?
-          links.any? ? "#{auth_path}._{,1}.*{1}" : "#{auth_path}.*{1}"
-        else
-          "#{auth_path}.*{1,}"
+        [].tap do |queries|
+          if limit_to_single_depth?
+            queries << "#{auth_path}.*{1}"
+            queries << "#{auth_path}._.*{1}" if links.any?
+          else
+            queries << "#{auth_path}.*{1,}"
+          end
         end
       end
 
