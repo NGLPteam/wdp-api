@@ -6,6 +6,23 @@ RSpec.describe Mutations::CreatePersonContributor, type: :request, graphql: :mut
     createPersonContributor(input: $input) {
       contributor {
         kind
+        id
+        name
+        orcid
+        url
+        givenName
+        familyName
+        title
+        affiliation
+
+        links {
+          title
+          url
+        }
+
+        contributionCount
+        collectionContributionCount
+        itemContributionCount
       }
 
       ... ErrorFragment
@@ -13,36 +30,67 @@ RSpec.describe Mutations::CreatePersonContributor, type: :request, graphql: :mut
   }
   GRAPHQL
 
-  context "as an admin" do
-    let(:token) { token_helper.build_token has_global_admin: true }
+  let_mutation_input!(:url) { Faker::Internet.url }
+  let_mutation_input!(:bio) { Faker::Lorem.paragraphs(number: 4).join("\n") }
 
-    let_mutation_input!(:url) { Faker::Internet.url }
-    let_mutation_input!(:bio) { Faker::Lorem.paragraphs(number: 4).join("\n") }
-
-    let_mutation_input!(:links) do
-      2.times.map do
-        { title: Faker::Lorem.sentence, url: Faker::Internet.url }
-      end
+  let_mutation_input!(:links) do
+    2.times.map do
+      { title: Faker::Lorem.sentence, url: Faker::Internet.url }
     end
+  end
 
-    # person-specific properties
-    let_mutation_input!(:given_name) { Faker::Name.first_name }
-    let_mutation_input!(:family_name) { Faker::Name.last_name }
-    let_mutation_input!(:title) { Faker::Name.prefix }
-    let_mutation_input!(:affiliation) { Faker::Company.name }
+  # person-specific properties
+  let_mutation_input!(:given_name) { Faker::Name.first_name }
+  let_mutation_input!(:family_name) { Faker::Name.last_name }
+  let_mutation_input!(:title) { Faker::Name.prefix }
+  let_mutation_input!(:affiliation) { Faker::Company.name }
+  let_mutation_input!(:orcid) { nil }
 
+  shared_examples_for "a successful creation" do
     let!(:expected_shape) do
       gql.mutation :create_person_contributor do |m|
         m.prop :contributor do |c|
           c[:kind] = "person"
+          c[:id] = be_present
+          c[:url] = url.presence
+          c[:orcid] = orcid.presence
+          c[:given_name] = given_name
+          c[:family_name] = family_name
+          c[:title] = title
+          c[:affiliation] = affiliation
+
+          c[:links] = links
+          c[:contribution_count] = 0
+          c[:collection_contribution_count] = 0
+          c[:item_contribution_count] = 0
         end
       end
     end
 
-    it "creates a person contributor" do
-      expect_the_default_request.to change(Contributor, :count).by(1)
+    it "creates a person contributor", :aggregate_failures do
+      expect_request! do |req|
+        req.effect! change(Contributor, :count).by(1)
 
-      expect_graphql_data expected_shape
+        req.data! expected_shape
+      end
+    end
+  end
+
+  shared_examples_for "a failed creation" do
+    it "does not create the contributor" do
+      expect_request! do |req|
+        req.effect! keep_the_same Contributor, :count
+
+        req.data! expected_shape
+      end
+    end
+  end
+
+  context "as an admin" do
+    let(:token) { token_helper.build_token has_global_admin: true }
+
+    context "with valid inputs" do
+      it_behaves_like "a successful creation"
     end
 
     context "with an invalid link" do
@@ -60,11 +108,13 @@ RSpec.describe Mutations::CreatePersonContributor, type: :request, graphql: :mut
         end
       end
 
-      it "does not create the contributor" do
-        expect_the_default_request.to keep_the_same(Contributor, :count)
+      it_behaves_like "a failed creation"
+    end
 
-        expect_graphql_data expected_shape
-      end
+    context "with orcid set to an empty string" do
+      let_mutation_input!(:orcid) { "" }
+
+      include_examples "a successful creation"
     end
 
     context "with an already existing ORCID" do
@@ -84,11 +134,7 @@ RSpec.describe Mutations::CreatePersonContributor, type: :request, graphql: :mut
         end
       end
 
-      it "does not create the contributor" do
-        expect_the_default_request.to keep_the_same(Contributor, :count)
-
-        expect_graphql_data expected_shape
-      end
+      it_behaves_like "a failed creation"
     end
   end
 end
