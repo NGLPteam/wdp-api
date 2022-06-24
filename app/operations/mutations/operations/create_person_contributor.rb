@@ -31,6 +31,8 @@ module Mutations
         contributor.properties = { person: properties }
 
         persist_model! contributor, attach_to: :contributor
+
+        contributor.reload
       end
     end
   end

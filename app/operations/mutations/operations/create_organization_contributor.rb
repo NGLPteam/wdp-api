@@ -29,6 +29,8 @@ module Mutations
         contributor.properties = { organization: properties }
 
         persist_model! contributor, attach_to: :contributor
+
+        contributor.reload
       end
     end
   end

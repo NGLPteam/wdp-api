@@ -7,6 +7,8 @@ class Contributor < ApplicationRecord
   include SchematicReferent
   include ScopesForIdentifier
 
+  strip_attributes only: %i[email orcid url]
+
   pg_enum! :kind, as: "contributor_kind"
 
   attribute :links, Contributors::Link.to_array_type

@@ -27,7 +27,7 @@ class ApplicationContract < Dry::Validation::Contract
   end
 
   register_macro :orcid_format do
-    key.failure(:must_be_orcid) unless value.nil? || Contributors::Types::ORCID_FORMAT.match?(value)
+    key.failure(:must_be_orcid) unless value.blank? || Contributors::Types::ORCID_FORMAT.match?(value)
   end
 
   register_macro :tag_format do
