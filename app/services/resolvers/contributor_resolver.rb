@@ -16,6 +16,14 @@ module Resolvers
 
     option :kind, type: Types::ContributorFilterKindType, default: "ALL"
 
+    PREFIX_DESC = <<~TEXT
+    Search for contributors with names that start with the provided text.
+    TEXT
+
+    option :prefix, type: String, description: PREFIX_DESC do |scope, value|
+      scope.apply_prefix value
+    end
+
     def apply_kind_with_all(scope)
       scope.all
     end

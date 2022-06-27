@@ -69,6 +69,15 @@ class Entity < ApplicationRecord
       compiler.()
     end
 
+    # @see Resolvers::SearchResultsResolver
+    # @param [String] text
+    # @return [ActiveRecord::Relation<Entity>]
+    def apply_prefix(text)
+      compiler = Searching::PrefixCompiler.new text, scope: all
+
+      compiler.()
+    end
+
     # @api private
     # @see Resolvers::SearchResultsResolver
     # @param [<Searching::Operator>] predicates
@@ -93,7 +102,7 @@ class Entity < ApplicationRecord
 
     # @param [Integer] max_depth
     # @param [Integer] origin_depth
-    # @return [void]
+    # @return [ActiveRecord::Relation]
     def by_max_relative_depth(max_depth, origin_depth: 0)
       relative_depth = arel_table[:depth] - origin_depth
 

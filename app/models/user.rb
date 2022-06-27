@@ -101,6 +101,21 @@ class User < ApplicationRecord
   end
 
   class << self
+    # @param [String] input
+    # @return [ActiveRecord::Relation]
+    def apply_prefix(input)
+      needle = WDPAPI::Container["searching.prefix_sanitize"].(input)
+
+      return all if needle.blank?
+
+      where_begins_like(
+        search_given_name: needle,
+        search_family_name: needle,
+        _or: true,
+        _case_sensitive: true
+      )
+    end
+
     # Scope users that have *all* allowed actions matching the provided input.
     #
     # @param [<String>] actions

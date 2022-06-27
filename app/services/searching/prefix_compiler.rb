@@ -1,22 +1,27 @@
 # frozen_string_literal: true
 
 module Searching
-  # @see Entity.apply_query
+  # @see Entity.apply_prefix
   # @api private
-  class QueryCompiler
+  class PrefixCompiler
     include Dry::Initializer[undefined: false].define -> do
-      param :text, Searching::Types::String.optional
+      param :input, Searching::Types::String.optional
 
       option :dictionary, Searching::Types::String, default: proc { "english" }
 
       option :scope, Searching::Types::Interface(:all), default: proc { Entity.all }
     end
+    include WDPAPI::Deps[
+      prefix_sanitize: "searching.prefix_sanitize",
+    ]
 
     # @return [ActiveRecord::Relation<::Entity>]
     def call
-      return scope if text.blank?
+      needle = prefix_sanitize.(input)
 
-      scope.by_composed_text(text, dictionary: dictionary)
+      return scope if needle.blank?
+
+      scope.where_begins_like(search_title: needle, _case_sensitive: true)
     end
   end
 end

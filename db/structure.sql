@@ -80,6 +80,20 @@ COMMENT ON EXTENSION pg_stat_statements IS 'track planning and execution statist
 
 
 --
+-- Name: pg_trgm; Type: EXTENSION; Schema: -; Owner: -
+--
+
+CREATE EXTENSION IF NOT EXISTS pg_trgm WITH SCHEMA public;
+
+
+--
+-- Name: EXTENSION pg_trgm; Type: COMMENT; Schema: -; Owner: -
+--
+
+COMMENT ON EXTENSION pg_trgm IS 'text similarity measurement and index searching based on trigrams';
+
+
+--
 -- Name: pgcrypto; Type: EXTENSION; Schema: -; Owner: -
 --
 
@@ -1005,6 +1019,28 @@ CREATE FUNCTION public.to_header(public.schema_versions) RETURNS jsonb
     LANGUAGE sql IMMUTABLE STRICT PARALLEL SAFE
     AS $_$
 SELECT jsonb_build_object('id', $1.id, 'namespace', $1.namespace, 'identifier', $1.identifier, 'version', $1.number);
+$_$;
+
+
+--
+-- Name: to_prefix_search(text); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.to_prefix_search(text) RETURNS text
+    LANGUAGE sql IMMUTABLE STRICT PARALLEL SAFE
+    AS $_$
+SELECT LOWER(regexp_replace($1, '[^[:alnum:]]', '', 'g'));
+$_$;
+
+
+--
+-- Name: to_prefix_search(public.citext); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.to_prefix_search(public.citext) RETURNS text
+    LANGUAGE sql IMMUTABLE STRICT PARALLEL SAFE
+    AS $_$
+SELECT to_prefix_search($1::text);
 $_$;
 
 
@@ -3126,7 +3162,8 @@ CREATE TABLE public.entities (
     properties jsonb DEFAULT '{}'::jsonb NOT NULL,
     stale_at timestamp without time zone,
     refreshed_at timestamp without time zone,
-    stale boolean GENERATED ALWAYS AS (((stale_at IS NOT NULL) AND ((refreshed_at IS NULL) OR (refreshed_at < stale_at)))) STORED NOT NULL
+    stale boolean GENERATED ALWAYS AS (((stale_at IS NOT NULL) AND ((refreshed_at IS NULL) OR (refreshed_at < stale_at)))) STORED NOT NULL,
+    search_title text NOT NULL
 );
 
 
@@ -3390,7 +3427,8 @@ CREATE TABLE public.contributors (
     name text GENERATED ALWAYS AS (public.derive_contributor_name(kind, properties)) STORED,
     sort_name public.citext GENERATED ALWAYS AS (public.derive_contributor_sort_name(kind, properties)) STORED,
     affiliation text GENERATED ALWAYS AS (public.derive_contributor_affiliation(kind, properties)) STORED,
-    orcid public.citext
+    orcid public.citext,
+    search_name text GENERATED ALWAYS AS (public.to_prefix_search(public.derive_contributor_name(kind, properties))) STORED
 );
 
 
@@ -4786,7 +4824,9 @@ CREATE TABLE public.users (
     global_access_control_list jsonb DEFAULT '{}'::jsonb NOT NULL,
     allowed_actions public.ltree[] DEFAULT '{}'::public.ltree[] NOT NULL,
     avatar_data jsonb,
-    role_priority integer GENERATED ALWAYS AS (public.user_role_priority(roles, metadata, allowed_actions)) STORED
+    role_priority integer GENERATED ALWAYS AS (public.user_role_priority(roles, metadata, allowed_actions)) STORED,
+    search_given_name text GENERATED ALWAYS AS (public.to_prefix_search(given_name)) STORED NOT NULL,
+    search_family_name text GENERATED ALWAYS AS (public.to_prefix_search(family_name)) STORED NOT NULL
 );
 
 
@@ -6348,6 +6388,13 @@ CREATE INDEX index_contributors_on_sort_name ON public.contributors USING btree 
 
 
 --
+-- Name: index_contributors_prefix_searching_names; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_contributors_prefix_searching_names ON public.contributors USING gin (search_name public.gin_trgm_ops);
+
+
+--
 -- Name: index_entities_crumb_source; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -6422,6 +6469,13 @@ CREATE INDEX index_entities_on_properties ON public.entities USING gin (properti
 --
 
 CREATE INDEX index_entities_on_schema_version_id ON public.entities USING btree (schema_version_id);
+
+
+--
+-- Name: index_entities_on_search_title; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_entities_on_search_title ON public.entities USING gin (search_title public.gin_trgm_ops);
 
 
 --
@@ -7838,6 +7892,13 @@ CREATE INDEX index_users_on_role_priority ON public.users USING btree (role_prio
 --
 
 CREATE UNIQUE INDEX index_users_on_system_slug ON public.users USING btree (system_slug);
+
+
+--
+-- Name: index_users_prefix_searching_names; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_users_prefix_searching_names ON public.users USING gin (search_given_name public.gin_trgm_ops, search_family_name public.gin_trgm_ops);
 
 
 --
@@ -10493,6 +10554,8 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20220609235453'),
 ('20220615234049'),
 ('20220616001209'),
-('20220617164554');
+('20220617164554'),
+('20220621170232'),
+('20220627205514');
 
 

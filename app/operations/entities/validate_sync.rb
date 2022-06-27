@@ -14,6 +14,7 @@ module Entities
       optional(:link_operator).maybe(Links::Types::Operator)
       optional(:properties).value(:hash)
       required(:scope).filled(Entities::Types::Scope)
+      required(:search_title).filled(:string)
       required(:schema_version_id).filled(:string, :uuid_v4?)
       required(:system_slug).filled(Entities::Types::Slug)
       required(:title).filled(:string)

@@ -13,6 +13,27 @@ RSpec.describe "Query.contributors", type: :request, disable_ordering_refresh: t
     end
   end
 
+  def shape_for(*keys)
+    keys.flatten!
+
+    gql.query do |q|
+      q.prop :contributors do |u|
+        u.array :edges do |e|
+          keys.each do |k|
+            e.item do |n|
+              n[:node] = keyed_models.fetch k
+            end
+          end
+        end
+
+        u.prop :page_info do |pi|
+          pi[:total_count] = keys.size
+          pi[:total_unfiltered_count] = keyed_models.size
+        end
+      end
+    end
+  end
+
   def to_rep(model)
     {
       name: model.safe_name,
@@ -53,20 +74,30 @@ RSpec.describe "Query.contributors", type: :request, disable_ordering_refresh: t
     end
 
     let!(:order) { "RECENT" }
+    let(:search_prefix) { nil }
 
-    let!(:graphql_variables) { { order: order } }
+    let!(:graphql_variables) do
+      {
+        order: order,
+        prefix: search_prefix,
+      }
+    end
 
     let!(:query) do
       <<~GRAPHQL
-      query getOrderedContributors($order: ContributorOrder!) {
-        contributors(order: $order) {
+      query getOrderedContributors($order: ContributorOrder!, $prefix: String) {
+        contributors(order: $order, prefix: $prefix) {
           edges {
             node {
               ... on Node { id }
               ... on Contributor { name }
             }
           }
-          pageInfo { totalCount }
+
+          pageInfo {
+            totalCount
+            totalUnfilteredCount
+          }
         }
       }
       GRAPHQL
@@ -76,18 +107,13 @@ RSpec.describe "Query.contributors", type: :request, disable_ordering_refresh: t
       let!(:order) { order_value }
 
       let_it_be(:expected_shape) do
-        {
-          contributors: {
-            edges: keys.map { |k| { node: keyed_models.fetch(k) } },
-            page_info: { total_count: keyed_models.size },
-          },
-        }
+        shape_for(*keys)
       end
 
       it "returns contributors in the expected order" do
-        expect_the_default_request.to execute_safely
-
-        expect_graphql_data expected_shape
+        expect_request! do |req|
+          req.data! expected_shape
+        end
       end
     end
 
@@ -103,6 +129,17 @@ RSpec.describe "Query.contributors", type: :request, disable_ordering_refresh: t
     }.each do |order, keys|
       context "when ordered by #{order}" do
         include_examples "an ordered list of contributors", order, *keys
+      end
+    end
+
+    context "when filtered by prefix" do
+      let(:search_prefix) { "isaa" }
+      let(:expected_shape) { shape_for(:asimov) }
+
+      it "returns only the filtered contributor" do
+        expect_request! do |req|
+          req.data! expected_shape
+        end
       end
     end
   end

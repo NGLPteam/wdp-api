@@ -93,6 +93,19 @@ class Contributor < ApplicationRecord
   end
 
   class << self
+    # @param [String] input
+    # @return [ActiveRecord::Relation]
+    def apply_prefix(input)
+      needle = WDPAPI::Container["searching.prefix_sanitize"].(input)
+
+      return all if needle.blank?
+
+      where_begins_like(
+        search_name: needle,
+        _case_sensitive: true
+      )
+    end
+
     def by_given_and_family_name(given_name, family_name)
       person.where(arel_json_contains(:properties, person: { given_name: given_name, family_name: family_name }))
     end
