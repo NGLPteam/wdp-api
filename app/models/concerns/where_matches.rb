@@ -4,22 +4,25 @@ module WhereMatches
   extend ActiveSupport::Concern
 
   class_methods do
-    def where_matches(_wildcard: false, _escape: true, **pairs)
+    def where_matches(_wildcard: false, _escape: true, _case_sensitive: false, _or: false, **pairs)
+      counter = 0
+
       pairs.reduce(all) do |scope, (column, value)|
+        counter += 1
+
         next scope if value.blank?
 
-        conditions =
-          if value.kind_of?(Array)
-            expressions = value.map do |actual_value|
-              arel_table[column].matches(wrap_like_value_in_wildcard(actual_value, _wildcard, escape: _escape))
-            end
+        conditions = arel_or_expressions value do |actual_value|
+          needle = wrap_like_value_in_wildcard(actual_value, _wildcard, escape: _escape)
 
-            arel_or_expressions(*expressions)
-          else
-            arel_table[column].matches(wrap_like_value_in_wildcard(value, _wildcard, escape: _escape))
-          end
+          arel_table[column].matches(needle, nil, _case_sensitive)
+        end
 
-        scope.where conditions
+        if _or && counter > 1
+          scope.or(scope.unscoped.where(conditions))
+        else
+          scope.where conditions
+        end
       end
     end
 

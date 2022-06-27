@@ -7,6 +7,7 @@ module Entities
     include MonadicPersistence
     include WDPAPI::Deps[
       calculate_authorizing: "entities.calculate_authorizing",
+      prefix_sanitize: "searching.prefix_sanitize",
       validate_sync: "entities.validate_sync",
     ]
 
@@ -43,6 +44,7 @@ module Entities
       tuple[:hierarchical_id] = source.hierarchical_id
       tuple[:hierarchical_type] = source.hierarchical_type
       tuple[:scope] = source.entity_scope
+      tuple[:search_title] = prefix_sanitize.(tuple[:title])
       tuple[:system_slug] = source.entity_slug
 
       validate_sync.call(tuple).to_monad.fmap(&:to_h)

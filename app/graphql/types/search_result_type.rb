@@ -11,6 +11,8 @@ module Types
 
     field :kind, Types::EntityKindType, null: false
 
+    field :id, ID, null: false
+
     field :schema_version, Types::SchemaVersionType, null: false
 
     field :slug, Types::SlugType, null: false
@@ -23,8 +25,15 @@ module Types
     end
 
     # @return [String]
+    def id
+      entity.then do |ent|
+        Promise.resolve(ent.to_encoded_id)
+      end
+    end
+
+    # @return [String]
     def kind
-      objet.hierarchical_kind
+      object.hierarchical_type
     end
 
     # @return [SchemaVersion]

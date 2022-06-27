@@ -28,6 +28,14 @@ module Resolvers
       scope.apply_search_predicates predicates.flatten
     end
 
+    PREFIX_DESC = <<~TEXT
+    Search for entities with titles that start with the provided text (case-insensitive).
+    TEXT
+
+    option :prefix, type: String, description: PREFIX_DESC do |scope, value|
+      scope.apply_prefix value
+    end
+
     QUERY_DESC = <<~TEXT
     Search all text associated with individual entities.
 
@@ -42,7 +50,7 @@ module Resolvers
 
     def finalize(scope)
       # If no search options are provided, we return an empty set.
-      return scope.none if predicates.blank? && query.blank?
+      return scope.none if predicates.blank? && query.blank? && prefix.blank?
 
       scope.apply_order_to_exclude_duplicate_links
     end
