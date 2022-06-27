@@ -18,72 +18,96 @@ RSpec.describe "Query.item", type: :request do
               familyName
             }
           }
+
+          pageInfo {
+            totalCount
+          }
         }
 
-        items { nodes { id } }
+        items {
+          nodes { id }
+
+          pageInfo {
+            totalCount
+          }
+        }
       }
     }
     GRAPHQL
   end
 
-  let!(:token) { nil }
+  let(:slug) { random_slug }
 
-  let!(:graphql_variables) { {} }
-
-  def make_default_request!
-    make_graphql_request! query, token: token, variables: graphql_variables
-  end
+  let(:graphql_variables) { { slug: slug, } }
 
   context "as an admin" do
     let(:token) { token_helper.build_token has_global_admin: true }
 
     context "with a valid slug" do
-      let!(:graphql_variables) { { slug: item.system_slug } }
+      let_it_be(:item) { FactoryBot.create :item }
 
-      let!(:item) { FactoryBot.create :item }
+      let_it_be(:subitems) { FactoryBot.create_list :item, 2, parent: item }
 
-      let!(:subitems) { FactoryBot.create_list :item, 2, parent: item }
+      let_it_be(:contributors) do
+        %i[person organization].map do |trait|
+          FactoryBot.create :contributor, trait
+        end
+      end
 
-      let!(:contributors) { %i[person organization].map { |trait| FactoryBot.create :contributor, trait } }
-
-      before do
+      let_it_be(:item_contributions) do
         contributors.map do |contrib|
           FactoryBot.create :item_contribution, contributor: contrib, item: item
         end
       end
 
-      it "has the right title" do
-        make_default_request!
+      let(:slug) { item.system_slug }
 
-        expect_graphql_response_data item: { title: item.title }
+      let(:expected_shape) do
+        gql.query do |q|
+          q.prop :item do |i|
+            i[:title] = item.title
+
+            i.prop :contributors do |c|
+              c.prop :page_info do |pi|
+                pi[:total_count] = contributors.size
+              end
+            end
+
+            i.prop :items do |is|
+              is.prop :page_info do |pi|
+                pi[:total_count] = subitems.size
+              end
+            end
+          end
+        end
       end
 
-      it "has the right number of contributors" do
-        make_default_request!
-
-        expect(graphql_response(:data, :item, :contributors, :nodes)).to have(contributors.length).items
-      end
-
-      it "has the right number of subitems" do
-        make_default_request!
-
-        expect(graphql_response(:data, :item, :items, :nodes)).to have(subitems.length).items
+      it "has the expected shape" do
+        expect_request! do |req|
+          req.data! expected_shape
+        end
       end
     end
 
     context "with an invalid slug" do
-      let!(:graphql_variables) { { slug: random_slug } }
+      let(:slug) { random_slug }
+
+      let(:expected_shape) do
+        gql.query do |q|
+          q[:item] = be_nil
+        end
+      end
 
       it "returns nil" do
-        make_default_request!
-
-        expect_graphql_response_data item: nil
+        expect_request! do |req|
+          req.data! expected_shape
+        end
       end
     end
   end
 
   it_behaves_like "a graphql type with firstItem" do
-    let!(:item) { FactoryBot.create :item }
+    let_it_be(:item) { FactoryBot.create :item }
 
     subject { item }
   end

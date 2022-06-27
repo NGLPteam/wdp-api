@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
-RSpec.shared_examples_for "an entity sync job" do
+RSpec.shared_examples_for "an entity sync job", disable_ordering_refresh: true do
+  include_context "sans entity sync"
+
   let(:entities) { [] }
 
   let(:entity_count) { entities.size }

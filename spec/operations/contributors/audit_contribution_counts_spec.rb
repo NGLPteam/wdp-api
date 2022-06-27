@@ -1,15 +1,15 @@
 # frozen_string_literal: true
 
 RSpec.describe Contributors::AuditContributionCounts, type: :operation do
-  let!(:contributor_a) { FactoryBot.create :contributor, :person }
+  let_it_be(:contributor_a) { FactoryBot.create :contributor, :person }
 
-  let!(:a_contributions) { FactoryBot.create_list :item_contribution, 2, contributor: contributor_a }
+  let_it_be(:a_contributions) { FactoryBot.create_list :item_contribution, 2, contributor: contributor_a }
 
-  let!(:contributor_b) { FactoryBot.create :contributor, :organization }
+  let_it_be(:contributor_b) { FactoryBot.create :contributor, :organization }
 
-  let!(:b_contributions) { FactoryBot.create_list :collection_contribution, 2, contributor: contributor_b }
+  let_it_be(:b_contributions) { FactoryBot.create_list :collection_contribution, 2, contributor: contributor_b }
 
-  let!(:contributor_c) { FactoryBot.create :contributor, :organization }
+  let_it_be(:contributor_c) { FactoryBot.create :contributor, :organization }
 
   context "when everything is in sync" do
     it "updates nothing" do
