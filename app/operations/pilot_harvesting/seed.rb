@@ -86,6 +86,39 @@ module PilotHarvesting
           },
         ],
       },
+      escholarship_v2: {
+        communities: [
+          {
+            identifier: "uci",
+            title: "UC Irvine",
+            journals: [
+              {
+                identifier: "ssha_transmodernity",
+                title: "Transmodernity",
+                subtitle: "Journal of Peripheral Cultural Production of the Luso-Hispanic World",
+                url: "https://escholarship.org/oai",
+                metadata_format: "oaidc",
+                add_set: true,
+                set_identifier: "ssha_transmodernity",
+              }
+            ],
+          },
+          {
+            identifier: "ucm",
+            title: "UC Merced",
+            journals: [
+              {
+                identifier: "class_lta",
+                title: "Journal for Learning through the Arts",
+                url: "https://escholarship.org/oai",
+                metadata_format: "oaidc",
+                add_set: true,
+                set_identifier: "class_lta",
+              }
+            ],
+          },
+        ]
+      },
       longleaf: {
         communities: [
           {
