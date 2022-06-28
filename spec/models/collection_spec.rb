@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 RSpec.describe Collection, type: :model do
+  include ActiveJob::TestHelper
+
   let!(:collection) { FactoryBot.create :collection }
 
   it_behaves_like "an entity with a reference"
@@ -18,6 +20,20 @@ RSpec.describe Collection, type: :model do
           FactoryBot.create :collection, community: community, schema_version: simple_collection_v1
         end.to change(described_class, :count).by(1).and change(Ordering, :count).by(2)
       end
+    end
+  end
+
+  describe "#largest_child_collection" do
+    let(:collection) { nil }
+
+    let_it_be(:parent_collection) { perform_enqueued_jobs { FactoryBot.create :collection } }
+    let_it_be(:subcollection_1) { perform_enqueued_jobs { FactoryBot.create :collection, parent: parent_collection } }
+    let_it_be(:subcollection_2) { perform_enqueued_jobs { FactoryBot.create :collection, parent: parent_collection } }
+    let_it_be(:subcollection_1_items) { perform_enqueued_jobs { FactoryBot.create_list :item, 2, collection: subcollection_1 } }
+    let_it_be(:subcollection_2_items) { perform_enqueued_jobs { FactoryBot.create_list :item, 3, collection: subcollection_2 } }
+
+    it "finds the right subcollection" do
+      expect(parent_collection.largest_child_collection).to eq subcollection_2
     end
   end
 

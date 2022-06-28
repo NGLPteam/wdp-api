@@ -3086,6 +3086,17 @@ CREATE MATERIALIZED VIEW public.assignable_role_targets AS
 
 
 --
+-- Name: collection_hierarchies; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.collection_hierarchies (
+    ancestor_id uuid NOT NULL,
+    descendant_id uuid NOT NULL,
+    generations integer NOT NULL
+);
+
+
+--
 -- Name: collections; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -3110,6 +3121,21 @@ CREATE TABLE public.collections (
     subtitle text,
     issn text
 );
+
+
+--
+-- Name: audits_mismatched_collection_parents; Type: VIEW; Schema: public; Owner: -
+--
+
+CREATE VIEW public.audits_mismatched_collection_parents AS
+ SELECT DISTINCT ON (c.id) c.id AS collection_id,
+    c.community_id AS invalid_community_id,
+    anc.community_id AS valid_community_id
+   FROM ((public.collections c
+     JOIN public.collection_hierarchies hier ON ((hier.descendant_id = c.id)))
+     JOIN public.collections anc ON ((hier.ancestor_id = anc.id)))
+  WHERE ((c.parent_id IS NOT NULL) AND (anc.community_id <> c.community_id))
+  ORDER BY c.id, hier.generations DESC;
 
 
 --
@@ -3229,6 +3255,32 @@ CREATE VIEW public.audits_mismatched_entity_schemas AS
 
 
 --
+-- Name: item_hierarchies; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.item_hierarchies (
+    ancestor_id uuid NOT NULL,
+    descendant_id uuid NOT NULL,
+    generations integer NOT NULL
+);
+
+
+--
+-- Name: audits_mismatched_item_parents; Type: VIEW; Schema: public; Owner: -
+--
+
+CREATE VIEW public.audits_mismatched_item_parents AS
+ SELECT DISTINCT ON (c.id) c.id AS item_id,
+    c.collection_id AS invalid_collection_id,
+    anc.collection_id AS valid_collection_id
+   FROM ((public.items c
+     JOIN public.item_hierarchies hier ON ((hier.descendant_id = c.id)))
+     JOIN public.items anc ON ((hier.ancestor_id = anc.id)))
+  WHERE ((c.parent_id IS NOT NULL) AND (anc.collection_id <> c.collection_id))
+  ORDER BY c.id, hier.generations DESC;
+
+
+--
 -- Name: collection_authorizations; Type: MATERIALIZED VIEW; Schema: public; Owner: -
 --
 
@@ -3266,17 +3318,6 @@ CREATE TABLE public.collection_contributions (
     metadata jsonb,
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
-);
-
-
---
--- Name: collection_hierarchies; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.collection_hierarchies (
-    ancestor_id uuid NOT NULL,
-    descendant_id uuid NOT NULL,
-    generations integer NOT NULL
 );
 
 
@@ -4145,17 +4186,6 @@ CREATE TABLE public.item_contributions (
     metadata jsonb,
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
-);
-
-
---
--- Name: item_hierarchies; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.item_hierarchies (
-    ancestor_id uuid NOT NULL,
-    descendant_id uuid NOT NULL,
-    generations integer NOT NULL
 );
 
 
@@ -10556,6 +10586,8 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20220616001209'),
 ('20220617164554'),
 ('20220621170232'),
-('20220627205514');
+('20220627205514'),
+('20220628184601'),
+('20220628184617');
 
 

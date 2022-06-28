@@ -167,6 +167,11 @@ module HierarchicalEntity
     [contextual_auth_path, system_slug].compact.join(?.)
   end
 
+  # @param [HierarchicalEntity] entity
+  def has_descendant?(entity)
+    entity_descendants.exists?(descendant: entity)
+  end
+
   # @abstract
   # @return [ActiveRecord::Relation<HierarchicalEntity>]
   def hierarchical_children
@@ -362,7 +367,7 @@ module HierarchicalEntity
   # @!scope private
   # @return [void]
   def track_parent_changes!
-    return if top_level?
+    return if kind_of?(Community)
 
     return unless should_update_hierarchical_children_after_save?
 

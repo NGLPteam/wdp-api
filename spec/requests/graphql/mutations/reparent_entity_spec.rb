@@ -69,12 +69,37 @@ RSpec.describe Mutations::ReparentEntity, type: :request, graphql: :mutation, di
     context "when moving a subcollection to the top level in a new community" do
       let_it_be(:old_parent) { FactoryBot.create :collection, community: community }
 
-      let!(:child) { FactoryBot.create :collection, parent: old_parent }
+      let!(:child) { FactoryBot.create :collection, parent: old_parent, title: "Child" }
 
-      let!(:new_parent) { FactoryBot.create :community }
+      let!(:new_parent) { FactoryBot.create :community, title: "New Parent" }
 
       it_behaves_like "moving a leaf to a root"
       it_behaves_like "a valid mutation"
+
+      context "when dealing with descendants" do
+        let!(:grandchild) { FactoryBot.create :collection, parent: child, title: "Grandchild" }
+
+        let!(:subitem) { FactoryBot.create :item, collection: child }
+
+        it "ensures the hierarchy looks correct" do
+          flush_enqueued_jobs
+
+          # sanity check
+          aggregate_failures do
+            expect(community).to have_descendant grandchild
+            expect(community).to have_descendant subitem
+          end
+
+          expect_request!(run_jobs: true) do |req|
+            req.effect! change { subitem.reload.community.id }.from(community.id).to(new_parent.id)
+            req.effect! change { grandchild.reload.community.id }.from(community.id).to(new_parent.id)
+            req.effect! change { community.items.exists?(subitem.id) }.from(true).to(false)
+            req.effect! change { new_parent.items.exists?(subitem.id) }.from(false).to(true)
+            req.effect! change { community.has_descendant?(grandchild) }.from(true).to(false)
+            req.effect! change { new_parent.has_descendant?(grandchild) }.from(false).to(true)
+          end
+        end
+      end
     end
 
     context "when moving to another collection" do
@@ -87,9 +112,11 @@ RSpec.describe Mutations::ReparentEntity, type: :request, graphql: :mutation, di
       it_behaves_like "a valid mutation"
 
       it "stays within the same community" do
-        expect_the_default_request.to keep_the_same { child.reload.community }
+        expect_request! do |req|
+          req.effect! keep_the_same { child.reload.community }
 
-        expect_graphql_data expected_shape
+          req.data! expected_shape
+        end
       end
     end
 
@@ -107,9 +134,11 @@ RSpec.describe Mutations::ReparentEntity, type: :request, graphql: :mutation, di
 
     shared_examples_for "a simple failure" do
       it "fails" do
-        expect_the_default_request.to keep_the_same { child.reload.parent_id }
+        expect_request! do |req|
+          req.effect! keep_the_same { child.reload.parent_id }
 
-        expect_graphql_data expected_shape
+          req.data! expected_shape
+        end
       end
     end
 
@@ -162,6 +191,36 @@ RSpec.describe Mutations::ReparentEntity, type: :request, graphql: :mutation, di
       end
 
       include_examples "a simple failure"
+    end
+
+    context "when moving an item with children to another item" do
+      let_it_be(:old_parent) { FactoryBot.create :collection, community: community }
+
+      let(:new_grandparent) { FactoryBot.create :collection, community: community }
+
+      let!(:item) { FactoryBot.create :item, collection: old_parent }
+
+      let!(:subitem) { FactoryBot.create :item, parent: item }
+
+      let(:child) { item }
+
+      let!(:new_parent) { FactoryBot.create :item, collection: new_grandparent }
+
+      it "maintains the proper hierarchy" do
+        flush_enqueued_jobs
+
+        # Sanity check
+        aggregate_failures do
+          expect(old_parent).to have_descendant(item)
+          expect(old_parent).to have_descendant(subitem)
+        end
+
+        expect_request!(run_jobs: true) do |req|
+          req.effect! change { new_parent.reload.has_descendant?(subitem) }.from(false).to(true)
+          req.effect! change { old_parent.reload.has_descendant?(subitem) }.from(true).to(false)
+          req.effect! keep_the_same { community.reload.has_descendant?(subitem) }
+        end
+      end
     end
   end
 end
