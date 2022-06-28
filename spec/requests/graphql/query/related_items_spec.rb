@@ -1,16 +1,7 @@
 # frozen_string_literal: true
 
-RSpec.describe "Query.item.relatedItems", type: :request do
-  let(:token) { token_helper.build_token }
-
-  let!(:graphql_variables) { { slug: source_item.system_slug } }
-
-  let!(:test_schema) { FactoryBot.create :schema_version, :item }
-  let!(:other_schema) { FactoryBot.create :schema_version, :item }
-
-  let!(:source_item) { FactoryBot.create :item, schema_version: test_schema }
-  let!(:target_item) { FactoryBot.create :item, schema_version: test_schema }
-  let!(:other_item) { FactoryBot.create :item, schema_version: other_schema }
+RSpec.describe "Query.item.relatedItems", type: :request, disable_ordering_refresh: true do
+  include_context "sans entity sync"
 
   let!(:query) do
     <<~GRAPHQL
@@ -30,30 +21,43 @@ RSpec.describe "Query.item.relatedItems", type: :request do
     GRAPHQL
   end
 
+  let(:token) { token_helper.build_token }
+
+  let!(:graphql_variables) { { slug: source_item.system_slug } }
+
+  let_it_be(:test_schema) { FactoryBot.create :schema_version, :item }
+  let_it_be(:other_schema) { FactoryBot.create :schema_version, :item }
+
+  let_it_be(:source_item) { FactoryBot.create :item, schema_version: test_schema }
+  let_it_be(:target_item) { FactoryBot.create :item, schema_version: test_schema }
+  let_it_be(:other_item) { FactoryBot.create :item, schema_version: other_schema }
+
+  let_it_be(:target_link) { FactoryBot.create :entity_link, source: source_item, target: target_item }
+  let_it_be(:other_link) { FactoryBot.create :entity_link, source: source_item, target: other_item }
+
   let!(:expected_shape) do
-    {
-      item: {
-        related_items: {
-          edges: [
-            { node: { id: target_item.to_encoded_id } }
-          ],
+    gql.query do |q|
+      q.prop :item do |i|
+        i.prop :related_items do |ri|
+          ri.array :edges do |es|
+            es.item do |edge|
+              edge.prop :node do |n|
+                n[:id] = target_item.to_encoded_id
+              end
+            end
+          end
 
-          page_info: { total_count: 1 },
-        },
-      },
-    }
-  end
-
-  before do
-    FactoryBot.create :entity_link, source: source_item, target: target_item
-    FactoryBot.create :entity_link, source: source_item, target: other_item
+          ri.prop :page_info do |pi|
+            pi[:total_count] = 1
+          end
+        end
+      end
+    end
   end
 
   it "returns the right results" do
-    expect do
-      make_default_request!
-    end.to execute_safely
-
-    expect_graphql_response_data expected_shape, decamelize: true
+    expect_request! do |req|
+      req.data! expected_shape
+    end
   end
 end
