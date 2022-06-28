@@ -21,9 +21,11 @@ module TestHelpers
         end
       end
 
-      def expect_the_default_request(**options)
+      def expect_the_default_request(run_jobs: false, **options)
         expect do
           make_default_request!(**options)
+
+          flush_enqueued_jobs if run_jobs
         end
       end
 
