@@ -23,6 +23,8 @@ module PilotHarvesting
 
       attribute? :url, PilotHarvesting::Types::SourceURL
 
+      attribute? :add_set, PilotHarvesting::Types::Bool.default(false)
+
       attribute? :set_identifier, PilotHarvesting::Types::String.optional
 
       attribute? :link_identifiers_globally, PilotHarvesting::Types::Bool.default(false)
@@ -83,7 +85,7 @@ module PilotHarvesting
 
       call_operation("harvesting.sources.upsert", harvesting_identifier, harvesting_title, url, **source_options) do |source|
         if set_identifier.present?
-          call_operation("harvesting.actions.upsert_set_mapping", source, entity, set_identifier, **options) do |mapping|
+          call_operation("harvesting.actions.upsert_set_mapping", source, entity, set_identifier, add_set_if_missing: add_set, **options) do |mapping|
             call_operation("harvesting.actions.manually_run_mapping", mapping, skip_harvest: skip_harvest) do
               Success entity
             end
