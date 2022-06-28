@@ -14,6 +14,8 @@ module PilotHarvesting
 
     attribute :title, Types::String
 
+    attribute? :subtitle, Types::String.optional.default(nil)
+
     delegate :schema_name, to: :class
 
     def upsert
