@@ -1,11 +1,13 @@
 # frozen_string_literal: true
 
+# Because of harvesting, we don't actually enforce a unique DOI at the database level, only
+# for creating and updating through the API. Duplicate records _shouldn't_ enter the system
+# through harvesting, but it's possible.
 module HasUniqueDOI
   extend ActiveSupport::Concern
 
   included do
     scope :by_doi, ->(doi) { where(doi: doi) }
-    validates :doi, uniqueness: { if: :doi? }
 
     before_validation :nullify_blank_doi!
   end

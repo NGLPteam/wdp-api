@@ -6239,7 +6239,7 @@ CREATE INDEX index_collections_on_community_id ON public.collections USING btree
 -- Name: index_collections_on_doi; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE UNIQUE INDEX index_collections_on_doi ON public.collections USING btree (doi);
+CREATE INDEX index_collections_on_doi ON public.collections USING btree (doi);
 
 
 --
@@ -7242,7 +7242,7 @@ CREATE INDEX index_items_on_collection_id ON public.items USING btree (collectio
 -- Name: index_items_on_doi; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE UNIQUE INDEX index_items_on_doi ON public.items USING btree (doi);
+CREATE INDEX index_items_on_doi ON public.items USING btree (doi);
 
 
 --
@@ -10588,6 +10588,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20220621170232'),
 ('20220627205514'),
 ('20220628184601'),
-('20220628184617');
+('20220628184617'),
+('20220706164702');
 
 
