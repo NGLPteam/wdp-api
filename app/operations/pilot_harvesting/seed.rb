@@ -93,14 +93,13 @@ module PilotHarvesting
             title: "UC Irvine",
             journals: [
               {
-                identifier: "ssha_transmodernity",
-                title: "Transmodernity",
-                subtitle: "Journal of Peripheral Cultural Production of the Luso-Hispanic World",
+                identifier: "class_lta",
+                title: "Journal for Learning through the Arts",
                 url: "https://escholarship.org/oai",
                 metadata_format: "oaidc",
                 add_set: true,
-                set_identifier: "ssha_transmodernity",
-              }
+                set_identifier: "class_lta",
+              },
             ],
           },
           {
@@ -108,13 +107,14 @@ module PilotHarvesting
             title: "UC Merced",
             journals: [
               {
-                identifier: "class_lta",
-                title: "Journal for Learning through the Arts",
+                identifier: "ssha_transmodernity",
+                title: "Transmodernity",
+                subtitle: "Journal of Peripheral Cultural Production of the Luso-Hispanic World",
                 url: "https://escholarship.org/oai",
                 metadata_format: "oaidc",
                 add_set: true,
-                set_identifier: "class_lta",
-              }
+                set_identifier: "ssha_transmodernity",
+              },
             ],
           },
         ]
