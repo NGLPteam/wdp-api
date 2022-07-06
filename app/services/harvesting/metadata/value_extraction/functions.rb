@@ -317,6 +317,17 @@ module Harvesting
             result.value_or(nil)
           end
 
+          # @param [Object] input
+          # @param [<String, Symbol>] dependencies
+          # @return [Array]
+          def with_dependency_tuple(input, *dependencies)
+            dependencies.flatten!
+
+            dependencies.each_with_object([input]) do |dependency, tuple|
+              tuple << fetch_dependency(dependency)
+            end
+          end
+
           # Wrap the dependencies property hash around the pipeline.
           #
           # @param [Object] input

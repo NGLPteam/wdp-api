@@ -73,6 +73,35 @@ module Harvesting
               to_full_text_reference abstract, kind: :html, lang: "en"
             end
           end
+
+          set :host do
+            xpath :title, %{//mods:relatedItem[@type="host"]/mods:titleInfo/mods:title/text()}, type: :present_string, require_match: false
+
+            xpath :volume, %{//mods:relatedItem[@type="host"]/mods:part/mods:detail[@type="volume"]/text()}, type: :present_string, require_match: false
+            xpath :issue, %{//mods:relatedItem[@type="host"]/mods:part/mods:detail[@type="issue"]/text()}, type: :present_string, require_match: false
+
+            xpath :fpage, %{//mods:relatedItem[@type="host"]/mods:extent[@unit="page"]/mods:start/text()}, type: :integer, require_match: false do
+              pipeline! do
+                xml_text
+              end
+            end
+
+            xpath :lpage, %{//mods:relatedItem[@type="host"]/mods:extent[@unit="page"]/mods:end/text()}, type: :integer, require_match: false do
+              pipeline! do
+                xml_text
+              end
+            end
+
+            compose_value :page_count, from: "host.fpage", type: :integer, require_match: false do
+              depends_on "host.lpage"
+
+              pipeline! do
+                with_dependency_tuple "host.lpage"
+
+                metadata_operation "utility.parse_page_count"
+              end
+            end
+          end
         end
 
         tag_section! :mods

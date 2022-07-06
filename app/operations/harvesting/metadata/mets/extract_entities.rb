@@ -35,6 +35,12 @@ module Harvesting
           abstract: "details.abstract_as_full_text",
           accessioned: "details.accessioned",
           available: "details.available",
+          "host.title" => "details.host.title",
+          "host.volume" => "details.host.volume",
+          "host.issue" => "details.host.issue",
+          "host.fpage" => "details.host.fpage",
+          "host.lpage" => "details.host.lpage",
+          "host.page_count" => "details.host.page_count",
         }.freeze
 
         MATCHES_PAPER = /\A\s*(Article|paper)\s*\z/i.freeze
