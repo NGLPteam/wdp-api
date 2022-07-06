@@ -18,10 +18,16 @@ module Harvesting
         attach_assets: "harvesting.entities.attach_assets",
       ]
 
+      # Harvest error codes that are cleared by this operation.
+      CLEARABLE_CODES = %i[
+        asset_not_found could_not_upsert_assets failed_asset_upsert
+        failed_entity_upsert invalid_entity_asset
+      ].freeze
+
       # @param [HarvestEntity] entity
       # @return [Dry::Monads::Result]
       def call(harvest_entity)
-        harvest_entity.clear_harvest_errors! :asset_not_found, :could_not_upsert_assets, :failed_asset_upsert, :failed_entity_upsert
+        harvest_entity.clear_harvest_errors!(*CLEARABLE_CODES)
 
         return Failure[:missing_entity, harvest_entity] unless harvest_entity.has_entity?
 
