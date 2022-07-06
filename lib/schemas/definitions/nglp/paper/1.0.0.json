@@ -13,6 +13,21 @@
     { "path": "pdf_version", "label": "PDF Version", "type": "asset", "required": false, "function": "content" },
     { "path": "text_version", "label": "Text Version", "type": "asset", "required": false, "function": "content" },
     { "path": "accessioned", "type": "variable_date", "label": "Accessioned", "description": "When the paper was added to a collection", "function": "metadata" },
-    { "path": "available", "type": "variable_date", "label": "Available", "description": "When the paper was made available", "function": "metadata" }
+    { "path": "available", "type": "variable_date", "label": "Available", "description": "When the paper was made available", "function": "metadata" },
+    {
+      "type": "group",
+      "path": "host",
+      "legend": "Host",
+      "description": "Details about the source of the paper",
+      "function": "presentation",
+      "properties": [
+        { "path": "title", "type": "string", "required": false, "function": "presentation" },
+        { "path": "volume", "type": "string", "required": false, "function": "presentation", "unorderable": true },
+        { "path": "issue", "type": "string", "required": false, "function": "presentation", "unorderable": true },
+        { "path": "fpage", "type": "integer", "label": "First Page", "required": false, "function": "metadata", "unorderable": true },
+        { "path": "lpage", "type": "integer", "label": "Last Page", "required": false, "function": "metadata", "unorderable": true },
+        { "path": "page_count", "type": "integer", "label": "Page Count", "required": false, "function": "metadata", "unorderable": true }
+      ]
+    }
   ]
 }
