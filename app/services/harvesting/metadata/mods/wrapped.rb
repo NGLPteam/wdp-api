@@ -45,7 +45,8 @@ module Harvesting
             end
           end
 
-          xpath :issn, "//mods:identifier[type='issn']", type: :string, require_match: false
+          xpath :doi, "//mods:identifier[@type='doi']", type: :string, require_match: false
+          xpath :issn, "//mods:identifier[@type='issn']", type: :string, require_match: false
 
           xpath_list :identifiers, "//mods:identifier", type: :extracted_value_map do
             pipeline! do
