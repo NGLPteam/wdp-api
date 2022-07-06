@@ -11,6 +11,7 @@ module Harvesting
         ]
 
         DISSERTATION_ATTRS = {
+          doi: "details.doi",
           title: "details.title",
           issn: "details.issn",
           published: "details.issued",
@@ -25,6 +26,7 @@ module Harvesting
         }.freeze
 
         PAPER_ATTRS = {
+          doi: "details.doi",
           title: "details.title",
           issn: "details.issn",
           published: "details.issued",
