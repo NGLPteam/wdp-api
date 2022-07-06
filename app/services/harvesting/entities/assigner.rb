@@ -13,6 +13,7 @@ module Harvesting
         @attributes = {}.with_indifferent_access
         @props = ::PropertyHash.new
         @assets = {}
+        @entity_assets = Harvesting::Assets::EntityMapping.new
         @incoming_collections = []
         @scalar_assets = {}
         @collected_assets = {}
@@ -23,7 +24,16 @@ module Harvesting
       # @param [Object] value the value for the attribute
       # @return [self]
       def attribute!(name, value)
-        @attributes[name] = realize(value).value!
+        actual_value = realize(value).value!
+
+        case name
+        when /\A(?<image>hero_image|logo|thumbnail)_remote_url\z/
+          identifier = Regexp.last_match[:image]
+
+          @entity_assets.assign_remote_url identifier, actual_value
+        else
+          @attributes[name] = actual_value
+        end
 
         return self
       end
@@ -217,6 +227,7 @@ module Harvesting
         end
 
         {
+          entity: @entity_assets,
           unassociated: @assets.values,
           scalar: scalar,
           collected: collected,

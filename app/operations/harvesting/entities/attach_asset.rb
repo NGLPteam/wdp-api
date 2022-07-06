@@ -17,7 +17,7 @@ module Harvesting
       DOWNLOAD_OVERRIDE = %r!(?<=/article/)view(?=/[^/]+/[^/]+)!.freeze
 
       # @param [Attachable] entity
-      # @param [Harvesting::Assets::ExtractedSource]
+      # @param [Harvesting::Assets::ExtractedSource] source
       # @return [Dry::Monads::Result]
       def call(entity, source)
         asset = entity.assets.by_identifier(source.identifier).first_or_initialize
@@ -48,6 +48,8 @@ module Harvesting
 
       # @param [HarvestCachedAsset] cached
       # @param [Asset] asset
+      # @param [Hash] metadata
+      # @return [Dry::Monads::Result]
       def maybe_attach!(cached, asset, metadata)
         # Skip because signatures match
         return Success() if asset.has_attachment? && cached.signature == asset.signature

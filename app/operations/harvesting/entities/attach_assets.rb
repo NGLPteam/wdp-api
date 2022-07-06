@@ -9,6 +9,7 @@ module Harvesting
       include Dry::Monads[:do, :result]
       include WDPAPI::Deps[
         attach_asset: "harvesting.entities.attach_asset",
+        attach_entity_asset: "harvesting.entities.attach_entity_asset",
       ]
 
       # @param [Attachable] entity
@@ -17,6 +18,8 @@ module Harvesting
       # @return [Dry::Monads::Failure]
       def call(entity, mapping)
         return Success(PropertyHash.new) if mapping.blank?
+
+        yield attach_entity_assets! entity, mapping
 
         yield attach_unassociated_assets! entity, mapping
 
@@ -32,6 +35,17 @@ module Harvesting
       end
 
       private
+
+      # @param [Attachable] entity
+      # @param [Harvest::Assets::Mapping] mapping
+      # @return [void]
+      def attach_entity_assets!(entity, mapping)
+        mapping.entity.images.each do |source|
+          yield attach_entity_asset.(entity, source)
+        end
+
+        Success nil
+      end
 
       # @param [Attachable] entity
       # @param [Harvest::Assets::Mapping] mapping

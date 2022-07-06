@@ -3,7 +3,7 @@
 module Harvesting
   module Assets
     class ExtractedSource
-      include StoreModel::Model
+      include Shared::EnhancedStoreModel
 
       attribute :identifier, :string
       attribute :url, :string
@@ -11,7 +11,11 @@ module Harvesting
       attribute :name, :string
       attribute :mime_type, :string
 
-      validates :identifier, :url, presence: true
+      validates :identifier, presence: true
+
+      def blank?
+        url.blank?
+      end
 
       def to_metadata
         {
