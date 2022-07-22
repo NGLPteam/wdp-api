@@ -50,8 +50,7 @@
       },
       "order": [
         { "path": "props.volume.sortable_number#integer", "direction": "desc" },
-        { "path": "props.volume.id#string", "direction": "desc" },
-        { "path": "props.sortable_number#integer", "direction": "asc" }
+        { "path": "props.sortable_number#integer", "direction": "desc" }
       ],
       "position": 2
     },
