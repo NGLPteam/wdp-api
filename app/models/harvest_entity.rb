@@ -5,6 +5,7 @@
 class HarvestEntity < ApplicationRecord
   include HasHarvestErrors
   include ScopesForIdentifier
+  include ReferencesCachedAssets
   include Dry::Monads[:result]
 
   has_closure_tree
