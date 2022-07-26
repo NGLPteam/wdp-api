@@ -5,7 +5,7 @@ source "https://rubygems.org"
 ruby "2.7.3"
 
 # Rails / database
-gem "rails", "~> 6.1.4.7"
+gem "rails", "~> 6.1.6.1"
 gem "pg", "~> 1.2.3"
 gem "activerecord-cte"
 gem "activerecord-pg_enum"
