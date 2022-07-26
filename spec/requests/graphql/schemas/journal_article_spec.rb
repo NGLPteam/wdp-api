@@ -85,7 +85,6 @@ RSpec.describe "nglp:journal_article", type: :request do
 
             sp.group :meta do |mp|
               mp.variable_date :collected, value: VariablePrecisionDate.parse(collected).value.to_s, precision: "MONTH"
-              mp.variable_date :published
               mp.integer :page_count
             end
           end

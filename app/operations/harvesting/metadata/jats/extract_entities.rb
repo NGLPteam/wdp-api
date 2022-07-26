@@ -106,7 +106,7 @@ module Harvesting
           "issue.fpage" => "fpage",
           "issue.lpage" => "lpage",
           "meta.collected" => "date_collected",
-          "meta.published" => "epub_published",
+          # "meta.published" => "epub_published",
           "meta.page_count" => "page_count",
         }.freeze
 
