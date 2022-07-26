@@ -73,6 +73,8 @@ class Ordering < ApplicationRecord
 
   assign_polymorphic_foreign_key! :entity, :community, :collection, :item
 
+  after_commit :maybe_purge_initial_ordering_selection!, on: :update
+
   # @return [void]
   def asynchronously_refresh!
     Schemas::Orderings::RefreshJob.perform_later self
@@ -93,8 +95,31 @@ class Ordering < ApplicationRecord
     schema_version.has_ordering? identifier
   end
 
+  # @return [void]
+  def disable!
+    self.disabled_at = Time.current
+
+    save!
+  end
+
   def disabled?
     disabled_at.present?
+  end
+
+  # @return [void]
+  def enable!
+    update_attribute :disabled_at, nil
+  end
+
+  # @api private
+  # @return [void]
+  def maybe_purge_initial_ordering_selection!
+    if disabled?
+      initial_ordering_link&.destroy!
+      initial_ordering_selection&.destroy!
+    end
+
+    call_operation("schemas.orderings.calculate_initial", entity: entity)
   end
 
   # @return [<Schemas::Orderings::OrderDefinition>]
@@ -105,9 +130,9 @@ class Ordering < ApplicationRecord
   # @api private
   # @return [void]
   def recalculate_initial_ordering!
-    return unless !destroyed_by_association && entity.initial_ordering == self
+    return if destroyed_by_association
 
-    WDPAPI["schemas.orderings.calculate_initial"].call(entity: entity)
+    call_operation("schemas.orderings.calculate_initial", entity: entity)
   end
 
   # @param [HierarchicalEntity] refreshing_entity

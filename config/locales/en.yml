@@ -64,6 +64,7 @@ en:
       must_be_unique_orcid: "has already been assigned to another contributor"
       must_be_unique_slug: "must be a unique slug for the entity"
       must_be_url: "must be a valid HTTP URL"
+      must_not_be_disabled: "must not be disabled"
       range_required_when_limited_visibility: "must be set when visibility is limited"
       schematic_references:
         collected:

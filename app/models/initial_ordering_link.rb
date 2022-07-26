@@ -19,4 +19,6 @@ class InitialOrderingLink < ApplicationRecord
   belongs_to :entity, polymorphic: true, inverse_of: :initial_ordering_link
 
   belongs_to :ordering, inverse_of: :initial_ordering_link
+
+  scope :to_purge, -> { joins(:ordering).merge(Ordering.disabled) }
 end
