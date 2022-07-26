@@ -67,7 +67,6 @@
       "legend": "Article Metadata",
       "properties": [
         { "path": "collected", "label": "Collected", "type": "variable_date", "function": "metadata" },
-        { "path": "published", "label": "Published", "type": "variable_date", "function": "metadata" },
         { "path": "page_count", "label": "Page Count", "type": "integer", "function": "metadata", "unorderable": true }
       ],
       "type": "group"
