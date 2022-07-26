@@ -391,14 +391,14 @@ module HierarchicalEntity
 
   # @see Schemas::Instances::ClearInitialOrdering
   # @return [Dry::Monads::Result]
-  def clear_initial_ordering
+  monadic_operation! def clear_initial_ordering
     call_operation("schemas.instances.clear_initial_ordering", self)
   end
 
   # @see Schemas::Instances::SelectInitialOrdering
   # @param [Ordering] ordering
   # @return [Dry::Monads::Result]
-  def select_initial_ordering(ordering)
+  monadic_operation! def select_initial_ordering(ordering)
     call_operation("schemas.instances.select_initial_ordering", self, ordering)
   end
 

@@ -38,13 +38,40 @@ RSpec.describe Mutations::SelectInitialOrdering, type: :request, graphql: :mutat
 
     context "with no previous selection" do
       before do
-        collection.clear_initial_ordering.value!
+        collection.clear_initial_ordering!
       end
 
       it "selects a new ordering" do
-        expect_the_default_request.to change(InitialOrderingSelection, :count).by(1)
+        expect_request! do |req|
+          req.effect! change(InitialOrderingSelection, :count).by(1)
 
-        expect_graphql_data expected_shape
+          req.data! expected_shape
+        end
+      end
+
+      context "when selecting a disabled ordering" do
+        before do
+          ordering.disable!
+        end
+
+        let(:expected_shape) do
+          gql.mutation(:select_initial_ordering, no_errors: false) do |m|
+            m[:entity] = be_blank
+            m[:ordering] = be_blank
+
+            m.attribute_errors do |ae|
+              ae.error :ordering, :must_not_be_disabled
+            end
+          end
+        end
+
+        it "fails to select an ordering" do
+          expect_request! do |req|
+            req.effect! keep_the_same(InitialOrderingSelection, :count)
+
+            req.data! expected_shape
+          end
+        end
       end
 
       context "when selecting another entity's ordering" do
@@ -64,22 +91,26 @@ RSpec.describe Mutations::SelectInitialOrdering, type: :request, graphql: :mutat
         end
 
         it "fails to select an ordering" do
-          expect_the_default_request.to keep_the_same(InitialOrderingSelection, :count)
+          expect_request! do |req|
+            req.effect! keep_the_same(InitialOrderingSelection, :count)
 
-          expect_graphql_data expected_shape
+            req.data! expected_shape
+          end
         end
       end
     end
 
     context "with a previous selection" do
       before do
-        collection.select_initial_ordering(ordering).value!
+        collection.select_initial_ordering!(ordering)
       end
 
       it "is idempotent" do
-        expect_the_default_request.to keep_the_same(InitialOrderingSelection, :count)
+        expect_request! do |req|
+          req.effect! keep_the_same(InitialOrderingSelection, :count)
 
-        expect_graphql_data expected_shape
+          req.data! expected_shape
+        end
       end
     end
   end

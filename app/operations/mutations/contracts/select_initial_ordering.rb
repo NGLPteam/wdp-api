@@ -6,13 +6,13 @@ module Mutations
     class SelectInitialOrdering < MutationOperations::Contract
       json do
         required(:entity).filled(Models::Types::Model)
-        required(:ordering).filled(Models::Types::Model)
+        required(:ordering).value(AppTypes::Instance(::Ordering))
       end
 
       rule(:entity).validate(:entity)
 
       rule(:ordering) do
-        key.failure(:must_be_ordering) unless value.kind_of?(::Ordering)
+        key.failure(:must_not_be_disabled) if value.disabled?
       end
 
       rule(:ordering, :entity) do

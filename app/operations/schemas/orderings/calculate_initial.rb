@@ -36,6 +36,10 @@ module Schemas
       def call(entity: nil)
         inserted = sql_insert! PREFIX, generate_infix_for(entity: entity), SUFFIX
 
+        # If all orderings for an entity are disabled, the above query won't remove them.
+        # We'll do that here:
+        InitialOrderingLink.to_purge.delete_all
+
         Success inserted
       end
 
