@@ -13,6 +13,8 @@ module Harvesting
       include Dry::Effects.Resolve(:link_identifiers_globally)
       include Dry::Effects.Resolve(:target_entity)
 
+      include WDPAPI::Deps[find_global_collections: "entities.find_global_collections"]
+
       # @param [String, nil] identifier
       # @raise [ActiveRecord::RecordNotFound]
       # @raise [LimitToOne::TooManyMatches]
@@ -21,7 +23,7 @@ module Harvesting
         return nil if identifier.blank?
 
         if link_identifiers_globally
-          Collection.by_identifier(identifier).only_one!
+          find_global_collections.(target_entity).by_identifier(identifier).only_one!
         else
           target_entity.descendant_collection_by! identifier
         end
