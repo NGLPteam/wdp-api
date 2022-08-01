@@ -48,6 +48,10 @@ module Harvesting
         MATCHES_PAPER = /\A\s*(Article|paper)\s*\z/i.freeze
         MATCHES_DISSERTATION = /\AETD|dissertation|Electronic Thesis|text\z/i.freeze
 
+        # These genres should probably be their own discrete schemas in the future,
+        # but for now, we will treat them as `nglp:paper`.
+        ADJACENT_PAPER_GENRES = %w[CHAPTER MONOGRAPH MULTIMEDIA NON_TEXTUAL].freeze
+
         # @param [String] raw_metadata
         # @return [Dry::Monads::Result(void)]
         def call(raw_metadata)
@@ -72,7 +76,7 @@ module Harvesting
           options = {}
 
           case values.details.genre
-          when MATCHES_PAPER
+          when MATCHES_PAPER, *ADJACENT_PAPER_GENRES
             options[:attrs] = PAPER_ATTRS
             options[:props] = PAPER_PROPS
             options[:schema] = :paper
