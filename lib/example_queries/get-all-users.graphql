@@ -1,0 +1,16 @@
+# Fetch a list of users with page-based pagination
+query getAllUsers {
+  users(page: 2, perPage: 15) {
+    nodes {
+      email
+      name
+    }
+
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
+      pageCount
+      page
+    }
+  }
+}

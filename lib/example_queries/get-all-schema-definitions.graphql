@@ -1,0 +1,13 @@
+query getAllSchemaDefinitions {
+  schemaDefinitions {
+    edges {
+      node {
+        name
+        namespace
+        identifier
+        kind
+        slug
+      }
+    }
+  }
+}

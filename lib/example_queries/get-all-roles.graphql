@@ -1,0 +1,17 @@
+# Fetch defined roles
+query getAllRoles {
+  roles {
+    nodes {
+      # The name of the role. Guaranteed to be unique.
+      name
+      # Contextual actions this role grants
+      allowedActions
+      # Contextual permissions this role grants
+      permissions {
+        scope
+        name
+        allowed
+      }
+    }
+  }
+}
