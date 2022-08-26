@@ -1,0 +1,54 @@
+# Fetch the current user's editable items
+# For very large data sets, this query might be a little slow.
+# This query is intended for illustrative purposes and building
+# API integrations beyond the frontend.
+query userEditableItems {
+  viewer {
+    items(access: READ_ONLY, page: 1) {
+      pageInfo {
+        perPage
+        pageCount
+        totalCount
+        totalUnfilteredCount
+      }
+
+      nodes {
+        allowedActions
+        hierarchicalDepth
+        breadcrumbs {
+          depth
+          label
+          kind
+          slug
+          # You can also look up the path to each item
+          crumb {
+            __typename
+
+            ... on Entity {
+              hierarchicalDepth
+              allowedActions
+            }
+
+            ... on Community {
+              title
+            }
+
+            ... on Collection {
+              title
+            }
+
+            ... on Item {
+              title
+              breadcrumbs {
+                depth
+                label
+                kind
+                slug
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

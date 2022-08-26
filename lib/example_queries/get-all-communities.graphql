@@ -1,0 +1,20 @@
+# Paginate through communities
+# Communities are the top-level entity in the WDP API.
+query getAllCommunities {
+  communities(page: 1) {
+    pageInfo {
+      page
+      pageCount
+      perPage
+      totalCount
+      totalUnfilteredCount
+    }
+
+    edges {
+      node {
+        slug
+        title
+      }
+    }
+  }
+}

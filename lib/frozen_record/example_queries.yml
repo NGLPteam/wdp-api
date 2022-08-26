@@ -1,0 +1,25 @@
+---
+- identifier: viewer
+  description: "Fetch the viewer & permissions"
+- identifier: entity-thumbnails
+  description: "Get thumbnails for all entity types"
+- identifier: user-editable-items
+  description: "Fetch the current user's editable items"
+- identifier: get-all-communities
+  description: "Paginate through communities"
+- identifier: get-all-contributors
+  description: "Paginate through contributors"
+- identifier: get-all-roles
+  description: "Paginate through roles"
+- identifier: get-all-users
+  description: "Paginate through users"
+- identifier: fetch-community
+  description: "Fetch a community and its top level collections"
+- identifier: fetch-collection
+  description: "Fetch a single collection"
+- identifier: fetch-item
+  description: "Fetch a single item & schema props"
+- identifier: get-all-schema-definitions
+  description: "Fetch all schema definitions"
+- identifier: get-all-schema-versions
+  description: "Fetch all schema versions"

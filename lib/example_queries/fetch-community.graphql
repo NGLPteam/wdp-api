@@ -1,0 +1,28 @@
+# Fetch a community and its top-level collections
+query fetchCommunity {
+  community(slug: "vENG574TN4K9Uo34Kh4N2ZsenJxpe2JO") {
+    title
+
+    collections(order: OLDEST) {
+      nodes {
+        title
+        slug
+        contributors {
+          nodes {
+            ... on OrganizationContributor {
+              __typename
+              legalName
+            }
+
+            ... on PersonContributor {
+              __typename
+              slug
+              givenName
+              familyName
+            }
+          }
+        }
+      }
+    }
+  }
+}

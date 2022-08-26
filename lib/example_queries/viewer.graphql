@@ -1,0 +1,19 @@
+# Fetch the viewer and their permissions.
+query getViewer {
+  # The current identity is represented as "viewer"
+  viewer {
+    # slugs are used to look up records with certain finders in the API,
+    # and to be a little more presentable in URIs as opposed to the `id`.
+    slug
+    username
+    name
+    # Globally-allowed actions
+    allowedActions
+    # Globally-allowed permissions
+    permissions {
+      scope
+      name
+      allowed
+    }
+  }
+}

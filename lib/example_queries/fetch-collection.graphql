@@ -1,0 +1,50 @@
+# Fetch a collection, its items, and breadcrumbs
+query collection {
+  collection(slug: "1kL3Rv9UnBQaI58XtpYoyfGegyGogbb") {
+    title
+    slug
+    items {
+      nodes {
+        title
+        slug
+        createdAt
+        doi
+        hierarchicalDepth
+        permissions {
+          scope
+          name
+          allowed
+        }
+        allowedActions
+        breadcrumbs {
+          depth
+          label
+          kind
+          slug
+          crumb {
+            __typename
+            ... on Entity {
+              hierarchicalDepth
+              allowedActions
+            }
+            ... on Community {
+              title
+            }
+            ... on Collection {
+              title
+            }
+            ... on Item {
+              title
+              breadcrumbs {
+                depth
+                label
+                kind
+                slug
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

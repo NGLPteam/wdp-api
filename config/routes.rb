@@ -11,6 +11,10 @@ Rails.application.routes.draw do
 
   post "/graphql", to: "graphql#execute"
 
+  scope "/graphql" do
+    resources :example_queries, only: %i[index]
+  end
+
   get "/ping", to: "status#ping"
 
   root to: "status#root"

@@ -1,0 +1,26 @@
+# Fetch a list of contributors with page-based pagination
+query getContributors {
+  contributors(page: 1, perPage: 5) {
+    nodes {
+      # contributors are a union, so need to dispatch like:
+      __typename
+
+      ... on OrganizationContributor {
+        legalName
+      }
+
+      ... on PersonContributor {
+        givenName
+        familyName
+      }
+    }
+
+    pageInfo {
+      page
+      pageCount
+      perPage
+      totalCount
+      totalUnfilteredCount
+    }
+  }
+}

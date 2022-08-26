@@ -1,0 +1,43 @@
+# Get thumbnails for all entity types
+query entityThumbnails {
+  communities {
+    nodes {
+      ...ThumbnailFragment
+    }
+  }
+
+  viewer {
+    collections {
+      nodes {
+        ...ThumbnailFragment
+
+        items {
+          nodes {
+            ...ThumbnailFragment
+          }
+        }
+      }
+    }
+  }
+}
+
+# It's exposed as an abstract field on the Entity interface, so a fragment works fine
+fragment ThumbnailFragment on Entity {
+  thumbnail {
+    # also large, medium, thumb (tiny)
+    small {
+      height
+      width
+      webp {
+        url
+        height
+        width
+      }
+      png {
+        url
+        height
+        width
+      }
+    }
+  }
+}

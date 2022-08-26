@@ -1,0 +1,101 @@
+# Get all schema versions and enumerate their properties
+query getAllSchemaVersions {
+  schemaVersions {
+    edges {
+      node {
+        name
+        namespace
+        identifier
+        kind
+        slug
+        schemaProperties {
+          ... SchemaPropertiesFragment
+        }
+      }
+    }
+  }
+}
+
+# Reusable fragment for including all schema properties
+fragment SchemaPropertiesFragment on AnySchemaProperty {
+  ... on GroupProperty {
+    legend
+    path
+    properties {
+      ... SchemaPropertyFragment
+    }
+  }
+
+  ... SchemaPropertyFragment
+}
+
+# Reusable fragment that describes each available schema property type
+fragment SchemaPropertyFragment on AnyScalarProperty {
+  ... on ScalarProperty {
+    fullPath
+    path
+    type
+    label
+  }
+
+  ... on ContributorsProperty {
+    contributors {
+      __typename
+      ... on Sluggable {
+        slug
+      }
+      ... on OrganizationContributor {
+        legalName
+      }
+      ... on PersonContributor {
+        givenName
+        familyName
+      }
+    }
+  }
+  ... on StringProperty {
+    default
+    content
+  }
+
+  ... on EmailProperty {
+    defaultAddress
+    address
+  }
+
+  ... on BooleanProperty {
+    checkedByDefault
+    checked
+  }
+
+  ... on DateProperty {
+    date
+  }
+
+  ... on MarkdownProperty {
+    default
+    content
+  }
+
+  ... on MultiselectProperty {
+    options {
+      label
+      value
+    }
+    defaultSelections
+    selections
+  }
+
+  ... on SelectProperty {
+    options {
+      label
+      value
+    }
+    defaultSelection
+    selection
+  }
+
+  ... on TagsProperty {
+    tags
+  }
+}
