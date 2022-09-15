@@ -15,6 +15,10 @@ module Types
     field :access_grants, resolver: Resolvers::AccessGrantResolver,
       description: "Retrieve all access grants"
 
+    field :analytics, Types::AnalyticsType, null: false do
+      description "Access top-level analytics."
+    end
+
     field :asset, Types::AnyAssetType, null: true do
       description "Look up an asset by slug"
 
@@ -155,12 +159,19 @@ module Types
     field :viewer, Types::UserType, null: false,
       description: "The currently authenticated user. AKA: you"
 
+    # @return [void]
+    def analytics
+      {}
+    end
+
     def asset(slug:)
       Loaders::RecordLoader.for(Asset).load(slug)
     end
 
     def collection(slug:)
-      Loaders::RecordLoader.for(Collection).load(slug)
+      Loaders::RecordLoader.for(Collection).load(slug).tap do |collection|
+        track_entity_event! collection
+      end
     end
 
     def collection_contribution(slug:)
@@ -168,13 +179,17 @@ module Types
     end
 
     def community(slug:)
-      Loaders::RecordLoader.for(Community).load(slug)
+      Loaders::RecordLoader.for(Community).load(slug).tap do |community|
+        track_entity_event! community
+      end
     end
 
     # @param [String] title
     # @return [Community, nil]
     def community_by_title(title:)
-      Community.by_title(title).first
+      Community.by_title(title).first.tap do |community|
+        track_entity_event! community
+      end
     end
 
     def contributor(slug:)
@@ -205,7 +220,9 @@ module Types
     end
 
     def item(slug:)
-      Loaders::RecordLoader.for(Item).load(slug)
+      Loaders::RecordLoader.for(Item).load(slug).tap do |item|
+        track_entity_event! item
+      end
     end
 
     def item_contribution(slug:)

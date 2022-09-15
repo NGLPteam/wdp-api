@@ -108,6 +108,16 @@ COMMENT ON EXTENSION pgcrypto IS 'cryptographic functions';
 
 
 --
+-- Name: analytics_context; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.analytics_context AS ENUM (
+    'admin',
+    'frontend'
+);
+
+
+--
 -- Name: asset_kind; Type: TYPE; Schema: public; Owner: -
 --
 
@@ -2967,6 +2977,63 @@ CREATE VIEW public.access_grant_management_links AS
 
 
 --
+-- Name: ahoy_events; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.ahoy_events (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    visit_id uuid,
+    user_id uuid,
+    entity_type character varying,
+    entity_id uuid,
+    subject_type character varying,
+    subject_id uuid,
+    context public.analytics_context DEFAULT 'frontend'::public.analytics_context NOT NULL,
+    name public.citext,
+    properties jsonb,
+    "time" timestamp without time zone
+);
+
+
+--
+-- Name: ahoy_visits; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.ahoy_visits (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    visit_token character varying,
+    visitor_token character varying,
+    user_id uuid,
+    ip inet,
+    user_agent text,
+    referrer text,
+    referring_domain text,
+    landing_page text,
+    browser text,
+    os text,
+    device_type text,
+    country text,
+    region text,
+    city text,
+    latitude double precision,
+    longitude double precision,
+    utm_source text,
+    utm_medium text,
+    utm_term text,
+    utm_content text,
+    utm_campaign text,
+    app_version text,
+    os_version text,
+    platform text,
+    started_at timestamp without time zone,
+    country_code text,
+    region_code text,
+    postal_code text,
+    geocoded_at timestamp without time zone
+);
+
+
+--
 -- Name: announcements; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -3744,6 +3811,21 @@ CREATE TABLE public.entity_visibilities (
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     visibility_range tstzrange GENERATED ALWAYS AS (public.calculate_visibility_range(visibility, visible_after_at, visible_until_at)) STORED
+);
+
+
+--
+-- Name: fake_visitors; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.fake_visitors (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    user_id uuid,
+    ip inet NOT NULL,
+    user_agent public.citext NOT NULL,
+    sequence integer NOT NULL,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
 
@@ -4970,6 +5052,20 @@ CREATE TABLE public.role_permissions (
 
 
 --
+-- Name: rollups; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.rollups (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    name public.citext NOT NULL,
+    "interval" public.citext NOT NULL,
+    "time" timestamp without time zone NOT NULL,
+    dimensions jsonb DEFAULT '{}'::jsonb NOT NULL,
+    value numeric(21,4)
+);
+
+
+--
 -- Name: schema_version_properties; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -5193,6 +5289,22 @@ ALTER TABLE ONLY public.access_grants
 
 
 --
+-- Name: ahoy_events ahoy_events_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.ahoy_events
+    ADD CONSTRAINT ahoy_events_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: ahoy_visits ahoy_visits_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.ahoy_visits
+    ADD CONSTRAINT ahoy_visits_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: announcements announcements_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -5326,6 +5438,14 @@ ALTER TABLE ONLY public.entity_searchable_properties
 
 ALTER TABLE ONLY public.entity_visibilities
     ADD CONSTRAINT entity_visibilities_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: fake_visitors fake_visitors_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.fake_visitors
+    ADD CONSTRAINT fake_visitors_pkey PRIMARY KEY (id);
 
 
 --
@@ -5753,6 +5873,14 @@ ALTER TABLE ONLY public.roles
 
 
 --
+-- Name: rollups rollups_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.rollups
+    ADD CONSTRAINT rollups_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: schema_definitions schema_definitions_declaration_key; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -5995,6 +6123,62 @@ CREATE INDEX index_access_grants_subject_roles ON public.access_grants USING btr
 --
 
 CREATE UNIQUE INDEX index_access_grants_uniqueness ON public.access_grants USING btree (accessible_type, accessible_id, subject_type, subject_id);
+
+
+--
+-- Name: index_ahoy_events_on_entity; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_ahoy_events_on_entity ON public.ahoy_events USING btree (entity_type, entity_id);
+
+
+--
+-- Name: index_ahoy_events_on_name_and_time; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_ahoy_events_on_name_and_time ON public.ahoy_events USING btree (name, "time");
+
+
+--
+-- Name: index_ahoy_events_on_properties; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_ahoy_events_on_properties ON public.ahoy_events USING gin (properties jsonb_path_ops);
+
+
+--
+-- Name: index_ahoy_events_on_subject; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_ahoy_events_on_subject ON public.ahoy_events USING btree (subject_type, subject_id);
+
+
+--
+-- Name: index_ahoy_events_on_user_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_ahoy_events_on_user_id ON public.ahoy_events USING btree (user_id);
+
+
+--
+-- Name: index_ahoy_events_on_visit_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_ahoy_events_on_visit_id ON public.ahoy_events USING btree (visit_id);
+
+
+--
+-- Name: index_ahoy_visits_on_user_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_ahoy_visits_on_user_id ON public.ahoy_visits USING btree (user_id);
+
+
+--
+-- Name: index_ahoy_visits_on_visit_token; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_ahoy_visits_on_visit_token ON public.ahoy_visits USING btree (visit_token);
 
 
 --
@@ -6882,6 +7066,20 @@ CREATE UNIQUE INDEX index_esp_uniqueness ON public.entity_searchable_properties 
 
 
 --
+-- Name: index_fake_visitors_on_sequence; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_fake_visitors_on_sequence ON public.fake_visitors USING btree (sequence);
+
+
+--
+-- Name: index_fake_visitors_on_user_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_fake_visitors_on_user_id ON public.fake_visitors USING btree (user_id);
+
+
+--
 -- Name: index_global_configurations_singleton_guard; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -7673,6 +7871,13 @@ CREATE UNIQUE INDEX index_roles_unique_name ON public.roles USING btree (name);
 
 
 --
+-- Name: index_rollups_on_name_and_interval_and_time_and_dimensions; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_rollups_on_name_and_interval_and_time_and_dimensions ON public.rollups USING btree (name, "interval", "time", dimensions);
+
+
+--
 -- Name: index_schema_definition_properties_on_current; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -7929,6 +8134,13 @@ CREATE UNIQUE INDEX index_users_on_system_slug ON public.users USING btree (syst
 --
 
 CREATE INDEX index_users_prefix_searching_names ON public.users USING gin (search_given_name public.gin_trgm_ops, search_family_name public.gin_trgm_ops);
+
+
+--
+-- Name: index_visits_by_country_and_region_codes; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_visits_by_country_and_region_codes ON public.ahoy_visits USING btree (country_code, region_code, id);
 
 
 --
@@ -10071,6 +10283,14 @@ ALTER TABLE ONLY public.collection_contributions
 
 
 --
+-- Name: ahoy_events fk_rails_a0df956a8d; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.ahoy_events
+    ADD CONSTRAINT fk_rails_a0df956a8d FOREIGN KEY (visit_id) REFERENCES public.ahoy_visits(id) ON DELETE CASCADE;
+
+
+--
 -- Name: harvest_entities fk_rails_a1262d403c; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -10239,6 +10459,14 @@ ALTER TABLE ONLY public.schematic_texts
 
 
 --
+-- Name: ahoy_visits fk_rails_db648022ad; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.ahoy_visits
+    ADD CONSTRAINT fk_rails_db648022ad FOREIGN KEY (user_id) REFERENCES public.users(id) ON DELETE SET NULL;
+
+
+--
 -- Name: harvest_mappings fk_rails_dc2ccde798; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -10279,6 +10507,14 @@ ALTER TABLE ONLY public.named_variable_dates
 
 
 --
+-- Name: fake_visitors fk_rails_ea98e13842; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.fake_visitors
+    ADD CONSTRAINT fk_rails_ea98e13842 FOREIGN KEY (user_id) REFERENCES public.users(id) ON DELETE CASCADE;
+
+
+--
 -- Name: entity_links fk_rails_eabc9b5139; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -10300,6 +10536,14 @@ ALTER TABLE ONLY public.item_contributions
 
 ALTER TABLE ONLY public.items
     ADD CONSTRAINT fk_rails_ed5bf219ac FOREIGN KEY (parent_id) REFERENCES public.items(id) ON DELETE RESTRICT;
+
+
+--
+-- Name: ahoy_events fk_rails_f1ed9fc4a0; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.ahoy_events
+    ADD CONSTRAINT fk_rails_f1ed9fc4a0 FOREIGN KEY (user_id) REFERENCES public.users(id) ON DELETE SET NULL;
 
 
 --
@@ -10589,6 +10833,10 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20220627205514'),
 ('20220628184601'),
 ('20220628184617'),
-('20220706164702');
+('20220706164702'),
+('20220908194547'),
+('20220909184024'),
+('20220912193952'),
+('20220915020155');
 
 

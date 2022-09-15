@@ -84,6 +84,8 @@ RSpec.describe "Query.item", type: :request do
 
       it "has the expected shape" do
         expect_request! do |req|
+          req.effect! change(Ahoy::Event, :count).by(1)
+
           req.data! expected_shape
         end
       end
