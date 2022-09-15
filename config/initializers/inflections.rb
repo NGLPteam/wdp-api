@@ -20,6 +20,7 @@ ActiveSupport::Inflector.inflections(:en) do |inflect|
   inflect.acronym "DSL"
   inflect.acronym "ISBN"
   inflect.acronym "ISSN"
+  inflect.acronym "IP"
   inflect.acronym "JATS"
   inflect.acronym "JSON"
   inflect.acronym "METS"

@@ -24,7 +24,7 @@ SimpleCov.start "rails" do
   add_group "Services", "app/services"
   add_group "Uploaders", "app/uploaders"
 
-  add_filter "app/operations/testing/merced"
+  add_filter "app/operations/testing"
   add_filter "app/services/testing"
   add_filter "app/services/tus_client"
   add_filter "lib/cops"
