@@ -16,6 +16,7 @@ require "graphql/client"
 require "graphql/client/http"
 require "net/http"
 require "sidekiq/api"
+require "with_advisory_lock"
 
 require_relative Rails.root.join("lib", "global_types", "array_types")
 require_relative Rails.root.join("lib", "global_types", "indifferent_hash")
