@@ -34,4 +34,14 @@ Dry::Rails.container do
   register :node_verifier, memoize: true do
     ActiveSupport::MessageVerifier.new SecurityConfig.node_salt, digest: "SHA256"
   end
+
+  namespace :system do
+    register :time_zone, memoize: true do
+      Time.find_zone! Rails.application.config.time_zone
+    rescue ArgumentError
+      # :nocov:
+      Time.find_zone! "UTC"
+      # :nocov:
+    end
+  end
 end
