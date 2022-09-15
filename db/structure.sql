@@ -6126,6 +6126,20 @@ CREATE UNIQUE INDEX index_access_grants_uniqueness ON public.access_grants USING
 
 
 --
+-- Name: index_ahoy_events_asset_downloads_aggregation; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_ahoy_events_asset_downloads_aggregation ON public.ahoy_events USING btree ("time", visit_id, entity_id, subject_id) WHERE ((context = 'frontend'::public.analytics_context) AND (name OPERATOR(public.=) 'asset.download'::public.citext));
+
+
+--
+-- Name: index_ahoy_events_entity_views_aggregation; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_ahoy_events_entity_views_aggregation ON public.ahoy_events USING btree ("time", visit_id, entity_id, subject_id) WHERE ((context = 'frontend'::public.analytics_context) AND (name OPERATOR(public.=) 'entity.view'::public.citext));
+
+
+--
 -- Name: index_ahoy_events_on_entity; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -10837,6 +10851,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20220908194547'),
 ('20220909184024'),
 ('20220912193952'),
-('20220915020155');
+('20220915020155'),
+('20220915084147');
 
 
