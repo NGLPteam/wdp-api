@@ -14,6 +14,7 @@ class ApplicationRecord < ActiveRecord::Base
   include PostgresEnums
   include StoreModelIntrospection
   include WhereMatches
+  include WithAdvisoryLock::Concern
 
   def call_operation(name, *args)
     WDPAPI::Container[name].call(*args)
