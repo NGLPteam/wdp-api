@@ -73,6 +73,8 @@ module Patches
   end
 end
 
+Ahoy::GeocodeV2Job.prepend Patches::BetterAhoyGeocoding
+
 Ahoy.api = true
 Ahoy.api_only = true
 
