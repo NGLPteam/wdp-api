@@ -21,7 +21,7 @@ module Users
       unique_by: UNIQUE_BY
     }.freeze
 
-    # @param [Keycloak::DecodedToken] token
+    # @param [KeycloakRack::DecodedToken] token
     # @return [Dry::Monads::Result]
     def call(token)
       attributes = transform_token.call(token)

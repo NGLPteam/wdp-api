@@ -4,7 +4,7 @@ module Users
   class TransformToken
     include WDPAPI::Deps[encode_id: "slugs.encode_id"]
 
-    # @param [Keycloak::DecodedToken] token
+    # @param [KeycloakRack::DecodedToken] token
     # @return [{ Symbol => Object }]
     def call(token)
       token.slice(:keycloak_id, :email, :email_verified, :given_name, :family_name, :name).tap do |h|
