@@ -7,6 +7,8 @@ Rails.application.routes.draw do
 
   mount Middleware::SidekiqFrontend, at: "/sekrit/sidekiq"
 
+  resources :downloads, only: %i[show]
+
   resource :identity, path: "whoami", only: %i[show]
 
   post "/graphql", to: "graphql#execute"

@@ -40,6 +40,8 @@ module Tokens
       # :nocov:
       Failure[:invalid_jwk, e.message]
       # :nocov:
+    rescue JWT::ExpiredSignature => e
+      Failure[:expired, e.message]
     rescue JWT::DecodeError => e
       Failure[:invalid_token, e.message]
     end

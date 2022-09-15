@@ -36,17 +36,30 @@ class Asset < ApplicationRecord
   validates :attachment, :name, :content_type, :file_size, presence: true
   validates :identifier, uniqueness: { scope: %i[attachable_type attachable_id], if: :identifier? }
 
+  # We mask this with {#download_url} in order to track analytics of a download.
+  #
+  # @return [String]
+  def actual_download_url
+    attachment.url(
+      public: Rails.env.development?,
+      expires_in: 5.minutes.to_i,
+      response_content_disposition: content_disposition,
+    )
+  end
+
   # @return [String]
   def content_disposition
     ContentDisposition.attachment(name)
   end
 
   # @return [String]
+  def download_token
+    generate_download_token!
+  end
+
+  # @return [String]
   def download_url
-    attachment.url(
-      expires_in: 5.minutes.to_i,
-      response_content_disposition: content_disposition,
-    )
+    generate_download_url!
   end
 
   def has_attachment?
@@ -85,6 +98,24 @@ class Asset < ApplicationRecord
 
   def to_schematic_referent_label
     name
+  end
+
+  # @param [String] token
+  # @return [Dry::Monads::Success(Boolean)]
+  monadic_operation! def decode_download_token(token)
+    call_operation("assets.decode_download_token", self, token)
+  end
+
+  # @param [Hash] options
+  # @return [Dry::Monads::Success(Boolean)]
+  monadic_operation! def encode_download_token(**options)
+    call_operation("assets.encode_download_token", self, **options)
+  end
+
+  # @param [Hash] options
+  # @return [Dry::Monads::Success(String)]
+  monadic_operation! def generate_download_url(**options)
+    call_operation("assets.generate_download_url", self, **options)
   end
 
   private
