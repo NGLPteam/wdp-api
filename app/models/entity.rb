@@ -50,6 +50,8 @@ class Entity < ApplicationRecord
   scope :sans_thumbnail, -> { real.where(arel_sans_thumbnail) }
   scope :unharvested, -> { where.not(hierarchical_id: HarvestEntity.existing_entity_ids) }
 
+  scope :sans_analytics, -> { where.not(hierarchical_id: Ahoy::Event.distinct.select(:entity_id)) }
+
   def schema_kind
     hierarchical_type&.underscore
   end

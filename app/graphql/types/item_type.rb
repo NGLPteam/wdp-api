@@ -5,6 +5,7 @@ module Types
     implements Types::AccessibleType
     implements Types::EntityType
     implements Types::ChildEntityType
+    implements Types::HasEntityAnalytics
     implements Types::HasDOIType
     implements Types::HasISSNType
     implements Types::ContributableType
