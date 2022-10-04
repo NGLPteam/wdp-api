@@ -39,7 +39,7 @@ module Types
     # @return [String, nil]
     def url
       object.url(
-        expires_in: 5.minutes.to_i,
+        expires_in: 1.week.to_i,
         response_content_disposition: ContentDisposition.inline(object.original_filename)
       )
     end
