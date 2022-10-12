@@ -13,6 +13,8 @@ class Community < ApplicationRecord
   include ImageUploader::Attachment.new(:logo)
   include ScopesForIdentifier
 
+  acts_as_list add_new_at: :bottom
+
   has_many :collections, dependent: :destroy
 
   has_many :items, through: :collections

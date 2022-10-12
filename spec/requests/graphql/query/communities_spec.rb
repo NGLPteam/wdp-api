@@ -1,44 +1,40 @@
 # frozen_string_literal: true
 
 RSpec.describe "Query.communities", type: :request do
-  let_it_be(:community_a3) do
-    Timecop.freeze(3.days.ago) do
-      FactoryBot.create :community, title: "AA"
-    end
-  end
-
-  let_it_be(:community_m2) do
-    Timecop.freeze(2.days.ago) do
-      FactoryBot.create :community, title: "MM"
-    end
-  end
-
-  let_it_be(:community_n4) do
-    Timecop.freeze(4.days.ago) do
-      FactoryBot.create :community, title: "NN"
+  let_it_be(:community_k0) do
+    Timecop.freeze(1.hour.ago) do
+      FactoryBot.create :community, title: "KK", position: 1
     end
   end
 
   let_it_be(:community_z1) do
     Timecop.freeze(1.day.ago) do
-      FactoryBot.create :community, title: "ZZ"
+      FactoryBot.create :community, title: "ZZ", position: 2
     end
   end
 
-  let_it_be(:community_k0) do
-    Timecop.freeze(1.hour.ago) do
-      FactoryBot.create :community, title: "KK"
+  let_it_be(:community_m2) do
+    Timecop.freeze(2.days.ago) do
+      FactoryBot.create :community, title: "MM", position: 3
+    end
+  end
+
+  let_it_be(:community_a3) do
+    Timecop.freeze(3.days.ago) do
+      FactoryBot.create :community, title: "AA", position: 4
+    end
+  end
+
+  let_it_be(:community_n4) do
+    Timecop.freeze(4.days.ago) do
+      FactoryBot.create :community, title: "NN", position: 5
     end
   end
 
   let_it_be(:keyed_models) do
-    {
-      a3: to_rep(community_a3),
-      k0: to_rep(community_k0),
-      m2: to_rep(community_m2),
-      n4: to_rep(community_n4),
-      z1: to_rep(community_z1),
-    }
+    %i[a3 k0 m2 n4 z1].index_with do |k|
+      to_rep public_send :"community_#{k}"
+    end
   end
 
   let!(:order) { "RECENT" }
@@ -54,6 +50,7 @@ RSpec.describe "Query.communities", type: :request do
         edges {
           node {
             id
+            position
             title
           }
         }
@@ -67,7 +64,7 @@ RSpec.describe "Query.communities", type: :request do
   end
 
   def to_rep(model)
-    model.slice(:title).merge(id: model.to_encoded_id)
+    model.slice(:position, :title).merge(id: model.to_encoded_id)
   end
 
   context "when ordering" do
@@ -76,7 +73,7 @@ RSpec.describe "Query.communities", type: :request do
     shared_examples_for "an ordered list of communities" do |order_value, *keys|
       let(:order) { order_value }
 
-      let(:expected_edges) do
+      let!(:expected_edges) do
         keys.map do |k|
           { node: keyed_models.fetch(k) }
         end
@@ -104,6 +101,8 @@ RSpec.describe "Query.communities", type: :request do
     {
       "RECENT" => %i[k0 z1 m2 a3 n4],
       "OLDEST" => %i[n4 a3 m2 z1 k0],
+      "POSITION_ASCENDING" => %i[k0 z1 m2 a3 n4],
+      "POSITION_DESCENDING" => %i[n4 a3 m2 z1 k0],
       "PUBLISHED_ASCENDING" => %i[n4 a3 m2 z1 k0],
       "PUBLISHED_DESCENDING" => %i[k0 z1 m2 a3 n4],
       "TITLE_ASCENDING" => %i[a3 k0 m2 n4 z1],

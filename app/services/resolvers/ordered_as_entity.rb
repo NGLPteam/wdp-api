@@ -18,6 +18,14 @@ module Resolvers
       scope.order(created_at: :asc)
     end
 
+    def apply_order_with_position_ascending(scope)
+      scope_wraps?(scope, Community) ? scope.order(position: :asc) : apply_order_with_recent(scope)
+    end
+
+    def apply_order_with_position_descending(scope)
+      scope_wraps?(scope, Community) ? scope.order(position: :desc) : apply_order_with_oldest(scope)
+    end
+
     def apply_order_with_published_ascending(scope)
       scope_wraps?(scope, Community) ? apply_order_with_oldest(scope) : scope.with_sorted_published_date(:asc)
     end
