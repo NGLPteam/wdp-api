@@ -6,6 +6,8 @@ module Types
 
     value "RECENT", description: "Sort entities by newest created date"
     value "OLDEST", description: "Sort entities by oldest created date"
+    value "POSITION_ASCENDING", description: "Sort communities by position 0-9; other entities by RECENT"
+    value "POSITION_DESCENDING", description: "Sort communities by position 9-0; other entities by OLDEST"
     value "PUBLISHED_ASCENDING", description: "Sort entities by oldest published date (or OLDEST for communities)"
     value "PUBLISHED_DESCENDING", description: "Sort entities by newest published date (or RECENT for communities)"
     value "TITLE_ASCENDING", description: "Sort entities by title A-Z"
