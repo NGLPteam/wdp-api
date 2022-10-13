@@ -14,7 +14,7 @@ module HasHarvestErrors
 
   # @return [void]
   def clear_harvest_errors!(*codes)
-    harvest_errors.maybe_by_code(codes).delete_all
+    harvest_errors.maybe_by_code(*codes).delete_all
   end
 
   # @param [String] code
