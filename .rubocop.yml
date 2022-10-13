@@ -513,6 +513,10 @@ Style/GuardClause:
 Style/HashConversion:
   Enabled: true
 
+# Tries to correct non-hashes
+Style/HashEachMethods:
+  Enabled: false
+
 Style/HashExcept:
   Enabled: true
 

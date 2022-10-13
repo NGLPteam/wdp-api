@@ -7,6 +7,12 @@ module FrozenSchema
     extend Dry::Core::ClassAttributes
 
     defines :schema, type: Dry::Types::Nominal.new(Dry::Schema::Processor)
+    defines :has_merged_schemas, type: Dry::Types["bool"]
+    defines :merged_schemas, type: AppTypes::Array.of(AppTypes.Instance(Dry::Schema::Processor))
+
+    has_merged_schemas false
+
+    merged_schemas []
   end
 
   class_methods do
@@ -16,19 +22,61 @@ module FrozenSchema
 
       result = schema.call record
 
-      return result.to_monad.value! if result.failure?
-
-      result.to_h.stringify_keys
+      if has_merged_schemas
+        handle_merged_schemas result, record: record
+      else
+        handle_single_schema result
+      end
     end
 
     def default_attributes
       schema.present? ? {} : nil
     end
 
-    def schema!(&block)
+    def schema!(*parent_schemas, &block)
       defined = Dry::Schema.Params(&block)
 
-      schema defined
+      handled_schemas = parent_schemas.map do |parent|
+        WDPAPI::Container["utility.schemafy"].(parent)
+      end
+
+      has_merged_schemas handled_schemas.size > 0
+
+      merged = [*handled_schemas, defined].reduce(&:&)
+
+      merged_schemas [*handled_schemas, defined]
+
+      schema merged
+    end
+
+    private
+
+    # @param [#failure?] result
+    # @return [Hash]
+    def handle_merged_schemas(result, record:)
+      if result.failure?
+        merged_schemas.each do |schema|
+          result = schema.(record)
+
+          # rubocop:disable Rails/Output
+          puts result.errors.inspect if result.failure?
+          # rubocop:enable Rails/Output
+        end
+
+        raise "Problem with merged schemas (better errors TBI)"
+      end
+
+      merged_schemas.reduce({}) do |merged, schema|
+        merged.reverse_merge(schema.(record).to_h.stringify_keys)
+      end
+    end
+
+    # @param [Dry::Schema::Result] result
+    # @return [Hash]
+    def handle_single_schema(result)
+      return result.to_monad.value! if result.failure?
+
+      result.to_h.deep_stringify_keys
     end
   end
 end
