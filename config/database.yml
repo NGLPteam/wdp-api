@@ -20,6 +20,7 @@ default: &default
   host: db
   username: postgres
   password: password
+  # schema_search_path: '"$user",heroku_ext,public'
 
   # For details on connection pooling, see Rails configuration guide
   # https://guides.rubyonrails.org/configuring.html#database-pooling

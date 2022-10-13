@@ -3,11 +3,18 @@ SET lock_timeout = 0;
 SET idle_in_transaction_session_timeout = 0;
 SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
-SELECT pg_catalog.set_config('search_path', '"$user",public', false);
+SELECT pg_catalog.set_config('search_path', '"$user",heroku_ext,public', false);
 SET check_function_bodies = false;
 SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
+
+--
+-- Name: heroku_ext; Type: SCHEMA; Schema: -; Owner: -
+--
+
+CREATE SCHEMA IF NOT EXISTS heroku_ext;
+
 
 --
 -- Name: btree_gist; Type: EXTENSION; Schema: -; Owner: -
@@ -10853,6 +10860,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20220912193952'),
 ('20220915020155'),
 ('20220915084147'),
-('20221012160517');
+('20221012160517'),
+('20221012175221');
 
 
