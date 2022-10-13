@@ -8,7 +8,7 @@ module PilotHarvesting
 
     defines :schema_name, type: Types::String
 
-    schema_name "default:community"
+    schema_name "default:collection"
 
     attribute :identifier, Types::String
 
