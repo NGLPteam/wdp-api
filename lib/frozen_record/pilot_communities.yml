@@ -158,3 +158,40 @@
   - identifier: beyondthemargins
     title: Beyond The Margins
     url: https://neworleans.nglp.olh.pub/beyondthemargins/api/oai/
+- seed_identifier: uncg
+  identifier: uncg
+  title: "University of North Carolina: Greensboro"
+  journals:
+  - url: "http://libjournal.uncg.edu/ap/oai"
+    title: "Archival Practice"
+    issn: "2378-4032"
+    identifier: "ap"
+    metadata_format: oaidc
+  - url: "http://libjournal.uncg.edu/index.php/fsm/oai"
+    title: "Found Sounds"
+    metadata_format: oaidc
+    identifier: fsm
+  - url: "http://libjournal.uncg.edu/ijnpe/oai"
+    title: "International Journal of Nurse Practitioner Educators"
+    issn: "2161-0053"
+    metadata_format: oaidc
+    identifier: ijnpe
+  - url: "http://libjournal.uncg.edu/jbc/oai"
+    title: "Journal of Backcountry Studies"
+    issn: "2325-4254"
+    metadata_format: oaidc
+    identifier: jbc
+  - url: "http://libjournal.uncg.edu/prt/oai"
+    title: "Partnerships"
+    issn: "1944-1061"
+    metadata_format: oaidc
+    identifier: prt
+  - url: "http://libjournal.uncg.edu/index.php/pcel/oai"
+    title: "Proceedings of The Conference for Entrepreneurial Librarians"
+    issn: "2376-6409"
+    metadata_format: oaidc
+    identifier: pcel
+  - url: "http://libjournal.uncg.edu/index.php/wpe/oai"
+    title: "Working Papers on Language and Diversity in Education"
+    metadata_format: oaidc
+    identifier: wpe
