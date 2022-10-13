@@ -10,9 +10,14 @@ module Patches
       super
 
       edit_file filename do |line|
-        next unless line =~ /pg_catalog\.set_config\('search_path'/
-
-        line.gsub(/''/, %['"$user",public'])
+        case line
+        when /pg_catalog\.set_config\('search_path'/
+          line.gsub(/''/, %['"$user",heroku_ext,public'])
+        when /CREATE SCHEMA(?! IF NOT EXISTS)/
+          line.gsub(/CREATE SCHEMA/, "CREATE SCHEMA IF NOT EXISTS")
+        else
+          next
+        end
       end
     end
 
