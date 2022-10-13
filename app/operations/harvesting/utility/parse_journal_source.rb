@@ -6,6 +6,10 @@ module Harvesting
     #
     # @see Harvesting::Utility::ParsedJournalSource
     class ParseJournalSource
+      include WDPAPI::Deps[
+        extract_year: "harvesting.utility.extract_year",
+      ]
+
       PATTERNS = [
         /\A.+?; Vol\.?? (?<volume>\d+),?? No\.?? (?<issue>\d+(?:-\d+)?) \((?<year>\d+)\)(?:; (?<fpage>\d+)(?:[^\d](?<lpage>\d+))?)?\z/,
         # "Special edition" issues", e.g. `Vol 50, No SE`
@@ -79,7 +83,7 @@ module Harvesting
               h[:fpage] = fpage
               h[:lpage] = lpage
             when :date
-              h[:year] = value.first.presence
+              h[:year] = extract_year.(value.first).value_or(nil)
             end
           end
         end
