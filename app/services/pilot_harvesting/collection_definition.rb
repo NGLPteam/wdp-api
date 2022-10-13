@@ -16,11 +16,13 @@ module PilotHarvesting
 
     attribute? :subtitle, Types::String.optional.default(nil)
 
+    attribute? :issn, Types::String.optional.default(nil)
+
     delegate :schema_name, to: :class
 
     def upsert
       provide default_collection_schema: schema do
-        call_operation("collections.upsert", identifier, title: title, parent: collection_parent, properties: properties) do |collection|
+        call_operation("collections.upsert", identifier, title: title, parent: collection_parent, issn: issn, properties: properties) do |collection|
           upsert_source_for! collection
         end
       end
