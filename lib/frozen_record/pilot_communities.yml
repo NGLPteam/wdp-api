@@ -167,10 +167,12 @@
     issn: "2378-4032"
     identifier: "ap"
     metadata_format: oaidc
+    auto_create_volumes_and_issues: true
   - url: "http://libjournal.uncg.edu/index.php/fsm/oai"
     title: "Found Sounds"
     metadata_format: oaidc
     identifier: fsm
+    auto_create_volumes_and_issues: true
   - url: "http://libjournal.uncg.edu/ijnpe/oai"
     title: "International Journal of Nurse Practitioner Educators"
     issn: "2161-0053"
@@ -186,12 +188,14 @@
     issn: "1944-1061"
     metadata_format: oaidc
     identifier: prt
+  - url: "http://libjournal.uncg.edu/index.php/wpe/oai"
+    title: "Working Papers on Language and Diversity in Education"
+    metadata_format: oaidc
+    identifier: wpe
+  series:
   - url: "http://libjournal.uncg.edu/index.php/pcel/oai"
     title: "Proceedings of The Conference for Entrepreneurial Librarians"
     issn: "2376-6409"
     metadata_format: oaidc
     identifier: pcel
-  - url: "http://libjournal.uncg.edu/index.php/wpe/oai"
-    title: "Working Papers on Language and Diversity in Education"
-    metadata_format: oaidc
-    identifier: wpe
+

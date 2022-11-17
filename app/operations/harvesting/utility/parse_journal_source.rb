@@ -9,6 +9,7 @@ module Harvesting
       include WDPAPI::Deps[
         extract_year: "harvesting.utility.extract_year",
       ]
+      include Dry::Effects.Resolve(:auto_create_volumes_and_issues)
 
       PATTERNS = [
         /\A.+?; Vol\.?? (?<volume>\d+),?? No\.?? (?<issue>\d+(?:-\d+)?) \((?<year>\d+)\)(?:; (?<fpage>\d+)(?:[^\d](?<lpage>\d+))?)?\z/,
@@ -17,9 +18,10 @@ module Harvesting
         /\A.+?, vol (?<volume>\d+), iss (?<issue>\d+)\z/,
       ].freeze
 
+      NO_ISSUE = /\A.+?; Vol(?:ume)?\.?? (?<volume>\d+)(?: \((?<year>\d{4})\))?/.freeze
+
       # @param [<String>] inputs
       # @return [Harvesting::Utility::ParsedJournalSource]
-      # @return [nil] when there is no match
       def call(*inputs)
         inputs.flatten!
 
@@ -37,12 +39,28 @@ module Harvesting
           anystyle = try_anystyle input
 
           return anystyle if anystyle.present?
+
+          next unless auto_create_volumes_and_issues?
+
+          match = NO_ISSUE.match input
+
+          next unless match
+
+          return parse! input, match, issue: ?1
         end
 
-        return nil
+        if auto_create_volumes_and_issues?
+          return Harvesting::Utility::ParsedJournalSource.default_journal_source
+        end
+
+        return Harvesting::Utility::ParsedJournalSource.unknown
       end
 
       private
+
+      def auto_create_volumes_and_issues?
+        auto_create_volumes_and_issues { false }
+      end
 
       # @param [String] input
       # @return [Harvesting::Utility::ParsedJournalSource, nil]
@@ -61,8 +79,8 @@ module Harvesting
       # @param [String] input
       # @param [MatchData] match
       # @return [Harvesting::Utility::ParsedJournalSource]
-      def parse!(input, match)
-        attrs = { input: input }.merge(match.named_captures.symbolize_keys)
+      def parse!(input, match, **extra)
+        attrs = { input: input }.merge(match.named_captures.symbolize_keys).merge(**extra)
 
         Harvesting::Utility::ParsedJournalSource.new(**attrs)
       end

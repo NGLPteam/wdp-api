@@ -112,7 +112,7 @@ module Harvesting
             end
 
             def has_journal?
-              journal.present?
+              journal.present? && journal.known?
             end
 
             memoize def online_version
