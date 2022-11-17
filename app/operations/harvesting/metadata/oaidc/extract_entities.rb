@@ -11,17 +11,41 @@ module Harvesting
         def call(raw_metadata)
           values = yield metadata_format.extract_values raw_metadata
 
+          child = yield handle_by_parent values
+
+          yield upsert_contribution_proxies.(child, values.authors)
+
+          Success nil
+        end
+
+        private
+
+        # @param [Harvesting::Metadata::OAIDC::Parsed::ExtractedValues] values
+        # @return [Dry::Monads::Success(HarvestEntity)]
+        def handle_by_parent(values)
+          declaration = target_entity.schema_version.declaration
+
+          case declaration
+          when /\Anglp:journal:/
+            handle_journal values
+          when /\Anglp:series:/
+            handle_series values
+          else
+            # :nocov:
+            Failure[:unsupported_target, "Don't know how to upsert OAIDC metadata on #{declaration}"]
+          end
+        end
+
+        # @param [Harvesting::Metadata::OAIDC::Parsed::ExtractedValues] values
+        # @return [Dry::Monads::Success(HarvestEntity)]
+        def handle_journal(values)
           skip_record! "article is missing volume or issue" unless values.has_journal?
 
           volume = yield upsert_volume_from values
 
           issue = yield upsert_issue_from values, volume: volume
 
-          article = yield upsert_article_from values, issue: issue
-
-          yield upsert_contribution_proxies.(article, values.authors)
-
-          Success nil
+          upsert_article_from values, issue: issue
         end
 
         VOLUME_ATTRS = {
@@ -116,6 +140,42 @@ module Harvesting
             assigner.assets! scalar: values.scalar_assets, unassociated: values.unassociated_assets
 
             assigner.schema! schemas[:article]
+          end
+        end
+
+        # @param [Harvesting::Metadata::OAIDC::Parsed::ExtractedValues] values
+        # @return [Dry::Monads::Success(HarvestEntity)]
+        def handle_series(values)
+          upsert_paper_from values
+        end
+
+        PAPER_ATTRS = {
+          doi: "doi",
+          title: "title",
+          summary: "summary",
+          issn: "issn",
+          published: "published",
+        }.freeze
+
+        PAPER_PROPS = {
+          abstract: "summary",
+        }.freeze
+
+        # @param [Harvesting::Metadata::OAIDC::Parsed::ExtractedValues] values
+        # @return [Dry::Monads::Success(HarvestEntity)]
+        def upsert_paper_from(values)
+          identifier = harvest_record.identifier
+
+          paper = find_or_create_entity identifier
+
+          with_entity.(paper) do |assigner|
+            assigner.metadata_kind! "paper"
+
+            assigner.attrs_and_props_from! values, PAPER_ATTRS, PAPER_PROPS
+
+            assigner.assets! scalar: values.scalar_assets, unassociated: values.unassociated_assets
+
+            assigner.schema! schemas[:paper]
           end
         end
       end

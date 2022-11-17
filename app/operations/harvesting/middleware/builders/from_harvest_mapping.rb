@@ -13,6 +13,7 @@ module Harvesting
           yield set! :harvest_mapping, harvest_mapping
           yield set! :target_entity, harvest_mapping.target_entity
 
+          yield set! :auto_create_volumes_and_issues, harvest_mapping.mapping_options.auto_create_volumes_and_issues
           yield set! :link_identifiers_globally, harvest_mapping.mapping_options.link_identifiers_globally
 
           Success nil

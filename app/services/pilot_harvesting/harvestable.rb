@@ -27,6 +27,8 @@ module PilotHarvesting
 
       attribute? :set_identifier, PilotHarvesting::Types::String.optional
 
+      attribute? :auto_create_volumes_and_issues, PilotHarvesting::Types::Bool.default(false)
+
       attribute? :link_identifiers_globally, PilotHarvesting::Types::Bool.default(false)
 
       attribute? :max_records, Harvesting::Types::MaxRecordCount
@@ -71,6 +73,7 @@ module PilotHarvesting
 
       options = {
         mapping_options: {
+          auto_create_volumes_and_issues: auto_create_volumes_and_issues,
           link_identifiers_globally: link_identifiers_globally,
         },
         read_options: {

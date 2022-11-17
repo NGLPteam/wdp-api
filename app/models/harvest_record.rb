@@ -16,8 +16,6 @@ class HarvestRecord < ApplicationRecord
   has_many :harvest_contributions, through: :harvest_entities
   has_many :harvest_contributors, through: :harvest_contributions
 
-  has_many :entities, through: :harvest_entities
-
   has_many_readonly :collections, through: :harvest_entities, source: :entity, source_type: "Collection"
   has_many_readonly :items, through: :harvest_entities, source: :entity, source_type: "Item"
 

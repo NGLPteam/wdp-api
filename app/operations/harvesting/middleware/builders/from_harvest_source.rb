@@ -9,6 +9,7 @@ module Harvesting
           yield set_protocol! harvest_source
           yield set_metadata_format! harvest_source
 
+          yield set! :auto_create_volumes_and_issues, harvest_source.mapping_options.auto_create_volumes_and_issues
           yield set! :link_identifiers_globally, harvest_source.mapping_options.link_identifiers_globally
 
           Success nil

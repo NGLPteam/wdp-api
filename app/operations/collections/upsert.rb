@@ -8,6 +8,7 @@ module Collections
     include Dry::Monads::Do.for(:scope_for)
     include Dry::Effects.Resolve(:default_collection_schema)
     include WDPAPI::Deps[
+      alter: "schemas.instances.alter_version",
       apply_properties: "schemas.instances.apply",
       calculate_edge: "schemas.edges.calculate"
     ]
@@ -31,7 +32,11 @@ module Collections
 
       yield monadic_save collection
 
-      yield apply_properties.call(collection, properties) if properties.present?
+      if collection.properties.schema.full_declaration != collection_schema.declaration
+        yield alter.call(collection, collection_schema, properties)
+      elsif properties.present?
+        yield apply_properties.call(collection, properties)
+      end
 
       Success collection
     end

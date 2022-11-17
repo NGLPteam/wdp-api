@@ -7,6 +7,7 @@ module Harvesting
       include StoreModel::Model
       include Shared::EnhancedStoreModel
 
+      attribute :auto_create_volumes_and_issues, :boolean, default: false
       attribute :link_identifiers_globally, :boolean, default: false
     end
   end

@@ -29,11 +29,29 @@ RSpec.describe Harvesting::Utility::ParseJournalSource, type: :operation do
     end
   end
 
+  context "with auto_create_volumes_and_issues set" do
+    include Dry::Effects::Handler.Resolve
+
+    around do |example|
+      provide auto_create_volumes_and_issues: true do
+        example.run
+      end
+    end
+
+    it "defaults to volume 1 and issue 1" do
+      expect_calling_with("literally anything").to have_attributes(volume: ?1, issue: ?1).and be_known
+    end
+
+    it "can handle just a volume" do
+      expect_calling_with("Some Journal; Vol. 13 (1999)").to have_attributes(volume: "13", issue: ?1, year: 1999).and be_known
+    end
+  end
+
   it "handles a truncated format (such as used by CDL)" do
     expect_calling_with(nil, "Some Journal, vol 12, iss 103").to have_attributes(volume: "12", issue: "103", fpage: nil)
   end
 
   it "handles non-matching input" do
-    expect_calling_with("some random text").to be_nil
+    expect_calling_with("some random text").to be_unknown
   end
 end
