@@ -26,78 +26,170 @@ module Harvesting
             Harvesting::Metadata::ValueExtraction::Set.new(identifier, @values)
           end
 
-          def journal_source_issue_attrs!(from:, identifier_prefix: ?i, title_prefix: "Issue ")
-            compose_value :identifier, from: from, type: :string, require_match: true do
-              pipeline! do
-                chain :issue
+          def journal_source_issue_attrs!(from:, identifier_prefix: ?i, title_prefix: "Issue ", xpath_query: nil)
+            value :identifier, type: :string, require_match: true do
+              xpath xpath_query, type: :string do
+                pipeline! do
+                  xml_text
 
-                maybe_prefix identifier_prefix
+                  maybe_prefix identifier_prefix
+                end
+              end if xpath_query.present?
+
+              from_value from, type: :string do
+                pipeline! do
+                  chain :volume
+
+                  maybe_prefix identifier_prefix
+                end
               end
             end
 
-            compose_value :id, from: from, type: :string, require_match: true do
-              pipeline! do
-                chain :issue
+            value :id, type: :string, require_match: true do
+              xpath xpath_query, type: :string do
+                pipeline! do
+                  xml_text
+                end
+              end if xpath_query.present?
+
+              from_value from, type: :string do
+                pipeline! do
+                  chain :volume
+                end
               end
             end
 
-            compose_value :number, from: from, type: :string, require_match: true do
-              pipeline! do
-                chain :issue
+            value :number, type: :string, require_match: true do
+              xpath xpath_query, type: :string do
+                pipeline! do
+                  xml_text
+                end
+              end if xpath_query.present?
+
+              from_value from, type: :string do
+                pipeline! do
+                  chain :volume
+                end
               end
             end
 
-            compose_value :sortable_number, from: from, type: :integer, require_match: true do
-              pipeline! do
-                chain :issue
+            value :sortable_number, type: :integer, require_match: true do
+              xpath xpath_query, type: :string do
+                pipeline! do
+                  xml_text
 
-                metadata_operation "jats.parse_sortable_number"
+                  metadata_operation "jats.parse_sortable_number"
+                end
+              end if xpath_query.present?
+
+              from_value from, type: :string do
+                pipeline! do
+                  chain :volume
+
+                  metadata_operation "jats.parse_sortable_number"
+                end
               end
             end
 
-            compose_value :title, from: from, type: :string, require_match: true do
-              pipeline! do
-                chain :issue
+            value :title, type: :string, require_match: true do
+              xpath xpath_query, type: :string do
+                pipeline! do
+                  xml_text
 
-                maybe_prefix title_prefix
+                  maybe_prefix title_prefix
+                end
+              end if xpath_query.present?
+
+              from_value from, type: :string do
+                pipeline! do
+                  chain :volume
+
+                  maybe_prefix title_prefix
+                end
               end
             end
           end
 
-          def journal_source_volume_attrs!(from:, identifier_prefix: ?v, title_prefix: "Volume ")
-            compose_value :identifier, from: from, type: :string, require_match: true do
-              pipeline! do
-                chain :volume
+          def journal_source_volume_attrs!(from:, identifier_prefix: ?v, title_prefix: "Volume ", xpath_query: nil)
+            value :identifier, type: :string, require_match: true do
+              xpath xpath_query, type: :string do
+                pipeline! do
+                  xml_text
 
-                maybe_prefix identifier_prefix
+                  maybe_prefix identifier_prefix
+                end
+              end if xpath_query.present?
+
+              from_value from, type: :string do
+                pipeline! do
+                  chain :volume
+
+                  maybe_prefix identifier_prefix
+                end
               end
             end
 
-            compose_value :id, from: from, type: :string, require_match: true do
-              pipeline! do
-                chain :volume
+            value :id, type: :string, require_match: true do
+              xpath xpath_query, type: :string do
+                pipeline! do
+                  xml_text
+                end
+              end if xpath_query.present?
+
+              from_value from, type: :string do
+                pipeline! do
+                  chain :volume
+                end
               end
             end
 
-            compose_value :number, from: from, type: :string, require_match: true do
-              pipeline! do
-                chain :volume
+            value :number, type: :string, require_match: true do
+              xpath xpath_query, type: :string do
+                pipeline! do
+                  xml_text
+                end
+              end if xpath_query.present?
+
+              from_value from, type: :string do
+                pipeline! do
+                  chain :volume
+                end
               end
             end
 
-            compose_value :sortable_number, from: from, type: :integer, require_match: true do
-              pipeline! do
-                chain :volume
+            value :sortable_number, type: :integer, require_match: true do
+              xpath xpath_query, type: :string do
+                pipeline! do
+                  xml_text
 
-                metadata_operation "jats.parse_sortable_number"
+                  metadata_operation "jats.parse_sortable_number"
+                end
+              end if xpath_query.present?
+
+              from_value from, type: :string do
+                pipeline! do
+                  chain :volume
+
+                  metadata_operation "jats.parse_sortable_number"
+                end
               end
             end
 
-            compose_value :title, from: from, type: :string, require_match: true do
-              pipeline! do
-                chain :volume
+            value :title, type: :string, require_match: true do
+              xpath xpath_query, type: :string do
+                pipeline! do
+                  xml_text
 
-                maybe_prefix title_prefix
+                  maybe_prefix title_prefix
+                end
+              end if xpath_query.present?
+
+              from_value from, type: :string do
+                pipeline! do
+                  chain :volume
+
+                  maybe_prefix title_prefix
+                end
               end
             end
           end

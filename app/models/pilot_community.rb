@@ -15,6 +15,10 @@ class PilotCommunity < FrozenRecord::Base
     required(:seed_identifier).filled(:string)
   end
 
+  def matches?(only)
+    only.blank? || identifier.in?(only)
+  end
+
   class << self
     def assign_defaults!(record)
       record["unique_identifier"] = record.values_at("seed_identifier", "identifier").join(?-)
@@ -24,16 +28,20 @@ class PilotCommunity < FrozenRecord::Base
 
     # @param [String, Symbol] name
     # @return [Hash]
-    def grouped_for(name)
-      communities = for_seed(name).map(&:as_json)
+    def grouped_for(name, only_communities: [])
+      only_communities = Array(only_communities)
+
+      communities = for_seed(name).select do |community|
+        community.matches?(only_communities)
+      end.map(&:as_json)
 
       { communities: communities }
     end
 
     # @param [String, Symbol] name
     # @return [PilotHarvesting::Root]
-    def root_for(name)
-      definition = grouped_for name
+    def root_for(name, only_communities: [])
+      definition = grouped_for(name, only_communities: only_communities)
 
       ::PilotHarvesting::Root.new(definition)
     end
