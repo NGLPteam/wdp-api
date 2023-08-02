@@ -192,10 +192,37 @@
     title: "Working Papers on Language and Diversity in Education"
     metadata_format: oaidc
     identifier: wpe
+  - identifier: ccj
+    title: Communication Center Journal
+    url: https://longleaf.defender.janeway.systems/ccj/api/oai/
+    metadata_format: oaidc
+  - identifier: jae
+    title: Journal of Appreciative Education
+    url: https://longleaf.defender.janeway.systems/jae/api/oai/
+    metadata_format: oaidc
+  - identifier: jls
+    title: Journal of Learning Spaces
+    url: https://longleaf.defender.janeway.systems/jls/api/oai/
+    metadata_format: oaidc
+  - identifier: jmal
+    title: Journal of Movement Arts Literacy
+    url: https://longleaf.defender.janeway.systems/jmal/api/oai/
+    metadata_format: oaidc
+  - identifier: North Carolina Journal of Mathematics and Statistics
+    title: ncjms
+    url: https://longleaf.defender.janeway.systems/ncjms/api/oai/
+    metadata_format: oaidc
+  - identifier: prp
+    title: Global Journal of Peace Research and Praxis
+    url: https://longleaf.defender.janeway.systems/prp/api/oai/
+    metadata_format: oaidc
+  - identifier: ijcp
+    title: The International Journal of Critical Pedagogy
+    url: https://longleaf.defender.janeway.systems/ijcp/api/oai/
+    metadata_format: oaidc
   series:
   - url: "http://libjournal.uncg.edu/index.php/pcel/oai"
     title: "Proceedings of The Conference for Entrepreneurial Librarians"
     issn: "2376-6409"
     metadata_format: oaidc
     identifier: pcel
-

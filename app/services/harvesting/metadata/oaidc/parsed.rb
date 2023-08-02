@@ -83,8 +83,16 @@ module Harvesting
             end
           end
 
-          compose_value :journal, from: :sources, type: :journal_source, require_match: false do
-            parse_journal_source!
+          value :journal, type: :journal_source, require_match: false do
+            xpath ?., type: :journal_source do
+              pipeline! do
+                metadata_operation "oaidc.extract_journal_source"
+              end
+            end
+
+            from_value :sources, type: :journal_source do
+              parse_journal_source!
+            end
           end
 
           on_struct do
@@ -112,7 +120,7 @@ module Harvesting
             end
 
             def has_journal?
-              journal.present? && journal.known?
+              (journal.present? && journal.known?) || (volume.present? && issue.present?)
             end
 
             memoize def online_version
@@ -140,7 +148,7 @@ module Harvesting
           end
 
           set :volume do
-            journal_source_volume_attrs! from: :journal
+            journal_source_volume_attrs! from: :journal, xpath_query: ".//dc:volume"
 
             compose_value :issn, from: :sources, type: AppTypes::ISSN, require_match: false do
               pipeline! do
@@ -150,7 +158,7 @@ module Harvesting
           end
 
           set :issue do
-            journal_source_issue_attrs! from: :journal
+            journal_source_issue_attrs! from: :journal, xpath_query: ".//dc:issue"
 
             compose_value :issn, from: :sources, type: AppTypes::ISSN, require_match: false do
               pipeline! do
