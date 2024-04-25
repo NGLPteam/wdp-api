@@ -1,0 +1,12 @@
+version: "2"
+
+syncs:
+  meru-api-sync:
+    src: "."
+    sync_excludes:
+      - ".git"
+      - "log"
+      - "tmp/cache"
+      - "*.swp"
+      - ".docker-sync/daemon.log"
+    sync_strategy: "unison"

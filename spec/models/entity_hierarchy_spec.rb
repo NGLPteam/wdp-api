@@ -10,7 +10,7 @@ RSpec.describe EntityHierarchy, type: :model do
 
     expect do
       perform_enqueued_jobs do
-        collection = FactoryBot.create :collection, community: community
+        collection = FactoryBot.create :collection, community:
       end
     end.to change(described_class, :count).by_at_least(1)
 

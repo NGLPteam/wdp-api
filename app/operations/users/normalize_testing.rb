@@ -3,7 +3,7 @@
 module Users
   class NormalizeTesting
     include Dry::Monads[:do, :result]
-    include WDPAPI::Deps[
+    include MeruAPI::Deps[
       encode_id: "slugs.encode_id",
     ]
     include MonadicPersistence

@@ -6,13 +6,13 @@ module Roles
 
     extend Shared::EnhancedTypes
 
-    PERMISSION_PART = /(?:[a-z]+?[a-z_]+[a-z]+)/.freeze
+    PERMISSION_PART = /(?:[a-z]+?[a-z_]+[a-z]+)/
 
-    PERMISSION_FORMAT = /\A(?<scope>(?<part>#{PERMISSION_PART})(?:\.\g<part>)*?)\.(?<name>\g<part>)\z/.freeze
+    PERMISSION_FORMAT = /\A(?<scope>(?<part>#{PERMISSION_PART})(?:\.\g<part>)*?)\.(?<name>\g<part>)\z/
 
-    PERMISSION_QUERY_PART = /(?:\*|#{PERMISSION_PART})/.freeze
+    PERMISSION_QUERY_PART = /(?:\*|#{PERMISSION_PART})/
 
-    PERMISSION_QUERY = /\A#{PERMISSION_QUERY_PART}(?:\.#{PERMISSION_QUERY_PART})+\z/.freeze
+    PERMISSION_QUERY = /\A#{PERMISSION_QUERY_PART}(?:\.#{PERMISSION_QUERY_PART})+\z/
 
     GRID = ->(klass) do
       Constructor(klass) do |value|

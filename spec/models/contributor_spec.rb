@@ -6,8 +6,8 @@ RSpec.describe Contributor, type: :model, disable_ordering_refresh: true do
   let(:collection_count) { 2 }
   let(:item_count) { 2 }
 
-  let!(:collection_contributions) { FactoryBot.create_list :collection_contribution, collection_count, contributor: contributor }
-  let!(:item_contributions) { FactoryBot.create_list :item_contribution, item_count, contributor: contributor }
+  let!(:collection_contributions) { FactoryBot.create_list :collection_contribution, collection_count, contributor: }
+  let!(:item_contributions) { FactoryBot.create_list :item_contribution, item_count, contributor: }
 
   describe "#attach!" do
     it "can attach a collection" do

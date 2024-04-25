@@ -9,14 +9,14 @@ module Schemas
       # @param [<Schemas::Associations::Association>] associations
       # @return [<SchemaVersion>]
       def find_all_matching_versions_for(associations)
-        WDPAPI::Container["schemas.associations.find_all_matching_versions"].call(associations).value_or([])
+        MeruAPI::Container["schemas.associations.find_all_matching_versions"].call(associations).value_or([])
       end
 
       # @see Schemas::Associations::FindMatchingVersions
       # @param [Schemas::Associations::Association] association
       # @return [<SchemaVersion>]
       def find_matching_versions_for(association)
-        WDPAPI::Container["schemas.associations.find_matching_versions"].call(association).value_or([])
+        MeruAPI::Container["schemas.associations.find_matching_versions"].call(association).value_or([])
       end
 
       # @see Schemas::Associations::RequireAllMatchingVersions
@@ -24,7 +24,7 @@ module Schemas
       # @return [Dry::Monads::Success<SchemaVersion>]
       # @return [Dry::Monads::Failure(:no_match, <Schemas::Associations::Association>)]
       def require_all_matching_versions_for(associations)
-        WDPAPI::Container["schemas.associations.require_all_matching_versions"].call(associations)
+        MeruAPI::Container["schemas.associations.require_all_matching_versions"].call(associations)
       end
 
       # @see Schemas::Associations::RequireMatchingVersions
@@ -32,7 +32,7 @@ module Schemas
       # @return [Dry::Monads::Success<SchemaVersion>]
       # @return [Dry::Monads::Failure(:no_match, Schemas::Associations::Association)]
       def require_matching_versions_for(association)
-        WDPAPI::Container["schemas.associations.require_matching_versions"].call(association)
+        MeruAPI::Container["schemas.associations.require_matching_versions"].call(association)
       end
     end
   end

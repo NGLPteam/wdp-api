@@ -67,7 +67,7 @@ module HasSchemaDefinition
   # @param [Hash] new_values
   # @return [Dry::Monads::Result]
   def alter_version!(schema_version, new_values, strategy: :apply)
-    call_operation("schemas.instances.alter_version", self, schema_version, new_values, strategy: strategy)
+    call_operation("schemas.instances.alter_version", self, schema_version, new_values, strategy:)
   end
 
   # @param [SchemaVersion] schema_version
@@ -88,14 +88,14 @@ module HasSchemaDefinition
   # @param [Schemas::Properties::Context, nil] context
   # @return [void]
   monadic_operation! def extract_orderable_properties(context: nil)
-    call_operation("schemas.instances.extract_orderable_properties", self, context: context)
+    call_operation("schemas.instances.extract_orderable_properties", self, context:)
   end
 
   # @see Schemas::Instances::ExtractSearchableProperties
   # @param [Schemas::Properties::Context, nil] context
   # @return [void]
   monadic_operation! def extract_searchable_properties(context: nil)
-    call_operation("schemas.instances.extract_searchable_properties", self, context: context)
+    call_operation("schemas.instances.extract_searchable_properties", self, context:)
   end
 
   # @see Schemas::Instances::Reindex
@@ -114,7 +114,7 @@ module HasSchemaDefinition
   # @see Schemas::Instances::Validate
   # @return [Hash]
   def validate_schema_properties(context: nil)
-    call_operation("schemas.instances.validate", self, context: context).value!
+    call_operation("schemas.instances.validate", self, context:).value!
   end
 
   # @api private

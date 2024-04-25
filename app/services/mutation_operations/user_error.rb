@@ -27,8 +27,8 @@ module MutationOperations
 
     def to_global_error
       {
-        message: message,
-        type: type,
+        message:,
+        type:,
       }
     end
 

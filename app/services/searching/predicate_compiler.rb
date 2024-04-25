@@ -9,7 +9,7 @@ module Searching
     include Dry::Initializer[undefined: false].define -> do
       param :predicates, Searching::Operator::List.optional, default: proc { [] }
 
-      option :encode_join, Searching::Types::JoinEncoder, default: proc { WDPAPI::Container["searching.compilation.encode_join_name"] }
+      option :encode_join, Searching::Types::JoinEncoder, default: proc { MeruAPI::Container["searching.compilation.encode_join_name"] }
 
       option :scope, Searching::Types::Interface(:all), default: proc { Entity.all }
     end
@@ -47,7 +47,7 @@ module Searching
       expression = {}
 
       joins, _ = with_joins(joins) do
-        provide encode_join: encode_join do
+        provide(encode_join:) do
           yield expression
         end
       end

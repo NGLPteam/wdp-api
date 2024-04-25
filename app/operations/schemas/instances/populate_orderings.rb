@@ -9,7 +9,7 @@ module Schemas
     class PopulateOrderings
       include Dry::Monads[:do, :result]
       include MonadicPersistence
-      include WDPAPI::Deps[reset_ordering: "schemas.orderings.reset"]
+      include MeruAPI::Deps[reset_ordering: "schemas.orderings.reset"]
 
       prepend TransactionalCall
 
@@ -18,7 +18,7 @@ module Schemas
       # @return [Dry::Monads::Result]
       def call(entity, reset: false)
         entity.schema_version.configuration.orderings.each do |definition|
-          yield populate_definition! entity, definition, reset: reset
+          yield populate_definition!(entity, definition, reset:)
         end
 
         Success nil

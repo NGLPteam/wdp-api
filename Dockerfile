@@ -1,14 +1,25 @@
-FROM ruby:2.7.3-buster
+FROM ruby:3.2.3-bullseye
 
-RUN apt-get update -qq && apt-get install -y -qq --no-install-recommends gnupg2 libsndfile1-dev build-essential libvips-dev mediainfo ffmpeg vim
+RUN apt-get update -qq && apt-get install -y -qq --no-install-recommends \
+    build-essential \
+    ca-certificates \
+    curl \
+    gnupg gnupg2 \
+    libglib2.0-0 libglib2.0-dev \
+    libjemalloc2 \
+    libpoppler-glib8 \
+    librsvg2-bin \
+    libsndfile1-dev \
+    libvips \
+    libvips-dev \
+    mediainfo \
+    postgresql-common
 
-RUN wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
+RUN /usr/share/postgresql-common/pgdg/apt.postgresql.org.sh -y
 
-RUN echo "deb http://apt.postgresql.org/pub/repos/apt/ buster-pgdg main" | tee /etc/apt/sources.list.d/pgdg.list
+RUN apt-get update -qq && apt-get install -y -qq --no-install-recommends postgresql-client-15
 
-RUN apt-get update -qq && apt-get install -y -qq --no-install-recommends postgresql-client-13
-
-RUN gem update --system && gem install bundler:2.2.16
+RUN gem update --system && gem install bundler:2.5.7
 
 WORKDIR /srv/app
 COPY Gemfile /srv/app/Gemfile
@@ -21,9 +32,14 @@ ENTRYPOINT ["entrypoint.sh"]
 
 ENV BUNDLE_PATH=/bundle \
     BUNDLE_BIN=/bundle/bin \
-    GEM_HOME=/bundle
+    GEM_HOME=/bundle \
+    RACK_ENV=development \
+    RAILS_LOG_TO_STDOUT=true \
+    RAILS_SERVE_STATIC_FILES=true \
+    PORT=8080
 ENV PATH="${BUNDLE_BIN}:${PATH}"
+ENV LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libjemalloc.so.2
 
-EXPOSE 6222
+EXPOSE 8080
 
-CMD ["bin/falcon", "-b", "http://0.0.0.0:6222", "-p", "6222"]
+CMD ["bin/puma", "-C", "config/puma.rb"]

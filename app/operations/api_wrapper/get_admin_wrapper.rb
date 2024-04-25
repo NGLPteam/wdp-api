@@ -2,7 +2,7 @@
 
 module APIWrapper
   class GetAdminWrapper
-    include WDPAPI::Deps[
+    include MeruAPI::Deps[
       get_graphql_client: "api_wrapper.get_client",
       get_token: "password_flow.get_token"
     ]
@@ -11,7 +11,7 @@ module APIWrapper
     def call(username, password, endpoint: LocationsConfig.default_graphql_endpoint)
       access_token = get_token.(username, password, via_admin: true)
 
-      client = get_graphql_client.(endpoint: endpoint)
+      client = get_graphql_client.(endpoint:)
 
       ::APIWrapper::Wrapper.new(client, access_token.access_token)
     end

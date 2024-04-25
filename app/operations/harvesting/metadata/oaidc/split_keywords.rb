@@ -6,7 +6,7 @@ module Harvesting
       # Parse a bunch of strings to a flat array of values suitable for use as tags.
       class SplitKeywords
         # A possible separator for a tag list
-        SEPARATOR = /\s*,\s*/.freeze
+        SEPARATOR = /\s*,\s*/
 
         # @param [<String>] input
         # @return [<String>]

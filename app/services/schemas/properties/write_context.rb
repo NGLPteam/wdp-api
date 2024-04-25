@@ -16,7 +16,7 @@ module Schemas
 
       # @return [Dry::Monads::Result]
       def finalize
-        Success Schemas::Properties::Context.new(value_context)
+        Success Schemas::Properties::Context.new(**value_context)
       end
 
       def within_group!(path)

@@ -3,9 +3,7 @@
 module Types
   module Settings
     # @see Settings::Site
-    class SiteSettingsInputType < Types::BaseInputObject
-      include AutoHash
-
+    class SiteSettingsInputType < Types::HashInputObject
       description "A value for updating the site's configuration"
 
       argument :installation_name, String, required: false, attribute: true do

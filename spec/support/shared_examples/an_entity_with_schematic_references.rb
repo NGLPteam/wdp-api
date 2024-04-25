@@ -37,7 +37,7 @@ RSpec.shared_examples_for "an entity with schematic references" do |var_name|
 
   describe "#schematic_texts" do
     context "with only an invalid reference" do
-      let!(:invalid_text) { FactoryBot.create :schematic_text, path: "does_not.exist", entity: entity }
+      let!(:invalid_text) { FactoryBot.create :schematic_text, path: "does_not.exist", entity: }
 
       it "does not include an invalid text" do
         expect(invalid_text.entity).to eq entity

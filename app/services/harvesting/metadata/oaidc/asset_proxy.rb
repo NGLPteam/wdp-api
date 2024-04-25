@@ -46,7 +46,7 @@ module Harvesting
         #
         # @return [(String, String, Hash)]
         def to_assigner
-          [identifier, url, { name: name, mime_type: format.to_s }]
+          [identifier, url, { name:, mime_type: format.to_s }]
         end
 
         def unassociated?

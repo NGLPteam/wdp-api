@@ -18,7 +18,7 @@ module Mutations
       def call(item:, **attributes)
         authorize item, :update?
 
-        update_entity! item, attributes
+        update_entity! item, **attributes
       end
     end
   end

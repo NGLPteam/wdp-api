@@ -2,11 +2,9 @@
 
 module Resolvers
   module AccessGrants
-    class CommunityResolver < GraphQL::Schema::Resolver
-      include SearchObject.module(:graphql)
-
+    class CommunityResolver < AbstractResolver
       include Resolvers::FiltersByAccessGrantSubject
-      include Resolvers::PageBasedPagination
+      include Resolvers::Enhancements::PageBasedPagination
       include Resolvers::SimplyOrdered
 
       type Types::AnyCommunityAccessGrantType.connection_type, null: false

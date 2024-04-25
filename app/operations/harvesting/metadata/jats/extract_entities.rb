@@ -4,7 +4,7 @@ module Harvesting
   module Metadata
     module JATS
       class ExtractEntities < Harvesting::Metadata::BaseEntityExtractor
-        include WDPAPI::Deps[
+        include MeruAPI::Deps[
           upsert_contribution: "harvesting.metadata.jats.upsert_contribution",
         ]
 
@@ -19,9 +19,9 @@ module Harvesting
 
           volume = yield upsert_volume_from values
 
-          issue = yield upsert_issue_from values, volume: volume
+          issue = yield upsert_issue_from(values, volume:)
 
-          article = yield upsert_article_from values, issue: issue
+          article = yield upsert_article_from(values, issue:)
 
           yield upsert_contributions_for article, values
 

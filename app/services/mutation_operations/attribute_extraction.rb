@@ -21,7 +21,7 @@ module MutationOperations
       # @option options [Boolean] :image
       # @return [void]
       def attachment!(name, **options)
-        attribute = Attachments::Attribute.new name, options
+        attribute = Attachments::Attribute.new name, **options
 
         previous = attachments[name]
 

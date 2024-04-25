@@ -7,7 +7,7 @@ module Harvesting
     # can be used later
     class AttachAssets
       include Dry::Monads[:do, :result]
-      include WDPAPI::Deps[
+      include MeruAPI::Deps[
         attach_asset: "harvesting.entities.attach_asset",
         attach_entity_asset: "harvesting.entities.attach_entity_asset",
       ]

@@ -47,7 +47,7 @@ module Harvesting
 
         xml_parse_method xml_type
 
-        parser = Harvesting::XMLParser.new xml_type, parse_method: xml_parse_method, strip_multibyte_spaces: true, enforced_namespaces: enforced_namespaces
+        parser = Harvesting::XMLParser.new(xml_type, parse_method: xml_parse_method, strip_multibyte_spaces: true, enforced_namespaces:)
 
         xml_parser parser
       end

@@ -132,8 +132,8 @@ RSpec.describe Mutations::UpdateCollection, type: :request, graphql: :mutation d
 
       let_mutation_input!(:schema_properties) do
         {
-          required_field: required_field,
-          optional_field: optional_field,
+          required_field:,
+          optional_field:,
         }
       end
 

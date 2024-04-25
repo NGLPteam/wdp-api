@@ -19,36 +19,43 @@ RSpec.describe "Query.user", type: :request do
     GRAPHQL
   end
 
-  let!(:token) { nil }
+  let_it_be(:existing_user, refind: true) { FactoryBot.create :user, :with_avatar }
 
-  let!(:graphql_variables) { {} }
-
-  def make_default_request!
-    make_graphql_request! query, token: token, variables: graphql_variables
-  end
-
-  context "as an admin" do
-    let(:token) { token_helper.build_token has_global_admin: true }
-
+  as_an_admin_user do
     context "with a valid slug" do
-      let!(:graphql_variables) { { slug: user.system_slug } }
+      let(:slug) { existing_user.system_slug }
 
-      let!(:user) { FactoryBot.create :user, :with_avatar }
+      let!(:graphql_variables) { { slug:, } }
 
-      it "has the right name" do
-        make_default_request!
+      let(:expected_shape) do
+        gql.query do |q|
+          q.prop :user do |u|
+            u[:name] = existing_user.name
+            u[:slug] = slug
+          end
+        end
+      end
 
-        expect_graphql_response_data user: { name: user.name, slug: user.system_slug }
+      it "has the right shape" do
+        expect_request! do |req|
+          req.data! expected_shape
+        end
       end
     end
 
     context "with an invalid slug" do
       let!(:graphql_variables) { { slug: random_slug } }
 
-      it "returns nil" do
-        make_default_request!
+      let(:expected_shape) do
+        gql.query do |q|
+          q[:user] = be_blank
+        end
+      end
 
-        expect_graphql_response_data user: nil
+      it "finds nothing" do
+        expect_request! do |req|
+          req.data! expected_shape
+        end
       end
     end
   end

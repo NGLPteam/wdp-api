@@ -38,7 +38,7 @@ class ImageUploader < Shrine
   end
 
   Attacher.derivatives do |original|
-    WDPAPI::Container["image_attachments.generate_derivatives"].call(original).value!
+    MeruAPI::Container["image_attachments.generate_derivatives"].call(original).value!
   end
 
   UploadedFile.include ImageAttachments::HasMetadata

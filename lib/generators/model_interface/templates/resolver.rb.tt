@@ -1,0 +1,24 @@
+<%-
+  # vim: set ft=ruby.eruby nosmartindent noautoindent :
+-%>
+# frozen_string_literal: true
+
+module Resolvers
+  # A resolver for a {<%= model_name %>}.
+  #
+  # @see <%= model_name %>
+  # @see <%= graphql_model_klass %>
+  class <%= resolver_name %> < AbstractResolver
+    include Resolvers::Enhancements::AppliesPolicyScope
+    include Resolvers::Enhancements::PageBasedPagination
+    <%- if use_custom_enum? -%>
+    include <%= order_concern_klass %>
+    <%- elsif simply_ordered? -%>
+    include Resolvers::Defaults::SimplyOrdered
+    <%- end -%>
+
+    type <%= graphql_model_klass %>.connection_type, null: false
+
+    scope { ::<%= model_name %>.all }
+  end
+end

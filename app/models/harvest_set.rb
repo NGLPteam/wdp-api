@@ -11,7 +11,7 @@ class HarvestSet < ApplicationRecord
 
   has_many_readonly :latest_harvest_attempt_links, inverse_of: :harvest_set
 
-  scope :by_identifier, ->(identifier) { where(identifier: identifier) }
+  scope :by_identifier, ->(identifier) { where(identifier:) }
 
   validates :identifier, uniqueness: { scope: %i[harvest_source_id] }
 end

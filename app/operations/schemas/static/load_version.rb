@@ -5,7 +5,7 @@ module Schemas
     class LoadVersion
       include Dry::Monads[:do, :result]
       include MonadicPersistence
-      include WDPAPI::Deps[validate_metaschema: "schemas.validate_metaschema"]
+      include MeruAPI::Deps[validate_metaschema: "schemas.validate_metaschema"]
 
       # @param [SchemaDefinition] definition
       # @param [Schemas::Static::Definitions::Version] static_version

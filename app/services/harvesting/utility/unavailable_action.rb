@@ -10,7 +10,7 @@ module Harvesting
         param :action_name, Dry::Types["symbol"]
       end
 
-      def call(*)
+      def call(...)
         Failure[:unavailable_action, "The #{type} #{name.inspect} does not implement #{action_name.inspect}"]
       end
     end

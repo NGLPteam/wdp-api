@@ -10,7 +10,7 @@ module Schemas
       class Compile
         include Dry::Effects::Handler.State(:joins)
         include Dry::Effects::Handler.Resolve
-        include WDPAPI::Deps[
+        include MeruAPI::Deps[
           encode_join: "schemas.orderings.order_builder.encode_join_name"
         ]
 
@@ -33,7 +33,7 @@ module Schemas
         # @return [<Arel::Nodes::Ordering>]
         def compile_all(order_definitions, invert: false)
           order_definitions.reduce([]) do |acc, order_definition|
-            orderings = order_definition.compile invert: invert
+            orderings = order_definition.compile(invert:)
 
             acc.concat orderings
           end
@@ -56,7 +56,7 @@ module Schemas
           expression = {}
 
           joins, _ = with_joins(joins) do
-            provide encode_join: encode_join, definition: definition do
+            provide(encode_join:, definition:) do
               yield expression
             end
           end

@@ -3,7 +3,7 @@
 module Schemas
   class ValidateMetaschema
     include Dry::Monads[:do, :result]
-    include WDPAPI::Deps[fetch: "schemas.fetch_latest_metaschema"]
+    include MeruAPI::Deps[fetch: "schemas.fetch_latest_metaschema"]
 
     def call(name, value)
       schema = yield fetch.call name

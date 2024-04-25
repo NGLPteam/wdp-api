@@ -27,7 +27,7 @@ RSpec.describe Mutations::CreateCollection, type: :request, graphql: :mutation d
     let(:token) { token_helper.build_token has_global_admin: true }
 
     let!(:community) { FactoryBot.create :community }
-    let!(:parent_collection) { FactoryBot.create :collection, community: community }
+    let!(:parent_collection) { FactoryBot.create :collection, community: }
     let!(:parent) { community }
 
     let(:alt_text) { "Some Alt Text" }

@@ -22,7 +22,7 @@ class Contributor < ApplicationRecord
   has_many :item_contributions, dependent: :destroy, inverse_of: :contributor
   has_many :items, through: :item_contributions
 
-  scope :by_kind, ->(kind) { where(kind: kind) }
+  scope :by_kind, ->(kind) { where(kind:) }
   scope :unharvested, -> { where.not(id: HarvestContributor.harvested_ids) }
 
   validates :identifier, :kind, presence: true
@@ -96,7 +96,7 @@ class Contributor < ApplicationRecord
     # @param [String] input
     # @return [ActiveRecord::Relation]
     def apply_prefix(input)
-      needle = WDPAPI::Container["searching.prefix_sanitize"].(input)
+      needle = MeruAPI::Container["searching.prefix_sanitize"].(input)
 
       return all if needle.blank?
 
@@ -107,7 +107,7 @@ class Contributor < ApplicationRecord
     end
 
     def by_given_and_family_name(given_name, family_name)
-      person.where(arel_json_contains(:properties, person: { given_name: given_name, family_name: family_name }))
+      person.where(arel_json_contains(:properties, person: { given_name:, family_name: }))
     end
 
     def by_organization_name(name)

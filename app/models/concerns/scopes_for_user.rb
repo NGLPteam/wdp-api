@@ -7,7 +7,7 @@ module ScopesForUser
     # @param [User, AnonymousUser, <User>, ActiveRecord::Relation<User>, nil] user
     # @return [ActiveRecord::Relation]
     def for_user(user)
-      recognized_user?(user) ? where(user: user) : for_anonymous_user
+      recognized_user?(user) ? where(user:) : for_anonymous_user
     end
 
     # @see {.for_user}

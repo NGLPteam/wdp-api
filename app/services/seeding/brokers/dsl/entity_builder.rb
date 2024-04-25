@@ -12,7 +12,7 @@ module Seeding
         # @param [String] declaration
         # @return [void]
         def handles_schema!(declaration, suppressed_properties: [])
-          @schemas[declaration] = Seeding::Brokers::SchemaBroker.new declaration, suppressed_properties: suppressed_properties
+          @schemas[declaration] = Seeding::Brokers::SchemaBroker.new(declaration, suppressed_properties:)
 
           return self
         end
@@ -21,7 +21,7 @@ module Seeding
         def add_schemas!
           schemas = Seeding::Brokers::SchemaBroker::Map[@schemas]
 
-          @attributes[:schemas] = Seeding::Brokers::SchemasBroker.new schemas: schemas
+          @attributes[:schemas] = Seeding::Brokers::SchemasBroker.new(schemas:)
         end
 
         # @return [void]

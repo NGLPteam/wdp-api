@@ -1,0 +1,90 @@
+<%-
+  # vim: set ft=ruby.eruby nosmartindent noautoindent :
+-%>
+# frozen_string_literal: true
+
+RSpec.describe "Query.<%= graphql_single_field_name %>", type: :request do
+<%- if tenant_schema? -%>
+  include_context "with tenant"
+
+<%- end -%>
+  let(:query) do
+    <<~GRAPHQL
+    query get<%= model_name %>($slug: Slug!) {
+      <%= graphql_single_field_name %>(slug: $slug) {
+        id
+        slug
+        <%- if has_title? -%>
+        title
+        <%- end -%>
+      }
+    }
+    GRAPHQL
+  end
+
+  let(:found_shape) do
+    gql.query do |q|
+      q.prop <%= field_single_name.inspect %> do |m|
+        m[:id] = be_an_encoded_id.of_an_existing_model
+        m[:slug] = be_an_encoded_slug
+        <%- if has_title? -%>
+        m[:title] = existing_model.title
+        <%- end -%>
+      end
+    end
+  end
+
+  let(:blank_shape) do
+    gql.query do |q|
+      q[<%= field_single_name.inspect %>] = be_blank
+    end
+  end
+
+  let!(:existing_model) { FactoryBot.create <%= model_factory.inspect %> }
+
+  let(:slug) { existing_model.system_slug }
+
+  let(:graphql_variables) do
+    { slug:, }
+  end
+
+  shared_examples "a found record" do
+    it "finds the <%= model_name %>" do
+      expect_request! do |req|
+        req.data! found_shape
+      end
+    end
+  end
+
+  shared_examples "a not found record" do
+    it "does not find the <%= model_name %>" do
+      expect_request! do |req|
+        req.data! blank_shape
+      end
+    end
+  end
+
+  as_a_regular_user do
+    context "when looking for an existing model" do
+      include_examples "a found record"
+    end
+
+    context "when looking for an unknown model" do
+      let(:slug) { random_slug }
+
+      include_examples "a not found record"
+    end
+  end
+
+  as_an_anonymous_user do
+    context "when looking for an existing model" do
+      include_examples "a found record"
+    end
+
+    context "when looking for an unknown model" do
+      let(:slug) { random_slug }
+
+      include_examples "a not found record"
+    end
+  end
+end

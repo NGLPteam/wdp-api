@@ -5,7 +5,7 @@ module Schemas
     # @see Schemas::Associations::FindMatchingVersions
     class RequireMatchingVersions
       include Dry::Monads[:result]
-      include WDPAPI::Deps[find_matching_versions: "schemas.associations.find_matching_versions"]
+      include MeruAPI::Deps[find_matching_versions: "schemas.associations.find_matching_versions"]
 
       # @param [Schemas::Associations::Association] association
       # @return [Dry::Monads::Success<SchemaVersion>]

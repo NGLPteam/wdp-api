@@ -4,9 +4,9 @@
 class PropertyHash
   include Enumerable
 
-  KEY_PATH = /\A[^.]+(?:\.[^.]+)+\z/.freeze
-  DOT_PATH = /\./.freeze
-  SINGLE_PATH = /\A[^.]+\z/.freeze
+  KEY_PATH = /\A[^.]+(?:\.[^.]+)+\z/
+  DOT_PATH = /\./
+  SINGLE_PATH = /\A[^.]+\z/
   DELETE = Object.new.freeze
 
   delegate :size, :length, to: :@inner

@@ -87,8 +87,8 @@ module MutationOperations
     # @yieldparam [Schemas::Edges::Matcher] matcher a dry-matcher
     # @yieldreturn [void]
     # @return [void]
-    def validate_edge(parent, child, &block)
-      WDPAPI::Container["schemas.edges.validate"].call(parent, child, &block)
+    def validate_edge(parent, child, &)
+      MeruAPI::Container["schemas.edges.validate"].call(parent, child, &)
     end
 
     # Retrieve the entity-ish value from a given `source` based on its `key`
@@ -159,7 +159,7 @@ module MutationOperations
       def derives_edge!(parent: :parent, child: :child, parent_source: :args, child_source: :args, skip_blank: false, on: :edge)
         config = EdgeConfiguration.new(
           key: on,
-          skip_blank: skip_blank,
+          skip_blank:,
           parent: build_edge_component(parent, parent_source, :parent),
           child: build_edge_component(child, child_source, :child),
         )
@@ -178,7 +178,7 @@ module MutationOperations
       def build_edge_component(key, source, type)
         valid_key = validate_edge_component_key key, source, type
 
-        ConnectionConfig.new key: valid_key, source: source, type: type
+        ConnectionConfig.new key: valid_key, source:, type:
       end
 
       def validate_edge_component_key(key, source, type)

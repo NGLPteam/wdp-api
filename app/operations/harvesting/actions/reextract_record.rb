@@ -6,7 +6,7 @@ module Harvesting
     #
     # @see Harvesting::Records::Reextract
     class ReextractRecord < Harvesting::BaseAction
-      include WDPAPI::Deps[
+      include MeruAPI::Deps[
         prepare_entities: "harvesting.records.prepare_entities",
         reextract: "harvesting.records.reextract",
         upsert_entities: "harvesting.records.upsert_entities",

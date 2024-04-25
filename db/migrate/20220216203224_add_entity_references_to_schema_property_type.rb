@@ -33,7 +33,7 @@ class AddEntityReferencesToSchemaPropertyType < ActiveRecord::Migration[6.1]
     drop_view :schema_definition_properties, materialized: true
 
     PROP_TYPES.each do |prop_type|
-      execute "DROP FUNCTION IF EXISTS #{prop_type.generate_fn_signature}"
+      execute "DROP FUNCTION IF EXISTS #{prop_type.generate_fn_signature} CASCADE"
     end
   end
 

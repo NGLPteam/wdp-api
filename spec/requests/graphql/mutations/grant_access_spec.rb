@@ -3,7 +3,7 @@
 RSpec.describe Mutations::GrantAccess, type: :request, graphql: :mutation do
   let!(:current_user) { FactoryBot.create :user }
 
-  let!(:token) { current_user.build_fake_token }
+  let!(:token) { token_helper.build_token(from_user: current_user) }
 
   mutation_query! <<~GRAPHQL
   mutation grantAccess($input: GrantAccessInput!) {
@@ -22,7 +22,7 @@ RSpec.describe Mutations::GrantAccess, type: :request, graphql: :mutation do
 
   let!(:community) { FactoryBot.create :community }
 
-  let!(:entity) { FactoryBot.create :collection, community: community }
+  let!(:entity) { FactoryBot.create :collection, community: }
   let!(:role) { reader }
   let!(:user) { FactoryBot.create :user }
 
@@ -126,7 +126,7 @@ RSpec.describe Mutations::GrantAccess, type: :request, graphql: :mutation do
 
   context "as a community manager" do
     before do
-      WDPAPI::Container["access.grant"].call(manager, on: community, to: current_user)
+      MeruAPI::Container["access.grant"].call(manager, on: community, to: current_user)
     end
 
     context "when granting reader access on an entity" do

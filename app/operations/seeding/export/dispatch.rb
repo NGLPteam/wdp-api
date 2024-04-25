@@ -4,7 +4,7 @@ module Seeding
   module Export
     class Dispatch
       include Dry::Effects::Handler.Interrupt(:skip, as: :catch_skip)
-      include WDPAPI::Deps[
+      include MeruAPI::Deps[
         export_entity: "seeding.export.export_entity",
         export_page: "seeding.export.export_page",
         export_relation: "seeding.export.export_relation",
@@ -28,7 +28,7 @@ module Seeding
           export_entity.(input)
         when ::Page
           export_page.(input)
-        when ActiveRecord::Relation, Models::Types::ModelList
+        when ActiveRecord::Relation, Support::Models::Types::ModelList
           export_relation.(input)
         end
       end

@@ -8,7 +8,7 @@ module Schemas
     # @see Schemas::Associations::FindMatchingVersions
     class FindAllMatchingVersions
       include Dry::Monads[:result]
-      include WDPAPI::Deps[find_matching_versions: "schemas.associations.find_matching_versions"]
+      include MeruAPI::Deps[find_matching_versions: "schemas.associations.find_matching_versions"]
 
       # @param [<Schemas::Associations::Association>] associations
       # @return [Dry::Monads::Success<SchemaVersion>]

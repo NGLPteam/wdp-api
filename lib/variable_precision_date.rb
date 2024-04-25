@@ -47,17 +47,17 @@ class VariablePrecisionDate
   private_constant :SQL_PRECISIONS
 
   # A regular expression for matching an encoded variable precision date in the database.
-  SQL_REPRESENTATION = /\A\([^,]*,(?:#{SQL_PRECISIONS})?\)\z/.freeze
+  SQL_REPRESENTATION = /\A\([^,]*,(?:#{SQL_PRECISIONS})?\)\z/
 
   private_constant :SQL_REPRESENTATION
 
-  ISO_8601 = /\A\d{4}\D\d{2}\D\d{2}\z/.freeze
+  ISO_8601 = /\A\d{4}\D\d{2}\D\d{2}\z/
 
   YEAR_INT = ->(o) { o.kind_of?(Integer) && o.to_s.length == 4 }
 
-  YEAR_ONLY = /\A(?<year>\d{4})\z/.freeze
+  YEAR_ONLY = /\A(?<year>\d{4})\z/
 
-  YEAR_MONTH = /\A(?<year>\d{4})\D(?<month>\d{2})\z/.freeze
+  YEAR_MONTH = /\A(?<year>\d{4})\D(?<month>\d{2})\z/
 
   XMLSCHEMA_TIME_FORMAT = /\A\s*
   (-?\d+)-(\d\d)-(\d\d)
@@ -65,7 +65,7 @@ class VariablePrecisionDate
   (\d\d):(\d\d):(\d\d)
   (\.\d+)?
   (Z|[+-]\d\d(?::?\d\d)?)?
-  \s*\z/ix.freeze
+  \s*\z/ix
 
   # @api private
   # An array of `===`-comparable objects that represent something that can be parsed into a {VariablePrecisionDate}.

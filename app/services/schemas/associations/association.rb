@@ -31,7 +31,7 @@ module Schemas
 
       # @return [SchemaDefinition, nil]
       def find_schema_definition
-        WDPAPI::Container["schemas.definitions.find"].(schema_definition_identifier).value_or(nil)
+        MeruAPI::Container["schemas.definitions.find"].(schema_definition_identifier).value_or(nil)
       end
 
       def has_version_requirement?
@@ -57,7 +57,7 @@ module Schemas
 
       # @param [SchemaVersion] schema
       def satisfied_by?(schema)
-        WDPAPI::Container["schemas.associations.satisfied_by"].call(self, schema).success?
+        MeruAPI::Container["schemas.associations.satisfied_by"].call(self, schema).success?
       end
 
       # @!attribute [r] schema_definition_identifier

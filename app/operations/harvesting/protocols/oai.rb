@@ -3,7 +3,7 @@
 module Harvesting
   module Protocols
     class OAI < BaseProtocol
-      include WDPAPI::Deps[
+      include MeruAPI::Deps[
         augment_middleware: "harvesting.oai.augment_middleware",
         extract_raw_metadata: "harvesting.oai.extract_raw_metadata",
         extract_raw_source: "harvesting.oai.extract_raw_source",

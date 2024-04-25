@@ -3,11 +3,15 @@
 module Types
   # @abstract
   class BaseArgument < GraphQL::Schema::Argument
-    def initialize(*args, attribute: false, transient: false, **kwargs, &block)
+    # @abstract
+    def initialize(*args, public_values: [], attribute: true, transient: false, replace_null_with_default: nil, **kwargs, &block)
       @attribute = attribute
       @transient = transient
+      @public_values = Array(public_values).flatten
 
-      super(*args, **kwargs, &block)
+      replace_null_with_default = !kwargs[:default_value].nil? if replace_null_with_default.nil?
+
+      super(*args, replace_null_with_default:, **kwargs, &block)
     end
 
     def attribute?
@@ -17,6 +21,18 @@ module Types
     # @return [<String>]
     def attribute_names(names: [], parent: nil)
       argument_paths_for_if(&:attribute?)
+    end
+
+    def authorized?(obj, arg_value, ctx)
+      if should_check_public_values?(ctx)
+        super && arg_value.in?(@public_values)
+      else
+        super
+      end
+    end
+
+    def has_public_values?
+      @public_values.present?
     end
 
     # @param [<String>] names
@@ -45,6 +61,10 @@ module Types
       else
         []
       end
+    end
+
+    def should_check_public_values?(ctx)
+      has_public_values? && !ctx[:current_user]&.has_admin_access?
     end
 
     # @return [<Symbol>]

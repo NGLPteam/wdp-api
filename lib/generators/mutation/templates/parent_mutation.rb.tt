@@ -1,0 +1,49 @@
+<%-
+  # vim: set ft=ruby.eruby nosmartindent noautoindent :
+-%>
+# frozen_string_literal: true
+
+module Mutations
+  # @abstract
+  # @see Mutations::Create<%= model_name %>
+  # @see Mutations::Update<%= model_name %>
+  class <%= parent_mutation_name %> < Mutations::BaseMutation
+    description <<~TEXT
+    A base mutation that is used to share fields between `create<%= model_name %>` and `update<%= model_name %>`.
+    TEXT
+
+    field <%= model_key.inspect %>, <%= graphql_model_type %>, null: true do
+      description <<~TEXT
+      The newly-modified <%= human_model_name %>, if successful.
+      TEXT
+    end
+<%- unless fields.empty? -%>
+
+<%- fields.each do |field| -%>
+    argument :<%= field[:name] %>, <%= field["type"] %>, required: <%= field["required"] %><% if field.key?("loads") -%>, loads: Types::<%= field["loads"] %><% end %> do
+      description <<~TEXT
+      <%= field[:description] || "TKTKTK" %>
+      TEXT
+    end
+<% end -%>
+<% end -%>
+ <%- if has_unique_title? -%>
+
+    argument :title, String, required: true do
+      description "The title for the <%= human_model_name %>. Must be globally unique."
+    end
+    <%- end -%>
+    <%- if has_unique_identifier? -%>
+
+    argument :identifier, String, required: true do
+      description "The identifier for the <%= human_model_name %>. Must be globally unique."
+    end
+    <%- end -%>
+    <%- if has_optional_description? -%>
+
+    argument :description, String, required: false do
+      description "The optional, human-readable description for the <%= human_model_name %>."
+    end
+    <%- end -%>
+  end
+end

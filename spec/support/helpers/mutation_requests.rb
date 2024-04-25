@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require_relative "./hash_setter"
-require_relative "./graphql_helpers"
+require_relative "hash_setter"
+require_relative "graphql_helpers"
 
 module TestHelpers
   MutationInputHelpers = TestHelpers::HashSetter.new :mutation_input

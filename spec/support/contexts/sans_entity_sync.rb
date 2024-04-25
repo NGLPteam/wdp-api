@@ -8,10 +8,10 @@ RSpec.shared_context "sans entity sync" do
   end
 
   before(:all) do
-    WDPAPI::Container.stub("entities.sync", fake_entity_sync)
+    MeruAPI::Container.stub("entities.sync", fake_entity_sync)
   end
 
   after(:all) do
-    WDPAPI::Container.unstub("entities.sync")
+    MeruAPI::Container.unstub("entities.sync")
   end
 end

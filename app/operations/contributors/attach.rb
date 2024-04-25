@@ -3,7 +3,7 @@
 module Contributors
   class Attach
     include Dry::Monads[:result, :do]
-    include WDPAPI::Deps[
+    include MeruAPI::Deps[
       attach_collection: "contributors.attach_collection",
       attach_item: "contributors.attach_item",
     ]

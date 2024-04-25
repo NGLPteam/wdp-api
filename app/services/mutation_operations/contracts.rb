@@ -94,12 +94,12 @@ module MutationOperations
       end
 
       # @param [String, Symbol] name The name of an existing contract in the
-      #   WDPAPI container (defined under "mutations.contracts.")
+      #   MeruAPI container (defined under "mutations.contracts.")
       # @return [Dry::Validation::Contract]
       def lookup_mutation_contract(name)
         full_name = "mutations.contracts.#{name}"
 
-        check_contract! WDPAPI::Container[full_name]
+        check_contract! MeruAPI::Container[full_name]
       rescue Dry::Container::Error
         raise ArgumentError, "Could not find mutation contract: #{full_name}"
       end

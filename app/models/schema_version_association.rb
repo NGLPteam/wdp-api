@@ -10,9 +10,9 @@ class SchemaVersionAssociation < ApplicationRecord
   belongs_to :source, class_name: "SchemaVersion"
   belongs_to :target, class_name: "SchemaVersion"
 
-  scope :by_name, ->(name) { where(name: name) }
-  scope :by_source, ->(source) { where(source: source) }
-  scope :by_target, ->(target) { where(target: target) }
+  scope :by_name, ->(name) { where(name:) }
+  scope :by_source, ->(source) { where(source:) }
+  scope :by_target, ->(target) { where(target:) }
 
   validates :name, presence: true, uniqueness: { scope: %i[source_id target_id] }
 end

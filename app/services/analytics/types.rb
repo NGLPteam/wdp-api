@@ -24,9 +24,9 @@ module Analytics
         ::Time.find_zone value
       end
     end.fallback do
-      WDPAPI::Container["system.time_zone"]
+      MeruAPI::Container["system.time_zone"]
     end.default do
-      WDPAPI::Container["system.time_zone"]
+      MeruAPI::Container["system.time_zone"]
     end
 
     User = Users::Types::Current

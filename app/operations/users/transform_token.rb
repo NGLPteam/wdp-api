@@ -2,7 +2,7 @@
 
 module Users
   class TransformToken
-    include WDPAPI::Deps[encode_id: "slugs.encode_id"]
+    include MeruAPI::Deps[encode_id: "slugs.encode_id"]
 
     # @param [KeycloakRack::DecodedToken] token
     # @return [{ Symbol => Object }]

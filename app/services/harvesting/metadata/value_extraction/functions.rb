@@ -34,7 +34,7 @@ module Harvesting
             Bool[input]
           end
 
-          # Call an operation within the `WDPAPI::Container`. It must take only one
+          # Call an operation within the `MeruAPI::Container`. It must take only one
           # argument and either handle its own exceptions or risk interrupting the
           # pipeline.
           #
@@ -44,7 +44,7 @@ module Harvesting
           # @param [String] operation_name the name of an operation in the WDP-API container
           # @return [Object] the return value of the operation (probably a monad)
           def call_operation(input, operation_name)
-            WDPAPI::Container[operation_name].call(input)
+            MeruAPI::Container[operation_name].call(input)
           end
 
           # Attempt to call a method chain in the provided `input`.
@@ -55,7 +55,7 @@ module Harvesting
           # @raise [PipelineError]
           # @return [Object]
           def chain(input, method_chain)
-            WDPAPI::Container["utility.chain_method"].call(input, method_chain)
+            MeruAPI::Container["utility.chain_method"].call(input, method_chain)
           rescue NoMethodError => e
             raise PipelineError, e.message
           end
@@ -147,8 +147,8 @@ module Harvesting
           def full_text_reference(kind, content)
             {
               lang: "en",
-              kind: kind,
-              content: content
+              kind:,
+              content:
             }
           end
 
@@ -254,34 +254,42 @@ module Harvesting
           alias filter_array select_array
 
           # @param [String] name
+          # @param [Hash] options
           # @param [#to_s] kind the kind of contribution
           # @return [Harvesting::Contributions::Proxy]
-          def parse_organization_contribution(name, kind: "organization")
-            unwrap_or_nil! WDPAPI::Container["harvesting.contributions.simple_parse"].call(name, kind: kind, contributor_kind: :organization)
+          def parse_organization_contribution(name, options = {})
+            options.reverse_merge! kind: "organization"
+
+            options => { kind:, }
+
+            unwrap_or_nil! MeruAPI::Container["harvesting.contributions.simple_parse"].call(name, kind:, contributor_kind: :organization)
           end
 
           # @param [<String>] arr
-          # @param [#to_s] kind the kind of contribution
           # @return [<Harvesting::Contributions::Proxy>]
-          def parse_organization_contributions(arr, kind: "organization")
+          def parse_organization_contributions(arr, options = {})
             arr.map do |name|
-              parse_organization_contribution name, kind: kind
+              parse_organization_contribution name, options
             end
           end
 
           # @param [String] name
           # @param [#to_s] kind the kind of contribution
           # @return [Harvesting::Contributions::Proxy]
-          def parse_person_contribution(name, kind: "author")
-            unwrap_or_nil! WDPAPI::Container["harvesting.contributions.simple_parse"].call(name, kind: kind, contributor_kind: :person)
+          def parse_person_contribution(name, options = {})
+            options.reverse_merge! kind: "author"
+
+            options => { kind:, }
+
+            unwrap_or_nil! MeruAPI::Container["harvesting.contributions.simple_parse"].call(name, kind:, contributor_kind: :person)
           end
 
           # @param [<String>] arr
           # @param [#to_s] kind the kind of contribution
           # @return [<Harvesting::Contributions::Proxy>]
-          def parse_people_contributions(arr, kind: "author")
+          def parse_people_contributions(arr, options = {})
             arr.map do |name|
-              parse_person_contribution name, kind: kind
+              parse_person_contribution name, options
             end
           end
 

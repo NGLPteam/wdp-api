@@ -5,7 +5,7 @@ module Harvesting
     module Formats
       # The entry point for processing OAI Dublin-Core-formatted records.
       class OAIDC < Harvesting::Metadata::BaseFormat
-        include WDPAPI::Deps[
+        include MeruAPI::Deps[
           augment_middleware: "harvesting.metadata.oaidc.augment_middleware",
           extract_entities: "harvesting.metadata.oaidc.extract_entities",
           parse: "harvesting.metadata.oaidc.parse",

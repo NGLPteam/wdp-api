@@ -12,6 +12,6 @@ class CommunityMembership < ApplicationRecord
   def sync_access_grant!
     return if role.blank?
 
-    WDPAPI::Container["access.grant"].call(role, on: community, to: user).value!
+    MeruAPI::Container["access.grant"].call(role, on: community, to: user).value!
   end
 end

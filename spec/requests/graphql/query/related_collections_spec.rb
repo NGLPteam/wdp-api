@@ -50,10 +50,8 @@ RSpec.describe "Query.collection.relatedCollections", type: :request do
   end
 
   it "returns the right results" do
-    expect do
-      make_default_request!
-    end.to execute_safely
-
-    expect_graphql_response_data expected_shape, decamelize: true
+    expect_request! do |req|
+      req.data! expected_shape
+    end
   end
 end

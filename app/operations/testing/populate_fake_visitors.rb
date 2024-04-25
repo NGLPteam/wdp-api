@@ -6,7 +6,7 @@ module Testing
   class PopulateFakeVisitors
     include Dry::Monads[:result]
 
-    include WDPAPI::Deps[
+    include MeruAPI::Deps[
       random_ip_address: "testing.random_ip_address",
     ]
 

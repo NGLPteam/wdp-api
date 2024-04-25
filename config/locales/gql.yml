@@ -1,0 +1,10 @@
+---
+en:
+  gql:
+    resolvers:
+      user:
+        options:
+          prefix:
+            description: >
+              Search for users with given OR family names that start with the provided text.
+

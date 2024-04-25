@@ -18,6 +18,7 @@ ActiveSupport::Inflector.inflections(:en) do |inflect|
   inflect.acronym "CRUD"
   inflect.acronym "DOI"
   inflect.acronym "DSL"
+  inflect.acronym "GraphQL"
   inflect.acronym "ISBN"
   inflect.acronym "ISSN"
   inflect.acronym "IP"
@@ -33,8 +34,8 @@ ActiveSupport::Inflector.inflections(:en) do |inflect|
   inflect.acronym "PDF"
   inflect.acronym "PREMIS"
   inflect.acronym "URL"
-  inflect.acronym "WDPAPISchema"
-  inflect.acronym "WDPAPI"
+  inflect.acronym "APISchema"
+  inflect.acronym "MeruAPI"
   inflect.acronym "XML"
   inflect.acronym "XPath"
 

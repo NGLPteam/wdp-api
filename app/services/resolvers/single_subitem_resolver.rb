@@ -2,10 +2,8 @@
 
 module Resolvers
   # A resolver for getting the first-matching {Item} below a {Item}.
-  class SingleSubitemResolver < GraphQL::Schema::Resolver
-    include SearchObject.module(:graphql)
-
-    include Resolvers::FirstMatching
+  class SingleSubitemResolver < AbstractResolver
+    include Resolvers::Enhancements::FirstMatching
     include Resolvers::OrderedAsEntity
     include Resolvers::Subtreelike
 

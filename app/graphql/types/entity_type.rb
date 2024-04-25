@@ -106,17 +106,17 @@ module Types
       description: "A representative thumbnail for the entity, suitable for displaying in lists, tables, grids, etc."
 
     # @see HierarchicalEntity#entity_links
-    # @see Loaders::AssociationLoader
+    # @see Support::Loaders::AssociationLoader
     # @return [ActiveRecord::Relation<EntityLink>]
     def links
-      Loaders::AssociationLoader.for(object.class, :entity_links).load(object)
+      Support::Loaders::AssociationLoader.for(object.class, :entity_links).load(object)
     end
 
     # @see HierarchicalEntity#hierarchical_schema_ranks
-    # @see Loaders::AssociationLoader
+    # @see Support::Loaders::AssociationLoader
     # @return [<HierarchicalSchemaRank>]
     def schema_ranks
-      Loaders::AssociationLoader.for(object.class, :hierarchical_schema_ranks).load(object)
+      Support::Loaders::AssociationLoader.for(object.class, :hierarchical_schema_ranks).load(object)
     end
 
     # @!group Contextual Permission Support
@@ -176,7 +176,7 @@ module Types
 
     # @return [Ordering, nil]
     def initial_ordering
-      Loaders::AssociationLoader.for(object.class, :initial_ordering).load(object)
+      Support::Loaders::AssociationLoader.for(object.class, :initial_ordering).load(object)
     end
 
     # @param [String] slug
@@ -188,7 +188,7 @@ module Types
     # @param [String] slug
     # @return [Announcement, nil]
     def announcement(slug:)
-      Loaders::RecordLoader.for(Announcement).load(slug)
+      Support::Loaders::RecordLoader.for(Announcement).load(slug)
     end
   end
 end

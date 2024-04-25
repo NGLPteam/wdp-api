@@ -4,7 +4,7 @@ module Seeding
   class ImportVendoredJob < ApplicationJob
     queue_as :maintenance
 
-    unique :until_and_while_executing, lock_ttl: 1.hour, on_conflict: :log
+    unique_job! by: :first_arg
 
     # @param [#to_s] name
     # @return [void]

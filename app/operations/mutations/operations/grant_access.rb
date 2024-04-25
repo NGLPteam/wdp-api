@@ -7,7 +7,7 @@ module Mutations
     # @see Mutations::Contracts::GrantAccess
     class GrantAccess
       include MutationOperations::Base
-      include WDPAPI::Deps[grant_access: "access.grant"]
+      include MeruAPI::Deps[grant_access: "access.grant"]
 
       use_contract! :grant_access
 

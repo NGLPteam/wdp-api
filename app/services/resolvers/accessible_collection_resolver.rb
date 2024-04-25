@@ -1,11 +1,9 @@
 # frozen_string_literal: true
 
 module Resolvers
-  class AccessibleCollectionResolver < GraphQL::Schema::Resolver
-    include SearchObject.module(:graphql)
-
+  class AccessibleCollectionResolver < AbstractResolver
     include Resolvers::FiltersByEntityPermission
-    include Resolvers::PageBasedPagination
+    include Resolvers::Enhancements::PageBasedPagination
     include Resolvers::OrderedAsEntity
     include Resolvers::Treelike
 

@@ -5,7 +5,7 @@ module Mutations
     # @see Mutations::Operations::ClearInitialOrdering
     class ClearInitialOrdering < MutationOperations::Contract
       json do
-        required(:entity).filled(Models::Types::Model)
+        required(:entity).filled(Support::Models::Types::Model)
       end
 
       rule(:entity).validate(:entity)

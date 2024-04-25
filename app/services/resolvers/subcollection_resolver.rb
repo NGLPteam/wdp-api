@@ -2,10 +2,8 @@
 
 module Resolvers
   # A resolver for getting {Collection}s below a {Collection}.
-  class SubcollectionResolver < GraphQL::Schema::Resolver
-    include SearchObject.module(:graphql)
-
-    include Resolvers::PageBasedPagination
+  class SubcollectionResolver < AbstractResolver
+    include Resolvers::Enhancements::PageBasedPagination
     include Resolvers::OrderedAsEntity
     include Resolvers::Subtreelike
 

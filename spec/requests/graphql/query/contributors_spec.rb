@@ -6,8 +6,8 @@ RSpec.describe "Query.contributors", type: :request, disable_ordering_refresh: t
   def create_person_contributor_at(time, item_count:, **attributes)
     Timecop.freeze time do
       FactoryBot.create(:contributor, :person, **attributes).tap do |contributor|
-        FactoryBot.create_list(:item, item_count, collection: collection).map do |item|
-          FactoryBot.create :item_contribution, contributor: contributor, item: item
+        FactoryBot.create_list(:item, item_count, collection:).map do |item|
+          FactoryBot.create :item_contribution, contributor:, item:
         end
       end
     end
@@ -46,7 +46,7 @@ RSpec.describe "Query.contributors", type: :request, disable_ordering_refresh: t
 
     let_it_be(:community) { FactoryBot.create :community }
 
-    let_it_be(:collection) { FactoryBot.create :collection, community: community }
+    let_it_be(:collection) { FactoryBot.create :collection, community: }
 
     let_it_be(:contributor_asimov) do
       create_person_contributor_at(1.day.ago, item_count: 5, given_name: "Isaac", family_name: "Asimov", affiliation: "everything")
@@ -78,7 +78,7 @@ RSpec.describe "Query.contributors", type: :request, disable_ordering_refresh: t
 
     let!(:graphql_variables) do
       {
-        order: order,
+        order:,
         prefix: search_prefix,
       }
     end

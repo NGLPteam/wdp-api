@@ -49,8 +49,8 @@ module Harvesting
         #
         # @see Harvesting::Metadata::ValueExtraction::DSL::Builder
         # @return [void]
-        def extract_values!(&block)
-          extractor = Harvesting::Metadata::ValueExtraction::DSL::Builder.new(self).build(&block)
+        def extract_values!(&)
+          extractor = Harvesting::Metadata::ValueExtraction::DSL::Builder.new(self).build(&)
 
           value_extractor extractor
         end

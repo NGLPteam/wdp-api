@@ -2,7 +2,7 @@
 
 RSpec.describe Harvesting::Dispatch::BuildMetadataFormat, type: :operation do
   def format_proxy(name)
-    WDPAPI::Container["harvesting.metadata.formats.#{name}"]
+    MeruAPI::Container["harvesting.metadata.formats.#{name}"]
   end
 
   def succeed_with_format(name)

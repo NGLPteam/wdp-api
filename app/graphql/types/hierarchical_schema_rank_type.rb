@@ -32,11 +32,11 @@ module Types
       description: "A reference to the schema versions from this ranking"
 
     def schema_definition
-      Loaders::AssociationLoader.for(object.class, :schema_definition).load(object)
+      Support::Loaders::AssociationLoader.for(object.class, :schema_definition).load(object)
     end
 
     def version_ranks
-      Loaders::AssociationLoader.for(object.class, :hierarchical_schema_version_ranks).load(object)
+      Support::Loaders::AssociationLoader.for(object.class, :hierarchical_schema_version_ranks).load(object)
     end
   end
 end

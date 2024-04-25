@@ -4,7 +4,7 @@ module Harvesting
   module Dispatch
     class BuildMetadataFormat
       include Dry::Monads[:result]
-      include WDPAPI::Deps[
+      include MeruAPI::Deps[
         jats: "harvesting.metadata.formats.jats",
         mets: "harvesting.metadata.formats.mets",
         mods: "harvesting.metadata.formats.mods",

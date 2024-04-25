@@ -2,10 +2,8 @@
 
 module Resolvers
   # @see RelatedCollectionLink
-  class RelatedCollectionResolver < GraphQL::Schema::Resolver
-    include SearchObject.module(:graphql)
-
-    include Resolvers::PageBasedPagination
+  class RelatedCollectionResolver < AbstractResolver
+    include Resolvers::Enhancements::PageBasedPagination
     include Resolvers::OrderedAsEntity
 
     description "Retrieve linked collections of the same schema type"

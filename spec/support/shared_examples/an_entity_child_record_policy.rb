@@ -7,7 +7,7 @@ RSpec.shared_examples_for "an entity child record policy" do
 
   let!(:entity) { FactoryBot.create :collection }
 
-  let!(:record) { FactoryBot.create :record, entity: entity }
+  let!(:record) { FactoryBot.create :record, entity: }
 
   let!(:editor_role) { FactoryBot.create :role, :editor }
 

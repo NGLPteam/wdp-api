@@ -6,7 +6,7 @@ RSpec.describe "Query.roles", type: :request do
   let!(:graphql_variables) { {} }
 
   def make_default_request!
-    make_graphql_request! query, token: token, variables: graphql_variables
+    make_graphql_request! query, token:, variables: graphql_variables
   end
 
   context "when ordering" do
@@ -53,7 +53,7 @@ RSpec.describe "Query.roles", type: :request do
 
     let!(:order) { "RECENT" }
 
-    let!(:graphql_variables) { { order: order } }
+    let!(:graphql_variables) { { order: } }
 
     let!(:query) do
       <<~GRAPHQL
@@ -99,12 +99,12 @@ RSpec.describe "Query.roles", type: :request do
       end
 
       let!(:reps) { keys.map { |k| keyed_models.fetch(k) } }
-      let!(:edges) { reps.map { |node| { node: node } } }
+      let!(:edges) { reps.map { |node| { node: } } }
 
       let!(:expected_shape) do
         {
           roles: {
-            edges: edges,
+            edges:,
             page_info: { total_count: keyed_models.size },
           },
         }

@@ -8,13 +8,13 @@ module Entities
 
     include JobIteration::Iteration
 
-    unique :until_and_while_executing, lock_ttl: 3.hours, on_conflict: :log
+    unique_job! by: :job
 
     # @return [void]
     def build_enumerator(cursor:)
       enumerator_builder.active_record_on_records(
         ::Entity.real.preload(:hierarchical),
-        cursor: cursor,
+        cursor:,
       )
     end
 

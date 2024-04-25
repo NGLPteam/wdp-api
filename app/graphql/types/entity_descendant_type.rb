@@ -19,7 +19,7 @@ module Types
 
     # @return [HierarchicalEntity]
     def descendant
-      Loaders::AssociationLoader.for(object.class, :descendant).load(object)
+      Support::Loaders::AssociationLoader.for(object.class, :descendant).load(object)
     end
   end
 end

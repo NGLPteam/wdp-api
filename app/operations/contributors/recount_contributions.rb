@@ -3,7 +3,7 @@
 module Contributors
   class RecountContributions
     include Dry::Monads[:result, :do]
-    include WDPAPI::Deps[
+    include MeruAPI::Deps[
       count_collections: "contributors.count_collections",
       count_items: "contributors.count_items",
     ]

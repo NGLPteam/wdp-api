@@ -7,7 +7,7 @@ module Harvesting
     # @api private
     # @note This is intended for debugging and may not be a part of the final Harvesting API.
     class UpsertEntity < Harvesting::BaseAction
-      include WDPAPI::Deps[
+      include MeruAPI::Deps[
         upsert_entity: "harvesting.entities.upsert",
       ]
 

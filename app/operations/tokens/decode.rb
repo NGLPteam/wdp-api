@@ -21,7 +21,7 @@ module Tokens
 
       jwks = { keys: [jwk.export] }
 
-      decode_headers = { algorithms: ["RS512"], jwks: jwks }
+      decode_headers = { algorithms: ["RS512"], jwks: }
 
       if aud.present?
         decode_headers[:aud] = aud

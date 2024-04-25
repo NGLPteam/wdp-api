@@ -5,7 +5,7 @@ module Harvesting
     class BuildProtocol
       include Dry::Monads[:result]
 
-      include WDPAPI::Deps[
+      include MeruAPI::Deps[
         oai: "harvesting.protocols.oai",
       ]
 

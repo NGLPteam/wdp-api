@@ -6,7 +6,7 @@ RSpec.describe Schemas::Instances::RefreshOrderings, type: :operation do
   end
 
   let_it_be(:journal) do
-    FactoryBot.create :collection, schema: "nglp:journal", community: community
+    FactoryBot.create :collection, schema: "nglp:journal", community:
   end
 
   let_it_be(:volume) do
@@ -33,7 +33,7 @@ RSpec.describe Schemas::Instances::RefreshOrderings, type: :operation do
   end
 
   let(:operation) do
-    described_class.new refresh: refresh_ordering, calculate_initial: calculate_initial
+    described_class.new refresh: refresh_ordering, calculate_initial:
   end
 
   context "when refreshing an issue" do

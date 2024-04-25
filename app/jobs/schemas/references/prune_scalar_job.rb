@@ -12,7 +12,7 @@ module Schemas
       def build_enumerator(cursor:)
         enumerator_builder.active_record_on_records(
           SchematicScalarReference.to_prune,
-          cursor: cursor,
+          cursor:,
         )
       end
 

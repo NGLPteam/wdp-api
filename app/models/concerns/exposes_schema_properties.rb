@@ -21,7 +21,7 @@ module ExposesSchemaProperties
   # @param [Schemas::Properties::Context, nil] context
   # @return [Dry::Monads::Success<Schemas::Properties::Reader, Schemas::Properties::GroupReader>]
   def read_properties(context: nil)
-    call_operation("schemas.properties.to_readers", self, context: context)
+    call_operation("schemas.properties.to_readers", self, context:)
   end
 
   # Generate a reader for a single property.
@@ -33,7 +33,7 @@ module ExposesSchemaProperties
   # @return [Dry::Monads::Success(Schemas::Properties::GroupReader)]
   # @return [Dry::Monads::Failure(Symbol, String)]
   def read_property(full_path, context: nil)
-    call_operation("schemas.properties.fetch_reader", self, full_path, context: context)
+    call_operation("schemas.properties.fetch_reader", self, full_path, context:)
   end
 
   # Fetch a reader for a property known to exist, or raise an error.
@@ -44,7 +44,7 @@ module ExposesSchemaProperties
   # @raise [Dry::Monads::UnwrapError]
   # @return [Schemas::Properties::Reader, Schemas::Properties::GroupReader]
   def read_property!(full_path, context: nil)
-    read_property(full_path, context: context).value!
+    read_property(full_path, context:).value!
   end
 
   # Fetch the property context for this model's schema.
@@ -66,7 +66,7 @@ module ExposesSchemaProperties
   # @param [Schemas::Properties::Context, nil] context
   # @return [Dry::Monads::Result]
   def read_property_value(full_path, context: nil)
-    read_property(full_path, context: context).tee(&:must_be_scalar).fmap(&:value)
+    read_property(full_path, context:).tee(&:must_be_scalar).fmap(&:value)
   end
 
   # Read the value for a property known to exist, or raise an error.
@@ -77,7 +77,7 @@ module ExposesSchemaProperties
   # @raise [Dry::Monads::UnwrapError]
   # @return [Object]
   def read_property_value!(full_path, context: nil)
-    read_property_value(full_path, context: context).value!
+    read_property_value(full_path, context:).value!
   end
 
   # @api private

@@ -2,9 +2,7 @@
 
 module Types
   # A GraphQL input type for {Schemas::Orderings::SelectLinkDefinition}.
-  class OrderingSelectLinkDefinitionInputType < Types::BaseInputObject
-    include AutoHash
-
+  class OrderingSelectLinkDefinitionInputType < Types::HashInputObject
     description <<~TEXT
     Describe how an ordering should select its links.
     TEXT

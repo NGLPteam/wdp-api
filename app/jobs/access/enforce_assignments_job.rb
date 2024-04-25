@@ -5,7 +5,7 @@ module Access
   class EnforceAssignmentsJob < ApplicationJob
     queue_as :permissions
 
-    unique :until_and_while_executing, lock_ttl: 10.minutes, on_conflict: :log
+    unique_job! by: :job
 
     # @return [void]
     def perform

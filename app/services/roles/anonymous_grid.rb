@@ -5,7 +5,7 @@ module Roles
   class AnonymousGrid < Dry::Struct
     include Dry::Core::Memoizable
 
-    PATTERN = /\A(?:(?<scope>.+)\.)?(?<name>[^.]+)\z/.freeze
+    PATTERN = /\A(?:(?<scope>.+)\.)?(?<name>[^.]+)\z/
 
     attribute :available_actions, Roles::Types::PermissionList
     attribute :allowed_actions, Roles::Types::PermissionList
@@ -19,7 +19,7 @@ module Roles
 
         next if name.blank?
 
-        attrs = { name: name, scope: scope }
+        attrs = { name:, scope: }
 
         attrs[:allowed] = action.in?(allowed_actions)
 

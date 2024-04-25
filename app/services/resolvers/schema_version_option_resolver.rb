@@ -1,9 +1,7 @@
 # frozen_string_literal: true
 
 module Resolvers
-  class SchemaVersionOptionResolver < GraphQL::Schema::Resolver
-    include SearchObject.module(:graphql)
-
+  class SchemaVersionOptionResolver < AbstractResolver
     include Resolvers::BySchemaKind
 
     type [Types::SchemaVersionOptionType, { null: false }], null: false

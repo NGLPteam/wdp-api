@@ -4,7 +4,7 @@ module Harvesting
   module Actions
     # Upsert all {HarvestEntity staged entities} from a {HarvestAttempt}.
     class UpsertAllEntities < Harvesting::BaseAction
-      include WDPAPI::Deps[
+      include MeruAPI::Deps[
         upsert_entities: "harvesting.actions.upsert_entities"
       ]
 
@@ -21,7 +21,7 @@ module Harvesting
       # @return [Dry::Monads::Result]
       def perform(harvest_attempt, reprepare: false)
         harvest_attempt.harvest_records.find_each do |harvest_record|
-          yield upsert_entities.call(harvest_record, reprepare: reprepare)
+          yield upsert_entities.call(harvest_record, reprepare:)
         end
 
         return Success()

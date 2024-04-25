@@ -2,7 +2,7 @@
 
 # A namespace for referring back to our dry-rails containers and auto_inject objects.
 module Common
-  Container = WDPAPI::Container
+  Container = MeruAPI::Container
 
-  Deps = WDPAPI::Deps
+  Deps = MeruAPI::Deps
 end

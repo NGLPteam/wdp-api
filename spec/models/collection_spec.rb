@@ -17,7 +17,7 @@ RSpec.describe Collection, type: :model do
 
       it "creates the orderings defined in the schema" do
         expect do
-          FactoryBot.create :collection, community: community, schema_version: simple_collection_v1
+          FactoryBot.create :collection, community:, schema_version: simple_collection_v1
         end.to change(described_class, :count).by(1).and change(Ordering, :count).by(2)
       end
     end

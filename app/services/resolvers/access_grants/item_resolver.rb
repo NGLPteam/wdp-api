@@ -2,11 +2,9 @@
 
 module Resolvers
   module AccessGrants
-    class ItemResolver < GraphQL::Schema::Resolver
-      include SearchObject.module(:graphql)
-
+    class ItemResolver < AbstractResolver
       include Resolvers::FiltersByAccessGrantSubject
-      include Resolvers::PageBasedPagination
+      include Resolvers::Enhancements::PageBasedPagination
       include Resolvers::SimplyOrdered
 
       type Types::AnyItemAccessGrantType.connection_type, null: false

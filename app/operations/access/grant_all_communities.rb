@@ -2,7 +2,7 @@
 
 module Access
   class GrantAllCommunities
-    include WDPAPI::Deps[grant: "access.grant"]
+    include MeruAPI::Deps[grant: "access.grant"]
     include Dry::Monads[:result, :do]
 
     # @param [AccessGrantSubject] subject

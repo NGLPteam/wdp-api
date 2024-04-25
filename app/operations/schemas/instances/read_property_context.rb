@@ -17,7 +17,7 @@ module Schemas
         options[:full_texts] = schema_instance.schematic_texts.to_reference_map
         options[:scalar_references] = schema_instance.schematic_scalar_references.to_reference_map
 
-        Schemas::Properties::Context.new options
+        Schemas::Properties::Context.new **options
       end
     end
   end

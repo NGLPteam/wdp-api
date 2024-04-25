@@ -10,7 +10,7 @@ RSpec.describe Schemas::Orderings::PathOptions::Fetch, type: :operation do
   let!(:schemas) { [] }
 
   let!(:operation_args) do
-    { schemas: schemas }
+    { schemas: }
   end
 
   matcher :have_the_expected_property_count do
@@ -27,7 +27,7 @@ RSpec.describe Schemas::Orderings::PathOptions::Fetch, type: :operation do
 
   shared_examples_for "a valid set of args" do
     it "has the expected count of properties" do
-      expect_calling_with(operation_args).to have_the_expected_property_count
+      expect_calling_with(**operation_args).to have_the_expected_property_count
     end
   end
 
@@ -61,7 +61,7 @@ RSpec.describe Schemas::Orderings::PathOptions::Fetch, type: :operation do
     let(:expected_schema_property_count) { 0 }
 
     it "has no schema properties in the result" do
-      expect_calling_with(operation_args).to have_the_expected_property_count
+      expect_calling_with(**operation_args).to have_the_expected_property_count
     end
   end
 end

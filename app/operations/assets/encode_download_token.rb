@@ -3,7 +3,7 @@
 module Assets
   class EncodeDownloadToken
     include Dry::Monads[:do, :result]
-    include WDPAPI::Deps[
+    include MeruAPI::Deps[
       encode: "tokens.encode",
     ]
 

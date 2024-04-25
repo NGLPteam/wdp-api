@@ -24,8 +24,8 @@ FactoryBot.define do
       properties do
         {
           organization: {
-            legal_name: legal_name,
-            location: location
+            legal_name:,
+            location:
           }
         }
       end
@@ -44,10 +44,10 @@ FactoryBot.define do
       properties do
         {
           person: {
-            given_name: given_name,
-            family_name: family_name,
-            title: title,
-            affiliation: affiliation
+            given_name:,
+            family_name:,
+            title:,
+            affiliation:
           }
         }
       end

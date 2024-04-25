@@ -19,10 +19,10 @@ module TestHelpers
         order = clear_previous ? [] : Array(defn[:order])
 
         order += paths.map do |path|
-          { path: path, direction: direction, nulls: nulls }
+          { path:, direction:, nulls: }
         end
 
-        defn.merge(order: order)
+        defn.merge(order:)
       end
     end
 
@@ -54,7 +54,7 @@ module TestHelpers
 
     def set_ordering_paths!(ordering, *paths, direction: :asc, nulls: :last)
       mutate_ordering! ordering do |om|
-        om.add_paths_to ordering, *paths, direction: direction, nulls: nulls, clear_previous: true
+        om.add_paths_to ordering, *paths, direction:, nulls:, clear_previous: true
       end
     end
   end

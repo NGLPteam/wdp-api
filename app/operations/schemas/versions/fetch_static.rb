@@ -7,7 +7,7 @@ module Schemas
     # @see Schemas::Definitions::FetchStatic
     class FetchStatic
       include Dry::Monads[:result, :do]
-      include WDPAPI::Deps[
+      include MeruAPI::Deps[
         fetch_versions: "schemas.definitions.fetch_static"
       ]
 

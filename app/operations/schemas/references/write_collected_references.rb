@@ -36,7 +36,7 @@ module Schemas
         base_columns = {
           referrer_type: referrer.model_name.to_s,
           referrer_id: referrer.id,
-          path: path
+          path:
         }
 
         attributes = referents.map.with_index do |referent, i|
@@ -45,7 +45,7 @@ module Schemas
           base_columns.merge(
             referent_type: referent.model_name.to_s,
             referent_id: referent.id,
-            position: position
+            position:
           )
         end
 

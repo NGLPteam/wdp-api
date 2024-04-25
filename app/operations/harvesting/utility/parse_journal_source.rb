@@ -6,7 +6,7 @@ module Harvesting
     #
     # @see Harvesting::Utility::ParsedJournalSource
     class ParseJournalSource
-      include WDPAPI::Deps[
+      include MeruAPI::Deps[
         extract_year: "harvesting.utility.extract_year",
       ]
       include Dry::Effects.Resolve(:auto_create_volumes_and_issues)
@@ -18,7 +18,7 @@ module Harvesting
         /\A.+?, vol (?<volume>\d+), iss (?<issue>\d+)\z/,
       ].freeze
 
-      NO_ISSUE = /\A.+?; Vol(?:ume)?\.?? (?<volume>\d+)(?: \((?<year>\d{4})\))?/.freeze
+      NO_ISSUE = /\A.+?; Vol(?:ume)?\.?? (?<volume>\d+)(?: \((?<year>\d{4})\))?/
 
       # @param [<String>] inputs
       # @return [Harvesting::Utility::ParsedJournalSource]
@@ -71,7 +71,7 @@ module Harvesting
 
         return if parsed.blank?
 
-        attrs = parsed.merge(input: input)
+        attrs = parsed.merge(input:)
 
         Harvesting::Utility::ParsedJournalSource.new(**attrs)
       end
@@ -80,7 +80,7 @@ module Harvesting
       # @param [MatchData] match
       # @return [Harvesting::Utility::ParsedJournalSource]
       def parse!(input, match, **extra)
-        attrs = { input: input }.merge(match.named_captures.symbolize_keys).merge(**extra)
+        attrs = { input: }.merge(match.named_captures.symbolize_keys).merge(**extra)
 
         Harvesting::Utility::ParsedJournalSource.new(**attrs)
       end

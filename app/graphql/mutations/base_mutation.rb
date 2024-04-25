@@ -3,31 +3,35 @@
 module Mutations
   # @abstract
   class BaseMutation < GraphQL::Schema::RelayClassicMutation
-    include Graphql::PunditHelpers
+    include Support::GraphQLAPI::PunditHelpers
 
     argument_class Types::BaseArgument
     field_class Types::BaseField
     input_object_class Types::BaseInputObject
     object_class Types::BaseObject
 
+    SYMBOLIZE_INPUT = ->(input, _ctx) { input&.to_h.try(:deep_symbolize_keys) }
+
+    SYMBOLIZE_INPUTS = ->(inputs, ctx) { Array(inputs).compact.map { |input| SYMBOLIZE_INPUT.(input, ctx) } }
+
     delegate :attribute_names, :error_compiler, :transient_arguments, to: :class
 
     def app_container
-      WDPAPI::Container
+      Common::Container
     end
 
-    def resolve_container_value(*args)
-      app_container.resolve(*args)
+    def resolve_container_value(...)
+      app_container.resolve(...)
     end
 
     def perform_operation(name, **args)
       middleware = MutationOperations::Middleware.new(
-        attribute_names: attribute_names,
-        context: context,
+        attribute_names:,
+        context:,
         error_compiler: self.class.error_compiler,
         mutation: self,
         operation_name: name,
-        transient_arguments: transient_arguments,
+        transient_arguments:,
       )
 
       operation = resolve_container_value name
@@ -35,20 +39,12 @@ module Mutations
       middleware.call operation, **args
     end
 
-    def perform_simple_operation(name, *args, &block)
-      operation = resolve_container_value name
-
-      result = operation.call(*args)
-
-      Dry::Matcher::ResultMatcher.call(result, &block)
-    end
-
     class << self
       # @!attribute [r] attribute_names
       # @see Types::BaseArgument#attribute_names
       # @return [<String>]
       def attribute_names
-        @attribute_names ||= arguments.values.map(&:attribute_names).reduce(&:+)
+        @attribute_names ||= Array(arguments.values.map { Array(_1.try(:attribute_names)) }.reduce(&:+))
       end
 
       # @return [void]
@@ -59,7 +55,7 @@ module Mutations
         options[:required] = false
         options[:default_value] = false
 
-        options[:description] ||= <<~TEXT
+        options[:description] ||= <<~TEXT.strip_heredoc
         If set to true, this will clear the attachment #{attachment_name} on this model.
         TEXT
 
@@ -69,13 +65,13 @@ module Mutations
       # @!attribute [r] error_compiler
       # @return [MutationOperations::ErrorCompiler]
       def error_compiler
-        @error_compiler ||= MutationOperations::ErrorCompiler.new attribute_names: attribute_names
+        @error_compiler ||= MutationOperations::ErrorCompiler.new attribute_names:
       end
 
       # @param [String] name
       # @return [void]
-      def performs_operation!(name, standard_mutation: true, destroy: false)
-        standard_mutation! if standard_mutation
+      def performs_operation!(name, destroy: false)
+        standard_mutation!
         destroy_mutation! if destroy
 
         class_eval <<~RUBY, __FILE__, __LINE__ + 1
@@ -97,14 +93,14 @@ module Mutations
 
       # @param [Symbol] attachment_name
       # @return [void]
-      def image_attachment!(attachment_name, required: false, has_metadata: true)
-        argument attachment_name, Types::UploadedFileInputType, required: required, attribute: true do
-          description <<~TEXT
+      def image_attachment!(attachment_name, required: false)
+        argument attachment_name, Types::UploadedFileInputType, required:, attribute: true do
+          description <<~TEXT.strip_heredoc
           A reference to an uploaded image in Tus.
           TEXT
         end
 
-        add_image_metadata_input! attachment_name if has_metadata
+        add_image_metadata_input! attachment_name
       end
 
       # @param [Symbol] attachment_name
@@ -120,14 +116,14 @@ module Mutations
         Metadata for an image attachment.
         TEXT
 
-        argument full_name, Types::ImageMetadataInputType, options
+        argument(full_name, Types::ImageMetadataInputType, **options)
       end
 
       # @!attribute [r] transient_arguments
       # @see Types::BaseArgument#transient_arguments
       # @return [<Symbol>]
       def transient_arguments
-        @transient_arguments ||= arguments.values.map(&:transient_arguments).reduce(&:+)
+        @transient_arguments ||= Array(arguments.values.map { Array(_1.try(:transient_arguments)) }.reduce(&:+))
       end
     end
   end

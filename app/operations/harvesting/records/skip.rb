@@ -6,7 +6,7 @@ module Harvesting
     # harvested entities that were associated with it.
     class Skip
       include Dry::Monads[:result]
-      include WDPAPI::Deps[
+      include MeruAPI::Deps[
         purge_entity: "harvesting.entities.purge",
       ]
 
@@ -21,10 +21,10 @@ module Harvesting
       #   @param [String] reason
       #   @param [{ Symbol => Object }] options
       #   @return [Dry::Monads::Result]
-      def call(harvest_record, *args)
-        skipped = wrap args
+      def call(harvest_record, *args, **kwargs)
+        skipped = wrap args, **kwargs
 
-        columns = { skipped: skipped, entity_count: 0 }
+        columns = { skipped:, entity_count: 0 }
 
         harvest_record.update_columns columns
 
@@ -41,19 +41,19 @@ module Harvesting
 
       # @param [Array] args
       # @return [Harvesting::Records::Skipped]
-      def wrap(args)
+      def wrap(args, **kwargs)
         case args
         when SKIPPED
           args.first
         else
-          wrap_args(*args)
+          wrap_args(*args, **kwargs)
         end
       end
 
       def wrap_args(reason, **options)
         reason = reason.presence || "Unknown"
 
-        Harvesting::Records::Skipped.because reason, options
+        Harvesting::Records::Skipped.because reason, **options
       end
     end
   end

@@ -8,9 +8,9 @@ module Harvesting
 
     METADATA_FORMATS = %w[jats mets mods oaidc].freeze
 
-    VALID_NAME = /\A([a-z_][a-zA-Z_0-9]*)\z/.freeze
+    VALID_NAME = /\A([a-z_][a-zA-Z_0-9]*)\z/
 
-    VALID_PATH = /\A(?<part>[a-z_][a-zA-Z_0-9]*)\.\g<part>\z/.freeze
+    VALID_PATH = /\A(?<part>[a-z_][a-zA-Z_0-9]*)\.\g<part>\z/
 
     # @see ::HarvestAttempt
     Attempt = Instance(::HarvestAttempt)

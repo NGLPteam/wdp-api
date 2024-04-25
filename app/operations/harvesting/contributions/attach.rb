@@ -5,7 +5,7 @@ module Harvesting
     class Attach
       include Dry::Monads[:do, :result]
       include MonadicPersistence
-      include WDPAPI::Deps[
+      include MeruAPI::Deps[
         attach: "contributors.attach",
         connect_or_create: "harvesting.contributors.connect_or_create",
       ]

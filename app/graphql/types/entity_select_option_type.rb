@@ -34,7 +34,7 @@ module Types
 
     # @return [SchemaVersion]
     def schema_version
-      Loaders::AssociationLoader.for(object.class, :schema_version).load(object)
+      Support::Loaders::AssociationLoader.for(object.class, :schema_version).load(object)
     end
   end
 end

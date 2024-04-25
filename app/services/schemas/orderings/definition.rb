@@ -99,7 +99,7 @@ module Schemas
       # @see Schemas::Orderings::OrderBuilder::Compile
       # @return [Schemas::Ordering::OrderExpression]
       def compile_order_expression
-        WDPAPI::Container["schemas.orderings.order_builder.compile"].call(self)
+        MeruAPI::Container["schemas.orderings.order_builder.compile"].call(self)
       end
 
       # @!endgroup

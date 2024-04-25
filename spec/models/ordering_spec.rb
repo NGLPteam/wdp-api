@@ -15,7 +15,7 @@ RSpec.describe Ordering, type: :model, simple_v1_hierarchy: true, orderings: tru
 
   context "when working with an initially-selected ordering" do
     let!(:collection) { FactoryBot.create :collection }
-    let!(:item) { FactoryBot.create :item, collection: collection }
+    let!(:item) { FactoryBot.create :item, collection: }
     let!(:ordering_1) { FactoryBot.create :ordering, entity: collection }
     let!(:ordering_2) { FactoryBot.create :ordering, entity: collection }
 

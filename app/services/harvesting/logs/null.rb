@@ -22,7 +22,7 @@ module Harvesting
       end
 
       def log(message, tags: [], level: nil)
-        obj = { message: message, time: Time.current, tags: tags.presence, level: level }.compact
+        obj = { message:, time: Time.current, tags: tags.presence, level: }.compact
 
         messages.push obj
       end

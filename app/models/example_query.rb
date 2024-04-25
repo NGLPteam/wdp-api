@@ -7,7 +7,7 @@ class ExampleQuery < FrozenRecord::Base
 
   EXAMPLE_QUERIES_PATH = Rails.root.join("lib", "example_queries")
 
-  IDENTIFIER_FORMAT = /\A[a-z][a-z-]+[a-z]\z/.freeze
+  IDENTIFIER_FORMAT = /\A[a-z][a-z-]+[a-z]\z/
 
   self.primary_key = :identifier
 

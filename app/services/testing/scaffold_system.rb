@@ -40,7 +40,7 @@ module Testing
       users = FactoryBot.create_list(:user, fake_user_count)
 
       users.each do |user|
-        yield WDPAPI::Container["users.normalize_testing"].call user
+        yield MeruAPI::Container["users.normalize_testing"].call user
       end
 
       Testing::AssignRandomRoles.new.call

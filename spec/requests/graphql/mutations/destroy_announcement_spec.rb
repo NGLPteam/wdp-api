@@ -12,14 +12,12 @@ RSpec.describe Mutations::DestroyAnnouncement, type: :request, graphql: :mutatio
   }
   GRAPHQL
 
-  context "as an admin" do
-    let(:token) { token_helper.build_token has_global_admin: true }
+  let_it_be(:announcement, refind: true) { FactoryBot.create :announcement }
 
-    let!(:announcement) { FactoryBot.create :announcement }
+  let_mutation_input!(:announcement_id) { announcement.to_encoded_id }
 
-    let_mutation_input!(:announcement_id) { announcement.to_encoded_id }
-
-    let!(:expected_shape) do
+  as_an_admin_user do
+    let(:expected_shape) do
       gql.mutation(:destroy_announcement) do |m|
         m[:destroyed] = true
         m[:destroyed_id] = eq(announcement_id).and(be_an_encoded_id.of_a_deleted_model)

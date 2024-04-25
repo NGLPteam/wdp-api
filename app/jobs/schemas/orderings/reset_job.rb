@@ -5,7 +5,7 @@ module Schemas
     class ResetJob < ApplicationJob
       queue_as :orderings
 
-      unique :until_and_while_executing, lock_ttl: 5.minutes, on_conflict: :log
+      unique_job! by: :first_arg
 
       # @param [Ordering] ordering
       # @return [void]

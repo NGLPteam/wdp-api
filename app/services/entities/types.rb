@@ -8,7 +8,7 @@ module Entities
     extend Shared::EnhancedTypes
 
     # A pattern for matching an auth_path, composed of multiple slugs
-    AUTH_PATH_FORMAT = /\A[a-z0-9]+(?:(?:\.[a-z0-9]+)|(?<!\._)\._(?!\z))*\z/i.freeze
+    AUTH_PATH_FORMAT = /\A[a-z0-9]+(?:(?:\.[a-z0-9]+)|(?<!\._)\._(?!\z))*\z/i
 
     HIERARCHICAL_TYPES = %w[Community Collection Item].freeze
 
@@ -16,7 +16,7 @@ module Entities
 
     ENTITY_TYPES = [*HIERARCHICAL_TYPES, "EntityLink"].freeze
 
-    SLUG_FORMAT = /\A[a-z0-9]+\z/i.freeze
+    SLUG_FORMAT = /\A[a-z0-9]+\z/i
 
     AuthPath = String.constrained(format: AUTH_PATH_FORMAT)
 

@@ -3,7 +3,7 @@ class CreateContributors < ActiveRecord::Migration[6.1]
     create_enum "contributor_kind", %w[person organization]
 
     create_table :contributors, id: :uuid do |t|
-      t.enum :kind, as: "contributor_kind", null: false
+      t.enum :kind, enum_type: "contributor_kind", null: false
 
       t.citext :identifier, null: false
 

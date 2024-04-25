@@ -26,7 +26,7 @@ module Harvesting
 
       # @return [Hash]
       def options
-        { kind: kind, metadata: metadata }
+        { kind:, metadata: }
       end
     end
   end

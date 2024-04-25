@@ -8,7 +8,7 @@ module Harvesting
 
       def extract(identifier)
         options = {
-          identifier: identifier,
+          identifier:,
           metadata_prefix: metadata_format.oai_metadata_prefix,
         }
 

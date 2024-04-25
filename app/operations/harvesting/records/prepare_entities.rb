@@ -10,7 +10,7 @@ module Harvesting
       include Dry::Monads[:result, :do]
       include Dry::Effects.Resolve(:metadata_format)
       include Dry::Effects::Handler.Interrupt(:skip_record, as: :catch_record_skip)
-      include WDPAPI::Deps[
+      include MeruAPI::Deps[
         handle_skip: "harvesting.records.skip",
         prune_extraction: "harvesting.records.prune_extraction",
         update_entity_count: "harvesting.records.update_entity_count",

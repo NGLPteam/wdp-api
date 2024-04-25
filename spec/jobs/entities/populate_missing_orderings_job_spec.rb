@@ -16,7 +16,7 @@ RSpec.describe Entities::PopulateMissingOrderingsJob, type: :job, simple_v1_hier
 
     it "calls the operation on the expected record(s)" do
       expect do
-        WDPAPI::Container.stub("schemas.instances.populate_orderings", operation) do
+        MeruAPI::Container.stub("schemas.instances.populate_orderings", operation) do
           described_class.perform_now
         end
       end.to execute_safely

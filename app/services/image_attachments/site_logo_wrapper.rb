@@ -34,7 +34,7 @@ module ImageAttachments
       original_file&.storage_key
     end
 
-    def method_missing(meth, *args, &block)
+    def method_missing(meth, *args, &)
       if ImageAttachments.site_logo_size?(meth) && args.empty?
         size_wrapper meth
       else

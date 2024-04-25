@@ -7,7 +7,7 @@ FactoryBot.define do
     end
 
     association :harvest_source
-    target_entity { create :collection }
+    target_entity { FactoryBot.create :collection }
     harvest_set { nil }
     harvest_mapping { nil }
 
@@ -18,7 +18,7 @@ FactoryBot.define do
 
     metadata do
       {
-        max_records: max_records,
+        max_records:,
       }
     end
 

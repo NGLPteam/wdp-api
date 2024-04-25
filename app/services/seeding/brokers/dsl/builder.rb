@@ -21,11 +21,11 @@ module Seeding
         end
 
         # @return [Dry::Struct, Object]
-        def build(&block)
+        def build(&)
           @attributes = {}
 
           run_callbacks :build do
-            instance_eval(&block)
+            instance_eval(&)
           end
 
           attrs = @attributes.symbolize_keys
@@ -46,8 +46,8 @@ module Seeding
         # @param [Class<Seeding::Brokers::DSL::Builder>] builder_klass
         # @yieldreturn [void]
         # @return [self]
-        def build_nested(key, builder_klass, &block)
-          value = builder_klass.new(parent: self).build(&block)
+        def build_nested(key, builder_klass, &)
+          value = builder_klass.new(parent: self).build(&)
 
           attr! key, value
         end

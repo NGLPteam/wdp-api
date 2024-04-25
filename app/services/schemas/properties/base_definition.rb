@@ -77,8 +77,8 @@ module Schemas
       def to_version_property
         {
           path: full_path,
-          type: type,
-          kind: kind,
+          type:,
+          kind:,
           label: version_property_label,
           extract_path: full_path.split(?.),
           array: array?,

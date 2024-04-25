@@ -4,7 +4,7 @@
 #
 # @note This module should always be prepended.
 module TransactionalCall
-  def call(*)
+  def call(...)
     wrap_in_transaction do
       super
     end
@@ -37,8 +37,8 @@ module TransactionalCall
   def wrap_in_transaction(deadlock_count: deadlock_retry_count, requires_new: start_new_transaction?)
     requires_new = deadlock_count > 0 || requires_new
 
-    maybe_retry_deadlocks(deadlock_count: deadlock_count) do
-      ApplicationRecord.transaction(requires_new: requires_new) do
+    maybe_retry_deadlocks(deadlock_count:) do
+      ApplicationRecord.transaction(requires_new:) do
         yield
       end
     end

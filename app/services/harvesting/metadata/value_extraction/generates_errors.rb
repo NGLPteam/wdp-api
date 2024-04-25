@@ -16,7 +16,7 @@ module Harvesting
 
         # @return [Harvesting::Metadata::ValueExtraction::Error]
         def extraction_error!(code, context: self.class.error_context, message: nil, **metadata)
-          Harvesting::Metadata::ValueExtraction::Error.new(code: code, context: context, message: message, metadata: metadata)
+          Harvesting::Metadata::ValueExtraction::Error.new(code:, context:, message:, metadata:)
         end
       end
     end

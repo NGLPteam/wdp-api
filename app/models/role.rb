@@ -3,9 +3,9 @@
 class Role < ApplicationRecord
   include HasEphemeralSystemSlug
 
-  pg_enum! :identifier, as: "role_identifier", _prefix: :identified_as
-  pg_enum! :kind, as: "role_kind", _prefix: :for
-  pg_enum! :primacy, as: "role_primacy", _prefix: :has, _suffix: :primacy
+  pg_enum! :identifier, as: "role_identifier", prefix: :identified_as
+  pg_enum! :kind, as: "role_kind", prefix: :for
+  pg_enum! :primacy, as: "role_primacy", prefix: :has, suffix: :primacy
 
   attr_readonly :identifier, :primacy, :kind, :priority, :allowed_actions, :global_allowed_actions
 
@@ -32,8 +32,8 @@ class Role < ApplicationRecord
 
   after_save :calculate_role_permissions!
 
-  scope :for_identifier, ->(identifier) { where(identifier: identifier) }
-  scope :for_name, ->(name) { where(name: name) }
+  scope :for_identifier, ->(identifier) { where(identifier:) }
+  scope :for_name, ->(name) { where(name:) }
 
   scope :with_allowed_action, ->(name) { where(arel_allowed_action(name)) }
   scope :in_default_order, -> { order(primacy: :asc, priority: :desc, kind: :asc) }

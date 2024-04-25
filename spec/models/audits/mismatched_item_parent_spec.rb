@@ -4,7 +4,7 @@ RSpec.describe Audits::MismatchedItemParent, type: :model, disable_ordering_refr
   include_context "sans entity sync"
 
   let!(:collection) { FactoryBot.create :collection }
-  let!(:item) { FactoryBot.create :item, collection: collection }
+  let!(:item) { FactoryBot.create :item, collection: }
   let!(:subitem) { FactoryBot.create :item, parent: item }
   let!(:invalid_collection) { FactoryBot.create :collection }
 
@@ -17,7 +17,7 @@ RSpec.describe Audits::MismatchedItemParent, type: :model, disable_ordering_refr
 
     expect(first).to have_attributes(
       item: subitem,
-      invalid_collection: invalid_collection,
+      invalid_collection:,
       valid_collection: collection,
     )
   end

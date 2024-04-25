@@ -46,15 +46,15 @@ FactoryBot.define do
 
     after(:create) do |user, evaluator|
       if evaluator.manager_on.present?
-        WDPAPI::Container["access.grant"].call(Role.fetch(:manager), on: evaluator.manager_on, to: user)
+        MeruAPI::Container["access.grant"].call(Role.fetch(:manager), on: evaluator.manager_on, to: user)
       end
 
       if evaluator.editor_on.present?
-        WDPAPI::Container["access.grant"].call(Role.fetch(:editor), on: evaluator.editor_on, to: user)
+        MeruAPI::Container["access.grant"].call(Role.fetch(:editor), on: evaluator.editor_on, to: user)
       end
 
       if evaluator.reader_on.present?
-        WDPAPI::Container["access.grant"].call(Role.fetch(:reader), on: evaluator.reader_on, to: user)
+        MeruAPI::Container["access.grant"].call(Role.fetch(:reader), on: evaluator.reader_on, to: user)
       end
     end
   end

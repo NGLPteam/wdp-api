@@ -75,14 +75,14 @@ module Schemas
       # An individual component of a property path. Matches the format
       # expressed in the metaschema, and requires something that more
       # or less resembles valid ruby property names (sans `!` / `?`).
-      PATH_PART = /[a-z][a-z0-9_]*[a-z]/.freeze
+      PATH_PART = /[a-z][a-z0-9_]*[a-z]/
 
       # A full path, composed of {PATH_PART} with an optional group key
       # preceding it.
-      FULL_PATH = /#{PATH_PART}(?:\.#{PATH_PART})?/.freeze
+      FULL_PATH = /#{PATH_PART}(?:\.#{PATH_PART})?/
 
       # The path used to build type maps.
-      TYPE_PATH = /\A(?<full_path>#{FULL_PATH})\.\$type\z/.freeze
+      TYPE_PATH = /\A(?<full_path>#{FULL_PATH})\.\$type\z/
 
       # A meta type for matching dry-types, used to enforce setting a base type
       # within scalar property classes.

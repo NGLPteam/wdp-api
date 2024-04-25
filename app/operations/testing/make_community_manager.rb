@@ -3,7 +3,7 @@
 module Testing
   class MakeCommunityManager
     include Dry::Monads[:do, :result]
-    include WDPAPI::Deps[grant_access: "access.grant"]
+    include MeruAPI::Deps[grant_access: "access.grant"]
     include MonadicPersistence
 
     def call(user)

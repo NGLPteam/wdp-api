@@ -29,9 +29,7 @@ module Entities
 
     # @return [Dry::Monads::Result]
     def preload!
-      preloader = ::ActiveRecord::Associations::Preloader.new
-
-      preloader.preload(ancestors, %i[schema_version schema_definition])
+      ::ActiveRecord::Associations::Preloader.new(records: ancestors, associations: %i[schema_version schema_definition]).call
 
       Success()
     end
@@ -45,7 +43,7 @@ module Entities
 
     # @return [Dry::Monads::Result]
     def prune!
-      EntityHierarchy.where(descendant: descendant).where.not(ancestor: ancestors).delete_all
+      EntityHierarchy.where(descendant:).where.not(ancestor: ancestors).delete_all
 
       Success()
     end
@@ -57,12 +55,12 @@ module Entities
         hierarchical_type: descendant.hierarchical_type,
         hierarchical_id: descendant.hierarchical_id,
         link_operator: link_operator_for(descendant),
-        auth_path: auth_path,
+        auth_path:,
         schema_definition_id: descendant.schema_definition.id,
         schema_version_id: descendant.schema_version.id,
         title: title_for(descendant),
         descendant_scope: descendant.entity_scope,
-        descendant_slug: descendant_slug,
+        descendant_slug:,
         created_at: descendant.created_at,
         updated_at: descendant.updated_at,
       }

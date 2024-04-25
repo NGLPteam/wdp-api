@@ -16,8 +16,8 @@ module AssociationHelpers
     #   @!parse ruby
     #     # @note This association is read-only (likely against a database view).
     #     belongs_to $1, -> { readonly }, ${2--1}
-    def belongs_to_readonly(name, *args, **kwargs, &block)
-      belongs_to name, *args, **kwargs, &block
+    def belongs_to_readonly(name, *args, **kwargs, &)
+      belongs_to(name, *args, **kwargs, &)
     end
 
     # Define a read-only `has_many` association.
@@ -31,8 +31,8 @@ module AssociationHelpers
     #   @!parse ruby
     #     # @note This association is read-only (likely against a database view).
     #     has_many $1, -> { readonly }, ${2--1}
-    def has_many_readonly(name, *args, **kwargs, &block)
-      has_many name, *args, **kwargs, &block # rubocop:disable Rails/HasManyOrHasOneDependent
+    def has_many_readonly(name, *args, **kwargs, &)
+      has_many(name, *args, **kwargs, &) # rubocop:disable Rails/HasManyOrHasOneDependent
     end
 
     # Define a read-only `has_one` association
@@ -46,8 +46,8 @@ module AssociationHelpers
     #   @!parse ruby
     #     # @note This association is read-only (likely against a database view).
     #     has_one $1, -> { readonly }, ${2--1}
-    def has_one_readonly(name, *args, **kwargs, &block)
-      has_one name, *args, **kwargs, &block # rubocop:disable Rails/HasManyOrHasOneDependent
+    def has_one_readonly(name, *args, **kwargs, &)
+      has_one(name, *args, **kwargs, &) # rubocop:disable Rails/HasManyOrHasOneDependent
     end
   end
 end

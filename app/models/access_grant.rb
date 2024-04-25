@@ -27,7 +27,7 @@ class AccessGrant < ApplicationRecord
 
   scope :for_system_role, ->(identifier) { where(role: Role.for_identifier(identifier)) }
   scope :for_accessible_type, ->(type) { where(accessible_type: type) }
-  scope :for_subject, ->(subject) { where(subject: subject) }
+  scope :for_subject, ->(subject) { where(subject:) }
   scope :for_subject_type, ->(type) { where(subject_type: type) }
   scope :for_possible_subject, ->(subject) { for_subject(subject) if subject.present? }
 
@@ -35,7 +35,7 @@ class AccessGrant < ApplicationRecord
   scope :for_collections, -> { for_accessible_type("Collection") }
   scope :for_items, -> { for_accessible_type("Item") }
 
-  scope :for_role, ->(role) { where(role: role) }
+  scope :for_role, ->(role) { where(role:) }
   scope :for_role_name, ->(name) { joins(:role).merge(Role.for_name(name)) }
 
   scope :for_groups, -> { for_subject_type "UserGroup" }
@@ -68,7 +68,7 @@ class AccessGrant < ApplicationRecord
   # @api private
   # @return [void]
   def calculate_granted_permissions!
-    WDPAPI::Container["access.calculate_granted_permissions"].call(access_grant: self)
+    MeruAPI::Container["access.calculate_granted_permissions"].call(access_grant: self)
   end
 
   # @return [Class]
@@ -78,20 +78,20 @@ class AccessGrant < ApplicationRecord
 
   class << self
     def for_user_group(user_group)
-      user_group.present? ? where(user_group: user_group) : none
+      user_group.present? ? where(user_group:) : none
     end
 
     # @param [Role] role
     # @param [HierarchicalEntity] on
     # @param [AccessGrantSubject] to
     def has_granted?(role, on:, to:)
-      exists?(role: role, accessible: on, subject: to)
+      exists?(role:, accessible: on, subject: to)
     end
 
     # @param [HierarchicalEntity] accessible
     # @param [AccessGrantSubject] subject
     def fetch(accessible, subject)
-      where(accessible: accessible, subject: subject).first_or_initialize
+      where(accessible:, subject:).first_or_initialize
     end
 
     # @param [User] user

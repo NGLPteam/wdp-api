@@ -34,7 +34,7 @@ module Types
 
     def available_entities_for(full_path:)
       with_schema_associations_loaded.then do |(context, *)|
-        object.read_property(full_path, context: context).bind do |prop|
+        object.read_property(full_path, context:).bind do |prop|
           prop.available_entities
         end.value_or([])
       end
@@ -49,7 +49,7 @@ module Types
     # @see HasSchemaDefinition#read_properties
     def schema_properties
       with_schema_associations_loaded.then do |(context, *)|
-        object.read_properties(context: context).value_or([])
+        object.read_properties(context:).value_or([])
       end
     end
 
@@ -57,7 +57,7 @@ module Types
     # @see HasSchemaDefinition#read_property
     def schema_property(full_path:)
       with_schema_associations_loaded.then do |(context, *)|
-        object.read_property(full_path, context: context).value_or(nil)
+        object.read_property(full_path, context:).value_or(nil)
       end
     end
 
@@ -67,9 +67,9 @@ module Types
       Promise.all(
         [
           schema_instance_context,
-          Loaders::AssociationLoader.for(object.class, :schematic_collected_references).load(object),
-          Loaders::AssociationLoader.for(object.class, :schematic_scalar_references).load(object),
-          Loaders::AssociationLoader.for(object.class, :schematic_texts).load(object)
+          Support::Loaders::AssociationLoader.for(object.class, :schematic_collected_references).load(object),
+          Support::Loaders::AssociationLoader.for(object.class, :schematic_scalar_references).load(object),
+          Support::Loaders::AssociationLoader.for(object.class, :schematic_texts).load(object)
         ]
       )
     end

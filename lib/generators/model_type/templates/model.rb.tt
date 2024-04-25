@@ -1,0 +1,36 @@
+<%-
+  # vim: set ft=ruby.eruby :
+-%>
+# frozen_string_literal: true
+
+module Types
+  # @see <%= class_name %>
+  class <%= graphql_type_name %> < Types::AbstractModel
+    description <<~TEXT
+    A database-backed model.
+    TEXT
+    <%- if has_title? -%>
+
+    field :title, String, null: false do
+      description <<~TEXT
+      The title for the <%= model_name %>.<%= " Must be unique." if has_unique_title? %>
+      TEXT
+    end
+    <%- end -%>
+    <%- if has_unique_identifier? -%>
+
+    implements Types::UniquelyIdentifiedType
+    <%- end -%>
+    <%- if has_optional_description? -%>
+
+    implements Types::OptionallyDescribedType
+    <%- end -%>
+    <%- if normalized_gql_fields.any? -%>
+    <%- normalized_gql_fields.each do |nf| -%>
+
+<%# indentation here is intentional and necessary -%>
+<%= nf.to_field_definition %>
+    <%- end -%>
+    <%- end -%>
+  end
+end

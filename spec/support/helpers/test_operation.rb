@@ -2,7 +2,7 @@
 
 module TestHelpers
   class TestOperation
-    def call(*)
+    def call(...)
       ::Dry::Monads.Success()
     end
   end

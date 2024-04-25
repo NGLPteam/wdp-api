@@ -10,13 +10,13 @@ module Schemas
 
       # @return [Schemas::BaseContract]
       def to_dry_validation
-        WDPAPI::Container["schemas.properties.compile_contract"].call(self).value!
+        MeruAPI::Container["schemas.properties.compile_contract"].call(self).value!
       end
 
       # @see Schemas::Properties::CompileSchema
       # @return [Dry::Schema::Params]
       def to_dry_schema
-        WDPAPI::Container["schemas.properties.compile_schema"].call(properties)
+        MeruAPI::Container["schemas.properties.compile_schema"].call(properties)
       end
     end
   end

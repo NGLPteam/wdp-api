@@ -4,7 +4,7 @@ module TestHelpers
   module GrantsAccess
     module ExampleHelpers
       def grant_access!(role, on:, to:)
-        Access::Grant.new.call(role, on: on, to: to)
+        Access::Grant.new.call(role, on:, to:)
       end
     end
   end

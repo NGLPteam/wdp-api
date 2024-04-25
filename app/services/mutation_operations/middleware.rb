@@ -21,7 +21,7 @@ module MutationOperations
     option :transient_arguments, AppTypes::Array.of(AppTypes::Symbol)
     option :error_compiler, AppTypes.Instance(MutationOperations::ErrorCompiler),
       default: proc {
-        MutationOperations::ErrorCompiler.new attribute_names: attribute_names
+        MutationOperations::ErrorCompiler.new attribute_names:
       }
 
     # @param [#call] operation
@@ -30,7 +30,7 @@ module MutationOperations
       response, result = with_graphql_response(base_response) do
         with_transaction do
           with_effects_stack do
-            operation.perform! args
+            operation.perform!(**args)
           end
         end
       end
@@ -82,12 +82,12 @@ module MutationOperations
 
     def dependency_injections
       {
-        attribute_names: attribute_names,
-        current_user: current_user,
-        error_compiler: error_compiler,
+        attribute_names:,
+        current_user:,
+        error_compiler:,
         graphql_context: context,
         local_context: base_local_context,
-        transient_arguments: transient_arguments,
+        transient_arguments:,
       }
     end
 

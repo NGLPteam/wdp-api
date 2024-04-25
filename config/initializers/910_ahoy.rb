@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "ahoy"
+
 module Ahoy
   class Store < Ahoy::DatabaseStore
     HAS_ENTITY = ->(subject) do
@@ -68,12 +70,14 @@ module Patches
     # @param [String] ip
     # @return [void]
     def perform(visit_token, ip)
-      WDPAPI::Container["analytics.update_geocoding"].(visit_token, ip)
+      MeruAPI::Container["analytics.update_geocoding"].(visit_token, ip)
     end
   end
 end
 
-Ahoy::GeocodeV2Job.prepend Patches::BetterAhoyGeocoding
+Rails.application.config.to_prepare do
+  Ahoy::GeocodeV2Job.prepend Patches::BetterAhoyGeocoding
+end
 
 Ahoy.api = true
 Ahoy.api_only = true

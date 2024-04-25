@@ -15,7 +15,7 @@ module Harvesting
       memoize_value_extraction!
 
       # A restrictive pattern that matches only (positive) integers.
-      LOOKS_LIKE_INTEGER = /\A\d+\z/.freeze
+      LOOKS_LIKE_INTEGER = /\A\d+\z/
 
       # @!attribute [r] raw_source
       # @return [Harvesting::Types::XMLInput]
@@ -54,7 +54,7 @@ module Harvesting
 
       # @return [Utility::NullXMLElement]
       def null_element
-        Utility::NullXMLElement.new document: document
+        Utility::NullXMLElement.new document:
       end
 
       # Fetch a single node that matches the provided XPath query

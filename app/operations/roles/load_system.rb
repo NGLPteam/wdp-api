@@ -5,7 +5,7 @@ module Roles
   class LoadSystem
     include Dry::Monads[:result, :do]
     include QueryOperation
-    include WDPAPI::Deps[
+    include MeruAPI::Deps[
       calculate_role_permissions: "roles.calculate_role_permissions"
     ]
 
@@ -30,7 +30,7 @@ module Roles
       role_ids = inserted.pluck "id"
 
       Role.where(id: role_ids).find_each do |role|
-        yield calculate_role_permissions.call role: role
+        yield calculate_role_permissions.call(role:)
       end
 
       AssignableRoleTarget.refresh!

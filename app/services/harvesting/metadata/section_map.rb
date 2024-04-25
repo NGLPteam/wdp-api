@@ -20,7 +20,7 @@ module Harvesting
 
       delegate :empty?, :length, :size, to: :children
 
-      def initialize(*)
+      def initialize(...)
         super
 
         @mapping = {}
@@ -66,10 +66,10 @@ module Harvesting
 
       # Build a filtered section map based on a predicate applied to its sections.
       # @return [Harvesting::Metadata::SectionMap]
-      def funnel(&block)
-        new_children = select(&block)
+      def funnel(&)
+        new_children = select(&)
 
-        self.class.new(parent, name, new_children, key_attribute: key_attribute)
+        self.class.new(parent, name, new_children, key_attribute:)
       end
 
       # @param [#to_sym] tags
@@ -111,7 +111,7 @@ module Harvesting
           option :key_attribute, Harvesting::Types::Symbol, default: proc { :section_id }
         end
 
-        def initialize(*)
+        def initialize(...)
           super
 
           @matcher = Harvesting::Types::MetadataSection.constrained(respond_to: key_attribute)
@@ -143,7 +143,7 @@ module Harvesting
             parent,
             name,
             children,
-            key_attribute: key_attribute
+            key_attribute:
           )
         end
       end

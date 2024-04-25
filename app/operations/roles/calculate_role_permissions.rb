@@ -50,7 +50,7 @@ module Roles
         Access::CalculateAllGrantedPermissionsJob.perform_later
       end
 
-      Success(inserted: inserted, deleted: deleted)
+      Success(inserted:, deleted:)
     end
 
     private

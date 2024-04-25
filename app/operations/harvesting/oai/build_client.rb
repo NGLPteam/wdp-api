@@ -29,7 +29,7 @@ module Harvesting
           backoff_factor: 2
         }
 
-        Faraday.new(url: url) do |builder|
+        Faraday.new(url:) do |builder|
           builder.request :retry, retry_options
           builder.response :follow_redirects, limit: 5
           builder.adapter :net_http

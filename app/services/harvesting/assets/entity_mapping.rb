@@ -30,7 +30,7 @@ module Harvesting
       # @param [String, nil] name
       # @param [String, nil] mime_type
       def assign_remote_url(identifier, url, name: nil, mime_type: nil)
-        source = { identifier: identifier, url: url, name: name, mime_type: mime_type }.compact_blank
+        source = { identifier:, url:, name:, mime_type: }.compact_blank
 
         self[identifier] = source
       end

@@ -16,7 +16,7 @@ module TranslatedFrozenRecord
       options[:default] = nil
     end
 
-    I18n.t(key, options)&.strip
+    I18n.t(key, **options)&.strip
   end
 
   # @api private

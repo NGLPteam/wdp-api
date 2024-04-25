@@ -1,0 +1,23 @@
+Description:
+    Generate create, update, and destroy mutations and test specs for a given model,
+    registering each into the system.
+
+Example:
+    bin/rails generate mutation_scaffold Model
+
+    This will create:
+        app/graphql/mutations/create_model.rb
+        app/graphql/mutations/destroy_model.rb
+        app/graphql/mutations/update_model.rb
+        app/operations/mutations/contracts/create_model.rb
+        app/operations/mutations/contracts/destroy_model.rb
+        app/operations/mutations/contracts/update_model.rb
+        app/operations/mutations/operations/create_model.rb
+        app/operations/mutations/operations/destroy_model.rb
+        app/operations/mutations/operations/update_model.rb
+        spec/requests/graphql/mutations/create_model_spec.rb
+        spec/requests/graphql/mutations/destroy_model_spec.rb
+        spec/requests/graphql/mutations/update_model_spec.rb
+
+    It will also add entries for each mutation to:
+        app/graphql/types/mutation_type.rb

@@ -5,7 +5,7 @@ module Schemas
     class Validate
       include Dry::Monads[:do, :result]
 
-      include WDPAPI::Deps[
+      include MeruAPI::Deps[
         compile_contract: "schemas.properties.compile_contract",
         decamelize_hash: "utility.decamelize_hash"
       ]
@@ -21,7 +21,7 @@ module Schemas
         corrected_values = decamelize_hash.call(values)
 
         validation_context = {
-          instance: instance,
+          instance:,
         }
 
         response = contract.call(corrected_values, validation_context).to_monad

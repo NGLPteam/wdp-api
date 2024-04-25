@@ -3,3 +3,6 @@
 *.swp
 *.swo
 .*.swn
+.do
+docker
+!/docker/entrypoint.sh

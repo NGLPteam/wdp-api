@@ -27,12 +27,12 @@ module Types
     def search(visibility:, max_depth: nil)
       options = {
         origin: search_origin,
-        max_depth: max_depth,
-        visibility: visibility,
+        max_depth:,
+        visibility:,
         user: context[:current_user]
       }
 
-      ::Searching::Scope.new options
+      ::Searching::Scope.new(**options)
     end
 
     # @see Searching::Origin

@@ -42,7 +42,7 @@ FactoryBot.define do
         attrs[:created_at] = Time.current
         attrs[:updated_at] = Time.current
 
-        results = Role.upsert(attrs, unique_by: unique_by, returning: %w[id])
+        results = Role.upsert(attrs, unique_by:, returning: %w[id])
 
         id = results.first["id"]
 

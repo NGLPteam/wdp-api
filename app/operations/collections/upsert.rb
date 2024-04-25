@@ -7,7 +7,7 @@ module Collections
     include Dry::Monads::Do.for(:call)
     include Dry::Monads::Do.for(:scope_for)
     include Dry::Effects.Resolve(:default_collection_schema)
-    include WDPAPI::Deps[
+    include MeruAPI::Deps[
       alter: "schemas.instances.alter_version",
       apply_properties: "schemas.instances.apply",
       calculate_edge: "schemas.edges.calculate"

@@ -8,8 +8,8 @@ RSpec.describe Schemas::Instances::ResetAllOrderingsJob, type: :job, simple_v1_h
   let!(:reset_operation) { Schemas::Orderings::Reset.new }
 
   around do |example|
-    WDPAPI::Container.stub "schemas.instances.populate_orderings", populate_operation do
-      WDPAPI::Container.stub "schemas.orderings.reset", reset_operation do
+    MeruAPI::Container.stub "schemas.instances.populate_orderings", populate_operation do
+      MeruAPI::Container.stub "schemas.orderings.reset", reset_operation do
         example.run
       end
     end

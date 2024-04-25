@@ -6,7 +6,7 @@ module Seeding
     class UpsertPages
       include MonadicPersistence
       include Dry::Monads[:result, :do]
-      include WDPAPI::Deps[
+      include MeruAPI::Deps[
         upsert_page: "seeding.import.upsert_page",
       ]
 

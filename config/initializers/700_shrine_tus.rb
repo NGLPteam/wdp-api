@@ -12,7 +12,7 @@ aws_credentials = S3Config.to_h
 bucket = UploadConfig.bucket
 
 shared_s3_options = {
-  bucket: bucket,
+  bucket:,
   http_open_timeout: 30,
   retry_limit: 10,
   use_accelerate_endpoint: false,
@@ -55,14 +55,12 @@ Shrine.plugin :backgrounding
 Shrine.plugin :determine_mime_type, analyzer: :marcel, analyzer_options: { filename_fallback: true }
 Shrine.plugin :type_predicates, methods: %i[pdf], mime: :marcel
 Shrine.plugin :pretty_location, class_underscore: true
+Shrine.plugin :data_uri
 Shrine.plugin :tempfile # load it globally so that it overrides `Shrine.with_file`
 Shrine.plugin :derivatives, create_on_promote: true, store: :derivatives
-Shrine.plugin :upload_options, store: { acl: Rails.env.production? ? "private" : "public-read" }
-if UploadConfig.host.present?
-  url_options = { public: !Rails.env.production?, host: "#{URI.join(UploadConfig.host, UploadConfig.bucket)}/" }
+Shrine.plugin :upload_options, cache: { acl: "public-read" }, store: { acl: "public-read" }
+Shrine.plugin :url_options, cache: { public: true }, store: { public: true }
 
-  Shrine.plugin :url_options, cache: { **url_options }, store: { **url_options }
-end
 Shrine.plugin :tus
 
 Shrine::Attacher.promote_block do

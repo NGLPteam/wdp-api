@@ -52,7 +52,9 @@ module Harvesting
     # @api private
     # @param [{ Symbol > String }]
     # @return [{ Symbol => String }]
-    def merge_namespaces(additional = {})
+    def merge_namespaces(additional = {}, **other)
+      additional.merge!(other)
+
       return namespaces if additional.blank?
 
       additional = Harvesting::Types::XMLNamespaceMap[additional]
@@ -65,10 +67,10 @@ module Harvesting
     # @param [String] query XPath query
     # @param [Nokogiri::XML::Element, #xpath, nil] element
     # @return [Nokogiri::XML::Element, Utility::NullXMLElement]
-    def at_xpath(query, **additional, &block)
+    def at_xpath(query, **additional, &)
       with_ns additional do
-        current_element.at_xpath(query, current_namespaces).tap do |result|
-          with_element(result, &block) if block_given?
+        current_element.at_xpath(query, **current_namespaces).tap do |result|
+          with_element(result, &) if block_given?
         end
       end
     end
@@ -76,11 +78,11 @@ module Harvesting
     # @param [String] query XPath query
     # @param [Nokogiri::XML::Element, #xpath, nil] element
     # @return [Nokogiri::XML::NodeSet]
-    def xpath(query, **additional, &block)
+    def xpath(query, **additional, &)
       with_ns additional do
-        current_element.xpath(query, current_namespaces).tap do |node_set|
+        current_element.xpath(query, **current_namespaces).tap do |node_set|
           node_set.each do |element|
-            with_element(element, &block)
+            with_element(element, &)
           end if block_given?
         end
       end
@@ -115,7 +117,7 @@ module Harvesting
     # @return [String, nil]
     def find_candidate_text_for(element, paths, fallback: nil)
       with_element element do
-        find_candidate_text_at(paths, fallback: fallback)
+        find_candidate_text_at(paths, fallback:)
       end
     end
 
@@ -164,7 +166,9 @@ module Harvesting
       end
 
       # @return [void]
-      def namespaces!(new_namespaces = {})
+      def namespaces!(new_namespaces = {}, **symbol_namespaces)
+        new_namespaces.merge!(symbol_namespaces)
+
         merged = namespaces.merge Harvesting::Types::XMLNamespaceMap[new_namespaces]
 
         namespaces merged

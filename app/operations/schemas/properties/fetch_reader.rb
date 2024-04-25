@@ -10,7 +10,7 @@ module Schemas
     # @see Schemas::Properties::ToReader
     class FetchReader
       include Dry::Monads[:result, :do]
-      include WDPAPI::Deps[
+      include MeruAPI::Deps[
         fetch: "schemas.properties.fetch",
         to_context: "schemas.properties.to_context",
         to_reader: "schemas.properties.to_reader",
@@ -31,7 +31,7 @@ module Schemas
 
         return Failure[:unknown_property, "#{full_path} is not a known property"] if property.blank?
 
-        to_reader.call property, options
+        to_reader.call property, **options
       end
     end
   end

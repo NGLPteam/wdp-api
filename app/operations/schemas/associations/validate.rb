@@ -11,7 +11,7 @@ module Schemas
     class Validate
       include Dry::Matcher.for(:call, with: Schemas::Associations::Matchers::Connection)
       include Dry::Monads[:list, :result]
-      include WDPAPI::Deps[
+      include MeruAPI::Deps[
         accepts_parent: "schemas.associations.accepts_parent",
         accepts_child: "schemas.associations.accepts_child",
       ]

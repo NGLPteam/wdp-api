@@ -5,8 +5,8 @@ module Contributors
   class Lookup
     include Dry::Matcher.for(:call, with: Dry::Matcher::ResultMatcher)
 
-    def call(**options)
-      Contributors::Finder.new(options).call
+    def call(...)
+      Contributors::Finder.new(...).call
     end
   end
 end

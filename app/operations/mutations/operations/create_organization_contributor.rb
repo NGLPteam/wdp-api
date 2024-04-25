@@ -22,8 +22,8 @@ module Mutations
         contributor.links = Array(links).map(&:to_h)
 
         properties = {
-          legal_name: legal_name,
-          location: location,
+          legal_name:,
+          location:,
         }.compact
 
         contributor.properties = { organization: properties }

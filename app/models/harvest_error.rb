@@ -8,7 +8,7 @@ class HarvestError < ApplicationRecord
 
   UNKNOWN_COLLECTIONS = "existing collection with identifier"
 
-  scope :by_code, ->(code) { where(code: code) }
+  scope :by_code, ->(code) { where(code:) }
   scope :by_source_type, ->(type) { where source_type: type }
   scope :harvest_entities, -> { by_source_type "HarvestEntity" }
   scope :harvest_records, -> { by_source_type "HarvestRecord" }

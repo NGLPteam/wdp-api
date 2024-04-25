@@ -5,7 +5,7 @@ module Harvesting
   class ExtractRecordJob < ApplicationJob
     queue_as :extraction
 
-    unique :until_and_while_executing, lock_ttl: 30.minutes, on_conflict: :log, runtime_lock_ttl: 30.minutes, on_runtime_conflict: :log
+    unique_job! by: :all_args
 
     discard_on Harvesting::Records::Unknown
     discard_on Harvesting::Sources::Unknown

@@ -19,7 +19,7 @@ class GenericUploader < Shrine
   end
 
   add_metadata :kind do |io, **options|
-    WDPAPI::Container["assets.parse_kind"].call(io).value_or("unknown")
+    MeruAPI::Container["assets.parse_kind"].call(io).value_or("unknown")
   end
 
   Attacher.validate do

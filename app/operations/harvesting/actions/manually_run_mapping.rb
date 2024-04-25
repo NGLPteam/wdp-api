@@ -4,7 +4,7 @@ module Harvesting
   module Actions
     class ManuallyRunMapping < Harvesting::BaseAction
       include Dry::Monads[:do, :result]
-      include WDPAPI::Deps[
+      include MeruAPI::Deps[
         create_manual_attempt: "harvesting.mappings.create_manual_attempt",
         extract_records: "harvesting.actions.extract_records",
       ]

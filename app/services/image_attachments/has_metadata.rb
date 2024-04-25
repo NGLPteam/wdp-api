@@ -11,7 +11,7 @@ module ImageAttachments
 
     # @return [void]
     def merge_graphql_metadata!(new_metadata)
-      sanitized = WDPAPI::Container["image_attachments.sanitize_metadata"].call value
+      sanitized = MeruAPI::Container["image_attachments.sanitize_metadata"].call value
 
       add_metadata sanitized
     end

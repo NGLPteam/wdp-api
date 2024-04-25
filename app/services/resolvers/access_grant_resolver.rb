@@ -1,13 +1,11 @@
 # frozen_string_literal: true
 
 module Resolvers
-  class AccessGrantResolver < GraphQL::Schema::Resolver
-    include SearchObject.module(:graphql)
-
-    include Resolvers::AppliesPolicyScope
+  class AccessGrantResolver < AbstractResolver
+    include Resolvers::Enhancements::AppliesPolicyScope
     include Resolvers::FiltersByAccessGrantEntity
     include Resolvers::FiltersByAccessGrantSubject
-    include Resolvers::PageBasedPagination
+    include Resolvers::Enhancements::PageBasedPagination
     include Resolvers::SimplyOrdered
 
     type Types::AnyAccessGrantType.connection_type, null: false

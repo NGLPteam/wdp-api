@@ -3,8 +3,8 @@
 RSpec.describe Announcement, type: :model do
   context "when sorting" do
     let!(:entity) { FactoryBot.create :collection }
-    let!(:today) { FactoryBot.create :announcement, :today, entity: entity }
-    let!(:yesterday) { FactoryBot.create :announcement, :yesterday, entity: entity }
+    let!(:today) { FactoryBot.create :announcement, :today, entity: }
+    let!(:yesterday) { FactoryBot.create :announcement, :yesterday, entity: }
 
     describe ".recent" do
       it "returns announcements in the correct order" do

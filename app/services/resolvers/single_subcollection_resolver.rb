@@ -2,10 +2,8 @@
 
 module Resolvers
   # A resolver for getting the first-matching {Collection} below a {Collection}.
-  class SingleSubcollectionResolver < GraphQL::Schema::Resolver
-    include SearchObject.module(:graphql)
-
-    include Resolvers::FirstMatching
+  class SingleSubcollectionResolver < AbstractResolver
+    include Resolvers::Enhancements::FirstMatching
     include Resolvers::OrderedAsEntity
     include Resolvers::Subtreelike
 

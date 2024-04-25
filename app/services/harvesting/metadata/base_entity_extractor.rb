@@ -13,7 +13,7 @@ module Harvesting
       include Dry::Effects.Interrupt(:skip_record)
       include MonadicPersistence
 
-      include WDPAPI::Deps[
+      include MeruAPI::Deps[
         find_existing_collection: "harvesting.utility.find_existing_collection",
         parse_variable_precision_date: "variable_precision.parse_date",
         upsert_contribution_proxies: "harvesting.metadata.upsert_contribution_proxies",

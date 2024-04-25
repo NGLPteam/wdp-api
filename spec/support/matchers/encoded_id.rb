@@ -18,7 +18,7 @@ RSpec::Matchers.define :be_an_encoded_id do
   end
 
   def parse_id(id)
-    global_id = WDPAPI::Container[:node_verifier].verify id, purpose: :node
+    global_id = MeruAPI::Container[:node_verifier].verify id, purpose: :node
 
     GlobalID.parse global_id
   rescue ActiveSupport::MessageVerifier::InvalidSignature

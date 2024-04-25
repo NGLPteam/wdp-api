@@ -106,14 +106,14 @@ module Types
       if object.association(:entity).loaded?
         Promise.resolve(object.entity)
       else
-        Loaders::AssociationLoader.for(object.class, :entity).load(object)
+        Support::Loaders::AssociationLoader.for(object.class, :entity).load(object)
       end
     end
 
     # @return [Promise<Boolean>]
     def initial
       entity.then do |ent|
-        Loaders::AssociationLoader.for(ent.class, :initial_ordering).load(ent).then do |initial_ordering|
+        Support::Loaders::AssociationLoader.for(ent.class, :initial_ordering).load(ent).then do |initial_ordering|
           object == initial_ordering
         end
       end

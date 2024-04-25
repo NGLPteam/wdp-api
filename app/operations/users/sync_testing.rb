@@ -4,7 +4,7 @@ module Users
   # This is a temporary service to create Keycloak representations of our test users.
   class SyncTesting
     include Dry::Monads[:do, :result]
-    include WDPAPI::Deps[
+    include MeruAPI::Deps[
       realm: "keycloak.realm",
       normalize_testing: "users.normalize_testing",
       update_profile: "users.update_profile",

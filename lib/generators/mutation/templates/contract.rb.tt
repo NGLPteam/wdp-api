@@ -1,0 +1,36 @@
+<%-
+  # vim: set ft=ruby.eruby :
+-%>
+# frozen_string_literal: true
+
+module Mutations
+  module Contracts
+    # @see <%= mutation_class_name %>
+    # @see <%= operation_class_name %>
+    class <%= class_name %> < MutationOperations::Contract
+<%- unless required? -%>
+      # rubocop:disable Lint/EmptyBlock
+<%- end -%>
+      json do
+<%- required.each do |definition| -%>
+        required(<%= definition[:field] %>).<%= definition[:macro] %>(<%= definition[:arg] %>)
+<%- end -%>
+      end
+<%- unless required? -%>
+      # rubocop:enable Lint/EmptyBlock
+<%- end -%>
+<%- if contract_has_rules? -%>
+<%- rules.each do |definition| -%>
+        rule(<%= definition[:field] %>).validate(<%= definition[:arg] %>)
+<%- end -%>
+
+      <%- if has_unique_title? -%>
+      rule(:title).validate(:unique_title)
+      <%- end -%>
+      <%- if has_unique_identifier? -%>
+      rule(:identifier).validate(:unique_identifier)
+      <%- end -%>
+<%- end -%>
+    end
+  end
+end

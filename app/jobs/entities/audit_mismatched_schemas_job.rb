@@ -7,14 +7,14 @@ module Entities
 
     queue_as :maintenance
 
-    unique :until_and_while_executing, lock_ttl: 5.minutes, runtime_lock_ttl: 5.minutes, on_conflict: :log, on_runtime_conflict: :log
+    unique_job! by: :job
 
     # @param [String] cursor
     # @return [void]
     def build_enumerator(cursor:)
       enumerator_builder.active_record_on_records(
         Audits::MismatchedEntitySchema.preload(:hierarchical),
-        cursor: cursor,
+        cursor:,
       )
     end
 

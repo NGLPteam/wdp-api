@@ -9,7 +9,7 @@ module Schemas
     # @see Schemas::Associations::AnyAssociationSatisfier
     class AcceptsChild
       include Dry::Matcher.for(:call, with: Schemas::Associations::Matchers::Child)
-      include WDPAPI::Deps[satisfied_by: "schemas.associations.any_satisfied_by"]
+      include MeruAPI::Deps[satisfied_by: "schemas.associations.any_satisfied_by"]
 
       # @param [SchemaVersion] parent
       # @param [SchemaVersion] child

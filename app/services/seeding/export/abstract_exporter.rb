@@ -53,7 +53,7 @@ module Seeding
       # @param [Object] object
       # @return [#as_json, nil]
       def dispatch_export!(object)
-        WDPAPI::Container["seeding.export.dispatch"].(object)
+        MeruAPI::Container["seeding.export.dispatch"].(object)
       end
     end
   end

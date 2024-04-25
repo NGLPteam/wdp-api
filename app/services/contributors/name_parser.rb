@@ -9,7 +9,7 @@ module Contributors
 
       option :kind, Contributors::Types::Kind, default: proc { Contributors::Types::PersonalName.valid?(name) ? :person : :organization }
     end
-    include WDPAPI::Deps[
+    include MeruAPI::Deps[
       parse_name: "utility.parse_name",
     ]
 

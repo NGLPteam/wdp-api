@@ -2,20 +2,10 @@
 
 require "base64"
 require "i18n"
-require "dry/core/class_builder"
-require "dry/core/equalizer"
-require "dry/core/memoizable"
-require "dry/matcher/result_matcher"
-require "dry/monads/all"
-require "dry/transformer/all"
-require "dry/schema"
-require "dry/types"
-require "dry/validation"
-require "faraday_middleware"
 require "graphql/client"
 require "graphql/client/http"
 require "net/http"
-require "sidekiq/api"
+require "sorted_set"
 require "with_advisory_lock"
 
 require_relative Rails.root.join("lib", "global_types", "array_types")
@@ -33,16 +23,6 @@ Oj.optimize_rails
   lib.config.messages.backend = :i18n
   lib.config.messages.load_paths << Rails.root.join("config", "locales", "en.yml").realpath
 end
-
-Dry::Schema.load_extensions :hints
-Dry::Schema.load_extensions :info
-Dry::Schema.load_extensions :monads
-Dry::Types.load_extensions :monads
-Dry::Validation.load_extensions :monads
-Dry::Validation.load_extensions :predicates_as_macros
-
-FrozenRecord::Base.auto_reloading = Rails.env.development?
-FrozenRecord::Base.base_path = Rails.root.join("lib", "frozen_record")
 
 ActiveModel::Type.register :any_array, GlobalTypes::AnyArray
 ActiveModel::Type.register :any_json, GlobalTypes::AnyJSON

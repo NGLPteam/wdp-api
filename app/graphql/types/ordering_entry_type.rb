@@ -64,29 +64,29 @@ module Types
 
     # @return [Promise<OrderingEntry>]
     def ancestors
-      Loaders::AssociationLoader.for(OrderingEntry, :ancestors).load(object)
+      Support::Loaders::AssociationLoader.for(OrderingEntry, :ancestors).load(object)
     end
 
     # @return [Promise(HierarchicalEntity)]
     def entry
-      Loaders::AssociationLoader.for(OrderingEntry, :entity).load(object)
+      Support::Loaders::AssociationLoader.for(OrderingEntry, :entity).load(object)
     end
 
     # @return [Promise(OrderingEntry)]
     # @return [Promise(nil)]
     def next_sibling
-      Loaders::AssociationLoader.for(OrderingEntry, :next_sibling).load(object)
+      Support::Loaders::AssociationLoader.for(OrderingEntry, :next_sibling).load(object)
     end
 
     # @return [Promise(Ordering)]
     def ordering
-      Loaders::AssociationLoader.for(OrderingEntry, :ordering).load(object)
+      Support::Loaders::AssociationLoader.for(OrderingEntry, :ordering).load(object)
     end
 
     # @return [Promise(OrderingEntry)]
     # @return [Promise(nil)]
     def prev_sibling
-      Loaders::AssociationLoader.for(OrderingEntry, :prev_sibling).load(object)
+      Support::Loaders::AssociationLoader.for(OrderingEntry, :prev_sibling).load(object)
     end
 
     # @!group Delegated Entity Methods

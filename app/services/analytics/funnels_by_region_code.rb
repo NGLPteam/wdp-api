@@ -32,9 +32,9 @@ module Analytics
       augment_scope! do |scope|
         scope.map do |(country_code, region_code), count|
           attrs = {
-            count: count,
-            country_code: country_code,
-            region_code: region_code
+            count:,
+            country_code:,
+            region_code:
           }.compact_blank
 
           Analytics::RegionCountResult.new(attrs)
@@ -45,7 +45,7 @@ module Analytics
     def funnel_to_summary!
       augment_scope! do |results|
         attrs = {
-          results: results,
+          results:,
           unfiltered_total: unfiltered_count,
         }
 

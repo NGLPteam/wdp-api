@@ -34,7 +34,7 @@ class TusClient
     file_size = File.size(file_path)
     io = File.open(file_path, 'rb')
 
-    upload_by_io(file_name: file_name, file_size: file_size, io: io)
+    upload_by_io(file_name:, file_size:, io:)
   end
 
   # @return [String] the tus URI
@@ -183,7 +183,7 @@ class TusClient
     # Generate an upload token
     # @return [String]
     def generate_upload_token
-      WDPAPI::Container["uploads.encode_token"].call.value!
+      MeruAPI::Container["uploads.encode_token"].call.value!
     end
 
     def generate_additional_headers

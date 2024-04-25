@@ -4,7 +4,7 @@ module Searching
   class CoreProperty < Dry::Struct
     include Dry::Core::Memoizable
 
-    PATTERN = /\A\$core\.(?<path>.+)\z/.freeze
+    PATTERN = /\A\$core\.(?<path>.+)\z/
 
     attribute :path, Searching::Types::String
     attribute :static_property, Searching::Types::Instance(::StaticProperty)
@@ -44,7 +44,7 @@ module Searching
 
           prop = StaticProperty.find path
 
-          new(path: path, static_property: prop) if prop.present?
+          new(path:, static_property: prop) if prop.present?
         end
       end
     end

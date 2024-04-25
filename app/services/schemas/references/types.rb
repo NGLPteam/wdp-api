@@ -9,20 +9,20 @@ module Schemas
       extend Shared::EnhancedTypes
 
       Collected = Any.constrained(schematic_collected_references: true).constructor ->(input, &block) do
-        WDPAPI::Container["schemas.references.parse_collected"].call(input).value_or do
+        MeruAPI::Container["schemas.references.parse_collected"].call(input).value_or do
           block.call
         end
       end
 
-      CollectedMap = Hash.map(String, Models::Types::ModelList)
+      CollectedMap = Hash.map(String, Support::Models::Types::ModelList)
 
       Scalar = Any.constrained(schematic_scalar_reference: true).constructor ->(input, &block) do
-        WDPAPI::Container["schemas.references.parse_scalar"].call(input).value_or do
+        MeruAPI::Container["schemas.references.parse_scalar"].call(input).value_or do
           block.call
         end
       end
 
-      ScalarMap = Hash.map(String, Models::Types::Model.optional)
+      ScalarMap = Hash.map(String, Support::Models::Types::Model.optional)
     end
   end
 end

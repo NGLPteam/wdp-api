@@ -5,7 +5,7 @@ module Mutations
     # @see Mutations::SelectInitialOrdering
     class SelectInitialOrdering
       include MutationOperations::Base
-      include WDPAPI::Deps[select_initial: "schemas.instances.select_initial_ordering"]
+      include MeruAPI::Deps[select_initial: "schemas.instances.select_initial_ordering"]
 
       use_contract! :select_initial_ordering
 

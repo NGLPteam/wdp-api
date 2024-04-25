@@ -2,7 +2,7 @@
 
 RSpec.describe Utility::ReadOrParseJSON, type: :operation do
   around do |example|
-    WDPAPI::Container.stub(:filesystem, Dry::Files.new(memory: false)) do
+    MeruAPI::Container.stub(:filesystem, Dry::Files.new(memory: false)) do
       example.run
     end
   end

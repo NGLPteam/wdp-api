@@ -28,48 +28,52 @@ RSpec.describe "Query.collection", type: :request do
     GRAPHQL
   end
 
+  let_it_be(:collection, refind: true) { FactoryBot.create :collection }
+
+  let(:slug) { collection.system_slug }
+
   context "as an admin" do
     let(:token) { token_helper.build_token has_global_admin: true }
 
     context "with a valid slug" do
-      let!(:graphql_variables) { { slug: collection.system_slug } }
-
-      let!(:collection) { FactoryBot.create :collection }
+      let!(:graphql_variables) { { slug:, } }
 
       let!(:subcollections) { FactoryBot.create_list :collection, 2, parent: collection }
 
       let!(:contributors) { %i[person organization].map { |trait| FactoryBot.create :contributor, trait } }
 
-      let!(:items) { FactoryBot.create_list :item, 2, collection: collection }
+      let!(:items) { FactoryBot.create_list :item, 2, collection: }
 
       before do
         contributors.map do |contrib|
-          FactoryBot.create :collection_contribution, contributor: contrib, collection: collection
+          FactoryBot.create :collection_contribution, contributor: contrib, collection:
         end
       end
 
-      it "has the right title" do
-        make_default_request!
+      let(:expected_shape) do
+        gql.query do |q|
+          q.prop :collection do |c|
+            c[:title] = collection.title
 
-        expect_graphql_response_data collection: { title: collection.title }
+            c.prop :contributors do |con|
+              con[:nodes] = have_length(contributors.size)
+            end
+
+            c.prop :items do |itm|
+              itm[:nodes] = have_length(items.size)
+            end
+
+            c.prop :collections do |sub|
+              sub[:nodes] = have_length(subcollections.size)
+            end
+          end
+        end
       end
 
-      it "has the right number of contributors" do
-        make_default_request!
-
-        expect(graphql_response(:data, :collection, :contributors, :nodes)).to have(contributors.length).items
-      end
-
-      it "has the right number of items" do
-        make_default_request!
-
-        expect(graphql_response(:data, :collection, :items, :nodes)).to have(items.length).items
-      end
-
-      it "has the right number of subcollections" do
-        make_default_request!
-
-        expect(graphql_response(:data, :collection, :collections, :nodes)).to have(subcollections.length).items
+      it "fetches the right shape" do
+        expect_request! do |req|
+          req.data! expected_shape
+        end
       end
     end
 
@@ -96,16 +100,15 @@ RSpec.describe "Query.collection", type: :request do
 
       let!(:graphql_variables) do
         {
-          slug: collection.system_slug,
-          announcement_order: announcement_order,
+          slug:,
+          announcement_order:,
         }
       end
 
       let(:announcement_order) { "RECENT" }
 
-      let!(:collection) { FactoryBot.create :collection }
-
       let!(:today_announcement) { FactoryBot.create :announcement, :today, entity: collection }
+
       let!(:yesterday_announcement) { FactoryBot.create :announcement, :yesterday, entity: collection }
 
       let(:announcement_list) { [today_announcement, yesterday_announcement] }
@@ -115,7 +118,7 @@ RSpec.describe "Query.collection", type: :request do
           node = announcement.slice(:published_on, :header, :teaser, :body).merge(id: announcement.to_encoded_id).as_json
 
           {
-            node: node
+            node:
           }
         end
       end
@@ -153,23 +156,25 @@ RSpec.describe "Query.collection", type: :request do
     context "with an invalid slug" do
       let!(:graphql_variables) { { slug: random_slug } }
 
-      it "returns nil" do
-        make_default_request!
+      let(:expected_shape) do
+        gql.query do |c|
+          c[:collection] = be_blank
+        end
+      end
 
-        expect_graphql_response_data collection: nil
+      it "returns nil" do
+        expect_request! do |req|
+          req.data! expected_shape
+        end
       end
     end
   end
 
   it_behaves_like "a graphql type with firstCollection" do
-    let!(:collection) { FactoryBot.create :collection }
-
     subject { collection }
   end
 
   it_behaves_like "a graphql type with firstItem" do
-    let!(:collection) { FactoryBot.create :collection }
-
     subject { collection }
   end
 end

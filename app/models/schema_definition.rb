@@ -27,9 +27,9 @@ class SchemaDefinition < ApplicationRecord
 
   has_many :entity_hierarchies, dependent: :delete_all, inverse_of: :schema_definition
 
-  scope :by_namespace, ->(namespace) { where(namespace: namespace) }
-  scope :by_identifier, ->(identifier) { where(identifier: identifier) }
-  scope :by_kind, ->(kind) { where(kind: kind) }
+  scope :by_namespace, ->(namespace) { where(namespace:) }
+  scope :by_identifier, ->(identifier) { where(identifier:) }
+  scope :by_kind, ->(kind) { where(kind:) }
   scope :by_tuple, ->(namespace, identifier) { by_namespace(namespace).by_identifier(identifier) }
 
   scope :builtin, -> { by_namespace(BUILTIN_NAMESPACES) }
@@ -73,7 +73,7 @@ class SchemaDefinition < ApplicationRecord
     # @param [String] needle
     # @return [SchemaDefinition]
     def [](needle)
-      WDPAPI::Container["schemas.definitions.find"].call(needle).value_or do |(_, message)|
+      MeruAPI::Container["schemas.definitions.find"].call(needle).value_or do |(_, message)|
         raise ActiveRecord::RecordNotFound, message
       end
     end
@@ -95,7 +95,7 @@ class SchemaDefinition < ApplicationRecord
 
     def filtered_by(schemas)
       schema_definitions = Array(schemas).map do |needle|
-        WDPAPI::Container["schemas.definitions.find"].call(needle).value_or(nil)
+        MeruAPI::Container["schemas.definitions.find"].call(needle).value_or(nil)
       end.compact
 
       if schema_definitions.present?
@@ -111,7 +111,7 @@ class SchemaDefinition < ApplicationRecord
     # @param [String] identifier
     # @return [SchemaDefinition]
     def lookup_or_initialize(namespace, identifier)
-      where(namespace: namespace, identifier: identifier).first_or_initialize
+      where(namespace:, identifier:).first_or_initialize
     end
   end
 end

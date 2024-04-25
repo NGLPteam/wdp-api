@@ -4,7 +4,7 @@ module Seeding
   # Import one of the vendored seed files in `./vendor/seeds`.
   class ImportVendored
     include Dry::Monads[:result, :do]
-    include WDPAPI::Deps[
+    include MeruAPI::Deps[
       run: "seeding.import.run",
     ]
 

@@ -7,7 +7,7 @@ module Schemas
         # Find a set of schemas for the given scope.
         class FindSchemas
           include Dry::Monads[:result, :do]
-          include WDPAPI::Deps[
+          include MeruAPI::Deps[
             require_all_matching_versions: "schemas.associations.require_all_matching_versions"
           ]
 

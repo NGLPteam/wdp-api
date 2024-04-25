@@ -33,7 +33,7 @@ module Contributors
     # @param [String, <String>] contributor_id an optional contributor id to scope the update by
     # @return [Dry::Monads::Result]
     def call(contributor_id: nil)
-      conditions = generate_conditions_for(contributor_id: contributor_id)
+      conditions = generate_conditions_for(contributor_id:)
 
       updated = sql_update! PREFIX, conditions, INFIX, conditions
 

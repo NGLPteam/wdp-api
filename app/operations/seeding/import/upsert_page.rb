@@ -6,7 +6,7 @@ module Seeding
     class UpsertPage
       include MonadicPersistence
       include Dry::Monads[:result, :do]
-      include WDPAPI::Deps[
+      include MeruAPI::Deps[
         attach_image_property: "seeding.import.attach_image_property",
       ]
 

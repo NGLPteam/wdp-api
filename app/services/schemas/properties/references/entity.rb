@@ -10,7 +10,7 @@ module Schemas
         include Schemas::Properties::References::Model
 
         included do
-          include WDPAPI::Deps[
+          include MeruAPI::Deps[
             available_entity_scope: "schemas.properties.references.entities.find_available"
           ]
 

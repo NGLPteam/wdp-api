@@ -8,7 +8,7 @@ module Schemas
           include Dry.Types
 
           # Parse the name for an ancestor origin.
-          ANCESTOR = /\Aancestor\.(?<ancestor_name>[a-z][a-z0-9_]*[a-z])\z/.freeze
+          ANCESTOR = /\Aancestor\.(?<ancestor_name>[a-z][a-z0-9_]*[a-z])\z/
 
           AncestorOrigin = Coercible::String.constrained(format: ANCESTOR)
 

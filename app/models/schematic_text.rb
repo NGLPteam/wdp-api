@@ -23,8 +23,8 @@ class SchematicText < ApplicationRecord
   validates :path, presence: true, uniqueness: { scope: :entity }
   validates :dictionary, full_text_dictionary: true
 
-  scope :by_entity, ->(entity) { where(entity: entity) }
-  scope :by_path, ->(path) { where(path: path) }
+  scope :by_entity, ->(entity) { where(entity:) }
+  scope :by_path, ->(path) { where(path:) }
 
   before_validation :normalize_columns!
 
@@ -41,7 +41,7 @@ class SchematicText < ApplicationRecord
   # @return [void]
   def normalize_columns!
     self.dictionary = call_operation("full_text.derive_dictionary", lang)
-    self.text_content = call_operation("full_text.extract_text_content", to_reference)
+    self.text_content = call_operation("full_text.extract_text_content", **to_reference)
   end
 
   class << self

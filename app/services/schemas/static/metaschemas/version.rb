@@ -15,7 +15,7 @@ module Schemas
           return Success(value) if errors.blank?
 
           Invalid.new(
-            metaschema: { name: name, version: version },
+            metaschema: { name:, version: },
             target: value,
             schema: value,
             errors: clean_up_errors(errors),

@@ -8,7 +8,7 @@ module Schemas
         # target type.
         class NarrowScope
           include Dry::Monads[:result, :do]
-          include WDPAPI::Deps[
+          include MeruAPI::Deps[
             find_schemas: "schemas.properties.references.entities.find_schemas",
           ]
 
@@ -67,7 +67,7 @@ module Schemas
           # @param [Schemas::Properties::References::Entities::Scopes::Base] scope
           # @return [Dry::Monads::Success(ActiveRecord::Relation<::Entity>)]
           def descendant_scope_for(actual, origin, scope)
-            query = yield initial_scope_for actual, scope, origin: origin
+            query = yield initial_scope_for(actual, scope, origin:)
 
             Success query.descendants_of(origin, depth: scope.depth)
           end
@@ -77,7 +77,7 @@ module Schemas
           # @param [Schemas::Properties::References::Entities::Scopes::Base] scope
           # @return [Dry::Monads::Success(ActiveRecord::Relation<::Entity>)]
           def link_scope_for(actual, origin, scope)
-            query = yield initial_scope_for actual, scope, origin: origin
+            query = yield initial_scope_for(actual, scope, origin:)
 
             Success query.links_for(origin, direction: scope.direction)
           end

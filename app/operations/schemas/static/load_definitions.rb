@@ -4,7 +4,7 @@ module Schemas
   module Static
     class LoadDefinitions
       include Dry::Monads[:do, :result]
-      include WDPAPI::Deps[load_definition: "schemas.static.load_definition"]
+      include MeruAPI::Deps[load_definition: "schemas.static.load_definition"]
       include Schemas::Static::Import[definitions: "definitions.map"]
 
       def call

@@ -34,7 +34,7 @@ module Analytics
     def funnel_to_results!
       augment_scope! do |scope|
         scope.map do |datelike, count|
-          attrs = { count: count }
+          attrs = { count: }
 
           case precision
           when "hour"
@@ -54,10 +54,10 @@ module Analytics
         min_date, max_date = results.pluck(:date).minmax
 
         attrs = {
-          min_date: min_date,
-          max_date: max_date,
-          precision: precision,
-          results: results,
+          min_date:,
+          max_date:,
+          precision:,
+          results:,
           unfiltered_total: unfiltered_count,
         }
 

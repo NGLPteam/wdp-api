@@ -38,8 +38,8 @@ class Ordering < ApplicationRecord
   # @return [Schemas::Orderings::Definition]
   attribute :definition, Schemas::Orderings::Definition.to_type, default: proc { {} }
 
-  scope :by_entity, ->(entity) { where(entity: entity) }
-  scope :by_identifier, ->(identifier) { where(identifier: identifier) }
+  scope :by_entity, ->(entity) { where(entity:) }
+  scope :by_identifier, ->(identifier) { where(identifier:) }
 
   scope :deterministically_ordered, -> { reorder(position: :asc, name: :asc, identifier: :asc) }
   scope :initially_ordered, -> { reorder(entity_id: :asc, position: :asc, name: :asc, identifier: :asc) }
@@ -62,7 +62,7 @@ class Ordering < ApplicationRecord
 
   # A restrictive pattern to ensure that ordering identifiers are sane, URL-safe,
   # and consistent across the application.
-  IDENTIFIER_FORMAT = /\A[a-z](?:[a-z0-9]*|(?:(?<![-_])[_-](?![_-])))*[a-z0-9]\z/.freeze
+  IDENTIFIER_FORMAT = /\A[a-z](?:[a-z0-9]*|(?:(?<![-_])[_-](?![_-])))*[a-z0-9]\z/
 
   validates :identifier, presence: true, format: { with: IDENTIFIER_FORMAT }, uniqueness: { scope: %i[entity_type entity_id] }
   validates :definition, store_model: true
@@ -119,7 +119,7 @@ class Ordering < ApplicationRecord
       initial_ordering_selection&.destroy!
     end
 
-    call_operation("schemas.orderings.calculate_initial", entity: entity)
+    call_operation("schemas.orderings.calculate_initial", entity:)
   end
 
   # @return [<Schemas::Orderings::OrderDefinition>]
@@ -132,7 +132,7 @@ class Ordering < ApplicationRecord
   def recalculate_initial_ordering!
     return if destroyed_by_association
 
-    call_operation("schemas.orderings.calculate_initial", entity: entity)
+    call_operation("schemas.orderings.calculate_initial", entity:)
   end
 
   # @param [HierarchicalEntity] refreshing_entity
@@ -189,7 +189,7 @@ class Ordering < ApplicationRecord
     # @param [String] slug
     # @return [ActiveRecord::Relation<Ordering>]
     def by_handled_schema_definition(slug)
-      WDPAPI::Container["schemas.definitions.find"].(slug).fmap do |schema_definition|
+      MeruAPI::Container["schemas.definitions.find"].(slug).fmap do |schema_definition|
         where(handled_schema_definition: schema_definition)
       end.value_or do
         none

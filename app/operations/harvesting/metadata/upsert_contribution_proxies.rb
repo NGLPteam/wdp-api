@@ -8,7 +8,7 @@ module Harvesting
     # @see Harvesting::Metadata::UpsertContributionProxy
     class UpsertContributionProxies
       include Dry::Monads[:do, :result]
-      include WDPAPI::Deps[
+      include MeruAPI::Deps[
         upsert_proxy: "harvesting.metadata.upsert_contribution_proxy",
       ]
 

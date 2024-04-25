@@ -4,8 +4,8 @@ module ScopesForEntity
   extend ActiveSupport::Concern
 
   included do
-    scope :for_entity, ->(entity) { recognized_entity_entity?(entity) ? where(entity: entity) : none }
-    scope :for_entity_type, ->(entity_type) { where(entity_type: entity_type) }
+    scope :for_entity, ->(entity) { recognized_entity_entity?(entity) ? where(entity:) : none }
+    scope :for_entity_type, ->(entity_type) { where(entity_type:) }
   end
 
   module ClassMethods

@@ -25,7 +25,7 @@ module MutationOperations
   module Base
     extend ActiveSupport::Concern
 
-    include Graphql::PunditHelpers
+    include Support::GraphQLAPI::PunditHelpers
     include MutationOperations::AttributeExtraction
     include MutationOperations::Contracts
     include MutationOperations::Edges
@@ -112,7 +112,7 @@ module MutationOperations
     # @param [Hash] extensions
     # @return [void]
     def add_error!(message, code: nil, path: nil, force_attribute: false)
-      error = error_compiler.call(message, code: code, path: path, force_attribute: force_attribute)
+      error = error_compiler.call(message, code:, path:, force_attribute:)
 
       graphql_response[:errors] << error
 
@@ -190,7 +190,7 @@ module MutationOperations
     end
 
     def upsert_model!(klass, attributes, unique_by:, attach_to: nil)
-      result = klass.upsert attributes, returning: unique_by, unique_by: unique_by
+      result = klass.upsert(attributes, returning: unique_by, unique_by:)
 
       conditions = unique_by.each_with_object({}) do |key, h|
         h[key.to_sym] = result.first[key.to_s]
@@ -261,7 +261,7 @@ module MutationOperations
     # @return [Dry::Monads::Result] This is not guaranteed, but assumed for most operations
     #   that would be called by a mutation
     def call_operation(name, *args)
-      WDPAPI::Container[name].call(*args)
+      MeruAPI::Container[name].call(*args)
     end
 
     # @param [<Symbol>] keys
@@ -283,14 +283,14 @@ module MutationOperations
     # @yieldparam [Dry::Matcher::ResultMatcher] matcher
     # @yieldreturn [void]
     # @return [void]
-    def with_called_operation!(name, *args, &block)
+    def with_called_operation!(name, *args, &)
       result = call_operation(name, *args)
 
-      with_result! result, &block
+      with_result!(result, &)
     end
 
-    def with_result!(result, &block)
-      Dry::Matcher::ResultMatcher.call(result, &block)
+    def with_result!(result, &)
+      Dry::Matcher::ResultMatcher.call(result, &)
     end
 
     def with_operation_result!(result)
@@ -328,10 +328,6 @@ module MutationOperations
         end
       end
     end
-
-    # @!endgroup
-
-    # @!group Schema Errors
 
     # @!endgroup
   end

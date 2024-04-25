@@ -6,7 +6,7 @@ module Loaders
   # @see Schemas::Instances::ReadPropertyContext
   # @see Schemas::Properties::Context
   class SchemaPropertyContextLoader < GraphQL::Batch::Loader
-    include WDPAPI::Deps[to_context: "schemas.instances.read_property_context"]
+    include MeruAPI::Deps[to_context: "schemas.instances.read_property_context"]
 
     # @param [Class<HasSchemaDefinition>] model
     def initialize(model, **args)

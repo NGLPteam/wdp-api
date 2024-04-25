@@ -1,72 +1,57 @@
 # frozen_string_literal: true
 
-RSpec.describe Mutations::DestroyCommunity, type: :request do
-  context "as an admin" do
-    let(:token) { token_helper.build_token has_global_admin: true }
+RSpec.describe Mutations::DestroyCommunity, type: :request, graphql: :mutation do
+  mutation_query! <<~GRAPHQL
+  mutation destroyCommunity($input: DestroyCommunityInput!) {
+    destroyCommunity(input: $input) {
+      destroyed
+      destroyedId
 
-    let!(:community) { FactoryBot.create :community }
+      ... ErrorFragment
+    }
+  }
+  GRAPHQL
 
-    let!(:mutation_input) do
-      {
-        communityId: community.to_encoded_id,
-      }
-    end
+  let_it_be(:community, refind: true) { FactoryBot.create :community }
 
-    let!(:graphql_variables) do
-      {
-        input: mutation_input
-      }
-    end
+  let_mutation_input!(:community_id) { community.to_encoded_id }
 
+  as_an_admin_user do
     let!(:expected_shape) do
-      {
-        destroyCommunity: {
-          destroyed: true,
-          globalErrors: be_blank
-        }
-      }
-    end
-
-    let!(:query) do
-      <<~GRAPHQL
-      mutation destroyCommunity($input: DestroyCommunityInput!) {
-        destroyCommunity(input: $input) {
-          destroyed
-
-          globalErrors { message }
-        }
-      }
-      GRAPHQL
+      gql.mutation :destroy_community do |m|
+        m[:destroyed] = true
+        m[:destroyed_id] = community_id
+      end
     end
 
     it "destroys the community" do
-      expect do
-        make_graphql_request! query, token: token, variables: graphql_variables
-      end.to change(Community, :count).by(-1)
+      expect_request! do |req|
+        req.effect! change(Community, :count).by(-1)
 
-      expect_graphql_response_data expected_shape
+        req.data! expected_shape
+      end
     end
 
     context "when the community has at least one collection" do
-      let!(:collection) { FactoryBot.create :collection, community: community }
+      let!(:collection) { FactoryBot.create :collection, community: }
 
       let(:expected_shape) do
-        {
-          destroyCommunity: {
-            destroyed: be_blank,
-            globalErrors: [
-              { message: I18n.t("dry_validation.errors.destroy_community_with_collections") }
-            ]
-          }
-        }
+        gql.mutation :destroy_community, no_global_errors: false do |m|
+          m[:destroyed] = be_blank
+          m[:destroyed_id] = be_blank
+
+          m.global_errors do |ge|
+            ge.error :destroy_community_with_collections
+          end
+        end
       end
 
       it "fails to destroy the community" do
-        expect do
-          make_graphql_request! query, token: token, variables: graphql_variables
-        end.to keep_the_same(Community, :count)
+        expect_request! do |req|
+          req.effect! keep_the_same(Community, :count)
 
-        expect_graphql_response_data expected_shape
+          req.data! expected_shape
+        end
       end
     end
   end

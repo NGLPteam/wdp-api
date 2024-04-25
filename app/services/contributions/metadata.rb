@@ -10,7 +10,7 @@ module Contributions
     attribute :display_name, :string, default: nil
     attribute :location, :string, default: nil
 
-    def fetch(attribute, &block)
+    def fetch(attribute, &)
       attributes[attribute.to_s].presence || yield
     end
   end

@@ -61,7 +61,7 @@ module MutationOperations
       private
 
       def build_contract
-        ContractBuilder.new(name, image: image).call
+        ContractBuilder.new(name, image:).call
       end
 
       # @param [MutationOperations::Attachments::Attribute] attachment
@@ -70,10 +70,9 @@ module MutationOperations
       def prepare_metadata(value)
         # :nocov:
         return nil unless image
-
         # :nocov:
 
-        WDPAPI::Container["image_attachments.sanitize_metadata"].call value
+        MeruAPI::Container["image_attachments.sanitize_metadata"].call value
       end
     end
   end

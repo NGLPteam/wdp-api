@@ -20,15 +20,15 @@ class ContextualPermission < ApplicationRecord
 
   self.primary_key = [:user_id, :hierarchical_type, :hierarchical_id]
 
-  attribute :access_control_list, Roles::AccessControlList.to_type, default: {}
-  attribute :grid, Roles::EntityPermissionGrid.to_type, default: {}
+  attribute :access_control_list, Roles::AccessControlList.to_type, default: -> { {} }
+  attribute :grid, Roles::EntityPermissionGrid.to_type, default: -> { {} }
 
   belongs_to :hierarchical, polymorphic: true
   belongs_to :user
 
-  has_many_readonly :contextually_assignable_roles, -> { in_order }, primary_key: primary_key, foreign_key: primary_key, inverse_of: :contextual_permission
-  has_many_readonly :contextually_assigned_access_grants, primary_key: primary_key, foreign_key: primary_key, inverse_of: :contextual_permission
-  has_many_readonly :contextually_assigned_roles, primary_key: primary_key, foreign_key: primary_key, inverse_of: :contextual_permission
+  has_many_readonly :contextually_assignable_roles, -> { in_order }, primary_key:, foreign_key: primary_key, inverse_of: :contextual_permission
+  has_many_readonly :contextually_assigned_access_grants, primary_key:, foreign_key: primary_key, inverse_of: :contextual_permission
+  has_many_readonly :contextually_assigned_roles, primary_key:, foreign_key: primary_key, inverse_of: :contextual_permission
 
   has_many :assignable_roles, through: :contextually_assignable_roles, source: :role
 
@@ -92,7 +92,7 @@ class ContextualPermission < ApplicationRecord
     def empty_permission_for(user, entity)
       attrs = DEFAULT_ATTRIBUTES.merge(
         hierarchical: entity,
-        user: user
+        user:
       )
 
       attrs.delete(:user) unless user.kind_of?(User)

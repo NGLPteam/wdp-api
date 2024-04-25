@@ -2,10 +2,8 @@
 
 module Resolvers
   # @see RelatedItemLink
-  class RelatedItemResolver < GraphQL::Schema::Resolver
-    include SearchObject.module(:graphql)
-
-    include Resolvers::PageBasedPagination
+  class RelatedItemResolver < AbstractResolver
+    include Resolvers::Enhancements::PageBasedPagination
     include Resolvers::OrderedAsEntity
 
     description "Retrieve linked items of the same schema type"

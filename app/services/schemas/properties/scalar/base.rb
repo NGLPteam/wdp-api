@@ -258,6 +258,8 @@ module Schemas
           array? ? Array(value) : value
         end
 
+        # @param [Schemas::Properties::WriteContext] context
+        # @return [void]
         def write_values_within!(context)
           context.copy_value! path
         end
@@ -271,12 +273,12 @@ module Schemas
         end
 
         def to_version_property
-          super.merge(function: function)
+          super.merge(function:)
         end
 
         def to_version_property_metadata
           super.merge(
-            order_path: order_path,
+            order_path:,
           ).tap do |metadata|
             metadata[:default] = default if has_default?
           end.compact

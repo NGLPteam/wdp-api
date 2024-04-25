@@ -10,7 +10,7 @@ module Schemas
       # @see Schemas::Utility::VersionFor
       class ValidateAssociation
         include Dry::Matcher.for(:call, with: Schemas::Associations::Matchers::Connection)
-        include WDPAPI::Deps[
+        include MeruAPI::Deps[
           validate: "schemas.associations.validate",
           version_for: "schemas.utility.version_for"
         ]

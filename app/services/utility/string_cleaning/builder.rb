@@ -20,7 +20,7 @@ module Utility
       # @param [String] replacement
       # @return [void]
       def gsub(pattern, replacement)
-        @substitutions << Utility::StringCleaning::Substitution.new(pattern: pattern, replacement: replacement)
+        @substitutions << Utility::StringCleaning::Substitution.new(pattern:, replacement:)
       end
 
       # Add a substitution rule that replaces the provided pattern with `""`.

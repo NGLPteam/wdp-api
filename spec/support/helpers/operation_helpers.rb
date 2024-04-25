@@ -13,9 +13,9 @@ module TestHelpers
         expect(operation.call(...))
       end
 
-      matcher :be_the_result_with do |*args|
+      matcher :be_the_result_with do |*args, **kwargs|
         match do |actual|
-          @expected = operation.call(*args)
+          @expected = operation.call(*args, **kwargs)
 
           if @expected.success?
             values_match? @expected.value!, actual

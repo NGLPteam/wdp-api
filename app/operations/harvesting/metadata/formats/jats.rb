@@ -4,7 +4,7 @@ module Harvesting
   module Metadata
     module Formats
       class JATS < Harvesting::Metadata::BaseFormat
-        include WDPAPI::Deps[
+        include MeruAPI::Deps[
           augment_middleware: "harvesting.metadata.jats.augment_middleware",
           extract_entities: "harvesting.metadata.jats.extract_entities",
           parse: "harvesting.metadata.jats.parse",

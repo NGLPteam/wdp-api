@@ -16,7 +16,7 @@ module Harvesting
         harvest_attempt.clear_harvest_errors!
 
         with_stack do
-          yield protocol.extract_records.(harvest_attempt, async: async, cursor: cursor)
+          yield protocol.extract_records.(harvest_attempt, async:, cursor:)
         end
 
         Success harvest_attempt.harvest_records.count

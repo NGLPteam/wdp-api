@@ -13,16 +13,9 @@ module Harvesting
 
         # :nocov:
 
-        connection = HarvestRecord.connection
+        count = HarvestRecord.where(id: harvest_record.id).update_all(entity_count: HarvestEntity.where(harvest_record_id: harvest_record.id))
 
-        bindings = [[nil, harvest_record.id]]
-
-        result = connection.exec_update(<<~SQL, "Updating HarvestRecord.entity_count", bindings)
-        UPDATE harvest_records SET entity_count = (SELECT COUNT(*) FROM harvest_entities WHERE harvest_record_id = $1)
-        WHERE id = $1
-        SQL
-
-        Success result
+        Success count
       end
     end
   end

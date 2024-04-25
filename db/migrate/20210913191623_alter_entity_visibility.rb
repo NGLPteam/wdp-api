@@ -34,7 +34,7 @@ class AlterEntityVisibility < ActiveRecord::Migration[6.1]
       change_table table do |t|
         t.column :visible_until_at, :timestamptz, null: true
         t.column :hidden_at, :timestamptz, null: true
-        t.enum :visibility, as: "entity_visibility", null: false, default: "visible"
+        t.enum :visibility, enum_type: "entity_visibility", null: false, default: "visible"
       end
 
       reversible do |dir|

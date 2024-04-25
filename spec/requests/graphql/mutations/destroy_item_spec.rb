@@ -1,72 +1,55 @@
 # frozen_string_literal: true
 
-RSpec.describe Mutations::DestroyItem, type: :request do
-  context "as an admin" do
-    let(:token) { token_helper.build_token has_global_admin: true }
+RSpec.describe Mutations::DestroyItem, type: :request, graphql: :mutation do
+  mutation_query! <<~GRAPHQL
+  mutation destroyItem($input: DestroyItemInput!) {
+    destroyItem(input: $input) {
+      destroyed
+      destroyedId
 
-    let!(:item) { FactoryBot.create :item }
+      ... ErrorFragment
+    }
+  }
+  GRAPHQL
 
-    let!(:mutation_input) do
-      {
-        itemId: item.to_encoded_id,
-      }
-    end
+  let_it_be(:item, refind: true) { FactoryBot.create :item }
 
-    let!(:graphql_variables) do
-      {
-        input: mutation_input
-      }
-    end
+  let_mutation_input!(:item_id) { item.to_encoded_id }
 
-    let!(:expected_shape) do
-      {
-        destroyItem: {
-          destroyed: true,
-          globalErrors: be_blank
-        }
-      }
-    end
-
-    let!(:query) do
-      <<~GRAPHQL
-      mutation destroyItem($input: DestroyItemInput!) {
-        destroyItem(input: $input) {
-          destroyed
-
-          globalErrors { message }
-        }
-      }
-      GRAPHQL
+  as_an_admin_user do
+    let(:expected_shape) do
+      gql.mutation :destroy_item do |m|
+        m[:destroyed] = true
+      end
     end
 
     it "destroys the item" do
-      expect do
-        make_graphql_request! query, token: token, variables: graphql_variables
-      end.to change(Item, :count).by(-1)
+      expect_request! do |req|
+        req.effect! change(Item, :count).by(-1)
 
-      expect_graphql_response_data expected_shape
+        req.data! expected_shape
+      end
     end
 
     context "when the item has at least one subitem" do
-      let!(:subitem) { FactoryBot.create :item, parent: item }
+      let_it_be(:subitem, refind: true) { FactoryBot.create :item, parent: item }
 
       let(:expected_shape) do
-        {
-          destroyItem: {
-            destroyed: be_blank,
-            globalErrors: [
-              { message: I18n.t("dry_validation.errors.destroy_item_with_subitems") }
-            ]
-          }
-        }
+        gql.mutation(:destroy_item, no_errors: false) do |m|
+          m[:destroyed] = be_blank
+
+          m.global_errors do |ge|
+            ge.error :destroy_item_with_subitems
+          end
+        end
       end
 
       it "fails to destroy the item" do
-        expect do
-          make_graphql_request! query, token: token, variables: graphql_variables
-        end.to keep_the_same(Item, :count)
+        expect_request! do |req|
+          req.effect! keep_the_same(Item, :count)
 
-        expect_graphql_response_data expected_shape
+          req.data! expected_shape
+        end
       end
     end
   end

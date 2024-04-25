@@ -1,0 +1,44 @@
+<%-
+  # vim: set ft=ruby.eruby nosmartindent noautoindent :
+-%>
+# frozen_string_literal: true
+
+module Mutations
+  # @see <%= operation_class_name %>
+  <%- if abstract? -%>
+  # @abstract
+  <%- end -%>
+  class <%= class_name %> < <%= parent_mutation_class_name %>
+    <%- unless abstract? -%>
+    description <<~TEXT
+    <%- if standard_mutation? -%>
+    <%= mutation_verb.to_s.titleize %> a single `<%= model_name %>` record.
+    <%- else -%>
+    A mutation.
+    <%- end -%>
+    TEXT
+    <%- if standard_mutation? && subaction? -%>
+
+    field <%= model_key.inspect %>, <%= graphql_model_type %>, null: true do
+      description <<~TEXT
+      The newly-modified <%= human_model_name %>, if successful.
+      TEXT
+    end
+    <%- end -%>
+    <%- if works_with_existing_model? -%>
+
+    argument <%= model_id_key.inspect %>, ID, loads: <%= graphql_model_type %>, required: true do
+      description <<~TEXT
+      The <%= human_model_name %> to <%= mutation_verb %>.
+      TEXT
+    end
+    <%- end -%>
+
+    performs_operation! <%= operation_path.inspect %><%= ", destroy: true" if destroy_mutation? %>
+    <%- else -%>
+    description <<~TEXT
+    An abstract mutation.
+    TEXT
+    <%- end -%>
+  end
+end

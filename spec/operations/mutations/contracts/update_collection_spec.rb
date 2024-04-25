@@ -11,7 +11,7 @@ RSpec.describe Mutations::Contracts::UpdateCollection, type: :operation do
 
   let!(:inputs) do
     {
-      collection: collection,
+      collection:,
       doi: new_doi
     }
   end

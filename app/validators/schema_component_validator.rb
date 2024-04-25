@@ -4,7 +4,7 @@
 # i.e. `namespace` and `identifier`.
 class SchemaComponentValidator < ActiveModel::EachValidator
   # The supported format. Alphanumeric with underscores, all lowercase.
-  COMPONENT_FORMAT = /\A[a-z][a-z0-9_]+[a-z0-9]\z/.freeze
+  COMPONENT_FORMAT = /\A[a-z][a-z0-9_]+[a-z0-9]\z/
 
   private_constant :COMPONENT_FORMAT
 

@@ -27,7 +27,7 @@ module Harvesting
                 kind: :organization,
                 attributes: {},
                 properties: {
-                  legal_name: legal_name
+                  legal_name:
                 }
               }
 
@@ -36,7 +36,7 @@ module Harvesting
                 metadata: {
                   "aff_id" => id,
                 },
-                contributor: contributor
+                contributor:
               }
             end
           end

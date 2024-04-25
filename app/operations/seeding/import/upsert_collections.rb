@@ -4,7 +4,7 @@ module Seeding
   module Import
     class UpsertCollections
       include Dry::Monads[:result, :do]
-      include WDPAPI::Deps[
+      include MeruAPI::Deps[
         upsert_collection: "seeding.import.upsert_collection",
       ]
 

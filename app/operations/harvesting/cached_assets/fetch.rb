@@ -7,7 +7,7 @@ module Harvesting
       include Dry::Monads[:result, :do]
       include MonadicPersistence
 
-      NOT_FOUND = /remote file not found/.freeze
+      NOT_FOUND = /remote file not found/
 
       # @return [Dry::Monads::Success(HarvestCachedAsset)]
       def call(url)

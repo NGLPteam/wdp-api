@@ -2,11 +2,9 @@
 
 module Resolvers
   module AccessGrants
-    class UserGroupResolver < GraphQL::Schema::Resolver
-      include SearchObject.module(:graphql)
-
+    class UserGroupResolver < AbstractResolver
       include Resolvers::FiltersByAccessGrantEntity
-      include Resolvers::PageBasedPagination
+      include Resolvers::Enhancements::PageBasedPagination
       include Resolvers::SimplyOrdered
 
       type Types::AnyUserGroupAccessGrantType.connection_type, null: false

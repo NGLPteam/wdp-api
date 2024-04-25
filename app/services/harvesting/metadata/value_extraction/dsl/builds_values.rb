@@ -7,7 +7,7 @@ module Harvesting
         module BuildsValues
           extend ActiveSupport::Concern
 
-          def initialize(*)
+          def initialize(...)
             super
 
             @values = {}
@@ -21,26 +21,26 @@ module Harvesting
 
           # @!group DSL Methods
 
-          def attribute(id, *attribute_names, **options, &block)
+          def attribute(id, *attribute_names, **options, &)
             value id, **options do
-              attribute(*attribute_names, **options, &block)
+              attribute(*attribute_names, **options, &)
             end
           end
 
-          def xpath(id, *queries, **options, &block)
+          def xpath(id, *queries, **options, &)
             value id, **options do
-              xpath(*queries, **options, &block)
+              xpath(*queries, **options, &)
             end
           end
 
-          def xpath_list(id, *queries, **options, &block)
+          def xpath_list(id, *queries, **options, &)
             value id, **options do
-              xpath_list(*queries, **options, &block)
+              xpath_list(*queries, **options, &)
             end
           end
 
-          def value(id, **options, &block)
-            value = DSL::ValueBuilder.new(id, **options).build(&block)
+          def value(id, **options, &)
+            value = DSL::ValueBuilder.new(id, **options).build(&)
 
             raise "existing value" if @values[value.identifier].present?
 

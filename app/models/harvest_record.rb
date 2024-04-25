@@ -70,7 +70,7 @@ class HarvestRecord < ApplicationRecord
   # @param [Boolean] reprepare
   # @return [void]
   def asynchronously_upsert_entities!(reprepare: false)
-    Harvesting::UpsertEntitiesForRecordJob.perform_later self, reprepare: reprepare
+    Harvesting::UpsertEntitiesForRecordJob.perform_later self, reprepare:
   end
 
   # @see Harvesting::Actions::ParseRecordMetadata
@@ -100,7 +100,7 @@ class HarvestRecord < ApplicationRecord
   # @param [Boolean] reprepare
   # @return [Dry::Monads::Result]
   def upsert_entities!(reprepare: false)
-    call_operation("harvesting.actions.upsert_entities", self, reprepare: reprepare)
+    call_operation("harvesting.actions.upsert_entities", self, reprepare:)
   end
 
   class << self

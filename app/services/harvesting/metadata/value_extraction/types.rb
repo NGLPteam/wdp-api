@@ -45,7 +45,7 @@ module Harvesting
         end
 
         # Enforce a string that is not `blank?`.
-        PresentString = MaybeXMLText.constrained(present: true)
+        PresentString = MaybeXMLText.constrained(rails_present: true)
 
         # An HTTP (or HTTPS) URL.
         URL = Coercible::String.constrained(http_uri: true)

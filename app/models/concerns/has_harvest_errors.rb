@@ -19,9 +19,13 @@ module HasHarvestErrors
 
   # @param [String] code
   # @param [String] message
+  # @param [Hash] flat_metadata an arg that allows a hash to be passed in a tuple straight to this method
+  #   as a third positional argument and transparently merged into `metadata`.
   # @param [Hash] metadata
   # @return [void]
-  def log_harvest_error!(code, message, **metadata)
-    harvest_errors.create!(code: code, message: message, metadata: metadata)
+  def log_harvest_error!(code, message, flat_metadata = {}, **metadata)
+    metadata.merge!(flat_metadata)
+
+    harvest_errors.create!(code:, message:, metadata:)
   end
 end

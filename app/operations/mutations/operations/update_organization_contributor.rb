@@ -18,8 +18,8 @@ module Mutations
         assign_attributes! contributor, **args
 
         properties = {
-          legal_name: legal_name,
-          location: location,
+          legal_name:,
+          location:,
         }.compact
 
         contributor.properties = { organization: properties }

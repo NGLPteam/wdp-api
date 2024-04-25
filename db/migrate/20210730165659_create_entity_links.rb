@@ -3,7 +3,7 @@ class CreateEntityLinks < ActiveRecord::Migration[6.1]
     create_enum "link_operator", %w[contains references]
 
     change_table :entities do |t|
-      t.enum :link_operator, as: "link_operator", null: true
+      t.enum :link_operator, enum_type: "link_operator", null: true
 
       t.index :link_operator
     end
@@ -22,7 +22,7 @@ class CreateEntityLinks < ActiveRecord::Migration[6.1]
       t.references :target_collection, null: true, foreign_key: { to_table: :collections, on_delete: :cascade }, type: :uuid
       t.references :target_item, null: true, foreign_key: { to_table: :items, on_delete: :cascade }, type: :uuid
 
-      t.enum :operator, as: "link_operator", null: false
+      t.enum :operator, enum_type: "link_operator", null: false
 
       t.ltree :auth_path, null: false
 

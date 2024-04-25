@@ -4,7 +4,7 @@ module Analytics
   class FakeTrackerBuilder
     include Dry::Core::Memoizable
     include Dry::Initializer[undefined: false].define -> do
-      option :ip, Analytics::Types::String, default: proc { WDPAPI::Container["testing.random_ip_address"].() }
+      option :ip, Analytics::Types::String, default: proc { MeruAPI::Container["testing.random_ip_address"].() }
       option :user, Users::Types::Current.optional, default: proc { AnonymousUser.new }
       option :user_agent, Analytics::Types::String, default: proc { Faker::Internet.user_agent }
     end
@@ -12,8 +12,8 @@ module Analytics
     # @return [Ahoy::Tracker]
     def call
       tracker = Ahoy::Tracker.new(
-        controller: controller,
-        request: request
+        controller:,
+        request:
       )
 
       return tracker
@@ -27,7 +27,7 @@ module Analytics
 
     # @return [ActionDispatch::Request]
     memoize def request
-      Testing::RequestMocker.new(ip: ip, user_agent: user_agent).build
+      Testing::RequestMocker.new(ip:, user_agent:).build
     end
   end
 end

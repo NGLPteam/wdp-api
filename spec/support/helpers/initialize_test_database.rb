@@ -5,7 +5,7 @@ module Testing
   # that should always exist in a running instance of WDP-API.
   class InitializeTestDatabase
     include Dry::Monads[:do, :result]
-    include WDPAPI::Deps[
+    include MeruAPI::Deps[
       role_sync: "roles.sync",
       load_static_schemas: "schemas.static.load_definitions"
     ]

@@ -38,7 +38,7 @@ RSpec.describe "Query.item", type: :request do
 
   let(:slug) { random_slug }
 
-  let(:graphql_variables) { { slug: slug, } }
+  let(:graphql_variables) { { slug:, } }
 
   context "as an admin" do
     let(:token) { token_helper.build_token has_global_admin: true }
@@ -56,7 +56,7 @@ RSpec.describe "Query.item", type: :request do
 
       let_it_be(:item_contributions) do
         contributors.map do |contrib|
-          FactoryBot.create :item_contribution, contributor: contrib, item: item
+          FactoryBot.create :item_contribution, contributor: contrib, item:
         end
       end
 

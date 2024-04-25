@@ -2,7 +2,7 @@
 
 RSpec.describe Harvesting::Dispatch::BuildProtocol, type: :operation do
   def protocol_proxy(name)
-    WDPAPI::Container["harvesting.protocols.#{name}"]
+    MeruAPI::Container["harvesting.protocols.#{name}"]
   end
 
   def succeed_with_protocol(name)

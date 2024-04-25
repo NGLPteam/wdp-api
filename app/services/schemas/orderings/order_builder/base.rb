@@ -17,7 +17,7 @@ module Schemas
           attributes = Array(attributes_for(definition))
 
           attributes.map do |attr|
-            apply definition, attr, invert: invert
+            apply definition, attr, invert:
           end
         end
 

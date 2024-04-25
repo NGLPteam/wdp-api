@@ -83,12 +83,12 @@ module Types
 
     # @return [Promise(Community)]
     def community
-      Loaders::AssociationLoader.for(object.class, :community).load(object)
+      Support::Loaders::AssociationLoader.for(object.class, :community).load(object)
     end
 
     # @return [Promise(ActiveRecord::Relation<EntityAncestor>)]
     def named_ancestors
-      Loaders::AssociationLoader.for(object.class, :named_ancestors).load(object)
+      Support::Loaders::AssociationLoader.for(object.class, :named_ancestors).load(object)
     end
 
     # @todo Ensure by_entry is properly wrapped in a loader

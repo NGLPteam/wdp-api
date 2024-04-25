@@ -5,10 +5,8 @@ module Resolvers
   #
   # @see Types::EntityType
   # @see Types::OrderingType
-  class OrderingResolver < GraphQL::Schema::Resolver
-    include SearchObject.module(:graphql)
-
-    include Resolvers::PageBasedPagination
+  class OrderingResolver < AbstractResolver
+    include Resolvers::Enhancements::PageBasedPagination
     include Resolvers::OrderedAsOrdering
 
     description <<~TEXT

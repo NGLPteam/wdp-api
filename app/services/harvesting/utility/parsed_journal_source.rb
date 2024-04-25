@@ -32,7 +32,7 @@ module Harvesting
 
         def unknown(input: "UNKNOWN")
           new(
-            input: input,
+            input:,
             volume: "UNKNOWN",
             issue: "UNKNOWN"
           )

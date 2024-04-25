@@ -5,7 +5,7 @@ module Schemas
     # Check if a given {Schemas::Associations::Abstract association} can be
     # satisfied by a {SchemaVersion}.
     class AnySatisfiedBy
-      include WDPAPI::Deps[satisfied_by: "schemas.associations.satisfied_by"]
+      include MeruAPI::Deps[satisfied_by: "schemas.associations.satisfied_by"]
 
       # @param [<Schemas::Associations::Association>] association
       # @param [SchemaVersion] schema

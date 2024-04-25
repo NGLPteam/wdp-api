@@ -10,7 +10,7 @@ module Schemas
       def build_enumerator(schema_version, cursor:)
         enumerator_builder.active_record_on_records(
           Entity.actual.filtered_by_schema_version(schema_version).preload(:entity),
-          cursor: cursor,
+          cursor:,
         )
       end
 

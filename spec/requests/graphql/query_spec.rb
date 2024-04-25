@@ -1,16 +1,20 @@
 # frozen_string_literal: true
 
 RSpec.describe "GraphQL Query", type: :request do
-  context "as an admin" do
-    let(:token) { token_helper.build_token has_global_admin: true }
-
+  as_an_admin_user do
     describe "using the relay node resolver" do
-      let!(:collection) { FactoryBot.create :collection }
+      let_it_be(:collection) { FactoryBot.create :collection }
 
-      it "works as expected" do
-        variables = { id: collection.to_encoded_id }
+      let(:expected_shape) do
+        gql.query do |q|
+          q.prop :node do |n|
+            n[:title] = collection.title
+          end
+        end
+      end
 
-        make_graphql_request! <<~GRAPHQL, token: token, variables: variables
+      let(:query) do
+        <<~GRAPHQL
         query($id: ID!) {
           node(id: $id) {
             ... on Collection {
@@ -19,16 +23,24 @@ RSpec.describe "GraphQL Query", type: :request do
           }
         }
         GRAPHQL
+      end
 
-        expect_graphql_response_data node: { title: collection.title }
+      let(:graphql_variables) do
+        { id: collection.to_encoded_id }
+      end
+
+      it "works as expected" do
+        expect_request! do |req|
+          req.data! expected_shape
+        end
       end
     end
 
     describe "fetching a list of communities" do
       let!(:communities) { FactoryBot.create_list :community, 5 }
 
-      it "has the expected count" do
-        make_graphql_request! <<~GRAPHQL, token: token
+      let(:query) do
+        <<~GRAPHQL
         query getCommunities {
           communities {
             nodes {
@@ -37,16 +49,28 @@ RSpec.describe "GraphQL Query", type: :request do
           }
         }
         GRAPHQL
+      end
 
-        expect(graphql_response(:data, :communities, :nodes)).to have(5).items
+      let(:expected_shape) do
+        gql.query do |q|
+          q.prop :communities do |c|
+            c[:nodes] = have_length(5)
+          end
+        end
+      end
+
+      it "has the expected count" do
+        expect_request! do |req|
+          req.data! expected_shape
+        end
       end
     end
 
     describe "fetching a list of roles" do
-      let!(:roles) { FactoryBot.create_list :role, 4 }
+      let_it_be(:roles, refind: true) { FactoryBot.create_list :role, 4 }
 
-      it "fetches all known roles in the system" do
-        make_graphql_request! <<~GRAPHQL, token: token
+      let(:query) do
+        <<~GRAPHQL
         query getRoles {
           roles {
             nodes {
@@ -56,8 +80,20 @@ RSpec.describe "GraphQL Query", type: :request do
           }
         }
         GRAPHQL
+      end
 
-        expect(graphql_response(:data, :roles, :nodes)).to have(Role.count).items
+      let(:expected_shape) do
+        gql.query do |q|
+          q.prop :roles do |c|
+            c[:nodes] = have_length(Role.count)
+          end
+        end
+      end
+
+      it "fetches all known roles in the system" do
+        expect_request! do |req|
+          req.data! expected_shape
+        end
       end
     end
 
@@ -96,13 +132,13 @@ RSpec.describe "GraphQL Query", type: :request do
 
       let(:graphql_query_options) do
         {
-          token: token,
+          token:,
           variables: graphql_variables
         }
       end
 
       it "can fetch all contributors" do
-        make_graphql_request! query, graphql_query_options
+        make_graphql_request! query, **graphql_query_options
 
         expect(graphql_response(:data, :contributors, :nodes)).to have(4).items
       end
@@ -111,9 +147,9 @@ RSpec.describe "GraphQL Query", type: :request do
         let(:filter_kind) { "ORGANIZATION" }
 
         it "fetches only people" do
-          make_graphql_request! query, graphql_query_options
+          make_graphql_request! query, **graphql_query_options
 
-          expect(graphql_response(:data, :contributors, :nodes)).to have(2).items.and all(have_typename("OrganizationContributor"))
+          expect(graphql_response(:data, :contributors, :nodes)).to have(2).items.and all(include_json(__typename: "OrganizationContributor"))
         end
       end
 
@@ -121,9 +157,9 @@ RSpec.describe "GraphQL Query", type: :request do
         let(:filter_kind) { "PERSON" }
 
         it "fetches only people" do
-          make_graphql_request! query, graphql_query_options
+          make_graphql_request! query, **graphql_query_options
 
-          expect(graphql_response(:data, :contributors, :nodes)).to have(2).items.and all(have_typename("PersonContributor"))
+          expect(graphql_response(:data, :contributors, :nodes)).to have(2).items.and all(include_json(__typename: "PersonContributor"))
         end
       end
     end

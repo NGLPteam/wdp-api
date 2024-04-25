@@ -25,7 +25,7 @@ RSpec.describe Mutations::ApplySchemaProperties, type: :request, simple_v1_hiera
 
   let!(:schema_version) { FactoryBot.create :schema_version, :required_collection }
 
-  let!(:entity) { FactoryBot.create(:collection, schema_version: schema_version) }
+  let!(:entity) { FactoryBot.create(:collection, schema_version:) }
 
   context "as an admin" do
     let(:token) { token_helper.build_token has_global_admin: true }

@@ -64,7 +64,7 @@ module Harvesting
         # @return [Dry::Monads::Result]
         def validate_source(source)
           source_type.try(source).to_monad.or do |message|
-            return extraction_error!(:invalid_source, message: message, source: source)
+            return extraction_error!(:invalid_source, message:, source:)
           end
         end
 

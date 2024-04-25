@@ -2,6 +2,6 @@
 
 Rails.autoloaders.each do |autoloader|
   autoloader.inflector.inflect(
-    "wdpapischema" => "WDPAPISchema"
+    "APISchema" => "APISchema"
   )
 end

@@ -8,7 +8,7 @@ module Schemas
 
       include MonadicPersistence
 
-      include WDPAPI::Deps[
+      include MeruAPI::Deps[
         write_collected_references: "schemas.references.write_collected_references",
         write_full_text: "schemas.instances.write_full_text",
         write_scalar_reference: "schemas.references.write_scalar_reference"

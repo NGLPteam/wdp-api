@@ -6,7 +6,7 @@ RSpec.describe Seeding::Import::Run, type: :operation, disable_ordering_refresh:
   let(:import_path) { Rails.root.join "spec", "data", "sample_import.json" }
 
   around do |example|
-    WDPAPI::Container.stub(:filesystem, Dry::Files.new(memory: false)) do
+    MeruAPI::Container.stub(:filesystem, Dry::Files.new(memory: false)) do
       example.run
     end
   end

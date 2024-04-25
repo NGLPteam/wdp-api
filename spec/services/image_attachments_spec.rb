@@ -41,11 +41,11 @@ RSpec.describe ImageAttachments do
       example.metadata[:method]
     end
 
-    def call_enumerator(*args, **kwargs, &block)
+    def call_enumerator(*args, **kwargs, &)
       if args.any? || kwargs.any?
-        described_class.public_send(method_name, *args, **kwargs, &block)
+        described_class.public_send(method_name, *args, **kwargs, &)
       else
-        described_class.public_send(method_name, &block)
+        described_class.public_send(method_name, &)
       end
     end
 

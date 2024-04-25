@@ -9,7 +9,7 @@ module Entities
 
     retry_on Redis::TimeoutError, wait: :exponentially_longer
 
-    unique :until_and_while_executing, lock_ttl: 10.minutes, on_conflict: :log
+    unique_job! by: :all_args
 
     around_perform do |job, block|
       Schemas::Orderings.with_disabled_refresh do

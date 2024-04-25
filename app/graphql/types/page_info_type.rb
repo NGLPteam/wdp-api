@@ -49,15 +49,29 @@ module Types
 
     # @return [Integer]
     def total_count
-      object.items.count_from_subquery(strip_order: true)
+      maybe_cache_expensive do
+        from_connection_info(:total_count) do
+          object.items.count_from_subquery
+        end
+      end
     end
 
     # @return [Integer]
     def total_unfiltered_count
-      from_resolver(:unfiltered_count) { total_count }
+      maybe_cache_expensive depends_on_variables: false do
+        from_connection_info(:unfiltered_count) do
+          from_resolver(:unfiltered_count) { total_count }
+        end
+      end
     end
 
     private
+
+    def from_connection_info(key)
+      object.context[:connection_info].then do |cinfo|
+        cinfo&.__send__(key) || yield
+      end
+    end
 
     def from_info(key)
       object.context[:pagination].then do |pagination|
@@ -71,7 +85,7 @@ module Types
       end
     end
 
-    def from_resolver(method_name, &fallback)
+    def from_resolver(method_name, &)
       object.context[:resolver].try(method_name).then do |value|
         if value.present?
           value

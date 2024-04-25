@@ -11,8 +11,8 @@ module Harvesting
         attrs = {
           harvest_entity_id: harvest_entity.id,
           harvest_contributor_id: harvest_contributor.id,
-          kind: kind,
-          metadata: metadata,
+          kind:,
+          metadata:,
         }
 
         contribution_upsertion = HarvestContribution.upsert attrs, unique_by: %i[harvest_contributor_id harvest_entity_id], returning: %i[id]

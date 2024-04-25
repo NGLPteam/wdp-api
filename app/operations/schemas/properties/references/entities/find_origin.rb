@@ -34,7 +34,7 @@ module Schemas
 
             return Success ancestor if ancestor
 
-            Failure[:unknown_ancestor, { entity: entity, name: name }]
+            Failure[:unknown_ancestor, { entity:, name: }]
           end
         end
       end

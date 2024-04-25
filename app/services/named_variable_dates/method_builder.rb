@@ -8,7 +8,7 @@ module NamedVariableDates
       param :name, NamedVariableDates::Types::GlobalName
     end
 
-    def initialize(*)
+    def initialize(...)
       super
 
       compile_methods!

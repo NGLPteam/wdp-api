@@ -90,7 +90,7 @@ class User < ApplicationRecord
   def to_whoami
     {
       anonymous: false,
-      name: name
+      name:
     }
   end
 
@@ -104,7 +104,7 @@ class User < ApplicationRecord
     # @param [String] input
     # @return [ActiveRecord::Relation]
     def apply_prefix(input)
-      needle = WDPAPI::Container["searching.prefix_sanitize"].(input)
+      needle = MeruAPI::Container["searching.prefix_sanitize"].(input)
 
       return all if needle.blank?
 

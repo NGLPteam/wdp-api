@@ -6,7 +6,7 @@ module Schemas
       module Entities
         class FindAvailable
           include Dry::Monads[:result]
-          include WDPAPI::Deps[
+          include MeruAPI::Deps[
             find_origin: "schemas.properties.references.entities.find_origin",
             narrow_scope: "schemas.properties.references.entities.narrow_scope",
           ]

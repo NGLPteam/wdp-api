@@ -28,12 +28,12 @@ RSpec.describe "Page-Based Pagination", type: :request, disable_ordering_refresh
   let!(:graphql_variables) do
     {
       slug: collection.system_slug,
-      order: order,
-      page: page,
-      per_page: per_page,
-      page_direction: page_direction,
-      before: before,
-      after: after,
+      order:,
+      page:,
+      per_page:,
+      page_direction:,
+      before:,
+      after:,
       schema: Array(schema_filter).presence,
     }.compact
   end
@@ -41,7 +41,7 @@ RSpec.describe "Page-Based Pagination", type: :request, disable_ordering_refresh
   let_it_be(:subcollection_count) { collection.children.count }
 
   let!(:derived_page) { page || 1 if page || per_page }
-  let!(:derived_per_page) { per_page || Graphql::Constants::DEFAULT_PER_PAGE_SIZE if page || per_page }
+  let!(:derived_per_page) { per_page || Support::GraphQLAPI::Constants::DEFAULT_PER_PAGE_SIZE if page || per_page }
 
   let(:expected_page) { page }
   let(:expected_per_page) { per_page }
@@ -98,14 +98,14 @@ RSpec.describe "Page-Based Pagination", type: :request, disable_ordering_refresh
   let(:expected_edges) { expect_edges :a, :b, :c, :d }
 
   let(:expected_shape) do
-    {
-      collection: {
-        collections: {
-          edges: expected_edges,
-          page_info: expected_page_info,
-        },
-      },
-    }
+    gql.query do |q|
+      q.prop :collection do |coll|
+        coll.prop :collections do |colls|
+          colls[:edges] = expected_edges
+          colls[:page_info] = expected_page_info
+        end
+      end
+    end
   end
 
   def expect_edges(*keys)
@@ -118,9 +118,9 @@ RSpec.describe "Page-Based Pagination", type: :request, disable_ordering_refresh
 
   context "when fetching in ascending title order" do
     it "gets the proper values" do
-      make_default_request!
-
-      expect_graphql_response_data expected_shape, decamelize: true
+      expect_request! do |req|
+        req.data! expected_shape
+      end
     end
   end
 
@@ -132,21 +132,21 @@ RSpec.describe "Page-Based Pagination", type: :request, disable_ordering_refresh
     let(:expected_edges) { super().take(2) }
 
     it "defaults to setting page 1" do
-      make_default_request!
-
-      expect_graphql_response_data expected_shape, decamelize: true
+      expect_request! do |req|
+        req.data! expected_shape
+      end
     end
   end
 
   context "when specifying only page" do
     let(:page) { 1 }
 
-    let(:expected_per_page) { Graphql::Constants::DEFAULT_PER_PAGE_SIZE }
+    let(:expected_per_page) { Support::GraphQLAPI::Constants::DEFAULT_PER_PAGE_SIZE }
 
     it "defaults the global per-page default" do
-      make_default_request!
-
-      expect_graphql_response_data expected_shape, decamelize: true
+      expect_request! do |req|
+        req.data! expected_shape
+      end
     end
   end
 
@@ -157,9 +157,9 @@ RSpec.describe "Page-Based Pagination", type: :request, disable_ordering_refresh
     let(:expected_edges) { expect_edges :d }
 
     it "has the correct total count vs total unfiltered count" do
-      make_default_request!
-
-      expect_graphql_response_data expected_shape, decamelize: true
+      expect_request! do |req|
+        req.data! expected_shape
+      end
     end
   end
 
@@ -197,29 +197,29 @@ RSpec.describe "Page-Based Pagination", type: :request, disable_ordering_refresh
 
     let(:schema_filter) { "does_not:exist" }
 
-    let(:expected_per_page) { Graphql::Constants::DEFAULT_PER_PAGE_SIZE }
+    let(:expected_per_page) { Support::GraphQLAPI::Constants::DEFAULT_PER_PAGE_SIZE }
     let(:expected_page_count) { 0 }
     let(:expected_total_count) { 0 }
     let(:expected_edges) { be_blank }
 
     it "has the proper total_unfiltered_count but no results" do
-      make_default_request!
-
-      expect_graphql_response_data expected_shape, decamelize: true
+      expect_request! do |req|
+        req.data! expected_shape
+      end
     end
   end
 
   context "when set to a ridiculous page" do
     let(:page) { 1000 }
 
-    let(:expected_per_page) { Graphql::Constants::DEFAULT_PER_PAGE_SIZE }
+    let(:expected_per_page) { Support::GraphQLAPI::Constants::DEFAULT_PER_PAGE_SIZE }
 
     let(:expected_edges) { be_blank }
 
     it "has the proper total_unfiltered_count but no results" do
-      make_default_request!
-
-      expect_graphql_response_data expected_shape, decamelize: true
+      expect_request! do |req|
+        req.data! expected_shape
+      end
     end
   end
 

@@ -5,7 +5,7 @@ class CreateCollectionLinks < ActiveRecord::Migration[6.1]
     create_table :collection_links, id: :uuid do |t|
       t.references :source, null: false, foreign_key: { to_table: :collections, on_delete: :restrict }, type: :uuid
       t.references :target, null: false, foreign_key: { to_table: :collections, on_delete: :restrict }, type: :uuid
-      t.enum :operator, as: "collection_link_operator", null: false
+      t.enum :operator, enum_type: "collection_link_operator", null: false
 
       t.timestamps null: false, default: -> { "CURRENT_TIMESTAMP" }
 

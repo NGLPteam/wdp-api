@@ -1,0 +1,17 @@
+<%-
+  # vim: set ft=ruby.eruby nosmartindent noautoindent :
+-%>
+# frozen_string_literal: true
+
+module Resolvers
+  # A concern for resolvers that order {<%= model_name %>} with {::<%= order_enum_klass %>}.
+  module <%= order_concern_name %>
+    extend ActiveSupport::Concern
+
+    include ::Resolvers::AbstractOrdering
+
+    included do
+      orders_with! ::<%= order_enum_klass %>, default: "<%= has_default_order? ? :DEFAULT : :RECENT %>"
+    end
+  end
+end

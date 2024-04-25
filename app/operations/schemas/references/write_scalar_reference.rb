@@ -32,7 +32,7 @@ module Schemas
         attributes = {
           referrer_type: referrer.model_name.to_s,
           referrer_id: referrer.id,
-          path: path,
+          path:,
           referent_type: referent.model_name.to_s,
           referent_id: referent.id
         }

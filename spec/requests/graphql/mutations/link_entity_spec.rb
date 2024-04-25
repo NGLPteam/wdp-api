@@ -1,75 +1,57 @@
 # frozen_string_literal: true
 
-RSpec.describe Mutations::LinkEntity, type: :request do
-  context "as an admin" do
-    let(:token) { token_helper.build_token has_global_admin: true }
+RSpec.describe Mutations::LinkEntity, type: :request, graphql: :mutation do
+  mutation_query! <<~GRAPHQL
+  mutation linkEntity($input: LinkEntityInput!) {
+    linkEntity(input: $input) {
+      link { id }
 
-    let!(:source) { FactoryBot.create :collection }
-    let!(:target) { FactoryBot.create :collection }
-    let!(:operator) { "CONTAINS" }
+      ... ErrorFragment
+    }
+  }
+  GRAPHQL
 
-    let!(:mutation_input) do
-      {
-        sourceId: source.to_encoded_id,
-        targetId: target.to_encoded_id,
-        operator: operator,
-      }
-    end
+  let_it_be(:source_collection, refind: true) { FactoryBot.create :collection }
+  let_it_be(:target_collection, refind: true) { FactoryBot.create :collection }
 
-    let!(:graphql_variables) do
-      {
-        input: mutation_input
-      }
-    end
+  let!(:source) { source_collection }
+  let!(:target) { target_collection }
 
-    let!(:expected_shape) do
-      {
-        linkEntity: {
-          link: {
-            id: be_present
-          },
-          errors: be_blank
-        }
-      }
-    end
+  as_an_admin_user do
+    let_mutation_input!(:source_id) { source.to_encoded_id }
+    let_mutation_input!(:target_id) { target.to_encoded_id }
+    let_mutation_input!(:operator) { "CONTAINS" }
 
-    let!(:query) do
-      <<~GRAPHQL
-      mutation linkEntity($input: LinkEntityInput!) {
-        linkEntity(input: $input) {
-          link { id }
-
-          errors { message }
-        }
-      }
-      GRAPHQL
+    let(:expected_shape) do
+      gql.mutation :link_entity do |m|
+        m.prop :link do |l|
+          l[:id] = be_an_encoded_id
+        end
+      end
     end
 
     it "can link one entity to another" do
-      expect do
-        make_graphql_request! query, token: token, variables: graphql_variables
-      end.to change(EntityLink, :count).by(1)
+      expect_request! do |req|
+        req.effect! change(EntityLink, :count).by(1)
 
-      expect_graphql_response_data expected_shape
+        req.data! expected_shape
+      end
     end
 
     context "with invalid inputs" do
-      let!(:expected_shape) do
-        {
-          linkEntity: {
-            link: be_blank,
-            errors: be_present
-          }
-        }
+      let(:expected_shape) do
+        gql.mutation :link_entity, no_global_errors: false do |m|
+          m[:link] = be_blank
+        end
       end
 
       shared_examples_for "a failed request" do
         it "fails" do
-          expect do
-            make_graphql_request! query, token: token, variables: graphql_variables
-          end.to keep_the_same(EntityLink, :count)
+          expect_request! do |req|
+            req.effect! keep_the_same(EntityLink, :count)
 
-          expect_graphql_response_data expected_shape
+            req.data! expected_shape
+          end
         end
       end
 

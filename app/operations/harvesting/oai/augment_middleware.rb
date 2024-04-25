@@ -3,7 +3,7 @@
 module Harvesting
   module OAI
     class AugmentMiddleware < Harvesting::Protocols::Actions::AugmentMiddleware
-      include WDPAPI::Deps[
+      include MeruAPI::Deps[
         build_client: "harvesting.oai.build_client",
       ]
 

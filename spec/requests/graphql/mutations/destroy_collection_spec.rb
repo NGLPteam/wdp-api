@@ -1,106 +1,80 @@
 # frozen_string_literal: true
 
-RSpec.describe Mutations::DestroyCollection, type: :request do
-  context "as an admin" do
-    let(:token) { token_helper.build_token has_global_admin: true }
+RSpec.describe Mutations::DestroyCollection, type: :request, graphql: :mutation do
+  mutation_query! <<~GRAPHQL
+  mutation destroyCollection($input: DestroyCollectionInput!) {
+    destroyCollection(input: $input) {
+      destroyed
+      destroyedId
 
-    let!(:collection) { FactoryBot.create :collection }
+      ... ErrorFragment
+    }
+  }
+  GRAPHQL
 
-    let!(:mutation_input) do
-      {
-        collectionId: collection.to_encoded_id,
-      }
-    end
+  let_it_be(:collection, refind: true) { FactoryBot.create :collection }
 
-    let!(:graphql_variables) do
-      {
-        input: mutation_input
-      }
-    end
+  let_mutation_input!(:collection_id) { collection.to_encoded_id }
 
+  as_an_admin_user do
     let!(:expected_shape) do
-      {
-        destroyCollection: {
-          destroyed: true,
-          destroyedId: a_kind_of(String),
-          globalErrors: be_blank
-        }
-      }
-    end
-
-    let!(:query) do
-      <<~GRAPHQL
-      mutation destroyCollection($input: DestroyCollectionInput!) {
-        destroyCollection(input: $input) {
-          destroyed
-          destroyedId
-
-          globalErrors { message }
-        }
-      }
-      GRAPHQL
+      gql.mutation :destroy_collection do |m|
+        m[:destroyed] = true
+        m[:destroyed_id] = eq(collection_id).and(be_an_encoded_id.of_a_deleted_model)
+      end
     end
 
     it "destroys the collection" do
-      expect do
-        make_graphql_request! query, token: token, variables: graphql_variables
-      end.to change(Collection, :count).by(-1)
+      expect_request! do |req|
+        req.effect! change(Collection, :count).by(-1)
 
-      expect_graphql_response_data expected_shape
-
-      expect(
-        graphql_response(
-          :data, :destroy_collection, :destroyed_id,
-          decamelize: true
-        )
-      ).to be_an_encoded_id.of_a_deleted_model
+        req.data! expected_shape
+      end
     end
 
     context "when the collection has at least one subcollection" do
-      let!(:subcollection) { FactoryBot.create :collection, parent: collection }
+      let_it_be(:subcollection, refind: true) { FactoryBot.create :collection, parent: collection }
 
       let(:expected_shape) do
-        {
-          destroyCollection: {
-            destroyed: be_blank,
-            destroyedId: be_blank,
-            globalErrors: [
-              { message: I18n.t("dry_validation.errors.destroy_collection_with_subcollections") }
-            ]
-          }
-        }
+        gql.mutation :destroy_collection, no_errors: false do |m|
+          m[:destroyed] = be_blank
+          m[:destroyed_id] = be_blank
+
+          m.global_errors do |ge|
+            ge.error :destroy_collection_with_subcollections
+          end
+        end
       end
 
       it "fails to destroy the collection" do
-        expect do
-          make_graphql_request! query, token: token, variables: graphql_variables
-        end.to keep_the_same(Collection, :count)
+        expect_request! do |req|
+          req.effect! keep_the_same Collection, :count
 
-        expect_graphql_response_data expected_shape
+          req.data! expected_shape
+        end
       end
     end
 
     context "when the collection has at least one item" do
-      let!(:item) { FactoryBot.create :item, collection: collection }
+      let_it_be(:item, refind: true) { FactoryBot.create :item, collection: }
 
       let(:expected_shape) do
-        {
-          destroyCollection: {
-            destroyed: be_blank,
-            destroyedId: be_blank,
-            globalErrors: [
-              { message: I18n.t("dry_validation.errors.destroy_collection_with_items") }
-            ]
-          }
-        }
+        gql.mutation :destroy_collection, no_errors: false do |m|
+          m[:destroyed] = be_blank
+          m[:destroyed_id] = be_blank
+
+          m.global_errors do |ge|
+            ge.error :destroy_collection_with_items
+          end
+        end
       end
 
       it "fails to destroy the collection" do
-        expect do
-          make_graphql_request! query, token: token, variables: graphql_variables
-        end.to keep_the_same(Collection, :count)
+        expect_request! do |req|
+          req.effect! keep_the_same Collection, :count
 
-        expect_graphql_response_data expected_shape
+          req.data! expected_shape
+        end
       end
     end
   end

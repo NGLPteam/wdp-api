@@ -83,7 +83,7 @@ module Harvesting
 
         return valid! if root_tag == actual
 
-        invalid!(:root_tag, :mismatch, name: root_tag, actual: actual)
+        invalid!(:root_tag, :mismatch, name: root_tag, actual:)
       end
 
       # @param [Nokogiri::XML::Document, Nokogiri::XML::DocumentFragment] doc
@@ -96,7 +96,7 @@ module Harvesting
         return valid! if actual == expected
 
         options = {
-          expected: expected,
+          expected:,
           namespace: namespace.to_s,
           actual: actual.presence,
         }.compact.transform_values(&:inspect)

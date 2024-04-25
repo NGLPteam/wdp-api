@@ -8,7 +8,7 @@ module Harvesting
     # by {Harvesting::Middleware::Wrap} in order to set up the dry-effects resolution stack.
     class BuildMiddlewareState
       include Dry::Monads[:result]
-      include WDPAPI::Deps[
+      include MeruAPI::Deps[
         from_harvest_attempt: "harvesting.middleware.builders.from_harvest_attempt",
         from_harvest_mapping: "harvesting.middleware.builders.from_harvest_mapping",
         from_harvest_record: "harvesting.middleware.builders.from_harvest_record",

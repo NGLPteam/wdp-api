@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
 # Request handling for the GraphQL API.
-class GraphqlController < ApplicationController
+class GraphQLController < ApplicationController
   before_action :authenticate_user!
 
   # This method handles all GraphQL requests that WDP-API receives.
   #
-  # @see WDPAPISchema
+  # @see APISchema
   # @return [void]
   def execute
     variables = prepare_variables(params[:variables])
@@ -15,12 +15,17 @@ class GraphqlController < ApplicationController
 
     operation_name = params[:operationName]
 
+    request_state = Support::Requests::State.new
+
     context = {
-      ahoy: ahoy,
+      ahoy:,
       current_user: @current_user,
+      request_state:,
     }
 
-    result = WDPAPISchema.execute(query, variables: variables, context: context, operation_name: operation_name)
+    result = request_state.wrap do
+      APISchema.execute(query, variables:, context:, operation_name:)
+    end
 
     render json: result
   rescue StandardError => e

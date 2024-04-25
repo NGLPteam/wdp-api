@@ -66,20 +66,20 @@ module Stacks
 
     # @param [Symbol, Proc] callable
     # @param [<Object>] args
-    def evaluate(callable, *args)
+    def evaluate(callable, *args, **kwargs)
       case callable
       when Symbol
-        evaluate_method(callable, *args)
+        evaluate_method(callable, *args, **kwargs)
       when Proc
-        evaluate_proc(callable, *args)
+        evaluate_proc(callable, *args, **kwargs)
       end
     end
 
     # @param [Proc] callable
     # @param [<Object>] args
-    def evaluate_proc(callable, *args)
+    def evaluate_proc(callable, *args, **kwargs)
       if args.size > 0
-        parent.instance_exec(*args, &callable)
+        parent.instance_exec(*args, **kwargs, &callable)
       else
         parent.instance_eval(&callable)
       end
@@ -87,8 +87,8 @@ module Stacks
 
     # @param [Symbol] callable
     # @param [<Object>] args
-    def evaluate_method(callable, *args)
-      parent.public_send(callable, *args)
+    def evaluate_method(callable, *args, **kwargs)
+      parent.__send__(callable, *args, **kwargs)
     end
   end
 end

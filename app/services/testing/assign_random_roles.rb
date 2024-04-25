@@ -2,7 +2,7 @@
 
 module Testing
   class AssignRandomRoles
-    include WDPAPI::Deps[grant_access: "access.grant"]
+    include MeruAPI::Deps[grant_access: "access.grant"]
     include Dry::Monads[:do, :result]
     prepend HushActiveRecord
 

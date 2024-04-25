@@ -64,11 +64,11 @@ module Types
     end
 
     def enforced_parent_versions
-      Loaders::AssociationLoader.for(object.class, :enforced_parent_versions).load(object)
+      Support::Loaders::AssociationLoader.for(object.class, :enforced_parent_versions).load(object)
     end
 
     def enforced_child_versions
-      Loaders::AssociationLoader.for(object.class, :enforced_child_versions).load(object)
+      Support::Loaders::AssociationLoader.for(object.class, :enforced_child_versions).load(object)
     end
 
     # @see Schemas::Versions::Configuration#core

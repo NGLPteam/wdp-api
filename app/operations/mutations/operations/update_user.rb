@@ -5,7 +5,7 @@ module Mutations
     class UpdateUser
       include MutationOperations::Base
 
-      include WDPAPI::Deps[
+      include MeruAPI::Deps[
         update_profile: "users.update_profile"
       ]
 

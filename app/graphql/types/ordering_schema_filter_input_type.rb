@@ -2,9 +2,7 @@
 
 module Types
   # A GraphQL input type for {Schemas::Associations::OrderingFilter}.
-  class OrderingSchemaFilterInputType < Types::BaseInputObject
-    include AutoHash
-
+  class OrderingSchemaFilterInputType < Types::HashInputObject
     description "This defines a specific schema that an ordering can filter its entries by"
 
     argument :namespace, String, required: true, attribute: true do

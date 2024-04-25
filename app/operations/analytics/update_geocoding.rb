@@ -4,7 +4,7 @@ module Analytics
   # Use an `UPDATE` statement. Better performing.
   class UpdateGeocoding
     include Dry::Monads[:do, :result]
-    include WDPAPI::Deps[
+    include MeruAPI::Deps[
       lookup: "geocoding.lookup",
     ]
 
@@ -17,7 +17,7 @@ module Analytics
 
       attributes[:geocoded_at] = Time.current
 
-      Ahoy::Visit.where(visit_token: visit_token).update_all(attributes)
+      Ahoy::Visit.where(visit_token:).update_all(attributes)
 
       Success()
     end

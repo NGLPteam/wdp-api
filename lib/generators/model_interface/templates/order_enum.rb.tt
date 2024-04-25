@@ -1,0 +1,37 @@
+<%-
+  # vim: set ft=ruby.eruby nosmartindent noautoindent :
+-%>
+# frozen_string_literal: true
+
+module Types
+  # @see <%= order_concern_klass %>
+  class <%= order_enum_name %> < Types::BaseEnum
+    description <<~TEXT
+    Sort a collection of `<%= model_name %>` records by specific properties and directions.
+    TEXT
+    <%- if has_default_order? -%>
+
+    value "DEFAULT" do
+      description "Sort <%= human_models %> by their default order."
+    end
+    <%- end -%>
+
+    value "RECENT" do
+      description "Sort <%= human_models %> by newest created date."
+    end
+
+    value "OLDEST" do
+      description "Sort <%= human_models %> by oldest created date."
+    end
+    <%- if has_title? -%>
+
+    value "TITLE_ASCENDING" do
+      description "Sort <%= human_models %> by their title A-Z."
+    end
+
+    value "TITLE_DESCENDING" do
+      description "Sort <%= human_models %> by their title Z-A."
+    end
+    <%- end -%>
+  end
+end

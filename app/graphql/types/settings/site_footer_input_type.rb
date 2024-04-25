@@ -3,9 +3,7 @@
 module Types
   module Settings
     # @see Settings::SiteFooter
-    class SiteFooterInputType < Types::BaseInputObject
-      include AutoHash
-
+    class SiteFooterInputType < Types::HashInputObject
       description "A value for updating the site's configuration"
 
       argument :description, String, required: false, attribute: true,

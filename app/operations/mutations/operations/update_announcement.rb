@@ -20,10 +20,10 @@ module Mutations
         authorize announcement, :update?
 
         attributes = {
-          published_on: published_on,
-          header: header,
-          teaser: teaser,
-          body: body,
+          published_on:,
+          header:,
+          teaser:,
+          body:,
         }
 
         announcement.assign_attributes attributes

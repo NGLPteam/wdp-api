@@ -14,7 +14,7 @@ module Stacks
       option :coercer, Stacks::Types::Evaluable.optional, default: proc {}
     end
 
-    def initialize(*)
+    def initialize(...)
       super
 
       @instance_mod = Methods.new self
@@ -51,7 +51,7 @@ module Stacks
     # @param [Stacks::Parent] parent
     # @return [Stacks::Stack]
     def stack_for(parent)
-      Stacks::Stack.new parent, name, default: default, coercer: coercer
+      Stacks::Stack.new(parent, name, default:, coercer:)
     end
 
     # @api private
@@ -80,8 +80,8 @@ module Stacks
           #{definition.stack_method_name}.with_default(&block)
         end
 
-        def #{definition.with_method_name}(new_value, &block)
-          #{definition.stack_method_name}.with(new_value, &block)
+        def #{definition.with_method_name}(new_value, **opts, &block)
+          #{definition.stack_method_name}.with(new_value, **opts, &block)
         end
         RUBY
       end

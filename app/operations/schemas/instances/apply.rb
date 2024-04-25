@@ -8,7 +8,7 @@ module Schemas
     # owing to the complexity of the inputs. Adding a merge/patch may happen later.
     class Apply
       include Dry::Monads[:do, :result]
-      include WDPAPI::Deps[
+      include MeruAPI::Deps[
         apply_value_context: "schemas.instances.apply_value_context",
         extract_composed_text: "schemas.instances.extract_composed_text",
         extract_orderable_properties: "schemas.instances.extract_orderable_properties",

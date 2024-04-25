@@ -5,7 +5,7 @@ module Seeding
     class Run
       include Dry::Core::Memoizable
       include Dry::Monads[:result, :do]
-      include WDPAPI::Deps[
+      include MeruAPI::Deps[
         read_or_parse_json: "utility.read_or_parse_json",
         upsert_communities: "seeding.import.upsert_communities",
         validate: "seeding.import.validate",

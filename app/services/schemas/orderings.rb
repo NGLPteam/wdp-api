@@ -17,7 +17,7 @@ module Schemas
       # @param [<HierarchicalEntity, SchemaVersion, String>] entities
       # @param [{ Symbol => Object }] options
       # @return [void]
-      def skip_refresh_for(*things, **options, &block)
+      def skip_refresh_for(*things, **options, &)
         things.flatten!
 
         options[:skip_entities] ||= []
@@ -39,36 +39,36 @@ module Schemas
           end
         end
 
-        refresh(options, &block)
+        refresh(**options, &)
       end
 
       # @see .refresh
       # @param [{ Symbol => Object }] options
       # @return [void]
-      def with_asynchronous_refresh(**options, &block)
+      def with_asynchronous_refresh(**options, &)
         options[:async] = true
 
-        refresh(options, &block)
+        refresh(**options, &)
       end
 
       # @see https://dry-rb.org/gems/dry-effects/master/effects/defer/
       # @see .refresh
       # @param [{ Symbol => Object }] options
       # @return [void]
-      def with_deferred_refresh(**options, &block)
+      def with_deferred_refresh(**options, &)
         options[:deferred] = true
         options[:async] = true
 
-        refresh(options, &block)
+        refresh(**options, &)
       end
 
       # @see .refresh
       # @param [{ Symbol => Object }] options
       # @return [void]
-      def with_disabled_refresh(**options, &block)
+      def with_disabled_refresh(**options, &)
         options[:disabled] = true
 
-        refresh(options, &block)
+        refresh(**options, &)
       end
     end
   end

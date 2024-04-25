@@ -6,7 +6,7 @@ module Harvesting
       class ExtractEntities < Harvesting::Metadata::BaseEntityExtractor
         include Dry::Effects.Resolve(:target_entity)
 
-        include WDPAPI::Deps[
+        include MeruAPI::Deps[
           upsert_contribution: "harvesting.metadata.mets.upsert_contribution",
         ]
 
@@ -45,8 +45,8 @@ module Harvesting
           "host.page_count" => "details.host.page_count",
         }.freeze
 
-        MATCHES_PAPER = /\A\s*(Article|paper)\s*\z/i.freeze
-        MATCHES_DISSERTATION = /\AETD|dissertation|Electronic Thesis|text\z/i.freeze
+        MATCHES_PAPER = /\A\s*(Article|paper)\s*\z/i
+        MATCHES_DISSERTATION = /\AETD|dissertation|Electronic Thesis|text\z/i
 
         # These genres should probably be their own discrete schemas in the future,
         # but for now, we will treat them as `nglp:paper`.

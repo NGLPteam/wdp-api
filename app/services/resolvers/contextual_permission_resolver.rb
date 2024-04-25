@@ -1,10 +1,8 @@
 # frozen_string_literal: true
 
 module Resolvers
-  class ContextualPermissionResolver < GraphQL::Schema::Resolver
-    include SearchObject.module(:graphql)
-
-    include Resolvers::PageBasedPagination
+  class ContextualPermissionResolver < AbstractResolver
+    include Resolvers::Enhancements::PageBasedPagination
 
     type Types::ContextualPermissionType.connection_type, null: false
 

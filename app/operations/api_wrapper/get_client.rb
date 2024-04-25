@@ -10,7 +10,7 @@ module APIWrapper
 
       schema = ::GraphQL::Client.load_schema APIWrapper::CLIENT_SCHEMA_PATH
 
-      ::GraphQL::Client.new(schema: schema, execute: adapter).tap do |client|
+      ::GraphQL::Client.new(schema:, execute: adapter).tap do |client|
         client.allow_dynamic_queries = true
       end
     end

@@ -8,7 +8,7 @@ class CreateEntityVisibilities < ActiveRecord::Migration[6.1]
       t.column :visible_after_at, :timestamptz, null: true
       t.column :visible_until_at, :timestamptz, null: true
       t.column :hidden_at, :timestamptz, null: true
-      t.enum :visibility, as: "entity_visibility", null: false, default: "visible"
+      t.enum :visibility, enum_type: "entity_visibility", null: false, default: "visible"
 
       t.timestamps null: false, default: -> { "CURRENT_TIMESTAMP" }
     end
@@ -54,7 +54,7 @@ class CreateEntityVisibilities < ActiveRecord::Migration[6.1]
             t.column :visible_after_at, :timestamptz, null: true
             t.column :visible_until_at, :timestamptz, null: true
             t.column :hidden_at, :timestamptz, null: true
-            t.enum :visibility, as: "entity_visibility", null: false, default: "visible"
+            t.enum :visibility, enum_type: "entity_visibility", null: false, default: "visible"
           end
 
           add_visibility_range_and_index_to! table, with_fk: false

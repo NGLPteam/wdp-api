@@ -5,14 +5,14 @@ module Schemas
     # Build {Schemas::Properties::Reader a reader} (or {Schemas::Properties::GroupReader group reader})
     # for a single schema property on {HasSchemaDefinition an instance}.
     class ReadProperty
-      include WDPAPI::Deps[fetch_reader: "schemas.properties.fetch_reader"]
+      include MeruAPI::Deps[fetch_reader: "schemas.properties.fetch_reader"]
 
       # @param [HasSchemaDefinition] schema_instance
       # @param [String] full_path
       # @param [Schemas::Properties::Context, nil] context
       # @return [Schemas::Properties::Reader, Schemas::Properties::GroupReader]
       def call(schema_instance, full_path, context: nil)
-        fetch_reader.(schema_instance, full_path, context: context)
+        fetch_reader.(schema_instance, full_path, context:)
       end
     end
   end

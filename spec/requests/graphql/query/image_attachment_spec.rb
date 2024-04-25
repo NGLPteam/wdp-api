@@ -109,9 +109,9 @@ RSpec.describe "ImageAttachment", type: :request do
     end
 
     it "looks as expected" do
-      make_default_request!
-
-      expect_graphql_response_data expected_shape, decamelize: true
+      expect_request! do |req|
+        req.data! expected_shape
+      end
     end
   end
 
@@ -155,9 +155,9 @@ RSpec.describe "ImageAttachment", type: :request do
         flush_enqueued_jobs
       end.to change { item.reload.thumbnail.storage_key }.from(:cache).to(:store)
 
-      make_default_request!
-
-      expect_graphql_response_data expected_shape, decamelize: true
+      expect_request! do |req|
+        req.data! expected_shape
+      end
     end
   end
 end

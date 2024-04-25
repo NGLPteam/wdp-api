@@ -3,11 +3,9 @@
 module Resolvers
   module AccessGrants
     # A resolver for {Types::AccessGrantSubjectType}.
-    class SubjectResolver < GraphQL::Schema::Resolver
-      include SearchObject.module(:graphql)
-
+    class SubjectResolver < AbstractResolver
       include Resolvers::FiltersByAccessGrantEntity
-      include Resolvers::PageBasedPagination
+      include Resolvers::Enhancements::PageBasedPagination
       include Resolvers::SimplyOrdered
 
       type Types::AnyAccessGrantType.connection_type, null: false

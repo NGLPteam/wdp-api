@@ -35,13 +35,13 @@ class PilotCommunity < FrozenRecord::Base
         community.matches?(only_communities)
       end.map(&:as_json)
 
-      { communities: communities }
+      { communities: }
     end
 
     # @param [String, Symbol] name
     # @return [PilotHarvesting::Root]
     def root_for(name, only_communities: [])
-      definition = grouped_for(name, only_communities: only_communities)
+      definition = grouped_for(name, only_communities:)
 
       ::PilotHarvesting::Root.new(definition)
     end

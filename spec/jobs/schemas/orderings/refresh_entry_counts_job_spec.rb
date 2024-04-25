@@ -9,7 +9,7 @@ RSpec.describe Schemas::Orderings::RefreshEntryCountsJob, type: :job, simple_v1_
     end.to execute_safely
 
     expect do
-      create_v1_item collection: collection
+      create_v1_item(collection:)
 
       described_class.perform_now
     end.to change(OrderingEntryCount, :count).by(2)

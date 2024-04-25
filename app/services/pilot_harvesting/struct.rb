@@ -4,6 +4,7 @@ module PilotHarvesting
   # @abstract
   class Struct < Dry::Struct
     extend Dry::Core::ClassAttributes
+    extend Support::DoFor
 
     include Dry::Effects::Handler.Cache(:harvesting)
     include Dry::Effects::Handler.Resolve
@@ -25,8 +26,8 @@ module PilotHarvesting
     end
 
     # @return [Dry::Monads::Result]
-    def call_operation(name, *args)
-      result = WDPAPI::Container[name].(*args)
+    def call_operation(name, *args, **kwargs)
+      result = MeruAPI::Container[name].(*args, **kwargs)
 
       return result unless block_given?
 
@@ -55,7 +56,7 @@ module PilotHarvesting
 
     # @abstract
     # @return [Dry::Monads::Result]
-    def upsert
+    do_for! def upsert
       # :nocov:
       raise NotImplementedError
       # :nocov:

@@ -9,7 +9,7 @@ module Harvesting
     # @see Harvesting::Records::PruneContributions
     # @see Harvesting::Records::PruneContributors
     class PruneExtraction
-      include WDPAPI::Deps[
+      include MeruAPI::Deps[
         prune_entities: "harvesting.records.prune_entities",
         prune_contributions: "harvesting.records.prune_contributions",
         prune_contributors: "harvesting.records.prune_contributors",

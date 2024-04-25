@@ -106,8 +106,8 @@ RSpec.describe "Schema Instances", type: :request do
   end
 
   it "can retrieve information about incomplete schemas" do
-    make_default_request!
-
-    expect_graphql_response_data expected_shape, decamelize: true
+    expect_request! do |req|
+      req.data! expected_shape
+    end
   end
 end

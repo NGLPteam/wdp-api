@@ -5,7 +5,7 @@ module Schemas
     class Validate
       include Dry::Monads[:do, :result]
 
-      include WDPAPI::Deps[
+      include MeruAPI::Deps[
         read_context: "schemas.instances.read_property_context",
         compile_contract: "schemas.properties.compile_contract",
       ]
@@ -14,7 +14,7 @@ module Schemas
       def call(entity, context: nil)
         contract = yield contract_for entity
 
-        context = context.kind_of?(Schemas::Properties::Context) ? context : read_context.call(entity)
+        context = read_context.call(entity) unless context.kind_of?(Schemas::Properties::Context)
 
         values = context.field_values
 

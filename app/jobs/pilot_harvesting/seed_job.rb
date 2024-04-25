@@ -5,7 +5,7 @@ module PilotHarvesting
   class SeedJob < ApplicationJob
     queue_as :default
 
-    unique :until_and_while_executing, lock_ttl: 1.hour, on_conflict: :log
+    unique_job! by: :first_arg
 
     # @param [#to_s] name
     # @return [void]

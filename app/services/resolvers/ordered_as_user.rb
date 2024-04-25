@@ -8,7 +8,7 @@ module Resolvers
     include ScopeUtilities
 
     included do
-      option :order, type: Types::UserOrderType, default: "RECENT"
+      orders_with! Types::UserOrderType, default: "RECENT"
     end
 
     def apply_order_with_recent(scope)

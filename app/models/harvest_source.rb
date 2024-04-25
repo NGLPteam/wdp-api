@@ -19,7 +19,7 @@ class HarvestSource < ApplicationRecord
 
   KNOWN_PROTOCOLS = %w[oai].freeze
 
-  scope :for_protocol, ->(protocol) { where(protocol: protocol) }
+  scope :for_protocol, ->(protocol) { where(protocol:) }
   scope :with_oai_protocol, -> { for_protocol "oai" }
 
   validates :name, uniqueness: true

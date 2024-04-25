@@ -7,7 +7,7 @@ module TestHelpers
       # @param [String, Date, Integer, nil] value
       # @return [VariablePrecisionDate]
       def variable_date(value)
-        WDPAPI::Container["variable_precision.parse_date"].call(value).value!
+        MeruAPI::Container["variable_precision.parse_date"].call(value).value!
       end
     end
   end

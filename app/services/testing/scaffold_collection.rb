@@ -48,7 +48,7 @@ module Testing
 
     def attach_contributors_from!(contributors, collection)
       contributors.each do |contributor|
-        WDPAPI::Container["contributors.attach_collection"].call(contributor, collection)
+        MeruAPI::Container["contributors.attach_collection"].call(contributor, collection)
       end
     end
 

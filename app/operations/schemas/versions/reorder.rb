@@ -10,7 +10,7 @@ module Schemas
     #   which is a PostgreSQL composite type that parses a semver.
     class Reorder
       include Dry::Monads[:do, :result, :try]
-      include WDPAPI::Deps[lock: "schemas.versions.lock_for_update"]
+      include MeruAPI::Deps[lock: "schemas.versions.lock_for_update"]
       include QueryOperation
 
       prepend TransactionalCall
