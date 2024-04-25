@@ -7,7 +7,7 @@ module Schemas
     # @see Schemas::Orderings::CalculateInitial
     class SelectInitialOrdering
       include Dry::Monads[:result, :do]
-      include WDPAPI::Deps[calculate_initial: "schemas.orderings.calculate_initial"]
+      include MeruAPI::Deps[calculate_initial: "schemas.orderings.calculate_initial"]
 
       UNIQUE_KEYS = %i[entity_type entity_id].freeze
 
@@ -25,7 +25,7 @@ module Schemas
 
         InitialOrderingSelection.upsert attributes, unique_by: UNIQUE_KEYS, returning: nil
 
-        yield calculate_initial.(entity: entity)
+        yield calculate_initial.(entity:)
 
         Success()
       end

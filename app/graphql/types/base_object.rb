@@ -8,12 +8,12 @@ module Types
 
     field_class Types::BaseField
 
-    def call_operation(name, *args, &block)
-      WDPAPI::Container[name].call(*args, &block)
+    def call_operation(name, ...)
+      MeruAPI::Container[name].call(...)
     end
 
-    def call_operation!(name, *args)
-      call_operation(name, *args).value!
+    def call_operation!(name, ...)
+      call_operation(name, ...).value!
     end
 
     # @api private

@@ -43,9 +43,9 @@ module Harvesting
 
           volume = yield upsert_volume_from values
 
-          issue = yield upsert_issue_from values, volume: volume
+          issue = yield upsert_issue_from(values, volume:)
 
-          upsert_article_from values, issue: issue
+          upsert_article_from values, issue:
         end
 
         VOLUME_ATTRS = {

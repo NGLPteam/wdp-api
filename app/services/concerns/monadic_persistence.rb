@@ -21,7 +21,7 @@ module MonadicPersistence
   # @param [<Symbol>] unique_by
   # @return [Dry::Monads::Result]
   def monadic_upsert(klass, attributes, unique_by:, skip_find: false)
-    klass.upsert attributes, unique_by: unique_by
+    klass.upsert(attributes, unique_by:)
 
     return Dry::Monads.Success() if skip_find
 

@@ -13,7 +13,7 @@ class Page < ApplicationRecord
 
   acts_as_list scope: :entity, add_new_at: :bottom
 
-  scope :by_slug, ->(slug) { where(slug: slug) }
+  scope :by_slug, ->(slug) { where(slug:) }
 
   scope :in_default_order, -> { order(position: :asc) }
 

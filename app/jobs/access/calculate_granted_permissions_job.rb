@@ -10,7 +10,7 @@ module Access
     # @param [AccessGrant] access_grant
     # @return [void]
     def perform(access_grant)
-      WDPAPI::Container["access.calculate_granted_permissions"].call access_grant: access_grant
+      MeruAPI::Container["access.calculate_granted_permissions"].call access_grant:
     end
   end
 end

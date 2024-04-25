@@ -23,7 +23,7 @@ module Harvesting
           @type = type
           @id = id
 
-          attrs = { name: data.name, type: type.inspect, id: id }
+          attrs = { name: data.name, type: type.inspect, id: }
 
           super(FORMAT % attrs)
         end

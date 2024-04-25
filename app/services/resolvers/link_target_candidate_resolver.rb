@@ -1,10 +1,8 @@
 # frozen_string_literal: true
 
 module Resolvers
-  class LinkTargetCandidateResolver < GraphQL::Schema::Resolver
-    include SearchObject.module(:graphql)
-
-    include Resolvers::PageBasedPagination
+  class LinkTargetCandidateResolver < AbstractResolver
+    include Resolvers::Enhancements::PageBasedPagination
 
     type Types::LinkTargetCandidateType.connection_type, null: false
 

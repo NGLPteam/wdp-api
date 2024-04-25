@@ -66,7 +66,7 @@ module QueryOperation
   # @param [Boolean] prefix
   # @return [String]
   def compile_and(*parts, prefix: false)
-    compile_query(*parts, join_with: " AND ", prefix: prefix)
+    compile_query(*parts, join_with: " AND ", prefix:)
   end
 
   # Provide the quoted model id as a formatting argument

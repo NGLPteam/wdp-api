@@ -8,7 +8,7 @@ class CreateHarvestContributors < ActiveRecord::Migration[6.1]
       t.references :harvest_source, null: false, type: :uuid, foreign_key: { on_delete: :cascade }
       t.references :contributor, null: true, type: :uuid, foreign_key: { on_delete: :nullify }
 
-      t.enum :kind, as: "contributor_kind", null: false
+      t.enum :kind, enum_type: "contributor_kind", null: false
 
       t.citext :identifier, null: false
 

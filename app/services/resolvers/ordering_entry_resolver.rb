@@ -8,10 +8,8 @@ module Resolvers
   # @see Types::OrderingType
   # @see Types::OrderingEntryType
   # @see Types::OrderingEntrySortModeType
-  class OrderingEntryResolver < GraphQL::Schema::Resolver
-    include SearchObject.module(:graphql)
-
-    include Resolvers::PageBasedPagination
+  class OrderingEntryResolver < AbstractResolver
+    include Resolvers::Enhancements::PageBasedPagination
 
     option :order, type: Types::OrderingEntrySortModeType, default: "default",
       description: <<~TEXT

@@ -6,7 +6,7 @@ class CreateInitialOrderingLinks < ActiveRecord::Migration[6.1]
       t.references :entity, polymorphic: true, null: false, type: :uuid, index: { unique: true }
       t.references :ordering, null: false, foreign_key: { on_delete: :cascade }, type: :uuid
 
-      t.enum :kind, as: "initial_ordering_kind", null: false
+      t.enum :kind, enum_type: "initial_ordering_kind", null: false
 
       t.timestamps null: false, default: -> { "CURRENT_TIMESTAMP" }
     end

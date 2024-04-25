@@ -34,7 +34,7 @@ module Schemas
       # @param [HierarchicalEntity, nil] entity
       # @return [Dry::Monads::Success]
       def call(entity: nil)
-        inserted = sql_insert! PREFIX, generate_infix_for(entity: entity), SUFFIX
+        inserted = sql_insert! PREFIX, generate_infix_for(entity:), SUFFIX
 
         # If all orderings for an entity are disabled, the above query won't remove them.
         # We'll do that here:

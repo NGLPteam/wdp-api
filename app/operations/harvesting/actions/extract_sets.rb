@@ -5,7 +5,7 @@ module Harvesting
     # Populates a collection of {HarvestSet sets} for an individual {HarvestSource source},
     # based on the source's protocol.
     class ExtractSets < Harvesting::BaseAction
-      include WDPAPI::Deps[
+      include MeruAPI::Deps[
         extract_sets: "harvesting.sources.extract_sets"
       ]
 

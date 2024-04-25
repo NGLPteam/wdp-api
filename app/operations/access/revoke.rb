@@ -9,7 +9,7 @@ module Access
     # @param [AccessGrantSubject] to
     # @return [Dry::Monads::Result]
     def call(role, on:, to:)
-      return Success(nil) unless AccessGrant.has_granted?(role, on: on, to: to)
+      return Success(nil) unless AccessGrant.has_granted?(role, on:, to:)
 
       grant = AccessGrant.fetch(on, to)
 

@@ -1,0 +1,15 @@
+Description:
+    Generate a GraphQL mutation, support files, and test spec and then
+    register it into the system.
+
+Example:
+    bin/rails generate mutation SomeMutation
+
+    This will create:
+        app/graphql/mutations/some_mutation.rb
+        app/operations/mutations/contracts/some_mutation.rb
+        app/operations/mutations/operations/some_mutation.rb
+        spec/requests/graphql/mutations/some_mutation_spec.rb
+
+    It will also add an entry for the mutation to:
+        app/graphql/types/mutation_type.rb

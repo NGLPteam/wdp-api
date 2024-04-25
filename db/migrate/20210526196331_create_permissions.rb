@@ -46,7 +46,7 @@ class CreatePermissions < ActiveRecord::Migration[6.1]
     create_enum "permission_kind", %w[contextual global]
 
     create_table :permissions, id: :uuid do |t|
-      t.enum :kind, as: "permission_kind", null: false
+      t.enum :kind, enum_type: "permission_kind", null: false
 
       t.ltree :path, null: false
 

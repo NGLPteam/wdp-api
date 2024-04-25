@@ -49,18 +49,23 @@ RSpec.shared_examples_for "a graphql type with firstCollection" do
     end
 
     let(:expected_shape) do
-      {
-        subject: {
-          custom: { id: subcollection_with_custom_schema.to_encoded_id },
-          z: { id: subcollection_z.to_encoded_id },
-        },
-      }
+      gql.query do |q|
+        q.prop :subject do |sub|
+          sub.prop :custom do |c|
+            c[:id] = subcollection_with_custom_schema.to_encoded_id
+          end
+
+          sub.prop :z do |z|
+            z[:id] = subcollection_z.to_encoded_id
+          end
+        end
+      end
     end
 
     it "can fetch collections by various filters and orderings" do
-      make_default_request!
-
-      expect_graphql_response_data expected_shape, decamelize: true
+      expect_request! do |req|
+        req.data! expected_shape
+      end
     end
   end
 end

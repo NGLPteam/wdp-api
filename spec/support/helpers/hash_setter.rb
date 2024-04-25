@@ -17,7 +17,7 @@ module TestHelpers
 
     attr_reader :klass_methods
 
-    def initialize(*)
+    def initialize(...)
       super
 
       define_methods!

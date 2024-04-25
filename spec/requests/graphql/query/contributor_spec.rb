@@ -45,9 +45,7 @@ RSpec.describe "Query.contributor", type: :request, disable_ordering_refresh: tr
     GRAPHQL
   end
 
-  context "as an admin" do
-    let(:token) { token_helper.build_token has_global_admin: true }
-
+  as_an_admin_user do
     context "with a valid slug" do
       let(:graphql_variables) do
         {
@@ -56,11 +54,11 @@ RSpec.describe "Query.contributor", type: :request, disable_ordering_refresh: tr
         }
       end
 
-      let!(:org_contributor) do
+      let_it_be(:org_contributor, refind: true) do
         FactoryBot.create :contributor, :organization
       end
 
-      let!(:person_contributor) do
+      let_it_be(:person_contributor, refind: true) do
         FactoryBot.create :contributor, :person
       end
 
@@ -69,33 +67,36 @@ RSpec.describe "Query.contributor", type: :request, disable_ordering_refresh: tr
       let!(:expected_shape) do
         a_single_node = { nodes: [{ id: a_kind_of(String) } ] }
 
-        {
-          organization: {
-            __typename: "OrganizationContributor",
-            slug: org_contributor.system_slug,
-            collection_contributions: a_single_node,
-            item_contributions: a_single_node,
-          },
-          person: {
-            __typename: "PersonContributor",
-            slug: person_contributor.system_slug,
-            collection_contributions: a_single_node,
-            item_contributions: a_single_node,
-          }
-        }
+        gql.query do |q|
+          q.prop :organization do |org|
+            org.typename("OrganizationContributor")
+
+            org[:slug] = org_contributor.system_slug
+            org[:collection_contributions] = a_single_node
+            org[:item_contributions] = a_single_node
+          end
+
+          q.prop :person do |org|
+            org.typename("PersonContributor")
+
+            org[:slug] = person_contributor.system_slug
+            org[:collection_contributions] = a_single_node
+            org[:item_contributions] = a_single_node
+          end
+        end
       end
 
       before do
-        contributors.map do |contrib|
-          FactoryBot.create :collection_contribution, contributor: contrib
-          FactoryBot.create :item_contribution, contributor: contrib
+        contributors.map do |contributor|
+          FactoryBot.create(:collection_contribution, contributor:)
+          FactoryBot.create(:item_contribution, contributor:)
         end
       end
 
       it "has the expected shape" do
-        make_default_request!
-
-        expect_graphql_response_data expected_shape, decamelize: true
+        expect_request! do |req|
+          req.data! expected_shape
+        end
       end
     end
 
@@ -103,145 +104,143 @@ RSpec.describe "Query.contributor", type: :request, disable_ordering_refresh: tr
       let!(:graphql_variables) { { org_slug: random_slug, person_slug: random_slug } }
 
       let!(:expected_shape) do
-        {
-          organization: nil,
-          person: nil,
-        }
+        gql.query do |q|
+          q[:organization] = be_blank
+          q[:person] = be_blank
+        end
       end
 
       it "returns nil" do
-        make_default_request!
-
-        expect_graphql_response_data expected_shape, decamelize: true
-      end
-    end
-  end
-
-  context "when ordering contributions" do
-    let(:token) { token_helper.build_token has_global_admin: true }
-
-    let!(:contributor) { FactoryBot.create :contributor, :person }
-
-    let!(:slug) { contributor.system_slug }
-    let!(:order) { "RECENT" }
-
-    let!(:graphql_variables) { { slug: slug, order: order } }
-
-    let!(:query) do
-      <<~GRAPHQL
-      query getContributor($slug: Slug!, $order: ContributionOrder!) {
-        contributor(slug: $slug) {
-          ... on Contributor {
-            collectionContributions(order: $order) {
-              edges {
-                node {
-                  ... ContributionFragment
-                }
-              }
-
-              pageInfo { totalCount }
-            }
-
-            itemContributions(order: $order) {
-              edges {
-                node {
-                  ... ContributionFragment
-                }
-              }
-
-              pageInfo { totalCount }
-            }
-          }
-        }
-      }
-
-      fragment ContributionFragment on Node {
-        id
-      }
-      GRAPHQL
-    end
-
-    let(:contribution_factory) { :"#{target_factory}_contribution" }
-    let(:association_key) { contribution_factory.to_s.pluralize.to_sym }
-
-    let(:target_factory) { raise "must set" }
-
-    let!(:contribution_a3) do
-      Timecop.freeze(3.days.ago) do
-        FactoryBot.create contribution_factory, contributor: contributor, target_factory => FactoryBot.create(target_factory, title: "AA")
-      end
-    end
-
-    let!(:contribution_m1) do
-      Timecop.freeze(1.day.ago) do
-        FactoryBot.create contribution_factory, contributor: contributor, target_factory => FactoryBot.create(target_factory, title: "MM")
-      end
-    end
-
-    let!(:contribution_z2) do
-      Timecop.freeze(2.days.ago) do
-        FactoryBot.create contribution_factory, contributor: contributor, target_factory => FactoryBot.create(target_factory, title: "ZZ")
-      end
-    end
-
-    let!(:keyed_models) do
-      {
-        a3: to_rep(contribution_a3),
-        m1: to_rep(contribution_m1),
-        z2: to_rep(contribution_z2),
-      }
-    end
-
-    def to_rep(model)
-      {
-        id: model.to_encoded_id,
-      }
-    end
-
-    shared_examples_for "an ordered list of contributions" do |order_value, *keys|
-      let!(:order) { order_value }
-
-      let!(:expected_shape) do
-        {
-          contributor: {
-            association_key => {
-              edges: keys.map { |k| { node: keyed_models.fetch(k) } },
-              page_info: { total_count: keyed_models.size },
-            },
-          }
-        }
-      end
-
-      it "returns contributions in the expected order" do
-        make_default_request!
-
-        expect_graphql_response_data expected_shape, decamelize: true
-      end
-    end
-
-    shared_examples_for "ordered contributions" do
-      {
-        "RECENT" => %i[m1 z2 a3],
-        "OLDEST" => %i[a3 z2 m1],
-        "TARGET_TITLE_ASCENDING" => %i[a3 m1 z2],
-        "TARGET_TITLE_DESCENDING" => %i[z2 m1 a3],
-      }.each do |order, keys|
-        context "when ordered by #{order}" do
-          include_examples "an ordered list of contributions", order, *keys
+        expect_request! do |req|
+          req.data! expected_shape
         end
       end
     end
 
-    describe "collectionContributions" do
-      let(:target_factory) { :collection }
+    context "when ordering contributions" do
+      let_it_be(:contributor, refind: true) { FactoryBot.create :contributor, :person }
 
-      include_examples "ordered contributions"
-    end
+      let!(:slug) { contributor.system_slug }
+      let!(:order) { "RECENT" }
 
-    describe "itemContributions" do
-      let(:target_factory) { :item }
+      let!(:graphql_variables) { { slug:, order: } }
 
-      include_examples "ordered contributions"
+      let!(:query) do
+        <<~GRAPHQL
+        query getContributor($slug: Slug!, $order: ContributionOrder!) {
+          contributor(slug: $slug) {
+            ... on Contributor {
+              collectionContributions(order: $order) {
+                edges {
+                  node {
+                    ... ContributionFragment
+                  }
+                }
+
+                pageInfo { totalCount }
+              }
+
+              itemContributions(order: $order) {
+                edges {
+                  node {
+                    ... ContributionFragment
+                  }
+                }
+
+                pageInfo { totalCount }
+              }
+            }
+          }
+        }
+
+        fragment ContributionFragment on Node {
+          id
+        }
+        GRAPHQL
+      end
+
+      let(:contribution_factory) { :"#{target_factory}_contribution" }
+      let(:association_key) { contribution_factory.to_s.pluralize.to_sym }
+
+      let(:target_factory) { raise "must set" }
+
+      let!(:contribution_a3) do
+        Timecop.freeze(3.days.ago) do
+          FactoryBot.create contribution_factory, contributor:, target_factory => FactoryBot.create(target_factory, title: "AA")
+        end
+      end
+
+      let!(:contribution_m1) do
+        Timecop.freeze(1.day.ago) do
+          FactoryBot.create contribution_factory, contributor:, target_factory => FactoryBot.create(target_factory, title: "MM")
+        end
+      end
+
+      let!(:contribution_z2) do
+        Timecop.freeze(2.days.ago) do
+          FactoryBot.create contribution_factory, contributor:, target_factory => FactoryBot.create(target_factory, title: "ZZ")
+        end
+      end
+
+      let!(:keyed_models) do
+        {
+          a3: to_rep(contribution_a3),
+          m1: to_rep(contribution_m1),
+          z2: to_rep(contribution_z2),
+        }
+      end
+
+      def to_rep(model)
+        {
+          id: model.to_encoded_id,
+        }
+      end
+
+      shared_examples_for "an ordered list of contributions" do |order_value, *keys|
+        let!(:order) { order_value }
+
+        let!(:expected_shape) do
+          {
+            contributor: {
+              association_key => {
+                edges: keys.map { |k| { node: keyed_models.fetch(k) } },
+                page_info: { total_count: keyed_models.size },
+              },
+            }
+          }
+        end
+
+        it "returns contributions in the expected order" do
+          expect_request! do |req|
+            req.data! expected_shape
+          end
+        end
+      end
+
+      shared_examples_for "ordered contributions" do
+        {
+          "RECENT" => %i[m1 z2 a3],
+          "OLDEST" => %i[a3 z2 m1],
+          "TARGET_TITLE_ASCENDING" => %i[a3 m1 z2],
+          "TARGET_TITLE_DESCENDING" => %i[z2 m1 a3],
+        }.each do |order, keys|
+          context "when ordered by #{order}" do
+            include_examples "an ordered list of contributions", order, *keys
+          end
+        end
+      end
+
+      describe "collectionContributions" do
+        let(:target_factory) { :collection }
+
+        include_examples "ordered contributions"
+      end
+
+      describe "itemContributions" do
+        let(:target_factory) { :item }
+
+        include_examples "ordered contributions"
+      end
     end
   end
 end

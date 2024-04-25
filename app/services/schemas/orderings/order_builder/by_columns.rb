@@ -9,7 +9,7 @@ module Schemas
       class ByColumns < Base
         option :columns, Schemas::Orderings::Types::ColumnList
 
-        def attributes_for(*)
+        def attributes_for(...)
           cached_attributes
         end
 

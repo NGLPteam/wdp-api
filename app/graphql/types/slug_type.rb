@@ -6,7 +6,7 @@ module Types
 
     SCHEMA_SLUG_PATTERN = /
     \A(?:[a-z_]+):(?:[a-z_]+)(?::[^:]+)?\z
-    /x.freeze
+    /x
 
     class << self
       def coerce_input(input_value, context)
@@ -14,7 +14,7 @@ module Types
         when SCHEMA_SLUG_PATTERN then input_value
         when AnonymousUser::ID then AnonymousUser::ID
         else
-          WDPAPI::Container["slugs.decode_id"].call(input_value).value_or(nil)
+          MeruAPI::Container["slugs.decode_id"].call(input_value).value_or(nil)
         end
       end
 
@@ -23,7 +23,7 @@ module Types
         when SCHEMA_SLUG_PATTERN then ruby_value
         when AnonymousUser::ID then AnonymousUser::ID
         else
-          WDPAPI::Container["slugs.encode_id"].call(ruby_value).value_or(nil)
+          MeruAPI::Container["slugs.encode_id"].call(ruby_value).value_or(nil)
         end
       end
     end

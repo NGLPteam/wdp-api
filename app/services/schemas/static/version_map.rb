@@ -6,11 +6,11 @@ module Schemas
     class VersionMap
       extend Dry::Core::ClassAttributes
       extend Dry::Initializer
-      extend Memoist
 
       defines :version_klass, type: Dry::Types["strict.class"]
 
       include ActiveModel::Validations
+      include Dry::Core::Memoizable
       include Enumerable
 
       param :name, AppTypes::String

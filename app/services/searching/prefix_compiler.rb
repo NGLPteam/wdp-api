@@ -11,7 +11,7 @@ module Searching
 
       option :scope, Searching::Types::Interface(:all), default: proc { Entity.all }
     end
-    include WDPAPI::Deps[
+    include MeruAPI::Deps[
       prefix_sanitize: "searching.prefix_sanitize",
     ]
 

@@ -4,7 +4,7 @@ module HasUniqueORCID
   extend ActiveSupport::Concern
 
   included do
-    scope :by_orcid, ->(orcid) { where(orcid: orcid) }
+    scope :by_orcid, ->(orcid) { where(orcid:) }
     validates :orcid, uniqueness: { if: :orcid? }
 
     before_validation :nullify_blank_orcid!

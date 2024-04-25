@@ -17,7 +17,7 @@ module Types
 
     def attribute_errors
       object[:attribute_errors].map do |(path, type), messages|
-        { path: path, type: type, messages: messages }
+        { path:, type:, messages: }
       end
     end
   end

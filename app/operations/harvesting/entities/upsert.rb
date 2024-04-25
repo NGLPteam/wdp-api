@@ -11,7 +11,7 @@ module Harvesting
       include Dry::Effects.Resolve(:target_entity)
       include Dry::Effects.Resolve(:schemas)
       include MonadicPersistence
-      include WDPAPI::Deps[
+      include MeruAPI::Deps[
         apply_properties: "schemas.instances.apply",
         attach_contribution: "harvesting.contributions.attach",
         connect_link: "links.connect",

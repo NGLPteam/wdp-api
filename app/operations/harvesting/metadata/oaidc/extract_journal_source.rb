@@ -22,11 +22,11 @@ module Harvesting
             def to_parsed_journal_source
               Harvesting::Utility::ParsedJournalSource.new(
                 input: "",
-                volume: volume,
-                issue: issue,
-                fpage: fpage,
-                lpage: lpage,
-                year: year,
+                volume:,
+                issue:,
+                fpage:,
+                lpage:,
+                year:,
               )
             end
           end

@@ -6,7 +6,7 @@ module Harvesting
     #
     # @see Harvesting::Records::PrepareEntities
     class PrepareEntitiesFromRecord < Harvesting::BaseAction
-      include WDPAPI::Deps[
+      include MeruAPI::Deps[
         prepare_entities: "harvesting.records.prepare_entities",
       ]
 

@@ -6,7 +6,6 @@ module Mutations
 
     field :community, Types::CommunityType, null: true, description: "A representation of a successfully created community"
 
-    argument :title, String, required: true, attribute: true, description: "A human readable title for the community"
     argument :position, Int, required: false, attribute: true, description: "The position the community occupies in the list"
     argument :schema_version_slug, String, required: false, transient: true, attribute: true, default_value: "default:community:latest"
 

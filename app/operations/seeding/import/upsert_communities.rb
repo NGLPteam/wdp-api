@@ -4,7 +4,7 @@ module Seeding
   module Import
     class UpsertCommunities
       include Dry::Monads[:result, :do]
-      include WDPAPI::Deps[
+      include MeruAPI::Deps[
         upsert_community: "seeding.import.upsert_community",
       ]
 

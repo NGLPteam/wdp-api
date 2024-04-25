@@ -28,8 +28,8 @@ class OrderingEntry < ApplicationRecord
   scope :in_default_order, -> { reorder(position: :asc) }
   scope :in_inverse_order, -> { reorder(inverse_position: :asc) }
 
-  scope :by_ordering, ->(ordering) { where(ordering: ordering) }
-  scope :by_entity, ->(entity) { where(entity: entity) }
+  scope :by_ordering, ->(ordering) { where(ordering:) }
+  scope :by_entity, ->(entity) { where(entity:) }
 
   class << self
     # @param [Ordering] ordering

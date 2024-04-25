@@ -8,14 +8,14 @@ module Schemas
     #
     # @see Schemas::Properties::ToReaders
     class ReadProperties
-      include WDPAPI::Deps[to_readers: "schemas.properties.to_readers"]
+      include MeruAPI::Deps[to_readers: "schemas.properties.to_readers"]
 
       # @param [HasSchemaDefinition] schema_instance
       # @param [Schemas::Properties::Context, nil] context
       # @return [Dry::Monads::Success<Schemas::Properties::Reader, Schemas::Properties::GroupReader>]
       # @return [Dry::Monads::Failure]
       def call(schema_instance, context: nil)
-        to_readers.(schema_instance, context: context)
+        to_readers.(schema_instance, context:)
       end
     end
   end

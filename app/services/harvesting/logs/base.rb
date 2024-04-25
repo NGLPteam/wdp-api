@@ -8,7 +8,7 @@ module Harvesting
 
       include Redis::Objects
 
-      param :model, Models::Types::Model
+      param :model, Support::Models::Types::Model
 
       delegate :id, to: :model, prefix: true
 
@@ -18,7 +18,7 @@ module Harvesting
         expireat: proc { 1.day.from_now }
 
       def log(message, tags: [], level: nil)
-        obj = { message: message, time: Time.current, tags: tags.presence, level: level }.compact
+        obj = { message:, time: Time.current, tags: tags.presence, level: }.compact
 
         messages.push obj
       end

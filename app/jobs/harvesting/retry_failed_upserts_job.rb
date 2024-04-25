@@ -8,7 +8,7 @@ module Harvesting
 
     include JobIteration::Iteration
 
-    unique :until_and_while_executing, lock_ttl: 1.hour, on_conflict: :log
+    unique_job! by: :first_arg
 
     # @param [HarvestAttempt] harvest_attempt
     # @param [Object] cursor
@@ -16,7 +16,7 @@ module Harvesting
     def build_enumerator(harvest_attempt, cursor:)
       enumerator_builder.active_record_on_records(
         harvest_attempt.harvest_records.with_coded_harvest_errors("failed_entity_upsert"),
-        cursor: cursor
+        cursor:
       )
     end
 

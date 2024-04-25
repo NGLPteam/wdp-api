@@ -103,7 +103,7 @@ module AnonymousInterface
   # @see RelayNode::IdFromObject
   # @return [String, nil]
   def to_encoded_id
-    WDPAPI::Container["relay_node.id_from_object"].(self).value!
+    Support::System["relay_node.id_from_object"].(self).value!
   end
 
   # @see IdentitiesController#show

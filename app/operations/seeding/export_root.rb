@@ -6,7 +6,7 @@ module Seeding
     include Dry::Monads[:result]
 
     def call(**options)
-      exporter = Seeding::Export::RootExporter.new(options)
+      exporter = Seeding::Export::RootExporter.new(**options)
 
       Success exporter.call
     end

@@ -9,7 +9,7 @@ module Harvesting
       include Dry::Core::Equalizer.new(:protocol_name)
 
       include Dry::Monads[:result]
-      include WDPAPI::Deps[
+      include MeruAPI::Deps[
         augment_middleware: "harvesting.protocols.actions.augment_middleware",
         process_record_batch: "harvesting.protocols.actions.process_record_batch",
       ]

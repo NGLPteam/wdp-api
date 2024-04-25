@@ -9,7 +9,7 @@ module Roles
           part == ?* ? Roles::Types::PERMISSION_PART : part
         end
 
-        Regexp.new(/\A#{parts.join("\\.")}\z/)
+        /\A#{parts.join("\\.")}\z/
       end
     end
   end

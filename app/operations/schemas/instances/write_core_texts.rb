@@ -5,7 +5,7 @@ module Schemas
     class WriteCoreTexts
       include Dry::Monads[:do, :result]
 
-      include WDPAPI::Deps[
+      include MeruAPI::Deps[
         write_full_text: "schemas.instances.write_full_text",
       ]
 
@@ -38,10 +38,10 @@ module Schemas
         value = {
           lang: "en",
           kind: "text",
-          content: content,
+          content:,
         }
 
-        write_full_text.(entity, path, value, weight: weight)
+        write_full_text.(entity, path, value, weight:)
       end
     end
   end

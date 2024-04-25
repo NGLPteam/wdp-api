@@ -4,7 +4,7 @@ module Schemas
   module Instances
     class ReadSearchablePropertyValues
       include Dry::Monads[:do, :result]
-      include WDPAPI::Deps[
+      include MeruAPI::Deps[
         read_properties: "schemas.instances.read_properties"
       ]
 
@@ -12,7 +12,7 @@ module Schemas
       # @param [Schemas::Properties::Context, nil] context
       # @return [Dry::Monads::Success(Hash)]
       def call(schema_instance, context: nil)
-        properties = yield read_properties.call schema_instance, context: context
+        properties = yield read_properties.call(schema_instance, context:)
 
         values = properties.each_with_object({}) do |property, v|
           extract_value_into! v, property

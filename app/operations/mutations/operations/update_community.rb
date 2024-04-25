@@ -17,7 +17,7 @@ module Mutations
       def call(community:, **attributes)
         authorize community, :update?
 
-        update_entity! community, attributes
+        update_entity! community, **attributes
       end
     end
   end

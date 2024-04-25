@@ -16,7 +16,7 @@ class SchemaVersionAncestor < ApplicationRecord
 
   scope :by_source, ->(source) { where(schema_version: source) }
   scope :by_target, ->(target) { where(target_version: target) }
-  scope :by_name, ->(name) { where(name: name) }
+  scope :by_name, ->(name) { where(name:) }
   scope :sans_target, ->(target) { where.not(target_version: target) }
 
   validates :name, presence: true, uniqueness: { scope: %i[schema_version_id target_version_id] }

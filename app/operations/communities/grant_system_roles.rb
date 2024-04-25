@@ -4,7 +4,7 @@ module Communities
   # Grant built-in system roles for a single {Community}.
   class GrantSystemRoles
     include Dry::Monads[:result, :do]
-    include WDPAPI::Deps[
+    include MeruAPI::Deps[
       grant_access: "access.grant",
     ]
 

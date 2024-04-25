@@ -9,7 +9,7 @@ module Mutations
       include Mutations::Shared::RefreshesOrderingsAsynchronously
       include Mutations::Shared::WithSchemaErrors
 
-      include WDPAPI::Deps[apply: "schemas.instances.apply"]
+      include MeruAPI::Deps[apply: "schemas.instances.apply"]
 
       def call(entity:, property_values:)
         authorize entity, :update?

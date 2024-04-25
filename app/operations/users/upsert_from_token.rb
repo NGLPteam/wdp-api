@@ -3,7 +3,7 @@
 module Users
   class UpsertFromToken
     include Dry::Monads[:result, :do]
-    include WDPAPI::Deps[
+    include MeruAPI::Deps[
       enforce_role_assignments: "access.enforce_assignments",
       transform_token: "users.transform_token",
     ]
@@ -28,7 +28,7 @@ module Users
 
       was_admin = ::User.global_admins.exists?(keycloak_id: attributes[:keycloak_id])
 
-      results = ::User.upsert attributes, UPSERT_OPTS
+      results = ::User.upsert attributes, **UPSERT_OPTS
 
       result = results.first.to_h.with_indifferent_access
 

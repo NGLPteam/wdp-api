@@ -4,7 +4,7 @@ module Schemas
   module Instances
     class Reindex
       include Dry::Monads[:result, :do]
-      include WDPAPI::Deps[
+      include MeruAPI::Deps[
         extract_core_texts: "schemas.instances.write_core_texts",
         extract_searchable_properties: "schemas.instances.extract_searchable_properties",
         extract_composed_text: "schemas.instances.extract_composed_text",

@@ -24,7 +24,7 @@ module Mutations
 
         collection = Collection.new
 
-        create_entity! collection, attributes
+        create_entity! collection, **attributes
       end
     end
   end

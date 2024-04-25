@@ -3,12 +3,12 @@
 module Schemas
   module Instances
     class ExtractComposedText
-      include WDPAPI::Deps[
+      include MeruAPI::Deps[
         calculate_composed_texts: "entities.calculate_composed_texts"
       ]
 
       def call(entity)
-        calculate_composed_texts.(entity: entity)
+        calculate_composed_texts.(entity:)
       end
     end
   end

@@ -16,11 +16,10 @@ RSpec.describe Entities::AuditMismatchedSchemasJob, type: :job do
     expect do
       described_class.perform_now
     end.to(
-      (
-        change(Audits::MismatchedEntitySchema, :count).by(-1)
-      ).and(
-        change { synced_entity.reload.schema_version }.from(default_collection).to(collection.schema_version)
-      )
+      change(Audits::MismatchedEntitySchema, :count).by(-1)
+    .and(
+      change { synced_entity.reload.schema_version }.from(default_collection).to(collection.schema_version)
+    )
     )
   end
 end

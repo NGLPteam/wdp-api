@@ -19,7 +19,7 @@ class RebuildOrderableProperties < ActiveRecord::Migration[6.1]
 
       change_table :entity_orderable_properties do |t|
         prop_type.indices.each do |(expr, options)|
-          t.index expr, options
+          t.index expr, **options
         end
       end
     end

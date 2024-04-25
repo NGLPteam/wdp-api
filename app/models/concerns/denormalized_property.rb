@@ -10,7 +10,7 @@ module DenormalizedProperty
   included do
     self.inheritance_column = :_type_disabled
 
-    pg_enum! :type, as: "schema_property_type", _prefix: :with, _suffix: :type
+    pg_enum! :type, as: "schema_property_type", prefix: :with, suffix: :type
 
     belongs_to :entity, polymorphic: true, inverse_of: :entity_orderable_properties
     belongs_to :schema_version_property, inverse_of: :entity_orderable_properties
@@ -18,7 +18,7 @@ module DenormalizedProperty
     has_one :schema_version, through: :schema_version_property
     has_one :schema_definition, through: :schema_version_property
 
-    scope :by_path, ->(path) { where(path: path) }
+    scope :by_path, ->(path) { where(path:) }
     scope :filtered_by_schema_version, ->(*args) { joins(:schema_version_property).merge(SchemaVersionProperty.filtered_by_schema_version(*args)) }
 
     validates :path, presence: true, uniqueness: { scope: %i[entity_id entity_type] }

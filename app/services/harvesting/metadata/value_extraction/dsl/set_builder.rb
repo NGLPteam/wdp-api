@@ -12,15 +12,15 @@ module Harvesting
           end
           include BuildsValues
 
-          def initialize(*)
+          def initialize(...)
             super
 
             builder.set_mods[identifier] = []
           end
 
-          def build(&block)
+          def build(&)
             provide(set: self) do
-              instance_eval(&block)
+              instance_eval(&)
             end
 
             Harvesting::Metadata::ValueExtraction::Set.new(identifier, @values)

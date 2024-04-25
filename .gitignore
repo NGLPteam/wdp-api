@@ -25,10 +25,10 @@
 
 .byebug_history
 
-# Ignore master key for decrypting credentials and more.
-/config/master.key
 spec/examples.txt
 
+# Ignore master key for decrypting credentials and more.
+/config/master.key
 /config/*.local.yml
 /config/credentials/local.*
 
@@ -37,3 +37,9 @@ spec/examples.txt
 
 # IntelliJ/Rubymine settings
 /.idea
+
+/.docker-sync
+
+/docker/minio/client/*
+!/docker/minio/client/.keep
+!/docker/minio/client/initialize.sh

@@ -13,7 +13,7 @@ module Types
     field :slug,  String, null: false
 
     def crumb
-      Loaders::AssociationLoader.for(EntityBreadcrumb, :crumb).load(object)
+      Support::Loaders::AssociationLoader.for(EntityBreadcrumb, :crumb).load(object)
     end
 
     def label

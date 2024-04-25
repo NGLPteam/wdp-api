@@ -6,7 +6,7 @@ module Users
   # in sync with the upstream provider.
   class UpdateProfile
     include Dry::Monads[:do, :result]
-    include WDPAPI::Deps[realm: "keycloak.realm"]
+    include MeruAPI::Deps[realm: "keycloak.realm"]
     include MonadicPersistence
 
     prepend TransactionalCall

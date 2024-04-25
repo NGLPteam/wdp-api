@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require_relative "./hash_setter"
-require_relative "./operation_helpers"
+require_relative "hash_setter"
+require_relative "operation_helpers"
 
 module TestHelpers
   module MutationContracts
@@ -21,7 +21,7 @@ module TestHelpers
       end
 
       def set_edge_for!(parent, child, name: :default_edge, key: :edge)
-        let_local_context_edge!(name, key: key) do
+        let_local_context_edge!(name, key:) do
           edge_for! parent, child
         end
       end
@@ -36,7 +36,7 @@ RSpec.shared_context "mutation contracts" do
 
   let(:contract_middleware) do
     MutationOperations::ContractMiddleware.new(
-      current_user: current_user,
+      current_user:,
       local_context: local_context.dup,
       edges: local_context_edges.dup,
     )

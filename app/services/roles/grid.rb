@@ -7,7 +7,7 @@ module Roles
     include Roles::ComposesGrids
 
     included do
-      config.permission_names = []
+      config.permission_names = [].freeze
 
       config_accessor :permission_names, instance_reader: false, instance_writer: false
     end
@@ -20,7 +20,7 @@ module Roles
       base = { scope: scope.presence }.compact
 
       own_permissions = self.class.permission_names.map do |name|
-        attrs = base.merge(name: name, allowed: public_send(name))
+        attrs = base.merge(name:, allowed: public_send(name))
 
         Permissions::Grant.new attrs
       end
@@ -43,11 +43,11 @@ module Roles
         combined = names.flatten.map(&:to_sym).uniq.index_with { default }.merge(names_with_defaults)
 
         combined.each do |name, default_value|
-          next if name.in? permission_names
+          next if name.present? && permission_names.present? && name.in?(permission_names)
 
           attribute name, :boolean, default: default_value
 
-          config.permission_names |= [name]
+          config.permission_names = [*config.permission_names, name].uniq.freeze
         end
 
         recalculate_available_actions!

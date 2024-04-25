@@ -1,0 +1,14 @@
+<%-
+  # vim: set ft=ruby.eruby nosmartindent noautoindent :
+-%>
+# frozen_string_literal: true
+
+<% module_namespacing do -%>
+module <%= class_path.map(&:camelize).join("::") %>
+  class << self
+    def table_name_prefix
+      "<%= namespaced? ? namespaced_class_path.join("_") : class_path.join("_") %>_"
+    end
+  end
+end
+<% end -%>

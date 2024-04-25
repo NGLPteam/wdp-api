@@ -12,7 +12,7 @@ module Access
   class CalculateAllGrantedPermissionsJob < ApplicationJob
     include JobIteration::Iteration
 
-    unique :until_and_while_executing, lock_ttl: 3.hours, on_conflict: :log
+    unique_job! by: :job
 
     queue_as :permissions
 
@@ -21,7 +21,7 @@ module Access
     def build_enumerator(cursor:)
       enumerator_builder.active_record_on_records(
         AccessGrant.all,
-        cursor: cursor,
+        cursor:,
       )
     end
 

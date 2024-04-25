@@ -15,9 +15,9 @@ module SchematicReference
 
     has_one :schema_version, through: :entity
 
-    scope :by_referrer, ->(referrer) { where(referrer: referrer) }
-    scope :by_referent, ->(referent) { where(referent: referent) }
-    scope :by_path, ->(path) { where(path: path) }
+    scope :by_referrer, ->(referrer) { where(referrer:) }
+    scope :by_referent, ->(referent) { where(referent:) }
+    scope :by_path, ->(path) { where(path:) }
     scope :to_prune, -> { preload(:referrer, :referent) }
   end
 

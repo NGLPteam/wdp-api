@@ -4,7 +4,7 @@ module Searching
   # Sanitize text for prefix searching.
   class PrefixSanitize
     # All non-alphanumeric characters
-    FILTER = /[^[:alnum:]]/.freeze
+    FILTER = /[^[:alnum:]]/
 
     # @param [#to_s] text
     # @return [String]

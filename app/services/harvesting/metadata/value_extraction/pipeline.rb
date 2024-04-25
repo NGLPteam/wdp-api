@@ -15,9 +15,9 @@ module Harvesting
           # each extraction.
           #
           # @return [Harvesting::Metadata::ValueExtraction::Pipeline]
-          def make!(&block)
+          def make!(&)
             Class.new(self) do
-              define!(&block)
+              define!(&)
             end.new
           end
         end

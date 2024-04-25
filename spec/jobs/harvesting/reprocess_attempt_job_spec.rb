@@ -2,7 +2,7 @@
 
 RSpec.describe Harvesting::ReprocessAttemptJob, type: :job do
   let!(:harvest_attempt) { FactoryBot.create :harvest_attempt }
-  let!(:harvest_records) { FactoryBot.create_list :harvest_record, 2, harvest_attempt: harvest_attempt }
+  let!(:harvest_records) { FactoryBot.create_list :harvest_record, 2, harvest_attempt: }
 
   it "will enqueue a job for each record in the attempt" do
     expect do

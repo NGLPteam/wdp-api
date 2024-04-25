@@ -20,7 +20,7 @@ module FullText
 
     # @see FullText::Normalizer
     NormalizedReference = Reference.constructor do |value|
-      WDPAPI::Container["full_text.normalizer"].call(value)
+      MeruAPI::Container["full_text.normalizer"].call(value)
     end
 
     Map = Hash.map(String, Reference.optional)

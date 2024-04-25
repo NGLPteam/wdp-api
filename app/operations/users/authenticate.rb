@@ -11,7 +11,7 @@ module Users
   # @subsystem Authentication
   class Authenticate
     include Dry::Monads[:result]
-    include WDPAPI::Deps[
+    include MeruAPI::Deps[
       upsert_from_token: "users.upsert_from_token",
     ]
 

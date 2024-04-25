@@ -45,7 +45,7 @@ module Utility
     end
 
     def array_of?(key, matcher)
-      return unless nested_primitive(key) == ::Array
+      return false unless nested_primitive(key) == ::Array
 
       case key.type.type.member
       when matcher then true

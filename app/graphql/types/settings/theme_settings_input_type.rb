@@ -2,15 +2,11 @@
 
 module Types
   module Settings
-    class ThemeSettingsInputType < Types::BaseInputObject
+    class ThemeSettingsInputType < Types::HashInputObject
       description "A value for updating the theme"
 
       argument :color, String, required: true, attribute: true
       argument :font, String, required: true, attribute: true
-
-      def prepare
-        to_h
-      end
     end
   end
 end

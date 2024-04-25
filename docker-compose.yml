@@ -1,16 +1,8 @@
 version: "3.9"
 services:
-  cache:
-    image: "memcached:1.6.9"
-    logging:
-      driver: json-file
-      options:
-        max-size: "10m"
-        max-file: "10"
-    restart: unless-stopped
-    shm_size: 2g
   db:
-    image: "postgres:13.4-alpine"
+    image: "postgres:15.5-alpine"
+    command: postgres -c shared_preload_libraries=pg_stat_statements -c pg_stat_statements.track=all
     shm_size: 2g
     environment:
       POSTGRES_PASSWORD: password
@@ -22,9 +14,13 @@ services:
     restart: unless-stopped
     volumes:
       - postgres-data:/var/lib/postgresql/data
-      - ./docker/postgresql.conf:/var/lib/postgresql/data/postgresql.conf
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
   redis:
-    image: bitnami/redis:latest
+    image: bitnami/redis:6.2.7-debian-10-r34
     environment:
       - "ALLOW_EMPTY_PASSWORD=yes"
     logging:
@@ -33,13 +29,37 @@ services:
         max-size: "10m"
         max-file: "10"
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+  test-redis:
+    image: bitnami/redis:6.2.7-debian-10-r34
+    environment:
+      - "ALLOW_EMPTY_PASSWORD=yes"
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "10"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
   web:
     tty: true
     stdin_open: true
     build: .
     depends_on:
-      - db
-      - redis
+      db:
+        condition: service_healthy
+      migrations:
+        condition: service_completed_successfully
+      redis:
+        condition: service_healthy
     env_file: docker/compose.env
     logging:
       driver: json-file
@@ -48,16 +68,26 @@ services:
         max-file: "10"
     volumes:
       - bundle_cache:/bundle
-      - .:/srv/app
+      - meru-api-sync:/srv/app:nocopy
     ports:
-      - "6222:6222"
+      - "6222:8080"
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "-s", "-o", "/dev/null", "http://localhost:8080/up"]
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
   worker:
     build: .
-    command: bin/sidekiq -C config/sidekiq.yml
+    command: bin/good_job start --probe-port 7001
     depends_on:
-      - db
-      - redis
+      db:
+        condition: service_healthy
+      migrations:
+        condition: service_completed_successfully
+      redis:
+        condition: service_healthy
     env_file: docker/compose.env
     logging:
       driver: json-file
@@ -66,15 +96,30 @@ services:
         max-file: "10"
     volumes:
       - bundle_cache:/bundle
-      - .:/srv/app
+      - meru-api-sync:/srv/app:nocopy
     restart: unless-stopped
-  clock:
+    healthcheck:
+      test: ["CMD", "curl", "-f", "-s", "-o", "/dev/null", "http://localhost:7001/status/started"]
+      interval: 10s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+  spec:
     build: .
-    command: bin/zhong zhong.rb
+    command: tail -f /dev/null
     depends_on:
-      - db
-      - redis
-    env_file: docker/compose.env
+      db:
+        condition: service_healthy
+      migrations:
+        condition: service_completed_successfully
+      test-redis:
+        condition: service_healthy
+    env_file:
+      - docker/compose.env
+    environment:
+      - RACK_ENV=test
+      - RAILS_ENV=test
+      - REDIS_URL=redis://test-redis:6379
     logging:
       driver: json-file
       options:
@@ -82,11 +127,89 @@ services:
         max-file: "10"
     volumes:
       - bundle_cache:/bundle
-      - .:/srv/app
+      - meru-api-sync:/srv/app:nocopy
     restart: unless-stopped
+  mailcatcher:
+    image: "sj26/mailcatcher:v0.8.2"
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "10"
+    ports:
+      - "6223:1080"
+    restart: unless-stopped
+  minio:
+    image: "minio/minio:RELEASE.2022-09-25T15-44-53Z"
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "10"
+    ports:
+      - "6224:9000"
+      - "6225:9001"
+    volumes:
+      - minio_storage:/data
+    env_file:
+      - docker/minio.env
+    command: server --console-address ":9001" /data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+  minio-proxy:
+    image: nginx:1.19.2-alpine
+    depends_on:
+      minio:
+        condition: service_healthy
+    volumes:
+      - ./docker/minio/proxy/nginx.conf:/etc/nginx/nginx.conf:ro
+    restart: unless-stopped
+  minio-client:
+    entrypoint: "/root/.mc/initialize.sh"
+    image: "minio/mc:RELEASE.2022-09-16T09-16-47Z"
+    depends_on:
+      minio:
+        condition: service_healthy
+      minio-proxy:
+        condition: service_started
+    env_file:
+      - docker/compose.env
+      - docker/minio.env
+    restart: "no"
+    volumes:
+      - ./docker/minio/client:/root/.mc
+  migrations:
+    build: .
+    command: bin/ensure-db
+    depends_on:
+      db:
+        condition: service_healthy
+      minio-client:
+        condition: service_completed_successfully
+      redis:
+        condition: service_healthy
+    env_file: docker/compose.env
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "10"
+    restart: "no"
+    volumes:
+      - bundle_cache:/bundle
+      - meru-api-sync:/srv/app:nocopy
 
 volumes:
+  meru-api-sync:
+    external: true
   bundle_cache:
     driver: local
+  minio_storage:
+    driver: local
   postgres-data:
+    driver: local
+  upload_storage:
     driver: local

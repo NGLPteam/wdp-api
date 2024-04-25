@@ -8,7 +8,7 @@ module ScopesForEntityComposedText
     def by_composed_text(query, dictionary: "english")
       return all if query.blank?
 
-      left_outer_joins(:entity_composed_text).merge(EntityComposedText.websearch(query, dictionary: dictionary))
+      left_outer_joins(:entity_composed_text).merge(EntityComposedText.websearch(query, dictionary:))
     end
   end
 end

@@ -47,7 +47,7 @@ module Searching
       when Searching::CoreProperty::PATTERN
         Searching::CoreProperty.parse left
       when Schemas::Properties::ParsePath::PATTERN
-        WDPAPI::Container["schemas.properties.parse_path"].(left).value_or(nil)
+        MeruAPI::Container["schemas.properties.parse_path"].(left).value_or(nil)
       else
         skip
       end

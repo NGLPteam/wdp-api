@@ -3,9 +3,7 @@
 module Types
   module Settings
     # @see Settings::Institution
-    class InstitutionSettingsInputType < Types::BaseInputObject
-      include AutoHash
-
+    class InstitutionSettingsInputType < Types::HashInputObject
       description "An object for updating the site's configuration"
 
       argument :name, String, required: false, attribute: true,

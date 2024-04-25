@@ -13,7 +13,7 @@ RSpec.describe Mutations::ClearInitialOrdering, type: :request, graphql: :mutati
 
   let!(:collection) { create_v1_collection }
 
-  let!(:item) { create_v1_item collection: collection }
+  let!(:item) { create_v1_item collection: }
 
   let!(:ordering) { collection.orderings.by_identifier("subcollections").first! }
 

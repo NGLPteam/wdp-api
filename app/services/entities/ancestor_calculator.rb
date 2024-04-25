@@ -7,7 +7,7 @@ module Entities
     end
 
     include Dry::Monads[:do, :result]
-    include WDPAPI::Deps[
+    include MeruAPI::Deps[
       calculate_ancestors: "entities.calculate_ancestors"
     ]
 

@@ -16,7 +16,7 @@ module Types
     end
 
     def load_named_variable_dates
-      Loaders::AssociationLoader.for(object.class, :named_variable_dates)
+      Support::Loaders::AssociationLoader.for(object.class, :named_variable_dates)
     end
 
     def published

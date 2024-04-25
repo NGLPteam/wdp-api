@@ -10,7 +10,7 @@ class EntityLink < ApplicationRecord
   include MatchesScopes
   include SyncsEntities
 
-  pg_enum! :operator, as: :link_operator, _prefix: :operator
+  pg_enum! :operator, as: :link_operator, prefix: :operator
 
   belongs_to :source, polymorphic: true
   belongs_to :target, polymorphic: true
@@ -27,8 +27,8 @@ class EntityLink < ApplicationRecord
   belongs_to :target_collection, optional: true
   belongs_to :target_item, optional: true
 
-  scope :by_source, ->(source) { where(source: source) }
-  scope :by_target, ->(target) { where(target: target) }
+  scope :by_source, ->(source) { where(source:) }
+  scope :by_target, ->(target) { where(target:) }
   scope :by_source_or_target, ->(entity) { where(id: unscoped.by_source(entity).or(unscoped.by_target(entity))) }
 
   before_validation :calculate_auth_path!

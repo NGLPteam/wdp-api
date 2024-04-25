@@ -9,19 +9,19 @@ FactoryBot.define do
 
     association :harvest_source
     harvest_set { nil }
-    target_entity { create :collection }
+    target_entity { FactoryBot.create :collection }
     mode { "manual" }
     metadata_format { "mods" }
 
     mapping_options do
       {
-        link_identifiers_globally: link_identifiers_globally,
+        link_identifiers_globally:,
       }
     end
 
     read_options do
       {
-        max_records: max_records,
+        max_records:,
       }
     end
 

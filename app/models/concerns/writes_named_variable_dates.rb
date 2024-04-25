@@ -36,7 +36,7 @@ module WritesNamedVariableDates
   # @param [String, VariablePrecisionDate, Date] value (@see VariablePrecision::ParseDate)
   # @return [void]
   def write_named_variable_date!(name, value)
-    parsed = WDPAPI::Container["variable_precision.parse_date"].call(value).value!
+    parsed = MeruAPI::Container["variable_precision.parse_date"].call(value).value!
 
     named_variable_date_cache[name] = parsed
   end
@@ -51,7 +51,7 @@ module WritesNamedVariableDates
     attributes = named_variable_date_cache.each_pair.map do |name, actual|
       path = named_variable_date_global_path_for name
 
-      base.merge(path: path, actual: actual)
+      base.merge(path:, actual:)
     end
 
     NamedVariableDate.upsert_all(
@@ -85,7 +85,7 @@ module WritesNamedVariableDates
 
   # @note We hook the reload method to clear our pending writes
   #   in case the model needs be reset.
-  def reload(*)
+  def reload(...)
     named_variable_date_cache.clear
 
     super

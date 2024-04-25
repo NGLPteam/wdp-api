@@ -30,9 +30,9 @@ module Harvesting
             extraction_error!(
               :failed_dependency,
               message: "Failed to resolve #{parent.inspect}",
-              parent: parent,
+              parent:,
               for: (value_id { nil }),
-              reason: reason,
+              reason:,
             )
           end
         end
@@ -57,7 +57,7 @@ module Harvesting
           extraction_error!(
             :unknown_path,
             message: "No value registered for #{path.inspect}",
-            path: path
+            path:
           )
         end
 
@@ -96,7 +96,7 @@ module Harvesting
 
               extraction_error!(
                 :invalid_values,
-                values: values,
+                values:,
                 paths: value_paths,
               )
             end

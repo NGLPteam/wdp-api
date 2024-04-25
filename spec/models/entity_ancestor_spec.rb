@@ -7,8 +7,8 @@ RSpec.describe EntityAncestor, type: :model do
     let!(:item_schema) { FactoryBot.create :schema_version, :simple_item }
 
     let!(:community) { FactoryBot.create :community, schema: community_schema }
-    let!(:collection) { FactoryBot.create :collection, schema: collection_schema, community: community }
-    let!(:item) { FactoryBot.create :item, schema: item_schema, collection: collection }
+    let!(:collection) { FactoryBot.create :collection, schema: collection_schema, community: }
+    let!(:item) { FactoryBot.create :item, schema: item_schema, collection: }
 
     it "has the expected count of entity ancestors" do
       expect(item.named_ancestors.count).to eq 1

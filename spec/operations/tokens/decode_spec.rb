@@ -59,7 +59,7 @@ RSpec.describe Tokens::Decode, operation: true do
 
   context "when verifying a token subject" do
     it "checks the subject for validity" do
-      result = operation.call encoded_token, sub: sub
+      result = operation.call(encoded_token, sub:)
 
       expect(result).to be_a_success
     end

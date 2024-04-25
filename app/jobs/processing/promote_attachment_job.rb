@@ -21,7 +21,7 @@ module Processing
       attacher_class = Object.const_get(attacher_class)
       record         = Object.const_get(record_class).find(record_id)
 
-      attacher = attacher_class.retrieve(model: record, name: name, file: file_data)
+      attacher = attacher_class.retrieve(model: record, name:, file: file_data)
 
       attacher.file.open do
         attacher.refresh_metadata! if attacher.respond_to?(:refresh_metadata!)

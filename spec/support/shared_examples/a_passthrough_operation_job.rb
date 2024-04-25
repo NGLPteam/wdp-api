@@ -35,13 +35,17 @@ RSpec.shared_examples_for "a pass-through operation job" do |operation_path|
   end
 
   after do
-    WDPAPI::Container.unstub operation_path
+    Common::Container.unstub operation_path
   end
 
   def expect_running_the_job
     expect do
-      WDPAPI::Container.stub(operation_path, operation) do
-        described_class.perform_now job_arg
+      Common::Container.stub(operation_path, operation) do
+        if job_arg.kind_of?(Hash)
+          described_class.perform_now(**job_arg)
+        else
+          described_class.perform_now job_arg
+        end
       end
     end
   end

@@ -14,9 +14,9 @@ class HarvestCachedAsset < ApplicationRecord
 
   has_many :harvest_cached_asset_references, inverse_of: :harvest_cached_asset, dependent: :delete_all
 
-  attribute :metadata, Harvesting::CachedAssets::Metadata.to_type, default: {}
+  attribute :metadata, Harvesting::CachedAssets::Metadata.to_type, default: -> { {} }
 
-  scope :by_url, ->(url) { where(url: url) }
+  scope :by_url, ->(url) { where(url:) }
 
   validates :url, presence: true, uniqueness: true
 

@@ -10,15 +10,12 @@ module Patches
       super
 
       edit_file filename do |line|
-        case line
-        when /pg_catalog\.set_config\('search_path'/
-          line.gsub(/''/, %['"$user",heroku_ext,public'])
-        when /CREATE SCHEMA(?! IF NOT EXISTS)/
-          line.gsub(/CREATE SCHEMA/, "CREATE SCHEMA IF NOT EXISTS")
-        else
-          next
-        end
+        next unless line =~ /pg_catalog\.set_config\('search_path'/
+
+        line.gsub("''", %['"$user",public'])
       end
+    ensure
+      ::Support::System["column_cache.write"].call.value!
     end
 
     def edit_file(filename)

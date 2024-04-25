@@ -7,7 +7,7 @@ module Harvesting
       include MonadicPersistence
       include Dry::Effects.Resolve(:harvest_entity)
       include Dry::Monads[:result, :do]
-      include WDPAPI::Deps[
+      include MeruAPI::Deps[
         fetch_cached_asset: "harvesting.cached_assets.fetch",
         add_reference: "harvesting.cached_assets.reference",
       ]
@@ -51,7 +51,7 @@ module Harvesting
           metadata = source.to_metadata
 
           cached.asset.download do |io|
-            attacher.assign io, metadata: metadata
+            attacher.assign(io, metadata:)
 
             monadic_save(entity).or do |(_code, _model, errors)|
               attacher.assign nil
@@ -59,7 +59,7 @@ module Harvesting
               harvest_entity.log_harvest_error!(
                 :invalid_entity_asset,
                 "Invalid entity asset: #{errors.to_sentence}",
-                errors: errors,
+                errors:,
                 content_type: cached.content_type,
                 identifier: source.identifier,
                 url: cached.url

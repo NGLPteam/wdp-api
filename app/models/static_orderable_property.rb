@@ -41,7 +41,7 @@ class StaticOrderableProperty < FrozenRecord::Base
 
   # @return [Schemas::Orderings::OrderBuilder::Base]
   def order_builder
-    order_builder_klass.new order_builder_options
+    order_builder_klass.new(**order_builder_options)
   end
 
   def order_builder_klass
@@ -69,7 +69,7 @@ class StaticOrderableProperty < FrozenRecord::Base
     return if path.start_with? "#{grouping}."
 
     # :nocov:
-    errors.add :path, :invalid, grouping: grouping
+    errors.add :path, :invalid, grouping:
     # :nocov:
   end
 

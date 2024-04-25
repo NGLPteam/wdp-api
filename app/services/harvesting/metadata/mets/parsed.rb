@@ -87,8 +87,8 @@ module Harvesting
 
             memoize def scalar_assets
               {
-                pdf_version: pdf_version,
-                text_version: text_version,
+                pdf_version:,
+                text_version:,
               }.compact
             end
 
@@ -156,12 +156,12 @@ module Harvesting
               raw_source = data.to_xml
               inner_source = data.at_xpath("./*").to_xml
 
-              return klass.new(raw_source, inner_source: inner_source, wrapper_id: id)
+              return klass.new(raw_source, inner_source:, wrapper_id: id)
             end
           end
 
           # :nocov:
-          raise UnsupportedMetadataWrapping.new(data: data, type: md_type, id: id)
+          raise UnsupportedMetadataWrapping.new(data:, type: md_type, id:)
           # :nocov:
         end
 

@@ -1,0 +1,21 @@
+<%-
+  # vim: set ft=ruby.eruby nosmartindent noautoindent :
+-%>
+# frozen_string_literal: true
+
+<% module_namespacing_when_supported do -%>
+module Types
+  class <%= ruby_class_name %> < Types::BaseEnum
+    description <<~TEXT
+    <%= human_name %> enum
+    TEXT
+    <%- prepared_values.each do |v| -%>
+
+    value "<%= v[0] %>"<%= v.length > 1 ? ", value: #{v[1]}" : ", value: #{v[0].underscore.inspect}" %> do
+      description <<~TEXT
+      TEXT
+    end
+    <%- end -%>
+  end
+end
+<% end -%>

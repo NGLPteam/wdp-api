@@ -5,7 +5,7 @@ RSpec.describe Roles::DumpCalculatedSystemRoles, type: :operation do
 
   let(:dump_path) { described_class::DUMP_PATH.to_s }
 
-  let(:operation) { described_class.new filesystem: filesystem }
+  let(:operation) { described_class.new filesystem: }
 
   it "writes the YAML file" do
     expect do

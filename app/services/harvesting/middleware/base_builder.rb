@@ -6,7 +6,7 @@ module Harvesting
     # @see Harvesting::Dispatch::BuildMiddlewareState
     class BaseBuilder
       include Dry::Monads[:do, :result]
-      include WDPAPI::Deps[
+      include MeruAPI::Deps[
         build_logger: "harvesting.dispatch.build_logger",
         build_metadata_format: "harvesting.dispatch.build_metadata_format",
         build_protocol: "harvesting.dispatch.build_protocol",
@@ -50,7 +50,7 @@ module Harvesting
       # @see Harvesting::Dispatch::BuildMiddlewareState
       # @return [#call]
       def build_middleware_state
-        WDPAPI::Container["harvesting.dispatch.build_middleware_state"]
+        MeruAPI::Container["harvesting.dispatch.build_middleware_state"]
       end
 
       # @api private
@@ -58,7 +58,7 @@ module Harvesting
       def inherit_middleware_from!(model)
         result = yield build_middleware_state.call(model)
 
-        merge! result
+        merge!(**result)
       end
 
       # @api private

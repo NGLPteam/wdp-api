@@ -77,9 +77,9 @@ module Harvesting
 
             def contribution_metadata
               {
-                identifier: identifier,
-                name_type: name_type,
-                role_type: role_type,
+                identifier:,
+                name_type:,
+                role_type:,
               }
             end
 

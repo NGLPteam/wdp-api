@@ -6,13 +6,13 @@ module Harvesting
       # Parsing a sortable issue number from JATS metadata is not always straightforward.
       class ParseSortableNumber
         # A string that contains an integer. We'll scan it and return the first matching integer as a best guess.
-        HAS_INTEGER = /\d+/.freeze
+        HAS_INTEGER = /\d+/
 
         # A string that is guaranteed to coerce to an integer.
-        LOOKS_LIKE_INTEGER = /\A\d+\z/.freeze
+        LOOKS_LIKE_INTEGER = /\A\d+\z/
 
         # Some issue numbers are things like `2/3` or `2-3`. We'll parse them as 2 for sorting purposes.
-        ODDLY_FORMATTED_ISSUE_NUMBER = %r,\A(?<actual>\d+)[/-]\d+\z,.freeze
+        ODDLY_FORMATTED_ISSUE_NUMBER = %r,\A(?<actual>\d+)[/-]\d+\z,
 
         # @param [String] input
         # @return [Integer]

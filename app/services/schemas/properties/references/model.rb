@@ -20,7 +20,7 @@ module Schemas
           # @!attribute [r] model_types
           # A list of models that this reference can refer to.
           # @return [<Class>]
-          defines :model_types, type: ::Models::Types::ModelClassList
+          defines :model_types, type: ::Support::Models::Types::ModelClassList
 
           model_types []
 

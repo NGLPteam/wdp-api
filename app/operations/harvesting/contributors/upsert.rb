@@ -7,7 +7,7 @@ module Harvesting
       include Dry::Effects.Resolve(:harvest_source)
       include Dry::Effects.State(:extracted_contributor_ids)
       include MonadicPersistence
-      include WDPAPI::Deps[
+      include MeruAPI::Deps[
         connect_or_create: "harvesting.contributors.connect_or_create",
       ]
 

@@ -6,7 +6,7 @@ module MutationOperations
       option :attribute_names, AppTypes::Array.of(AppTypes::String)
     end
 
-    include WDPAPI::Deps[normalize_path: "mutations.utility.normalize_path"]
+    include MeruAPI::Deps[normalize_path: "mutations.utility.normalize_path"]
 
     GLOBAL_PATH = %w[$global].freeze
 
@@ -20,10 +20,10 @@ module MutationOperations
       attribute_path = path.join(?.)
 
       error = MutationOperations::UserError.new(
-        message: message,
-        code: code,
-        path: path,
-        attribute_path: attribute_path,
+        message:,
+        code:,
+        path:,
+        attribute_path:,
         global: force_attribute ? false : !attribute_path.in?(attribute_names)
       )
 
@@ -33,7 +33,7 @@ module MutationOperations
     # @return [MutationOperations::UserError]
     def global(message)
       MutationOperations::UserError.new(
-        message: message,
+        message:,
         code: nil,
         path: GLOBAL_PATH,
         attribute_path: "$global",

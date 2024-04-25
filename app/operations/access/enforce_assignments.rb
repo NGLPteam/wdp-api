@@ -9,7 +9,7 @@ module Access
   # @see Access::EnforceAssignmentsJob
   class EnforceAssignments
     include Dry::Monads[:result, :do]
-    include WDPAPI::Deps[
+    include MeruAPI::Deps[
       grant: "access.grant",
       revoke: "access.revoke",
     ]
@@ -17,11 +17,11 @@ module Access
     # @param [AccessGrantSubject, nil] subject
     # @return [Dry::Monads::Result]
     def call(subject: nil)
-      assigned = yield assign_pending!(subject: subject)
+      assigned = yield assign_pending!(subject:)
 
-      invalid = yield revoke_invalid!(subject: subject)
+      invalid = yield revoke_invalid!(subject:)
 
-      Success(assigned: assigned, invalid: invalid)
+      Success(assigned:, invalid:)
     end
 
     private
@@ -32,7 +32,7 @@ module Access
       count = 0
 
       PendingRoleAssignment.to_assign.for_possible_subject(subject).find_each do |assignment|
-        yield grant.call(*assignment.to_grant)
+        yield grant.call(assignment.role, **assignment.to_grant_options)
 
         count += 1
       end

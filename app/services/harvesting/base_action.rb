@@ -8,7 +8,7 @@ module Harvesting
 
     include Dry::Monads[:result, :do]
     include Harvesting::HushActiveRecord
-    include WDPAPI::Deps[
+    include MeruAPI::Deps[
       wrap_middleware: "harvesting.middleware.wrap",
     ]
 
@@ -135,10 +135,10 @@ module Harvesting
       end
 
       # @return [void]
-      def runner(&block)
+      def runner(&)
         klass = Class.new(runner_klass)
 
-        klass.class_eval(&block)
+        klass.class_eval(&)
 
         runner_klass klass
 

@@ -18,10 +18,10 @@ module Mutations
         assign_attributes! contributor, **args
 
         properties = {
-          given_name: given_name,
-          family_name: family_name,
-          title: title,
-          affiliation: affiliation,
+          given_name:,
+          family_name:,
+          title:,
+          affiliation:,
         }.compact
 
         contributor.properties = { person: properties }

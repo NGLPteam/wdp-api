@@ -115,7 +115,7 @@ module Harvesting
               zipped.map.with_index do |(url, format), index|
                 position = index + 1
 
-                Harvesting::Metadata::OAIDC::AssetProxy.new url, format, position: position
+                Harvesting::Metadata::OAIDC::AssetProxy.new url, format, position:
               end
             end
 
@@ -138,7 +138,7 @@ module Harvesting
 
             memoize def scalar_assets
               {
-                pdf_version: pdf_version,
+                pdf_version:,
               }.compact
             end
 

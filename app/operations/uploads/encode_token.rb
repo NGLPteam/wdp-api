@@ -5,7 +5,7 @@ module Uploads
   # for use with uppy / tus.js clients.
   class EncodeToken
     include Dry::Monads[:result]
-    include WDPAPI::Deps[encode: "tokens.encode"]
+    include MeruAPI::Deps[encode: "tokens.encode"]
 
     # @param [User] user
     # @param [{ String => String }] env the request environment
@@ -14,7 +14,7 @@ module Uploads
 
       exp = 5.hours.from_now.to_i
 
-      encode.call(sub: user.keycloak_id, aud: "upload", exp: exp)
+      encode.call(sub: user.keycloak_id, aud: "upload", exp:)
     end
   end
 end

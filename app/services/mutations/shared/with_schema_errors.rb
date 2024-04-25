@@ -12,7 +12,7 @@ module Mutations
       include Mutations::Shared::AttachesPolymorphicEntity
 
       included do
-        include WDPAPI::Deps[apply: "schemas.instances.apply"]
+        include MeruAPI::Deps[apply: "schemas.instances.apply"]
 
         before_prepare :prepare_schema_errors!
       end

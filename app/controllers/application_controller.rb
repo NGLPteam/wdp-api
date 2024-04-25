@@ -45,6 +45,6 @@ class ApplicationController < ActionController::API
   # @param [{ Symbol => Object }] props properties to add to the error message
   # @return [void]
   def render_single_error!(message, status: :internal_server_error, **props)
-    render json: { errors: [{ **props, message: message } ] }, status: status
+    render json: { errors: [{ **props, message: } ] }, status:
   end
 end

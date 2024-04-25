@@ -8,7 +8,7 @@ RSpec.describe Entities::AuditHierarchies, type: :operation do
   it "will detect if an entity is deleted without cleaning up the table" do
     expect do
       perform_enqueued_jobs do
-        FactoryBot.create :collection, community: community
+        FactoryBot.create :collection, community:
       end
     end.to change(EntityHierarchy, :count).by(2)
 

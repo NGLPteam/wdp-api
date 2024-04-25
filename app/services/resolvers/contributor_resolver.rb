@@ -1,12 +1,10 @@
 # frozen_string_literal: true
 
 module Resolvers
-  class ContributorResolver < GraphQL::Schema::Resolver
-    include SearchObject.module(:graphql)
-
-    include Resolvers::AppliesPolicyScope
+  class ContributorResolver < AbstractResolver
+    include Resolvers::Enhancements::AppliesPolicyScope
     include Resolvers::OrderedAsContributor
-    include Resolvers::PageBasedPagination
+    include Resolvers::Enhancements::PageBasedPagination
 
     type Types::AnyContributorType.connection_type, null: false
 

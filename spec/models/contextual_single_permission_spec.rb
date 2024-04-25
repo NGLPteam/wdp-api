@@ -7,15 +7,15 @@ RSpec.describe ContextualSinglePermission, type: :model do
 
   let!(:community) { FactoryBot.create :community }
 
-  let!(:collection) { FactoryBot.create :collection, community: community }
+  let!(:collection) { FactoryBot.create :collection, community: }
 
-  let!(:item) { FactoryBot.create :item, collection: collection }
+  let!(:item) { FactoryBot.create :item, collection: }
 
-  let!(:subitem) { FactoryBot.create :item, parent: item, collection: collection }
+  let!(:subitem) { FactoryBot.create :item, parent: item, collection: }
 
   let!(:accessible) { community }
 
-  let!(:access_grant) { FactoryBot.create :access_grant, accessible: accessible, role: role, subject: user }
+  let!(:access_grant) { FactoryBot.create :access_grant, accessible:, role:, subject: user }
 
   context "when inheriting permissions from a community" do
     specify "the community inherits permissions" do

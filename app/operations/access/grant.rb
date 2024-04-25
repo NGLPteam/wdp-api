@@ -3,7 +3,7 @@
 module Access
   class Grant
     include Dry::Monads[:result, :do]
-    include WDPAPI::Deps[
+    include MeruAPI::Deps[
       assign_global_permissions: "access.assign_global_permissions"
     ]
 
@@ -12,7 +12,7 @@ module Access
     # @param [AccessGrantSubject] to
     # @return [Dry::Monads::Result]
     def call(role, on:, to:)
-      return Success(nil) if AccessGrant.has_granted?(role, on: on, to: to)
+      return Success(nil) if AccessGrant.has_granted?(role, on:, to:)
 
       grant = AccessGrant.fetch(on, to)
 

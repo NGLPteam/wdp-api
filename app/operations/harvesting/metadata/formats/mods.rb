@@ -4,7 +4,7 @@ module Harvesting
   module Metadata
     module Formats
       class MODS < Harvesting::Metadata::BaseFormat
-        include WDPAPI::Deps[
+        include MeruAPI::Deps[
           extract_entities: "harvesting.metadata.mods.extract_entities"
         ]
       end

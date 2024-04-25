@@ -41,7 +41,7 @@ class Entity < ApplicationRecord
   scope :with_schema_name_desc, -> { joins(:schema_definition).merge(SchemaDefinition.order(name: :desc)) }
 
   scope :with_missing_orderings, -> { non_link.where(entity_id: EntityInheritedOrdering.missing.select(:entity_id)) }
-  scope :except_hierarchical, ->(hierarchical) { where.not(hierarchical: hierarchical) if hierarchical.present? }
+  scope :except_hierarchical, ->(hierarchical) { where.not(hierarchical:) if hierarchical.present? }
   scope :filtered_by_ancestor_schema, ->(schemas) { where(hierarchical_id: EntityBreadcrumb.filtered_by_schema_version(schemas).select(:entity_id)) }
 
   scope :actual, -> { where(scope: %w[communities items collections]) }

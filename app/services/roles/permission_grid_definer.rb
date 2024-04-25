@@ -6,7 +6,7 @@ module Roles
       param :available_actions, Roles::Types::GridList
     end
 
-    include WDPAPI::Deps[
+    include MeruAPI::Deps[
       quote_permission_query: "roles.quote_permission_query"
     ]
 
@@ -21,8 +21,8 @@ module Roles
       end
 
       attrs = {
-        available_actions: available_actions,
-        allowed_actions: allowed_actions,
+        available_actions:,
+        allowed_actions:,
         acl: @acl.to_h.deep_symbolize_keys,
       }
 
@@ -82,9 +82,7 @@ module Roles
       when Roles::Types::PermissionQuery
         pattern = quote_permission_query.call path
 
-        available_actions.select do |permission|
-          permission.match? pattern
-        end
+        available_actions.grep(pattern)
       else
         # :nocov:
         raise ArgumentError, "Don't know how to match permission path: #{path.inspect}"

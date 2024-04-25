@@ -6,7 +6,7 @@ module Schemas
       include Dry::Core::Equalizer.new(:path)
       include Dry::Core::Memoizable
 
-      PREFIX = /\A(?<prefix>#{Schemas::Properties::Types::PATH_PART})\./.freeze
+      PREFIX = /\A(?<prefix>#{Schemas::Properties::Types::PATH_PART})\./
 
       attribute :path, Schemas::Properties::Types::FullPath
 

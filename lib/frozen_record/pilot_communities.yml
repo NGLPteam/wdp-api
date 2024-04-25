@@ -208,8 +208,8 @@
     title: Journal of Movement Arts Literacy
     url: https://longleaf.defender.janeway.systems/jmal/api/oai/
     metadata_format: oaidc
-  - identifier: North Carolina Journal of Mathematics and Statistics
-    title: ncjms
+  - title: North Carolina Journal of Mathematics and Statistics
+    identifier: ncjms
     url: https://longleaf.defender.janeway.systems/ncjms/api/oai/
     metadata_format: oaidc
   - identifier: prp

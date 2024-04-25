@@ -7,7 +7,7 @@ class CreateSchemaDefinitions < ActiveRecord::Migration[6.1]
       t.citext :identifier, null: false
       t.citext :system_slug, null: false
 
-      t.enum :kind, as: "schema_kind", null: false
+      t.enum :kind, enum_type: "schema_kind", null: false
 
       t.timestamps null: false, default: -> { "CURRENT_TIMESTAMP" }
 

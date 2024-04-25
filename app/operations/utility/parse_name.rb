@@ -8,7 +8,7 @@ module Utility
     # Some names with commas don't work as expected.
     #
     # We need to try parsing a different way.
-    WEIRD = /\A(?<suffix>[^,]+),\s+(?<prefix>.+)\z/.freeze
+    WEIRD = /\A(?<suffix>[^,]+),\s+(?<prefix>.+)\z/
 
     # @param [Namae::Name, String] name
     # @param [Boolean] allow_multiple
@@ -33,7 +33,7 @@ module Utility
 
     def cleaner
       @cleaner ||= Utility::StringCleaner.build do |s|
-        s.gsub(/, and /, " and ")
+        s.gsub(", and ", " and ")
         s.remove(/\A\.,\s+/)
         s.remove(/\s+'[^']+?'/)
         s.remove(/\s+"[^"]+?"/)

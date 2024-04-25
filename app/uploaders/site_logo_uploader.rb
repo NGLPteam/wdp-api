@@ -38,7 +38,7 @@ class SiteLogoUploader < Shrine
   end
 
   Attacher.derivatives do |original|
-    WDPAPI::Container["image_attachments.generate_derivatives"].call(original, scope: :site_logo).value!
+    MeruAPI::Container["image_attachments.generate_derivatives"].call(original, scope: :site_logo).value!
   end
 
   UploadedFile.include ImageAttachments::HasMetadata

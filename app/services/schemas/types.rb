@@ -19,17 +19,17 @@ module Schemas
     # A pattern for matching a fully-qualified schema declaration with an optional version signifier.
     #
     # @note This pattern also supports both `namespace.identifier` and `namespace:identifier` usages.
-    FLEXIBLE_DECLARATION_PATTERN = /\A(?<namespace>[a-z_]+)[.:](?<identifier>[a-z_0-9]+)(?::(?<version>#{SIGNIFIER_PATTERN}))?\z/.freeze
+    FLEXIBLE_DECLARATION_PATTERN = /\A(?<namespace>[a-z_]+)[.:](?<identifier>[a-z_0-9]+)(?::(?<version>#{SIGNIFIER_PATTERN}))?\z/
 
     # A pattern for matching a fully-qualified schema definition.
     #
     # @note This pattern supports only `namespace:identifier` usage.
-    DECLARATION_PATTERN = /\A(?<namespace>[a-z_]+):(?<identifier>[a-z_0-9]+)\z/.freeze
+    DECLARATION_PATTERN = /\A(?<namespace>[a-z_]+):(?<identifier>[a-z_0-9]+)\z/
 
     # A pattern for matching a fully-qualified schema declaration with a required version string
     #
     # @note This pattern supports only `namespace:identifier` usage.
-    VERSION_DECLARATION_PATTERN = /\A(?<namespace>[a-z_]+):(?<identifier>[a-z_0-9]+):(?<version>[^:\s]+)\z/.freeze
+    VERSION_DECLARATION_PATTERN = /\A(?<namespace>[a-z_]+):(?<identifier>[a-z_0-9]+):(?<version>[^:\s]+)\z/
 
     # A type for matching a fully-qualified schema declaration.
     #
@@ -66,7 +66,7 @@ module Schemas
       case value
       when SchemaDefinition, SchemaVersion, Schemas::Versions::Configuration
         value.kind
-      when Community, Collection, Item, Entity
+      when ::Community, ::Collection, ::Item, ::Entity
         value.schema_kind
       else
         value

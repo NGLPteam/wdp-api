@@ -13,7 +13,7 @@ module MutationOperations
     def call(model, **args)
       attributes = process_attachments_for model, **args
 
-      model.assign_attributes attributes
+      model.assign_attributes(attributes)
 
       return model
     end
@@ -27,7 +27,6 @@ module MutationOperations
     def process_attachments_for(model, **args)
       # :nocov:
       return args if attachments.blank?
-
       # :nocov:
 
       attachments.each do |attachment|

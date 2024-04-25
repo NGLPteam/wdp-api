@@ -30,7 +30,7 @@ RSpec.describe Mutations::CreateItem, type: :request, graphql: :mutation do
     let(:token) { token_helper.build_token has_global_admin: true }
 
     let!(:community) { FactoryBot.create :community }
-    let!(:collection) { FactoryBot.create :collection, community: community }
+    let!(:collection) { FactoryBot.create :collection, community: }
 
     let_mutation_input!(:title) { Faker::Lorem.sentence }
     let_mutation_input!(:subtitle) { Faker::Lorem.sentence }
@@ -47,7 +47,7 @@ RSpec.describe Mutations::CreateItem, type: :request, graphql: :mutation do
     end
     let_mutation_input!(:parent_id) { parent.to_encoded_id }
 
-    let!(:parent_item) { FactoryBot.create :item, collection: collection }
+    let!(:parent_item) { FactoryBot.create :item, collection: }
 
     let!(:parent) { collection }
 

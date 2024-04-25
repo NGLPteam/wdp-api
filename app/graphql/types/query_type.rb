@@ -3,12 +3,11 @@
 module Types
   class QueryType < Types::BaseObject
     description <<~TEXT
-    The entry point for retrieving data from within the WDP API.
+    The entry point for retrieving data from within the Meru API.
     TEXT
 
-    add_field GraphQL::Types::Relay::NodeField
-
-    add_field GraphQL::Types::Relay::NodesField
+    include GraphQL::Types::Relay::HasNodeField
+    include GraphQL::Types::Relay::HasNodesField
 
     implements Types::SearchableType
 
@@ -165,21 +164,21 @@ module Types
     end
 
     def asset(slug:)
-      Loaders::RecordLoader.for(Asset).load(slug)
+      Support::Loaders::RecordLoader.for(Asset).load(slug)
     end
 
     def collection(slug:)
-      Loaders::RecordLoader.for(Collection).load(slug).tap do |collection|
+      Support::Loaders::RecordLoader.for(Collection).load(slug).tap do |collection|
         track_entity_event! collection
       end
     end
 
     def collection_contribution(slug:)
-      Loaders::RecordLoader.for(CollectionContribution).load(slug)
+      Support::Loaders::RecordLoader.for(CollectionContribution).load(slug)
     end
 
     def community(slug:)
-      Loaders::RecordLoader.for(Community).load(slug).tap do |community|
+      Support::Loaders::RecordLoader.for(Community).load(slug).tap do |community|
         track_entity_event! community
       end
     end
@@ -193,11 +192,11 @@ module Types
     end
 
     def contributor(slug:)
-      Loaders::RecordLoader.for(Contributor).load(slug)
+      Support::Loaders::RecordLoader.for(Contributor).load(slug)
     end
 
     def contributor_lookup(**options)
-      call_operation "contributors.lookup", options do |m|
+      call_operation "contributors.lookup", **options do |m|
         m.success do |contributor|
           contributor
         end
@@ -220,32 +219,32 @@ module Types
     end
 
     def item(slug:)
-      Loaders::RecordLoader.for(Item).load(slug).tap do |item|
+      Support::Loaders::RecordLoader.for(Item).load(slug).tap do |item|
         track_entity_event! item
       end
     end
 
     def item_contribution(slug:)
-      Loaders::RecordLoader.for(ItemContribution).load(slug)
+      Support::Loaders::RecordLoader.for(ItemContribution).load(slug)
     end
 
     # @see Schemas::Orderings::PathOptions::Fetch
     # @param [<Hash>] schemas (@see Schemas::Associations::OrderingFilter)
     # @return [<Schemas::Orderings::PathOptions::Reader>]
     def ordering_paths(schemas: [])
-      call_operation! "schemas.orderings.path_options.fetch", schemas: schemas
+      call_operation! "schemas.orderings.path_options.fetch", schemas:
     end
 
     # @param [String] slug
     # @return [SchemaDefinition, nil]
     def schema_definition(slug:)
-      WDPAPI::Container["schemas.definitions.find"].call(slug).value_or(nil)
+      MeruAPI::Container["schemas.definitions.find"].call(slug).value_or(nil)
     end
 
     # @param [String] slug
     # @return [SchemaVersion, nil]
     def schema_version(slug:)
-      WDPAPI::Container["schemas.versions.find"].call(slug).value_or(nil)
+      MeruAPI::Container["schemas.versions.find"].call(slug).value_or(nil)
     end
 
     def system_info
@@ -255,7 +254,7 @@ module Types
     # @param [String] slug
     # @return [User, nil]
     def user(slug:)
-      Loaders::RecordLoader.for(User, column: :keycloak_id).load(slug)
+      Support::Loaders::RecordLoader.for(User, column: :keycloak_id).load(slug)
     end
 
     def viewer

@@ -8,7 +8,7 @@ module Uploads
   class Authorize
     include Dry::Monads[:result, :do]
     include MonadicFind
-    include WDPAPI::Deps[decode_upload_token: "uploads.decode_token"]
+    include MeruAPI::Deps[decode_upload_token: "uploads.decode_token"]
 
     # Header(s) that can be provided by a tus client or similar.
     TOKEN_HEADERS = %w[HTTP_UPLOAD_TOKEN].freeze
@@ -42,7 +42,7 @@ module Uploads
     end
 
     def find_user(keycloak_id)
-      monadic_find_by User, keycloak_id: keycloak_id
+      monadic_find_by User, keycloak_id:
     end
 
     def try_keycloak(env)

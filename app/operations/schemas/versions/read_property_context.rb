@@ -12,7 +12,7 @@ module Schemas
       def call(schema_version)
         options = schema_version.to_property_context
 
-        Schemas::Properties::Context.new options
+        Schemas::Properties::Context.new **options
       end
     end
   end

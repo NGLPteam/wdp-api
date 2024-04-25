@@ -1,0 +1,8 @@
+Description:
+    Generate a GraphQL Model Type
+
+Example:
+    bin/rails generate model_type Model
+
+    This will create:
+        app/graphql/types/model_type.rb

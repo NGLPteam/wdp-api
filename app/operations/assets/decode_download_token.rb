@@ -3,7 +3,7 @@
 module Assets
   class DecodeDownloadToken
     include Dry::Monads[:do, :result]
-    include WDPAPI::Deps[
+    include MeruAPI::Deps[
       decode: "tokens.decode",
     ]
 

@@ -4,7 +4,7 @@ module Harvesting
   module Actions
     class UpsertSetMapping < Harvesting::BaseAction
       include Dry::Monads[:result, :do]
-      include WDPAPI::Deps[
+      include MeruAPI::Deps[
         add_missing_set: "harvesting.sources.add_missing_set",
         extract_sets: "harvesting.actions.extract_sets",
         find_set: "harvesting.sources.find_set_by_identifier",
@@ -30,7 +30,7 @@ module Harvesting
 
         set = yield find_set.call(harvest_source, set_identifier)
 
-        mapping = yield upsert.(harvest_source, harvest_target, set: set, **options)
+        mapping = yield upsert.(harvest_source, harvest_target, set:, **options)
 
         Success mapping
       end

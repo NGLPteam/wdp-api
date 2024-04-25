@@ -41,7 +41,7 @@ RSpec.describe "Query.contributorLookup", type: :request do
   let(:value) { "" }
 
   let(:graphql_variables) do
-    { by: by, value: value }
+    { by:, value: }
   end
 
   shared_examples_for "a found contributor" do

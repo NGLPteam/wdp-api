@@ -38,7 +38,7 @@ module Harvesting
         def call(source)
           deps = yield resolve_dependencies!
 
-          with_provisions(deps: deps) do
+          with_provisions(deps:) do
             resolve_candidates_with source
           end
         end
@@ -48,7 +48,7 @@ module Harvesting
           return Success(nil) if default.nil? && optional?
 
           type.try(default).to_monad.or do |reason|
-            extraction_error!(:invalid_default, message: reason, path: full_path, default: default)
+            extraction_error!(:invalid_default, message: reason, path: full_path, default:)
           end
         end
 

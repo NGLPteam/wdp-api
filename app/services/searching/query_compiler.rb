@@ -16,7 +16,7 @@ module Searching
     def call
       return scope if text.blank?
 
-      scope.by_composed_text(text, dictionary: dictionary)
+      scope.by_composed_text(text, dictionary:)
     end
   end
 end

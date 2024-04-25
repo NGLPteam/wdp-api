@@ -7,7 +7,7 @@ module Schemas
     # Namely, {EntityOrderableProperty} and {NamedVariableDate}.
     class ExtractOrderableProperties
       include Dry::Monads[:do, :result]
-      include WDPAPI::Deps[
+      include MeruAPI::Deps[
         instance_for: "schemas.utility.instance_for",
         read_orderable_values: "schemas.instances.read_orderable_property_values",
       ]
@@ -20,7 +20,7 @@ module Schemas
 
         schema_version = schema_instance.schema_version
 
-        values = yield read_orderable_values.call schema_instance, context: context
+        values = yield read_orderable_values.call(schema_instance, context:)
 
         entity_attrs = schema_instance.to_entity_pair
 
@@ -50,7 +50,7 @@ module Schemas
 
         props = yield upsert_orderable_properties! orderable_attributes
 
-        result = { dates: dates, props: props }
+        result = { dates:, props: }
 
         Success result
       end

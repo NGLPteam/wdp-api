@@ -5,7 +5,7 @@ module Entities
   class PopulateVisibilitiesJob < ApplicationJob
     queue_as :maintenance
 
-    unique :until_and_while_executing, lock_ttl: 10.minutes, on_conflict: :log
+    unique_job! by: :job
 
     # @return [void]
     def perform

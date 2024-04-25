@@ -1,11 +1,9 @@
 # frozen_string_literal: true
 
 module Resolvers
-  class ItemContributionResolver < GraphQL::Schema::Resolver
-    include SearchObject.module(:graphql)
-
+  class ItemContributionResolver < AbstractResolver
     include Resolvers::OrderedAsContribution
-    include Resolvers::PageBasedPagination
+    include Resolvers::Enhancements::PageBasedPagination
 
     type Types::ItemContributionType.connection_type, null: false
 

@@ -3,7 +3,7 @@
 module Authorization
   class Authorize
     include Dry::Monads[:do, :result]
-    include WDPAPI::Deps[find_policy: "authorization.find_policy"]
+    include MeruAPI::Deps[find_policy: "authorization.find_policy"]
 
     def call(user, record, action, policy_class: nil)
       policy = policy_class ? policy_class.new(user, record) : yield(find_policy.call(user, record))

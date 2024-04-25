@@ -69,7 +69,7 @@ module HierarchicalEntity
 
     has_many :pages, -> { in_default_order }, as: :entity, dependent: :destroy, inverse_of: :entity
 
-    scope :by_title, ->(title) { where(title: title) }
+    scope :by_title, ->(title) { where(title:) }
     scope :sans_thumbnail, -> { where(arel_json_get(:thumbnail_data, :storage).eq(nil)) }
 
     scope :filtered_by_schema_version, ->(schemas) { where(schema_version: SchemaVersion.filtered_by(schemas)) }
@@ -296,7 +296,7 @@ module HierarchicalEntity
   end
 
   def has_permitted_actions_for?(user, *actions)
-    return unless persisted?
+    return false unless persisted?
 
     contextual_single_permissions.with_permitted_actions_for(user, *actions).exists?
   end

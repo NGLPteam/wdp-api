@@ -8,7 +8,7 @@ module Mutations
       def call(ordering:)
         authorize ordering.entity, :update?
 
-        result = WDPAPI::Container["schemas.orderings.reset"].call(ordering)
+        result = MeruAPI::Container["schemas.orderings.reset"].call(ordering)
 
         with_attached_result! :ordering, result
       end

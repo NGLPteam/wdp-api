@@ -4,7 +4,7 @@ module System
   # @api private
   class ReloadEverything
     include Dry::Monads[:result, :do]
-    include WDPAPI::Deps[
+    include MeruAPI::Deps[
       reload_roles: "roles.sync",
       reload_schemas: "schemas.static.load_definitions",
     ]

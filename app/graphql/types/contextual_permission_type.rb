@@ -19,15 +19,15 @@ module Types
     field :user, Types::UserType, null: false
 
     def access_grants
-      object.association(:access_grants).loaded? ? object.access_grants : Loaders::AssociationLoader.for(object.class, :access_grants).load(object)
+      object.association(:access_grants).loaded? ? object.access_grants : Support::Loaders::AssociationLoader.for(object.class, :access_grants).load(object)
     end
 
     def roles
-      object.association(:roles).loaded? ? object.roles : Loaders::AssociationLoader.for(object.class, :roles).load(object)
+      object.association(:roles).loaded? ? object.roles : Support::Loaders::AssociationLoader.for(object.class, :roles).load(object)
     end
 
     def user
-      object.association(:user).loaded? ? object.user : Loaders::AssociationLoader.for(object.class, :user).load(object)
+      object.association(:user).loaded? ? object.user : Support::Loaders::AssociationLoader.for(object.class, :user).load(object)
     end
   end
 end

@@ -5,7 +5,7 @@ module Schemas
     # Reload the static configuration for a specific {SchemaVersion}.
     class Reload
       include Dry::Monads[:do, :result]
-      include WDPAPI::Deps[
+      include MeruAPI::Deps[
         fetch_static: "schemas.versions.fetch_static",
         load_version: "schemas.static.load_version"
       ]

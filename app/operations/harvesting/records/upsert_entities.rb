@@ -6,7 +6,7 @@ module Harvesting
     # and merge in errors (if any).
     class UpsertEntities
       include Dry::Monads[:result]
-      include WDPAPI::Deps[
+      include MeruAPI::Deps[
         upsert_entity: "harvesting.entities.upsert",
       ]
 

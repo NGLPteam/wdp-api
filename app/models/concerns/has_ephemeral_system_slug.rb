@@ -5,7 +5,7 @@ module HasEphemeralSystemSlug
 
   # @return [String, nil]
   def system_slug
-    WDPAPI::Container["slugs.encode_id"].call(system_slug_id).value_or(nil)
+    MeruAPI::Container["slugs.encode_id"].call(system_slug_id).value_or(nil)
   end
 
   # @api private

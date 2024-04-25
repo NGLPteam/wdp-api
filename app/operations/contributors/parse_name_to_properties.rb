@@ -4,7 +4,7 @@ module Contributors
   # @see Contributors::NameParser
   class ParseNameToProperties
     include Dry::Monads[:do, :result]
-    include WDPAPI::Deps[
+    include MeruAPI::Deps[
       parse_name: "utility.parse_name",
     ]
 

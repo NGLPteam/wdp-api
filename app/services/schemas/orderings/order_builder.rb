@@ -17,7 +17,7 @@ module Schemas
       (?:#{STATIC_KEYS})
       |
       (?:props\.(?:[^.]+)(?:\.[^.]+)?)
-      \z/x.freeze
+      \z/x
 
       namespace :props do
         register ?* do

@@ -8,16 +8,16 @@ class ApplicationRecord < ActiveRecord::Base
   extend DefinesMonadicOperation
   include AssociationHelpers
   include CountFromSubquery
-  include DerivedGraphqlTypes
   include DistinctOnOrderValues
+  include GraphQLModelSupport
   include LimitToOne
   include PostgresEnums
   include StoreModelIntrospection
   include WhereMatches
   include WithAdvisoryLock::Concern
 
-  def call_operation(name, *args)
-    WDPAPI::Container[name].call(*args)
+  def call_operation(name, ...)
+    MeruAPI::Container[name].call(...)
   end
 
   # Quote the model's primary key if it is persisted and a single string.
@@ -25,14 +25,6 @@ class ApplicationRecord < ActiveRecord::Base
   # @return [String, nil]
   def quoted_id
     self.class.connection.quote id if persisted? && id.kind_of?(String)
-  end
-
-  # Generate a GUID for use with GraphQL / Relay for a persisted model.
-  #
-  # @see RelayNode::IdFromObject
-  # @return [String, nil] the Relay-acc
-  def to_encoded_id
-    call_operation("relay_node.id_from_object", self).value! if persisted?
   end
 
   class << self
@@ -50,7 +42,7 @@ class ApplicationRecord < ActiveRecord::Base
     end
 
     def find_graphql_slug(slug)
-      id = WDPAPI::Container["slugs.decode_id"].call(slug).value!
+      id = MeruAPI::Container["slugs.decode_id"].call(slug).value!
 
       find id
     end

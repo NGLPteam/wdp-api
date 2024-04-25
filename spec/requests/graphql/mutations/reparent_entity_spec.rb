@@ -31,9 +31,7 @@ RSpec.describe Mutations::ReparentEntity, type: :request, graphql: :mutation, di
   let_mutation_input!(:child_id) { child&.to_encoded_id }
   let_mutation_input!(:parent_id) { new_parent&.to_encoded_id }
 
-  context "as an admin" do
-    let(:token) { token_helper.build_token has_global_admin: true }
-
+  as_an_admin_user do
     let_it_be(:community) { FactoryBot.create :community }
 
     let!(:expected_shape) do
@@ -67,7 +65,7 @@ RSpec.describe Mutations::ReparentEntity, type: :request, graphql: :mutation, di
     end
 
     context "when moving a subcollection to the top level in a new community" do
-      let_it_be(:old_parent) { FactoryBot.create :collection, community: community }
+      let_it_be(:old_parent) { FactoryBot.create :collection, community: }
 
       let!(:child) { FactoryBot.create :collection, parent: old_parent, title: "Child" }
 
@@ -103,11 +101,11 @@ RSpec.describe Mutations::ReparentEntity, type: :request, graphql: :mutation, di
     end
 
     context "when moving to another collection" do
-      let_it_be(:old_parent) { FactoryBot.create :collection, community: community }
+      let_it_be(:old_parent) { FactoryBot.create :collection, community: }
 
       let!(:child) { FactoryBot.create :collection, parent: old_parent }
 
-      let!(:new_parent) { FactoryBot.create :collection, community: community }
+      let!(:new_parent) { FactoryBot.create :collection, community: }
 
       it_behaves_like "a valid mutation"
 
@@ -194,9 +192,9 @@ RSpec.describe Mutations::ReparentEntity, type: :request, graphql: :mutation, di
     end
 
     context "when moving an item with children to another item" do
-      let_it_be(:old_parent) { FactoryBot.create :collection, community: community }
+      let_it_be(:old_parent) { FactoryBot.create :collection, community: }
 
-      let(:new_grandparent) { FactoryBot.create :collection, community: community }
+      let(:new_grandparent) { FactoryBot.create :collection, community: }
 
       let!(:item) { FactoryBot.create :item, collection: old_parent }
 

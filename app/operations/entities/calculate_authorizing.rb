@@ -43,7 +43,7 @@ module Entities
     # @param [Boolean] stale
     # @return [Dry::Monads::Success(Integer)]
     def call(auth_path: nil, source: nil, stale: true)
-      query = [PREFIX, generate_infix_for(auth_path: auth_path, source: source, stale: stale), SUFFIX]
+      query = [PREFIX, generate_infix_for(auth_path:, source:, stale:), SUFFIX]
 
       inserted = sql_insert!(*query)
 

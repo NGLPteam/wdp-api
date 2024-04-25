@@ -7,8 +7,8 @@ RSpec.describe Schemas::Versions::Find, type: :operation do
     let!(:schema_definition) { FactoryBot.create :schema_definition, :for_item }
 
     shared_context "with schema versions" do
-      let!(:version_2) { FactoryBot.create :schema_version, :item, number: "2.0.0", schema_definition: schema_definition }
-      let!(:version_1) { FactoryBot.create :schema_version, :item, number: "1.0.0", schema_definition: schema_definition }
+      let!(:version_2) { FactoryBot.create :schema_version, :item, number: "2.0.0", schema_definition: }
+      let!(:version_1) { FactoryBot.create :schema_version, :item, number: "1.0.0", schema_definition: }
     end
   end
 

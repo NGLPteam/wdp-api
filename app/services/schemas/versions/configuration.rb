@@ -95,7 +95,7 @@ module Schemas
       # @yieldparam [Schemas::Properties::GroupDefinition, Schemas::Properties::Scalar::Base] prop
       # @return [Enumerator]
       def each_property(include_groups: false)
-        return enum_for(__method__, include_groups: include_groups) unless block_given?
+        return enum_for(__method__, include_groups:) unless block_given?
 
         recur_props = ->(prop) do
           if prop.group?
@@ -201,7 +201,7 @@ module Schemas
       #
       # @return [Dry::Validation::Contract]
       def to_contract
-        WDPAPI::Container["schemas.properties.compile_contract"].call(properties)
+        MeruAPI::Container["schemas.properties.compile_contract"].call(properties)
       end
 
       # Retrieve a list of hashes suitable for upserting into {SchemaVersionProperty}.
@@ -232,7 +232,7 @@ module Schemas
           set << type
         end
 
-        Schemas::Properties::TypeMapping.new map, paths: paths, set: set
+        Schemas::Properties::TypeMapping.new map, paths:, set:
       end
     end
   end

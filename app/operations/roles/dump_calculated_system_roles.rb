@@ -7,7 +7,7 @@ module Roles
   # the WDP-API's default roles are pristine.
   class DumpCalculatedSystemRoles
     include Dry::Monads[:result]
-    include WDPAPI::Deps[
+    include MeruAPI::Deps[
       calculate: "roles.calculate_system_roles",
       filesystem: "filesystem"
     ]

@@ -4,8 +4,8 @@ module ScopesForHierarchical
   extend ActiveSupport::Concern
 
   included do
-    scope :for_hierarchical, ->(hierarchical) { recognized_hierarchical_entity?(hierarchical) ? where(hierarchical: hierarchical) : none }
-    scope :for_hierarchical_type, ->(hierarchical_type) { where(hierarchical_type: hierarchical_type) }
+    scope :for_hierarchical, ->(hierarchical) { recognized_hierarchical_entity?(hierarchical) ? where(hierarchical:) : none }
+    scope :for_hierarchical_type, ->(hierarchical_type) { where(hierarchical_type:) }
   end
 
   module ClassMethods

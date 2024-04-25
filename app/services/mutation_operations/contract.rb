@@ -5,7 +5,7 @@ module MutationOperations
   class Contract < ApplicationContract
     include Dry::Effects.Resolve(:current_user)
     include Dry::Effects.Resolve(:local_context)
-    include WDPAPI::Deps[
+    include MeruAPI::Deps[
       validate_association: "schemas.associations.polymorphic.validate_association",
     ]
 

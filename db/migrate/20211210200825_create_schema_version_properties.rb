@@ -11,8 +11,8 @@ class CreateSchemaVersionProperties < ActiveRecord::Migration[6.1]
       t.boolean :nested, null: false, default: false
       t.boolean :orderable, null: false, default: false
       t.boolean :required, null: false, default: false
-      t.enum :kind, as: "schema_property_kind", null: false, default: "simple"
-      t.enum :type, as: "schema_property_type", null: false, default: "unknown"
+      t.enum :kind, enum_type: "schema_property_kind", null: false, default: "simple"
+      t.enum :type, enum_type: "schema_property_type", null: false, default: "unknown"
       t.text :path, null: false
       t.text :label, null: false
       t.text :extract_path, null: false, array: true

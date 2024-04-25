@@ -5,7 +5,7 @@ module Schemas
     class WriteFullText
       include Dry::Monads[:do, :result]
 
-      include WDPAPI::Deps[
+      include MeruAPI::Deps[
         derive_dictionary: "full_text.derive_dictionary",
         extract_text_content: "full_text.extract_text_content",
         normalize: "full_text.normalizer",
@@ -22,7 +22,7 @@ module Schemas
         normalized = normalize.call value
 
         if normalized[:content].present?
-          yield upsert! entity, path, **normalized, weight: weight
+          yield upsert!(entity, path, **normalized, weight:)
         else
           yield clear! entity, path
         end
@@ -44,16 +44,16 @@ module Schemas
         attributes = {
           entity_type: entity.model_name.to_s,
           entity_id: entity.id,
-          path: path,
-          content: content,
-          kind: kind,
-          lang: lang,
-          weight: weight,
+          path:,
+          content:,
+          kind:,
+          lang:,
+          weight:,
         }
 
         attributes[:schema_version_property_id] = property_id_for entity, path
 
-        attributes[:text_content] = extract_text_content.call(content: content, kind: kind)
+        attributes[:text_content] = extract_text_content.call(content:, kind:)
 
         attributes[:dictionary] = derive_dictionary.call lang
 

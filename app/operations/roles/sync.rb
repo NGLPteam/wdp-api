@@ -7,7 +7,7 @@ module Roles
   # * Load the {Roles::LoadSystem system roles}.
   class Sync
     include Dry::Monads[:result, :do]
-    include WDPAPI::Deps[
+    include MeruAPI::Deps[
       sync_permissions: "permissions.sync",
       load_system: "roles.load_system"
     ]
@@ -18,7 +18,7 @@ module Roles
 
       role_ids = yield load_system.call
 
-      Success(role_ids: role_ids)
+      Success(role_ids:)
     end
   end
 end

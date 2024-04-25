@@ -7,7 +7,7 @@ module Harvesting
     # Currently, this only supports _re_extraction via {Harvesting::Actions::ReextractRecord} but the API
     # may later support ad-hoc extraction by identifier, should we find a need for it.
     class ExtractRecord < Harvesting::BaseAction
-      include WDPAPI::Deps[
+      include MeruAPI::Deps[
         reextract_record: "harvesting.actions.reextract_record",
       ]
 

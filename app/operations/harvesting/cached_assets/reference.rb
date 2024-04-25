@@ -49,7 +49,7 @@ module Harvesting
         when HarvestEntity
           rows << cacheable
 
-          models_for cacheable.harvest_record, rows: rows
+          models_for cacheable.harvest_record, rows:
         when ::Asset
           rows << cacheable
           rows << cacheable.attachable

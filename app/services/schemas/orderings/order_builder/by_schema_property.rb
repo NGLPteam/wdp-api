@@ -8,7 +8,7 @@ module Schemas
       # @api private
       class BySchemaProperty < Base
         # @api private
-        PATTERN = /\Aprops\.(?<path>[^#]+)(?:#(?<type>[^#]+))?\z/.freeze
+        PATTERN = /\Aprops\.(?<path>[^#]+)(?:#(?<type>[^#]+))?\z/
 
         def attributes_for(definition)
           Array(property_attribute_for(definition.path))

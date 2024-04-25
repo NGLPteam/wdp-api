@@ -49,7 +49,7 @@ module Schemas
 
       # @return [<String>]
       def search_operators
-        WDPAPI::Container["searching.operators.for_type"].(type)
+        MeruAPI::Container["searching.operators.for_type"].(type)
       end
 
       # @!endgroup

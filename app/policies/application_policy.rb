@@ -148,7 +148,7 @@ class ApplicationPolicy
 
     return false if record.blank?
 
-    policy_for(record, pundit_user: pundit_user).public_send query
+    policy_for(record, pundit_user:).public_send query
   end
 
   # Load a sub-policy.

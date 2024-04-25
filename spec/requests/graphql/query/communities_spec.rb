@@ -40,7 +40,7 @@ RSpec.describe "Query.communities", type: :request do
   let!(:order) { "RECENT" }
 
   let!(:graphql_variables) do
-    { order: order }
+    { order: }
   end
 
   let!(:query) do

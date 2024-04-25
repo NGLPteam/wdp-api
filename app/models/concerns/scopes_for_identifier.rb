@@ -11,7 +11,7 @@ module ScopesForIdentifier
   extend ActiveSupport::Concern
 
   included do
-    scope :by_identifier, ->(identifier) { where(identifier: identifier) }
+    scope :by_identifier, ->(identifier) { where(identifier:) }
   end
 
   class_methods do

@@ -8,7 +8,7 @@ module Schemas
     # @see Schemas::Instances::Apply
     class AlterVersion
       include Dry::Monads[:do, :result]
-      include WDPAPI::Deps[
+      include MeruAPI::Deps[
         apply: "schemas.instances.apply",
         find_version: "schemas.versions.find",
         populate_orderings: "schemas.instances.populate_orderings",

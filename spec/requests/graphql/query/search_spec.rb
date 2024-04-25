@@ -56,8 +56,8 @@ RSpec.describe "Query.search", type: :request do
   end
 
   let_it_be(:community) { FactoryBot.create :community, title: "University of Testing" }
-  let_it_be(:coll_1) { FactoryBot.create :collection, community: community, title: "Testable Collection" }
-  let_it_be(:coll_2) { FactoryBot.create :collection, community: community, title: "Unknown Collection" }
+  let_it_be(:coll_1) { FactoryBot.create :collection, community:, title: "Testable Collection" }
+  let_it_be(:coll_2) { FactoryBot.create :collection, community:, title: "Unknown Collection" }
   let_it_be(:item_1_1) { FactoryBot.create :item, collection: coll_1, title: "Some Item" }
   let_it_be(:item_2_1) { FactoryBot.create :item, collection: coll_2, title: "Known Item" }
 
@@ -70,8 +70,8 @@ RSpec.describe "Query.search", type: :request do
 
   let(:graphql_variables) do
     {
-      collection_slug: collection_slug,
-      max_depth: max_depth,
+      collection_slug:,
+      max_depth:,
       predicates: search_predicates,
       prefix: search_prefix,
       query: search_query,
@@ -140,7 +140,7 @@ RSpec.describe "Query.search", type: :request do
       title: entity.title,
     }
 
-    { node: node, }
+    { node:, }
   end
 
   shared_examples_for "a valid search" do

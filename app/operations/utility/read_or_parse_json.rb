@@ -7,11 +7,11 @@ module Utility
   class ReadOrParseJSON
     include Dry::Core::Memoizable
     include Dry::Monads[:result, :do]
-    include WDPAPI::Deps[
+    include MeruAPI::Deps[
       filesystem: "filesystem",
     ]
 
-    LOOKS_LIKE_JSON = /\A\s*\{.*\}\s*\z/.freeze
+    LOOKS_LIKE_JSON = /\A\s*\{.*\}\s*\z/
 
     # @param [Hash, Array, String, Pathname] input
     # @return [Dry::Monads::Success(Hash, Array)]

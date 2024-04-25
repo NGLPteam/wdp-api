@@ -20,7 +20,7 @@ class Asset < ApplicationRecord
 
   before_validation :enforce_foreign_key!
 
-  scope :by_kind, ->(kind) { where(kind: kind) }
+  scope :by_kind, ->(kind) { where(kind:) }
   scope :audios, -> { by_kind(:audio) }
   scope :images, -> { by_kind(:image) }
   scope :videos, -> { by_kind(:video) }

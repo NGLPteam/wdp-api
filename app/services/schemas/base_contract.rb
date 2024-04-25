@@ -2,7 +2,7 @@
 
 module Schemas
   class BaseContract < ApplicationContract
-    include WDPAPI::Deps[
+    include Support::Deps[
       matches_models: "models.matches"
     ]
 

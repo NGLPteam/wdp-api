@@ -2,9 +2,7 @@
 
 module Resolvers
   # Orders {Role} models.
-  class RoleResolver < GraphQL::Schema::Resolver
-    include SearchObject.module(:graphql)
-
+  class RoleResolver < AbstractResolver
     include Resolvers::OrderedAsRole
 
     type Types::RoleType.connection_type, null: false

@@ -16,7 +16,7 @@ end
 
 RSpec.shared_context "disable ordering refreshes" do
   before(:all) do
-    WDPAPI::Container.stub("schemas.instances.refresh_orderings", stubbed_ordering_refresh)
+    MeruAPI::Container.stub("schemas.instances.refresh_orderings", stubbed_ordering_refresh)
   end
 
   def stubbed_ordering_refresh
@@ -24,7 +24,7 @@ RSpec.shared_context "disable ordering refreshes" do
   end
 
   after(:all) do
-    WDPAPI::Container.unstub("schemas.instances.refresh_orderings")
+    MeruAPI::Container.unstub("schemas.instances.refresh_orderings")
   end
 end
 

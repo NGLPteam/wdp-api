@@ -6,7 +6,7 @@ module Schemas
     class Find
       include Dry::Monads[:do, :result]
 
-      PATTERN = /\A(?<namespace>[a-z_]+)[.:](?<identifier>[a-z_0-9]+)(?::[^:]+)?\z/.freeze
+      PATTERN = /\A(?<namespace>[a-z_]+)[.:](?<identifier>[a-z_0-9]+)(?::[^:]+)?\z/
 
       def call(needle)
         case needle

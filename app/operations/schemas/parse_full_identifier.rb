@@ -5,7 +5,7 @@ module Schemas
   class ParseFullIdentifier
     include Dry::Monads[:result]
 
-    PATTERN = /\A(?<namespace>[^.:]+)[.:](?<id>[^.:]+)(?::[^:]+)?\z/.freeze
+    PATTERN = /\A(?<namespace>[^.:]+)[.:](?<id>[^.:]+)(?::[^:]+)?\z/
 
     # @param [String] full_identifier
     # @return [Dry::Monads::Result::Success(String, String)]

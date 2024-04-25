@@ -13,7 +13,7 @@ module Entities
     included do
       extend Dry::Core::ClassAttributes
 
-      unique :while_executing, lock_ttl: 3.hours, on_conflict: :log
+      unique_job! by: :job
 
       # @!scope class
       # @!attribute [r] model
@@ -31,7 +31,7 @@ module Entities
     def build_enumerator(cursor:)
       enumerator_builder.active_record_on_records(
         base_scope.all,
-        cursor: cursor,
+        cursor:,
       )
     end
 

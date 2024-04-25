@@ -11,11 +11,11 @@ module PilotHarvesting
       end
     end
 
-    def upsert
+    do_for! def upsert
       retval = {}
 
       retval[:seeds] = seeds.map do |seed|
-        yield WDPAPI::Container["seeding.import_vendored"].(seed)
+        yield MeruAPI::Container["seeding.import_vendored"].(seed)
       end
 
       retval[:communities] = yield upsert_each communities

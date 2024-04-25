@@ -73,11 +73,11 @@ module PilotHarvesting
 
       options = {
         mapping_options: {
-          auto_create_volumes_and_issues: auto_create_volumes_and_issues,
-          link_identifiers_globally: link_identifiers_globally,
+          auto_create_volumes_and_issues:,
+          link_identifiers_globally:,
         },
         read_options: {
-          max_records: max_records,
+          max_records:,
         },
       }
 
@@ -89,12 +89,12 @@ module PilotHarvesting
       call_operation("harvesting.sources.upsert", harvesting_identifier, harvesting_title, url, **source_options) do |source|
         if set_identifier.present?
           call_operation("harvesting.actions.upsert_set_mapping", source, entity, set_identifier, add_set_if_missing: add_set, **options) do |mapping|
-            call_operation("harvesting.actions.manually_run_mapping", mapping, skip_harvest: skip_harvest) do
+            call_operation("harvesting.actions.manually_run_mapping", mapping, skip_harvest:) do
               Success entity
             end
           end
         else
-          call_operation("harvesting.actions.manually_run_source", source, entity, skip_harvest: skip_harvest) do
+          call_operation("harvesting.actions.manually_run_source", source, entity, skip_harvest:) do
             Success entity
           end
         end

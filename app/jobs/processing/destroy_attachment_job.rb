@@ -4,7 +4,7 @@ module Processing
   class DestroyAttachmentJob < ApplicationJob
     queue_as :processing
 
-    unique :until_and_while_executing, lock_ttl: 1.hour, on_conflict: :log
+    unique_job! by: :all_args
 
     # @return [void]
     def perform(attacher_class, data)

@@ -3,13 +3,11 @@
 module Resolvers
   # @see EntityDescendant
   # @see Types::EntityDescendantType
-  class EntityDescendantResolver < GraphQL::Schema::Resolver
-    include SearchObject.module(:graphql)
-
+  class EntityDescendantResolver < AbstractResolver
     include Resolvers::FiltersByEntityDescendantScope
     include Resolvers::FiltersBySchemaName
     include Resolvers::OrderedAsEntityDescendant
-    include Resolvers::PageBasedPagination
+    include Resolvers::Enhancements::PageBasedPagination
 
     type Types::EntityDescendantType.connection_type, null: false
 

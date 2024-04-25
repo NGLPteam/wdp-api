@@ -21,8 +21,8 @@ module Schemas
         option :async, Schemas::Types::Bool, as: :currently_async, default: proc { false }
         option :deferred, Schemas::Types::Bool, as: :currently_deferred, default: proc { false }
         option :disabled, Schemas::Types::Bool, as: :currently_disabled, default: proc { false }
-        option :skip_entities, Models::Types::ModelList, default: proc { [] }
-        option :skip_schemas, Models::Types::ModelList, default: proc { [] }
+        option :skip_entities, Support::Models::Types::ModelList, default: proc { [] }
+        option :skip_schemas, Support::Models::Types::ModelList, default: proc { [] }
         option :skip_identifiers, Schemas::Types::Array.of(Schemas::Types::String), default: proc { [] }
       end
 

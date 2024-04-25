@@ -24,7 +24,7 @@ module Entities
     # @param [HierarchicalEntity] entity
     # @return [Dry::Monads::Success(Integer)]
     def call(entity: nil)
-      inserted = sql_insert! PREFIX, generate_infix_for(entity: entity), SUFFIX
+      inserted = sql_insert! PREFIX, generate_infix_for(entity:), SUFFIX
 
       Success(inserted)
     end

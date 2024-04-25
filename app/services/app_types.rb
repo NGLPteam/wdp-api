@@ -6,17 +6,17 @@ module AppTypes
   extend Shared::EnhancedTypes
 
   # @see https://www.crossref.org/blog/dois-and-matching-regular-expressions/
-  DOI_PATTERN = %r|\A10\.\d{4,9}/[-._;()/:A-Z0-9]+\z|i.freeze
+  DOI_PATTERN = %r|\A10\.\d{4,9}/[-._;()/:A-Z0-9]+\z|i
 
-  ISSN_PATTERN = /\A\d{4}-\d{4}\z/.freeze
+  ISSN_PATTERN = /\A\d{4}-\d{4}\z/
 
-  UUID_PATTERN = /\A[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\z/i.freeze
+  UUID_PATTERN = /\A[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\z/i
 
   UUID = AppTypes::String.constrained(format: UUID_PATTERN)
 
   EMAIL_PATTERN = URI::MailTo::EMAIL_REGEXP
 
-  SLUG_PATTERN = /\A[a-z0-9]+(?:-[a-z0-9]+)*\z/.freeze
+  SLUG_PATTERN = /\A[a-z0-9]+(?:-[a-z0-9]+)*\z/
 
   URL_PATTERN = URI::DEFAULT_PARSER.make_regexp(%w[http https]).freeze
 

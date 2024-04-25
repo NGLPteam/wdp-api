@@ -40,13 +40,13 @@ module Patches
 
     def remove(role_representation_list)
       execute_http do
-        RestClient::Request.execute(method: :delete, url: realm_level_url, payload: role_representation_list.to_json, headers: headers)
+        RestClient::Request.execute(method: :delete, url: realm_level_url, payload: role_representation_list.to_json, headers:)
       end
     end
   end
 
   module RemoveClientRole
-    def as_json(*)
+    def as_json(...)
       super.without("client_role")
     end
   end

@@ -9,7 +9,7 @@ module Schemas
       class ByVariableDate < Base
         option :path, NamedVariableDates::Types::GlobalPath
 
-        def attributes_for(*)
+        def attributes_for(...)
           nvd = join_for_variable_date path
 
           [

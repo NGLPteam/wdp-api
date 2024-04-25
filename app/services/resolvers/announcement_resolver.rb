@@ -3,10 +3,8 @@
 module Resolvers
   # @see Announcement
   # @see Types::AnnouncementType
-  class AnnouncementResolver < GraphQL::Schema::Resolver
-    include SearchObject.module(:graphql)
-
-    include Resolvers::PageBasedPagination
+  class AnnouncementResolver < AbstractResolver
+    include Resolvers::Enhancements::PageBasedPagination
 
     type Types::AnnouncementType.connection_type, null: false
 

@@ -26,9 +26,9 @@ module Contributors
 
       order = yield derive_order_expression
 
-      options = { column: column, order: order }
+      options = { column:, order: }
 
-      loader = Loaders::RecordLoader.for(::Contributor, options)
+      loader = Support::Loaders::RecordLoader.for(::Contributor, **options)
 
       Success loader
     end

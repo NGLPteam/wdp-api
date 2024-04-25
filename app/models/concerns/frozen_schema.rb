@@ -23,7 +23,7 @@ module FrozenSchema
       result = schema.call record
 
       if has_merged_schemas
-        handle_merged_schemas result, record: record
+        handle_merged_schemas(result, record:)
       else
         handle_single_schema result
       end
@@ -33,11 +33,11 @@ module FrozenSchema
       schema.present? ? {} : nil
     end
 
-    def schema!(*parent_schemas, &block)
-      defined = Dry::Schema.Params(&block)
+    def schema!(*parent_schemas, &)
+      defined = Dry::Schema.Params(&)
 
       handled_schemas = parent_schemas.map do |parent|
-        WDPAPI::Container["utility.schemafy"].(parent)
+        MeruAPI::Container["utility.schemafy"].(parent)
       end
 
       has_merged_schemas handled_schemas.size > 0

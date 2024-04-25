@@ -5,7 +5,7 @@ module Schemas
     # @see Schemas::Edges::ChildAttributesBuilder
     class BuildChildAttributes
       include Dry::Monads[:do, :result]
-      include WDPAPI::Deps[
+      include MeruAPI::Deps[
         calculate_edge: "schemas.edges.calculate",
       ]
 

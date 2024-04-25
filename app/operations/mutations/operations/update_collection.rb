@@ -18,7 +18,7 @@ module Mutations
       def call(collection:, **attributes)
         authorize collection, :update?
 
-        update_entity! collection, attributes
+        update_entity! collection, **attributes
       end
     end
   end

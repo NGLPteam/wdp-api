@@ -18,7 +18,7 @@ class EntityVisibility < ApplicationRecord
   # or `visible` for the specified time.
   ScopableVisibility = AppTypes::Coercible::Symbol.enum(:hidden, :visible)
 
-  pg_enum! :visibility, as: "entity_visibility", _prefix: :visibility
+  pg_enum! :visibility, as: "entity_visibility", prefix: :visibility
 
   scope :visible_at, ->(time) { build_visibility_scope_for(:visible, at: time) }
   scope :hidden_at, ->(time) { build_visibility_scope_for(:hidden, at: time) }

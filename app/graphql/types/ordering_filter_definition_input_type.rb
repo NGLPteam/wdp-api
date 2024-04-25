@@ -2,9 +2,7 @@
 
 module Types
   # A GraphQL input type for {Schemas::Orderings::FilterDefinition}.
-  class OrderingFilterDefinitionInputType < Types::BaseInputObject
-    include AutoHash
-
+  class OrderingFilterDefinitionInputType < Types::HashInputObject
     description <<~TEXT
     A collection of settings for filtering what appears what entities
     may populate an ordering. At present, this only supports schemas.

@@ -15,7 +15,7 @@ module Harvesting
 
         delegate :register_value!, to: :value_registry
 
-        def initialize(*)
+        def initialize(...)
           super
 
           @value_registry = Values.new
@@ -31,7 +31,7 @@ module Harvesting
         #
         # @see Harvesting::Metadata::ValueExtraction::Values#to_monad
         # @return [Dry::Monads::Result]
-        def wrap(&block)
+        def wrap(&)
           provide self do
             yield
           end

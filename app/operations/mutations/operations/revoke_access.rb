@@ -7,7 +7,7 @@ module Mutations
     # @see Mutations::Contracts::RevokeAccess
     class RevokeAccess
       include MutationOperations::Base
-      include WDPAPI::Deps[revoke_access: "access.revoke"]
+      include MeruAPI::Deps[revoke_access: "access.revoke"]
 
       use_contract! :revoke_access
 

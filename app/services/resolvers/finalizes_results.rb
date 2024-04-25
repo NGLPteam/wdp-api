@@ -6,8 +6,6 @@ module Resolvers
   module FinalizesResults
     extend ActiveSupport::Concern
 
-    include Resolvers::EnhancedResolver
-
     # @api private
     # This method comes from search_object and generates the initial query, with
     # all options applied. We hook into it in order to apply any finalizations

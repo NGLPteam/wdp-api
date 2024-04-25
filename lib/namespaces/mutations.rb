@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # This namespace contains the actual classes that expose mutations
-# to the {WDPAPISchema GraphQL Schema}.
+# to the {APISchema GraphQL Schema}.
 #
 # @subsystem GraphQL
 # @see MutationOperations

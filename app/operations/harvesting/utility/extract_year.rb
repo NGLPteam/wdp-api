@@ -5,7 +5,7 @@ module Harvesting
     class ExtractYear
       include Dry::Monads[:result]
 
-      PATTERN = /(?<year>\d{4})/.freeze
+      PATTERN = /(?<year>\d{4})/
 
       # @param [String] input
       # @return [Integer, nil]

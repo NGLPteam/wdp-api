@@ -50,14 +50,14 @@ class SchemaVersion < ApplicationRecord
 
   # @!attribute [rw] configuration
   # @return [Schemas::Versions::Configuration]
-  attribute :configuration, Schemas::Versions::Configuration.to_type, default: {}
+  attribute :configuration, Schemas::Versions::Configuration.to_type, default: -> { {} }
 
-  scope :by_namespace, ->(namespace) { where(namespace: namespace) }
-  scope :by_identifier, ->(identifier) { where(identifier: identifier) }
+  scope :by_namespace, ->(namespace) { where(namespace:) }
+  scope :by_identifier, ->(identifier) { where(identifier:) }
   scope :by_tuple, ->(namespace, identifier) { by_namespace(namespace).by_identifier(identifier) }
 
-  scope :by_number, ->(number) { where(number: number) }
-  scope :by_schema_definition, ->(schema_definition) { where(schema_definition: schema_definition) if schema_definition.present? }
+  scope :by_number, ->(number) { where(number:) }
+  scope :by_schema_definition, ->(schema_definition) { where(schema_definition:) if schema_definition.present? }
   scope :by_kind, ->(kind) { joins(:schema_definition).merge(SchemaDefinition.by_kind(kind)) }
 
   scope :current, -> { where(current: true) }
@@ -129,7 +129,7 @@ class SchemaVersion < ApplicationRecord
   def to_property_context
     {
       version: self,
-      type_mapping: type_mapping,
+      type_mapping:,
     }
   end
 
@@ -167,7 +167,7 @@ class SchemaVersion < ApplicationRecord
 
       next if expected == actual
 
-      errors.add :configuration, :mismatched_trait, trait: trait, expected: expected, actual: actual
+      errors.add :configuration, :mismatched_trait, trait:, expected:, actual:
     end
   end
 
@@ -242,7 +242,7 @@ class SchemaVersion < ApplicationRecord
     # @param [String] needle
     # @return [SchemaVersion]
     def [](needle)
-      WDPAPI::Container["schemas.versions.find"].call(needle).value_or do |(_, message)|
+      MeruAPI::Container["schemas.versions.find"].call(needle).value_or do |(_, message)|
         raise ActiveRecord::RecordNotFound, message
       end
     end
@@ -269,7 +269,7 @@ class SchemaVersion < ApplicationRecord
     # @return [ActiveRecord::Relation<SchemaVersion>]
     def filtered_by(schemas)
       schema_versions = Array(schemas).map do |needle|
-        WDPAPI::Container["schemas.versions.find"].call(needle).value_or(nil)
+        MeruAPI::Container["schemas.versions.find"].call(needle).value_or(nil)
       end.compact
 
       if schema_versions.present?

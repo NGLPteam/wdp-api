@@ -4,7 +4,7 @@ module Schemas
   module Properties
     class CompileContract
       include Dry::Monads[:do, :result]
-      include WDPAPI::Deps[compile_schema: "schemas.properties.compile_schema"]
+      include MeruAPI::Deps[compile_schema: "schemas.properties.compile_schema"]
 
       # @param [SchemaVersion, Schema::Versions::Configuration, <Schemas::Versions::ScalarProperties::Base, Schemas::Versions::PropertyGroupDefinition>] source
       # @return [Dry::Monads::Result::Success(Class)]
@@ -56,7 +56,7 @@ module Schemas
         end
 
         group_contracts.each do |(group, contract)|
-          contract_klass.rule(group.key).validate(contract: contract)
+          contract_klass.rule(group.key).validate(contract:)
         end
 
         scalar.each do |property|

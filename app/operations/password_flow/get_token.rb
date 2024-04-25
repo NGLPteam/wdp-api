@@ -3,7 +3,7 @@
 module PasswordFlow
   # Build an OAuth2 Client set up to authenticate against a password-flow client.
   class GetToken
-    include WDPAPI::Deps[build_client: "password_flow.build_client"]
+    include MeruAPI::Deps[build_client: "password_flow.build_client"]
 
     # @param [String] username
     # @param [String] password
@@ -23,7 +23,7 @@ module PasswordFlow
 
         token_from exchange_client
       else
-        client = client_from client_id: client_id
+        client = client_from(client_id:)
 
         client.resource_owner_credentials = [username, password]
 

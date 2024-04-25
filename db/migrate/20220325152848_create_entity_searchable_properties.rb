@@ -3,7 +3,7 @@ class CreateEntitySearchableProperties < ActiveRecord::Migration[6.1]
     create_table :entity_searchable_properties, id: :uuid do |t|
       t.references :entity, polymorphic: true, null: false, type: :uuid
       t.references :schema_version_property, null: true, foreign_key: { on_delete: :cascade }, type: :uuid, index: { name: "index_esp_on_svp" }
-      t.enum :type, as: "schema_property_type", null: false
+      t.enum :type, enum_type: "schema_property_type", null: false
       t.text :path, null: false
       t.jsonb :raw_value
 

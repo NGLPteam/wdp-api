@@ -42,7 +42,7 @@ module Harvesting
 
         # @return [Hash]
         def to_full_text_reference(content, kind:, lang: nil)
-          FullText::Types::NormalizedReference[content: content, kind: kind, lang: lang]
+          FullText::Types::NormalizedReference[content:, kind:, lang:]
         end
 
         # @param [#to_s] year

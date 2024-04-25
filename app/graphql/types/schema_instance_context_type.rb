@@ -30,7 +30,7 @@ module Types
 
       return [] if instance.blank?
 
-      Loaders::AssociationLoader.for(instance.class, :assets).load(instance).then do |assets|
+      Support::Loaders::AssociationLoader.for(instance.class, :assets).load(instance).then do |assets|
         assets.map(&:to_schematic_referent_option)
       end
     end

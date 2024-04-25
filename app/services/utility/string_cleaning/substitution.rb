@@ -8,7 +8,9 @@ module Utility
     class Substitution < Dry::Struct
       include Shared::Typing
 
-      attribute :pattern, AppTypes.Instance(::Regexp)
+      Pattern = AppTypes.Instance(::Regexp) | Dry::Types["string"]
+
+      attribute :pattern, Pattern
       attribute :replacement, Dry::Types["string"].default("").fallback("")
 
       # @param [String] input

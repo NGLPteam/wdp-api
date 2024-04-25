@@ -21,7 +21,7 @@ module Harvesting
         # @param [{ Symbol => Object }] metadata
         # @return [Harvesting::Records::Skipped]
         def because(reason, at: Time.current, code: nil, **metadata)
-          new(active: true, reason: reason, at: at, code: code, metadata: metadata)
+          new(active: true, reason:, at:, code:, metadata:)
         end
 
         # @return [Harvesting::Records::Skipped]

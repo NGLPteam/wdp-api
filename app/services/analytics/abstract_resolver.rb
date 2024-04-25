@@ -9,7 +9,7 @@ module Analytics
 
     define_model_callbacks :prepare, :build, :funnel, only: %i[before after]
 
-    defines :model, type: Models::Types::ModelClass
+    defines :model, type: Support::Models::Types::ModelClass
 
     model Ahoy::Event
 

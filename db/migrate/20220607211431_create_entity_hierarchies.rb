@@ -10,7 +10,7 @@ class CreateEntityHierarchies < ActiveRecord::Migration[6.1]
       t.references :schema_definition, type: :uuid, null: false, foreign_key: { on_delete: :cascade }
       t.references :schema_version, type: :uuid, null: false, foreign_key: { on_delete: :cascade }
 
-      t.enum :link_operator, as: "link_operator", null: true
+      t.enum :link_operator, enum_type: "link_operator", null: true
 
       t.ltree :ancestor_scope, null: false
       t.ltree :descendant_scope, null: false

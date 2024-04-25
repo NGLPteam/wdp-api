@@ -15,7 +15,7 @@ module Harvesting
     # set once it is over.
     class Wrap
       include Dry::Effects::Handler.Resolve
-      include WDPAPI::Deps[
+      include MeruAPI::Deps[
         build_middleware_state: "harvesting.dispatch.build_middleware_state",
       ]
 

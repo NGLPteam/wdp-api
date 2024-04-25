@@ -20,10 +20,10 @@ module Mutations
         authorize entity, :update?
 
         attributes = {
-          published_on: published_on,
-          header: header,
-          teaser: teaser,
-          body: body,
+          published_on:,
+          header:,
+          teaser:,
+          body:,
         }
 
         announcement = entity.announcements.new attributes

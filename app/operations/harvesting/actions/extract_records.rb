@@ -5,7 +5,7 @@ module Harvesting
     # Populates a collection of {HarvestRecord records} for an individual {HarvestAttempt attempt},
     # based on the protocol.
     class ExtractRecords < Harvesting::BaseAction
-      include WDPAPI::Deps[
+      include MeruAPI::Deps[
         extract_records: "harvesting.attempts.extract_records",
         prepare_entities_from_record: "harvesting.actions.prepare_entities_from_record",
       ]
@@ -40,7 +40,7 @@ module Harvesting
       # @param [HarvestAttempt] harvest_attempt
       # @return [Dry::Monads::Success(Integer)] the count of records harvested
       def perform(harvest_attempt, async: false, cursor: nil, skip_prepare: false)
-        record_count = yield extract_records.(harvest_attempt, async: async, cursor: cursor)
+        record_count = yield extract_records.(harvest_attempt, async:, cursor:)
 
         harvest_attempt.harvest_records.find_each do |harvest_record|
           yield prepare_entities_from_record.call harvest_record

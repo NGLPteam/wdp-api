@@ -34,7 +34,7 @@ class SchemaVersionProperty < ApplicationRecord
       return all if schemas.blank?
 
       schema_versions = Array(schemas).map do |needle|
-        WDPAPI::Container["schemas.versions.find"].call(needle).value_or(nil)
+        MeruAPI::Container["schemas.versions.find"].call(needle).value_or(nil)
       end.compact
 
       return none if schema_versions.blank?

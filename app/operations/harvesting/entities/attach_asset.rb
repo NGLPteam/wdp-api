@@ -9,12 +9,12 @@ module Harvesting
       include MonadicPersistence
       include Dry::Effects.Resolve(:harvest_entity)
       include Dry::Monads[:result, :do]
-      include WDPAPI::Deps[
+      include MeruAPI::Deps[
         fetch_cached_asset: "harvesting.cached_assets.fetch",
         add_reference: "harvesting.cached_assets.reference",
       ]
 
-      DOWNLOAD_OVERRIDE = %r!(?<=/article/)view(?=/[^/]+/[^/]+)!.freeze
+      DOWNLOAD_OVERRIDE = %r!(?<=/article/)view(?=/[^/]+/[^/]+)!
 
       # @param [Attachable] entity
       # @param [Harvesting::Assets::ExtractedSource] source
@@ -56,7 +56,7 @@ module Harvesting
 
         if cached.has_asset?
           cached.asset.download do |io|
-            asset.attachment_attacher.assign io, metadata: metadata
+            asset.attachment_attacher.assign(io, metadata:)
 
             monadic_save asset
           end

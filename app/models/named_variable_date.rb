@@ -14,11 +14,11 @@ class NamedVariableDate < ApplicationRecord
   belongs_to :entity, polymorphic: true, inverse_of: :named_variable_dates
   belongs_to :schema_version_property, optional: true, inverse_of: :named_variable_dates
 
-  GLOBAL_FORMAT = /\A\$[a-z_]+\$\z/.freeze
+  GLOBAL_FORMAT = /\A\$[a-z_]+\$\z/
 
-  SCHEMA_FORMAT = /\A[a-z_]+(?:\.[a-z_]+)?\z/.freeze
+  SCHEMA_FORMAT = /\A[a-z_]+(?:\.[a-z_]+)?\z/
 
-  scope :by_path, ->(path) { where(path: path) }
+  scope :by_path, ->(path) { where(path:) }
 
   validates :path, uniqueness: { scope: %i[entity_id entity_type] }
 

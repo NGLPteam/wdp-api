@@ -33,8 +33,8 @@ module Stacks
       #   @!method with_$1
       #   @see Stacks::Stack#with
       #   @return [void]
-      def define_stack!(name, coercer: nil, default: nil)
-        definition = Stacks::Definition.new self, name, coercer: coercer, default: default
+      def define_stack!(name, coercer:, default:)
+        definition = Stacks::Definition.new(self, name, coercer:, default:)
 
         new_definitions = stack_definitions.merge(definition.name => definition)
 

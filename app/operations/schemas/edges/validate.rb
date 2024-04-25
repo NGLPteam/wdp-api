@@ -4,7 +4,7 @@ module Schemas
   module Edges
     class Validate
       include Dry::Monads[:result]
-      include WDPAPI::Deps[
+      include MeruAPI::Deps[
         calculate: "schemas.edges.calculate"
       ]
       include Dry::Matcher.for(:call, with: Schemas::Edges::Matcher)

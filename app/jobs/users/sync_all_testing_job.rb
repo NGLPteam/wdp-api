@@ -4,7 +4,7 @@ module Users
   class SyncAllTestingJob < ApplicationJob
     include JobIteration::Iteration
 
-    unique :until_and_while_executing, lock_ttl: 3.hours, on_conflict: :log
+    unique_job! by: :job
 
     queue_as :maintenance
 
@@ -13,7 +13,7 @@ module Users
     def build_enumerator(cursor:)
       enumerator_builder.active_record_on_records(
         User.testing,
-        cursor: cursor
+        cursor:
       )
     end
 

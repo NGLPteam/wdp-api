@@ -12,7 +12,7 @@ module Harvesting
           end
           include BuildsValues
 
-          def initialize(*)
+          def initialize(...)
             super
 
             @sets = {}
@@ -21,11 +21,11 @@ module Harvesting
           end
 
           # @return [Harvesting::Metadata::ValueExtraction::Extractor]
-          def build(&block)
+          def build(&)
             provisions = { builder: self }
 
             provide provisions do
-              instance_eval(&block)
+              instance_eval(&)
             end
 
             finalize
@@ -43,8 +43,8 @@ module Harvesting
           # @see Harvesting::Metadata::ValueExtraction::DSL::SetBuilder
           # @param [Harvesting::Types::Identifier] id
           # @return [void]
-          def set(id, &block)
-            set = DSL::SetBuilder.new(id).build(&block)
+          def set(id, &)
+            set = DSL::SetBuilder.new(id).build(&)
 
             raise "existing set" if @sets[set.identifier].present?
 
@@ -81,7 +81,7 @@ module Harvesting
 
             options[:ordered_values] = paths.map { |path| values.fetch path }
 
-            return Harvesting::Metadata::ValueExtraction::Extractor.new options
+            return Harvesting::Metadata::ValueExtraction::Extractor.new **options
           end
 
           # @return [[{ String => Harvesting::Metadata::ValueExtraction::Value }, Class]]

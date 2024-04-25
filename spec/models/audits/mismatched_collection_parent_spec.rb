@@ -4,7 +4,7 @@ RSpec.describe Audits::MismatchedCollectionParent, type: :model, disable_orderin
   include_context "sans entity sync"
 
   let!(:community) { FactoryBot.create :community }
-  let!(:collection) { FactoryBot.create :collection, community: community }
+  let!(:collection) { FactoryBot.create :collection, community: }
   let!(:subcollection) { FactoryBot.create :collection, parent: collection }
   let!(:invalid_community) { FactoryBot.create :community }
 
@@ -17,7 +17,7 @@ RSpec.describe Audits::MismatchedCollectionParent, type: :model, disable_orderin
 
     expect(first).to have_attributes(
       collection: subcollection,
-      invalid_community: invalid_community,
+      invalid_community:,
       valid_community: community,
     )
   end

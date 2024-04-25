@@ -1,0 +1,52 @@
+<%-
+  # vim: set ft=ruby.eruby :
+-%>
+# frozen_string_literal: true
+
+module Mutations
+  module Operations
+    # @see <%= mutation_class_name %>
+    class <%= class_name %>
+      include MutationOperations::Base
+      <%- if should_use_contract? -%>
+
+      use_contract! <%= contract_key.inspect %>
+      <%- if generates_abstract_mutator? -%>
+      use_contract! <%= mutate_contract_key.inspect %>
+      <%- end -%>
+      <%- end -%>
+
+      <%- unless skip_operation_implementation? -%>
+      <%- if update_mutation? || destroy_mutation? -%>
+      # @param [<%= model_name %>] <%= model_key %>
+      <%- end -%>
+      <%- if create_mutation? || update_mutation? -%>
+      # @param [{ Symbol => Object }] attrs
+      <%- end -%>
+      <%- unless standard_mutation? -%>
+      # @param [{ Symbol => Object }] args
+      <%- end -%>
+      <%- end -%>
+      # @return [void]
+      def call(<%= operation_call_signature %>)
+        <%- unless skip_operation_implementation? -%>
+        <%- if destroy_mutation? -%>
+        destroy_model! <%= model_key %>, auth: true
+        <%- elsif changes_model? -%>
+        <%- if create_mutation? -%>
+        <%= model_key %> = <%= model_name %>.new
+
+        authorize <%= model_key %>, :create?
+        <%- elsif update_mutation? -%>
+        authorize <%= model_key %>, :update?
+        <%- end -%>
+
+        assign_attributes!(<%= model_key %>, **attrs)
+
+        persist_model! <%= model_key %>, attach_to: <%= model_key.inspect %>
+        <%- end -%>
+        <%- end -%>
+      end
+    end
+  end
+end

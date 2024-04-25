@@ -6,7 +6,7 @@ module Mutations
       include MutationOperations::Base
 
       def call(name:, access_control_list:)
-        attributes = { name: name, access_control_list: access_control_list }
+        attributes = { name:, access_control_list: }
 
         role = Role.new attributes
 

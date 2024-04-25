@@ -51,10 +51,10 @@ RSpec.describe "Query.users", type: :request do
 
   let!(:keyed_users) do
     {
-      admin: admin,
-      aa: aa,
-      test: test,
-      zz: zz,
+      admin:,
+      aa:,
+      test:,
+      zz:,
     }
   end
 
@@ -67,7 +67,7 @@ RSpec.describe "Query.users", type: :request do
 
   let(:search_prefix) { nil }
 
-  let!(:graphql_variables) { { order: order, prefix: search_prefix } }
+  let!(:graphql_variables) { { order:, prefix: search_prefix } }
 
   # We gotta make sure our keycloak default users are not present
   before do

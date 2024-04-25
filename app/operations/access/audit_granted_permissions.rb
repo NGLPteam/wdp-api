@@ -15,7 +15,7 @@ module Access
     SQL
 
     def call(access_grant: nil, role: nil)
-      Success sql_delete! CLEANUP, generate_suffix_for(access_grant: access_grant, role: role)
+      Success sql_delete! CLEANUP, generate_suffix_for(access_grant:, role:)
     end
 
     private

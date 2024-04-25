@@ -8,13 +8,11 @@ module Analytics
 
     include JobIteration::Iteration
 
-    around_perform :advisory_locked!
-
     # @return [void]
     def build_enumerator(cursor:)
       enumerator_builder.active_record_on_records(
         ::Entity.real.includes(:hierarchical).sans_analytics,
-        cursor: cursor,
+        cursor:,
       )
     end
 

@@ -5,7 +5,7 @@ module Harvesting
     module Formats
       # The entry point for processing METS-formatted records.
       class METS < Harvesting::Metadata::BaseFormat
-        include WDPAPI::Deps[
+        include MeruAPI::Deps[
           augment_middleware: "harvesting.metadata.mets.augment_middleware",
           extract_entities: "harvesting.metadata.mets.extract_entities",
           parse: "harvesting.metadata.mets.parse",

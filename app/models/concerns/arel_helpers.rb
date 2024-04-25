@@ -32,7 +32,7 @@ module ArelHelpers
   def arel_composite_attr(column, attribute)
     composite = arel_grouping(arel_attrify(column))
 
-    arel_literal("(%s.#{attribute})" % [composite.to_sql, attribute])
+    arel_literal("(%s.#{attribute})" % [composite.to_sql])
   end
 
   def arel_ltree_contains(left, right)

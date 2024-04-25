@@ -7,7 +7,7 @@ module Schemas
       include Dry::Monads[:result]
 
       # @api private
-      PATTERN = /\Aprops\.(?<path>[^#]+)(?:#(?<type>[^#]+))?\z/.freeze
+      PATTERN = /\Aprops\.(?<path>[^#]+)(?:#(?<type>[^#]+))?\z/
 
       # @param [String] input
       # @return [Dry::Monads::Success(Schemas::Properties::Path)]
@@ -19,7 +19,7 @@ module Schemas
 
         type = match[:type].presence || "unknown"
 
-        path = Schemas::Properties::Path.new path: match[:path], type: type
+        path = Schemas::Properties::Path.new(path: match[:path], type:)
 
         Success path
       end
@@ -29,7 +29,7 @@ module Schemas
       # @param [Object] input
       # @param [String] reason
       def unparseable!(input, reason)
-        Schemas::Properties::InvalidPath.new(input: input, reason: reason).to_monad
+        Schemas::Properties::InvalidPath.new(input:, reason:).to_monad
       end
     end
   end

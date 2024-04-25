@@ -10,11 +10,11 @@ module Analytics
       param :entity, Analytics::Types::Entity
 
       option :user, Analytics::Types::User, default: proc { AnonymousUser.new }
-      option :ip, Analytics::Types::String, default: proc { WDPAPI::Container["testing.random_ip_address"].call }
+      option :ip, Analytics::Types::String, default: proc { MeruAPI::Container["testing.random_ip_address"].call }
       option :user_agent, Analytics::Types::String, default: proc { Faker::Internet.user_agent }
     end
 
-    include WDPAPI::Deps[
+    include MeruAPI::Deps[
       build_fake_tracker: "analytics.build_fake_tracker",
     ]
 
@@ -34,7 +34,7 @@ module Analytics
     # @param [Time] start
     # @param [<Time>] times
     def visit_entity!(start, times)
-      @ahoy = build_fake_tracker.(ip: ip, user: user, user_agent: user_agent)
+      @ahoy = build_fake_tracker.(ip:, user:, user_agent:)
 
       @visit_id = upsert_visit!(started_at: start)
 
@@ -113,7 +113,7 @@ module Analytics
           attributes = {
             visit_token: @ahoy.visit_token,
             visitor_token: @ahoy.visitor_token,
-            started_at: started_at,
+            started_at:,
           }.reverse_merge(filtered_attributes)
 
           result = Ahoy::Visit.upsert(
@@ -137,8 +137,8 @@ module Analytics
       {
         visit_id: @visit_id,
         user_id: nil,
-        name: name,
-        time: time,
+        name:,
+        time:,
         subject_type: nil,
         subject_id: nil,
       }.tap do |h|

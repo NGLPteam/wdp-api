@@ -20,7 +20,7 @@ module MutationOperations
       local_context[:edges] ||= edges
       local_context[:edges].freeze
 
-      provide current_user: current_user, local_context: local_context do
+      provide(current_user:, local_context:) do
         yield
       end
     end

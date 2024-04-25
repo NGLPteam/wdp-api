@@ -1,7 +1,11 @@
 # frozen_string_literal: true
 
 RSpec.describe "Query.asset", type: :request do
-  let!(:asset) { FactoryBot.create :asset, :pdf }
+  let_it_be(:asset, refind: true) do
+    perform_enqueued_jobs do
+      FactoryBot.create :asset, :pdf
+    end
+  end
 
   let(:graphql_variables) { { slug: asset.system_slug } }
 
@@ -12,12 +16,13 @@ RSpec.describe "Query.asset", type: :request do
         __typename
 
         ... on AssetPDF {
-
           name
           caption
           fileSize
           contentType
-          downloadUrl
+          # Deprecated, but test that it still works.
+          old_url: downloadUrl
+          downloadURL
           kind
         }
       }
@@ -26,29 +31,25 @@ RSpec.describe "Query.asset", type: :request do
   end
 
   let(:expected_shape) do
-    {
-      asset: {
-        __typename: "AssetPDF",
-        name: asset.name,
-        file_size: asset.file_size,
-        kind: "pdf",
-        content_type: asset.content_type,
-        download_url: be_present,
-      }
-    }
+    gql.query do |q|
+      q.prop :asset do |ast|
+        ast.typename("AssetPDF")
+
+        ast[:name] = asset.name
+        ast[:file_size] = asset.file_size
+        ast[:kind] = "pdf"
+        ast[:content_type] = asset.content_type
+        ast[:old_url] = be_present
+        ast[:download_url] = be_present
+      end
+    end
   end
 
   context "with a processed asset" do
-    before do
-      perform_enqueued_jobs
-
-      asset.reload
-    end
-
     it "can fetch details based on the kind" do
-      make_default_request!
-
-      expect_graphql_response_data expected_shape, decamelize: true
+      expect_request! do |req|
+        req.data! expected_shape
+      end
     end
   end
 end

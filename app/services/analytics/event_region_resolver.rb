@@ -19,7 +19,7 @@ module Analytics
 
     def filter_by_event_name!
       augment_scope! do |scope|
-        scope.where(name: name)
+        scope.where(name:)
       end
     end
 

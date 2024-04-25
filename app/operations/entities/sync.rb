@@ -5,7 +5,7 @@ module Entities
   class Sync
     include Dry::Monads[:do, :result]
     include MonadicPersistence
-    include WDPAPI::Deps[
+    include MeruAPI::Deps[
       calculate_authorizing: "entities.calculate_authorizing",
       prefix_sanitize: "searching.prefix_sanitize",
       validate_sync: "entities.validate_sync",

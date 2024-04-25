@@ -4,7 +4,7 @@ module Access
   class CalculateGrantedPermissions
     include Dry::Monads[:do, :result]
     include QueryOperation
-    include WDPAPI::Deps[audit: "access.audit_granted_permissions"]
+    include MeruAPI::Deps[audit: "access.audit_granted_permissions"]
 
     PREFIX = <<~SQL.squish.strip_heredoc.squish.freeze
     INSERT INTO granted_permissions
@@ -46,11 +46,11 @@ module Access
     SQL
 
     def call(access_grant: nil, role: nil)
-      inserted = sql_insert! PREFIX, generate_infix_for(access_grant: access_grant, role: role), SUFFIX
+      inserted = sql_insert! PREFIX, generate_infix_for(access_grant:, role:), SUFFIX
 
-      deleted = yield audit.call(access_grant: access_grant, role: role)
+      deleted = yield audit.call(access_grant:, role:)
 
-      Success(inserted: inserted, deleted: deleted)
+      Success(inserted:, deleted:)
     end
 
     private

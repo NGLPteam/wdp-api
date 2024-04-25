@@ -35,7 +35,7 @@ module Schemas
       private
 
       def default_attributes
-        { parent: parent, child: child, associations: {}, roles: {} }
+        { parent:, child:, associations: {}, roles: {} }
       end
 
       # @return [Symbol]

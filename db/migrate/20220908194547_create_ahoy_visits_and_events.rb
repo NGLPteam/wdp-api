@@ -54,7 +54,7 @@ class CreateAhoyVisitsAndEvents < ActiveRecord::Migration[6.1]
       t.references :entity, type: :uuid, polymorphic: true
       t.references :subject, type: :uuid, polymorphic: true
 
-      t.enum :context, as: "analytics_context", null: false, default: "frontend"
+      t.enum :context, enum_type: "analytics_context", null: false, default: "frontend"
 
       t.citext :name
       t.jsonb :properties

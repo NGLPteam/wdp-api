@@ -68,7 +68,7 @@ FactoryBot.define do
     to_create do |instance|
       attrs = instance.slice(:namespace, :name, :identifier, :kind)
 
-      res = SchemaDefinition.upsert attrs, unique_by: %i[identifier namespace], returning: "id"
+      res = SchemaDefinition.upsert attrs, unique_by: %i[identifier namespace], returning: :id
 
       id = res.first["id"]
 

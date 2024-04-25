@@ -118,7 +118,7 @@ module Roles
 
         attribute name, type.to_type, default: default_value
 
-        define_grid! name, type: type, default: default_value
+        define_grid! name, type:, default: default_value
       end
 
       # @return [{ Symbol => Roles::Grid }]

@@ -5,7 +5,7 @@ module Schemas
     # Accept a {HasSchemaDefinition schema instance} and extract any given searchable properties from it.
     class ExtractSearchableProperties
       include Dry::Monads[:do, :result]
-      include WDPAPI::Deps[
+      include MeruAPI::Deps[
         instance_for: "schemas.utility.instance_for",
         read_searchable_values: "schemas.instances.read_searchable_property_values",
         write_full_text: "schemas.instances.write_full_text",
@@ -19,7 +19,7 @@ module Schemas
 
         schema_version = schema_instance.schema_version
 
-        values = yield read_searchable_values.call schema_instance, context: context
+        values = yield read_searchable_values.call(schema_instance, context:)
 
         entity_attrs = base_attrs_for schema_instance
 
@@ -45,7 +45,7 @@ module Schemas
 
         props = yield upsert_searchable_properties! searchable_attributes
 
-        result = { md: markdown_properties.size, props: props }
+        result = { md: markdown_properties.size, props: }
 
         Success result
       end

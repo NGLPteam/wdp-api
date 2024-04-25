@@ -44,8 +44,8 @@ RSpec.describe Mutations::CreateOrdering, type: :request, graphql: :mutation do
     let!(:mutation_input) do
       {
         entityId: entity.to_encoded_id,
-        identifier: identifier,
-        name: name,
+        identifier:,
+        name:,
         select: select_input,
         filter: filter_input,
         order: order_input,

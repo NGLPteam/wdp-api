@@ -6,7 +6,7 @@ module Harvesting
     #
     # @see Harveting::Entities::UpsertAssets
     class UpsertEntityAssets < Harvesting::BaseAction
-      include WDPAPI::Deps[
+      include MeruAPI::Deps[
         upsert_assets: "harvesting.entities.upsert_assets",
       ]
 

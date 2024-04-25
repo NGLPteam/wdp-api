@@ -4,7 +4,7 @@ RSpec.describe Schemas::Utility::InstanceFor, type: :operation do
   context "with an entity link" do
     let!(:target) { FactoryBot.create :item }
 
-    let!(:entity_link) { FactoryBot.create :entity_link, target: target }
+    let!(:entity_link) { FactoryBot.create :entity_link, target: }
 
     it "returns the link's target" do
       expect_calling_with(entity_link).to eq target

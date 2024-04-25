@@ -25,7 +25,7 @@ module Mutations
 
         item = Item.new
 
-        create_entity! item, attributes
+        create_entity! item, **attributes
       end
     end
   end

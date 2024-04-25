@@ -4,9 +4,9 @@ module Harvesting
   module Entities
     class Assigner
       include Dry::Monads::Do.for(:realize)
-      include WDPAPI::Deps[chain_method: "utility.chain_method"]
+      include MeruAPI::Deps[chain_method: "utility.chain_method"]
 
-      def initialize(*)
+      def initialize(...)
         super
 
         @metadata_kind = nil
@@ -106,7 +106,7 @@ module Harvesting
       # @param ["contains", "references"] operator
       # @return [self]
       def link_collection!(identifier, operator: "contains")
-        @incoming_collections << Harvesting::Links::Source.new(identifier: identifier, operator: operator)
+        @incoming_collections << Harvesting::Links::Source.new(identifier:, operator:)
 
         return self
       end
@@ -128,8 +128,10 @@ module Harvesting
       end
 
       # @return [self]
-      def unassociated_asset!(identifier, url, **props)
-        @assets[identifier] = to_asset_source(identifier, url, props)
+      def unassociated_asset!(identifier, url, flat_props = {}, **props)
+        props.merge!(flat_props)
+
+        @assets[identifier] = to_asset_source(identifier, url, **props)
 
         return self
       end
@@ -145,8 +147,10 @@ module Harvesting
       end
 
       # @return [self]
-      def scalar_asset!(full_path, identifier, url, **props)
-        @scalar_assets[full_path] = to_asset_source(identifier, url, props)
+      def scalar_asset!(full_path, identifier, url, flat_props = {}, **props)
+        props.merge!(flat_props)
+
+        @scalar_assets[full_path] = to_asset_source(identifier, url, **props)
 
         return self
       end
@@ -162,10 +166,12 @@ module Harvesting
       end
 
       # @return [self]
-      def collected_asset!(full_path, identifier, url, **props)
+      def collected_asset!(full_path, identifier, url, flat_props = {}, **props)
+        props.merge!(flat_props)
+
         @collected_assets[full_path] ||= []
 
-        @collected_assets[full_path].push(to_asset_source(identifier, url, props))
+        @collected_assets[full_path].push(to_asset_source(identifier, url, **props))
 
         return self
       end
@@ -215,13 +221,13 @@ module Harvesting
 
       def compile_assets
         scalar = @scalar_assets.each_with_object([]) do |(full_path, asset), ary|
-          ref = { full_path: full_path, asset: asset }
+          ref = { full_path:, asset: }
 
           ary << ref
         end
 
         collected = @collected_assets.each_with_object([]) do |(full_path, assets), ary|
-          ref = { full_path: full_path, assets: assets }
+          ref = { full_path:, assets: }
 
           ary << ref
         end
@@ -229,8 +235,8 @@ module Harvesting
         {
           entity: @entity_assets,
           unassociated: @assets.values,
-          scalar: scalar,
-          collected: collected,
+          scalar:,
+          collected:,
         }
       end
 
@@ -242,10 +248,10 @@ module Harvesting
 
       def to_asset_source(identifier, url, name: nil, mime_type: nil)
         {
-          identifier: identifier,
-          url: url,
-          name: name,
-          mime_type: mime_type
+          identifier:,
+          url:,
+          name:,
+          mime_type:
         }.compact
       end
     end

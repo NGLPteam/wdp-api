@@ -1,0 +1,110 @@
+<%-
+  # vim: set ft=ruby.eruby nosmartindent noautoindent :
+-%>
+# frozen_string_literal: true
+
+RSpec.describe "Query.<%= graphql_collection_field_name %>", type: :request do
+<%- if tenant_schema? -%>
+  include_context "with tenant"
+
+<%- end -%>
+  context "when ordering" do
+    let(:query) do
+      <<~GRAPHQL
+      query get<%= model_name %>Collection(<%= graphql_collection_var_declaration %>) {
+        <%= graphql_collection_field_name %>(<%= graphql_collection_vars %>) {
+          edges {
+            node {
+              id
+              slug
+              <%- if has_title? -%>
+              title
+              <%- end -%>
+            }
+          }
+
+          pageInfo {
+            totalCount
+            totalUnfilteredCount
+          }
+        }
+      }
+      GRAPHQL
+    end
+
+    let(:expected_shape) do
+      gql.query do |q|
+        q.prop <%= field_collection_name.inspect %> do |c|
+          c.array :edges do |edges|
+            sorted_records.each do |r|
+              edges.item do |edge|
+                edge.prop :node do |n|
+                  n[:id] = r.to_encoded_id
+                  n[:slug] = r.system_slug
+                  <%- if has_title? -%>
+                  n[:title] = r.title
+                  <%- end -%>
+                end
+              end
+            end
+          end
+
+          c.prop :page_info do |pi|
+            pi[:total_count] = sorted_records.size
+            pi[:total_unfiltered_count] = sorted_records.size
+          end
+        end
+      end
+    end
+
+    let(:graphql_variables) do
+      { order:, }
+    end
+
+    let(:order) { "RECENT" }
+
+    let_it_be(:records) do
+      1.upto(4).map do |n|
+        attrs = {
+          _at: n.days.ago,
+          <%- if has_title? -%>
+          title: Faker::Lorem.unique.sentence,
+          <%- end -%>
+        }
+
+        create_record(**attrs)
+      end
+    end
+
+    let(:sorted_records) { order_records(records, order:) }
+
+    def create_record(_at:, **attrs)
+      Timecop.freeze _at do
+        FactoryBot.create(<%= model_factory.inspect %>, **attrs)
+      end
+    end
+
+    def order_records(records, order: "RECENT")
+      case order
+      when "OLDEST"
+        records.sort_by(&:created_at)
+      <%- if has_title? -%>
+      when "TITLE_ASCENDING"
+        records.sort_by(&:title)
+      when "TITLE_DESCENDING"
+        order_records(records, order: "TITLE_ASCENDING").reverse!
+      <%- end -%>
+      else
+        order_records(records, order: "OLDEST").reverse!
+      end
+    end
+
+    shared_examples_for "a properly-ordered collection" do
+      it "retrieves everything in the right order" do
+        expect_request! do |req|
+          req.data! expected_shape
+        end
+      end
+    end
+  end
+end

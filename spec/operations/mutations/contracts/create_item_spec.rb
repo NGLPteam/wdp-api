@@ -16,7 +16,7 @@ RSpec.describe Mutations::Contracts::CreateItem, type: :mutation_contract do
   context "with an already existing DOI" do
     let_contract_param!(:doi) { "existing" }
 
-    let!(:item) { FactoryBot.create :item, doi: doi }
+    let!(:item) { FactoryBot.create :item, doi: }
 
     it { is_expected.to be_a_failure }
 
@@ -31,7 +31,7 @@ RSpec.describe Mutations::Contracts::CreateItem, type: :mutation_contract do
     let_contract_param!(:parent) do
       schema = SchemaVersion["nglp:journal_volume"]
 
-      FactoryBot.create :collection, schema: schema
+      FactoryBot.create :collection, schema:
     end
 
     it { is_expected.to be_failure }

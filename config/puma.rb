@@ -17,7 +17,7 @@ worker_timeout 3600 if ENV.fetch("RAILS_ENV", "development") == "development"
 
 # Specifies the `port` that Puma will listen on to receive requests; default is 3000.
 #
-port ENV.fetch("PORT") { 6222 }
+port ENV.fetch("PORT") { 6333 }
 
 # Specifies the `environment` that Puma will run in.
 #
@@ -25,16 +25,6 @@ environment ENV.fetch("RAILS_ENV") { "development" }
 
 # Specifies the `pidfile` that Puma will use.
 pidfile ENV.fetch("PIDFILE") { "tmp/pids/server.pid" }
-
-nakayoshi_fork
-# fork_worker 1000
-wait_for_less_busy_worker 0.010
-
-on_worker_boot do
-  # Worker specific setup for Rails 4.1+
-  # See: https://devcenter.heroku.com/articles/deploying-rails-applications-with-the-puma-web-server#on-worker-boot
-  ActiveRecord::Base.establish_connection
-end
 
 # Specifies the number of `workers` to boot in clustered mode.
 # Workers are forked web server processes. If using threads and workers together
@@ -53,3 +43,23 @@ preload_app!
 
 # Allow puma to be restarted by `rails restart` command.
 plugin :tmp_restart
+
+fork_worker 1000
+wait_for_less_busy_worker 0.001
+
+on_worker_fork do
+  ActiveSupport.on_load(:active_record) do
+    ActiveRecord::Base.connection.disconnect!
+  end
+
+  # Ensure we disconnect from Rails cache on forking.
+  Rails.cache.redis.disconnect!
+end
+
+on_worker_boot do
+  # Worker specific setup for Rails 4.1+
+  # See: https://devcenter.heroku.com/articles/deploying-rails-applications-with-the-puma-web-server#on-worker-boot
+  ActiveSupport.on_load(:active_record) do
+    ActiveRecord::Base.establish_connection
+  end
+end

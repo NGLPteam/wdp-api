@@ -28,11 +28,10 @@ RSpec.describe Mutations::AlterSchemaVersion, type: :request, simple_v1_hierarch
   GRAPHQL
 
   def change_both_schema_versions
-    (
-      change { entity.reload.schema_version }.from(schema_version).to(changed_version)
-    ).and(
-      change { synced_entity.reload.schema_version }.from(schema_version).to(changed_version)
-    )
+    change { entity.reload.schema_version }.from(schema_version).to(changed_version)
+  .and(
+    change { synced_entity.reload.schema_version }.from(schema_version).to(changed_version)
+  )
   end
 
   def keep_both_schema_versions_the_same
@@ -51,7 +50,7 @@ RSpec.describe Mutations::AlterSchemaVersion, type: :request, simple_v1_hierarch
     context "for an entity" do
       let!(:schema_version) { SchemaVersion.default_item }
 
-      let!(:entity) { FactoryBot.create(:item, collection: collection, schema_version: schema_version) }
+      let!(:entity) { FactoryBot.create(:item, collection:, schema_version:) }
 
       let!(:synced_entity) { entity.entity }
 

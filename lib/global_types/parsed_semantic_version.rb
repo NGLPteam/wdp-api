@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative "./semantic_version"
+require_relative "semantic_version"
 
 module GlobalTypes
   # A parsed [Semantic Version](https://semver.org) used for ordering and comparison
@@ -17,7 +17,7 @@ module GlobalTypes
     private_constant :DECODER
 
     # A regular expression for matching the SQL representation of a parsed semantic version.
-    ENCODED = /\A\((?:"?\d*"?),(?:"?\d*"?),(?:"?\d*"?),(?:"?[^,]*"?),(?:"?[^,]*"?)\)\z/.freeze
+    ENCODED = /\A\((?:"?\d*"?),(?:"?\d*"?),(?:"?\d*"?),(?:"?[^,]*"?),(?:"?[^,]*"?)\)\z/
 
     private_constant :ENCODED
 
@@ -92,7 +92,7 @@ module GlobalTypes
     def decode_semantic_version(value)
       major, minor, patch, pre, build = DECODER.decode value
 
-      version_string = version_string_from major: major, minor: minor, patch: patch, pre: pre, build: build
+      version_string = version_string_from(major:, minor:, patch:, pre:, build:)
 
       Semantic::Version.new version_string
     end

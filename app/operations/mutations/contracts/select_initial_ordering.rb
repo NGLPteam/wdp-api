@@ -5,7 +5,7 @@ module Mutations
     # @see Mutations::Operations::SelectInitialOrdering
     class SelectInitialOrdering < MutationOperations::Contract
       json do
-        required(:entity).filled(Models::Types::Model)
+        required(:entity).filled(Support::Models::Types::Model)
         required(:ordering).value(AppTypes::Instance(::Ordering))
       end
 

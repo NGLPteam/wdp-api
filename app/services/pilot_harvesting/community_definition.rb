@@ -12,9 +12,9 @@ module PilotHarvesting
 
     attribute :series, PilotHarvesting::SeriesDefinition.for_array_option
 
-    def upsert
-      call_operation("communities.upsert", identifier, title: title) do |community|
-        provide community: community do
+    do_for! def upsert
+      call_operation("communities.upsert", identifier, title:) do |community|
+        provide(community:) do
           yield upsert_each journals
           yield upsert_each series
         end

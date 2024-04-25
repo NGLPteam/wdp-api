@@ -1,10 +1,8 @@
 # frozen_string_literal: true
 
 module Resolvers
-  class AssetResolver < GraphQL::Schema::Resolver
-    include SearchObject.module(:graphql)
-
-    include Resolvers::PageBasedPagination
+  class AssetResolver < AbstractResolver
+    include Resolvers::Enhancements::PageBasedPagination
     include Resolvers::SimplyOrdered
 
     type Types::AnyAssetType.connection_type, null: false

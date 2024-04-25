@@ -8,10 +8,10 @@ module Roles
       return roles.values
     end
 
-    def role!(identifier, **options, &block)
+    def role!(identifier, **options, &)
       definer = Roles::Definer.new(identifier, **options)
 
-      roles[definer.identifier] = definer.call(&block)
+      roles[definer.identifier] = definer.call(&)
 
       return nil
     end

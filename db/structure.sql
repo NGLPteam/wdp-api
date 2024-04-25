@@ -3,7 +3,7 @@ SET lock_timeout = 0;
 SET idle_in_transaction_session_timeout = 0;
 SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
-SELECT pg_catalog.set_config('search_path', '"$user",heroku_ext,public', false);
+SELECT pg_catalog.set_config('search_path', '"$user",public', false);
 SET check_function_bodies = false;
 SET xmloption = content;
 SET client_min_messages = warning;
@@ -13,7 +13,7 @@ SET row_security = off;
 -- Name: heroku_ext; Type: SCHEMA; Schema: -; Owner: -
 --
 
-CREATE SCHEMA IF NOT EXISTS heroku_ext;
+CREATE SCHEMA heroku_ext;
 
 
 --
@@ -381,6 +381,125 @@ CREATE TYPE public.variable_precision_date AS (
 
 
 --
+-- Name: variable_precision(date); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.variable_precision(date) RETURNS public.variable_precision_date
+    LANGUAGE sql IMMUTABLE PARALLEL SAFE
+    AS $_$
+SELECT CASE
+WHEN $1 IS NOT NULL THEN ROW($1, 'day')::variable_precision_date
+ELSE
+  ROW(NULL, 'none')::variable_precision_date
+END;
+$_$;
+
+
+--
+-- Name: CAST (date AS public.variable_precision_date); Type: CAST; Schema: -; Owner: -
+--
+
+CREATE CAST (date AS public.variable_precision_date) WITH FUNCTION public.variable_precision(date) AS ASSIGNMENT;
+
+
+--
+-- Name: calculate_role_kind(public.role_identifier); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.calculate_role_kind(public.role_identifier) RETURNS public.role_kind
+    LANGUAGE sql IMMUTABLE PARALLEL SAFE
+    AS $_$
+SELECT CASE
+WHEN $1 IS NOT NULL THEN 'system'
+ELSE
+  'custom'
+END::role_kind;
+$_$;
+
+
+--
+-- Name: CAST (public.role_identifier AS public.role_kind); Type: CAST; Schema: -; Owner: -
+--
+
+CREATE CAST (public.role_identifier AS public.role_kind) WITH FUNCTION public.calculate_role_kind(public.role_identifier) AS ASSIGNMENT;
+
+
+--
+-- Name: calculate_role_primacy(public.role_identifier); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.calculate_role_primacy(public.role_identifier) RETURNS public.role_primacy
+    LANGUAGE sql IMMUTABLE PARALLEL SAFE
+    AS $_$
+SELECT CASE $1
+WHEN 'admin' THEN 'high'
+WHEN 'reader' THEN 'low'
+ELSE
+  'default'
+END::role_primacy;
+$_$;
+
+
+--
+-- Name: CAST (public.role_identifier AS public.role_primacy); Type: CAST; Schema: -; Owner: -
+--
+
+CREATE CAST (public.role_identifier AS public.role_primacy) WITH FUNCTION public.calculate_role_primacy(public.role_identifier) AS ASSIGNMENT;
+
+
+--
+-- Name: vpdate_value(public.variable_precision_date); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.vpdate_value(public.variable_precision_date) RETURNS date
+    LANGUAGE sql IMMUTABLE STRICT PARALLEL SAFE
+    AS $_$
+SELECT vpdate_value_for($1.value, $1.precision);
+$_$;
+
+
+--
+-- Name: CAST (public.variable_precision_date AS date); Type: CAST; Schema: -; Owner: -
+--
+
+CREATE CAST (public.variable_precision_date AS date) WITH FUNCTION public.vpdate_value(public.variable_precision_date) AS ASSIGNMENT;
+
+
+--
+-- Name: variable_daterange(public.variable_precision_date); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.variable_daterange(public.variable_precision_date) RETURNS daterange
+    LANGUAGE sql IMMUTABLE STRICT PARALLEL SAFE
+    AS $_$
+SELECT CASE WHEN $1.value IS NOT NULL THEN
+  CASE $1.precision
+  WHEN 'day' THEN daterange($1.value, $1.value, '[]')
+  WHEN 'month' THEN daterange(
+    date_trunc('month', $1.value)::date,
+    (date_trunc('month', $1.value) + INTERVAL '1 month')::date,
+    '[)')
+  WHEN 'year' THEN daterange(
+    date_trunc('year', $1.value)::date,
+    (date_trunc('year', $1.value) + INTERVAL '1 year')::date,
+    '[)')
+  ELSE
+    NULL
+  END
+ELSE
+  NUll
+END;
+$_$;
+
+
+--
+-- Name: CAST (public.variable_precision_date AS daterange); Type: CAST; Schema: -; Owner: -
+--
+
+CREATE CAST (public.variable_precision_date AS daterange) WITH FUNCTION public.variable_daterange(public.variable_precision_date) AS ASSIGNMENT;
+
+
+--
 -- Name: _jsonb_auth_path_acc(public.jsonb_auth_path_state[], public.ltree, boolean); Type: FUNCTION; Schema: public; Owner: -
 --
 
@@ -399,10 +518,10 @@ CREATE FUNCTION public._jsonb_auth_path_final(public.jsonb_auth_path_state[]) RE
 
 
 --
--- Name: array_distinct(anyarray); Type: FUNCTION; Schema: public; Owner: -
+-- Name: array_distinct(anycompatiblearray); Type: FUNCTION; Schema: public; Owner: -
 --
 
-CREATE FUNCTION public.array_distinct(anyarray) RETURNS anyarray
+CREATE FUNCTION public.array_distinct(anycompatiblearray) RETURNS anycompatiblearray
     LANGUAGE sql IMMUTABLE
     AS $_$ SELECT array_agg(DISTINCT x) FILTER (WHERE x IS NOT NULL) FROM unnest($1) t(x); $_$;
 
@@ -458,37 +577,6 @@ SELECT COALESCE(
   array_agg(action ORDER BY action) FILTER (WHERE allowed),
   '{}'::ltree[]
 ) FROM calculate_actions($1) AS t(action, allowed)
-$_$;
-
-
---
--- Name: calculate_role_kind(public.role_identifier); Type: FUNCTION; Schema: public; Owner: -
---
-
-CREATE FUNCTION public.calculate_role_kind(public.role_identifier) RETURNS public.role_kind
-    LANGUAGE sql IMMUTABLE PARALLEL SAFE
-    AS $_$
-SELECT CASE
-WHEN $1 IS NOT NULL THEN 'system'
-ELSE
-  'custom'
-END::role_kind;
-$_$;
-
-
---
--- Name: calculate_role_primacy(public.role_identifier); Type: FUNCTION; Schema: public; Owner: -
---
-
-CREATE FUNCTION public.calculate_role_primacy(public.role_identifier) RETURNS public.role_primacy
-    LANGUAGE sql IMMUTABLE PARALLEL SAFE
-    AS $_$
-SELECT CASE $1
-WHEN 'admin' THEN 'high'
-WHEN 'reader' THEN 'low'
-ELSE
-  'default'
-END::role_primacy;
 $_$;
 
 
@@ -1152,48 +1240,6 @@ $$;
 
 
 --
--- Name: variable_daterange(public.variable_precision_date); Type: FUNCTION; Schema: public; Owner: -
---
-
-CREATE FUNCTION public.variable_daterange(public.variable_precision_date) RETURNS daterange
-    LANGUAGE sql IMMUTABLE STRICT PARALLEL SAFE
-    AS $_$
-SELECT CASE WHEN $1.value IS NOT NULL THEN
-  CASE $1.precision
-  WHEN 'day' THEN daterange($1.value, $1.value, '[]')
-  WHEN 'month' THEN daterange(
-    date_trunc('month', $1.value)::date,
-    (date_trunc('month', $1.value) + INTERVAL '1 month')::date,
-    '[)')
-  WHEN 'year' THEN daterange(
-    date_trunc('year', $1.value)::date,
-    (date_trunc('year', $1.value) + INTERVAL '1 year')::date,
-    '[)')
-  ELSE
-    NULL
-  END
-ELSE
-  NUll
-END;
-$_$;
-
-
---
--- Name: variable_precision(date); Type: FUNCTION; Schema: public; Owner: -
---
-
-CREATE FUNCTION public.variable_precision(date) RETURNS public.variable_precision_date
-    LANGUAGE sql IMMUTABLE PARALLEL SAFE
-    AS $_$
-SELECT CASE
-WHEN $1 IS NOT NULL THEN ROW($1, 'day')::variable_precision_date
-ELSE
-  ROW(NULL, 'none')::variable_precision_date
-END;
-$_$;
-
-
---
 -- Name: variable_precision(date, public.date_precision); Type: FUNCTION; Schema: public; Owner: -
 --
 
@@ -1824,17 +1870,6 @@ $_$;
 
 
 --
--- Name: vpdate_value(public.variable_precision_date); Type: FUNCTION; Schema: public; Owner: -
---
-
-CREATE FUNCTION public.vpdate_value(public.variable_precision_date) RETURNS date
-    LANGUAGE sql IMMUTABLE STRICT PARALLEL SAFE
-    AS $_$
-SELECT vpdate_value_for($1.value, $1.precision);
-$_$;
-
-
---
 -- Name: vpdate_value_for(date, public.date_precision); Type: FUNCTION; Schema: public; Owner: -
 --
 
@@ -1853,23 +1888,23 @@ $_$;
 
 
 --
--- Name: array_accum(anyarray); Type: AGGREGATE; Schema: public; Owner: -
+-- Name: array_accum(anycompatiblearray); Type: AGGREGATE; Schema: public; Owner: -
 --
 
-CREATE AGGREGATE public.array_accum(anyarray) (
+CREATE AGGREGATE public.array_accum(anycompatiblearray) (
     SFUNC = array_cat,
-    STYPE = anyarray,
+    STYPE = anycompatiblearray,
     INITCOND = '{}'
 );
 
 
 --
--- Name: array_accum_distinct(anyarray); Type: AGGREGATE; Schema: public; Owner: -
+-- Name: array_accum_distinct(anycompatiblearray); Type: AGGREGATE; Schema: public; Owner: -
 --
 
-CREATE AGGREGATE public.array_accum_distinct(anyarray) (
+CREATE AGGREGATE public.array_accum_distinct(anycompatiblearray) (
     SFUNC = array_cat,
-    STYPE = anyarray,
+    STYPE = anycompatiblearray,
     INITCOND = '{}',
     FINALFUNC = public.array_distinct
 );
@@ -2821,41 +2856,6 @@ COMMENT ON OPERATOR public.~^ (NONE, public.variable_precision_date) IS 'Extract
 
 
 --
--- Name: CAST (date AS public.variable_precision_date); Type: CAST; Schema: -; Owner: -
---
-
-CREATE CAST (date AS public.variable_precision_date) WITH FUNCTION public.variable_precision(date) AS ASSIGNMENT;
-
-
---
--- Name: CAST (public.role_identifier AS public.role_kind); Type: CAST; Schema: -; Owner: -
---
-
-CREATE CAST (public.role_identifier AS public.role_kind) WITH FUNCTION public.calculate_role_kind(public.role_identifier) AS ASSIGNMENT;
-
-
---
--- Name: CAST (public.role_identifier AS public.role_primacy); Type: CAST; Schema: -; Owner: -
---
-
-CREATE CAST (public.role_identifier AS public.role_primacy) WITH FUNCTION public.calculate_role_primacy(public.role_identifier) AS ASSIGNMENT;
-
-
---
--- Name: CAST (public.variable_precision_date AS date); Type: CAST; Schema: -; Owner: -
---
-
-CREATE CAST (public.variable_precision_date AS date) WITH FUNCTION public.vpdate_value(public.variable_precision_date) AS ASSIGNMENT;
-
-
---
--- Name: CAST (public.variable_precision_date AS daterange); Type: CAST; Schema: -; Owner: -
---
-
-CREATE CAST (public.variable_precision_date AS daterange) WITH FUNCTION public.variable_daterange(public.variable_precision_date) AS ASSIGNMENT;
-
-
---
 -- Name: access_grants; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -3064,8 +3064,8 @@ CREATE TABLE public.announcements (
 CREATE TABLE public.ar_internal_metadata (
     key character varying NOT NULL,
     value character varying,
-    created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
 
@@ -3856,6 +3856,101 @@ CREATE TABLE public.global_configurations (
 
 
 --
+-- Name: good_job_batches; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.good_job_batches (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    description text,
+    serialized_properties jsonb,
+    on_finish text,
+    on_success text,
+    on_discard text,
+    callback_queue_name text,
+    callback_priority integer,
+    enqueued_at timestamp(6) without time zone,
+    discarded_at timestamp(6) without time zone,
+    finished_at timestamp(6) without time zone
+);
+
+
+--
+-- Name: good_job_executions; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.good_job_executions (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    active_job_id uuid NOT NULL,
+    job_class text,
+    queue_name text,
+    serialized_params jsonb,
+    scheduled_at timestamp(6) without time zone,
+    finished_at timestamp(6) without time zone,
+    error text,
+    error_event smallint
+);
+
+
+--
+-- Name: good_job_processes; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.good_job_processes (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    state jsonb
+);
+
+
+--
+-- Name: good_job_settings; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.good_job_settings (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    key text,
+    value jsonb
+);
+
+
+--
+-- Name: good_jobs; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.good_jobs (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    queue_name text,
+    priority integer,
+    serialized_params jsonb,
+    scheduled_at timestamp(6) without time zone,
+    performed_at timestamp(6) without time zone,
+    finished_at timestamp(6) without time zone,
+    error text,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    active_job_id uuid,
+    concurrency_key text,
+    cron_key text,
+    retried_good_job_id uuid,
+    cron_at timestamp(6) without time zone,
+    batch_id uuid,
+    batch_callback_id uuid,
+    is_discrete boolean,
+    executions_count integer,
+    job_class text,
+    error_event smallint,
+    labels text[]
+);
+
+
+--
 -- Name: harvest_attempts; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -4382,7 +4477,6 @@ CREATE TABLE public.ordering_entries_part_1 (
     tree_parent_id uuid,
     tree_parent_type text
 );
-ALTER TABLE ONLY public.ordering_entries ATTACH PARTITION public.ordering_entries_part_1 FOR VALUES WITH (modulus 8, remainder 0);
 
 
 --
@@ -4407,7 +4501,6 @@ CREATE TABLE public.ordering_entries_part_2 (
     tree_parent_id uuid,
     tree_parent_type text
 );
-ALTER TABLE ONLY public.ordering_entries ATTACH PARTITION public.ordering_entries_part_2 FOR VALUES WITH (modulus 8, remainder 1);
 
 
 --
@@ -4432,7 +4525,6 @@ CREATE TABLE public.ordering_entries_part_3 (
     tree_parent_id uuid,
     tree_parent_type text
 );
-ALTER TABLE ONLY public.ordering_entries ATTACH PARTITION public.ordering_entries_part_3 FOR VALUES WITH (modulus 8, remainder 2);
 
 
 --
@@ -4457,7 +4549,6 @@ CREATE TABLE public.ordering_entries_part_4 (
     tree_parent_id uuid,
     tree_parent_type text
 );
-ALTER TABLE ONLY public.ordering_entries ATTACH PARTITION public.ordering_entries_part_4 FOR VALUES WITH (modulus 8, remainder 3);
 
 
 --
@@ -4482,7 +4573,6 @@ CREATE TABLE public.ordering_entries_part_5 (
     tree_parent_id uuid,
     tree_parent_type text
 );
-ALTER TABLE ONLY public.ordering_entries ATTACH PARTITION public.ordering_entries_part_5 FOR VALUES WITH (modulus 8, remainder 4);
 
 
 --
@@ -4507,7 +4597,6 @@ CREATE TABLE public.ordering_entries_part_6 (
     tree_parent_id uuid,
     tree_parent_type text
 );
-ALTER TABLE ONLY public.ordering_entries ATTACH PARTITION public.ordering_entries_part_6 FOR VALUES WITH (modulus 8, remainder 5);
 
 
 --
@@ -4532,7 +4621,6 @@ CREATE TABLE public.ordering_entries_part_7 (
     tree_parent_id uuid,
     tree_parent_type text
 );
-ALTER TABLE ONLY public.ordering_entries ATTACH PARTITION public.ordering_entries_part_7 FOR VALUES WITH (modulus 8, remainder 6);
 
 
 --
@@ -4557,7 +4645,6 @@ CREATE TABLE public.ordering_entries_part_8 (
     tree_parent_id uuid,
     tree_parent_type text
 );
-ALTER TABLE ONLY public.ordering_entries ATTACH PARTITION public.ordering_entries_part_8 FOR VALUES WITH (modulus 8, remainder 7);
 
 
 --
@@ -4591,7 +4678,6 @@ CREATE TABLE public.ordering_entry_ancestor_links_part_1 (
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     CONSTRAINT oeal_child_does_not_parent_itself CHECK ((child_id <> ancestor_id))
 );
-ALTER TABLE ONLY public.ordering_entry_ancestor_links ATTACH PARTITION public.ordering_entry_ancestor_links_part_1 FOR VALUES WITH (modulus 8, remainder 0);
 
 
 --
@@ -4608,7 +4694,6 @@ CREATE TABLE public.ordering_entry_ancestor_links_part_2 (
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     CONSTRAINT oeal_child_does_not_parent_itself CHECK ((child_id <> ancestor_id))
 );
-ALTER TABLE ONLY public.ordering_entry_ancestor_links ATTACH PARTITION public.ordering_entry_ancestor_links_part_2 FOR VALUES WITH (modulus 8, remainder 1);
 
 
 --
@@ -4625,7 +4710,6 @@ CREATE TABLE public.ordering_entry_ancestor_links_part_3 (
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     CONSTRAINT oeal_child_does_not_parent_itself CHECK ((child_id <> ancestor_id))
 );
-ALTER TABLE ONLY public.ordering_entry_ancestor_links ATTACH PARTITION public.ordering_entry_ancestor_links_part_3 FOR VALUES WITH (modulus 8, remainder 2);
 
 
 --
@@ -4642,7 +4726,6 @@ CREATE TABLE public.ordering_entry_ancestor_links_part_4 (
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     CONSTRAINT oeal_child_does_not_parent_itself CHECK ((child_id <> ancestor_id))
 );
-ALTER TABLE ONLY public.ordering_entry_ancestor_links ATTACH PARTITION public.ordering_entry_ancestor_links_part_4 FOR VALUES WITH (modulus 8, remainder 3);
 
 
 --
@@ -4659,7 +4742,6 @@ CREATE TABLE public.ordering_entry_ancestor_links_part_5 (
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     CONSTRAINT oeal_child_does_not_parent_itself CHECK ((child_id <> ancestor_id))
 );
-ALTER TABLE ONLY public.ordering_entry_ancestor_links ATTACH PARTITION public.ordering_entry_ancestor_links_part_5 FOR VALUES WITH (modulus 8, remainder 4);
 
 
 --
@@ -4676,7 +4758,6 @@ CREATE TABLE public.ordering_entry_ancestor_links_part_6 (
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     CONSTRAINT oeal_child_does_not_parent_itself CHECK ((child_id <> ancestor_id))
 );
-ALTER TABLE ONLY public.ordering_entry_ancestor_links ATTACH PARTITION public.ordering_entry_ancestor_links_part_6 FOR VALUES WITH (modulus 8, remainder 5);
 
 
 --
@@ -4693,7 +4774,6 @@ CREATE TABLE public.ordering_entry_ancestor_links_part_7 (
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     CONSTRAINT oeal_child_does_not_parent_itself CHECK ((child_id <> ancestor_id))
 );
-ALTER TABLE ONLY public.ordering_entry_ancestor_links ATTACH PARTITION public.ordering_entry_ancestor_links_part_7 FOR VALUES WITH (modulus 8, remainder 6);
 
 
 --
@@ -4710,7 +4790,6 @@ CREATE TABLE public.ordering_entry_ancestor_links_part_8 (
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     CONSTRAINT oeal_child_does_not_parent_itself CHECK ((child_id <> ancestor_id))
 );
-ALTER TABLE ONLY public.ordering_entry_ancestor_links ATTACH PARTITION public.ordering_entry_ancestor_links_part_8 FOR VALUES WITH (modulus 8, remainder 7);
 
 
 --
@@ -4788,7 +4867,6 @@ CREATE TABLE public.ordering_entry_sibling_links_part_1 (
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     CONSTRAINT oesl_child_does_not_ref_itself CHECK (((sibling_id <> prev_id) AND (sibling_id <> next_id)))
 );
-ALTER TABLE ONLY public.ordering_entry_sibling_links ATTACH PARTITION public.ordering_entry_sibling_links_part_1 FOR VALUES WITH (modulus 8, remainder 0);
 
 
 --
@@ -4804,7 +4882,6 @@ CREATE TABLE public.ordering_entry_sibling_links_part_2 (
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     CONSTRAINT oesl_child_does_not_ref_itself CHECK (((sibling_id <> prev_id) AND (sibling_id <> next_id)))
 );
-ALTER TABLE ONLY public.ordering_entry_sibling_links ATTACH PARTITION public.ordering_entry_sibling_links_part_2 FOR VALUES WITH (modulus 8, remainder 1);
 
 
 --
@@ -4820,7 +4897,6 @@ CREATE TABLE public.ordering_entry_sibling_links_part_3 (
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     CONSTRAINT oesl_child_does_not_ref_itself CHECK (((sibling_id <> prev_id) AND (sibling_id <> next_id)))
 );
-ALTER TABLE ONLY public.ordering_entry_sibling_links ATTACH PARTITION public.ordering_entry_sibling_links_part_3 FOR VALUES WITH (modulus 8, remainder 2);
 
 
 --
@@ -4836,7 +4912,6 @@ CREATE TABLE public.ordering_entry_sibling_links_part_4 (
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     CONSTRAINT oesl_child_does_not_ref_itself CHECK (((sibling_id <> prev_id) AND (sibling_id <> next_id)))
 );
-ALTER TABLE ONLY public.ordering_entry_sibling_links ATTACH PARTITION public.ordering_entry_sibling_links_part_4 FOR VALUES WITH (modulus 8, remainder 3);
 
 
 --
@@ -4852,7 +4927,6 @@ CREATE TABLE public.ordering_entry_sibling_links_part_5 (
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     CONSTRAINT oesl_child_does_not_ref_itself CHECK (((sibling_id <> prev_id) AND (sibling_id <> next_id)))
 );
-ALTER TABLE ONLY public.ordering_entry_sibling_links ATTACH PARTITION public.ordering_entry_sibling_links_part_5 FOR VALUES WITH (modulus 8, remainder 4);
 
 
 --
@@ -4868,7 +4942,6 @@ CREATE TABLE public.ordering_entry_sibling_links_part_6 (
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     CONSTRAINT oesl_child_does_not_ref_itself CHECK (((sibling_id <> prev_id) AND (sibling_id <> next_id)))
 );
-ALTER TABLE ONLY public.ordering_entry_sibling_links ATTACH PARTITION public.ordering_entry_sibling_links_part_6 FOR VALUES WITH (modulus 8, remainder 5);
 
 
 --
@@ -4884,7 +4957,6 @@ CREATE TABLE public.ordering_entry_sibling_links_part_7 (
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     CONSTRAINT oesl_child_does_not_ref_itself CHECK (((sibling_id <> prev_id) AND (sibling_id <> next_id)))
 );
-ALTER TABLE ONLY public.ordering_entry_sibling_links ATTACH PARTITION public.ordering_entry_sibling_links_part_7 FOR VALUES WITH (modulus 8, remainder 6);
 
 
 --
@@ -4900,7 +4972,6 @@ CREATE TABLE public.ordering_entry_sibling_links_part_8 (
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     CONSTRAINT oesl_child_does_not_ref_itself CHECK (((sibling_id <> prev_id) AND (sibling_id <> next_id)))
 );
-ALTER TABLE ONLY public.ordering_entry_sibling_links ATTACH PARTITION public.ordering_entry_sibling_links_part_8 FOR VALUES WITH (modulus 8, remainder 7);
 
 
 --
@@ -5288,6 +5359,174 @@ CREATE TABLE public.user_groups (
 
 
 --
+-- Name: ordering_entries_part_1; Type: TABLE ATTACH; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.ordering_entries ATTACH PARTITION public.ordering_entries_part_1 FOR VALUES WITH (modulus 8, remainder 0);
+
+
+--
+-- Name: ordering_entries_part_2; Type: TABLE ATTACH; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.ordering_entries ATTACH PARTITION public.ordering_entries_part_2 FOR VALUES WITH (modulus 8, remainder 1);
+
+
+--
+-- Name: ordering_entries_part_3; Type: TABLE ATTACH; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.ordering_entries ATTACH PARTITION public.ordering_entries_part_3 FOR VALUES WITH (modulus 8, remainder 2);
+
+
+--
+-- Name: ordering_entries_part_4; Type: TABLE ATTACH; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.ordering_entries ATTACH PARTITION public.ordering_entries_part_4 FOR VALUES WITH (modulus 8, remainder 3);
+
+
+--
+-- Name: ordering_entries_part_5; Type: TABLE ATTACH; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.ordering_entries ATTACH PARTITION public.ordering_entries_part_5 FOR VALUES WITH (modulus 8, remainder 4);
+
+
+--
+-- Name: ordering_entries_part_6; Type: TABLE ATTACH; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.ordering_entries ATTACH PARTITION public.ordering_entries_part_6 FOR VALUES WITH (modulus 8, remainder 5);
+
+
+--
+-- Name: ordering_entries_part_7; Type: TABLE ATTACH; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.ordering_entries ATTACH PARTITION public.ordering_entries_part_7 FOR VALUES WITH (modulus 8, remainder 6);
+
+
+--
+-- Name: ordering_entries_part_8; Type: TABLE ATTACH; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.ordering_entries ATTACH PARTITION public.ordering_entries_part_8 FOR VALUES WITH (modulus 8, remainder 7);
+
+
+--
+-- Name: ordering_entry_ancestor_links_part_1; Type: TABLE ATTACH; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.ordering_entry_ancestor_links ATTACH PARTITION public.ordering_entry_ancestor_links_part_1 FOR VALUES WITH (modulus 8, remainder 0);
+
+
+--
+-- Name: ordering_entry_ancestor_links_part_2; Type: TABLE ATTACH; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.ordering_entry_ancestor_links ATTACH PARTITION public.ordering_entry_ancestor_links_part_2 FOR VALUES WITH (modulus 8, remainder 1);
+
+
+--
+-- Name: ordering_entry_ancestor_links_part_3; Type: TABLE ATTACH; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.ordering_entry_ancestor_links ATTACH PARTITION public.ordering_entry_ancestor_links_part_3 FOR VALUES WITH (modulus 8, remainder 2);
+
+
+--
+-- Name: ordering_entry_ancestor_links_part_4; Type: TABLE ATTACH; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.ordering_entry_ancestor_links ATTACH PARTITION public.ordering_entry_ancestor_links_part_4 FOR VALUES WITH (modulus 8, remainder 3);
+
+
+--
+-- Name: ordering_entry_ancestor_links_part_5; Type: TABLE ATTACH; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.ordering_entry_ancestor_links ATTACH PARTITION public.ordering_entry_ancestor_links_part_5 FOR VALUES WITH (modulus 8, remainder 4);
+
+
+--
+-- Name: ordering_entry_ancestor_links_part_6; Type: TABLE ATTACH; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.ordering_entry_ancestor_links ATTACH PARTITION public.ordering_entry_ancestor_links_part_6 FOR VALUES WITH (modulus 8, remainder 5);
+
+
+--
+-- Name: ordering_entry_ancestor_links_part_7; Type: TABLE ATTACH; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.ordering_entry_ancestor_links ATTACH PARTITION public.ordering_entry_ancestor_links_part_7 FOR VALUES WITH (modulus 8, remainder 6);
+
+
+--
+-- Name: ordering_entry_ancestor_links_part_8; Type: TABLE ATTACH; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.ordering_entry_ancestor_links ATTACH PARTITION public.ordering_entry_ancestor_links_part_8 FOR VALUES WITH (modulus 8, remainder 7);
+
+
+--
+-- Name: ordering_entry_sibling_links_part_1; Type: TABLE ATTACH; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.ordering_entry_sibling_links ATTACH PARTITION public.ordering_entry_sibling_links_part_1 FOR VALUES WITH (modulus 8, remainder 0);
+
+
+--
+-- Name: ordering_entry_sibling_links_part_2; Type: TABLE ATTACH; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.ordering_entry_sibling_links ATTACH PARTITION public.ordering_entry_sibling_links_part_2 FOR VALUES WITH (modulus 8, remainder 1);
+
+
+--
+-- Name: ordering_entry_sibling_links_part_3; Type: TABLE ATTACH; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.ordering_entry_sibling_links ATTACH PARTITION public.ordering_entry_sibling_links_part_3 FOR VALUES WITH (modulus 8, remainder 2);
+
+
+--
+-- Name: ordering_entry_sibling_links_part_4; Type: TABLE ATTACH; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.ordering_entry_sibling_links ATTACH PARTITION public.ordering_entry_sibling_links_part_4 FOR VALUES WITH (modulus 8, remainder 3);
+
+
+--
+-- Name: ordering_entry_sibling_links_part_5; Type: TABLE ATTACH; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.ordering_entry_sibling_links ATTACH PARTITION public.ordering_entry_sibling_links_part_5 FOR VALUES WITH (modulus 8, remainder 4);
+
+
+--
+-- Name: ordering_entry_sibling_links_part_6; Type: TABLE ATTACH; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.ordering_entry_sibling_links ATTACH PARTITION public.ordering_entry_sibling_links_part_6 FOR VALUES WITH (modulus 8, remainder 5);
+
+
+--
+-- Name: ordering_entry_sibling_links_part_7; Type: TABLE ATTACH; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.ordering_entry_sibling_links ATTACH PARTITION public.ordering_entry_sibling_links_part_7 FOR VALUES WITH (modulus 8, remainder 6);
+
+
+--
+-- Name: ordering_entry_sibling_links_part_8; Type: TABLE ATTACH; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.ordering_entry_sibling_links ATTACH PARTITION public.ordering_entry_sibling_links_part_8 FOR VALUES WITH (modulus 8, remainder 7);
+
+
+--
 -- Name: access_grants access_grants_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -5461,6 +5700,46 @@ ALTER TABLE ONLY public.fake_visitors
 
 ALTER TABLE ONLY public.global_configurations
     ADD CONSTRAINT global_configurations_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: good_job_batches good_job_batches_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.good_job_batches
+    ADD CONSTRAINT good_job_batches_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: good_job_executions good_job_executions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.good_job_executions
+    ADD CONSTRAINT good_job_executions_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: good_job_processes good_job_processes_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.good_job_processes
+    ADD CONSTRAINT good_job_processes_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: good_job_settings good_job_settings_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.good_job_settings
+    ADD CONSTRAINT good_job_settings_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: good_jobs good_jobs_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.good_jobs
+    ADD CONSTRAINT good_jobs_pkey PRIMARY KEY (id);
 
 
 --
@@ -6059,7 +6338,7 @@ CREATE INDEX harvest_entity_desc_idx ON public.harvest_entity_hierarchies USING 
 -- Name: index_access_grants_on_auth_path; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_access_grants_on_auth_path ON public.access_grants USING gist (auth_path public.gist_ltree_ops (siglen='1024'));
+CREATE INDEX index_access_grants_on_auth_path ON public.access_grants USING gist (auth_path);
 
 
 --
@@ -6936,8 +7215,6 @@ CREATE UNIQUE INDEX index_entity_visibilities_on_entity ON public.entity_visibil
 
 CREATE INDEX index_entity_visibilities_visibility_coverage ON public.entity_visibilities USING gist (visibility, visibility_range, entity_type, entity_id);
 
-ALTER TABLE public.entity_visibilities CLUSTER ON index_entity_visibilities_visibility_coverage;
-
 
 --
 -- Name: index_eop_boolean; Type: INDEX; Schema: public; Owner: -
@@ -7105,6 +7382,104 @@ CREATE INDEX index_fake_visitors_on_user_id ON public.fake_visitors USING btree 
 --
 
 CREATE UNIQUE INDEX index_global_configurations_singleton_guard ON public.global_configurations USING btree (guard);
+
+
+--
+-- Name: index_good_job_executions_on_active_job_id_and_created_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_good_job_executions_on_active_job_id_and_created_at ON public.good_job_executions USING btree (active_job_id, created_at);
+
+
+--
+-- Name: index_good_job_jobs_for_candidate_lookup; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_good_job_jobs_for_candidate_lookup ON public.good_jobs USING btree (priority, created_at) WHERE (finished_at IS NULL);
+
+
+--
+-- Name: index_good_job_settings_on_key; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_good_job_settings_on_key ON public.good_job_settings USING btree (key);
+
+
+--
+-- Name: index_good_jobs_jobs_on_finished_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_good_jobs_jobs_on_finished_at ON public.good_jobs USING btree (finished_at) WHERE ((retried_good_job_id IS NULL) AND (finished_at IS NOT NULL));
+
+
+--
+-- Name: index_good_jobs_jobs_on_priority_created_at_when_unfinished; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_good_jobs_jobs_on_priority_created_at_when_unfinished ON public.good_jobs USING btree (priority DESC NULLS LAST, created_at) WHERE (finished_at IS NULL);
+
+
+--
+-- Name: index_good_jobs_on_active_job_id_and_created_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_good_jobs_on_active_job_id_and_created_at ON public.good_jobs USING btree (active_job_id, created_at);
+
+
+--
+-- Name: index_good_jobs_on_batch_callback_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_good_jobs_on_batch_callback_id ON public.good_jobs USING btree (batch_callback_id) WHERE (batch_callback_id IS NOT NULL);
+
+
+--
+-- Name: index_good_jobs_on_batch_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_good_jobs_on_batch_id ON public.good_jobs USING btree (batch_id) WHERE (batch_id IS NOT NULL);
+
+
+--
+-- Name: index_good_jobs_on_concurrency_key_when_unfinished; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_good_jobs_on_concurrency_key_when_unfinished ON public.good_jobs USING btree (concurrency_key) WHERE (finished_at IS NULL);
+
+
+--
+-- Name: index_good_jobs_on_cron_key_and_created_at_cond; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_good_jobs_on_cron_key_and_created_at_cond ON public.good_jobs USING btree (cron_key, created_at) WHERE (cron_key IS NOT NULL);
+
+
+--
+-- Name: index_good_jobs_on_cron_key_and_cron_at_cond; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_good_jobs_on_cron_key_and_cron_at_cond ON public.good_jobs USING btree (cron_key, cron_at) WHERE (cron_key IS NOT NULL);
+
+
+--
+-- Name: index_good_jobs_on_labels; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_good_jobs_on_labels ON public.good_jobs USING gin (labels) WHERE (labels IS NOT NULL);
+
+
+--
+-- Name: index_good_jobs_on_queue_name_and_scheduled_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_good_jobs_on_queue_name_and_scheduled_at ON public.good_jobs USING btree (queue_name, scheduled_at) WHERE (finished_at IS NULL);
+
+
+--
+-- Name: index_good_jobs_on_scheduled_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_good_jobs_on_scheduled_at ON public.good_jobs USING btree (scheduled_at) WHERE (finished_at IS NULL);
 
 
 --
@@ -8917,7 +9292,7 @@ CREATE UNIQUE INDEX ordering_entry_counts_pkey ON public.ordering_entry_counts U
 -- Name: role_permissions_context; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX role_permissions_context ON public.role_permissions USING btree (role_id, permission_id, inferred, action, inferring_scopes);
+CREATE INDEX role_permissions_context ON public.role_permissions USING btree (role_id, permission_id, inferred, inferring_scopes);
 
 
 --
@@ -10861,6 +11236,17 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20220915020155'),
 ('20220915084147'),
 ('20221012160517'),
-('20221012175221');
+('20221012175221'),
+('20240223144805'),
+('20240322084252'),
+('20240322084253'),
+('20240322084254'),
+('20240322084255'),
+('20240322084256'),
+('20240322084257'),
+('20240322084258'),
+('20240322084259'),
+('20240322084260'),
+('20240322084261');
 
 

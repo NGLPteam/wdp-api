@@ -10,10 +10,10 @@ module Types
     end
 
     # @see HierarchicalEntity#entity_breadcrumbs
-    # @see Loaders::AssociationLoader
+    # @see Support::Loaders::AssociationLoader
     # @return [<EntityBreadcrumb>]
     def breadcrumbs
-      Loaders::AssociationLoader.for(object.class, :entity_breadcrumbs).load(object)
+      Support::Loaders::AssociationLoader.for(object.class, :entity_breadcrumbs).load(object)
     end
   end
 end

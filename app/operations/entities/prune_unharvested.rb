@@ -7,7 +7,7 @@ module Entities
     # @param [HierarchicalEntity, nil] source
     # @return [Dry::Monads::Success(Integer)] the number pruned
     def call(schema, source: nil)
-      pruner = Entities::OrphanPruner.new unharvested: true, schema: schema, source: source
+      pruner = Entities::OrphanPruner.new(unharvested: true, schema:, source:)
 
       pruner.call
     end

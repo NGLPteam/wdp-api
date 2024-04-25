@@ -33,13 +33,13 @@ module Searching
     # @see Entities::VisibilityRestrictor
     # @return [ActiveRecord::Relation<Entity>]
     def filter_by_visibility(relation)
-      Entities::VisibilityRestrictor.new(user: user, visibility: visibility, relation: relation).call
+      Entities::VisibilityRestrictor.new(user:, visibility:, relation:).call
     end
 
     def filter_by_depth(relation)
       return relation.all unless max_depth
 
-      relation.by_max_relative_depth(max_depth, origin_depth: origin_depth)
+      relation.by_max_relative_depth(max_depth, origin_depth:)
     end
   end
 end

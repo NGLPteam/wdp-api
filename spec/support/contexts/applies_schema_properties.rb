@@ -7,7 +7,7 @@ RSpec.shared_context "applies schema properties" do
   end
 
   let(:mutation_input) do
-    { entity_id: entity_id, property_values: property_values }
+    { entity_id:, property_values: }
   end
 
   let(:graphql_variables) { { input: mutation_input } }

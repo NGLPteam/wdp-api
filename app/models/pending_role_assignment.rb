@@ -12,19 +12,17 @@ class PendingRoleAssignment < ApplicationRecord
   belongs_to_readonly :role
   belongs_to_readonly :subject, polymorphic: true
 
-  scope :for_subject, ->(subject) { where(subject: subject) }
+  scope :for_subject, ->(subject) { where(subject:) }
   scope :for_possible_subject, ->(subject) { for_subject(subject) if subject.present? }
 
   scope :to_assign, -> { preload(:accessible, :role, :subject) }
 
   # @see Access::Grant#call
   # @return [Hash]
-  def to_grant
-    options = {
+  def to_grant_options
+    {
       to: subject,
       on: accessible
     }
-
-    return [role, options]
   end
 end

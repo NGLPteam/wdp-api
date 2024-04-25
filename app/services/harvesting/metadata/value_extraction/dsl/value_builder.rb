@@ -23,31 +23,31 @@ module Harvesting
             option :type, Type, default: proc { Harvesting::Types::Any }
           end
 
-          def initialize(*)
+          def initialize(...)
             super
 
             @candidates = []
             @dependencies = ::Set.new
             @options = {
               dependencies: @dependencies,
-              require_match: require_match,
+              require_match:,
               set_id: set_identifier,
-              type: type
+              type:
             }
           end
 
           # Build a value with a fluent DSL.
           #
           # @return [Harvesting::Metadata::ValueExtraction::Value]
-          def build(&block)
+          def build(&)
             provide({ value: self }, overridable: true) do
-              instance_eval(&block)
+              instance_eval(&)
             end
 
             Harvesting::Metadata::ValueExtraction::Value.new(
               identifier,
               @candidates,
-              @options
+              **@options
             )
           end
 
@@ -59,8 +59,8 @@ module Harvesting
           end
 
           # @return [void]
-          def candidate(**options, &block)
-            candidates = Harvesting::Metadata::ValueExtraction::DSL::CandidateBuilder.new(**options).build(&block)
+          def candidate(**options, &)
+            candidates = Harvesting::Metadata::ValueExtraction::DSL::CandidateBuilder.new(**options).build(&)
 
             @candidates += candidates
           end
@@ -90,41 +90,41 @@ module Harvesting
             @options[:type] = Type[type]
           end
 
-          def attribute(*names, **options, &block)
+          def attribute(*names, **options, &)
             candidate(**options) do
               attribute(*names)
 
-              instance_eval(&block) if block_given?
+              instance_eval(&) if block_given?
             end
           end
 
           # Set up XPath candidates with an optional block.
           #
           # @param [<String>] queries
-          def xpath(*queries, **options, &block)
+          def xpath(*queries, **options, &)
             candidate(**options) do
               xpath(*queries)
 
-              instance_eval(&block) if block_given?
+              instance_eval(&) if block_given?
             end
           end
 
           # Set up an array of XPath candidates with an optional block.
           #
           # @param [<String>] queries
-          def xpath_list(*queries, **options, &block)
+          def xpath_list(*queries, **options, &)
             candidate(**options) do
               xpath_list(*queries)
 
-              instance_eval(&block) if block_given?
+              instance_eval(&) if block_given?
             end
           end
 
-          def from_value(path, **options, &block)
+          def from_value(path, **options, &)
             candidate(**options) do
               from_value(path)
 
-              instance_eval(&block) if block_given?
+              instance_eval(&) if block_given?
             end
           end
 

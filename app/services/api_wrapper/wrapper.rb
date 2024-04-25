@@ -20,7 +20,7 @@ module APIWrapper
 
     def build_context
       {
-        token: token,
+        token:,
       }
     end
 

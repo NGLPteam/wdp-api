@@ -7,7 +7,7 @@ module Schemas
       #
       # @api private
       class ByIsLink < Base
-        def attributes_for(*)
+        def attributes_for(...)
           cached_attributes
         end
 

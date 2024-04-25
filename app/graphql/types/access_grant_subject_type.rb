@@ -28,12 +28,12 @@ module Types
 
     # @return [Promise<Role>]
     def assignable_roles
-      Loaders::AssociationLoader.for(object.class, :assignable_roles).load(object)
+      Support::Loaders::AssociationLoader.for(object.class, :assignable_roles).load(object)
     end
 
     # @return [Promise(Role), Promise(nil)]
     def primary_role
-      Loaders::AssociationLoader.for(object.class, :primary_role).load(object)
+      Support::Loaders::AssociationLoader.for(object.class, :primary_role).load(object)
     end
   end
 end

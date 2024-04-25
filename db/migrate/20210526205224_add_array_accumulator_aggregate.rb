@@ -19,7 +19,7 @@ class AddArrayAccumulatorAggregate < ActiveRecord::Migration[6.1]
     SELECT jsonb_set_rec($1, to_jsonb(jsonb_extract_boolean($1, $3) OR $2), $3);
     $$ LANGUAGE #{lang} IMMUTABLE;
 
-    CREATE FUNCTION array_distinct(anyarray) RETURNS anyarray AS $$
+    CREATE FUNCTION array_distinct(anycompatiblearray) RETURNS anycompatiblearray AS $$
     SELECT array_agg(DISTINCT x) FILTER (WHERE x IS NOT NULL) FROM unnest($1) t(x);
     $$ LANGUAGE #{lang} IMMUTABLE;
 
@@ -35,15 +35,15 @@ class AddArrayAccumulatorAggregate < ActiveRecord::Migration[6.1]
       initcond = '{}'
     );
 
-    CREATE AGGREGATE array_accum(anyarray) (
+    CREATE AGGREGATE array_accum(anycompatiblearray) (
       sfunc     = array_cat,
-      stype     = anyarray,
+      stype     = anycompatiblearray,
       initcond  = '{}'
     );
 
-    CREATE AGGREGATE array_accum_distinct(anyarray) (
+    CREATE AGGREGATE array_accum_distinct(anycompatiblearray) (
       sfunc     = array_cat,
-      stype     = anyarray,
+      stype     = anycompatiblearray,
       finalfunc = array_distinct,
       initcond  = '{}'
     );
@@ -81,13 +81,13 @@ class AddArrayAccumulatorAggregate < ActiveRecord::Migration[6.1]
     DROP AGGREGATE jsonb_auth_path(ltree, boolean);
     DROP FUNCTION _jsonb_auth_path_final(jsonb_auth_path_state[]);
     DROP FUNCTION _jsonb_auth_path_acc(jsonb_auth_path_state[], ltree, boolean);
-    DROP AGGREGATE array_accum_distinct(anyarray);
-    DROP AGGREGATE array_accum(anyarray);
+    DROP AGGREGATE array_accum_distinct(anycompatiblearray);
+    DROP AGGREGATE array_accum(anycompatiblearray);
     DROP AGGREGATE jsonb_set_agg(jsonb, text[]);
     DROP AGGREGATE jsonb_bool_or(boolean, text[]);
     DROP FUNCTION jsonb_bool_or_rec(jsonb, boolean, text[]);
     DROP FUNCTION jsonb_extract_boolean(jsonb, text[]);
-    DROP FUNCTION array_distinct(anyarray);
+    DROP FUNCTION array_distinct(anycompatiblearray);
     DROP FUNCTION jsonb_set_rec(jsonb, jsonb, text[]);
     DROP TYPE jsonb_auth_path_state;
     SQL

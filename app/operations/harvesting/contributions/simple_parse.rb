@@ -7,7 +7,7 @@ module Harvesting
     # @see Harvesting::Contributions::Proxy
     class SimpleParse
       include Dry::Monads[:do, :result]
-      include WDPAPI::Deps[
+      include MeruAPI::Deps[
         parse_name_to_properties: "contributors.parse_name_to_properties",
       ]
 
@@ -19,14 +19,14 @@ module Harvesting
 
         contributor = {
           kind: contributor_kind,
-          attributes: attributes,
-          properties: properties,
+          attributes:,
+          properties:,
         }
 
         contribution = {
-          kind: kind,
-          metadata: metadata,
-          contributor: contributor,
+          kind:,
+          metadata:,
+          contributor:,
         }
 
         proxy = Harvesting::Contributions::Proxy.new contribution

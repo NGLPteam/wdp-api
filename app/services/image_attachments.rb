@@ -17,7 +17,7 @@ module ImageAttachments
   namespace :images do
     register :sizes, memoize: true do
       Constants::IMAGE_SIZES.each_with_object({}) do |(size, (width, height)), h|
-        h[size] = ImageAttachments::Size.new name: size, width: width, height: height
+        h[size] = ImageAttachments::Size.new(name: size, width:, height:)
       end.freeze
     end
   end
@@ -25,7 +25,7 @@ module ImageAttachments
   namespace :site_logos do
     register :sizes, memoize: true do
       Constants::SITE_LOGO_SIZES.each_with_object({}) do |(size, (width, height)), h|
-        h[size] = ImageAttachments::Size.new name: size, width: width, height: height
+        h[size] = ImageAttachments::Size.new(name: size, width:, height:)
       end.freeze
     end
   end
@@ -80,12 +80,12 @@ module ImageAttachments
     # @see #each_site_logo_size
     # @param [ImageAttachments::Types::Scope] scope
     # @return [void]
-    def each_scoped_size(scope, &block)
+    def each_scoped_size(scope, &)
       case scope
       when :image
-        each_image_size(&block)
+        each_image_size(&)
       when :site_logo
-        each_site_logo_size(&block)
+        each_site_logo_size(&)
       else
         raise "Unknown scope: #{scope.inspect}"
       end

@@ -20,14 +20,14 @@ RSpec.shared_examples_for "a void operation job" do |operation_path|
 
   around do |example|
     RSpec::Mocks.with_temporary_scope do
-      WDPAPI::Container.stub(operation_path, operation) do
+      Common::Container.stub(operation_path, operation) do
         example.run
       end
     end
   end
 
   after do
-    WDPAPI::Container.unstub operation_path
+    Common::Container.unstub operation_path
   end
 
   def expect_running_the_job

@@ -11,7 +11,7 @@ module Harvesting
         class XPathList < Harvesting::Metadata::ValueExtraction::Accessor
           include Dry::Effects.Resolve(:namespaces)
 
-          param :query, Harvesting::Types::String.constrained(present: true)
+          param :query, Harvesting::Types::String.constrained(rails_present: true)
 
           source_type Harvesting::Types::Interface(:at_xpath)
 

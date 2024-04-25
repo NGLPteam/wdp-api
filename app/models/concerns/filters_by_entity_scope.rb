@@ -6,7 +6,7 @@ module FiltersByEntityScope
   extend ActiveSupport::Concern
 
   # A pattern for matching "all" scopes.
-  ALL = /\Aall\z/.freeze
+  ALL = /\Aall\z/
 
   # A collection of lquery specifiers for different levels of
   # @see https://www.postgresql.org/docs/13/ltree.html#id-1.11.7.30.5 `lquery`

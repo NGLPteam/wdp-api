@@ -5,16 +5,16 @@ module Entities
   class PopulateMissingOrderingsJob < ApplicationJob
     include JobIteration::Iteration
 
-    unique :until_and_while_executing, lock_ttl: 3.hours, on_conflict: :log
-
     queue_as :maintenance
+
+    unique_job! by: :job
 
     # @param [String] cursor
     # @return [void]
     def build_enumerator(cursor:)
       enumerator_builder.active_record_on_records(
         Entity.real.with_missing_orderings,
-        cursor: cursor,
+        cursor:,
       )
     end
 

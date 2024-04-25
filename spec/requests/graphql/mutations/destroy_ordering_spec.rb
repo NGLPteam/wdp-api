@@ -17,7 +17,7 @@ RSpec.describe Mutations::DestroyOrdering, type: :request, graphql: :mutation do
 
     let!(:schema_version) { FactoryBot.create :schema_version, :simple_collection }
 
-    let!(:collection) { FactoryBot.create(:collection, schema_version: schema_version) }
+    let!(:collection) { FactoryBot.create(:collection, schema_version:) }
 
     let!(:ordering) { collection.ordering!("items") }
 

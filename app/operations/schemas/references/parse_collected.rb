@@ -12,12 +12,12 @@ module Schemas
     # Given a single (or `nil`) input, it will always return an array.
     #
     # @see SchematicCollectedReference
-    # @see Models::Types::GlobalID
+    # @see Support::Models::Types::GlobalID
     # @see RelayNode::ObjectFromId
     class ParseCollected
       include Dry::Monads[:result]
       include Dry::Matcher.for(:call, with: Dry::Matcher::ResultMatcher)
-      include WDPAPI::Deps[
+      include Support::Deps[
         locate_many: "models.locate_many",
         objects_from_ids: "relay_node.objects_from_ids"
       ]
@@ -30,11 +30,11 @@ module Schemas
         return Success(values) if values.empty?
 
         case values
-        when Models::Types::GlobalIDList
+        when Support::Models::Types::GlobalIDList
           locate_many.call values
-        when RelayNode::Types::OpaqueIDList
+        when Support::RelayNode::Types::OpaqueIDList
           objects_from_ids.call values
-        when Models::Types::ModelList
+        when Support::Models::Types::ModelList
           Success values
         else
           Failure()

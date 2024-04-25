@@ -9,7 +9,7 @@ RSpec.describe Community, type: :model do
     specify "creating a community assigns an admin role to all existing admins" do
       expect do
         FactoryBot.create :community
-      end.to change(AccessGrant, :count).by(1).and change { administrator.access_grants.admin.count }.by(1)
+      end.to change(AccessGrant.where(user: administrator), :count).by(1).and change { administrator.access_grants.admin.count }.by(1)
     end
   end
 end

@@ -109,10 +109,10 @@ module Schemas
         updated_sibling_count = yield update_siblings! ordering
 
         response = {
-          deleted_count: deleted_count,
-          updated_count: updated_count,
-          updated_ancestor_count: updated_ancestor_count,
-          updated_sibling_count: updated_sibling_count,
+          deleted_count:,
+          updated_count:,
+          updated_ancestor_count:,
+          updated_sibling_count:,
         }
 
         Success response

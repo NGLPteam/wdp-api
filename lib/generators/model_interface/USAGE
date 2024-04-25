@@ -1,0 +1,13 @@
+Description:
+    Generate GraphQL interfaces for a given model, such as a top-level collection, getter by slug, and resolver.
+
+Example:
+    bin/rails generate model_interface SomeModel
+
+    This will create:
+        app/graphql/types/some_model_order_type.rb
+        app/graphql/types/some_model_type.rb
+        app/services/resolvers/ordered_as_some_model.rb
+        app/services/resolvers/some_model_resolver.rb
+        spec/requests/graphql/query/some_model_spec.rb
+        spec/requests/graphql/query/some_models_spec.rb

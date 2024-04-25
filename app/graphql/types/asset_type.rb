@@ -15,6 +15,7 @@ module Types
     field :kind, Types::AssetKindType, null: false
     field :file_size, Integer, null: false
     field :content_type, String, null: false
+    field :downloadUrl, String, null: true, method: :download_url, deprecation_reason: "Use downloadURL instead"
     field :download_url, String, null: true
 
     image_attachment_field :preview

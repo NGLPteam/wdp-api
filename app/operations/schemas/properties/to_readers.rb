@@ -9,7 +9,7 @@ module Schemas
     # @see Schemas::Properties::ToReader
     class ToReaders
       include Dry::Monads[:do, :list, :result]
-      include WDPAPI::Deps[
+      include MeruAPI::Deps[
         extract: "schemas.properties.extract",
         to_context: "schemas.properties.to_context",
         to_reader: "schemas.properties.to_reader",
@@ -24,7 +24,7 @@ module Schemas
 
         options[:context] = yield to_context.(source, existing: context)
 
-        readers = yield extract_and_convert source, options
+        readers = yield extract_and_convert source, **options
 
         Success readers.to_a
       end
@@ -32,11 +32,11 @@ module Schemas
       private
 
       # @return [Dry::Monads::Success(Dry::Monads::List::Result<Schemas::Properties::Reader, Schemas::Properties::GroupReader>)]
-      def extract_and_convert(source, options)
+      def extract_and_convert(source, **options)
         properties = extract.(source)
 
         results = properties.map do |property|
-          to_reader.call property, options
+          to_reader.call property, **options
         end
 
         List::Result.coerce(results).traverse

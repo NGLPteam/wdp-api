@@ -34,6 +34,8 @@ class AdjustEntityInstancesToUseVariableDateOperators < ActiveRecord::Migration[
 
     TABLES.each do |table|
       COLUMNS.each do |column|
+        remove_column table, :"#{column}_precision", if_exists: true
+        remove_column table, :"#{column}_range", if_exists: true
         remove_column table, column
       end
     end

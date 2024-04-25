@@ -3,9 +3,7 @@
 Rails.application.routes.draw do
   mount Middleware::TusUploader, at: "/files"
 
-  mount Middleware::PGHeroFrontend, at: "/sekrit/pghero"
-
-  mount Middleware::SidekiqFrontend, at: "/sekrit/sidekiq"
+  mount GoodJob::Engine => "/sekrit/good_job"
 
   resources :downloads, only: %i[show]
 

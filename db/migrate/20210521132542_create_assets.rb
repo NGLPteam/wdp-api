@@ -6,7 +6,7 @@ class CreateAssets < ActiveRecord::Migration[6.1]
       t.references :attachable, null: false, polymorphic: true, type: :uuid
       t.references :parent, null: true, type: :uuid, foreign_key: { to_table: :assets, on_delete: :restrict }
 
-      t.enum :kind, as: "asset_kind", null: false, default: "unknown"
+      t.enum :kind, enum_type: "asset_kind", null: false, default: "unknown"
 
       t.integer :position
 

@@ -9,7 +9,7 @@ module Communities
     # @param [String] title
     # @return [Dry::Monads::Success(Community)]
     def call(title)
-      community = Community.where(title: title).first_or_initialize
+      community = Community.where(title:).first_or_initialize
 
       yield community if block_given?
 

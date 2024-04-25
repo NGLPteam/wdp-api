@@ -24,7 +24,7 @@ module Harvesting
 
           delegate :identifier, to: :value, prefix: true
 
-          def initialize(*)
+          def initialize(...)
             super
 
             @accessors = []
@@ -38,9 +38,9 @@ module Harvesting
           end
 
           # @return [<Harvesting::Metadata::ValueExtraction::Candidate>]
-          def build(&block)
+          def build(&)
             provide(candidate: self) do
-              instance_eval(&block)
+              instance_eval(&)
             end
 
             raise "must provide at least one accessor" if @accessors.none?
@@ -50,7 +50,7 @@ module Harvesting
             @accessors.product(@pipelines).map do |(accessor, pipeline)|
               Harvesting::Metadata::ValueExtraction::Candidate.new(
                 accessor, pipeline,
-                @shared_options
+                **@shared_options
               )
             end
           end
@@ -99,8 +99,8 @@ module Harvesting
             value.depends_on(*deps)
           end
 
-          def pipeline!(&block)
-            pipe = Harvesting::Metadata::ValueExtraction::Pipeline.make!(&block)
+          def pipeline!(&)
+            pipe = Harvesting::Metadata::ValueExtraction::Pipeline.make!(&)
 
             @pipelines.push pipe
           end

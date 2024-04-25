@@ -17,7 +17,7 @@ module Mutations
 
         authorize community, :create?
 
-        create_entity! community, args
+        create_entity! community, **args
       end
     end
   end

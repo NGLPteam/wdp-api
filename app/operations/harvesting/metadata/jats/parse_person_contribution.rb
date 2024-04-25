@@ -78,12 +78,12 @@ module Harvesting
               contributor = {
                 kind: :person,
                 attributes: {
-                  email: email,
+                  email:,
                 },
                 properties: {
-                  given_name: given_name,
-                  family_name: family_name,
-                  affiliation: affiliation,
+                  given_name:,
+                  family_name:,
+                  affiliation:,
                 }
               }
 
@@ -91,10 +91,10 @@ module Harvesting
                 kind: role,
                 metadata: {
                   "rid" => rid,
-                  affiliation: affiliation,
-                  corresp: corresp,
+                  affiliation:,
+                  corresp:,
                 },
-                contributor: contributor
+                contributor:
               }
             end
           end

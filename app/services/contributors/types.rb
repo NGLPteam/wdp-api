@@ -6,7 +6,7 @@ module Contributors
 
     extend Shared::EnhancedTypes
 
-    ORCID_FORMAT = %r,\Ahttps://orcid.org/(?<identifier>\d{4}(?:-\d{4}){3})\z,.freeze
+    ORCID_FORMAT = %r,\Ahttps://orcid.org/(?<identifier>\d{4}(?:-\d{4}){3})\z,
 
     ORCID = String.constrained(format: ORCID_FORMAT)
 
@@ -18,7 +18,7 @@ module Contributors
     # @see Types::SimpleOrderType
     LookupOrder = String.enum("RECENT", "OLDEST").fallback("RECENT").default("RECENT")
 
-    PresentString = Coercible::String.constrained(present: true)
+    PresentString = Coercible::String.constrained(rails_present: true)
 
     StrippedPresentString = String.constructor do |value|
       PresentString.try(value).to_monad.fmap(&:strip).value_or(value)
@@ -31,7 +31,7 @@ module Contributors
       when PresentString
         string = PresentString[value]
 
-        WDPAPI::Container["utility.parse_name"].(string).value_or(string)
+        MeruAPI::Container["utility.parse_name"].(string).value_or(string)
       else
         value
       end

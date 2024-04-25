@@ -7,7 +7,7 @@ module HasUniqueDOI
   extend ActiveSupport::Concern
 
   included do
-    scope :by_doi, ->(doi) { where(doi: doi) }
+    scope :by_doi, ->(doi) { where(doi:) }
 
     before_validation :nullify_blank_doi!
   end

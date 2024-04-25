@@ -9,7 +9,7 @@ RSpec.describe AccessGrant, type: :model do
 
   it "creates granted permissions" do
     expect do
-      FactoryBot.create :access_grant, accessible: accessible, role: role, subject: user
+      FactoryBot.create :access_grant, accessible:, role:, subject: user
     end.to change(GrantedPermission, :count).by_at_least(1)
   end
 end

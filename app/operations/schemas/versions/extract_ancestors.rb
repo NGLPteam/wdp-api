@@ -4,7 +4,7 @@ module Schemas
   module Versions
     class ExtractAncestors
       include Dry::Monads[:do, :result]
-      include WDPAPI::Deps[find_matching_versions: "schemas.associations.find_matching_versions"]
+      include MeruAPI::Deps[find_matching_versions: "schemas.associations.find_matching_versions"]
 
       # @param [SchemaVersion] schema_version
       # @return [{ String => Integer }] hash of association names and matched version counts

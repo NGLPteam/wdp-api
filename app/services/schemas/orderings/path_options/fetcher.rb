@@ -9,7 +9,7 @@ module Schemas
           option :schemas, Schemas::Orderings::Types::OrderingFilters.optional, default: proc { [] }
         end
 
-        include WDPAPI::Deps[
+        include MeruAPI::Deps[
           find_all_matching_versions: "schemas.associations.find_all_matching_versions",
         ]
 

@@ -72,7 +72,7 @@ module Schemas
 
         rows = mapping.flat_map do |(name, targets)|
           targets.map do |target|
-            { source_id: source.id, target_id: target.id, name: name }
+            { source_id: source.id, target_id: target.id, name: }
           end
         end
 

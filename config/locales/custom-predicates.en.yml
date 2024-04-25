@@ -1,6 +1,8 @@
 # custom predicates implemented for dry-logic
 en:
   custom_predicates: &custom
+    email?: "must be an email"
+
     global_id?: "must be a GlobalID"
 
     http_uri?: "must be a valid HTTP or HTTPS url"
@@ -17,12 +19,17 @@ en:
 
     opaque_id?: "must be an opaque Relay Node ID"
 
+    rails_blank?: "must be blank"
+
+    rails_present?: "cannot be blank"
+
     schematic_collected_references?: "must resolve to an array of models"
 
     schematic_scalar_reference?: "must resolve to a model"
 
-    uri?: "must be a valid URI"
+    specific_model?: "must be a model of type %{model_name}"
 
+    uri?: "must be a valid URI"
 en:
   dry_schema:
     errors:

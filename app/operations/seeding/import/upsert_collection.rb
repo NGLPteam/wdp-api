@@ -5,7 +5,7 @@ module Seeding
     class UpsertCollection
       include MonadicPersistence
       include Dry::Monads[:result, :do]
-      include WDPAPI::Deps[
+      include MeruAPI::Deps[
         attach_image_property: "seeding.import.attach_image_property",
         fetch_schema: "seeding.import.fetch_schema",
         upsert_collection: "collections.upsert",
@@ -19,7 +19,7 @@ module Seeding
         schema_version = fetch_schema.(source.schema)
 
         collection = upsert_collection.with_schema(schema_version) do
-          yield upsert_collection.(source.identifier, title: source.title, parent: parent, properties: source.properties)
+          yield upsert_collection.(source.identifier, title: source.title, parent:, properties: source.properties)
         end
 
         source.images.each do |key, asset|

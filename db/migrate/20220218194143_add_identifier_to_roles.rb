@@ -1,7 +1,7 @@
 class AddIdentifierToRoles < ActiveRecord::Migration[6.1]
   def change
     change_table :roles do |t|
-      t.enum :identifier, as: "role_identifier", null: true
+      t.enum :identifier, enum_type: "role_identifier", null: true
       t.integer :custom_priority, null: true, limit: 2
 
       t.jsonb :global_access_control_list, null: false, default: {}
@@ -25,7 +25,7 @@ class AddIdentifierToRoles < ActiveRecord::Migration[6.1]
         add_index :roles, :system_slug, unique: true
 
         system_slugger = Role.ids.each_with_object(Arel::Nodes::Case.new(Role.arel_table[:id])) do |id, stmt|
-          slug = WDPAPI::Container["slugs.encode_id"].(id).value!
+          slug = MeruAPI::Container["slugs.encode_id"].(id).value!
 
           stmt.when(Arel::Nodes.build_quoted(id)).then(Arel::Nodes.build_quoted(slug))
         end.to_sql

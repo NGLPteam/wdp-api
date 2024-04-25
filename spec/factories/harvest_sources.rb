@@ -22,13 +22,13 @@ FactoryBot.define do
 
     mapping_options do
       {
-        link_identifiers_globally: link_identifiers_globally,
+        link_identifiers_globally:,
       }
     end
 
     read_options do
       {
-        max_records: max_records,
+        max_records:,
       }
     end
 

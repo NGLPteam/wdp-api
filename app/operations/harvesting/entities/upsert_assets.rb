@@ -12,7 +12,7 @@ module Harvesting
       include Dry::Effects::Handler.Resolve
       include Dry::Monads[:do, :result]
       include MonadicPersistence
-      include WDPAPI::Deps[
+      include MeruAPI::Deps[
         add_reference: "harvesting.cached_assets.reference",
         apply_properties: "schemas.instances.apply",
         attach_assets: "harvesting.entities.attach_assets",
@@ -60,7 +60,7 @@ module Harvesting
       # @param [HarvestEntity] harvest_entity
       # @return [Dry::Monads::Success(PropertyHash)] a hash of schema properties to assign
       def apply_assets!(harvest_entity)
-        provide harvest_entity: harvest_entity do
+        provide(harvest_entity:) do
           attach_assets.call harvest_entity.entity, harvest_entity.extracted_assets
         end
       end

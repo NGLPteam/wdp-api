@@ -5,7 +5,7 @@ module Mutations
     # @see Mutations::ClearInitialOrdering
     class ClearInitialOrdering
       include MutationOperations::Base
-      include WDPAPI::Deps[clear_initial: "schemas.instances.clear_initial_ordering"]
+      include MeruAPI::Deps[clear_initial: "schemas.instances.clear_initial_ordering"]
 
       use_contract! :clear_initial_ordering
 

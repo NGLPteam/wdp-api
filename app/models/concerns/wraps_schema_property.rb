@@ -10,12 +10,12 @@ module WrapsSchemaProperty
 
     attr_readonly :default_value
 
-    pg_enum! :kind, as: "schema_property_kind", _prefix: :with, _suffix: :kind
-    pg_enum! :type, as: "schema_property_type", _prefix: :with, _suffix: :type
+    pg_enum! :kind, as: "schema_property_kind", prefix: :with, suffix: :kind
+    pg_enum! :type, as: "schema_property_type", prefix: :with, suffix: :type
 
     scope :by_schema_definition, ->(definition) { where(schema_definition: definition) }
 
-    scope :by_path, ->(path) { where(path: path) }
+    scope :by_path, ->(path) { where(path:) }
 
     scope :orderable, -> { where(orderable: true) }
 

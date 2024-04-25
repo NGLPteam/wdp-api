@@ -5,7 +5,7 @@ module Harvesting
   class ReextractRecordJob < ApplicationJob
     queue_as :extraction
 
-    unique :until_and_while_executing, lock_ttl: 30.minutes, on_conflict: :log, runtime_lock_ttl: 30.minutes, on_runtime_conflict: :log
+    unique_job! by: :first_arg
 
     # @param [HarvestRecord] harvest_record
     # @return [void]

@@ -3,7 +3,7 @@ class CreateEntityOrderableProperties < ActiveRecord::Migration[6.1]
     create_table :entity_orderable_properties, id: :uuid do |t|
       t.references :entity, polymorphic: true, null: false, type: :uuid
       t.references :schema_version_property, null: false, foreign_key: { on_delete: :restrict }, type: :uuid
-      t.enum :type, as: "schema_property_type", null: false
+      t.enum :type, enum_type: "schema_property_type", null: false
       t.text :path, null: false
       t.bigint :fixed_position
       t.jsonb :raw_value
@@ -26,7 +26,7 @@ class CreateEntityOrderableProperties < ActiveRecord::Migration[6.1]
 
           change_table :entity_orderable_properties do |t|
             prop_type.indices.each do |(expr, options)|
-              t.index expr, options
+              t.index expr, **options
             end
           end
         end

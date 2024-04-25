@@ -6,8 +6,7 @@ module Schemas
     class RefreshJob < ApplicationJob
       queue_as :orderings
 
-      unique :until_and_while_executing, lock_ttl: 1.hour, runtime_lock_ttl: 1.minute, on_conflict: :log,
-        on_runtime_conflict: :log
+      unique_job! by: :first_arg
 
       # @param [Ordering] ordering
       # @return [void]

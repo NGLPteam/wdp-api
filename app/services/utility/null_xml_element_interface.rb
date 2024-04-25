@@ -17,14 +17,14 @@ module Utility
 
     attr_reader :document
 
-    def at_xpath(*)
+    def at_xpath(...)
       dup
     end
 
     alias at_css at_xpath
 
     # @return [Nokogiri::XML::NodeSet]
-    def xpath(*)
+    def xpath(...)
       Nokogiri::XML::NodeSet.new(document, [])
     end
 

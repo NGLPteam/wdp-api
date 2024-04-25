@@ -2,9 +2,7 @@
 
 module Types
   # A GraphQL input type for {Schemas::Orderings::RenderDefinition}.
-  class OrderingRenderDefinitionInputType < Types::BaseInputObject
-    include AutoHash
-
+  class OrderingRenderDefinitionInputType < Types::HashInputObject
     description <<~TEXT
     Describe how an ordering should render its entries.
     TEXT

@@ -10,7 +10,7 @@ RSpec.describe FullText::Normalizer, type: :operation do
     let(:lang) { nil }
     let(:content) { nil }
 
-    let(:reference) { { kind: kind, lang: lang, content: content } }
+    let(:reference) { { kind:, lang:, content: } }
 
     let(:input) { reference }
 
@@ -41,7 +41,7 @@ RSpec.describe FullText::Normalizer, type: :operation do
     let(:input) { content }
 
     it "turns it into a reference" do
-      expect_calling_with(input).to include_json kind: "text", content: content
+      expect_calling_with(input).to include_json(kind: "text", content:)
     end
   end
 end

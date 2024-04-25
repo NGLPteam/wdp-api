@@ -9,7 +9,7 @@ module Harvesting
       include Dry::Core::Equalizer.new(:format)
 
       include Dry::Monads[:result]
-      include WDPAPI::Deps[
+      include MeruAPI::Deps[
         augment_middleware: "harvesting.metadata.actions.augment_middleware",
         validate_raw_metadata: "harvesting.metadata.actions.validate_raw_metadata",
       ]

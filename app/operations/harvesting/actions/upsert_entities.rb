@@ -4,7 +4,7 @@ module Harvesting
   module Actions
     # Upsert a set of {HarvestEntity staged entities} from a {HarvestRecord}.
     class UpsertEntities < Harvesting::BaseAction
-      include WDPAPI::Deps[
+      include MeruAPI::Deps[
         prepare_entities: "harvesting.actions.prepare_entities_from_record",
         upsert_entities: "harvesting.records.upsert_entities",
       ]

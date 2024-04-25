@@ -6,7 +6,7 @@ module Harvesting
     #
     # For now, this is a thin wrapper around {Harvesting::Actions::UpsertAllEntities}.
     class ReprocessAttempt < Harvesting::BaseAction
-      include WDPAPI::Deps[
+      include MeruAPI::Deps[
         upsert_all_entities: "harvesting.actions.upsert_all_entities",
       ]
 
@@ -20,7 +20,7 @@ module Harvesting
       # @param [Boolean] reprepare
       # @return [Dry::Monads::Result]
       def perform(harvest_attempt, reprepare: true)
-        yield upsert_all_entities.call harvest_attempt, reprepare: reprepare
+        yield upsert_all_entities.call(harvest_attempt, reprepare:)
 
         return Success()
       end

@@ -9,9 +9,9 @@ module Schemas
     # @abstract
     class AbstractMapping
       extend Dry::Core::ClassAttributes
-      extend Memoist
 
       include Dry::Container::Mixin
+      include Dry::Core::Memoizable
       include Enumerable
 
       STATIC_ROOT = Rails.root.join("lib", "schemas")
@@ -24,10 +24,15 @@ module Schemas
       namespaced_versions false
       version_map_klass VersionMap
 
+      # @return [Pathname]
+      attr_reader :root
+
       alias identifiers keys
 
-      def initialize(*)
+      def initialize(...)
         super
+
+        @root = STATIC_ROOT.join self.class.root_namespace
 
         populate!
       end
@@ -54,10 +59,6 @@ module Schemas
         self.class.namespaced_versions
       end
 
-      memoize def root
-        STATIC_ROOT.join self.class.root_namespace
-      end
-
       # @api private
       # @return [(String, Schemas::Static::VersionMap)]
       def to_version_map(child, namespace: nil)
@@ -70,7 +71,7 @@ module Schemas
         child.glob("*.json") do |grandchild|
           version = grandchild.basename(".json").to_s
 
-          version_map.add! name, version, grandchild, namespace: namespace
+          version_map.add! name, version, grandchild, namespace:
         end
 
         return name, version_map

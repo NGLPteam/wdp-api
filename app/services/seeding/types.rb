@@ -16,13 +16,13 @@ module Seeding
     # @note This pattern supports only `namespace:identifier` usage.
     #
     # @see Schemas::Types::DeclarationPattern
-    SCHEMA_DECLARATION_PATTERN = /\A(?<namespace>[a-z_]+):(?<identifier>[a-z_0-9]+)\z/.freeze
+    SCHEMA_DECLARATION_PATTERN = /\A(?<namespace>[a-z_]+):(?<identifier>[a-z_0-9]+)\z/
 
     # The `namespace` portion of {SCHEMA_DECLARATION_PATTERN}
-    SCHEMA_NAMESPACE_PATTERN = /\A[a-z_]+\z/.freeze
+    SCHEMA_NAMESPACE_PATTERN = /\A[a-z_]+\z/
 
     # The `identifier` portion of {SCHEMA_DECLARATION_PATTERN}.
-    SCHEMA_IDENTIFIER_PATTERN = /\A[a-z_0-9]+\z/.freeze
+    SCHEMA_IDENTIFIER_PATTERN = /\A[a-z_0-9]+\z/
 
     CoercibleStringList = Coercible::Array.of(Coercible::String)
 

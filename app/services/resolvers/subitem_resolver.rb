@@ -2,10 +2,8 @@
 
 module Resolvers
   # A resolver for getting {Item}s below an {Item}.
-  class SubitemResolver < GraphQL::Schema::Resolver
-    include SearchObject.module(:graphql)
-
-    include Resolvers::PageBasedPagination
+  class SubitemResolver < AbstractResolver
+    include Resolvers::Enhancements::PageBasedPagination
     include Resolvers::OrderedAsEntity
     include Resolvers::Subtreelike
 

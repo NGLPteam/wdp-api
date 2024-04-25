@@ -5,8 +5,8 @@ RSpec.describe HarvestRecord, type: :model do
     let(:source_identifier) { "test_source" }
     let(:record_identifier) { "test_record" }
     let!(:harvest_source) { FactoryBot.create :harvest_source, identifier: source_identifier }
-    let!(:harvest_attempt) { FactoryBot.create :harvest_attempt, harvest_source: harvest_source }
-    let!(:harvest_record) { FactoryBot.create :harvest_record, harvest_attempt: harvest_attempt, identifier: record_identifier }
+    let!(:harvest_attempt) { FactoryBot.create :harvest_attempt, harvest_source: }
+    let!(:harvest_record) { FactoryBot.create :harvest_record, harvest_attempt:, identifier: record_identifier }
 
     describe ".fetch_for_source" do
       it "fetches an existing record" do

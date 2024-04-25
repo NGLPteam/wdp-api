@@ -3,7 +3,7 @@
 module Slugs
   class EncodeId
     include Dry::Monads[:do, :result]
-    include WDPAPI::Deps[:hashids, intify_uuid: "utility.intify_uuid"]
+    include MeruAPI::Deps[:hashids, intify_uuid: "utility.intify_uuid"]
 
     # @param [String] uuid
     # @return [Dry::Monads::Result(String)]

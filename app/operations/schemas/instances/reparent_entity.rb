@@ -16,7 +16,7 @@ module Schemas
     class ReparentEntity
       include Dry::Monads[:do, :result]
       include MonadicPersistence
-      include WDPAPI::Deps[
+      include MeruAPI::Deps[
         build_child_attributes: "schemas.edges.build_child_attributes",
       ]
 

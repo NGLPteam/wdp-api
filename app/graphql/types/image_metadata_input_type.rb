@@ -1,9 +1,7 @@
 # frozen_string_literal: true
 
 module Types
-  class ImageMetadataInputType < Types::BaseInputObject
-    include AutoHash
-
+  class ImageMetadataInputType < Types::HashInputObject
     description "Shared metadata for updating image attachments"
 
     argument :alt, String, required: false,

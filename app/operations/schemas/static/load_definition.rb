@@ -5,9 +5,9 @@ module Schemas
     class LoadDefinition
       include Dry::Monads[:do, :result]
       include MonadicPersistence
-      include WDPAPI::Deps[load_version: "schemas.static.load_version", parse: "schemas.parse_full_identifier", reorder_versions: "schemas.versions.reorder"]
+      include MeruAPI::Deps[load_version: "schemas.static.load_version", parse: "schemas.parse_full_identifier", reorder_versions: "schemas.versions.reorder"]
 
-      IDENTIFIER = /\A(?<namespace>[^.:]+)[.:](?<identifier>[^.:]+)\z/.freeze
+      IDENTIFIER = /\A(?<namespace>[^.:]+)[.:](?<identifier>[^.:]+)\z/
 
       # @param [String] identifier
       # @param [Schemas::Static::Definitions::VersionMap] versions

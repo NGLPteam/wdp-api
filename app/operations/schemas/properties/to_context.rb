@@ -8,7 +8,7 @@ module Schemas
     # @see Schemas::Versions::ReadPropertyContext
     class ToContext
       include Dry::Monads[:result]
-      include WDPAPI::Deps[
+      include MeruAPI::Deps[
         for_schema_instance: "schemas.instances.read_property_context",
         for_schema_version: "schemas.versions.read_property_context",
       ]

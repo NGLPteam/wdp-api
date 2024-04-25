@@ -3,10 +3,10 @@
 module Contributors
   class AttachItem
     include Dry::Monads[:result, :do]
-    include WDPAPI::Deps[count: "contributors.count_items"]
+    include MeruAPI::Deps[count: "contributors.count_items"]
 
     def call(contributor, item)
-      contribution = contributor.item_contributions.where(item: item).first_or_initialize
+      contribution = contributor.item_contributions.where(item:).first_or_initialize
 
       contribution.save!
 

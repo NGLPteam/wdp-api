@@ -24,7 +24,7 @@ RSpec.describe FullText::ExtractTextContent, type: :operation do
       <p>Some content</p><br />
       HTML
 
-      expect_calling_with(kind: "html", content: content).to eq "Some Title Some content"
+      expect_calling_with(kind: "html", content:).to eq "Some Title Some content"
     end
 
     it "returns nil when there is no text content" do
@@ -44,7 +44,7 @@ RSpec.describe FullText::ExtractTextContent, type: :operation do
       Some content
       MARKDOWN
 
-      expect_calling_with(kind: "markdown", content: content).to eq "Some Title Some content"
+      expect_calling_with(kind: "markdown", content:).to eq "Some Title Some content"
     end
 
     it "returns nil with empty content" do

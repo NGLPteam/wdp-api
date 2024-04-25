@@ -82,9 +82,7 @@ RSpec.describe Mutations::UpdateGlobalConfiguration, type: :request, graphql: :m
   }
   GRAPHQL
 
-  context "as an admin" do
-    let(:token) { token_helper.build_token has_global_admin: true }
-
+  as_an_admin_user do
     let!(:color) { "blue" }
     let!(:font) { "style2" }
     let!(:institution_name) { "Some Institution Name" }
@@ -110,16 +108,16 @@ RSpec.describe Mutations::UpdateGlobalConfiguration, type: :request, graphql: :m
 
     let_mutation_input!(:site) do
       {
-        installation_name: installation_name,
-        installation_home_page_copy: installation_home_page_copy,
+        installation_name:,
+        installation_home_page_copy:,
         logo_mode: site_logo_mode,
-        provider_name: provider_name,
-        footer: footer,
+        provider_name:,
+        footer:,
       }
     end
 
     let_mutation_input!(:theme) do
-      { color: color, font: font }
+      { color:, font: }
     end
 
     let!(:expected_footer) { footer }
@@ -219,7 +217,7 @@ RSpec.describe Mutations::UpdateGlobalConfiguration, type: :request, graphql: :m
 
     context "when omitting site but providing theme" do
       let(:mutation_input) do
-        { theme: theme }
+        { theme: }
       end
 
       let(:expected_institution) { GlobalConfiguration.fetch.institution.as_json }

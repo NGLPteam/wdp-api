@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require_relative "../token_helper"
-
 RSpec.shared_context "standard requests" do
   let(:token) { nil }
   let(:accept) { nil }
@@ -14,7 +12,7 @@ RSpec.shared_context "standard requests" do
   end
 
   # @abstract
-  def make_request!(*)
+  def make_request!(...)
     raise "Must define how to make the request here"
   end
 
@@ -31,7 +29,7 @@ RSpec.shared_context "standard requests" do
   def render_server_message(key, scope: "server_messages")
     include_json(
       errors: [
-        { message: server_message(key, scope: scope) }
+        { message: server_message(key, scope:) }
       ]
     )
   end

@@ -4,7 +4,7 @@ RSpec.describe Entities::ReprocessDerivativesJob, type: :job do
   include ActiveJob::TestHelper
 
   let!(:community) { FactoryBot.create :community }
-  let!(:collection) { FactoryBot.create :collection, community: community }
+  let!(:collection) { FactoryBot.create :collection, community: }
 
   it "enqueues the expected amount of subjobs for a community" do
     expect do
