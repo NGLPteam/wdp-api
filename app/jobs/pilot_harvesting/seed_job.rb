@@ -3,7 +3,7 @@
 module PilotHarvesting
   # @see PilotHarvesting::Seed
   class SeedJob < ApplicationJob
-    queue_as :default
+    queue_as :harvesting
 
     unique_job! by: :first_arg
 

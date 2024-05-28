@@ -2,7 +2,7 @@
 
 module System
   class CollectPgHeroSpaceStatsJob < ApplicationJob
-    queue_as :default
+    queue_as :maintenance
 
     # @return [void]
     def perform
