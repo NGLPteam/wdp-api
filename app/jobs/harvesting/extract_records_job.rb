@@ -5,7 +5,7 @@ module Harvesting
   class ExtractRecordsJob < ApplicationJob
     queue_as :extraction
 
-    unique_job! by: :all_args
+    # unique_job! by: :all_args
 
     # @param [HarvestAttempt] harvest_attempt
     # @param [String, nil] cursor
