@@ -3,6 +3,7 @@
 # A join model connecting a sorted {HierarchicalEntity entity} with an {Ordering}.
 class OrderingEntry < ApplicationRecord
   include EntityAdjacent
+  include TimestampScopes
 
   self.primary_key = %i[ordering_id id]
 

@@ -9,6 +9,7 @@
 class Ordering < ApplicationRecord
   include AssignsPolymorphicForeignKey
   include ReloadAfterSave
+  include TimestampScopes
 
   attr_readonly :constant, :disabled, :hidden, :identifier, :name
 

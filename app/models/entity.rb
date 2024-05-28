@@ -14,6 +14,7 @@ class Entity < ApplicationRecord
   include EntityReferent
   include ScopesForAuthPath
   include ScopesForEntityComposedText
+  include TimestampScopes
 
   belongs_to :entity, polymorphic: true
   belongs_to :hierarchical, polymorphic: true

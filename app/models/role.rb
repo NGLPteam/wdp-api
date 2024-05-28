@@ -2,6 +2,7 @@
 
 class Role < ApplicationRecord
   include HasEphemeralSystemSlug
+  include TimestampScopes
 
   pg_enum! :identifier, as: "role_identifier", prefix: :identified_as
   pg_enum! :kind, as: "role_kind", prefix: :for

@@ -5,6 +5,8 @@
 #
 # @subsystem Schema
 class SchemaDefinition < ApplicationRecord
+  include TimestampScopes
+
   # @!attribute [r] declaration
   # The combination of {#namespace} and {#identifier}.
   # @return [String]

@@ -3,6 +3,7 @@
 class AccessGrant < ApplicationRecord
   include AssignsPolymorphicForeignKey
   include ScopesForUser
+  include TimestampScopes
 
   belongs_to :accessible, polymorphic: true
   belongs_to :subject, polymorphic: true
