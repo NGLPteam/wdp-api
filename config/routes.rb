@@ -17,5 +17,7 @@ Rails.application.routes.draw do
 
   get "/ping", to: "status#ping"
 
+  get "/up", to: "status#ping", as: :health_check
+
   root to: "status#root"
 end
