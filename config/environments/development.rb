@@ -20,6 +20,13 @@ Rails.application.configure do
   # Run rails dev:cache to toggle caching.
   config.action_controller.perform_caching = false unless Rails.root.join("tmp", "caching-dev.txt").exist?
 
+  config.cache_store = :redis_cache_store, {
+    namespace: "rcache",
+    url: ENV["REDIS_URL"],
+    reconnect_attempts: 1,
+    ssl_params: { verify_mode: OpenSSL::SSL::VERIFY_NONE },
+  }
+
   # Don't care if the mailer can't send.
   config.action_mailer.raise_delivery_errors = false
 
