@@ -9,6 +9,8 @@
 # @see ReferencesNamedVariableDates
 # @see WritesNamedVariableDates
 class NamedVariableDate < ApplicationRecord
+  include TimestampScopes
+
   attr_readonly :actual_precision, :precision, :coverage, :normalized, :value
 
   belongs_to :entity, polymorphic: true, inverse_of: :named_variable_dates

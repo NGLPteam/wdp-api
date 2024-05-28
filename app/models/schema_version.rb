@@ -9,6 +9,7 @@
 class SchemaVersion < ApplicationRecord
   include Schemas::Properties::CompilesToSchema
   include ExposesSchemaProperties
+  include TimestampScopes
 
   # @!attribute [r] kind
   # @return ["community", "collection", "item"]

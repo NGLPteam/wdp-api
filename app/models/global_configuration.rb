@@ -8,6 +8,7 @@
 # @see SiteLogoUploader
 class GlobalConfiguration < ApplicationRecord
   include SiteLogoUploader::Attachment.new(:logo)
+  include TimestampScopes
 
   attribute :institution, Settings::Institution.to_type
   attribute :site, Settings::Site.to_type

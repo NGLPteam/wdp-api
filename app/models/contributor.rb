@@ -6,6 +6,7 @@ class Contributor < ApplicationRecord
   include ImageUploader::Attachment.new(:image)
   include SchematicReferent
   include ScopesForIdentifier
+  include TimestampScopes
 
   strip_attributes only: %i[email orcid url]
 

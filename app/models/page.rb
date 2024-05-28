@@ -4,6 +4,7 @@
 class Page < ApplicationRecord
   include EntityChildRecord
   include ImageUploader::Attachment.new(:hero_image)
+  include TimestampScopes
 
   belongs_to :entity, polymorphic: true, inverse_of: :pages
 

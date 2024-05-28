@@ -4,6 +4,7 @@ class User < ApplicationRecord
   include AccessGrantSubject
   include HasSystemSlug
   include ImageUploader::Attachment.new(:avatar)
+  include TimestampScopes
 
   has_many :community_memberships, dependent: :destroy, inverse_of: :user
 

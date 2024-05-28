@@ -7,6 +7,7 @@ class Asset < ApplicationRecord
   include HasEphemeralSystemSlug
   include SchematicReferent
   include ScopesForIdentifier
+  include TimestampScopes
 
   pg_enum! :kind, as: "asset_kind"
 
