@@ -158,9 +158,18 @@
   - identifier: beyondthemargins
     title: Beyond The Margins
     url: https://neworleans.nglp.olh.pub/beyondthemargins/api/oai/
+- seed_identifier: unca
+  identifier: unca
+  title: "UNC Asheville"
+  journals:
+  - url: "https://longleaf.defender.janeway.systems/ms/api/oai/"
+    title: "Mathematics and Sports"
+    identifier: "mas"
+    metadata_format: oaidc
+    auto_create_volumes_and_issues: true
 - seed_identifier: uncg
   identifier: uncg
-  title: "University of North Carolina: Greensboro"
+  title: "UNC Greensboro"
   journals:
   - url: "http://libjournal.uncg.edu/ap/oai"
     title: "Archival Practice"
