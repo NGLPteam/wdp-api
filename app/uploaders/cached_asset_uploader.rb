@@ -21,6 +21,20 @@ class CachedAssetUploader < Shrine
     calculate_signature(io, :sha256, format: :base64) unless store == :cache
   end
 
+  add_metadata skip_nil: true do |io, metadata:, **|
+    # Deal with invalid unicode encoding in filenames
+
+    raw_filename = metadata["filename"].presence || "asset"
+
+    filename = raw_filename.encode("UTF-8", invalid: :replace, undef: :replace, replace: ?-)
+
+    fallback = ["asset", File.extname(filename)].join
+
+    filename = Zaru.sanitize!(filename, fallback:)
+
+    { filename:, }
+  end
+
   Attacher.validate do
     validate_max_size 5.gigabytes
   end

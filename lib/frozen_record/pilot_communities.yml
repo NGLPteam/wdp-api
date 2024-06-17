@@ -165,7 +165,7 @@
   - url: "https://longleaf.defender.janeway.systems/ms/api/oai/"
     title: "Mathematics and Sports"
     identifier: "mas"
-    metadata_format: oaidc
+    metadata_format: jats
     auto_create_volumes_and_issues: true
 - seed_identifier: uncg
   identifier: uncg
@@ -204,31 +204,31 @@
   - identifier: ccj
     title: Communication Center Journal
     url: https://longleaf.defender.janeway.systems/ccj/api/oai/
-    metadata_format: oaidc
+    metadata_format: jats
   - identifier: jae
     title: Journal of Appreciative Education
     url: https://longleaf.defender.janeway.systems/jae/api/oai/
-    metadata_format: oaidc
+    metadata_format: jats
   - identifier: jls
     title: Journal of Learning Spaces
     url: https://longleaf.defender.janeway.systems/jls/api/oai/
-    metadata_format: oaidc
+    metadata_format: jats
   - identifier: jmal
     title: Journal of Movement Arts Literacy
     url: https://longleaf.defender.janeway.systems/jmal/api/oai/
-    metadata_format: oaidc
+    metadata_format: jats
   - title: North Carolina Journal of Mathematics and Statistics
     identifier: ncjms
     url: https://longleaf.defender.janeway.systems/ncjms/api/oai/
-    metadata_format: oaidc
+    metadata_format: jats
   - identifier: prp
     title: Global Journal of Peace Research and Praxis
     url: https://longleaf.defender.janeway.systems/prp/api/oai/
-    metadata_format: oaidc
+    metadata_format: jats
   - identifier: ijcp
     title: The International Journal of Critical Pedagogy
     url: https://longleaf.defender.janeway.systems/ijcp/api/oai/
-    metadata_format: oaidc
+    metadata_format: jats
   series:
   - url: "http://libjournal.uncg.edu/index.php/pcel/oai"
     title: "Proceedings of The Conference for Entrepreneurial Librarians"

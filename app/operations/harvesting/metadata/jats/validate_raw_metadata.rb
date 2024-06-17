@@ -9,6 +9,16 @@ module Harvesting
 
         root_tag "article"
 
+        def prepare!(doc)
+          if doc.namespaces["xmlns"].blank?
+            default = doc.namespaces["xmlns:jats"].presence || required_namespaces[:xmlns]
+
+            doc.root.add_namespace_definition nil, default
+          end
+
+          super
+        end
+
         def transform(doc)
           Success doc.to_xml
         end

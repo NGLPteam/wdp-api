@@ -26,11 +26,17 @@ module Harvesting
       def call(raw_xml)
         doc = xml_parser.call raw_xml
 
+        doc = yield prepare!(doc)
+
         yield validate! doc
 
         yield augment!(doc)
 
         Success doc.to_xml
+      end
+
+      def prepare!(doc)
+        Success doc
       end
 
       # @note The return value of this method is ignored, unless we want to override it
@@ -103,7 +109,7 @@ module Harvesting
 
         reason = actual.present? ? :invalid : :missing
 
-        invalid! :namespace, reason, options
+        invalid! :namespace, reason, **options
       end
 
       def valid!
@@ -111,7 +117,7 @@ module Harvesting
       end
 
       def invalid!(key, reason, **options)
-        message = failure_message_for key, reason, options
+        message = failure_message_for key, reason, **options
 
         Failure[key, message].to_validated
       end
@@ -122,7 +128,7 @@ module Harvesting
           scope: [:xml_validation, key],
         }
 
-        I18n.t reason, opts
+        I18n.t reason, **opts
       end
 
       class << self

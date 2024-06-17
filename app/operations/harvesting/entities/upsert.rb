@@ -7,6 +7,7 @@ module Harvesting
     # {SchemaVersion schema}. If the associated {HarvestEntity} has not set a schema,
     # it will fall back to an `default:item`.
     class Upsert
+      include AfterCommitEverywhere
       include Dry::Monads[:do, :result]
       include Dry::Effects.Resolve(:target_entity)
       include Dry::Effects.Resolve(:schemas)
@@ -79,7 +80,9 @@ module Harvesting
 
         yield upsert_links! harvest_entity, entity
 
-        Harvesting::UpsertEntityAssetsJob.perform_later harvest_entity if harvest_entity.has_assets?
+        after_commit do
+          Harvesting::UpsertEntityAssetsJob.set(wait: 10.seconds).perform_later harvest_entity if harvest_entity.has_assets?
+        end
 
         Success entity
       end
