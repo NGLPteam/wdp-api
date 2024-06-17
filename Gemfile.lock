@@ -719,6 +719,7 @@ GEM
       yard (>= 0.8.3)
     yard-activesupport-concern (0.0.1)
       yard (>= 0.8)
+    zaru (1.0.0)
     zeitwerk (2.6.13)
 
 PLATFORMS
@@ -842,6 +843,7 @@ DEPENDENCIES
   yard (~> 0.9.34)
   yard-activerecord (~> 0.0.16)
   yard-activesupport-concern (~> 0.0.1)
+  zaru (~> 1.0.0)
 
 RUBY VERSION
    ruby 3.2.3p157

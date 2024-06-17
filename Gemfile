@@ -110,6 +110,7 @@ gem "shrine-url", "~> 2.4.1"
 gem "ffi", "~> 1.16.3"
 gem "mediainfo", "~> 1.5.0"
 gem "tus-server", "~> 2.3.0"
+gem "zaru", "~> 1.0.0"
 
 # Servers / Rack
 gem "falcon", "~> 0.39.0", require: false

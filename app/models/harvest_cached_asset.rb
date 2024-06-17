@@ -11,6 +11,7 @@
 class HarvestCachedAsset < ApplicationRecord
   include CachedAssetUploader::Attachment.new(:asset)
   include HasEphemeralSystemSlug
+  include TimestampScopes
 
   has_many :harvest_cached_asset_references, inverse_of: :harvest_cached_asset, dependent: :delete_all
 

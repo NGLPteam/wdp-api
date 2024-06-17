@@ -137,7 +137,9 @@ module Harvesting
         # @param [Harvesting::Metadata::ValueExtraction::Struct] values
         def upsert_contributions_for(article, values)
           values.contributions.each do |contribution|
-            yield upsert_contribution.call article, contribution.deep_symbolize_keys
+            options = contribution.deep_symbolize_keys
+
+            yield upsert_contribution.call article, **options
           end
 
           Success nil
