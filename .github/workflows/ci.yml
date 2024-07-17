@@ -23,16 +23,16 @@ jobs:
       - name: "Checkout code"
         uses: actions/checkout@v1
 
-      - name: "Install Ruby 2.7.3"
+      - name: "Install Ruby 3.2.3"
         uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
-          ruby-version: 2.7.3
+          ruby-version: 3.2.3
 
       - name: "Run Rubocop"
         env:
           RAILS_ENV: development
-          RUBYOPT: "-W:no-deprecated -W:no-experimental" # Suppress Rails 6 deprecation warnings for ruby 2.7
+          RUBYOPT: "-W:no-deprecated -W:no-experimental"
         run: |
           bin/rubocop
 
@@ -43,7 +43,7 @@ jobs:
 
     services:
       postgres:
-        image: postgres:13.1-alpine
+        image: postgres:15.5-alpine
         ports: ["5432:5432"]
         env:
           POSTGRES_USER: postgres
@@ -69,11 +69,11 @@ jobs:
       - name: "Checkout code"
         uses: actions/checkout@v1
 
-      - name: "Install Ruby 2.7.3"
+      - name: "Install Ruby 3.2.3"
         uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
-          ruby-version: 2.7.3
+          ruby-version: 3.2.3
 
       - name: "Run API specs"
         env:
