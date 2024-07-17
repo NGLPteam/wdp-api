@@ -24,6 +24,16 @@ FactoryBot.define do
       kind { "item" }
     end
 
+    trait :cvocab_collection do
+      for_collection
+
+      testing
+
+      identifier { "cvocab_collection" }
+
+      name { "CVocab Testing Collection" }
+    end
+
     trait :required_collection do
       for_collection
 

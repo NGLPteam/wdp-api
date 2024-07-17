@@ -19,12 +19,17 @@ Rails.application.configure do
   config.good_job.max_threads = 5
   config.good_job.poll_interval = 30 # seconds
   config.good_job.shutdown_timeout = 25 # seconds
-  config.good_job.enable_cron = false
+  config.good_job.enable_cron = true
   config.good_job.cron = {
     "contributors.audit_contribution_counts": {
       cron: "*/5 * * * *",
       class: "Contributors::AuditContributionCountsJob",
       description: "Ensure contribution counts are up to date",
+    },
+    "controlled_vocabularies.populate_sources": {
+      cron: "*/15 * * * *",
+      class: "ControlledVocabularies::PopulateSourcesJob",
+      description: "Ensure all possible controlled vocabulary sources are populated.",
     },
     "entities.audit_authorizing": {
       cron: "*/5 * * * *",

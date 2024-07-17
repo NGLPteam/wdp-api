@@ -9,6 +9,8 @@ module Types
       Types::Schematic::BooleanPropertyType,
       Types::Schematic::ContributorPropertyType,
       Types::Schematic::ContributorsPropertyType,
+      Types::Schematic::ControlledVocabularyPropertyType,
+      Types::Schematic::ControlledVocabulariesPropertyType,
       Types::Schematic::DatePropertyType,
       Types::Schematic::EmailPropertyType,
       Types::Schematic::EntitiesPropertyType,

@@ -53,6 +53,16 @@ FactoryBot.define do
             testing_schema_configuration_for required, number
           end
         end
+
+        cvocab = :"cvocab_#{type}"
+
+        trait cvocab do
+          association :schema_definition, cvocab
+
+          configuration do
+            testing_schema_configuration_for cvocab, number
+          end
+        end
       end
     end
 

@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
+# A queryable, introspectable version of the various properties on a {SchemaVersion}.
 class SchemaVersionProperty < ApplicationRecord
+  include TimestampScopes
   include WrapsSchemaProperty
 
   belongs_to :schema_definition, inverse_of: :schema_version_properties
@@ -9,6 +11,7 @@ class SchemaVersionProperty < ApplicationRecord
   has_many :entity_orderable_properties, inverse_of: :schema_version_property, dependent: :destroy
   has_many :named_variable_dates, inverse_of: :schema_version_property, dependent: :destroy
 
+  scope :any_controlled_vocabulary, -> { where(type: %i[controlled_vocabulary controlled_vocabularies]) }
   scope :by_schema_version, ->(schema) { where(schema_version: schema) if schema.present? }
 
   validates :path, presence: true, uniqueness: { scope: :schema_version_id }
@@ -40,6 +43,11 @@ class SchemaVersionProperty < ApplicationRecord
       return none if schema_versions.blank?
 
       where(schema_version: schema_versions)
+    end
+
+    # @return [<String>]
+    def controlled_vocabulary_provisions
+      any_controlled_vocabulary.where(arel_json_has_key(:metadata, "wants")).distinct.pluck(arel_json_get_as_text(:metadata, "wants"))
     end
   end
 end

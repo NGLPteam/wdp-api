@@ -91,6 +91,20 @@ fragment GetPropertyInfoFragment on AnyScalarProperty {
     }
   }
 
+  ... on ControlledVocabularyProperty {
+    wants
+    controlledVocabulary {
+      ... GetControlledVocabularyInfoFragment
+    }
+  }
+
+  ... on ControlledVocabulariesProperty {
+    wants
+    controlledVocabulary {
+      ... GetControlledVocabularyInfoFragment
+    }
+  }
+
   ... on DateProperty {
     date
   }
@@ -181,6 +195,16 @@ fragment GetContributorInfoFragment on AnyContributor {
     name
     email
   }
+}
+
+fragment GetControlledVocabularyInfoFragment on ControlledVocabulary {
+  id
+  namespace
+  identifier
+  version
+  provides
+  name
+  itemSet
 }
 
 fragment OptionalPropertyFragment on OptionableProperty {

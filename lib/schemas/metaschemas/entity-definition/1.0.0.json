@@ -698,6 +698,12 @@
               "$ref": "#/$defs/ScalarPropertyDefinitions/Contributors"
             },
             {
+              "$ref": "#/$defs/ScalarPropertyDefinitions/ControlledVocabulary"
+            },
+            {
+              "$ref": "#/$defs/ScalarPropertyDefinitions/ControlledVocabularies"
+            },
+            {
               "$ref": "#/$defs/ScalarPropertyDefinitions/Date"
             },
             {
@@ -789,6 +795,33 @@
           "type": { "enum": ["contributors"] }
         },
         "required": ["path", "type"],
+        "allOf": [
+          { "$ref": "#/$defs/CollectedReferenceProperties" }
+        ]
+      },
+      "ControlledVocabulary": {
+        "title": "Controlled Vocabulary",
+        "description": "A value that references a single Controlled Vocabulary Item in the system.",
+        "properties": {
+          "type": { "enum": ["controlled_vocabulary"] },
+          "wants": {
+            "type": "string",
+            "description": "The provider selector for the CV desired by this property."
+          }
+        },
+        "required": ["path", "type", "wants"]
+      },
+      "ControlledVocabularies": {
+        "title": "Controlled Vocabularies",
+        "description": "A value that references multiple Controlled Vocabulary Item in the system.",
+        "properties": {
+          "type": { "enum": ["controlled_vocabularies"] },
+          "wants": {
+            "type": "string",
+            "description": "The provider selector for the CV desired by this property."
+          }
+        },
+        "required": ["path", "type", "wants"],
         "allOf": [
           { "$ref": "#/$defs/CollectedReferenceProperties" }
         ]
@@ -1072,6 +1105,8 @@
         "boolean",
         "contributor",
         "contributors",
+        "controlled_vocabulary",
+        "controlled_vocabularies",
         "date",
         "email",
         "entities",

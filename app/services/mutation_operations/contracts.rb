@@ -30,7 +30,7 @@ module MutationOperations
 
     # The combination of {BASE_PATH} and {GLOBAL_PATH},
     # used for inlining errors returned from contracts.
-    GLOBAL_PATHS = [GLOBAL_PATH, BASE_PATH].freeze
+    GLOBAL_PATHS = [GLOBAL_PATH, BASE_PATH, [nil], [""]].freeze
 
     # Run all the contracts defined for this mutation within the `validations` => `contracts` substep.
     # @api private

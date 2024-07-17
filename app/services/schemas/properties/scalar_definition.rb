@@ -12,6 +12,8 @@ module Schemas
       when "boolean" then Schemas::Properties::Scalar::Boolean
       when "contributor" then Schemas::Properties::Scalar::Contributor
       when "contributors" then Schemas::Properties::Scalar::Contributors
+      when "controlled_vocabulary" then Schemas::Properties::Scalar::ControlledVocabulary
+      when "controlled_vocabularies" then Schemas::Properties::Scalar::ControlledVocabularies
       when "date" then Schemas::Properties::Scalar::Date
       when "entities" then Schemas::Properties::Scalar::Entities
       when "entity" then Schemas::Properties::Scalar::Entity

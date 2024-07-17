@@ -1,0 +1,15 @@
+{
+  "namespace": "testing",
+  "identifier": "cvocab_collection",
+  "name": "CVocab Testing Collection",
+  "version": "1.0.0",
+  "kind": "collection",
+  "ancestors": [],
+  "parents": [],
+  "children": [],
+  "orderings": [],
+  "properties": [
+    { "path": "items", "label": "Items", "type": "controlled_vocabularies", "wants": "test_units", "required": true },
+    { "path": "item", "label": "Item", "type": "controlled_vocabulary", "wants": "test_units" }
+  ]
+}

@@ -28,8 +28,11 @@ SimpleCov.start "rails" do
   add_filter "app/services/testing"
   add_filter "app/services/tus_client"
   add_filter "lib/cops"
+  add_filter "lib/generators"
   add_filter "lib/namespaces"
   add_filter "lib/patches"
+  add_filter "lib/support"
+  add_filter "spec/support"
 end
 
 require File.expand_path("../config/environment", __dir__)
@@ -107,7 +110,8 @@ RSpec.configure do |config|
   end
 
   config.before(:suite) do
-    Testing::InitializeTestDatabase.call
+    Common::Container["system.reload_everything"]
+    TestingAPI::TestContainer["initialize_database"].()
   end
 
   config.around do |example|

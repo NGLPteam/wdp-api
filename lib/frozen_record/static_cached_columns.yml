@@ -2968,6 +2968,418 @@
   default_function: to_prefix_search(derive_contributor_name(kind, properties))
   has_default: false
   virtual: true
+- id: ControlledVocabulary#id
+  model_name: ControlledVocabulary
+  table_name: controlled_vocabularies
+  name: id
+  type: uuid
+  'null': false
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default: 
+  default_function: gen_random_uuid()
+  has_default: true
+  virtual: false
+- id: ControlledVocabulary#namespace
+  model_name: ControlledVocabulary
+  table_name: controlled_vocabularies
+  name: namespace
+  type: text
+  'null': false
+  sql_type_metadata:
+    sql_type: text
+    type: text
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: ControlledVocabulary#identifier
+  model_name: ControlledVocabulary
+  table_name: controlled_vocabularies
+  name: identifier
+  type: text
+  'null': false
+  sql_type_metadata:
+    sql_type: text
+    type: text
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: ControlledVocabulary#version
+  model_name: ControlledVocabulary
+  table_name: controlled_vocabularies
+  name: version
+  type: citext
+  'null': false
+  sql_type_metadata:
+    sql_type: semantic_version
+    type: citext
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: ControlledVocabulary#provides
+  model_name: ControlledVocabulary
+  table_name: controlled_vocabularies
+  name: provides
+  type: text
+  'null': false
+  sql_type_metadata:
+    sql_type: text
+    type: text
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: ControlledVocabulary#name
+  model_name: ControlledVocabulary
+  table_name: controlled_vocabularies
+  name: name
+  type: text
+  'null': false
+  sql_type_metadata:
+    sql_type: text
+    type: text
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: ControlledVocabulary#description
+  model_name: ControlledVocabulary
+  table_name: controlled_vocabularies
+  name: description
+  type: text
+  'null': true
+  sql_type_metadata:
+    sql_type: text
+    type: text
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: ControlledVocabulary#items_count
+  model_name: ControlledVocabulary
+  table_name: controlled_vocabularies
+  name: items_count
+  type: integer
+  'null': false
+  sql_type_metadata:
+    sql_type: bigint
+    type: integer
+    limit: 8
+  default: '0'
+  default_function: 
+  has_default: true
+  virtual: false
+- id: ControlledVocabulary#item_identifiers
+  model_name: ControlledVocabulary
+  table_name: controlled_vocabularies
+  name: item_identifiers
+  type: text
+  'null': false
+  sql_type_metadata:
+    sql_type: text[]
+    type: text
+  default: "{}"
+  default_function: 
+  has_default: true
+  virtual: false
+- id: ControlledVocabulary#item_set
+  model_name: ControlledVocabulary
+  table_name: controlled_vocabularies
+  name: item_set
+  type: jsonb
+  'null': true
+  sql_type_metadata:
+    sql_type: jsonb
+    type: jsonb
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: ControlledVocabulary#created_at
+  model_name: ControlledVocabulary
+  table_name: controlled_vocabularies
+  name: created_at
+  type: datetime
+  'null': false
+  sql_type_metadata:
+    sql_type: timestamp(6) without time zone
+    type: datetime
+    precision: 6
+  default: 
+  default_function: CURRENT_TIMESTAMP
+  has_default: true
+  virtual: false
+- id: ControlledVocabulary#updated_at
+  model_name: ControlledVocabulary
+  table_name: controlled_vocabularies
+  name: updated_at
+  type: datetime
+  'null': false
+  sql_type_metadata:
+    sql_type: timestamp(6) without time zone
+    type: datetime
+    precision: 6
+  default: 
+  default_function: CURRENT_TIMESTAMP
+  has_default: true
+  virtual: false
+- id: ControlledVocabularyItem#id
+  model_name: ControlledVocabularyItem
+  table_name: controlled_vocabulary_items
+  name: id
+  type: uuid
+  'null': false
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default: 
+  default_function: gen_random_uuid()
+  has_default: true
+  virtual: false
+- id: ControlledVocabularyItem#controlled_vocabulary_id
+  model_name: ControlledVocabularyItem
+  table_name: controlled_vocabulary_items
+  name: controlled_vocabulary_id
+  type: uuid
+  'null': false
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: ControlledVocabularyItem#parent_id
+  model_name: ControlledVocabularyItem
+  table_name: controlled_vocabulary_items
+  name: parent_id
+  type: uuid
+  'null': true
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: ControlledVocabularyItem#position
+  model_name: ControlledVocabularyItem
+  table_name: controlled_vocabulary_items
+  name: position
+  type: integer
+  'null': true
+  sql_type_metadata:
+    sql_type: bigint
+    type: integer
+    limit: 8
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: ControlledVocabularyItem#identifier
+  model_name: ControlledVocabularyItem
+  table_name: controlled_vocabulary_items
+  name: identifier
+  type: text
+  'null': false
+  sql_type_metadata:
+    sql_type: text
+    type: text
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: ControlledVocabularyItem#label
+  model_name: ControlledVocabularyItem
+  table_name: controlled_vocabulary_items
+  name: label
+  type: text
+  'null': false
+  sql_type_metadata:
+    sql_type: text
+    type: text
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: ControlledVocabularyItem#description
+  model_name: ControlledVocabularyItem
+  table_name: controlled_vocabulary_items
+  name: description
+  type: text
+  'null': true
+  sql_type_metadata:
+    sql_type: text
+    type: text
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: ControlledVocabularyItem#url
+  model_name: ControlledVocabularyItem
+  table_name: controlled_vocabulary_items
+  name: url
+  type: text
+  'null': true
+  sql_type_metadata:
+    sql_type: text
+    type: text
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: ControlledVocabularyItem#unselectable
+  model_name: ControlledVocabularyItem
+  table_name: controlled_vocabulary_items
+  name: unselectable
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
+  default_function: 
+  has_default: true
+  virtual: false
+- id: ControlledVocabularyItem#created_at
+  model_name: ControlledVocabularyItem
+  table_name: controlled_vocabulary_items
+  name: created_at
+  type: datetime
+  'null': false
+  sql_type_metadata:
+    sql_type: timestamp(6) without time zone
+    type: datetime
+    precision: 6
+  default: 
+  default_function: CURRENT_TIMESTAMP
+  has_default: true
+  virtual: false
+- id: ControlledVocabularyItem#updated_at
+  model_name: ControlledVocabularyItem
+  table_name: controlled_vocabulary_items
+  name: updated_at
+  type: datetime
+  'null': false
+  sql_type_metadata:
+    sql_type: timestamp(6) without time zone
+    type: datetime
+    precision: 6
+  default: 
+  default_function: CURRENT_TIMESTAMP
+  has_default: true
+  virtual: false
+- id: ControlledVocabularyItemHierarchy#ancestor_id
+  model_name: ControlledVocabularyItemHierarchy
+  table_name: controlled_vocabulary_item_hierarchies
+  name: ancestor_id
+  type: uuid
+  'null': false
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: ControlledVocabularyItemHierarchy#descendant_id
+  model_name: ControlledVocabularyItemHierarchy
+  table_name: controlled_vocabulary_item_hierarchies
+  name: descendant_id
+  type: uuid
+  'null': false
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: ControlledVocabularyItemHierarchy#generations
+  model_name: ControlledVocabularyItemHierarchy
+  table_name: controlled_vocabulary_item_hierarchies
+  name: generations
+  type: integer
+  'null': false
+  sql_type_metadata:
+    sql_type: integer
+    type: integer
+    limit: 4
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: ControlledVocabularySource#id
+  model_name: ControlledVocabularySource
+  table_name: controlled_vocabulary_sources
+  name: id
+  type: uuid
+  'null': false
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default: 
+  default_function: gen_random_uuid()
+  has_default: true
+  virtual: false
+- id: ControlledVocabularySource#controlled_vocabulary_id
+  model_name: ControlledVocabularySource
+  table_name: controlled_vocabulary_sources
+  name: controlled_vocabulary_id
+  type: uuid
+  'null': true
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: ControlledVocabularySource#provides
+  model_name: ControlledVocabularySource
+  table_name: controlled_vocabulary_sources
+  name: provides
+  type: text
+  'null': false
+  sql_type_metadata:
+    sql_type: text
+    type: text
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: ControlledVocabularySource#created_at
+  model_name: ControlledVocabularySource
+  table_name: controlled_vocabulary_sources
+  name: created_at
+  type: datetime
+  'null': false
+  sql_type_metadata:
+    sql_type: timestamp(6) without time zone
+    type: datetime
+    precision: 6
+  default: 
+  default_function: CURRENT_TIMESTAMP
+  has_default: true
+  virtual: false
+- id: ControlledVocabularySource#updated_at
+  model_name: ControlledVocabularySource
+  table_name: controlled_vocabulary_sources
+  name: updated_at
+  type: datetime
+  'null': false
+  sql_type_metadata:
+    sql_type: timestamp(6) without time zone
+    type: datetime
+    precision: 6
+  default: 
+  default_function: CURRENT_TIMESTAMP
+  has_default: true
+  virtual: false
 - id: Entity#id
   model_name: Entity
   table_name: entities

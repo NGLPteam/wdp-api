@@ -11,7 +11,7 @@ module Testing
     ]
 
     def call
-      yield reload_everything.call
+      yield reload_everything.call(skip_refresh: true)
 
       Success nil
     end
