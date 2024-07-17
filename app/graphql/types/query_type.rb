@@ -9,6 +9,8 @@ module Types
     include GraphQL::Types::Relay::HasNodeField
     include GraphQL::Types::Relay::HasNodesField
 
+    implements Types::QueriesControlledVocabulary
+    implements Types::QueriesControlledVocabularySource
     implements Types::SearchableType
 
     field :access_grants, resolver: Resolvers::AccessGrantResolver,

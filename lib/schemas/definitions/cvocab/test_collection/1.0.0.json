@@ -1,0 +1,15 @@
+{
+  "namespace": "cvocab",
+  "identifier": "test_collection",
+  "name": "Controlled Vocabularies Test Collection",
+  "version": "1.0.0",
+  "kind": "collection",
+  "orderings": [],
+  "properties": [
+    {
+      "type": "controlled_vocabularies",
+      "path": "desired_contribution_roles",
+      "wants": "contribution_roles"
+    }
+  ]
+}

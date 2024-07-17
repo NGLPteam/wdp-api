@@ -343,6 +343,8 @@ CREATE TYPE public.schema_property_type AS ENUM (
     'boolean',
     'contributor',
     'contributors',
+    'controlled_vocabulary',
+    'controlled_vocabularies',
     'date',
     'email',
     'entities',
@@ -3548,6 +3550,69 @@ CREATE TABLE public.contributors (
 
 
 --
+-- Name: controlled_vocabularies; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.controlled_vocabularies (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    namespace text NOT NULL,
+    identifier text NOT NULL,
+    version public.semantic_version NOT NULL,
+    provides text NOT NULL,
+    name text NOT NULL,
+    description text,
+    items_count bigint DEFAULT 0 NOT NULL,
+    item_identifiers text[] DEFAULT '{}'::text[] NOT NULL,
+    item_set jsonb,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+--
+-- Name: controlled_vocabulary_item_hierarchies; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.controlled_vocabulary_item_hierarchies (
+    ancestor_id uuid NOT NULL,
+    descendant_id uuid NOT NULL,
+    generations integer NOT NULL
+);
+
+
+--
+-- Name: controlled_vocabulary_items; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.controlled_vocabulary_items (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    controlled_vocabulary_id uuid NOT NULL,
+    parent_id uuid,
+    "position" bigint,
+    identifier text NOT NULL,
+    label text NOT NULL,
+    description text,
+    url text,
+    unselectable boolean DEFAULT false NOT NULL,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+--
+-- Name: controlled_vocabulary_sources; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.controlled_vocabulary_sources (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    controlled_vocabulary_id uuid,
+    provides text NOT NULL,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+--
 -- Name: schema_version_ancestors; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -5631,6 +5696,30 @@ ALTER TABLE ONLY public.contributors
 
 
 --
+-- Name: controlled_vocabularies controlled_vocabularies_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.controlled_vocabularies
+    ADD CONSTRAINT controlled_vocabularies_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: controlled_vocabulary_items controlled_vocabulary_items_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.controlled_vocabulary_items
+    ADD CONSTRAINT controlled_vocabulary_items_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: controlled_vocabulary_sources controlled_vocabulary_sources_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.controlled_vocabulary_sources
+    ADD CONSTRAINT controlled_vocabulary_sources_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: entities entities_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -6321,6 +6410,20 @@ CREATE INDEX collection_desc_idx ON public.collection_hierarchies USING btree (d
 
 
 --
+-- Name: controlled_vocabulary_item_anc_desc_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX controlled_vocabulary_item_anc_desc_idx ON public.controlled_vocabulary_item_hierarchies USING btree (ancestor_id, descendant_id, generations);
+
+
+--
+-- Name: controlled_vocabulary_item_desc_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX controlled_vocabulary_item_desc_idx ON public.controlled_vocabulary_item_hierarchies USING btree (descendant_id);
+
+
+--
 -- Name: harvest_entity_anc_desc_idx; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -6906,6 +7009,48 @@ CREATE INDEX index_contributors_on_sort_name ON public.contributors USING btree 
 --
 
 CREATE INDEX index_contributors_prefix_searching_names ON public.contributors USING gin (search_name public.gin_trgm_ops);
+
+
+--
+-- Name: index_controlled_vocabularies_on_provides; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_controlled_vocabularies_on_provides ON public.controlled_vocabularies USING btree (provides);
+
+
+--
+-- Name: index_controlled_vocabularies_uniqueness; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_controlled_vocabularies_uniqueness ON public.controlled_vocabularies USING btree (namespace, identifier, version);
+
+
+--
+-- Name: index_controlled_vocabulary_items_on_parent_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_controlled_vocabulary_items_on_parent_id ON public.controlled_vocabulary_items USING btree (parent_id);
+
+
+--
+-- Name: index_controlled_vocabulary_items_uniqueness; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_controlled_vocabulary_items_uniqueness ON public.controlled_vocabulary_items USING btree (controlled_vocabulary_id, identifier);
+
+
+--
+-- Name: index_controlled_vocabulary_sources_on_controlled_vocabulary_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_controlled_vocabulary_sources_on_controlled_vocabulary_id ON public.controlled_vocabulary_sources USING btree (controlled_vocabulary_id);
+
+
+--
+-- Name: index_controlled_vocabulary_sources_on_provides; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_controlled_vocabulary_sources_on_provides ON public.controlled_vocabulary_sources USING btree (provides);
 
 
 --
@@ -10343,6 +10488,14 @@ ALTER TABLE ONLY public.community_memberships
 
 
 --
+-- Name: controlled_vocabulary_items fk_rails_34693393c7; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.controlled_vocabulary_items
+    ADD CONSTRAINT fk_rails_34693393c7 FOREIGN KEY (controlled_vocabulary_id) REFERENCES public.controlled_vocabularies(id) ON DELETE CASCADE;
+
+
+--
 -- Name: entity_hierarchies fk_rails_352d828388; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -10436,6 +10589,14 @@ ALTER TABLE ONLY public.access_grants
 
 ALTER TABLE ONLY public.community_memberships
     ADD CONSTRAINT fk_rails_5275a2ad88 FOREIGN KEY (community_id) REFERENCES public.communities(id) ON DELETE CASCADE;
+
+
+--
+-- Name: controlled_vocabulary_sources fk_rails_52ce32d865; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.controlled_vocabulary_sources
+    ADD CONSTRAINT fk_rails_52ce32d865 FOREIGN KEY (controlled_vocabulary_id) REFERENCES public.controlled_vocabularies(id) ON DELETE SET NULL;
 
 
 --
@@ -10588,6 +10749,14 @@ ALTER TABLE ONLY public.harvest_contributions
 
 ALTER TABLE ONLY public.harvest_records
     ADD CONSTRAINT fk_rails_7d3cd534d8 FOREIGN KEY (harvest_attempt_id) REFERENCES public.harvest_attempts(id) ON DELETE CASCADE;
+
+
+--
+-- Name: controlled_vocabulary_items fk_rails_7dc0c7e015; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.controlled_vocabulary_items
+    ADD CONSTRAINT fk_rails_7dc0c7e015 FOREIGN KEY (parent_id) REFERENCES public.controlled_vocabulary_items(id) ON DELETE CASCADE;
 
 
 --
@@ -11247,6 +11416,11 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20240322084258'),
 ('20240322084259'),
 ('20240322084260'),
-('20240322084261');
+('20240322084261'),
+('20240618201518'),
+('20240618202125'),
+('20240618202411'),
+('20240620215406'),
+('20240701194303');
 
 

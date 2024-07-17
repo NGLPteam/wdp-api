@@ -2,8 +2,13 @@
 
 module Shared
   # The shared type registry used by {ApplicationContract}.
-  TypeRegistry = Dry::Schema::TypeContainer.new
-
-  TypeRegistry.register "params.safe_string", Dry::Types["coercible.string"]
-  TypeRegistry.register "json.safe_string", Dry::Types["coercible.string"]
+  TypeRegistry = Support::Schemas::TypeContainer.new.configure do |tc|
+    tc.add_model! "Collection"
+    tc.add_model! "Community"
+    tc.add_model! "ControlledVocabulary"
+    tc.add_model! "ControlledVocabularySource"
+    tc.add_model! "Item"
+    tc.add_model! "SchemaDefinition"
+    tc.add_model! "SchemaVersion"
+  end
 end

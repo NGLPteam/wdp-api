@@ -9,6 +9,8 @@ module Types
     value "BOOLEAN", value: "boolean", description: "True or false, yes or no, a checkbox. See `BooleanProperty`"
     value "CONTRIBUTOR", value: "contributor", description: "A reference to a single contributor in the system. See `ContributorProperty`"
     value "CONTRIBUTORS", value: "contributors", description: "A reference to multiple contributors in the system. See `ContributorsProperty`"
+    value "CONTROLLED_VOCABULARY", value: "controlled_vocabulary"
+    value "CONTROLLED_VOCABULARIES", value: "controlled_vocabularies"
     value "DATE", value: "date", description: "An ISO8601-formatted date. See `DateProperty`"
     value "EMAIL", value: "email", description: "An email address. See `EmailProperty`"
     value "ENTITIES", value: "entities", description: "A reference to multiple entities. See `EntitiesProperty`"

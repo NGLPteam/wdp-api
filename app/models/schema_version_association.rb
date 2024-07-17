@@ -7,6 +7,8 @@
 # If a schema has no records in this table for a given `name`, then _any_ schema can fill that
 # role, assuming said schema also supports the child.
 class SchemaVersionAssociation < ApplicationRecord
+  include TimestampScopes
+
   belongs_to :source, class_name: "SchemaVersion"
   belongs_to :target, class_name: "SchemaVersion"
 

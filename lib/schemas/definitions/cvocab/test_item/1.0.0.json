@@ -1,0 +1,15 @@
+{
+  "namespace": "cvocab",
+  "identifier": "test_item",
+  "name": "Controlled Vocabularies Test Item",
+  "version": "1.0.0",
+  "kind": "item",
+  "orderings": [],
+  "properties": [
+    {
+      "type": "controlled_vocabulary",
+      "path": "contribution_role",
+      "wants": "contribution_roles"
+    }
+  ]
+}

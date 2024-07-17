@@ -10,6 +10,12 @@ module Types
 
     field :apply_schema_properties, mutation: Mutations::ApplySchemaProperties
 
+    field :controlled_vocabulary_destroy, mutation: Mutations::ControlledVocabularyDestroy
+
+    field :controlled_vocabulary_source_update, mutation: Mutations::ControlledVocabularySourceUpdate
+
+    field :controlled_vocabulary_upsert, mutation: Mutations::ControlledVocabularyUpsert
+
     field :clear_initial_ordering, mutation: Mutations::ClearInitialOrdering
 
     field :create_announcement, mutation: Mutations::CreateAnnouncement

@@ -38,7 +38,7 @@ ENV BUNDLE_PATH=/bundle \
     RAILS_SERVE_STATIC_FILES=true \
     PORT=8080
 ENV PATH="${BUNDLE_BIN}:${PATH}"
-ENV LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libjemalloc.so.2
+ENV LD_PRELOAD=libjemalloc.so.2
 
 EXPOSE 8080
 

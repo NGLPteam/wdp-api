@@ -5,12 +5,16 @@ module System
   class ReloadEverything
     include Dry::Monads[:result, :do]
     include MeruAPI::Deps[
+      populate_sources: "controlled_vocabularies.populate_sources",
+      reload_controlled_vocabularies: "controlled_vocabularies.static.seed_all",
       reload_roles: "roles.sync",
       reload_schemas: "schemas.static.load_definitions",
     ]
 
-    def call
+    def call(skip_refresh: false)
       now = Time.current
+
+      yield reload_controlled_vocabularies.call
 
       yield reload_roles.call
 
@@ -20,7 +24,9 @@ module System
         warn "Refreshing #{sv.declaration} instances"
 
         Schemas::Versions::ResetAllOrderingsJob.perform_later sv
-      end
+      end unless skip_refresh
+
+      yield populate_sources.()
 
       Success()
     end

@@ -46,6 +46,10 @@ module Support
       end
 
       def add_model!(klass, as_type: "Types::#{klass}Type", model_name: model_name_from(klass), single_key: model_name.singular, plural_key: model_name.plural)
+        # :nocov:
+        raise TypeError, "must be string" unless klass.kind_of?(String)
+        # :nocov:
+
         single_type = ::Support::Types::ModelInstanceNamed[klass].gql_loads(as_type).gql_description(<<~TEXT)
         Filter by a single #{klass}.
         TEXT

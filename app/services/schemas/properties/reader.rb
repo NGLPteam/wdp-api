@@ -21,6 +21,13 @@ module Schemas
         end.to_result.flatten
       end
 
+      # @return [ControlledVocabulary, nil]
+      def configured_controlled_vocabulary
+        Dry::Monads.Try(NoMethodError) do
+          property.configured_controlled_vocabulary
+        end.to_result.flatten
+      end
+
       def default
         property.default if property.has_default?
       end
@@ -39,6 +46,10 @@ module Schemas
 
       def value
         property.read_value_from context
+      end
+
+      def wants
+        property.try(:wants)
       end
 
       def wide?

@@ -51,6 +51,8 @@ module Schemas
         boolean
         contributor
         contributors
+        controlled_vocabulary
+        controlled_vocabularies
         date
         email
         entities

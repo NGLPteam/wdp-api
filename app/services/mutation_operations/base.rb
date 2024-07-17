@@ -260,8 +260,8 @@ module MutationOperations
     # @param [<Object>] args the arguments for the operation (if any)
     # @return [Dry::Monads::Result] This is not guaranteed, but assumed for most operations
     #   that would be called by a mutation
-    def call_operation(name, *args)
-      MeruAPI::Container[name].call(*args)
+    def call_operation(name, *args, **kwargs)
+      MeruAPI::Container[name].call(*args, **kwargs)
     end
 
     # @param [<Symbol>] keys
@@ -283,8 +283,8 @@ module MutationOperations
     # @yieldparam [Dry::Matcher::ResultMatcher] matcher
     # @yieldreturn [void]
     # @return [void]
-    def with_called_operation!(name, *args, &)
-      result = call_operation(name, *args)
+    def with_called_operation!(name, *args, **kwargs, &)
+      result = call_operation(name, *args, **kwargs)
 
       with_result!(result, &)
     end
