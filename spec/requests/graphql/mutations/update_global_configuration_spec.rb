@@ -5,6 +5,10 @@ RSpec.describe Mutations::UpdateGlobalConfiguration, type: :request, graphql: :m
   mutation updateGlobalConfiguration($input: UpdateGlobalConfigurationInput!) {
     updateGlobalConfiguration(input: $input) {
       globalConfiguration {
+        entities {
+          suppressExternalLinks
+        }
+
         institution {
           name
         }
@@ -99,7 +103,11 @@ RSpec.describe Mutations::UpdateGlobalConfiguration, type: :request, graphql: :m
       }
     end
 
+    let(:suppress_external_links) { false }
+
     let_mutation_input!(:clear_logo) { false }
+
+    let_mutation_input!(:entities) { { suppress_external_links:, } }
 
     let_mutation_input!(:institution) { { name: institution_name } }
 
@@ -120,13 +128,14 @@ RSpec.describe Mutations::UpdateGlobalConfiguration, type: :request, graphql: :m
       { color:, font: }
     end
 
+    let!(:expected_entities) { entities }
     let!(:expected_footer) { footer }
-
     let(:expected_institution) { institution }
     let(:expected_site) { site.merge(footer: expected_footer) }
     let(:expected_theme) { theme }
     let(:expected_global_configuration) do
       {
+        entities: expected_entities,
         institution: expected_institution,
         site: expected_site,
         theme: expected_theme,

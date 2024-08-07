@@ -11,10 +11,12 @@ module Mutations
 
       attachment! :logo, image: true
 
-      def call(institution: nil, site: nil, theme: nil, **args)
+      def call(entities: nil, institution: nil, site: nil, theme: nil, **args)
         config = GlobalConfiguration.fetch
 
         authorize config, :update?
+
+        config.entities = entities if entities.present?
 
         config.institution = institution if institution.present?
 

@@ -7,7 +7,11 @@ module Types
 
     global_id_field :id
 
-    description "The global configuration for this installation of WDP."
+    description "The global configuration for this installation of Meru."
+
+    field :entities, Types::Settings::EntitiesSettingsType, null: false do
+      description "Settings specific to how entities should behave on this installation."
+    end
 
     field :institution, Types::Settings::InstitutionSettingsType, null: false do
       description "Settings specific to this institution."

@@ -5507,10 +5507,10 @@
   default_function: 
   has_default: true
   virtual: false
-- id: GlobalConfiguration#schema
+- id: GlobalConfiguration#entities
   model_name: GlobalConfiguration
   table_name: global_configurations
-  name: schema
+  name: entities
   type: jsonb
   'null': false
   sql_type_metadata:
