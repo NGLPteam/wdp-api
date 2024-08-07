@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
-# Global configurations for the entire WDP-API installation.
+# Global configurations for the entire Meru-API installation.
 #
+# @see Settings::Entities
 # @see Settings::Institution
 # @see Settings::Site
 # @see Settings::Theme
@@ -10,6 +11,7 @@ class GlobalConfiguration < ApplicationRecord
   include SiteLogoUploader::Attachment.new(:logo)
   include TimestampScopes
 
+  attribute :entities, Settings::Entities.to_type
   attribute :institution, Settings::Institution.to_type
   attribute :site, Settings::Site.to_type
   attribute :theme, Settings::Theme.to_type
@@ -18,14 +20,15 @@ class GlobalConfiguration < ApplicationRecord
 
   validates :guard, presence: true, uniqueness: true
 
-  validates :institution, :site, :theme,
-    store_model: true
+  validates :entities, :institution, :site, :theme, store_model: true
 
   before_validation :maybe_clear_logo_mode!
 
   # @api private
   # @return [void]
   def reset!
+    entities.reset!
+
     institution.reset!
 
     site.reset!

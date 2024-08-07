@@ -11,6 +11,10 @@ module Mutations
       description "Though a global configuration always exists, this will be null if it fails to apply for some reason."
     end
 
+    argument :entities, Types::Settings::EntitiesSettingsInputType, required: false, attribute: true do
+      description "Possible new settings for entity behavior"
+    end
+
     argument :institution, Types::Settings::InstitutionSettingsInputType, required: false, attribute: true do
       description "Possible new settings for the institution"
     end

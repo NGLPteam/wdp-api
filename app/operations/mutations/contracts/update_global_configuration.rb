@@ -5,6 +5,10 @@ module Mutations
     # @see Mutations::Operations::UpdateGlobalConfiguration
     class UpdateGlobalConfiguration < ApplicationContract
       json do
+        optional(:entities).maybe(:hash) do
+          required(:suppress_external_links).value(:bool)
+        end
+
         optional(:institution).maybe(:hash) do
           required(:name).value(:safe_string)
         end

@@ -3911,7 +3911,7 @@ CREATE TABLE public.global_configurations (
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     institution jsonb DEFAULT '{}'::jsonb NOT NULL,
-    schema jsonb DEFAULT '{}'::jsonb NOT NULL,
+    entities jsonb DEFAULT '{}'::jsonb NOT NULL,
     site jsonb DEFAULT '{}'::jsonb NOT NULL,
     theme jsonb DEFAULT '{}'::jsonb NOT NULL,
     logo_data jsonb,
@@ -11421,6 +11421,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20240618202125'),
 ('20240618202411'),
 ('20240620215406'),
-('20240701194303');
+('20240701194303'),
+('20240807162748');
 
 
