@@ -5,6 +5,8 @@
 #
 # @see Roles::CalculateRolePermissions
 class RolePermission < ApplicationRecord
+  include TimestampScopes
+
   belongs_to :permission, inverse_of: :role_permissions
   belongs_to :role, inverse_of: :role_permissions
 

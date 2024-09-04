@@ -23,6 +23,43 @@ RSpec.describe "Query.collection", type: :request do
         collections { nodes { id } }
 
         items { nodes { id } }
+
+        links {
+          ... EntityLinksListDataFragment
+        }
+      }
+    }
+
+    fragment EntityLinksListDataFragment on EntityLinkConnection {
+      nodes {
+        id
+        slug
+        operator
+        target {
+          __typename
+          ... on Item {
+            slug
+            title
+            schemaDefinition {
+              name
+              kind
+              id
+            }
+          }
+          ... on Collection {
+            slug
+            title
+            schemaDefinition {
+              name
+              kind
+              id
+            }
+          }
+          ... on Node {
+            __isNode: __typename
+            id
+          }
+        }
       }
     }
     GRAPHQL

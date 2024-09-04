@@ -6,6 +6,8 @@
 #
 # @see Permissions::Sync
 class Permission < ApplicationRecord
+  include TimestampScopes
+
   pg_enum! :kind, as: "permission_kind"
 
   has_many :role_permissions, dependent: :destroy, inverse_of: :permission

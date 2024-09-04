@@ -8,6 +8,7 @@ class SchemaDefinitionProperty < ApplicationRecord
   include FiltersBySchemaDefinition
   include WrapsSchemaProperty
   include MaterializedView
+  include TimestampScopes
 
   self.primary_key = %i[schema_definition_id path type]
 

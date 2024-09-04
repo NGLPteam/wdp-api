@@ -3,6 +3,8 @@
 # A denormalized view that's able to grab the prev & next entries for any given
 # {OrderingEntry}, if one exists.
 class OrderingEntrySiblingLink < ApplicationRecord
+  include TimestampScopes
+
   self.primary_key = %i[ordering_id sibling_id]
 
   belongs_to :ordering, inverse_of: :ordering_entry_sibling_links

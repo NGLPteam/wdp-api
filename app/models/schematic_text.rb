@@ -9,6 +9,7 @@
 # @see Types::Schematic::FullTextPropertyType
 class SchematicText < ApplicationRecord
   include SchematicPathValidity
+  include TimestampScopes
 
   belongs_to :entity, polymorphic: true
 

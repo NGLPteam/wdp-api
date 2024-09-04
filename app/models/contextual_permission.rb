@@ -6,6 +6,7 @@
 class ContextualPermission < ApplicationRecord
   include ScopesForHierarchical
   include ScopesForUser
+  include TimestampScopes
   include View
 
   DEFAULT_ATTRIBUTES = {
@@ -24,7 +25,7 @@ class ContextualPermission < ApplicationRecord
   attribute :grid, Roles::EntityPermissionGrid.to_type, default: -> { {} }
 
   belongs_to :hierarchical, polymorphic: true
-  belongs_to :user
+  belongs_to :user, inverse_of: :contextual_permissions
 
   has_many_readonly :contextually_assignable_roles, -> { in_order }, primary_key:, foreign_key: primary_key, inverse_of: :contextual_permission
   has_many_readonly :contextually_assigned_access_grants, primary_key:, foreign_key: primary_key, inverse_of: :contextual_permission

@@ -5,6 +5,7 @@
 # @see Schemas::Instances::ExtractSearchableProperties
 class EntitySearchableProperty < ApplicationRecord
   include DenormalizedProperty
+  include TimestampScopes
 
   # @api private
   SUPPORTED_PROPERTY_TYPES = %w[

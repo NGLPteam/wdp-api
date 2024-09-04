@@ -14,6 +14,8 @@
 #
 # A generated attribute, `visibility_range`, is used to handle checking for limited cases.
 class EntityVisibility < ApplicationRecord
+  include TimestampScopes
+
   # When scoping, it only makes sense to scope by `hidden`
   # or `visible` for the specified time.
   ScopableVisibility = AppTypes::Coercible::Symbol.enum(:hidden, :visible)

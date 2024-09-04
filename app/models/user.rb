@@ -10,6 +10,8 @@ class User < ApplicationRecord
 
   has_many :communities, through: :community_memberships
 
+  has_many_readonly :contextual_permissions, inverse_of: :user
+
   has_many :user_group_memberships, dependent: :destroy, inverse_of: :user
 
   has_many :user_groups, through: :user_group_memberships
