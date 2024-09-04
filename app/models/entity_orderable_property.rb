@@ -5,6 +5,7 @@
 # @see Schemas::Instances::ExtractOrderableProperties
 class EntityOrderableProperty < ApplicationRecord
   include DenormalizedProperty
+  include TimestampScopes
 
   # @api private
   SUPPORTED_PROPERTY_TYPES = %i[

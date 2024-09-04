@@ -3,6 +3,7 @@
 # A logical grouping of records in a {HarvestSource}
 class HarvestSet < ApplicationRecord
   include HasEphemeralSystemSlug
+  include TimestampScopes
 
   belongs_to :harvest_source, inverse_of: :harvest_sets
 

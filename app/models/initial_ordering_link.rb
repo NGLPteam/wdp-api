@@ -13,6 +13,7 @@
 # @see Schemas::Orderings::CalculateInitialJob
 class InitialOrderingLink < ApplicationRecord
   include ScopesForEntity
+  include TimestampScopes
 
   pg_enum! :kind, as: "initial_ordering_kind"
 

@@ -3,6 +3,7 @@
 # A staging ground to a {Contributor} from a {HarvestSource}.
 class HarvestContributor < ApplicationRecord
   include ScopesForIdentifier
+  include TimestampScopes
 
   pg_enum! :kind, as: "contributor_kind"
 

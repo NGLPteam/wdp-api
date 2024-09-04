@@ -4,6 +4,8 @@
 #
 # @api private
 class FakeVisitor < ApplicationRecord
+  include TimestampScopes
+
   belongs_to :user, optional: true
 
   scope :by_sequence, ->(value) { where(sequence: value) }

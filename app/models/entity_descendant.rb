@@ -10,6 +10,7 @@ class EntityDescendant < ApplicationRecord
   include EntityAdjacent
   include FiltersByEntityScope
   include FiltersBySchemaVersion
+  include TimestampScopes
   include View
 
   self.primary_key = %i[parent_type parent_id auth_path].freeze

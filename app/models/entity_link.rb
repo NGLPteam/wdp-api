@@ -9,6 +9,7 @@ class EntityLink < ApplicationRecord
   include HasSystemSlug
   include MatchesScopes
   include SyncsEntities
+  include TimestampScopes
 
   pg_enum! :operator, as: :link_operator, prefix: :operator
 

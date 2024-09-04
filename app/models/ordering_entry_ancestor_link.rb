@@ -3,6 +3,8 @@
 # A join model that connects a leaf {OrderingEntry} with 1+ parent entries
 # when its associated {Ordering} is a tree.
 class OrderingEntryAncestorLink < ApplicationRecord
+  include TimestampScopes
+
   self.primary_key = %i[ordering_id id]
 
   belongs_to :ordering, inverse_of: :ordering_entry_ancestor_links

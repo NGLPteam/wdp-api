@@ -5,6 +5,7 @@
 # {InitialOrderingDerivation}.
 class InitialOrderingSelection < ApplicationRecord
   include ScopesForEntity
+  include TimestampScopes
 
   belongs_to :entity, polymorphic: true, inverse_of: :initial_ordering_selection
 

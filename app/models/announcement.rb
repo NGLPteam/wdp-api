@@ -4,6 +4,7 @@
 class Announcement < ApplicationRecord
   include EntityChildRecord
   include HasEphemeralSystemSlug
+  include TimestampScopes
 
   belongs_to :entity, polymorphic: true, inverse_of: :announcements
 

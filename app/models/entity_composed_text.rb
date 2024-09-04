@@ -2,6 +2,8 @@
 
 # @see ScopesForEntityComposedText
 class EntityComposedText < ApplicationRecord
+  include TimestampScopes
+
   belongs_to :entity, polymorphic: true, inverse_of: :entity_composed_text
 
   class << self

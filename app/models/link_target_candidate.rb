@@ -2,6 +2,7 @@
 
 # A calculated view that determines available candidates to link a source {Entity} to.
 class LinkTargetCandidate < ApplicationRecord
+  include TimestampScopes
   include View
 
   self.primary_key = %i[source_type source_id target_type target_id].freeze

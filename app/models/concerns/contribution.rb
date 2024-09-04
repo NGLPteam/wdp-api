@@ -4,6 +4,7 @@ module Contribution
   extend ActiveSupport::Concern
 
   include HasEphemeralSystemSlug
+  include TimestampScopes
 
   included do
     attribute :metadata, Contributions::Metadata.to_type, default: proc { {} }

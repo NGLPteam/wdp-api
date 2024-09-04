@@ -2,6 +2,7 @@
 
 class SchematicScalarReference < ApplicationRecord
   include SchematicReference
+  include TimestampScopes
 
   validates :path, presence: true, uniqueness: { scope: :referrer }
 

@@ -6,6 +6,7 @@
 class UserGroup < ApplicationRecord
   include AccessGrantSubject
   include HasSystemSlug
+  include TimestampScopes
 
   has_many :user_group_memberships, dependent: :destroy, inverse_of: :user_group
 

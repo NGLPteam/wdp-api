@@ -2,6 +2,7 @@
 
 class SchematicCollectedReference < ApplicationRecord
   include SchematicReference
+  include TimestampScopes
 
   scope :in_order, -> { order(path: :asc, position: :asc) }
 

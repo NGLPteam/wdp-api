@@ -645,6 +645,11 @@ Style/RedundantReturn:
 Style/RedundantSelfAssignmentBranch:
   Enabled: true
 
+Style/RescueModifier:
+  Enabled: true
+  Exclude:
+    - "spec/**/*.rb"
+
 Style/SelectByRegexp:
   Enabled: true
 
