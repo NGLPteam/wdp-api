@@ -37,6 +37,8 @@ class Asset < ApplicationRecord
   validates :attachment, :name, :content_type, :file_size, presence: true
   validates :identifier, uniqueness: { scope: %i[attachable_type attachable_id], if: :identifier? }
 
+  delegate :original_filename, to: :attachment, allow_nil: true
+
   # We mask this with {#download_url} in order to track analytics of a download.
   #
   # @return [String]
@@ -50,7 +52,24 @@ class Asset < ApplicationRecord
 
   # @return [String]
   def content_disposition
-    ContentDisposition.attachment(name)
+    ContentDisposition.attachment(download_name)
+  end
+
+  # @return [String]
+  def download_name
+    # :nocov:
+    return original_filename if original_filename.present?
+
+    extension = Mime::Type.lookup(content_type).try(:symbol).try(:to_s)
+
+    extension = ".#{extension}" if extension
+
+    return name unless extension.present?
+
+    base = File.basename(name, extension)
+
+    "#{base}#{extension}"
+    # :nocov:
   end
 
   # @return [String]
