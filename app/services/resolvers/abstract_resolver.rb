@@ -16,6 +16,10 @@ module Resolvers
 
     defines :params_order, type: Support::Types::ParamsReorderer
 
+    defines :args_to_hash, type: Support::Types::Array.of(Support::Types::Coercible::Symbol)
+
+    args_to_hash [].freeze
+
     params_order Support::Params::Reorderer.default
 
     # @note Expose the SearchObject::Search object.
@@ -98,6 +102,23 @@ module Resolvers
 
     # @!endgroup
 
+    # @!group Caching
+
+    # @param [{ Symbol => Object }] args
+    # @return [Integer]
+    def arg_hash_from(args)
+      args_to_hash(args).hash
+    end
+
+    # @api private
+    # @param [{ Symbol => Object }] args
+    # @return [Hash]
+    def args_to_hash(args)
+      self.class.args_to_hash.index_with { args[_1] }
+    end
+
+    # @!endgroup
+
     private
 
     # @return [Integer]
@@ -128,6 +149,14 @@ module Resolvers
 
         option :filters, **options
         option :or_filters, **or_options
+      end
+
+      # @param [<Symbol>] args
+      # @return [void]
+      def hashes_args!(*args)
+        new_args = args.flatten.map(&:to_sym)
+
+        args_to_hash args_to_hash | new_args
       end
 
       def i18n_scope
