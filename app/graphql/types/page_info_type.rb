@@ -47,9 +47,13 @@ module Types
       from_info :per_page
     end
 
+    def arg_hash
+      object.context[:arg_hash] ||= calculate_arg_hash
+    end
+
     # @return [Integer]
     def total_count
-      maybe_cache_expensive do
+      maybe_cache_expensive(arg_hash:) do
         from_connection_info(:total_count) do
           object.items.count_from_subquery
         end
@@ -66,6 +70,12 @@ module Types
     end
 
     private
+
+    def calculate_arg_hash
+      args = object.context[:resolver].try(:args_to_hash, object.arguments) || {}
+
+      args.hash
+    end
 
     def from_connection_info(key)
       object.context[:connection_info].then do |cinfo|

@@ -19,13 +19,14 @@ module Support
 
         # @api private
         # @return [Object]
-        def maybe_cache_expensive(depends_on_variables: true, expires_in: 10.minutes, force: current_user_privileged?)
+        def maybe_cache_expensive(depends_on_variables: true, expires_in: 10.minutes, arg_hash: nil, force: current_user_privileged?)
           variable_hash = context.query.variables.to_h.hash
 
           key_parts = [
             "GQL",
             context.current_path.join(?.),
             rails_cache_key_for(object),
+            arg_hash,
           ]
 
           key_parts << variable_hash if depends_on_variables

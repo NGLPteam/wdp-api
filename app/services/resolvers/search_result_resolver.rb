@@ -11,8 +11,16 @@ module Resolvers
     type ::Types::SearchResultType.connection_type, null: false
 
     description <<~TEXT
-    The results of a search. Either `query` or `predicates` should be provided,
-    otherwise it will return as if everything matches.
+    The results of a search.
+
+    You must specify one of the following options in order to activate a search:
+
+    * `predicates`
+    * `prefix`
+    * `query`
+    * `schema`
+
+    If _none_ of these are set, the search will be considered empty, and return 0 results.
     TEXT
 
     scope { object.base_relation.all }
@@ -45,9 +53,11 @@ module Resolvers
       scope.apply_query value
     end
 
+    hashes_args! :query, :prefix, :predicates
+
     def finalize(scope)
       # If no search options are provided, we return an empty set.
-      return scope.none if predicates.blank? && query.blank? && prefix.blank?
+      return scope.none if predicates.blank? && query.blank? && prefix.blank? && schema.blank?
 
       scope.apply_order_to_exclude_duplicate_links
     end
