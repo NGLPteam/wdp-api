@@ -4,14 +4,12 @@ module Harvesting
   module Metadata
     module OAIDC
       class ExtractEntities < Harvesting::Metadata::BaseEntityExtractor
-        include Dry::Effects.Resolve(:target_entity)
-
         # @param [String] raw_metadata
         # @return [Dry::Monads::Result(void)]
         def call(raw_metadata)
           values = yield metadata_format.extract_values raw_metadata
 
-          child = yield handle_by_parent values
+          child = yield handle values
 
           yield upsert_contribution_proxies.(child, values.authors)
 
@@ -22,26 +20,70 @@ module Harvesting
 
         # @param [Harvesting::Metadata::OAIDC::Parsed::ExtractedValues] values
         # @return [Dry::Monads::Success(HarvestEntity)]
-        def handle_by_parent(values)
-          declaration = target_entity.schema_version.declaration
-
-          case declaration
-          when /\Anglp:journal:/
-            handle_journal values
-          when /\Anglp:series:/
-            handle_series values
+        def handle(values)
+          if use_metadata_mappings?
+            handle_with_mappings(values)
           else
-            # :nocov:
-            Failure[:unsupported_target, "Don't know how to upsert OAIDC metadata on #{declaration}"]
+            handle_default values
           end
         end
 
         # @param [Harvesting::Metadata::OAIDC::Parsed::ExtractedValues] values
         # @return [Dry::Monads::Success(HarvestEntity)]
-        def handle_journal(values)
+        def handle_with_mappings(values)
+          existing_parent = metadata_mappings.matching_one!(**values.to_metadata_mappings_match)
+
+          handle_with(existing_parent, values, existing_parent:)
+        rescue ActiveRecord::RecordNotFound
+          code = "metadata_mapping_not_found"
+
+          metadata = {
+            match: values.to_metadata_mappings_match,
+          }
+
+          skip_record!("no metadata mappings found", code:, metadata:)
+        rescue LimitToOne::TooManyMatches
+          code = "metadata_mapping_too_many_found"
+
+          metadata = {
+            match: values.to_metadata_mappings_match,
+          }
+
+          skip_record!("too many metadata mappings match", code:, metadata:)
+        end
+
+        # @param [Harvesting::Metadata::OAIDC::Parsed::ExtractedValues] values
+        # @return [Dry::Monads::Success(HarvestEntity)]
+        def handle_default(values)
+          handle_with(target_entity, values, existing_parent: nil)
+        end
+
+        # @param [Harvesting::Metadata::OAIDC::Parsed::ExtractedValues] values
+        # @return [Dry::Monads::Success(HarvestEntity)]
+        def handle_with(source, values, existing_parent: nil)
+          declaration = source.schema_version.declaration
+
+          options = { existing_parent:, }
+
+          case declaration
+          when /\Anglp:journal:/
+            handle_journal values, **options
+          when /\Anglp:series:/
+            handle_series values, **options
+          else
+            # :nocov:
+            Failure[:unsupported_target, "Don't know how to upsert OAIDC metadata on #{declaration}"]
+            # :nocov:
+          end
+        end
+
+        # @param [Harvesting::Metadata::OAIDC::Parsed::ExtractedValues] values
+        # @param [HarvestTarget, nil] existing_parent
+        # @return [Dry::Monads::Success(HarvestEntity)]
+        def handle_journal(values, existing_parent: nil)
           skip_record! "article is missing volume or issue" unless values.has_journal?
 
-          volume = yield upsert_volume_from values
+          volume = yield upsert_volume_from(values, existing_parent:)
 
           issue = yield upsert_issue_from(values, volume:)
 
@@ -58,11 +100,12 @@ module Harvesting
         }.freeze
 
         # @param [Harvesting::Metadata::ValueExtraction::Struct] values
+        # @param [HarvestTarget, nil] existing_parent
         # @return [HarvestEntity]
-        def upsert_volume_from(values)
+        def upsert_volume_from(values, existing_parent: nil)
           identifier = values.volume.identifier
 
-          volume = find_or_create_entity identifier
+          volume = find_or_create_entity(identifier, existing_parent:)
 
           with_entity.(volume) do |assigner|
             assigner.metadata_kind! "volume"
@@ -145,8 +188,8 @@ module Harvesting
 
         # @param [Harvesting::Metadata::OAIDC::Parsed::ExtractedValues] values
         # @return [Dry::Monads::Success(HarvestEntity)]
-        def handle_series(values)
-          upsert_paper_from values
+        def handle_series(values, **options)
+          upsert_paper_from values, **options
         end
 
         PAPER_ATTRS = {
@@ -162,11 +205,12 @@ module Harvesting
         }.freeze
 
         # @param [Harvesting::Metadata::OAIDC::Parsed::ExtractedValues] values
+        # @param [HarvestTarget, nil] existing_parent
         # @return [Dry::Monads::Success(HarvestEntity)]
-        def upsert_paper_from(values)
+        def upsert_paper_from(values, existing_parent: nil)
           identifier = harvest_record.identifier
 
-          paper = find_or_create_entity identifier
+          paper = find_or_create_entity(identifier, existing_parent:)
 
           with_entity.(paper) do |assigner|
             assigner.metadata_kind! "paper"

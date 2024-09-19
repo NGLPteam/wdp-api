@@ -73,6 +73,10 @@ class HarvestRecord < ApplicationRecord
     Harvesting::UpsertEntitiesForRecordJob.perform_later self, reprepare:
   end
 
+  monadic_operation! def metadata_values
+    parse_metadata.bind(&:extract_values)
+  end
+
   # @see Harvesting::Actions::ParseRecordMetadata
   # @return [Dry::Monads::Result]
   def parse_metadata

@@ -9,7 +9,7 @@ module Harvesting
     class Upsert
       include AfterCommitEverywhere
       include Dry::Monads[:do, :result]
-      include Dry::Effects.Resolve(:target_entity)
+      include Dry::Effects.Resolve(default_target_entity: :target_entity)
       include Dry::Effects.Resolve(:schemas)
       include MonadicPersistence
       include MeruAPI::Deps[
@@ -90,7 +90,7 @@ module Harvesting
       # @param [HarvestEntity] harvest_entity
       # @return [HarvestTarget]
       def root_parent_for(harvest_entity)
-        harvest_entity.has_existing_parent? ? harvest_entity.existing_parent : target_entity
+        harvest_entity.has_existing_parent? ? harvest_entity.existing_parent : default_target_entity
       end
 
       # @!group Steps

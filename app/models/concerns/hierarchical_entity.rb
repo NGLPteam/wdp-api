@@ -85,6 +85,8 @@ module HierarchicalEntity
 
     delegate :auth_path, to: :contextual_parent, allow_nil: true, prefix: :contextual
 
+    strip_attributes only: %i[title]
+
     before_validation :inherit_hierarchical_parent!
 
     after_validation :set_temporary_auth_path!, on: :create

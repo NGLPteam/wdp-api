@@ -19,7 +19,7 @@ module Harvesting
 
         extract_values! do
           xpath :title, ".//dc:title", type: :string, require_match: true
-          xpath :published, ".//dc:date", type: :extracted_date, require_match: true
+          # xpath :published, ".//dc:date", type: :variable_precision_date, require_match: false
           xpath :publisher, ".//dc:publisher", type: :contribution_proxy, require_match: false do
             pipeline! do
               xml_text
@@ -52,7 +52,9 @@ module Harvesting
             end
           end
 
+          xpath_list :raw_dates, ".//dc:date", type: :string_list, require_match: false
           xpath_list :identifiers, ".//dc:identifier", type: :string_list, require_match: true
+          xpath_list :relations, ".//dc:relation", type: :string_list, require_match: false
           xpath_list :sources, ".//dc:source", type: :string_list, require_match: true
           xpath_list :types, ".//dc:type", type: :string_list, require_match: false
 
@@ -119,6 +121,10 @@ module Harvesting
               end
             end
 
+            memoize def dates
+              raw_dates.map { VariablePrecisionDate.parse _1 }.reject(&:none?)
+            end
+
             def has_journal?
               (journal.present? && journal.known?) || (volume.present? && issue.present?)
             end
@@ -136,10 +142,20 @@ module Harvesting
               assets.detect(&:pdf?)
             end
 
+            memoize def published
+              dates.min_by(&:value)
+            end
+
             memoize def scalar_assets
               {
                 pdf_version:,
               }.compact
+            end
+
+            # @see HarvestMetdataMapping#matching
+            # @return [Hash]
+            def to_metadata_mappings_match
+              { relation: relations, identifier: identifiers, title: [title], }
             end
 
             memoize def unassociated_assets

@@ -15,6 +15,7 @@ module Harvesting
 
           yield set! :auto_create_volumes_and_issues, harvest_mapping.mapping_options.auto_create_volumes_and_issues
           yield set! :link_identifiers_globally, harvest_mapping.mapping_options.link_identifiers_globally
+          yield set! :use_metadata_mappings, harvest_mapping.mapping_options.use_metadata_mappings
 
           Success nil
         end

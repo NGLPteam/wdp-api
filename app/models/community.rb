@@ -29,6 +29,11 @@ class Community < ApplicationRecord
 
   after_create :grant_system_roles!
 
+  # @return [Community]
+  def community
+    self
+  end
+
   def hierarchical_parent
     nil
   end

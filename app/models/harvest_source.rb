@@ -10,6 +10,7 @@ class HarvestSource < ApplicationRecord
   has_many :harvest_attempts, inverse_of: :harvest_source, dependent: :destroy
   has_many :harvest_contributors, inverse_of: :harvest_source, dependent: :destroy
   has_many :harvest_mappings, inverse_of: :harvest_source, dependent: :destroy
+  has_many :harvest_metadata_mappings, inverse_of: :harvest_source, dependent: :destroy
   has_many :harvest_sets, inverse_of: :harvest_source, dependent: :destroy
 
   has_many_readonly :latest_harvest_attempt_links, inverse_of: :harvest_source
@@ -26,6 +27,14 @@ class HarvestSource < ApplicationRecord
   validates :identifier, :name, :protocol, :base_url, presence: true
   validates :protocol, inclusion: { in: KNOWN_PROTOCOLS }
   validates :metadata_format, harvesting_metadata_format: true
+
+  monadic_operation! def assign_metadata_mapping(field, pattern, target_entity)
+    call_operation("harvesting.metadata_mappings.assign", self, field, pattern, target_entity)
+  end
+
+  monadic_operation! def assign_metadata_mappings(raw_mappings, base_entity:)
+    call_operation("harvesting.metadata_mappings.assign_many_by_identifier", self, raw_mappings, base_entity:)
+  end
 
   def logger
     @logger ||= Harvesting::Logs::Source.new self
