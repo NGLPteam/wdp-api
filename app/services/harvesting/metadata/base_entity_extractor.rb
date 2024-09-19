@@ -8,8 +8,10 @@ module Harvesting
       include Dry::Effects.Resolve(:harvest_attempt)
       include Dry::Effects.Resolve(:harvest_record)
       include Dry::Effects.Resolve(:metadata_format)
+      include Dry::Effects.Resolve(:metadata_mappings)
       include Dry::Effects.Resolve(:schemas)
-      include Dry::Effects.Resolve(:target_entity)
+      include Dry::Effects.Resolve(default_target_entity: :target_entity)
+      include Dry::Effects.Resolve(:use_metadata_mappings)
       include Dry::Effects.Interrupt(:skip_record)
       include MonadicPersistence
 
@@ -59,6 +61,12 @@ module Harvesting
         skip_record skipped
       end
 
+      # @abstract
+      # @return [HarvestTarget]
+      def target_entity
+        default_target_entity
+      end
+
       # @see #skip_record!
       # @param [String, nil] kind
       # @param [Hash] options
@@ -73,6 +81,10 @@ module Harvesting
         options[:code] ||= base_code
 
         skip_record! reason, options
+      end
+
+      def use_metadata_mappings?
+        use_metadata_mappings { false }
       end
     end
   end

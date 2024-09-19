@@ -4,6 +4,7 @@ FactoryBot.define do
   factory :harvest_source do
     transient do
       link_identifiers_globally { false }
+      use_metadata_mappings { false }
       max_records { Harvesting::ABSOLUTE_MAX_RECORD_COUNT }
     end
 
@@ -23,6 +24,7 @@ FactoryBot.define do
     mapping_options do
       {
         link_identifiers_globally:,
+        use_metadata_mappings:,
       }
     end
 

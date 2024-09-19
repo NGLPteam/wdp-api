@@ -201,6 +201,17 @@ CREATE DOMAIN public.full_text_weight AS "char" DEFAULT 'D'::"char"
 
 
 --
+-- Name: harvest_metadata_mapping_field; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.harvest_metadata_mapping_field AS ENUM (
+    'relation',
+    'title',
+    'identifier'
+);
+
+
+--
 -- Name: initial_ordering_kind; Type: TYPE; Schema: public; Owner: -
 --
 
@@ -1006,6 +1017,19 @@ SELECT nlevel(
     index($1, $2),
     index($1, $3, index($1, $2))
   )
+);
+$_$;
+
+
+--
+-- Name: normalize_whitespace(text); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.normalize_whitespace(text) RETURNS text
+    LANGUAGE sql IMMUTABLE STRICT PARALLEL SAFE
+    AS $_$
+SELECT TRIM(
+  regexp_replace($1, '[\s\u00a0\u180e\u2007\u200b-\u200f\u202f\u2060\ufeff]+', ' ', 'g')
 );
 $_$;
 
@@ -4192,6 +4216,22 @@ CREATE TABLE public.harvest_mappings (
 
 
 --
+-- Name: harvest_metadata_mappings; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.harvest_metadata_mappings (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    harvest_source_id uuid NOT NULL,
+    target_entity_type character varying NOT NULL,
+    target_entity_id uuid NOT NULL,
+    field public.harvest_metadata_mapping_field NOT NULL,
+    pattern public.citext NOT NULL,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+--
 -- Name: harvest_records; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -5901,6 +5941,14 @@ ALTER TABLE ONLY public.harvest_errors
 
 ALTER TABLE ONLY public.harvest_mappings
     ADD CONSTRAINT harvest_mappings_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: harvest_metadata_mappings harvest_metadata_mappings_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.harvest_metadata_mappings
+    ADD CONSTRAINT harvest_metadata_mappings_pkey PRIMARY KEY (id);
 
 
 --
@@ -7835,6 +7883,27 @@ CREATE INDEX index_harvest_mappings_on_target_entity ON public.harvest_mappings 
 --
 
 CREATE UNIQUE INDEX index_harvest_mappings_uniqueness ON public.harvest_mappings USING btree (harvest_source_id, harvest_set_id, collection_id);
+
+
+--
+-- Name: index_harvest_metadata_mappings_on_harvest_source_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_harvest_metadata_mappings_on_harvest_source_id ON public.harvest_metadata_mappings USING btree (harvest_source_id);
+
+
+--
+-- Name: index_harvest_metadata_mappings_on_target_entity; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_harvest_metadata_mappings_on_target_entity ON public.harvest_metadata_mappings USING btree (target_entity_type, target_entity_id);
+
+
+--
+-- Name: index_harvest_metadata_mappings_uniqueness; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_harvest_metadata_mappings_uniqueness ON public.harvest_metadata_mappings USING btree (harvest_source_id, field, pattern);
 
 
 --
@@ -10584,6 +10653,14 @@ ALTER TABLE ONLY public.access_grants
 
 
 --
+-- Name: harvest_metadata_mappings fk_rails_4f6af7c2e4; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.harvest_metadata_mappings
+    ADD CONSTRAINT fk_rails_4f6af7c2e4 FOREIGN KEY (harvest_source_id) REFERENCES public.harvest_sources(id) ON DELETE CASCADE;
+
+
+--
 -- Name: community_memberships fk_rails_5275a2ad88; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -11422,6 +11499,8 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20240618202411'),
 ('20240620215406'),
 ('20240701194303'),
-('20240807162748');
+('20240807162748'),
+('20240917183334'),
+('20240919170725');
 
 

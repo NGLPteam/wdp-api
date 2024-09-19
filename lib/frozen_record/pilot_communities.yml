@@ -235,3 +235,52 @@
     issn: "2376-6409"
     metadata_format: oaidc
     identifier: pcel
+- seed_identifier: btaa-uiowa
+  identifier: uiowa
+  title: University of Iowa
+  journals:
+  - identifier: uiowa-transit
+    title: Transit
+    url: https://pubs.lib.uiowa.edu/transit/api/oai/
+    metadata_format: jats
+  - identifier: uiowa-mathal
+    title: "Journal of Islamic and Middle Eastern Multidisciplinary Studies: Mathal"
+    url: https://pubs.lib.uiowa.edu/mathal/api/oai/
+    metadata_format: jats
+  - identifier: uiowa-pog
+    title: Proceedings in Obstetrics and Gynecology
+    url: https://pubs.lib.uiowa.edu/pog/api/oai/
+    metadata_format: jats
+- seed_identifier: btaa-uiowa-esploro
+  identifier: uiowa
+  title: University of Iowa
+  url: "https://uiowa.alma.exlibrisgroup.com/view/oai/01IOWA_INST/request"
+  set_identifier: "iro:meru-dc"
+  metadata_format: oaidc
+  skip_harvest: true
+  use_metadata_mappings: true
+  metadata_mappings:
+    - identifier: uiowa-ofm
+      field: relation
+      pattern: "^ispartof:[[:space:]]+Open file map series.*"
+    - identifier: uiowa-wrir
+      field: relation
+      pattern: "^ispartof:[[:space:]]+Water Resources Investigation Report.*"
+    - identifier: uiowa-tech-info-series
+      field: relation
+      pattern: "^ispartof:[[:space:]]+Technical Information Series.*"
+    - identifier: uiowa-tech-info-series
+      field: relation
+      pattern: "^ispartof:[[:space:]]+Iowa Geological Survey Technical Information Series.*"
+    - identifier: uiowa-wsb
+      field: relation
+      pattern: "^ispartof:[[:space:]]+Water-supply bulletin.*"
+    - identifier: uiowa-iihr-monographs
+      field: identifier
+      pattern: "^iihr_monograph_series.*"
+    - identifier: uiowa-iwp
+      field: title
+      pattern: "^International Writing Program.*"
+    - identifier: uiowa-iwpar
+      field: title
+      pattern: "^The International Writing Program at the University of Iowa annual report.*"

@@ -4,6 +4,12 @@ module PilotHarvesting
   module Harvestable
     extend ActiveSupport::Concern
 
+    MetadataMapping = Types::Hash.schema(
+      identifier: Types::Coercible::String,
+      field: Types::Coercible::String,
+      pattern: Types::Coercible::String,
+    ).with_key_transform(&:to_sym)
+
     included do
       defines :metadata_format, type: Harvesting::Types::MetadataFormat
 
@@ -31,6 +37,8 @@ module PilotHarvesting
 
       attribute? :link_identifiers_globally, PilotHarvesting::Types::Bool.default(false)
 
+      attribute? :use_metadata_mappings, PilotHarvesting::Types::Bool.default(false)
+
       attribute? :max_records, Harvesting::Types::MaxRecordCount
 
       attribute? :metadata_format, Harvesting::Types::MetadataFormat.optional
@@ -38,6 +46,8 @@ module PilotHarvesting
       attribute? :protocol_name, Harvesting::Types::ProtocolName.optional
 
       attribute? :skip_harvest, Harvesting::Types::Bool.default(false)
+
+      attribute? :metadata_mappings, Harvesting::Types::Array.of(MetadataMapping).default([].freeze)
 
       delegate :metadata_format, :protocol_name, to: :class, prefix: :default
     end
@@ -75,6 +85,7 @@ module PilotHarvesting
         mapping_options: {
           auto_create_volumes_and_issues:,
           link_identifiers_globally:,
+          use_metadata_mappings:,
         },
         read_options: {
           max_records:,
@@ -87,6 +98,8 @@ module PilotHarvesting
       )
 
       call_operation("harvesting.sources.upsert", harvesting_identifier, harvesting_title, url, **source_options) do |source|
+        assign_metadata_mappings_for!(source, entity).value!
+
         if set_identifier.present?
           call_operation("harvesting.actions.upsert_set_mapping", source, entity, set_identifier, add_set_if_missing: add_set, **options) do |mapping|
             call_operation("harvesting.actions.manually_run_mapping", mapping, skip_harvest:) do
@@ -99,6 +112,12 @@ module PilotHarvesting
           end
         end
       end
+    end
+
+    def assign_metadata_mappings_for!(source, base_entity)
+      return Success([]) if metadata_mappings.blank?
+
+      source.assign_metadata_mappings(metadata_mappings, base_entity:)
     end
   end
 end

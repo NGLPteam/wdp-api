@@ -12,6 +12,8 @@ module HasHarvestingOptions
     attribute :read_options, Harvesting::Options::Read.to_type, default: proc { {} }
     attribute :format_options, Harvesting::Options::Format.to_type, default: proc { {} }
     attribute :mapping_options, Harvesting::Options::Mapping.to_type, default: proc { {} }
+
+    delegate :use_metadata_mappings?, to: :mapping_options
   end
 
   # @param [HasHarvestingOptions] parent

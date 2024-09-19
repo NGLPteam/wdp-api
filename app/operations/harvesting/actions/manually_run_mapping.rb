@@ -22,7 +22,7 @@ module Harvesting
       def perform(harvest_mapping, skip_harvest: false)
         attempt = yield create_manual_attempt.call harvest_mapping
 
-        Harvesting::ExtractRecordsJob.perform_later attempt
+        Harvesting::ExtractRecordsJob.perform_later attempt unless skip_harvest
 
         Success attempt
       end

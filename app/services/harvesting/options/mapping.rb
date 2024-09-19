@@ -9,6 +9,7 @@ module Harvesting
 
       attribute :auto_create_volumes_and_issues, :boolean, default: false
       attribute :link_identifiers_globally, :boolean, default: false
+      attribute :use_metadata_mappings, :boolean, default: false
     end
   end
 end

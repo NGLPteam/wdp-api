@@ -41,7 +41,7 @@ module Collections
       Success collection
     end
 
-    # @param [SchemaVersion]
+    # @param [SchemaVersion] schema_version
     def with_schema(schema_version)
       provide default_collection_schema: schema_version do
         yield
