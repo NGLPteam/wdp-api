@@ -41,6 +41,8 @@ workers ENV.fetch("WEB_CONCURRENCY") { 2 }
 #
 preload_app!
 
+plugin "rufus-scheduler"
+
 # Allow puma to be restarted by `rails restart` command.
 plugin :tmp_restart
 

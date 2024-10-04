@@ -41,3 +41,6 @@ jobs:
           file: docker/production/Dockerfile
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          secrets: |
+            "maxmind_account_id=${{ secrets.MAXMIND_ACCOUNT_ID }}"
+            "maxmind_license_key=${{ secrets.MAXMIND_LICENSE_KEY }}"

@@ -53,7 +53,11 @@ services:
   web:
     tty: true
     stdin_open: true
-    build: .
+    build:
+      context: .
+      secrets:
+        - maxmind_account_id
+        - maxmind_license_key
     depends_on:
       db:
         condition: service_healthy
@@ -80,7 +84,11 @@ services:
       retries: 3
       start_period: 15s
   worker:
-    build: .
+    build:
+      context: .
+      secrets:
+        - maxmind_account_id
+        - maxmind_license_key
     command: bin/good_job start --probe-port 7001
     depends_on:
       db:
@@ -106,7 +114,11 @@ services:
       retries: 3
       start_period: 15s
   spec:
-    build: .
+    build:
+      context: .
+      secrets:
+        - maxmind_account_id
+        - maxmind_license_key
     command: tail -f /dev/null
     depends_on:
       db:
@@ -142,6 +154,7 @@ services:
     restart: unless-stopped
   minio:
     image: "minio/minio:RELEASE.2022-09-25T15-44-53Z"
+    restart: unless-stopped
     logging:
       driver: json-file
       options:
@@ -173,7 +186,11 @@ services:
     volumes:
       - ./docker/minio/client:/root/.mc
   migrations:
-    build: .
+    build:
+      context: .
+      secrets:
+        - maxmind_account_id
+        - maxmind_license_key
     command: bin/ensure-db
     depends_on:
       db:
@@ -204,3 +221,9 @@ volumes:
     driver: local
   upload_storage:
     driver: local
+
+secrets:
+  maxmind_account_id:
+    file: ./docker/maxmind_account_id
+  maxmind_license_key:
+    file: ./docker/maxmind_license_key

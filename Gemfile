@@ -91,10 +91,12 @@ gem "oj", "3.16.3"
 gem "openid_connect", "~> 2.3.0"
 gem "pundit", "~> 2.3.1"
 gem "rollups", "~> 0.3.2"
+gem "rufus-scheduler", "~> 3.9.2"
 gem "sanitize", "~> 6.1.0"
 gem "semantic", "~> 1.6.1"
 gem "statesman", "~> 12.1.0"
 gem "strip_attributes", "1.13.0"
+gem "sucker_punch", "~> 3.2.0"
 gem "validate_url", "~> 1.0.15"
 
 # File processing
@@ -115,6 +117,7 @@ gem "zaru", "~> 1.0.0"
 # Servers / Rack
 gem "falcon", "~> 0.39.0", require: false
 gem "puma", "~> 6.4.2"
+gem "puma-rufus-scheduler", "~> 0.1.0"
 gem "rack-cors", "~> 2.0.2"
 
 # Debugging / system-level things

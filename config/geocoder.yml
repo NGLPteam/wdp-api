@@ -1,0 +1,15 @@
+default: &default
+  preserve_file_times: true
+  verbose: true
+
+development:
+  <<: *default
+
+test:
+  <<: *default
+
+staging:
+  <<: *default
+
+production:
+  <<: *default
