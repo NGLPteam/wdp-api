@@ -1,3 +1,14 @@
+FROM ghcr.io/maxmind/geoipupdate:v7.0.1 AS maxmind
+
+ENV GEOIPUPDATE_EDITION_IDS="GeoLite2-ASN GeoLite2-City GeoLite2-Country"
+ENV GEOIPUPDATE_PRESERVE_FILE_TIMES=1
+
+RUN --mount=type=secret,id=maxmind_account_id \
+  --mount=type=secret,id=maxmind_license_key \
+  GEOIPUPDATE_ACCOUNT_ID_FILE=/run/secrets/maxmind_account_id \
+  GEOIPUPDATE_LICENSE_KEY_FILE=/run/secrets/maxmind_license_key \
+  /usr/bin/geoipupdate
+
 FROM ruby:3.2.3-bullseye
 
 RUN apt-get update -qq && apt-get install -y -qq --no-install-recommends \
@@ -30,6 +41,9 @@ COPY docker/entrypoint.sh /usr/bin/
 RUN chmod +x /usr/bin/entrypoint.sh
 ENTRYPOINT ["entrypoint.sh"]
 
+COPY --from=maxmind /usr/bin/geoipupdate /usr/local/bin/geoipupdate
+COPY --from=maxmind /usr/share/GeoIP /usr/share/GeoIP
+
 ENV BUNDLE_PATH=/bundle \
     BUNDLE_BIN=/bundle/bin \
     GEM_HOME=/bundle \
@@ -39,6 +53,11 @@ ENV BUNDLE_PATH=/bundle \
     PORT=8080
 ENV PATH="${BUNDLE_BIN}:${PATH}"
 ENV LD_PRELOAD=libjemalloc.so.2
+ENV GEOIPUPDATE_ACCOUNT_ID_FILE=/run/secrets/maxmind_account_id
+ENV GEOIPUPDATE_LICENSE_KEY_FILE=/run/secrets/maxmind_license_key
+ENV GEOIPUPDATE_EDITION_IDS="GeoLite2-ASN GeoLite2-City GeoLite2-Country"
+ENV GEOIPUPDATE_PRESERVE_FILE_TIMES=1
+ENV GEOIPUPDATE_VERBOSE=1
 
 EXPOSE 8080
 

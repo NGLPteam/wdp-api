@@ -43,3 +43,5 @@ spec/examples.txt
 /docker/minio/client/*
 !/docker/minio/client/.keep
 !/docker/minio/client/initialize.sh
+/docker/maxmind_account_id
+/docker/maxmind_license_key
