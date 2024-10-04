@@ -59,7 +59,7 @@ Shrine.plugin :data_uri
 Shrine.plugin :tempfile # load it globally so that it overrides `Shrine.with_file`
 Shrine.plugin :derivatives, create_on_promote: true, store: :derivatives
 Shrine.plugin :upload_options, cache: { acl: "public-read" }, store: { acl: "public-read" }
-Shrine.plugin :url_options, cache: { public: true }, store: { public: true }
+Shrine.plugin :url_options, **UploadConfig.for_url_options
 
 Shrine.plugin :tus
 
