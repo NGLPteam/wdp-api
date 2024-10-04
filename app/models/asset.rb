@@ -45,7 +45,7 @@ class Asset < ApplicationRecord
   def actual_download_url
     attachment.url(
       public: Rails.env.development?,
-      expires_in: 5.minutes.to_i,
+      expires_in: 15.minutes.to_i,
       response_content_disposition: content_disposition,
     )
   end
@@ -70,11 +70,6 @@ class Asset < ApplicationRecord
 
     "#{base}#{extension}"
     # :nocov:
-  end
-
-  # @return [String]
-  def download_token
-    generate_download_token!
   end
 
   # @return [String]

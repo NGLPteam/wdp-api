@@ -8,7 +8,7 @@ class DownloadsController < ApplicationController
       m.success do
         ahoy.track "asset.download", subject: asset, entity: asset.attachable
 
-        redirect_to asset.actual_download_url
+        redirect_to asset.actual_download_url, status: :see_other
       end
 
       m.failure :missing_token do
