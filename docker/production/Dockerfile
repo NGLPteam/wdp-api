@@ -1,5 +1,6 @@
 FROM ghcr.io/maxmind/geoipupdate:v7.0.1 AS maxmind
 
+ENV GEOIPUPDATE_DB_DIR="/usr/share/GeoIP"
 ENV GEOIPUPDATE_EDITION_IDS="GeoLite2-ASN GeoLite2-City GeoLite2-Country"
 ENV GEOIPUPDATE_PRESERVE_FILE_TIMES=1
 
@@ -46,7 +47,7 @@ ENV BUNDLE_PATH=/bundle \
     RAILS_SERVE_STATIC_FILES=true \
     PORT=8080
 ENV PATH="${BUNDLE_BIN}:${PATH}"
-ENV LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libjemalloc.so.2
+ENV LD_PRELOAD=libjemalloc.so.2
 
 RUN gem update --system && gem install bundler:2.5.7
 
@@ -61,8 +62,10 @@ RUN bundle config set path /bundle
 
 COPY . /srv/app
 
+RUN mkdir -pv /usr/share
+
 COPY --from=maxmind /usr/bin/geoipupdate /usr/local/bin/geoipupdate
-COPY --from=maxmind /usr/share/GeoIP /usr/share/GeoIP
+COPY --from=maxmind /usr/share/GeoIP/ /usr/share/GeoIP
 
 EXPOSE 8080
 

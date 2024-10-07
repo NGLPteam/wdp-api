@@ -1,5 +1,6 @@
 FROM ghcr.io/maxmind/geoipupdate:v7.0.1 AS maxmind
 
+ENV GEOIPUPDATE_DB_DIR="/usr/share/GeoIP"
 ENV GEOIPUPDATE_EDITION_IDS="GeoLite2-ASN GeoLite2-City GeoLite2-Country"
 ENV GEOIPUPDATE_PRESERVE_FILE_TIMES=1
 
@@ -55,6 +56,7 @@ ENV PATH="${BUNDLE_BIN}:${PATH}"
 ENV LD_PRELOAD=libjemalloc.so.2
 ENV GEOIPUPDATE_ACCOUNT_ID_FILE=/run/secrets/maxmind_account_id
 ENV GEOIPUPDATE_LICENSE_KEY_FILE=/run/secrets/maxmind_license_key
+ENV GEOIPUPDATE_DB_DIR="/usr/share/GeoIP"
 ENV GEOIPUPDATE_EDITION_IDS="GeoLite2-ASN GeoLite2-City GeoLite2-Country"
 ENV GEOIPUPDATE_PRESERVE_FILE_TIMES=1
 ENV GEOIPUPDATE_VERBOSE=1
