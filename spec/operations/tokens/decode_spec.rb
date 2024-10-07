@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Tokens::Decode, operation: true do
-  let!(:operation) { described_class.new }
-
+RSpec.describe Tokens::Decode, type: :operation do
   let!(:encoder) { Tokens::Encode.new }
 
   let!(:audience) { "token_audience" }
@@ -41,6 +39,18 @@ RSpec.describe Tokens::Decode, operation: true do
 
   it "fails with an invalid token" do
     expect(operation.call("this is not a valid JWT")).to be_a_failure
+  end
+
+  context "when dealing with expirations" do
+    let!(:payload) { { "some" => "data", "exp" => 1.week.ago.to_i } }
+
+    it "handles expired tokens" do
+      expect_calling_with(encoded_token).to monad_fail.with_key(:expired)
+    end
+
+    it "can ignore expirations" do
+      expect_calling_with(encoded_token, verify_expiration: false).to succeed.with(payload)
+    end
   end
 
   context "when verifying an audience" do

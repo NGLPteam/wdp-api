@@ -13,7 +13,7 @@ module Assets
     def call(asset, token)
       return Failure[:missing_token] if token.blank?
 
-      payload = yield decode.(token, aud: "download", sub: asset.id)
+      payload = yield decode.(token, aud: "download", sub: asset.id, verify_expiration: false)
 
       Success payload.present?
     end

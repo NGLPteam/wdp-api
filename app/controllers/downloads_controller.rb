@@ -15,10 +15,6 @@ class DownloadsController < ApplicationController
         render plain: "Unauthorized", status: :unauthorized
       end
 
-      m.failure :expired do
-        render plain: "Forbidden", status: :forbidden
-      end
-
       m.failure do |*ex|
         render plain: "Bad Request", status: :bad_request
       end
