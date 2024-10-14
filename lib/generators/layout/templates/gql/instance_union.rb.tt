@@ -1,0 +1,15 @@
+<%-
+  # vim: set ft=ruby.eruby nosmartindent noautoindent :
+-%>
+# frozen_string_literal: true
+
+module Types
+  # @see Types::Layouts::<%= class_name %>InstanceType
+  class Any<%= class_name %>TemplateInstanceType < Types::BaseUnion
+    description <<~TEXT
+    Encompasses all the possible template instance types that can fall under a `<%= layout_kind.upcase %>` layout.
+    TEXT
+
+    possible_types <%= template_kinds.map { "types/templates/#{_1}_template_instance_type".classify.inspect }.join(",\n      ") %>
+  end
+end

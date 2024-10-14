@@ -20,7 +20,7 @@ module Schemas
 
       # Test if this is a {Schemas::Properties::Reader scalar reader}.
       def scalar?
-        kind_of? ::Schemas::Poperties::Reader
+        kind_of? ::Schemas::Properties::Reader
       end
 
       # @return [Dry::Monads::Result]

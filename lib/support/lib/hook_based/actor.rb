@@ -33,6 +33,10 @@ module Support
       # @return [Symbol]
       attr_reader :current_hook
 
+      def call_operation(name, ...)
+        ::Common::Container[name].(...)
+      end
+
       # @api private
       def inspect
         # :nocov:

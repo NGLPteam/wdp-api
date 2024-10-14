@@ -6,6 +6,10 @@ module GraphQLModelSupport
   extend ActiveSupport::Concern
 
   included do
+    extend Dry::Core::ClassAttributes
+
+    defines :graphql_node_type_name, type: Support::Types::String.optional
+
     delegate :graphql_node_type, :graphql_node_type_name,
       :graphql_connection_type, :graphql_edge_type,
       to: :class
@@ -19,7 +23,7 @@ module GraphQLModelSupport
     Support::System["relay_node.id_from_object"].(self).value! if persisted?
   end
 
-  class_methods do
+  module ClassMethods
     # @param [String] slug
     # @raise [ActiveRecord::RecordNotFound]
     # @return [ApplicationRecord]
@@ -57,12 +61,16 @@ module GraphQLModelSupport
       @graphql_node_type ||= graphql_node_type_name.safe_constantize
     end
 
-    # Overridable type used to derive {.graphql_node_type}.
-    #
-    # @api private
-    # @return [String]
-    def graphql_node_type_name
-      @graphql_node_type_name ||= "Types::#{model_name}Type"
+    # @param [Class] subclass
+    # @return [void]
+    def inherited(subclass)
+      super
+
+      begin
+        subclass.graphql_node_type_name "Types::#{subclass.model_name}Type"
+      rescue ArgumentError
+        # ignore, edge case in tests
+      end
     end
   end
 end

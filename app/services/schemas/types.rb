@@ -5,7 +5,7 @@ module Schemas
   module Types
     include Dry.Types
 
-    extend Shared::EnhancedTypes
+    extend Support::EnhancedTypes
 
     # A pattern to match a semantic version.
     #
@@ -91,6 +91,8 @@ module Schemas
 
       maybe_hash.to_monad.value_or({}).with_indifferent_access
     end
+
+    Version = ModelInstance("SchemaVersion")
 
     # A type for matching a fully qualified, versioned schema declaration.
     VersionDeclaration = String.constrained(format: VERSION_DECLARATION_PATTERN).constructor do |value|

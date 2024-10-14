@@ -150,4 +150,10 @@ RSpec.describe "Query.item", type: :request do
 
     subject { item }
   end
+
+  it_behaves_like "a graphql entity with layouts" do
+    let_it_be(:item) { FactoryBot.create :item }
+
+    let(:entity) { item }
+  end
 end

@@ -1,0 +1,17 @@
+<%-
+  # vim: set ft=ruby.eruby nosmartindent noautoindent :
+-%>
+# frozen_string_literal: true
+
+module Types
+  module Templates
+    # @see ::Templates::SlotMappings::<%= class_name %>DefinitionSlots
+    class <%= class_name %>TemplateDefinitionSlotsType < AbstractDefinitionSlotMapping
+      description <<~TEXT
+      Slot definitions for the associated template.
+      TEXT
+
+      derive_fields_from! ::Templates::SlotMappings::<%= class_name %>DefinitionSlots
+    end
+  end
+end

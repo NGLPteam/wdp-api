@@ -23,6 +23,11 @@ module Schemas
       def required
         group.required?
       end
+
+      # @return [Templates::Drops::GroupPropertyDrop]
+      def to_liquid
+        Templates::Drops::GroupPropertyDrop.new(self)
+      end
     end
   end
 end

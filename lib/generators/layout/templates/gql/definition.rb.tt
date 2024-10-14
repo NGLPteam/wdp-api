@@ -1,0 +1,33 @@
+<%-
+  # vim: set ft=ruby.eruby nosmartindent noautoindent :
+-%>
+# frozen_string_literal: true
+
+module Types
+  module Layouts
+    # @see ::Layouts::<%= class_name %>Definition
+    class <%= class_name %>LayoutDefinitionType < AbstractModel
+      implements ::Types::LayoutDefinitionType
+
+      field :templates, [Types::Any<%= class_name %>TemplateDefinitionType, { null: false }], null: false do
+        description <<~TEXT
+        The ordered template definitions available for this layout.
+        TEXT
+      end
+      <%- if has_single_template? -%>
+
+      field :template, "Types::Templates::<%= template_kinds.first.classify %>TemplateDefinitionType", null: true do
+        description <<~TEXT
+        This layout will only ever have one template, so it can be fetched directly without needing the union.
+        TEXT
+      end
+
+      load_association! :template_definition, as: :template
+      <%- end -%>
+
+      ::Layouts::<%= class_name %>Definition.template_definition_names.each do |name|
+        load_association! name
+      end
+    end
+  end
+end

@@ -9,6 +9,7 @@
 class SchemaVersion < ApplicationRecord
   include Schemas::Properties::CompilesToSchema
   include ExposesSchemaProperties
+  include SchemaVersionTemplating
   include TimestampScopes
 
   # @!attribute [r] kind
@@ -79,6 +80,8 @@ class SchemaVersion < ApplicationRecord
 
   after_save :extract_properties!
 
+  after_save :populate_root_layouts!
+
   validates :configuration, store_model: true
 
   validate :configuration_matches_definition!
@@ -106,6 +109,12 @@ class SchemaVersion < ApplicationRecord
 
   monadic_operation! def maintain_associations
     call_operation("schemas.versions.maintain_associations", self)
+  end
+
+  # @see Schemas::Versions::PopulateRootLayouts
+  # @see Schemas::Versions::RootLayoutsPopulator
+  monadic_operation! def populate_root_layouts
+    call_operation("schemas.versions.populate_root_layouts", self)
   end
 
   def read_searchable_properties

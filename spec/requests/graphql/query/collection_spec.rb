@@ -214,4 +214,8 @@ RSpec.describe "Query.collection", type: :request do
   it_behaves_like "a graphql type with firstItem" do
     subject { collection }
   end
+
+  it_behaves_like "a graphql entity with layouts" do
+    let(:entity) { collection }
+  end
 end

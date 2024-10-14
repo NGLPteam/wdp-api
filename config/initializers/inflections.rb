@@ -43,6 +43,7 @@ ActiveSupport::Inflector.inflections(:en) do |inflect|
   inflect.acronym "LTE"
 
   inflect.uncountable "JATS"
+  inflect.uncountable "Metadata"
   inflect.uncountable "METS"
   inflect.uncountable "MODS"
   inflect.uncountable "PREMIS"

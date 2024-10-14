@@ -1,0 +1,28 @@
+<%-
+  # vim: set ft=ruby.eruby nosmartindent noautoindent :
+-%>
+# frozen_string_literal: true
+
+module SchemaVersionTemplating
+  extend ActiveSupport::Concern
+
+  included do
+    <%- layout_kinds.each do |layout_kind| -%>
+    has_many :<%= layout_kind %>_layout_definitions,
+      class_name: "Layouts::<%= layout_kind.classify %>Definition",
+      inverse_of: :schema_version,
+      dependent: :destroy
+
+    has_one :root_<%= layout_kind %>_layout_definition, -> { root },
+      class_name: "Layouts::<%= layout_kind.classify %>Definition", inverse_of: :schema_version, dependent: :destroy
+    <%- end -%>
+  end
+
+  # @param [::Layouts::Types::Kind] layout_kind
+  # @return [LayoutDefinition]
+  def root_layout_for(layout_kind)
+    assoc = :"root_#{layout_kind}_layout_definition"
+
+    __send__(:"reload_#{assoc}") || __send__(:"build_#{assoc}")
+  end
+end

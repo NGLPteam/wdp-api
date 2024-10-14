@@ -44,6 +44,16 @@ module Schemas
         property.options if property.respond_to?(:options)
       end
 
+      def to_liquid
+        if property.array?
+          Array(value).map { _1.to_liquid }
+        elsif type == "variable_date"
+          value.then { Templates::Drops::VariablePrecisionDateDrop.new(_1) if _1 }
+        else
+          value&.to_liquid
+        end
+      end
+
       def value
         property.read_value_from context
       end

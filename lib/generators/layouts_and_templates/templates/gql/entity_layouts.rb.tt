@@ -1,0 +1,25 @@
+<%-
+  # vim: set ft=ruby.eruby nosmartindent noautoindent :
+-%>
+# frozen_string_literal: true
+
+module Types
+  # @see EntityTemplating
+  class EntityLayoutsType < Types::BaseObject
+    description <<~TEXT
+    An accessor for pulling up layout instances for a given entity.
+    TEXT
+    <%- layout_kinds.each do |layout_kind| -%>
+
+    field :<%= layout_kind %>, ::Types::Layouts::<%= layout_kind.classify %>LayoutInstanceType, null: true do
+      description <<~TEXT
+      The `<%= layout_kind.upcase %>` layout instance for this entity.
+      TEXT
+    end
+    <%- end -%>
+    <%- layout_kinds.each do |layout_kind| -%>
+
+    load_association! :<%= layout_kind %>_layout_instance, as: <%= layout_kind.to_sym.inspect %>
+    <%- end -%>
+  end
+end
