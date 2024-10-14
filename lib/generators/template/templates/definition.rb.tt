@@ -1,0 +1,29 @@
+<%-
+  # vim: set ft=ruby.eruby nosmartindent noautoindent :
+-%>
+# frozen_string_literal: true
+
+module Templates
+  class <%= class_name %>Definition < ApplicationRecord
+    include HasEphemeralSystemSlug
+    include TemplateDefinition
+    include TimestampScopes
+
+    layout_kind! <%= layout_kind.to_sym.inspect %>
+    template_kind! <%= template_kind.to_sym.inspect %>
+
+    graphql_node_type_name "::Types::Templates::<%= class_name %>TemplateDefinitionType"
+
+    attribute :slots, ::Templates::SlotMappings::<%= class_name %>DefinitionSlots.to_type
+
+    belongs_to :layout_definition,
+      class_name: "Layouts::<%= layout_kind.classify %>Definition",
+      inverse_of: :<%= template_kind %>_template_definitions
+
+    has_many :template_instances,
+      class_name: "Templates::<%= class_name %>Instance",
+      dependent: :destroy,
+      inverse_of: :template_definition,
+      foreign_key: :template_definition_id
+  end
+end

@@ -1,0 +1,19 @@
+<%-
+  # vim: set ft=ruby.eruby nosmartindent noautoindent :
+-%>
+# frozen_string_literal: true
+
+module Types
+  module Templates
+    # @see ::Templates::<%= class_name %>Definition
+    class <%= class_name %>TemplateDefinitionType < AbstractModel
+      implements ::Types::TemplateDefinitionType
+
+      field :slots, ::Types::Templates::<%= class_name %>TemplateDefinitionSlotsType, null: false do
+        description <<~TEXT
+        Slot definitions for this template.
+        TEXT
+      end
+    end
+  end
+end

@@ -1,0 +1,8 @@
+Description:
+    Explain the generator
+
+Example:
+    bin/rails generate layouts_and_templates Thing
+
+    This will create:
+        what/will/it/create

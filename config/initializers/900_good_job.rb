@@ -6,6 +6,7 @@ Rails.application.configure do
 
   queues = [
     "maintenance:1",
+    "rendering:1",
     "+hierarchies,entities,orderings:5",
     "+extraction,harvesting,asset_fetching:5",
     "permissions,processing,default,mailers,ahoy:5",
@@ -55,6 +56,12 @@ Rails.application.configure do
       cron: "*/10 * * * *",
       class: "Entities::PopulateVisibilitiesJob",
       description: "Populate entity visibilities",
+    },
+    "rendering.process_layout_invalidations": {
+      cron: "*/5 * * * *",
+      class: "Rendering::ProcessLayoutInvalidationsJob",
+      description: "Process layout invalidations & re-rendering",
+      args: -> { [Time.current.iso8601] }
     },
     "schemas.orderings.refresh_counts": {
       cron: "*/10 * * * *",

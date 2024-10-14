@@ -16,4 +16,8 @@ RSpec.describe "Query.community", type: :request do
 
     subject { community }
   end
+
+  it_behaves_like "a graphql entity with layouts" do
+    let(:entity) { community }
+  end
 end

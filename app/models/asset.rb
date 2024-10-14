@@ -5,9 +5,12 @@ class Asset < ApplicationRecord
   include GenericUploader::Attachment.new(:alternatives)
   include ImageUploader::Attachment.new(:preview)
   include HasEphemeralSystemSlug
+  include Liquifies
   include SchematicReferent
   include ScopesForIdentifier
   include TimestampScopes
+
+  drop_klass Templates::Drops::AssetDrop
 
   pg_enum! :kind, as: "asset_kind"
 

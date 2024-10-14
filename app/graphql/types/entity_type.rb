@@ -52,6 +52,12 @@ module Types
       description "The depth of the hierarchical entity, taking into account any parent types"
     end
 
+    field :layouts, ::Types::EntityLayoutsType, null: false do
+      description <<~TEXT
+      Access layouts for this entity.
+      TEXT
+    end
+
     field :links, resolver: Resolvers::EntityLinkResolver
 
     field :link_target_candidates, resolver: Resolvers::LinkTargetCandidateResolver,
@@ -105,19 +111,11 @@ module Types
     image_attachment_field :thumbnail,
       description: "A representative thumbnail for the entity, suitable for displaying in lists, tables, grids, etc."
 
-    # @see HierarchicalEntity#entity_links
-    # @see Support::Loaders::AssociationLoader
-    # @return [ActiveRecord::Relation<EntityLink>]
-    def links
-      Support::Loaders::AssociationLoader.for(object.class, :entity_links).load(object)
-    end
+    load_association! :entity_links, as: :links
 
-    # @see HierarchicalEntity#hierarchical_schema_ranks
-    # @see Support::Loaders::AssociationLoader
-    # @return [<HierarchicalSchemaRank>]
-    def schema_ranks
-      Support::Loaders::AssociationLoader.for(object.class, :hierarchical_schema_ranks).load(object)
-    end
+    load_association! :hierarchical_schema_ranks, as: :schema_ranks
+
+    load_association! :initial_ordering
 
     # @!group Contextual Permission Support
 
@@ -155,6 +153,12 @@ module Types
       contextual_permission.then(&:roles)
     end
 
+    # @see Types::EntityLayoutsType
+    # @return [HierarchicalEntity]
+    def layouts
+      object
+    end
+
     # @return [Promise<Permissions::Grant>]
     def permissions
       contextual_permission.then(&:permissions)
@@ -172,11 +176,6 @@ module Types
     # @return [Ordering, nil]
     def ordering_for_schema(slug:)
       Loaders::OrderingBySchemaLoader.for(slug).load(object)
-    end
-
-    # @return [Ordering, nil]
-    def initial_ordering
-      Support::Loaders::AssociationLoader.for(object.class, :initial_ordering).load(object)
     end
 
     # @param [String] slug

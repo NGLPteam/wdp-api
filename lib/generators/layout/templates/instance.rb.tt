@@ -1,0 +1,36 @@
+<%-
+  # vim: set ft=ruby.eruby nosmartindent noautoindent :
+-%>
+# frozen_string_literal: true
+
+module Layouts
+  class <%= class_name %>Instance < ApplicationRecord
+    include HasEphemeralSystemSlug
+    include LayoutInstance
+    include TimestampScopes
+
+    graphql_node_type_name "::Types::Layouts::<%= class_name %>LayoutInstanceType"
+
+    layout_kind! <%= layout_kind.to_sym.inspect %>
+    template_kinds! <%= template_kinds.inspect %>.freeze
+
+    belongs_to :layout_definition, class_name: "Layouts::<%= class_name %>Definition", inverse_of: :layout_instances
+    <%- template_kinds.each do |template_kind| -%>
+
+    has_many :<%= template_kind %>_template_instances,
+      class_name: "Templates::<%= template_kind.classify %>Instance",
+      dependent: :destroy,
+      inverse_of: :layout_instance,
+      foreign_key: :layout_instance_id
+    <%- end -%>
+    <%- if has_single_template? -%>
+
+    has_one :template_instance,
+      -> { in_recent_order },
+      class_name: "Templates::<%= template_kinds.first.classify %>Instance",
+      dependent: :destroy,
+      inverse_of: :layout_instance,
+      foreign_key: :layout_instance_id
+    <%- end -%>
+  end
+end

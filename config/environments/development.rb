@@ -21,6 +21,7 @@ Rails.application.configure do
   config.action_controller.perform_caching = false unless Rails.root.join("tmp", "caching-dev.txt").exist?
 
   config.cache_store = :redis_cache_store, {
+    expires_in: 1.month,
     namespace: "rcache",
     url: ENV["REDIS_URL"],
     reconnect_attempts: 1,

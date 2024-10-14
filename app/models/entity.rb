@@ -38,6 +38,8 @@ class Entity < ApplicationRecord
 
   has_many_readonly :named_variable_dates, primary_key: CONTEXTUAL_TUPLE, foreign_key: ENTITY_TUPLE
 
+  has_many_readonly :layout_invalidations, primary_key: CONTEXTUAL_TUPLE, foreign_key: ENTITY_TUPLE
+
   scope :with_schema_name_asc, -> { joins(:schema_definition).merge(SchemaDefinition.order(name: :asc)) }
   scope :with_schema_name_desc, -> { joins(:schema_definition).merge(SchemaDefinition.order(name: :desc)) }
 
@@ -52,6 +54,12 @@ class Entity < ApplicationRecord
   scope :unharvested, -> { where.not(hierarchical_id: HarvestEntity.existing_entity_ids) }
 
   scope :sans_analytics, -> { where.not(hierarchical_id: Ahoy::Event.distinct.select(:entity_id)) }
+
+  # @see Entities::InvalidateLayouts
+  # @return [Dry::Monads::Success(void)]
+  monadic_operation! def invalidate_layouts
+    call_operation("entities.invalidate_layouts", self)
+  end
 
   def schema_kind
     hierarchical_type&.underscore

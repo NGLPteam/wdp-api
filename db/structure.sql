@@ -212,6 +212,15 @@ CREATE TYPE public.harvest_metadata_mapping_field AS ENUM (
 
 
 --
+-- Name: hero_template_kind; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.hero_template_kind AS ENUM (
+    'hero'
+);
+
+
+--
 -- Name: initial_ordering_kind; Type: TYPE; Schema: public; Owner: -
 --
 
@@ -242,12 +251,67 @@ CREATE TYPE public.jsonb_auth_path_state AS (
 
 
 --
+-- Name: layout_kind; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.layout_kind AS ENUM (
+    'hero',
+    'list_item',
+    'main',
+    'navigation',
+    'metadata',
+    'supplementary'
+);
+
+
+--
 -- Name: link_operator; Type: TYPE; Schema: public; Owner: -
 --
 
 CREATE TYPE public.link_operator AS ENUM (
     'contains',
     'references'
+);
+
+
+--
+-- Name: list_item_template_kind; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.list_item_template_kind AS ENUM (
+    'list_item'
+);
+
+
+--
+-- Name: main_template_kind; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.main_template_kind AS ENUM (
+    'detail',
+    'descendant_list',
+    'link_list',
+    'page_list',
+    'contributor_list',
+    'ordering'
+);
+
+
+--
+-- Name: metadata_template_kind; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.metadata_template_kind AS ENUM (
+    'metadata'
+);
+
+
+--
+-- Name: navigation_template_kind; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.navigation_template_kind AS ENUM (
+    'navigation'
 );
 
 
@@ -381,6 +445,44 @@ CREATE TYPE public.schema_property_type AS ENUM (
 
 CREATE DOMAIN public.semantic_version AS public.citext DEFAULT '0.0.0'::public.citext
 	CONSTRAINT semver_format_applies CHECK ((VALUE OPERATOR(public.~) '^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$'::public.citext));
+
+
+--
+-- Name: supplementary_template_kind; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.supplementary_template_kind AS ENUM (
+    'supplementary'
+);
+
+
+--
+-- Name: template_kind; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.template_kind AS ENUM (
+    'hero',
+    'list_item',
+    'navigation',
+    'metadata',
+    'supplementary',
+    'detail',
+    'descendant_list',
+    'link_list',
+    'page_list',
+    'contributor_list',
+    'ordering'
+);
+
+
+--
+-- Name: template_slot_kind; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.template_slot_kind AS ENUM (
+    'block',
+    'inline'
+);
 
 
 --
@@ -828,6 +930,116 @@ $_$;
 
 
 --
+-- Name: is_hero_template_kind(text); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.is_hero_template_kind(text) RETURNS boolean
+    LANGUAGE sql IMMUTABLE STRICT PARALLEL SAFE
+    AS $_$
+SELECT $1 = ANY(enum_range(NULL::hero_template_kind)::text[]);
+$_$;
+
+
+--
+-- Name: is_hero_template_kind(public.template_kind); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.is_hero_template_kind(public.template_kind) RETURNS boolean
+    LANGUAGE sql IMMUTABLE STRICT PARALLEL SAFE
+    AS $_$
+SELECT $1::text = ANY(enum_range(NULL::hero_template_kind)::text[]);
+$_$;
+
+
+--
+-- Name: is_list_item_template_kind(text); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.is_list_item_template_kind(text) RETURNS boolean
+    LANGUAGE sql IMMUTABLE STRICT PARALLEL SAFE
+    AS $_$
+SELECT $1 = ANY(enum_range(NULL::list_item_template_kind)::text[]);
+$_$;
+
+
+--
+-- Name: is_list_item_template_kind(public.template_kind); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.is_list_item_template_kind(public.template_kind) RETURNS boolean
+    LANGUAGE sql IMMUTABLE STRICT PARALLEL SAFE
+    AS $_$
+SELECT $1::text = ANY(enum_range(NULL::list_item_template_kind)::text[]);
+$_$;
+
+
+--
+-- Name: is_main_template_kind(text); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.is_main_template_kind(text) RETURNS boolean
+    LANGUAGE sql IMMUTABLE STRICT PARALLEL SAFE
+    AS $_$
+SELECT $1 = ANY(enum_range(NULL::main_template_kind)::text[]);
+$_$;
+
+
+--
+-- Name: is_main_template_kind(public.template_kind); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.is_main_template_kind(public.template_kind) RETURNS boolean
+    LANGUAGE sql IMMUTABLE STRICT PARALLEL SAFE
+    AS $_$
+SELECT $1::text = ANY(enum_range(NULL::main_template_kind)::text[]);
+$_$;
+
+
+--
+-- Name: is_metadata_template_kind(text); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.is_metadata_template_kind(text) RETURNS boolean
+    LANGUAGE sql IMMUTABLE STRICT PARALLEL SAFE
+    AS $_$
+SELECT $1 = ANY(enum_range(NULL::metadata_template_kind)::text[]);
+$_$;
+
+
+--
+-- Name: is_metadata_template_kind(public.template_kind); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.is_metadata_template_kind(public.template_kind) RETURNS boolean
+    LANGUAGE sql IMMUTABLE STRICT PARALLEL SAFE
+    AS $_$
+SELECT $1::text = ANY(enum_range(NULL::metadata_template_kind)::text[]);
+$_$;
+
+
+--
+-- Name: is_navigation_template_kind(text); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.is_navigation_template_kind(text) RETURNS boolean
+    LANGUAGE sql IMMUTABLE STRICT PARALLEL SAFE
+    AS $_$
+SELECT $1 = ANY(enum_range(NULL::navigation_template_kind)::text[]);
+$_$;
+
+
+--
+-- Name: is_navigation_template_kind(public.template_kind); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.is_navigation_template_kind(public.template_kind) RETURNS boolean
+    LANGUAGE sql IMMUTABLE STRICT PARALLEL SAFE
+    AS $_$
+SELECT $1::text = ANY(enum_range(NULL::navigation_template_kind)::text[]);
+$_$;
+
+
+--
 -- Name: is_none(public.date_precision); Type: FUNCTION; Schema: public; Owner: -
 --
 
@@ -835,6 +1047,28 @@ CREATE FUNCTION public.is_none(public.date_precision) RETURNS boolean
     LANGUAGE sql IMMUTABLE PARALLEL SAFE
     AS $_$
 SELECT $1 IS NULL OR $1 = 'none';
+$_$;
+
+
+--
+-- Name: is_supplementary_template_kind(text); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.is_supplementary_template_kind(text) RETURNS boolean
+    LANGUAGE sql IMMUTABLE STRICT PARALLEL SAFE
+    AS $_$
+SELECT $1 = ANY(enum_range(NULL::supplementary_template_kind)::text[]);
+$_$;
+
+
+--
+-- Name: is_supplementary_template_kind(public.template_kind); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.is_supplementary_template_kind(public.template_kind) RETURNS boolean
+    LANGUAGE sql IMMUTABLE STRICT PARALLEL SAFE
+    AS $_$
+SELECT $1::text = ANY(enum_range(NULL::supplementary_template_kind)::text[]);
 $_$;
 
 
@@ -4506,6 +4740,242 @@ CREATE VIEW public.latest_harvest_attempt_links AS
 
 
 --
+-- Name: layout_invalidations; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.layout_invalidations (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    entity_type character varying NOT NULL,
+    entity_id uuid NOT NULL,
+    stale_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+--
+-- Name: layouts_hero_definitions; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.layouts_hero_definitions (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    schema_version_id uuid NOT NULL,
+    entity_type character varying,
+    entity_id uuid,
+    layout_kind public.layout_kind DEFAULT 'hero'::public.layout_kind NOT NULL,
+    root boolean GENERATED ALWAYS AS (((entity_type IS NULL) AND (entity_id IS NULL))) STORED NOT NULL,
+    leaf boolean GENERATED ALWAYS AS (((entity_type IS NOT NULL) AND (entity_id IS NOT NULL))) STORED NOT NULL,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    config jsonb DEFAULT '{}'::jsonb NOT NULL
+);
+
+
+--
+-- Name: layouts_hero_instances; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.layouts_hero_instances (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    layout_definition_id uuid NOT NULL,
+    entity_type character varying NOT NULL,
+    entity_id uuid NOT NULL,
+    layout_kind public.layout_kind DEFAULT 'hero'::public.layout_kind NOT NULL,
+    generation uuid NOT NULL,
+    last_rendered_at timestamp without time zone,
+    render_duration numeric,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    config jsonb DEFAULT '{}'::jsonb NOT NULL
+);
+
+
+--
+-- Name: layouts_list_item_definitions; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.layouts_list_item_definitions (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    schema_version_id uuid NOT NULL,
+    entity_type character varying,
+    entity_id uuid,
+    layout_kind public.layout_kind DEFAULT 'list_item'::public.layout_kind NOT NULL,
+    root boolean GENERATED ALWAYS AS (((entity_type IS NULL) AND (entity_id IS NULL))) STORED NOT NULL,
+    leaf boolean GENERATED ALWAYS AS (((entity_type IS NOT NULL) AND (entity_id IS NOT NULL))) STORED NOT NULL,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    config jsonb DEFAULT '{}'::jsonb NOT NULL
+);
+
+
+--
+-- Name: layouts_list_item_instances; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.layouts_list_item_instances (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    layout_definition_id uuid NOT NULL,
+    entity_type character varying NOT NULL,
+    entity_id uuid NOT NULL,
+    layout_kind public.layout_kind DEFAULT 'list_item'::public.layout_kind NOT NULL,
+    generation uuid NOT NULL,
+    last_rendered_at timestamp without time zone,
+    render_duration numeric,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    config jsonb DEFAULT '{}'::jsonb NOT NULL
+);
+
+
+--
+-- Name: layouts_main_definitions; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.layouts_main_definitions (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    schema_version_id uuid NOT NULL,
+    entity_type character varying,
+    entity_id uuid,
+    layout_kind public.layout_kind DEFAULT 'main'::public.layout_kind NOT NULL,
+    root boolean GENERATED ALWAYS AS (((entity_type IS NULL) AND (entity_id IS NULL))) STORED NOT NULL,
+    leaf boolean GENERATED ALWAYS AS (((entity_type IS NOT NULL) AND (entity_id IS NOT NULL))) STORED NOT NULL,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    config jsonb DEFAULT '{}'::jsonb NOT NULL
+);
+
+
+--
+-- Name: layouts_main_instances; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.layouts_main_instances (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    layout_definition_id uuid NOT NULL,
+    entity_type character varying NOT NULL,
+    entity_id uuid NOT NULL,
+    layout_kind public.layout_kind DEFAULT 'main'::public.layout_kind NOT NULL,
+    generation uuid NOT NULL,
+    last_rendered_at timestamp without time zone,
+    render_duration numeric,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    config jsonb DEFAULT '{}'::jsonb NOT NULL
+);
+
+
+--
+-- Name: layouts_metadata_definitions; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.layouts_metadata_definitions (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    schema_version_id uuid NOT NULL,
+    entity_type character varying,
+    entity_id uuid,
+    layout_kind public.layout_kind DEFAULT 'metadata'::public.layout_kind NOT NULL,
+    root boolean GENERATED ALWAYS AS (((entity_type IS NULL) AND (entity_id IS NULL))) STORED NOT NULL,
+    leaf boolean GENERATED ALWAYS AS (((entity_type IS NOT NULL) AND (entity_id IS NOT NULL))) STORED NOT NULL,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    config jsonb DEFAULT '{}'::jsonb NOT NULL
+);
+
+
+--
+-- Name: layouts_metadata_instances; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.layouts_metadata_instances (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    layout_definition_id uuid NOT NULL,
+    entity_type character varying NOT NULL,
+    entity_id uuid NOT NULL,
+    layout_kind public.layout_kind DEFAULT 'metadata'::public.layout_kind NOT NULL,
+    generation uuid NOT NULL,
+    last_rendered_at timestamp without time zone,
+    render_duration numeric,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    config jsonb DEFAULT '{}'::jsonb NOT NULL
+);
+
+
+--
+-- Name: layouts_navigation_definitions; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.layouts_navigation_definitions (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    schema_version_id uuid NOT NULL,
+    entity_type character varying,
+    entity_id uuid,
+    layout_kind public.layout_kind DEFAULT 'navigation'::public.layout_kind NOT NULL,
+    root boolean GENERATED ALWAYS AS (((entity_type IS NULL) AND (entity_id IS NULL))) STORED NOT NULL,
+    leaf boolean GENERATED ALWAYS AS (((entity_type IS NOT NULL) AND (entity_id IS NOT NULL))) STORED NOT NULL,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    config jsonb DEFAULT '{}'::jsonb NOT NULL
+);
+
+
+--
+-- Name: layouts_navigation_instances; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.layouts_navigation_instances (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    layout_definition_id uuid NOT NULL,
+    entity_type character varying NOT NULL,
+    entity_id uuid NOT NULL,
+    layout_kind public.layout_kind DEFAULT 'navigation'::public.layout_kind NOT NULL,
+    generation uuid NOT NULL,
+    last_rendered_at timestamp without time zone,
+    render_duration numeric,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    config jsonb DEFAULT '{}'::jsonb NOT NULL
+);
+
+
+--
+-- Name: layouts_supplementary_definitions; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.layouts_supplementary_definitions (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    schema_version_id uuid NOT NULL,
+    entity_type character varying,
+    entity_id uuid,
+    layout_kind public.layout_kind DEFAULT 'supplementary'::public.layout_kind NOT NULL,
+    root boolean GENERATED ALWAYS AS (((entity_type IS NULL) AND (entity_id IS NULL))) STORED NOT NULL,
+    leaf boolean GENERATED ALWAYS AS (((entity_type IS NOT NULL) AND (entity_id IS NOT NULL))) STORED NOT NULL,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    config jsonb DEFAULT '{}'::jsonb NOT NULL
+);
+
+
+--
+-- Name: layouts_supplementary_instances; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.layouts_supplementary_instances (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    layout_definition_id uuid NOT NULL,
+    entity_type character varying NOT NULL,
+    entity_id uuid NOT NULL,
+    layout_kind public.layout_kind DEFAULT 'supplementary'::public.layout_kind NOT NULL,
+    generation uuid NOT NULL,
+    last_rendered_at timestamp without time zone,
+    render_duration numeric,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    config jsonb DEFAULT '{}'::jsonb NOT NULL
+);
+
+
+--
 -- Name: link_target_candidates; Type: VIEW; Schema: public; Owner: -
 --
 
@@ -5435,6 +5905,446 @@ CREATE TABLE public.schematic_texts (
 
 
 --
+-- Name: templates_contributor_list_definitions; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.templates_contributor_list_definitions (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    layout_definition_id uuid NOT NULL,
+    layout_kind public.layout_kind DEFAULT 'main'::public.layout_kind NOT NULL,
+    template_kind public.template_kind DEFAULT 'contributor_list'::public.template_kind NOT NULL,
+    "position" bigint NOT NULL,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    config jsonb DEFAULT '{}'::jsonb NOT NULL,
+    slots jsonb DEFAULT '{}'::jsonb NOT NULL
+);
+
+
+--
+-- Name: templates_contributor_list_instances; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.templates_contributor_list_instances (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    layout_instance_id uuid NOT NULL,
+    template_definition_id uuid NOT NULL,
+    entity_type character varying NOT NULL,
+    entity_id uuid NOT NULL,
+    layout_kind public.layout_kind DEFAULT 'main'::public.layout_kind NOT NULL,
+    template_kind public.template_kind DEFAULT 'contributor_list'::public.template_kind NOT NULL,
+    generation uuid NOT NULL,
+    "position" bigint NOT NULL,
+    last_rendered_at timestamp without time zone,
+    render_duration numeric,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    config jsonb DEFAULT '{}'::jsonb NOT NULL,
+    slots jsonb DEFAULT '{}'::jsonb NOT NULL
+);
+
+
+--
+-- Name: templates_descendant_list_definitions; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.templates_descendant_list_definitions (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    layout_definition_id uuid NOT NULL,
+    layout_kind public.layout_kind DEFAULT 'main'::public.layout_kind NOT NULL,
+    template_kind public.template_kind DEFAULT 'descendant_list'::public.template_kind NOT NULL,
+    "position" bigint NOT NULL,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    config jsonb DEFAULT '{}'::jsonb NOT NULL,
+    slots jsonb DEFAULT '{}'::jsonb NOT NULL
+);
+
+
+--
+-- Name: templates_descendant_list_instances; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.templates_descendant_list_instances (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    layout_instance_id uuid NOT NULL,
+    template_definition_id uuid NOT NULL,
+    entity_type character varying NOT NULL,
+    entity_id uuid NOT NULL,
+    layout_kind public.layout_kind DEFAULT 'main'::public.layout_kind NOT NULL,
+    template_kind public.template_kind DEFAULT 'descendant_list'::public.template_kind NOT NULL,
+    generation uuid NOT NULL,
+    "position" bigint NOT NULL,
+    last_rendered_at timestamp without time zone,
+    render_duration numeric,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    config jsonb DEFAULT '{}'::jsonb NOT NULL,
+    slots jsonb DEFAULT '{}'::jsonb NOT NULL
+);
+
+
+--
+-- Name: templates_detail_definitions; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.templates_detail_definitions (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    layout_definition_id uuid NOT NULL,
+    layout_kind public.layout_kind DEFAULT 'main'::public.layout_kind NOT NULL,
+    template_kind public.template_kind DEFAULT 'detail'::public.template_kind NOT NULL,
+    "position" bigint NOT NULL,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    config jsonb DEFAULT '{}'::jsonb NOT NULL,
+    slots jsonb DEFAULT '{}'::jsonb NOT NULL
+);
+
+
+--
+-- Name: templates_detail_instances; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.templates_detail_instances (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    layout_instance_id uuid NOT NULL,
+    template_definition_id uuid NOT NULL,
+    entity_type character varying NOT NULL,
+    entity_id uuid NOT NULL,
+    layout_kind public.layout_kind DEFAULT 'main'::public.layout_kind NOT NULL,
+    template_kind public.template_kind DEFAULT 'detail'::public.template_kind NOT NULL,
+    generation uuid NOT NULL,
+    "position" bigint NOT NULL,
+    last_rendered_at timestamp without time zone,
+    render_duration numeric,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    config jsonb DEFAULT '{}'::jsonb NOT NULL,
+    slots jsonb DEFAULT '{}'::jsonb NOT NULL
+);
+
+
+--
+-- Name: templates_hero_definitions; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.templates_hero_definitions (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    layout_definition_id uuid NOT NULL,
+    layout_kind public.layout_kind DEFAULT 'hero'::public.layout_kind NOT NULL,
+    template_kind public.template_kind DEFAULT 'hero'::public.template_kind NOT NULL,
+    "position" bigint NOT NULL,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    config jsonb DEFAULT '{}'::jsonb NOT NULL,
+    slots jsonb DEFAULT '{}'::jsonb NOT NULL
+);
+
+
+--
+-- Name: templates_hero_instances; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.templates_hero_instances (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    layout_instance_id uuid NOT NULL,
+    template_definition_id uuid NOT NULL,
+    entity_type character varying NOT NULL,
+    entity_id uuid NOT NULL,
+    layout_kind public.layout_kind DEFAULT 'hero'::public.layout_kind NOT NULL,
+    template_kind public.template_kind DEFAULT 'hero'::public.template_kind NOT NULL,
+    generation uuid NOT NULL,
+    "position" bigint NOT NULL,
+    last_rendered_at timestamp without time zone,
+    render_duration numeric,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    config jsonb DEFAULT '{}'::jsonb NOT NULL,
+    slots jsonb DEFAULT '{}'::jsonb NOT NULL
+);
+
+
+--
+-- Name: templates_link_list_definitions; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.templates_link_list_definitions (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    layout_definition_id uuid NOT NULL,
+    layout_kind public.layout_kind DEFAULT 'main'::public.layout_kind NOT NULL,
+    template_kind public.template_kind DEFAULT 'link_list'::public.template_kind NOT NULL,
+    "position" bigint NOT NULL,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    config jsonb DEFAULT '{}'::jsonb NOT NULL,
+    slots jsonb DEFAULT '{}'::jsonb NOT NULL
+);
+
+
+--
+-- Name: templates_link_list_instances; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.templates_link_list_instances (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    layout_instance_id uuid NOT NULL,
+    template_definition_id uuid NOT NULL,
+    entity_type character varying NOT NULL,
+    entity_id uuid NOT NULL,
+    layout_kind public.layout_kind DEFAULT 'main'::public.layout_kind NOT NULL,
+    template_kind public.template_kind DEFAULT 'link_list'::public.template_kind NOT NULL,
+    generation uuid NOT NULL,
+    "position" bigint NOT NULL,
+    last_rendered_at timestamp without time zone,
+    render_duration numeric,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    config jsonb DEFAULT '{}'::jsonb NOT NULL,
+    slots jsonb DEFAULT '{}'::jsonb NOT NULL
+);
+
+
+--
+-- Name: templates_list_item_definitions; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.templates_list_item_definitions (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    layout_definition_id uuid NOT NULL,
+    layout_kind public.layout_kind DEFAULT 'list_item'::public.layout_kind NOT NULL,
+    template_kind public.template_kind DEFAULT 'list_item'::public.template_kind NOT NULL,
+    "position" bigint NOT NULL,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    config jsonb DEFAULT '{}'::jsonb NOT NULL,
+    slots jsonb DEFAULT '{}'::jsonb NOT NULL
+);
+
+
+--
+-- Name: templates_list_item_instances; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.templates_list_item_instances (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    layout_instance_id uuid NOT NULL,
+    template_definition_id uuid NOT NULL,
+    entity_type character varying NOT NULL,
+    entity_id uuid NOT NULL,
+    layout_kind public.layout_kind DEFAULT 'list_item'::public.layout_kind NOT NULL,
+    template_kind public.template_kind DEFAULT 'list_item'::public.template_kind NOT NULL,
+    generation uuid NOT NULL,
+    "position" bigint NOT NULL,
+    last_rendered_at timestamp without time zone,
+    render_duration numeric,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    config jsonb DEFAULT '{}'::jsonb NOT NULL,
+    slots jsonb DEFAULT '{}'::jsonb NOT NULL
+);
+
+
+--
+-- Name: templates_metadata_definitions; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.templates_metadata_definitions (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    layout_definition_id uuid NOT NULL,
+    layout_kind public.layout_kind DEFAULT 'metadata'::public.layout_kind NOT NULL,
+    template_kind public.template_kind DEFAULT 'metadata'::public.template_kind NOT NULL,
+    "position" bigint NOT NULL,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    config jsonb DEFAULT '{}'::jsonb NOT NULL,
+    slots jsonb DEFAULT '{}'::jsonb NOT NULL
+);
+
+
+--
+-- Name: templates_metadata_instances; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.templates_metadata_instances (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    layout_instance_id uuid NOT NULL,
+    template_definition_id uuid NOT NULL,
+    entity_type character varying NOT NULL,
+    entity_id uuid NOT NULL,
+    layout_kind public.layout_kind DEFAULT 'metadata'::public.layout_kind NOT NULL,
+    template_kind public.template_kind DEFAULT 'metadata'::public.template_kind NOT NULL,
+    generation uuid NOT NULL,
+    "position" bigint NOT NULL,
+    last_rendered_at timestamp without time zone,
+    render_duration numeric,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    config jsonb DEFAULT '{}'::jsonb NOT NULL,
+    slots jsonb DEFAULT '{}'::jsonb NOT NULL
+);
+
+
+--
+-- Name: templates_navigation_definitions; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.templates_navigation_definitions (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    layout_definition_id uuid NOT NULL,
+    layout_kind public.layout_kind DEFAULT 'navigation'::public.layout_kind NOT NULL,
+    template_kind public.template_kind DEFAULT 'navigation'::public.template_kind NOT NULL,
+    "position" bigint NOT NULL,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    config jsonb DEFAULT '{}'::jsonb NOT NULL,
+    slots jsonb DEFAULT '{}'::jsonb NOT NULL
+);
+
+
+--
+-- Name: templates_navigation_instances; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.templates_navigation_instances (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    layout_instance_id uuid NOT NULL,
+    template_definition_id uuid NOT NULL,
+    entity_type character varying NOT NULL,
+    entity_id uuid NOT NULL,
+    layout_kind public.layout_kind DEFAULT 'navigation'::public.layout_kind NOT NULL,
+    template_kind public.template_kind DEFAULT 'navigation'::public.template_kind NOT NULL,
+    generation uuid NOT NULL,
+    "position" bigint NOT NULL,
+    last_rendered_at timestamp without time zone,
+    render_duration numeric,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    config jsonb DEFAULT '{}'::jsonb NOT NULL,
+    slots jsonb DEFAULT '{}'::jsonb NOT NULL
+);
+
+
+--
+-- Name: templates_ordering_definitions; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.templates_ordering_definitions (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    layout_definition_id uuid NOT NULL,
+    layout_kind public.layout_kind DEFAULT 'main'::public.layout_kind NOT NULL,
+    template_kind public.template_kind DEFAULT 'ordering'::public.template_kind NOT NULL,
+    "position" bigint NOT NULL,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    config jsonb DEFAULT '{}'::jsonb NOT NULL,
+    slots jsonb DEFAULT '{}'::jsonb NOT NULL
+);
+
+
+--
+-- Name: templates_ordering_instances; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.templates_ordering_instances (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    layout_instance_id uuid NOT NULL,
+    template_definition_id uuid NOT NULL,
+    entity_type character varying NOT NULL,
+    entity_id uuid NOT NULL,
+    layout_kind public.layout_kind DEFAULT 'main'::public.layout_kind NOT NULL,
+    template_kind public.template_kind DEFAULT 'ordering'::public.template_kind NOT NULL,
+    generation uuid NOT NULL,
+    "position" bigint NOT NULL,
+    last_rendered_at timestamp without time zone,
+    render_duration numeric,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    config jsonb DEFAULT '{}'::jsonb NOT NULL,
+    slots jsonb DEFAULT '{}'::jsonb NOT NULL
+);
+
+
+--
+-- Name: templates_page_list_definitions; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.templates_page_list_definitions (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    layout_definition_id uuid NOT NULL,
+    layout_kind public.layout_kind DEFAULT 'main'::public.layout_kind NOT NULL,
+    template_kind public.template_kind DEFAULT 'page_list'::public.template_kind NOT NULL,
+    "position" bigint NOT NULL,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    config jsonb DEFAULT '{}'::jsonb NOT NULL,
+    slots jsonb DEFAULT '{}'::jsonb NOT NULL
+);
+
+
+--
+-- Name: templates_page_list_instances; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.templates_page_list_instances (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    layout_instance_id uuid NOT NULL,
+    template_definition_id uuid NOT NULL,
+    entity_type character varying NOT NULL,
+    entity_id uuid NOT NULL,
+    layout_kind public.layout_kind DEFAULT 'main'::public.layout_kind NOT NULL,
+    template_kind public.template_kind DEFAULT 'page_list'::public.template_kind NOT NULL,
+    generation uuid NOT NULL,
+    "position" bigint NOT NULL,
+    last_rendered_at timestamp without time zone,
+    render_duration numeric,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    config jsonb DEFAULT '{}'::jsonb NOT NULL,
+    slots jsonb DEFAULT '{}'::jsonb NOT NULL
+);
+
+
+--
+-- Name: templates_supplementary_definitions; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.templates_supplementary_definitions (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    layout_definition_id uuid NOT NULL,
+    layout_kind public.layout_kind DEFAULT 'supplementary'::public.layout_kind NOT NULL,
+    template_kind public.template_kind DEFAULT 'supplementary'::public.template_kind NOT NULL,
+    "position" bigint NOT NULL,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    config jsonb DEFAULT '{}'::jsonb NOT NULL,
+    slots jsonb DEFAULT '{}'::jsonb NOT NULL
+);
+
+
+--
+-- Name: templates_supplementary_instances; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.templates_supplementary_instances (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    layout_instance_id uuid NOT NULL,
+    template_definition_id uuid NOT NULL,
+    entity_type character varying NOT NULL,
+    entity_id uuid NOT NULL,
+    layout_kind public.layout_kind DEFAULT 'supplementary'::public.layout_kind NOT NULL,
+    template_kind public.template_kind DEFAULT 'supplementary'::public.template_kind NOT NULL,
+    generation uuid NOT NULL,
+    "position" bigint NOT NULL,
+    last_rendered_at timestamp without time zone,
+    render_duration numeric,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    config jsonb DEFAULT '{}'::jsonb NOT NULL,
+    slots jsonb DEFAULT '{}'::jsonb NOT NULL
+);
+
+
+--
 -- Name: user_group_memberships; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -6016,6 +6926,110 @@ ALTER TABLE ONLY public.items
 
 
 --
+-- Name: layout_invalidations layout_invalidations_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.layout_invalidations
+    ADD CONSTRAINT layout_invalidations_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: layouts_hero_definitions layouts_hero_definitions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.layouts_hero_definitions
+    ADD CONSTRAINT layouts_hero_definitions_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: layouts_hero_instances layouts_hero_instances_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.layouts_hero_instances
+    ADD CONSTRAINT layouts_hero_instances_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: layouts_list_item_definitions layouts_list_item_definitions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.layouts_list_item_definitions
+    ADD CONSTRAINT layouts_list_item_definitions_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: layouts_list_item_instances layouts_list_item_instances_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.layouts_list_item_instances
+    ADD CONSTRAINT layouts_list_item_instances_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: layouts_main_definitions layouts_main_definitions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.layouts_main_definitions
+    ADD CONSTRAINT layouts_main_definitions_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: layouts_main_instances layouts_main_instances_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.layouts_main_instances
+    ADD CONSTRAINT layouts_main_instances_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: layouts_metadata_definitions layouts_metadata_definitions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.layouts_metadata_definitions
+    ADD CONSTRAINT layouts_metadata_definitions_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: layouts_metadata_instances layouts_metadata_instances_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.layouts_metadata_instances
+    ADD CONSTRAINT layouts_metadata_instances_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: layouts_navigation_definitions layouts_navigation_definitions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.layouts_navigation_definitions
+    ADD CONSTRAINT layouts_navigation_definitions_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: layouts_navigation_instances layouts_navigation_instances_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.layouts_navigation_instances
+    ADD CONSTRAINT layouts_navigation_instances_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: layouts_supplementary_definitions layouts_supplementary_definitions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.layouts_supplementary_definitions
+    ADD CONSTRAINT layouts_supplementary_definitions_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: layouts_supplementary_instances layouts_supplementary_instances_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.layouts_supplementary_instances
+    ADD CONSTRAINT layouts_supplementary_instances_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: named_variable_dates named_variable_dates_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -6392,6 +7406,182 @@ ALTER TABLE ONLY public.schematic_texts
 
 
 --
+-- Name: templates_contributor_list_definitions templates_contributor_list_definitions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.templates_contributor_list_definitions
+    ADD CONSTRAINT templates_contributor_list_definitions_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: templates_contributor_list_instances templates_contributor_list_instances_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.templates_contributor_list_instances
+    ADD CONSTRAINT templates_contributor_list_instances_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: templates_descendant_list_definitions templates_descendant_list_definitions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.templates_descendant_list_definitions
+    ADD CONSTRAINT templates_descendant_list_definitions_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: templates_descendant_list_instances templates_descendant_list_instances_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.templates_descendant_list_instances
+    ADD CONSTRAINT templates_descendant_list_instances_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: templates_detail_definitions templates_detail_definitions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.templates_detail_definitions
+    ADD CONSTRAINT templates_detail_definitions_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: templates_detail_instances templates_detail_instances_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.templates_detail_instances
+    ADD CONSTRAINT templates_detail_instances_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: templates_hero_definitions templates_hero_definitions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.templates_hero_definitions
+    ADD CONSTRAINT templates_hero_definitions_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: templates_hero_instances templates_hero_instances_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.templates_hero_instances
+    ADD CONSTRAINT templates_hero_instances_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: templates_link_list_definitions templates_link_list_definitions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.templates_link_list_definitions
+    ADD CONSTRAINT templates_link_list_definitions_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: templates_link_list_instances templates_link_list_instances_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.templates_link_list_instances
+    ADD CONSTRAINT templates_link_list_instances_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: templates_list_item_definitions templates_list_item_definitions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.templates_list_item_definitions
+    ADD CONSTRAINT templates_list_item_definitions_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: templates_list_item_instances templates_list_item_instances_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.templates_list_item_instances
+    ADD CONSTRAINT templates_list_item_instances_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: templates_metadata_definitions templates_metadata_definitions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.templates_metadata_definitions
+    ADD CONSTRAINT templates_metadata_definitions_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: templates_metadata_instances templates_metadata_instances_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.templates_metadata_instances
+    ADD CONSTRAINT templates_metadata_instances_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: templates_navigation_definitions templates_navigation_definitions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.templates_navigation_definitions
+    ADD CONSTRAINT templates_navigation_definitions_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: templates_navigation_instances templates_navigation_instances_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.templates_navigation_instances
+    ADD CONSTRAINT templates_navigation_instances_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: templates_ordering_definitions templates_ordering_definitions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.templates_ordering_definitions
+    ADD CONSTRAINT templates_ordering_definitions_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: templates_ordering_instances templates_ordering_instances_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.templates_ordering_instances
+    ADD CONSTRAINT templates_ordering_instances_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: templates_page_list_definitions templates_page_list_definitions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.templates_page_list_definitions
+    ADD CONSTRAINT templates_page_list_definitions_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: templates_page_list_instances templates_page_list_instances_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.templates_page_list_instances
+    ADD CONSTRAINT templates_page_list_instances_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: templates_supplementary_definitions templates_supplementary_definitions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.templates_supplementary_definitions
+    ADD CONSTRAINT templates_supplementary_definitions_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: templates_supplementary_instances templates_supplementary_instances_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.templates_supplementary_instances
+    ADD CONSTRAINT templates_supplementary_instances_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: user_group_memberships user_group_memberships_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -6483,6 +7673,279 @@ CREATE UNIQUE INDEX harvest_entity_anc_desc_idx ON public.harvest_entity_hierarc
 --
 
 CREATE INDEX harvest_entity_desc_idx ON public.harvest_entity_hierarchies USING btree (descendant_id);
+
+
+--
+-- Name: idx_layouts_hero_instances_defn; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_layouts_hero_instances_defn ON public.layouts_hero_instances USING btree (layout_definition_id);
+
+
+--
+-- Name: idx_layouts_list_item_instances_defn; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_layouts_list_item_instances_defn ON public.layouts_list_item_instances USING btree (layout_definition_id);
+
+
+--
+-- Name: idx_layouts_main_instances_defn; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_layouts_main_instances_defn ON public.layouts_main_instances USING btree (layout_definition_id);
+
+
+--
+-- Name: idx_layouts_metadata_instances_defn; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_layouts_metadata_instances_defn ON public.layouts_metadata_instances USING btree (layout_definition_id);
+
+
+--
+-- Name: idx_layouts_navigation_instances_defn; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_layouts_navigation_instances_defn ON public.layouts_navigation_instances USING btree (layout_definition_id);
+
+
+--
+-- Name: idx_layouts_supplementary_instances_defn; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_layouts_supplementary_instances_defn ON public.layouts_supplementary_instances USING btree (layout_definition_id);
+
+
+--
+-- Name: idx_templates_contributor_list_definitions_layout; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_templates_contributor_list_definitions_layout ON public.templates_contributor_list_definitions USING btree (layout_definition_id);
+
+
+--
+-- Name: idx_templates_contributor_list_instances_defn; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_templates_contributor_list_instances_defn ON public.templates_contributor_list_instances USING btree (template_definition_id);
+
+
+--
+-- Name: idx_templates_contributor_list_instances_layout; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_templates_contributor_list_instances_layout ON public.templates_contributor_list_instances USING btree (layout_instance_id);
+
+
+--
+-- Name: idx_templates_descendant_list_definitions_layout; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_templates_descendant_list_definitions_layout ON public.templates_descendant_list_definitions USING btree (layout_definition_id);
+
+
+--
+-- Name: idx_templates_descendant_list_instances_defn; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_templates_descendant_list_instances_defn ON public.templates_descendant_list_instances USING btree (template_definition_id);
+
+
+--
+-- Name: idx_templates_descendant_list_instances_layout; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_templates_descendant_list_instances_layout ON public.templates_descendant_list_instances USING btree (layout_instance_id);
+
+
+--
+-- Name: idx_templates_detail_definitions_layout; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_templates_detail_definitions_layout ON public.templates_detail_definitions USING btree (layout_definition_id);
+
+
+--
+-- Name: idx_templates_detail_instances_defn; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_templates_detail_instances_defn ON public.templates_detail_instances USING btree (template_definition_id);
+
+
+--
+-- Name: idx_templates_detail_instances_layout; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_templates_detail_instances_layout ON public.templates_detail_instances USING btree (layout_instance_id);
+
+
+--
+-- Name: idx_templates_hero_definitions_layout; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_templates_hero_definitions_layout ON public.templates_hero_definitions USING btree (layout_definition_id);
+
+
+--
+-- Name: idx_templates_hero_instances_defn; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_templates_hero_instances_defn ON public.templates_hero_instances USING btree (template_definition_id);
+
+
+--
+-- Name: idx_templates_hero_instances_layout; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_templates_hero_instances_layout ON public.templates_hero_instances USING btree (layout_instance_id);
+
+
+--
+-- Name: idx_templates_link_list_definitions_layout; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_templates_link_list_definitions_layout ON public.templates_link_list_definitions USING btree (layout_definition_id);
+
+
+--
+-- Name: idx_templates_link_list_instances_defn; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_templates_link_list_instances_defn ON public.templates_link_list_instances USING btree (template_definition_id);
+
+
+--
+-- Name: idx_templates_link_list_instances_layout; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_templates_link_list_instances_layout ON public.templates_link_list_instances USING btree (layout_instance_id);
+
+
+--
+-- Name: idx_templates_list_item_definitions_layout; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_templates_list_item_definitions_layout ON public.templates_list_item_definitions USING btree (layout_definition_id);
+
+
+--
+-- Name: idx_templates_list_item_instances_defn; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_templates_list_item_instances_defn ON public.templates_list_item_instances USING btree (template_definition_id);
+
+
+--
+-- Name: idx_templates_list_item_instances_layout; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_templates_list_item_instances_layout ON public.templates_list_item_instances USING btree (layout_instance_id);
+
+
+--
+-- Name: idx_templates_metadata_definitions_layout; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_templates_metadata_definitions_layout ON public.templates_metadata_definitions USING btree (layout_definition_id);
+
+
+--
+-- Name: idx_templates_metadata_instances_defn; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_templates_metadata_instances_defn ON public.templates_metadata_instances USING btree (template_definition_id);
+
+
+--
+-- Name: idx_templates_metadata_instances_layout; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_templates_metadata_instances_layout ON public.templates_metadata_instances USING btree (layout_instance_id);
+
+
+--
+-- Name: idx_templates_navigation_definitions_layout; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_templates_navigation_definitions_layout ON public.templates_navigation_definitions USING btree (layout_definition_id);
+
+
+--
+-- Name: idx_templates_navigation_instances_defn; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_templates_navigation_instances_defn ON public.templates_navigation_instances USING btree (template_definition_id);
+
+
+--
+-- Name: idx_templates_navigation_instances_layout; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_templates_navigation_instances_layout ON public.templates_navigation_instances USING btree (layout_instance_id);
+
+
+--
+-- Name: idx_templates_ordering_definitions_layout; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_templates_ordering_definitions_layout ON public.templates_ordering_definitions USING btree (layout_definition_id);
+
+
+--
+-- Name: idx_templates_ordering_instances_defn; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_templates_ordering_instances_defn ON public.templates_ordering_instances USING btree (template_definition_id);
+
+
+--
+-- Name: idx_templates_ordering_instances_layout; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_templates_ordering_instances_layout ON public.templates_ordering_instances USING btree (layout_instance_id);
+
+
+--
+-- Name: idx_templates_page_list_definitions_layout; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_templates_page_list_definitions_layout ON public.templates_page_list_definitions USING btree (layout_definition_id);
+
+
+--
+-- Name: idx_templates_page_list_instances_defn; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_templates_page_list_instances_defn ON public.templates_page_list_instances USING btree (template_definition_id);
+
+
+--
+-- Name: idx_templates_page_list_instances_layout; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_templates_page_list_instances_layout ON public.templates_page_list_instances USING btree (layout_instance_id);
+
+
+--
+-- Name: idx_templates_supplementary_definitions_layout; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_templates_supplementary_definitions_layout ON public.templates_supplementary_definitions USING btree (layout_definition_id);
+
+
+--
+-- Name: idx_templates_supplementary_instances_defn; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_templates_supplementary_instances_defn ON public.templates_supplementary_instances USING btree (template_definition_id);
+
+
+--
+-- Name: idx_templates_supplementary_instances_layout; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_templates_supplementary_instances_layout ON public.templates_supplementary_instances USING btree (layout_instance_id);
 
 
 --
@@ -8110,6 +9573,139 @@ CREATE UNIQUE INDEX index_items_versioned_ids ON public.items USING btree (id, s
 
 
 --
+-- Name: index_layout_invalidations_distinct_staleness; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_layout_invalidations_distinct_staleness ON public.layout_invalidations USING btree (entity_id, stale_at DESC);
+
+
+--
+-- Name: index_layouts_hero_instances_on_entity; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_layouts_hero_instances_on_entity ON public.layouts_hero_instances USING btree (entity_type, entity_id);
+
+
+--
+-- Name: index_layouts_hero_instances_on_generation; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_layouts_hero_instances_on_generation ON public.layouts_hero_instances USING btree (generation);
+
+
+--
+-- Name: index_layouts_hero_instances_on_last_rendered_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_layouts_hero_instances_on_last_rendered_at ON public.layouts_hero_instances USING btree (last_rendered_at);
+
+
+--
+-- Name: index_layouts_list_item_instances_on_entity; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_layouts_list_item_instances_on_entity ON public.layouts_list_item_instances USING btree (entity_type, entity_id);
+
+
+--
+-- Name: index_layouts_list_item_instances_on_generation; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_layouts_list_item_instances_on_generation ON public.layouts_list_item_instances USING btree (generation);
+
+
+--
+-- Name: index_layouts_list_item_instances_on_last_rendered_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_layouts_list_item_instances_on_last_rendered_at ON public.layouts_list_item_instances USING btree (last_rendered_at);
+
+
+--
+-- Name: index_layouts_main_instances_on_entity; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_layouts_main_instances_on_entity ON public.layouts_main_instances USING btree (entity_type, entity_id);
+
+
+--
+-- Name: index_layouts_main_instances_on_generation; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_layouts_main_instances_on_generation ON public.layouts_main_instances USING btree (generation);
+
+
+--
+-- Name: index_layouts_main_instances_on_last_rendered_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_layouts_main_instances_on_last_rendered_at ON public.layouts_main_instances USING btree (last_rendered_at);
+
+
+--
+-- Name: index_layouts_metadata_instances_on_entity; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_layouts_metadata_instances_on_entity ON public.layouts_metadata_instances USING btree (entity_type, entity_id);
+
+
+--
+-- Name: index_layouts_metadata_instances_on_generation; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_layouts_metadata_instances_on_generation ON public.layouts_metadata_instances USING btree (generation);
+
+
+--
+-- Name: index_layouts_metadata_instances_on_last_rendered_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_layouts_metadata_instances_on_last_rendered_at ON public.layouts_metadata_instances USING btree (last_rendered_at);
+
+
+--
+-- Name: index_layouts_navigation_instances_on_entity; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_layouts_navigation_instances_on_entity ON public.layouts_navigation_instances USING btree (entity_type, entity_id);
+
+
+--
+-- Name: index_layouts_navigation_instances_on_generation; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_layouts_navigation_instances_on_generation ON public.layouts_navigation_instances USING btree (generation);
+
+
+--
+-- Name: index_layouts_navigation_instances_on_last_rendered_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_layouts_navigation_instances_on_last_rendered_at ON public.layouts_navigation_instances USING btree (last_rendered_at);
+
+
+--
+-- Name: index_layouts_supplementary_instances_on_entity; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_layouts_supplementary_instances_on_entity ON public.layouts_supplementary_instances USING btree (entity_type, entity_id);
+
+
+--
+-- Name: index_layouts_supplementary_instances_on_generation; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_layouts_supplementary_instances_on_generation ON public.layouts_supplementary_instances USING btree (generation);
+
+
+--
+-- Name: index_layouts_supplementary_instances_on_last_rendered_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_layouts_supplementary_instances_on_last_rendered_at ON public.layouts_supplementary_instances USING btree (last_rendered_at);
+
+
+--
 -- Name: index_named_variable_dates_ascending; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -8674,6 +10270,391 @@ CREATE INDEX index_schematic_texts_on_document ON public.schematic_texts USING g
 --
 
 CREATE INDEX index_schematic_texts_on_schema_version_property_id ON public.schematic_texts USING btree (schema_version_property_id);
+
+
+--
+-- Name: index_templates_contributor_list_definitions_on_position; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_templates_contributor_list_definitions_on_position ON public.templates_contributor_list_definitions USING btree ("position");
+
+
+--
+-- Name: index_templates_contributor_list_instances_on_entity; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_templates_contributor_list_instances_on_entity ON public.templates_contributor_list_instances USING btree (entity_type, entity_id);
+
+
+--
+-- Name: index_templates_contributor_list_instances_on_generation; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_templates_contributor_list_instances_on_generation ON public.templates_contributor_list_instances USING btree (generation);
+
+
+--
+-- Name: index_templates_contributor_list_instances_on_last_rendered_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_templates_contributor_list_instances_on_last_rendered_at ON public.templates_contributor_list_instances USING btree (last_rendered_at);
+
+
+--
+-- Name: index_templates_contributor_list_instances_on_position; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_templates_contributor_list_instances_on_position ON public.templates_contributor_list_instances USING btree ("position");
+
+
+--
+-- Name: index_templates_descendant_list_definitions_on_position; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_templates_descendant_list_definitions_on_position ON public.templates_descendant_list_definitions USING btree ("position");
+
+
+--
+-- Name: index_templates_descendant_list_instances_on_entity; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_templates_descendant_list_instances_on_entity ON public.templates_descendant_list_instances USING btree (entity_type, entity_id);
+
+
+--
+-- Name: index_templates_descendant_list_instances_on_generation; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_templates_descendant_list_instances_on_generation ON public.templates_descendant_list_instances USING btree (generation);
+
+
+--
+-- Name: index_templates_descendant_list_instances_on_last_rendered_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_templates_descendant_list_instances_on_last_rendered_at ON public.templates_descendant_list_instances USING btree (last_rendered_at);
+
+
+--
+-- Name: index_templates_descendant_list_instances_on_position; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_templates_descendant_list_instances_on_position ON public.templates_descendant_list_instances USING btree ("position");
+
+
+--
+-- Name: index_templates_detail_definitions_on_position; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_templates_detail_definitions_on_position ON public.templates_detail_definitions USING btree ("position");
+
+
+--
+-- Name: index_templates_detail_instances_on_entity; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_templates_detail_instances_on_entity ON public.templates_detail_instances USING btree (entity_type, entity_id);
+
+
+--
+-- Name: index_templates_detail_instances_on_generation; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_templates_detail_instances_on_generation ON public.templates_detail_instances USING btree (generation);
+
+
+--
+-- Name: index_templates_detail_instances_on_last_rendered_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_templates_detail_instances_on_last_rendered_at ON public.templates_detail_instances USING btree (last_rendered_at);
+
+
+--
+-- Name: index_templates_detail_instances_on_position; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_templates_detail_instances_on_position ON public.templates_detail_instances USING btree ("position");
+
+
+--
+-- Name: index_templates_hero_definitions_on_position; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_templates_hero_definitions_on_position ON public.templates_hero_definitions USING btree ("position");
+
+
+--
+-- Name: index_templates_hero_instances_on_entity; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_templates_hero_instances_on_entity ON public.templates_hero_instances USING btree (entity_type, entity_id);
+
+
+--
+-- Name: index_templates_hero_instances_on_generation; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_templates_hero_instances_on_generation ON public.templates_hero_instances USING btree (generation);
+
+
+--
+-- Name: index_templates_hero_instances_on_last_rendered_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_templates_hero_instances_on_last_rendered_at ON public.templates_hero_instances USING btree (last_rendered_at);
+
+
+--
+-- Name: index_templates_hero_instances_on_position; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_templates_hero_instances_on_position ON public.templates_hero_instances USING btree ("position");
+
+
+--
+-- Name: index_templates_link_list_definitions_on_position; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_templates_link_list_definitions_on_position ON public.templates_link_list_definitions USING btree ("position");
+
+
+--
+-- Name: index_templates_link_list_instances_on_entity; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_templates_link_list_instances_on_entity ON public.templates_link_list_instances USING btree (entity_type, entity_id);
+
+
+--
+-- Name: index_templates_link_list_instances_on_generation; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_templates_link_list_instances_on_generation ON public.templates_link_list_instances USING btree (generation);
+
+
+--
+-- Name: index_templates_link_list_instances_on_last_rendered_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_templates_link_list_instances_on_last_rendered_at ON public.templates_link_list_instances USING btree (last_rendered_at);
+
+
+--
+-- Name: index_templates_link_list_instances_on_position; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_templates_link_list_instances_on_position ON public.templates_link_list_instances USING btree ("position");
+
+
+--
+-- Name: index_templates_list_item_definitions_on_position; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_templates_list_item_definitions_on_position ON public.templates_list_item_definitions USING btree ("position");
+
+
+--
+-- Name: index_templates_list_item_instances_on_entity; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_templates_list_item_instances_on_entity ON public.templates_list_item_instances USING btree (entity_type, entity_id);
+
+
+--
+-- Name: index_templates_list_item_instances_on_generation; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_templates_list_item_instances_on_generation ON public.templates_list_item_instances USING btree (generation);
+
+
+--
+-- Name: index_templates_list_item_instances_on_last_rendered_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_templates_list_item_instances_on_last_rendered_at ON public.templates_list_item_instances USING btree (last_rendered_at);
+
+
+--
+-- Name: index_templates_list_item_instances_on_position; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_templates_list_item_instances_on_position ON public.templates_list_item_instances USING btree ("position");
+
+
+--
+-- Name: index_templates_metadata_definitions_on_position; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_templates_metadata_definitions_on_position ON public.templates_metadata_definitions USING btree ("position");
+
+
+--
+-- Name: index_templates_metadata_instances_on_entity; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_templates_metadata_instances_on_entity ON public.templates_metadata_instances USING btree (entity_type, entity_id);
+
+
+--
+-- Name: index_templates_metadata_instances_on_generation; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_templates_metadata_instances_on_generation ON public.templates_metadata_instances USING btree (generation);
+
+
+--
+-- Name: index_templates_metadata_instances_on_last_rendered_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_templates_metadata_instances_on_last_rendered_at ON public.templates_metadata_instances USING btree (last_rendered_at);
+
+
+--
+-- Name: index_templates_metadata_instances_on_position; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_templates_metadata_instances_on_position ON public.templates_metadata_instances USING btree ("position");
+
+
+--
+-- Name: index_templates_navigation_definitions_on_position; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_templates_navigation_definitions_on_position ON public.templates_navigation_definitions USING btree ("position");
+
+
+--
+-- Name: index_templates_navigation_instances_on_entity; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_templates_navigation_instances_on_entity ON public.templates_navigation_instances USING btree (entity_type, entity_id);
+
+
+--
+-- Name: index_templates_navigation_instances_on_generation; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_templates_navigation_instances_on_generation ON public.templates_navigation_instances USING btree (generation);
+
+
+--
+-- Name: index_templates_navigation_instances_on_last_rendered_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_templates_navigation_instances_on_last_rendered_at ON public.templates_navigation_instances USING btree (last_rendered_at);
+
+
+--
+-- Name: index_templates_navigation_instances_on_position; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_templates_navigation_instances_on_position ON public.templates_navigation_instances USING btree ("position");
+
+
+--
+-- Name: index_templates_ordering_definitions_on_position; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_templates_ordering_definitions_on_position ON public.templates_ordering_definitions USING btree ("position");
+
+
+--
+-- Name: index_templates_ordering_instances_on_entity; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_templates_ordering_instances_on_entity ON public.templates_ordering_instances USING btree (entity_type, entity_id);
+
+
+--
+-- Name: index_templates_ordering_instances_on_generation; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_templates_ordering_instances_on_generation ON public.templates_ordering_instances USING btree (generation);
+
+
+--
+-- Name: index_templates_ordering_instances_on_last_rendered_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_templates_ordering_instances_on_last_rendered_at ON public.templates_ordering_instances USING btree (last_rendered_at);
+
+
+--
+-- Name: index_templates_ordering_instances_on_position; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_templates_ordering_instances_on_position ON public.templates_ordering_instances USING btree ("position");
+
+
+--
+-- Name: index_templates_page_list_definitions_on_position; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_templates_page_list_definitions_on_position ON public.templates_page_list_definitions USING btree ("position");
+
+
+--
+-- Name: index_templates_page_list_instances_on_entity; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_templates_page_list_instances_on_entity ON public.templates_page_list_instances USING btree (entity_type, entity_id);
+
+
+--
+-- Name: index_templates_page_list_instances_on_generation; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_templates_page_list_instances_on_generation ON public.templates_page_list_instances USING btree (generation);
+
+
+--
+-- Name: index_templates_page_list_instances_on_last_rendered_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_templates_page_list_instances_on_last_rendered_at ON public.templates_page_list_instances USING btree (last_rendered_at);
+
+
+--
+-- Name: index_templates_page_list_instances_on_position; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_templates_page_list_instances_on_position ON public.templates_page_list_instances USING btree ("position");
+
+
+--
+-- Name: index_templates_supplementary_definitions_on_position; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_templates_supplementary_definitions_on_position ON public.templates_supplementary_definitions USING btree ("position");
+
+
+--
+-- Name: index_templates_supplementary_instances_on_entity; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_templates_supplementary_instances_on_entity ON public.templates_supplementary_instances USING btree (entity_type, entity_id);
+
+
+--
+-- Name: index_templates_supplementary_instances_on_generation; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_templates_supplementary_instances_on_generation ON public.templates_supplementary_instances USING btree (generation);
+
+
+--
+-- Name: index_templates_supplementary_instances_on_last_rendered_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_templates_supplementary_instances_on_last_rendered_at ON public.templates_supplementary_instances USING btree (last_rendered_at);
+
+
+--
+-- Name: index_templates_supplementary_instances_on_position; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_templates_supplementary_instances_on_position ON public.templates_supplementary_instances USING btree ("position");
 
 
 --
@@ -9521,6 +11502,90 @@ CREATE UNIQUE INDEX role_permissions_uniqueness ON public.role_permissions USING
 --
 
 CREATE UNIQUE INDEX schema_definition_properties_pkey ON public.schema_definition_properties USING btree (schema_definition_id, path, type);
+
+
+--
+-- Name: udx_layouts_hero_definitions_leaf; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX udx_layouts_hero_definitions_leaf ON public.layouts_hero_definitions USING btree (schema_version_id, entity_type, entity_id) WHERE ((entity_type IS NOT NULL) AND (entity_id IS NOT NULL));
+
+
+--
+-- Name: udx_layouts_hero_definitions_root; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX udx_layouts_hero_definitions_root ON public.layouts_hero_definitions USING btree (schema_version_id) WHERE ((entity_type IS NULL) AND (entity_id IS NULL));
+
+
+--
+-- Name: udx_layouts_list_item_definitions_leaf; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX udx_layouts_list_item_definitions_leaf ON public.layouts_list_item_definitions USING btree (schema_version_id, entity_type, entity_id) WHERE ((entity_type IS NOT NULL) AND (entity_id IS NOT NULL));
+
+
+--
+-- Name: udx_layouts_list_item_definitions_root; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX udx_layouts_list_item_definitions_root ON public.layouts_list_item_definitions USING btree (schema_version_id) WHERE ((entity_type IS NULL) AND (entity_id IS NULL));
+
+
+--
+-- Name: udx_layouts_main_definitions_leaf; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX udx_layouts_main_definitions_leaf ON public.layouts_main_definitions USING btree (schema_version_id, entity_type, entity_id) WHERE ((entity_type IS NOT NULL) AND (entity_id IS NOT NULL));
+
+
+--
+-- Name: udx_layouts_main_definitions_root; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX udx_layouts_main_definitions_root ON public.layouts_main_definitions USING btree (schema_version_id) WHERE ((entity_type IS NULL) AND (entity_id IS NULL));
+
+
+--
+-- Name: udx_layouts_metadata_definitions_leaf; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX udx_layouts_metadata_definitions_leaf ON public.layouts_metadata_definitions USING btree (schema_version_id, entity_type, entity_id) WHERE ((entity_type IS NOT NULL) AND (entity_id IS NOT NULL));
+
+
+--
+-- Name: udx_layouts_metadata_definitions_root; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX udx_layouts_metadata_definitions_root ON public.layouts_metadata_definitions USING btree (schema_version_id) WHERE ((entity_type IS NULL) AND (entity_id IS NULL));
+
+
+--
+-- Name: udx_layouts_navigation_definitions_leaf; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX udx_layouts_navigation_definitions_leaf ON public.layouts_navigation_definitions USING btree (schema_version_id, entity_type, entity_id) WHERE ((entity_type IS NOT NULL) AND (entity_id IS NOT NULL));
+
+
+--
+-- Name: udx_layouts_navigation_definitions_root; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX udx_layouts_navigation_definitions_root ON public.layouts_navigation_definitions USING btree (schema_version_id) WHERE ((entity_type IS NULL) AND (entity_id IS NULL));
+
+
+--
+-- Name: udx_layouts_supplementary_definitions_leaf; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX udx_layouts_supplementary_definitions_leaf ON public.layouts_supplementary_definitions USING btree (schema_version_id, entity_type, entity_id) WHERE ((entity_type IS NOT NULL) AND (entity_id IS NOT NULL));
+
+
+--
+-- Name: udx_layouts_supplementary_definitions_root; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX udx_layouts_supplementary_definitions_root ON public.layouts_supplementary_definitions USING btree (schema_version_id) WHERE ((entity_type IS NULL) AND (entity_id IS NULL));
 
 
 --
@@ -10469,6 +12534,22 @@ CREATE TRIGGER lock_version_definition_id BEFORE UPDATE OF schema_definition_id 
 
 
 --
+-- Name: templates_navigation_instances fk_rails_0380b5f1ad; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.templates_navigation_instances
+    ADD CONSTRAINT fk_rails_0380b5f1ad FOREIGN KEY (template_definition_id) REFERENCES public.templates_navigation_definitions(id) ON DELETE CASCADE;
+
+
+--
+-- Name: templates_navigation_instances fk_rails_05ddde0077; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.templates_navigation_instances
+    ADD CONSTRAINT fk_rails_05ddde0077 FOREIGN KEY (layout_instance_id) REFERENCES public.layouts_navigation_instances(id) ON DELETE CASCADE;
+
+
+--
 -- Name: collection_linked_items fk_rails_08f9156aa0; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -10493,11 +12574,35 @@ ALTER TABLE ONLY public.harvest_attempts
 
 
 --
+-- Name: layouts_metadata_instances fk_rails_0d9ab24a2b; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.layouts_metadata_instances
+    ADD CONSTRAINT fk_rails_0d9ab24a2b FOREIGN KEY (layout_definition_id) REFERENCES public.layouts_metadata_definitions(id) ON DELETE CASCADE;
+
+
+--
+-- Name: layouts_main_instances fk_rails_0e6bb1fad8; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.layouts_main_instances
+    ADD CONSTRAINT fk_rails_0e6bb1fad8 FOREIGN KEY (layout_definition_id) REFERENCES public.layouts_main_definitions(id) ON DELETE CASCADE;
+
+
+--
 -- Name: harvest_sets fk_rails_0f046d2238; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.harvest_sets
     ADD CONSTRAINT fk_rails_0f046d2238 FOREIGN KEY (harvest_source_id) REFERENCES public.harvest_sources(id) ON DELETE CASCADE;
+
+
+--
+-- Name: templates_page_list_instances fk_rails_0fd45e415a; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.templates_page_list_instances
+    ADD CONSTRAINT fk_rails_0fd45e415a FOREIGN KEY (layout_instance_id) REFERENCES public.layouts_main_instances(id) ON DELETE CASCADE;
 
 
 --
@@ -10517,6 +12622,38 @@ ALTER TABLE ONLY public.collection_links
 
 
 --
+-- Name: templates_page_list_definitions fk_rails_1245fb3453; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.templates_page_list_definitions
+    ADD CONSTRAINT fk_rails_1245fb3453 FOREIGN KEY (layout_definition_id) REFERENCES public.layouts_main_definitions(id) ON DELETE CASCADE;
+
+
+--
+-- Name: templates_hero_instances fk_rails_13ddf8a022; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.templates_hero_instances
+    ADD CONSTRAINT fk_rails_13ddf8a022 FOREIGN KEY (template_definition_id) REFERENCES public.templates_hero_definitions(id) ON DELETE CASCADE;
+
+
+--
+-- Name: layouts_hero_definitions fk_rails_152bba3eee; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.layouts_hero_definitions
+    ADD CONSTRAINT fk_rails_152bba3eee FOREIGN KEY (schema_version_id) REFERENCES public.schema_versions(id) ON DELETE CASCADE;
+
+
+--
+-- Name: templates_link_list_definitions fk_rails_16eb4e2132; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.templates_link_list_definitions
+    ADD CONSTRAINT fk_rails_16eb4e2132 FOREIGN KEY (layout_definition_id) REFERENCES public.layouts_main_definitions(id) ON DELETE CASCADE;
+
+
+--
 -- Name: schema_version_properties fk_rails_1f31833d7c; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -10525,11 +12662,51 @@ ALTER TABLE ONLY public.schema_version_properties
 
 
 --
+-- Name: templates_descendant_list_definitions fk_rails_2293d53f73; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.templates_descendant_list_definitions
+    ADD CONSTRAINT fk_rails_2293d53f73 FOREIGN KEY (layout_definition_id) REFERENCES public.layouts_main_definitions(id) ON DELETE CASCADE;
+
+
+--
+-- Name: layouts_hero_instances fk_rails_269b9f8e18; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.layouts_hero_instances
+    ADD CONSTRAINT fk_rails_269b9f8e18 FOREIGN KEY (layout_definition_id) REFERENCES public.layouts_hero_definitions(id) ON DELETE CASCADE;
+
+
+--
 -- Name: entity_orderable_properties fk_rails_27196ff015; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.entity_orderable_properties
     ADD CONSTRAINT fk_rails_27196ff015 FOREIGN KEY (schema_version_property_id) REFERENCES public.schema_version_properties(id) ON DELETE CASCADE;
+
+
+--
+-- Name: templates_metadata_instances fk_rails_28ca5fbc74; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.templates_metadata_instances
+    ADD CONSTRAINT fk_rails_28ca5fbc74 FOREIGN KEY (layout_instance_id) REFERENCES public.layouts_metadata_instances(id) ON DELETE CASCADE;
+
+
+--
+-- Name: templates_list_item_instances fk_rails_29224d5f0a; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.templates_list_item_instances
+    ADD CONSTRAINT fk_rails_29224d5f0a FOREIGN KEY (layout_instance_id) REFERENCES public.layouts_list_item_instances(id) ON DELETE CASCADE;
+
+
+--
+-- Name: templates_hero_definitions fk_rails_29ff73dfc0; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.templates_hero_definitions
+    ADD CONSTRAINT fk_rails_29ff73dfc0 FOREIGN KEY (layout_definition_id) REFERENCES public.layouts_hero_definitions(id) ON DELETE CASCADE;
 
 
 --
@@ -10557,6 +12734,14 @@ ALTER TABLE ONLY public.community_memberships
 
 
 --
+-- Name: layouts_supplementary_instances fk_rails_3358737399; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.layouts_supplementary_instances
+    ADD CONSTRAINT fk_rails_3358737399 FOREIGN KEY (layout_definition_id) REFERENCES public.layouts_supplementary_definitions(id) ON DELETE CASCADE;
+
+
+--
 -- Name: controlled_vocabulary_items fk_rails_34693393c7; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -10578,6 +12763,14 @@ ALTER TABLE ONLY public.entity_hierarchies
 
 ALTER TABLE ONLY public.items
     ADD CONSTRAINT fk_rails_382f073cd8 FOREIGN KEY (schema_definition_id) REFERENCES public.schema_definitions(id) ON DELETE RESTRICT;
+
+
+--
+-- Name: templates_supplementary_instances fk_rails_38eff55817; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.templates_supplementary_instances
+    ADD CONSTRAINT fk_rails_38eff55817 FOREIGN KEY (layout_instance_id) REFERENCES public.layouts_supplementary_instances(id) ON DELETE CASCADE;
 
 
 --
@@ -10653,6 +12846,22 @@ ALTER TABLE ONLY public.access_grants
 
 
 --
+-- Name: templates_contributor_list_definitions fk_rails_4dd3d9f1db; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.templates_contributor_list_definitions
+    ADD CONSTRAINT fk_rails_4dd3d9f1db FOREIGN KEY (layout_definition_id) REFERENCES public.layouts_main_definitions(id) ON DELETE CASCADE;
+
+
+--
+-- Name: templates_navigation_definitions fk_rails_4ebbf856c5; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.templates_navigation_definitions
+    ADD CONSTRAINT fk_rails_4ebbf856c5 FOREIGN KEY (layout_definition_id) REFERENCES public.layouts_navigation_definitions(id) ON DELETE CASCADE;
+
+
+--
 -- Name: harvest_metadata_mappings fk_rails_4f6af7c2e4; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -10677,6 +12886,14 @@ ALTER TABLE ONLY public.controlled_vocabulary_sources
 
 
 --
+-- Name: templates_metadata_instances fk_rails_54e69d62be; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.templates_metadata_instances
+    ADD CONSTRAINT fk_rails_54e69d62be FOREIGN KEY (template_definition_id) REFERENCES public.templates_metadata_definitions(id) ON DELETE CASCADE;
+
+
+--
 -- Name: access_grants fk_rails_55410f2ab3; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -10693,11 +12910,35 @@ ALTER TABLE ONLY public.harvest_contributions
 
 
 --
+-- Name: templates_list_item_instances fk_rails_5a96c21277; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.templates_list_item_instances
+    ADD CONSTRAINT fk_rails_5a96c21277 FOREIGN KEY (template_definition_id) REFERENCES public.templates_list_item_definitions(id) ON DELETE CASCADE;
+
+
+--
+-- Name: layouts_supplementary_definitions fk_rails_5ecf3a7cc1; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.layouts_supplementary_definitions
+    ADD CONSTRAINT fk_rails_5ecf3a7cc1 FOREIGN KEY (schema_version_id) REFERENCES public.schema_versions(id) ON DELETE CASCADE;
+
+
+--
 -- Name: role_permissions fk_rails_60126080bd; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.role_permissions
     ADD CONSTRAINT fk_rails_60126080bd FOREIGN KEY (role_id) REFERENCES public.roles(id) ON DELETE CASCADE;
+
+
+--
+-- Name: layouts_main_definitions fk_rails_61dd80f122; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.layouts_main_definitions
+    ADD CONSTRAINT fk_rails_61dd80f122 FOREIGN KEY (schema_version_id) REFERENCES public.schema_versions(id) ON DELETE CASCADE;
 
 
 --
@@ -10709,11 +12950,27 @@ ALTER TABLE ONLY public.harvest_mappings
 
 
 --
+-- Name: templates_detail_instances fk_rails_65e782e7f2; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.templates_detail_instances
+    ADD CONSTRAINT fk_rails_65e782e7f2 FOREIGN KEY (template_definition_id) REFERENCES public.templates_detail_definitions(id) ON DELETE CASCADE;
+
+
+--
 -- Name: item_links fk_rails_67a3fd259e; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.item_links
     ADD CONSTRAINT fk_rails_67a3fd259e FOREIGN KEY (target_id) REFERENCES public.items(id) ON DELETE RESTRICT;
+
+
+--
+-- Name: templates_descendant_list_instances fk_rails_681a91e75a; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.templates_descendant_list_instances
+    ADD CONSTRAINT fk_rails_681a91e75a FOREIGN KEY (layout_instance_id) REFERENCES public.layouts_main_instances(id) ON DELETE CASCADE;
 
 
 --
@@ -10749,6 +13006,14 @@ ALTER TABLE ONLY public.entity_links
 
 
 --
+-- Name: templates_hero_instances fk_rails_6d92b15d3f; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.templates_hero_instances
+    ADD CONSTRAINT fk_rails_6d92b15d3f FOREIGN KEY (layout_instance_id) REFERENCES public.layouts_hero_instances(id) ON DELETE CASCADE;
+
+
+--
 -- Name: harvest_attempts fk_rails_6eb1b8ebed; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -10770,6 +13035,14 @@ ALTER TABLE ONLY public.initial_ordering_links
 
 ALTER TABLE ONLY public.item_contributions
     ADD CONSTRAINT fk_rails_73af22b63e FOREIGN KEY (contributor_id) REFERENCES public.contributors(id);
+
+
+--
+-- Name: templates_list_item_definitions fk_rails_73f8774aa7; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.templates_list_item_definitions
+    ADD CONSTRAINT fk_rails_73f8774aa7 FOREIGN KEY (layout_definition_id) REFERENCES public.layouts_list_item_definitions(id) ON DELETE CASCADE;
 
 
 --
@@ -10802,6 +13075,14 @@ ALTER TABLE ONLY public.entity_searchable_properties
 
 ALTER TABLE ONLY public.schema_version_properties
     ADD CONSTRAINT fk_rails_77d4155820 FOREIGN KEY (schema_definition_id) REFERENCES public.schema_definitions(id) ON DELETE CASCADE;
+
+
+--
+-- Name: templates_supplementary_instances fk_rails_78822bf10c; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.templates_supplementary_instances
+    ADD CONSTRAINT fk_rails_78822bf10c FOREIGN KEY (template_definition_id) REFERENCES public.templates_supplementary_definitions(id) ON DELETE CASCADE;
 
 
 --
@@ -10909,6 +13190,14 @@ ALTER TABLE ONLY public.harvest_attempts
 
 
 --
+-- Name: templates_ordering_instances fk_rails_930e8b2e8f; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.templates_ordering_instances
+    ADD CONSTRAINT fk_rails_930e8b2e8f FOREIGN KEY (layout_instance_id) REFERENCES public.layouts_main_instances(id) ON DELETE CASCADE;
+
+
+--
 -- Name: harvest_entities fk_rails_96a93b8164; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -10917,11 +13206,43 @@ ALTER TABLE ONLY public.harvest_entities
 
 
 --
+-- Name: layouts_navigation_instances fk_rails_97fb76a4f0; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.layouts_navigation_instances
+    ADD CONSTRAINT fk_rails_97fb76a4f0 FOREIGN KEY (layout_definition_id) REFERENCES public.layouts_navigation_definitions(id) ON DELETE CASCADE;
+
+
+--
 -- Name: collection_contributions fk_rails_9955c93f4b; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.collection_contributions
     ADD CONSTRAINT fk_rails_9955c93f4b FOREIGN KEY (collection_id) REFERENCES public.collections(id);
+
+
+--
+-- Name: templates_contributor_list_instances fk_rails_99a28e74ee; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.templates_contributor_list_instances
+    ADD CONSTRAINT fk_rails_99a28e74ee FOREIGN KEY (layout_instance_id) REFERENCES public.layouts_main_instances(id) ON DELETE CASCADE;
+
+
+--
+-- Name: layouts_navigation_definitions fk_rails_9b1ab50bc6; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.layouts_navigation_definitions
+    ADD CONSTRAINT fk_rails_9b1ab50bc6 FOREIGN KEY (schema_version_id) REFERENCES public.schema_versions(id) ON DELETE CASCADE;
+
+
+--
+-- Name: templates_metadata_definitions fk_rails_a00acbf090; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.templates_metadata_definitions
+    ADD CONSTRAINT fk_rails_a00acbf090 FOREIGN KEY (layout_definition_id) REFERENCES public.layouts_metadata_definitions(id) ON DELETE CASCADE;
 
 
 --
@@ -11013,6 +13334,22 @@ ALTER TABLE ONLY public.access_grants
 
 
 --
+-- Name: layouts_list_item_definitions fk_rails_bbeb9cb947; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.layouts_list_item_definitions
+    ADD CONSTRAINT fk_rails_bbeb9cb947 FOREIGN KEY (schema_version_id) REFERENCES public.schema_versions(id) ON DELETE CASCADE;
+
+
+--
+-- Name: templates_detail_definitions fk_rails_c02b6c7bef; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.templates_detail_definitions
+    ADD CONSTRAINT fk_rails_c02b6c7bef FOREIGN KEY (layout_definition_id) REFERENCES public.layouts_main_definitions(id) ON DELETE CASCADE;
+
+
+--
 -- Name: orderings fk_rails_c09738b6c8; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -11026,6 +13363,22 @@ ALTER TABLE ONLY public.orderings
 
 ALTER TABLE ONLY public.entity_hierarchies
     ADD CONSTRAINT fk_rails_c2be56f2ad FOREIGN KEY (schema_definition_id) REFERENCES public.schema_definitions(id) ON DELETE CASCADE;
+
+
+--
+-- Name: layouts_list_item_instances fk_rails_c42661f077; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.layouts_list_item_instances
+    ADD CONSTRAINT fk_rails_c42661f077 FOREIGN KEY (layout_definition_id) REFERENCES public.layouts_list_item_definitions(id) ON DELETE CASCADE;
+
+
+--
+-- Name: templates_descendant_list_instances fk_rails_c4a01d56d6; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.templates_descendant_list_instances
+    ADD CONSTRAINT fk_rails_c4a01d56d6 FOREIGN KEY (template_definition_id) REFERENCES public.templates_descendant_list_definitions(id) ON DELETE CASCADE;
 
 
 --
@@ -11045,11 +13398,27 @@ ALTER TABLE ONLY public.harvest_contributors
 
 
 --
+-- Name: templates_link_list_instances fk_rails_cd4f3060a6; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.templates_link_list_instances
+    ADD CONSTRAINT fk_rails_cd4f3060a6 FOREIGN KEY (layout_instance_id) REFERENCES public.layouts_main_instances(id) ON DELETE CASCADE;
+
+
+--
 -- Name: assets fk_rails_ce34fffb9d; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.assets
     ADD CONSTRAINT fk_rails_ce34fffb9d FOREIGN KEY (parent_id) REFERENCES public.assets(id) ON DELETE RESTRICT;
+
+
+--
+-- Name: templates_contributor_list_instances fk_rails_cf282c6438; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.templates_contributor_list_instances
+    ADD CONSTRAINT fk_rails_cf282c6438 FOREIGN KEY (template_definition_id) REFERENCES public.templates_contributor_list_definitions(id) ON DELETE CASCADE;
 
 
 --
@@ -11069,11 +13438,27 @@ ALTER TABLE ONLY public.harvest_mappings
 
 
 --
+-- Name: templates_detail_instances fk_rails_d243ae43dd; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.templates_detail_instances
+    ADD CONSTRAINT fk_rails_d243ae43dd FOREIGN KEY (layout_instance_id) REFERENCES public.layouts_main_instances(id) ON DELETE CASCADE;
+
+
+--
 -- Name: schema_version_ancestors fk_rails_d355266964; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.schema_version_ancestors
     ADD CONSTRAINT fk_rails_d355266964 FOREIGN KEY (schema_version_id) REFERENCES public.schema_versions(id) ON DELETE CASCADE;
+
+
+--
+-- Name: templates_supplementary_definitions fk_rails_d49809ac3e; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.templates_supplementary_definitions
+    ADD CONSTRAINT fk_rails_d49809ac3e FOREIGN KEY (layout_definition_id) REFERENCES public.layouts_supplementary_definitions(id) ON DELETE CASCADE;
 
 
 --
@@ -11125,11 +13510,35 @@ ALTER TABLE ONLY public.granted_permissions
 
 
 --
+-- Name: layouts_metadata_definitions fk_rails_df56b1f30a; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.layouts_metadata_definitions
+    ADD CONSTRAINT fk_rails_df56b1f30a FOREIGN KEY (schema_version_id) REFERENCES public.schema_versions(id) ON DELETE CASCADE;
+
+
+--
+-- Name: templates_link_list_instances fk_rails_e0b0772553; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.templates_link_list_instances
+    ADD CONSTRAINT fk_rails_e0b0772553 FOREIGN KEY (template_definition_id) REFERENCES public.templates_link_list_definitions(id) ON DELETE CASCADE;
+
+
+--
 -- Name: harvest_cached_asset_references fk_rails_e10303fa2f; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.harvest_cached_asset_references
     ADD CONSTRAINT fk_rails_e10303fa2f FOREIGN KEY (harvest_cached_asset_id) REFERENCES public.harvest_cached_assets(id) ON DELETE CASCADE;
+
+
+--
+-- Name: templates_ordering_definitions fk_rails_e611341ed0; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.templates_ordering_definitions
+    ADD CONSTRAINT fk_rails_e611341ed0 FOREIGN KEY (layout_definition_id) REFERENCES public.layouts_main_definitions(id) ON DELETE CASCADE;
 
 
 --
@@ -11197,11 +13606,27 @@ ALTER TABLE ONLY public.collection_contributions
 
 
 --
+-- Name: templates_ordering_instances fk_rails_f315024259; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.templates_ordering_instances
+    ADD CONSTRAINT fk_rails_f315024259 FOREIGN KEY (template_definition_id) REFERENCES public.templates_ordering_definitions(id) ON DELETE CASCADE;
+
+
+--
 -- Name: entity_links fk_rails_f54d4f5cb3; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.entity_links
     ADD CONSTRAINT fk_rails_f54d4f5cb3 FOREIGN KEY (source_community_id) REFERENCES public.communities(id) ON DELETE CASCADE;
+
+
+--
+-- Name: templates_page_list_instances fk_rails_f8800717b5; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.templates_page_list_instances
+    ADD CONSTRAINT fk_rails_f8800717b5 FOREIGN KEY (template_definition_id) REFERENCES public.templates_page_list_definitions(id) ON DELETE CASCADE;
 
 
 --
@@ -11501,6 +13926,9 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20240701194303'),
 ('20240807162748'),
 ('20240917183334'),
-('20240919170725');
+('20240919170725'),
+('20241009214736'),
+('20241017174753'),
+('20241018223753');
 
 

@@ -14,6 +14,8 @@ class Collection < ApplicationRecord
   include ChildEntity
   include ScopesForIdentifier
 
+  drop_klass Templates::Drops::CollectionDrop
+
   has_closure_tree
 
   belongs_to :community, inverse_of: :collections

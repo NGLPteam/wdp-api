@@ -1,0 +1,23 @@
+---
+- template_kind: hero
+  layout_kind: hero
+- template_kind: list_item
+  layout_kind: list_item
+- template_kind: detail
+  layout_kind: main
+- template_kind: descendant_list
+  layout_kind: main
+- template_kind: link_list
+  layout_kind: main
+- template_kind: page_list
+  layout_kind: main
+- template_kind: contributor_list
+  layout_kind: main
+- template_kind: ordering
+  layout_kind: main
+- template_kind: navigation
+  layout_kind: navigation
+- template_kind: metadata
+  layout_kind: metadata
+- template_kind: supplementary
+  layout_kind: supplementary

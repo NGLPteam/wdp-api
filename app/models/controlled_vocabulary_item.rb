@@ -3,7 +3,10 @@
 # A term in a single {ControlledVocabulary}.
 class ControlledVocabularyItem < ApplicationRecord
   include HasEphemeralSystemSlug
+  include Liquifies
   include TimestampScopes
+
+  drop_klass Templates::Drops::ControlledVocabularyItemDrop
 
   strip_attributes only: %i[identifier label description]
 

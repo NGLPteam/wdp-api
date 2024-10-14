@@ -5,7 +5,9 @@ module HierarchicalEntity
   extend DefinesMonadicOperation
 
   include AssociationHelpers
+  include EntityTemplating
   include HasSystemSlug
+  include Liquifies
   include SyncsEntities
   include TimestampScopes
   include ScopesForEntityComposedText
@@ -406,7 +408,11 @@ module HierarchicalEntity
 
   # @!endgroup
 
-  class_methods do
+  monadic_operation! def to_liquid_assigns(**options)
+    call_operation("templates.build_assigns", **options, entity: self)
+  end
+
+  module ClassMethods
     # @param [User] user
     # @return [ActiveRecord::Relation<HierarchicalEntity>]
     def readable_by(user)

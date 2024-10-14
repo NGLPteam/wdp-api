@@ -42,4 +42,5 @@ class ImageUploader < Shrine
   end
 
   UploadedFile.include ImageAttachments::HasMetadata
+  UploadedFile.include ImageAttachments::ToLiquid
 end

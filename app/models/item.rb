@@ -13,6 +13,8 @@ class Item < ApplicationRecord
   include ChildEntity
   include ScopesForIdentifier
 
+  drop_klass Templates::Drops::ItemDrop
+
   has_closure_tree
 
   belongs_to :collection, inverse_of: :items

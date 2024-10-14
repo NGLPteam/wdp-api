@@ -1,0 +1,39 @@
+<%-
+  # vim: set ft=ruby.eruby nosmartindent noautoindent :
+-%>
+# frozen_string_literal: true
+
+module Types
+  module Layouts
+    # @see ::Layouts::<%= class_name %>Instance
+    class <%= class_name %>LayoutInstanceType < AbstractModel
+      implements ::Types::LayoutInstanceType
+
+      field :layout_definition, Types::Layouts::<%= class_name %>LayoutDefinitionType, null: false do
+        description <<~TEXT
+        The layout definition for this type.
+        TEXT
+      end
+
+      field :templates, [Types::Any<%= class_name %>TemplateInstanceType, { null: false }], null: false do
+        description <<~TEXT
+        The ordered template instances available for this layout.
+        TEXT
+      end
+      <%- if has_single_template? -%>
+
+      field :template, "Types::Templates::<%= template_kinds.first.classify %>TemplateInstanceType", null: true do
+        description <<~TEXT
+        This layout will only ever have one template, so it can be fetched directly without needing the union.
+        TEXT
+      end
+
+      load_association! :template_instance, as: :template
+      <%- end -%>
+
+      ::Layouts::<%= class_name %>Instance.template_instance_names.each do |name|
+        load_association! name
+      end
+    end
+  end
+end
