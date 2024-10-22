@@ -6,11 +6,16 @@ module Types
     include Types::BaseInterface
 
     implements Types::EntityType
+    implements Types::AccessibleType
+    implements Types::ExposesPermissionsType
+    implements Types::HasEntityBreadcrumbs
     implements Types::HasDefaultTimestamps
+    implements Types::HasSchemaPropertiesType
     implements Types::HasDOIType
     implements Types::HasISSNType
     implements Types::ReferencesEntityVisibilityType
     implements Types::ReferencesGlobalEntityDatesType
+    implements Types::SearchableType
 
     description <<~TEXT
     An interface for entities that can contain actual content, as well as any number of themselves
