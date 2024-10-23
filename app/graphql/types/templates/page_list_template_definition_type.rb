@@ -11,6 +11,11 @@ module Types
         Slot definitions for this template.
         TEXT
       end
+
+      field :background, ::Types::PageListBackgroundType, null: true do
+        description <<~TEXT
+        TEXT
+      end
     end
   end
 end

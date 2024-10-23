@@ -1,0 +1,16 @@
+<%-
+  # vim: set ft=ruby.eruby nosmartindent noautoindent :
+-%>
+# frozen_string_literal: true
+
+module Types
+  class <%= template_enum_property.gql_type_klass_name %> < Types::BaseEnum
+    description <<~TEXT
+    An enumerated value associated with the templating subsystem.
+    TEXT<% template_enum_property.enum_values.each do |value| %>
+
+    value <%= value.upcase.inspect %>, value: <%= value.to_s.inspect %> do
+      description <%= heredoc_description_for(value) %>
+    end<%- end %>
+  end
+end

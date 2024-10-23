@@ -7,9 +7,9 @@ module Templates
   module SlotMappings
     # @see Templates::<%= class_name %>Instance
     class <%= class_name %>InstanceSlots < AbstractInstanceSlots
-      block! :sample_block
-
-      inline! :sample_inline
+      <%- ::TemplateSlot.for_template(template_kind).each do |slot| -%>
+      <%= :"#{slot.slot_kind}!" %> <%= slot.name.to_sym.inspect %>
+      <%- end -%>
     end
   end
 end

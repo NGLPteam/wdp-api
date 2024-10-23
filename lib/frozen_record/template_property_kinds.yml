@@ -1,0 +1,27 @@
+---
+- name: background
+  enum_category: "background"
+- name: boolean
+  dry_type_key: "params.bool"
+  gql_type_name: "Boolean"
+- name: limit
+  dry_type_key: "limit"
+  gql_type_name: Int
+- name: ordering_definition
+  dry_type_key: "ordering_definition"
+  gql_type_name: "Types::OrderingDefinitionType"
+- name: schema_component
+  dry_type_key: "schema_component"
+  gql_type_name: String
+- name: selection_mode
+  enum_category: "selection_mode"
+- name: selection_source
+  dry_type_key: "selection_source"
+  gql_type_name: String
+- name: selection_source_mode
+  enum_name: selection_source_mode
+- name: string
+  dry_type_key: "params.string"
+  gql_type_name: String
+- name: variant
+  enum_category: "variant"

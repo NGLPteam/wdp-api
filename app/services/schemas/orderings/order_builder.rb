@@ -5,6 +5,8 @@ module Schemas
     module OrderBuilder
       extend Dry::Container::Mixin
 
+      COMPONENT_FORMAT = /[a-z][a-z0-9_]*?[a-z0-9]/
+
       StaticOrderableProperty.each do |property|
         register property.path do
           property.order_builder
@@ -13,11 +15,19 @@ module Schemas
 
       STATIC_KEYS = Regexp.union(keys)
 
-      PATTERN = /\A
-      (?:#{STATIC_KEYS})
-      |
-      (?:props\.(?:[^.]+)(?:\.[^.]+)?)
+      STATIC_PATTERN = /\A#{STATIC_KEYS}\z/
+
+      PROPS_PATTERN = /\A
+      props
+      \.
+      (?:
+        (?:#{COMPONENT_FORMAT}+)
+        (?:\.#{COMPONENT_FORMAT}+?)?
+      )
+      (?:\##{Regexp.union(::EntityOrderableProperty::SUPPORTED_PROPERTY_TYPES.map(&:to_s))})?
       \z/x
+
+      PATTERN = Regexp.union(STATIC_PATTERN, PROPS_PATTERN)
 
       namespace :props do
         register ?* do

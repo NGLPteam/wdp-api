@@ -4,9 +4,9 @@ module Templates
   module SlotMappings
     # @see Templates::DetailInstance
     class DetailInstanceSlots < AbstractInstanceSlots
-      block! :sample_block
-
-      inline! :sample_inline
+      inline! :header
+      inline! :subheader
+      block! :summary
     end
   end
 end

@@ -13,6 +13,7 @@ module Templates
     template_kind! <%= template_kind.to_sym.inspect %>
 
     graphql_node_type_name "::Types::Templates::<%= class_name %>TemplateDefinitionType"
+<%= definition_property_declarations %>
 
     attribute :slots, ::Templates::SlotMappings::<%= class_name %>DefinitionSlots.to_type
 

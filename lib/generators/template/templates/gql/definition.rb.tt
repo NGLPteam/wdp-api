@@ -13,7 +13,11 @@ module Types
         description <<~TEXT
         Slot definitions for this template.
         TEXT
-      end
+      end<% template_properties.each do |prop| %>
+
+      field <%= prop.name.to_sym.inspect %>, <%= prop.gql_type_name %>, null: true do
+        description <%= heredoc_description_for(prop.description) %>
+      end<% end %>
     end
   end
 end

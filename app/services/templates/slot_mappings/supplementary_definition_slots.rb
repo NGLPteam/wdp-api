@@ -6,9 +6,8 @@ module Templates
     class SupplementaryDefinitionSlots < AbstractDefinitionSlots
       instance_slots_klass Templates::SlotMappings::SupplementaryInstanceSlots
 
-      block! :sample_block
-
-      inline! :sample_inline
+      inline! :contributors_label
+      inline! :metrics_label
     end
   end
 end

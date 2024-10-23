@@ -170,6 +170,17 @@ CREATE TYPE public.contributor_kind AS ENUM (
 
 
 --
+-- Name: contributor_list_background; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.contributor_list_background AS ENUM (
+    'none',
+    'light',
+    'dark'
+);
+
+
+--
 -- Name: date_precision; Type: TYPE; Schema: public; Owner: -
 --
 
@@ -178,6 +189,62 @@ CREATE TYPE public.date_precision AS ENUM (
     'year',
     'month',
     'day'
+);
+
+
+--
+-- Name: descendant_list_background; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.descendant_list_background AS ENUM (
+    'none',
+    'light',
+    'dark'
+);
+
+
+--
+-- Name: descendant_list_selection_mode; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.descendant_list_selection_mode AS ENUM (
+    'dynamic',
+    'named',
+    'manual'
+);
+
+
+--
+-- Name: descendant_list_variant; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.descendant_list_variant AS ENUM (
+    'cards',
+    'compact',
+    'grid',
+    'promos',
+    'summary'
+);
+
+
+--
+-- Name: detail_background; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.detail_background AS ENUM (
+    'none',
+    'light',
+    'dark'
+);
+
+
+--
+-- Name: detail_variant; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.detail_variant AS ENUM (
+    'full',
+    'summary'
 );
 
 
@@ -208,6 +275,17 @@ CREATE TYPE public.harvest_metadata_mapping_field AS ENUM (
     'relation',
     'title',
     'identifier'
+);
+
+
+--
+-- Name: hero_background; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.hero_background AS ENUM (
+    'none',
+    'light',
+    'dark'
 );
 
 
@@ -265,6 +343,40 @@ CREATE TYPE public.layout_kind AS ENUM (
 
 
 --
+-- Name: link_list_background; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.link_list_background AS ENUM (
+    'none',
+    'light',
+    'dark'
+);
+
+
+--
+-- Name: link_list_selection_mode; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.link_list_selection_mode AS ENUM (
+    'dynamic',
+    'manual'
+);
+
+
+--
+-- Name: link_list_variant; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.link_list_variant AS ENUM (
+    'cards',
+    'compact',
+    'grid',
+    'promos',
+    'summary'
+);
+
+
+--
 -- Name: link_operator; Type: TYPE; Schema: public; Owner: -
 --
 
@@ -298,6 +410,17 @@ CREATE TYPE public.main_template_kind AS ENUM (
 
 
 --
+-- Name: metadata_background; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.metadata_background AS ENUM (
+    'none',
+    'light',
+    'dark'
+);
+
+
+--
 -- Name: metadata_template_kind; Type: TYPE; Schema: public; Owner: -
 --
 
@@ -307,11 +430,44 @@ CREATE TYPE public.metadata_template_kind AS ENUM (
 
 
 --
+-- Name: navigation_background; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.navigation_background AS ENUM (
+    'none',
+    'light',
+    'dark'
+);
+
+
+--
 -- Name: navigation_template_kind; Type: TYPE; Schema: public; Owner: -
 --
 
 CREATE TYPE public.navigation_template_kind AS ENUM (
     'navigation'
+);
+
+
+--
+-- Name: ordering_background; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.ordering_background AS ENUM (
+    'none',
+    'light',
+    'dark'
+);
+
+
+--
+-- Name: page_list_background; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.page_list_background AS ENUM (
+    'none',
+    'light',
+    'dark'
 );
 
 
@@ -440,11 +596,32 @@ CREATE TYPE public.schema_property_type AS ENUM (
 
 
 --
+-- Name: selection_source_mode; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.selection_source_mode AS ENUM (
+    'self',
+    'ancestor'
+);
+
+
+--
 -- Name: semantic_version; Type: DOMAIN; Schema: public; Owner: -
 --
 
 CREATE DOMAIN public.semantic_version AS public.citext DEFAULT '0.0.0'::public.citext
 	CONSTRAINT semver_format_applies CHECK ((VALUE OPERATOR(public.~) '^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$'::public.citext));
+
+
+--
+-- Name: supplementary_background; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.supplementary_background AS ENUM (
+    'none',
+    'light',
+    'dark'
+);
 
 
 --
@@ -5917,7 +6094,9 @@ CREATE TABLE public.templates_contributor_list_definitions (
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     config jsonb DEFAULT '{}'::jsonb NOT NULL,
-    slots jsonb DEFAULT '{}'::jsonb NOT NULL
+    slots jsonb DEFAULT '{}'::jsonb NOT NULL,
+    background public.contributor_list_background DEFAULT 'none'::public.contributor_list_background NOT NULL,
+    "limit" integer
 );
 
 
@@ -5957,7 +6136,19 @@ CREATE TABLE public.templates_descendant_list_definitions (
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     config jsonb DEFAULT '{}'::jsonb NOT NULL,
-    slots jsonb DEFAULT '{}'::jsonb NOT NULL
+    slots jsonb DEFAULT '{}'::jsonb NOT NULL,
+    background public.descendant_list_background DEFAULT 'none'::public.descendant_list_background NOT NULL,
+    variant public.descendant_list_variant DEFAULT 'cards'::public.descendant_list_variant NOT NULL,
+    selection_source_mode public.selection_source_mode DEFAULT 'self'::public.selection_source_mode NOT NULL,
+    selection_mode public.descendant_list_selection_mode DEFAULT 'manual'::public.descendant_list_selection_mode NOT NULL,
+    selection_source text DEFAULT 'self'::text NOT NULL,
+    title text,
+    selection_limit integer,
+    dynamic_ordering_definition jsonb,
+    ordering_name text,
+    see_all_button_label text,
+    show_see_all_button boolean DEFAULT false NOT NULL,
+    show_entity_context boolean DEFAULT false NOT NULL
 );
 
 
@@ -5997,7 +6188,11 @@ CREATE TABLE public.templates_detail_definitions (
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     config jsonb DEFAULT '{}'::jsonb NOT NULL,
-    slots jsonb DEFAULT '{}'::jsonb NOT NULL
+    slots jsonb DEFAULT '{}'::jsonb NOT NULL,
+    background public.detail_background DEFAULT 'none'::public.detail_background NOT NULL,
+    variant public.detail_variant DEFAULT 'summary'::public.detail_variant NOT NULL,
+    show_announcements boolean DEFAULT false NOT NULL,
+    show_hero_image boolean DEFAULT false NOT NULL
 );
 
 
@@ -6037,7 +6232,21 @@ CREATE TABLE public.templates_hero_definitions (
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     config jsonb DEFAULT '{}'::jsonb NOT NULL,
-    slots jsonb DEFAULT '{}'::jsonb NOT NULL
+    slots jsonb DEFAULT '{}'::jsonb NOT NULL,
+    background public.hero_background DEFAULT 'none'::public.hero_background NOT NULL,
+    enable_descendant_browsing boolean DEFAULT false NOT NULL,
+    enable_descendant_search boolean DEFAULT false NOT NULL,
+    list_contributors boolean DEFAULT false NOT NULL,
+    show_basic_view_metrics boolean DEFAULT false NOT NULL,
+    show_big_search_prompt boolean DEFAULT false NOT NULL,
+    show_breadcrumbs boolean DEFAULT false NOT NULL,
+    show_doi boolean DEFAULT false NOT NULL,
+    show_hero_image boolean DEFAULT false NOT NULL,
+    show_issn boolean DEFAULT false NOT NULL,
+    show_sharing_link boolean DEFAULT false NOT NULL,
+    show_split_display boolean DEFAULT false NOT NULL,
+    show_thumbnail_image boolean DEFAULT false NOT NULL,
+    descendant_search_prompt text
 );
 
 
@@ -6077,7 +6286,18 @@ CREATE TABLE public.templates_link_list_definitions (
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     config jsonb DEFAULT '{}'::jsonb NOT NULL,
-    slots jsonb DEFAULT '{}'::jsonb NOT NULL
+    slots jsonb DEFAULT '{}'::jsonb NOT NULL,
+    background public.link_list_background DEFAULT 'none'::public.link_list_background NOT NULL,
+    variant public.link_list_variant DEFAULT 'cards'::public.link_list_variant NOT NULL,
+    selection_source_mode public.selection_source_mode DEFAULT 'self'::public.selection_source_mode NOT NULL,
+    selection_mode public.link_list_selection_mode DEFAULT 'manual'::public.link_list_selection_mode NOT NULL,
+    selection_source text DEFAULT 'self'::text NOT NULL,
+    title text,
+    selection_limit integer,
+    dynamic_ordering_definition jsonb,
+    see_all_button_label text,
+    show_see_all_button boolean DEFAULT false NOT NULL,
+    show_entity_context boolean DEFAULT false NOT NULL
 );
 
 
@@ -6157,7 +6377,8 @@ CREATE TABLE public.templates_metadata_definitions (
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     config jsonb DEFAULT '{}'::jsonb NOT NULL,
-    slots jsonb DEFAULT '{}'::jsonb NOT NULL
+    slots jsonb DEFAULT '{}'::jsonb NOT NULL,
+    background public.metadata_background DEFAULT 'none'::public.metadata_background NOT NULL
 );
 
 
@@ -6197,7 +6418,8 @@ CREATE TABLE public.templates_navigation_definitions (
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     config jsonb DEFAULT '{}'::jsonb NOT NULL,
-    slots jsonb DEFAULT '{}'::jsonb NOT NULL
+    slots jsonb DEFAULT '{}'::jsonb NOT NULL,
+    background public.navigation_background DEFAULT 'none'::public.navigation_background NOT NULL
 );
 
 
@@ -6237,7 +6459,8 @@ CREATE TABLE public.templates_ordering_definitions (
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     config jsonb DEFAULT '{}'::jsonb NOT NULL,
-    slots jsonb DEFAULT '{}'::jsonb NOT NULL
+    slots jsonb DEFAULT '{}'::jsonb NOT NULL,
+    background public.ordering_background DEFAULT 'none'::public.ordering_background NOT NULL
 );
 
 
@@ -6277,7 +6500,8 @@ CREATE TABLE public.templates_page_list_definitions (
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     config jsonb DEFAULT '{}'::jsonb NOT NULL,
-    slots jsonb DEFAULT '{}'::jsonb NOT NULL
+    slots jsonb DEFAULT '{}'::jsonb NOT NULL,
+    background public.page_list_background DEFAULT 'none'::public.page_list_background NOT NULL
 );
 
 
@@ -6317,7 +6541,8 @@ CREATE TABLE public.templates_supplementary_definitions (
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     config jsonb DEFAULT '{}'::jsonb NOT NULL,
-    slots jsonb DEFAULT '{}'::jsonb NOT NULL
+    slots jsonb DEFAULT '{}'::jsonb NOT NULL,
+    background public.supplementary_background DEFAULT 'none'::public.supplementary_background NOT NULL
 );
 
 
@@ -13929,6 +14154,8 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20240919170725'),
 ('20241009214736'),
 ('20241017174753'),
-('20241018223753');
+('20241018223753'),
+('20241021161712'),
+('20241024210601');
 
 

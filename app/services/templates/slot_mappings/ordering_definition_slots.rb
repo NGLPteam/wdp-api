@@ -6,9 +6,8 @@ module Templates
     class OrderingDefinitionSlots < AbstractDefinitionSlots
       instance_slots_klass Templates::SlotMappings::OrderingInstanceSlots
 
-      block! :sample_block
-
-      inline! :sample_inline
+      inline! :previous_label
+      inline! :next_label
     end
   end
 end

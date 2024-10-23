@@ -110,8 +110,8 @@ RSpec.configure do |config|
   end
 
   config.before(:suite) do
-    Common::Container["system.reload_everything"]
-    TestingAPI::TestContainer["initialize_database"].()
+    Common::Container["system.reload_everything"].(skip_refresh: true).value!
+    TestingAPI::TestContainer["initialize_database"].().value!
   end
 
   config.around do |example|

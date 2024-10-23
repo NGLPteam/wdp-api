@@ -20,26 +20,6 @@ class LayoutsAndTemplatesGenerator < Rails::Generators::Base
     template "gql/entity_layouts.rb", Rails.root.join("app", "graphql", "types", "entity_layouts_type.rb")
   end
 
-  def write_layout_records!
-    records = layout_kinds.map do |layout_kind|
-      template_kinds = ::Layouts::Types::TemplateMapping.fetch(layout_kind)
-
-      { layout_kind:, template_kinds:, }.stringify_keys
-    end
-
-    create_file Rails.root.join("lib", "frozen_record", "layouts.yml"), YAML.dump(records)
-  end
-
-  def write_template_records!
-    records = ::Layouts::Types::TemplateMapping.flat_map do |(layout_kind, template_kinds)|
-      template_kinds.map do |template_kind|
-        { template_kind:, layout_kind:, }.stringify_keys
-      end
-    end
-
-    create_file Rails.root.join("lib", "frozen_record", "templates.yml"), YAML.dump(records)
-  end
-
   private
 
   def layout_kinds

@@ -10,6 +10,7 @@ module Templates
     template_kind! :metadata
 
     graphql_node_type_name "::Types::Templates::MetadataTemplateDefinitionType"
+    pg_enum! :background, as: :metadata_background, allow_blank: false, suffix: :background, default: "none"
 
     attribute :slots, ::Templates::SlotMappings::MetadataDefinitionSlots.to_type
 

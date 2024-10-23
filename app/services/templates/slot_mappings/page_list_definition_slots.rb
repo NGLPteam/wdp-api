@@ -6,9 +6,7 @@ module Templates
     class PageListDefinitionSlots < AbstractDefinitionSlots
       instance_slots_klass Templates::SlotMappings::PageListInstanceSlots
 
-      block! :sample_block
-
-      inline! :sample_inline
+      inline! :header
     end
   end
 end

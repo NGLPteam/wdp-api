@@ -10,6 +10,15 @@ module Templates
     template_kind! :link_list
 
     graphql_node_type_name "::Types::Templates::LinkListTemplateDefinitionType"
+    pg_enum! :variant, as: :link_list_variant, allow_blank: false, suffix: :variant
+
+    pg_enum! :background, as: :link_list_background, allow_blank: false, suffix: :background, default: "none"
+
+    pg_enum! :selection_source_mode, as: :selection_source_mode, allow_blank: false, suffix: :selection_source_mode, default: "self"
+
+    pg_enum! :selection_mode, as: :link_list_selection_mode, allow_blank: false, suffix: :selection_mode, default: "manual"
+
+    attribute :dynamic_ordering_definition, ::Schemas::Orderings::Definition.to_type
 
     attribute :slots, ::Templates::SlotMappings::LinkListDefinitionSlots.to_type
 

@@ -4,12 +4,20 @@
 # this document do not need to be included in that process.
 
 en:
+  activemodel:
+    errors:
+      messages:
+        must_be_orcid: "must be a valid ORCID URL: https://orcid.org/xxxx-xxxx-xxxx-xxxx"
+        must_be_entity: "must be an entity"
+        must_be_schema_component: "must be a valid schema component (starts with a letter, contains only alphanumeric characters and underscores, all lowercase)"
+        must_be_selection_source: "must be a valid selection source"
   activerecord:
     errors:
       messages:
         must_be_orcid: "must be a valid ORCID URL: https://orcid.org/xxxx-xxxx-xxxx-xxxx"
         must_be_entity: "must be an entity"
         must_be_schema_component: "must be a valid schema component (starts with a letter, contains only alphanumeric characters and underscores, all lowercase)"
+        must_be_selection_source: "must be a valid selection source"
       models:
         entity_link:
           attributes:

@@ -4,9 +4,7 @@ module Templates
   module SlotMappings
     # @see Templates::PageListInstance
     class PageListInstanceSlots < AbstractInstanceSlots
-      block! :sample_block
-
-      inline! :sample_inline
+      inline! :header
     end
   end
 end

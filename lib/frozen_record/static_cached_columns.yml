@@ -14232,6 +14232,33 @@
   default_function: 
   has_default: true
   virtual: false
+- id: Templates::ContributorListDefinition#background
+  model_name: Templates::ContributorListDefinition
+  table_name: templates_contributor_list_definitions
+  name: background
+  type: enum
+  'null': false
+  sql_type_metadata:
+    sql_type: contributor_list_background
+    type: enum
+  default: none
+  default_function: 
+  has_default: true
+  virtual: false
+- id: Templates::ContributorListDefinition#limit
+  model_name: Templates::ContributorListDefinition
+  table_name: templates_contributor_list_definitions
+  name: limit
+  type: integer
+  'null': true
+  sql_type_metadata:
+    sql_type: integer
+    type: integer
+    limit: 4
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
 - id: Templates::ContributorListInstance#id
   model_name: Templates::ContributorListInstance
   table_name: templates_contributor_list_instances
@@ -14547,6 +14574,163 @@
     sql_type: jsonb
     type: jsonb
   default: "{}"
+  default_function: 
+  has_default: true
+  virtual: false
+- id: Templates::DescendantListDefinition#background
+  model_name: Templates::DescendantListDefinition
+  table_name: templates_descendant_list_definitions
+  name: background
+  type: enum
+  'null': false
+  sql_type_metadata:
+    sql_type: descendant_list_background
+    type: enum
+  default: none
+  default_function: 
+  has_default: true
+  virtual: false
+- id: Templates::DescendantListDefinition#variant
+  model_name: Templates::DescendantListDefinition
+  table_name: templates_descendant_list_definitions
+  name: variant
+  type: enum
+  'null': false
+  sql_type_metadata:
+    sql_type: descendant_list_variant
+    type: enum
+  default: cards
+  default_function: 
+  has_default: true
+  virtual: false
+- id: Templates::DescendantListDefinition#selection_source_mode
+  model_name: Templates::DescendantListDefinition
+  table_name: templates_descendant_list_definitions
+  name: selection_source_mode
+  type: enum
+  'null': false
+  sql_type_metadata:
+    sql_type: selection_source_mode
+    type: enum
+  default: self
+  default_function: 
+  has_default: true
+  virtual: false
+- id: Templates::DescendantListDefinition#selection_mode
+  model_name: Templates::DescendantListDefinition
+  table_name: templates_descendant_list_definitions
+  name: selection_mode
+  type: enum
+  'null': false
+  sql_type_metadata:
+    sql_type: descendant_list_selection_mode
+    type: enum
+  default: manual
+  default_function: 
+  has_default: true
+  virtual: false
+- id: Templates::DescendantListDefinition#selection_source
+  model_name: Templates::DescendantListDefinition
+  table_name: templates_descendant_list_definitions
+  name: selection_source
+  type: text
+  'null': false
+  sql_type_metadata:
+    sql_type: text
+    type: text
+  default: self
+  default_function: 
+  has_default: true
+  virtual: false
+- id: Templates::DescendantListDefinition#title
+  model_name: Templates::DescendantListDefinition
+  table_name: templates_descendant_list_definitions
+  name: title
+  type: text
+  'null': true
+  sql_type_metadata:
+    sql_type: text
+    type: text
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: Templates::DescendantListDefinition#selection_limit
+  model_name: Templates::DescendantListDefinition
+  table_name: templates_descendant_list_definitions
+  name: selection_limit
+  type: integer
+  'null': true
+  sql_type_metadata:
+    sql_type: integer
+    type: integer
+    limit: 4
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: Templates::DescendantListDefinition#dynamic_ordering_definition
+  model_name: Templates::DescendantListDefinition
+  table_name: templates_descendant_list_definitions
+  name: dynamic_ordering_definition
+  type: jsonb
+  'null': true
+  sql_type_metadata:
+    sql_type: jsonb
+    type: jsonb
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: Templates::DescendantListDefinition#ordering_name
+  model_name: Templates::DescendantListDefinition
+  table_name: templates_descendant_list_definitions
+  name: ordering_name
+  type: text
+  'null': true
+  sql_type_metadata:
+    sql_type: text
+    type: text
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: Templates::DescendantListDefinition#see_all_button_label
+  model_name: Templates::DescendantListDefinition
+  table_name: templates_descendant_list_definitions
+  name: see_all_button_label
+  type: text
+  'null': true
+  sql_type_metadata:
+    sql_type: text
+    type: text
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: Templates::DescendantListDefinition#show_see_all_button
+  model_name: Templates::DescendantListDefinition
+  table_name: templates_descendant_list_definitions
+  name: show_see_all_button
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
+  default_function: 
+  has_default: true
+  virtual: false
+- id: Templates::DescendantListDefinition#show_entity_context
+  model_name: Templates::DescendantListDefinition
+  table_name: templates_descendant_list_definitions
+  name: show_entity_context
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
   default_function: 
   has_default: true
   virtual: false
@@ -14868,6 +15052,58 @@
   default_function: 
   has_default: true
   virtual: false
+- id: Templates::DetailDefinition#background
+  model_name: Templates::DetailDefinition
+  table_name: templates_detail_definitions
+  name: background
+  type: enum
+  'null': false
+  sql_type_metadata:
+    sql_type: detail_background
+    type: enum
+  default: none
+  default_function: 
+  has_default: true
+  virtual: false
+- id: Templates::DetailDefinition#variant
+  model_name: Templates::DetailDefinition
+  table_name: templates_detail_definitions
+  name: variant
+  type: enum
+  'null': false
+  sql_type_metadata:
+    sql_type: detail_variant
+    type: enum
+  default: summary
+  default_function: 
+  has_default: true
+  virtual: false
+- id: Templates::DetailDefinition#show_announcements
+  model_name: Templates::DetailDefinition
+  table_name: templates_detail_definitions
+  name: show_announcements
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
+  default_function: 
+  has_default: true
+  virtual: false
+- id: Templates::DetailDefinition#show_hero_image
+  model_name: Templates::DetailDefinition
+  table_name: templates_detail_definitions
+  name: show_hero_image
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
+  default_function: 
+  has_default: true
+  virtual: false
 - id: Templates::DetailInstance#id
   model_name: Templates::DetailInstance
   table_name: templates_detail_instances
@@ -15186,6 +15422,188 @@
   default_function: 
   has_default: true
   virtual: false
+- id: Templates::HeroDefinition#background
+  model_name: Templates::HeroDefinition
+  table_name: templates_hero_definitions
+  name: background
+  type: enum
+  'null': false
+  sql_type_metadata:
+    sql_type: hero_background
+    type: enum
+  default: none
+  default_function: 
+  has_default: true
+  virtual: false
+- id: Templates::HeroDefinition#enable_descendant_browsing
+  model_name: Templates::HeroDefinition
+  table_name: templates_hero_definitions
+  name: enable_descendant_browsing
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
+  default_function: 
+  has_default: true
+  virtual: false
+- id: Templates::HeroDefinition#enable_descendant_search
+  model_name: Templates::HeroDefinition
+  table_name: templates_hero_definitions
+  name: enable_descendant_search
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
+  default_function: 
+  has_default: true
+  virtual: false
+- id: Templates::HeroDefinition#list_contributors
+  model_name: Templates::HeroDefinition
+  table_name: templates_hero_definitions
+  name: list_contributors
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
+  default_function: 
+  has_default: true
+  virtual: false
+- id: Templates::HeroDefinition#show_basic_view_metrics
+  model_name: Templates::HeroDefinition
+  table_name: templates_hero_definitions
+  name: show_basic_view_metrics
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
+  default_function: 
+  has_default: true
+  virtual: false
+- id: Templates::HeroDefinition#show_big_search_prompt
+  model_name: Templates::HeroDefinition
+  table_name: templates_hero_definitions
+  name: show_big_search_prompt
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
+  default_function: 
+  has_default: true
+  virtual: false
+- id: Templates::HeroDefinition#show_breadcrumbs
+  model_name: Templates::HeroDefinition
+  table_name: templates_hero_definitions
+  name: show_breadcrumbs
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
+  default_function: 
+  has_default: true
+  virtual: false
+- id: Templates::HeroDefinition#show_doi
+  model_name: Templates::HeroDefinition
+  table_name: templates_hero_definitions
+  name: show_doi
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
+  default_function: 
+  has_default: true
+  virtual: false
+- id: Templates::HeroDefinition#show_hero_image
+  model_name: Templates::HeroDefinition
+  table_name: templates_hero_definitions
+  name: show_hero_image
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
+  default_function: 
+  has_default: true
+  virtual: false
+- id: Templates::HeroDefinition#show_issn
+  model_name: Templates::HeroDefinition
+  table_name: templates_hero_definitions
+  name: show_issn
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
+  default_function: 
+  has_default: true
+  virtual: false
+- id: Templates::HeroDefinition#show_sharing_link
+  model_name: Templates::HeroDefinition
+  table_name: templates_hero_definitions
+  name: show_sharing_link
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
+  default_function: 
+  has_default: true
+  virtual: false
+- id: Templates::HeroDefinition#show_split_display
+  model_name: Templates::HeroDefinition
+  table_name: templates_hero_definitions
+  name: show_split_display
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
+  default_function: 
+  has_default: true
+  virtual: false
+- id: Templates::HeroDefinition#show_thumbnail_image
+  model_name: Templates::HeroDefinition
+  table_name: templates_hero_definitions
+  name: show_thumbnail_image
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
+  default_function: 
+  has_default: true
+  virtual: false
+- id: Templates::HeroDefinition#descendant_search_prompt
+  model_name: Templates::HeroDefinition
+  table_name: templates_hero_definitions
+  name: descendant_search_prompt
+  type: text
+  'null': true
+  sql_type_metadata:
+    sql_type: text
+    type: text
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
 - id: Templates::HeroInstance#id
   model_name: Templates::HeroInstance
   table_name: templates_hero_instances
@@ -15501,6 +15919,150 @@
     sql_type: jsonb
     type: jsonb
   default: "{}"
+  default_function: 
+  has_default: true
+  virtual: false
+- id: Templates::LinkListDefinition#background
+  model_name: Templates::LinkListDefinition
+  table_name: templates_link_list_definitions
+  name: background
+  type: enum
+  'null': false
+  sql_type_metadata:
+    sql_type: link_list_background
+    type: enum
+  default: none
+  default_function: 
+  has_default: true
+  virtual: false
+- id: Templates::LinkListDefinition#variant
+  model_name: Templates::LinkListDefinition
+  table_name: templates_link_list_definitions
+  name: variant
+  type: enum
+  'null': false
+  sql_type_metadata:
+    sql_type: link_list_variant
+    type: enum
+  default: cards
+  default_function: 
+  has_default: true
+  virtual: false
+- id: Templates::LinkListDefinition#selection_source_mode
+  model_name: Templates::LinkListDefinition
+  table_name: templates_link_list_definitions
+  name: selection_source_mode
+  type: enum
+  'null': false
+  sql_type_metadata:
+    sql_type: selection_source_mode
+    type: enum
+  default: self
+  default_function: 
+  has_default: true
+  virtual: false
+- id: Templates::LinkListDefinition#selection_mode
+  model_name: Templates::LinkListDefinition
+  table_name: templates_link_list_definitions
+  name: selection_mode
+  type: enum
+  'null': false
+  sql_type_metadata:
+    sql_type: link_list_selection_mode
+    type: enum
+  default: manual
+  default_function: 
+  has_default: true
+  virtual: false
+- id: Templates::LinkListDefinition#selection_source
+  model_name: Templates::LinkListDefinition
+  table_name: templates_link_list_definitions
+  name: selection_source
+  type: text
+  'null': false
+  sql_type_metadata:
+    sql_type: text
+    type: text
+  default: self
+  default_function: 
+  has_default: true
+  virtual: false
+- id: Templates::LinkListDefinition#title
+  model_name: Templates::LinkListDefinition
+  table_name: templates_link_list_definitions
+  name: title
+  type: text
+  'null': true
+  sql_type_metadata:
+    sql_type: text
+    type: text
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: Templates::LinkListDefinition#selection_limit
+  model_name: Templates::LinkListDefinition
+  table_name: templates_link_list_definitions
+  name: selection_limit
+  type: integer
+  'null': true
+  sql_type_metadata:
+    sql_type: integer
+    type: integer
+    limit: 4
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: Templates::LinkListDefinition#dynamic_ordering_definition
+  model_name: Templates::LinkListDefinition
+  table_name: templates_link_list_definitions
+  name: dynamic_ordering_definition
+  type: jsonb
+  'null': true
+  sql_type_metadata:
+    sql_type: jsonb
+    type: jsonb
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: Templates::LinkListDefinition#see_all_button_label
+  model_name: Templates::LinkListDefinition
+  table_name: templates_link_list_definitions
+  name: see_all_button_label
+  type: text
+  'null': true
+  sql_type_metadata:
+    sql_type: text
+    type: text
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: Templates::LinkListDefinition#show_see_all_button
+  model_name: Templates::LinkListDefinition
+  table_name: templates_link_list_definitions
+  name: show_see_all_button
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
+  default_function: 
+  has_default: true
+  virtual: false
+- id: Templates::LinkListDefinition#show_entity_context
+  model_name: Templates::LinkListDefinition
+  table_name: templates_link_list_definitions
+  name: show_entity_context
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
   default_function: 
   has_default: true
   virtual: false
@@ -16140,6 +16702,19 @@
   default_function: 
   has_default: true
   virtual: false
+- id: Templates::MetadataDefinition#background
+  model_name: Templates::MetadataDefinition
+  table_name: templates_metadata_definitions
+  name: background
+  type: enum
+  'null': false
+  sql_type_metadata:
+    sql_type: metadata_background
+    type: enum
+  default: none
+  default_function: 
+  has_default: true
+  virtual: false
 - id: Templates::MetadataInstance#id
   model_name: Templates::MetadataInstance
   table_name: templates_metadata_instances
@@ -16455,6 +17030,19 @@
     sql_type: jsonb
     type: jsonb
   default: "{}"
+  default_function: 
+  has_default: true
+  virtual: false
+- id: Templates::NavigationDefinition#background
+  model_name: Templates::NavigationDefinition
+  table_name: templates_navigation_definitions
+  name: background
+  type: enum
+  'null': false
+  sql_type_metadata:
+    sql_type: navigation_background
+    type: enum
+  default: none
   default_function: 
   has_default: true
   virtual: false
@@ -16776,6 +17364,19 @@
   default_function: 
   has_default: true
   virtual: false
+- id: Templates::OrderingDefinition#background
+  model_name: Templates::OrderingDefinition
+  table_name: templates_ordering_definitions
+  name: background
+  type: enum
+  'null': false
+  sql_type_metadata:
+    sql_type: ordering_background
+    type: enum
+  default: none
+  default_function: 
+  has_default: true
+  virtual: false
 - id: Templates::OrderingInstance#id
   model_name: Templates::OrderingInstance
   table_name: templates_ordering_instances
@@ -17094,6 +17695,19 @@
   default_function: 
   has_default: true
   virtual: false
+- id: Templates::PageListDefinition#background
+  model_name: Templates::PageListDefinition
+  table_name: templates_page_list_definitions
+  name: background
+  type: enum
+  'null': false
+  sql_type_metadata:
+    sql_type: page_list_background
+    type: enum
+  default: none
+  default_function: 
+  has_default: true
+  virtual: false
 - id: Templates::PageListInstance#id
   model_name: Templates::PageListInstance
   table_name: templates_page_list_instances
@@ -17409,6 +18023,19 @@
     sql_type: jsonb
     type: jsonb
   default: "{}"
+  default_function: 
+  has_default: true
+  virtual: false
+- id: Templates::SupplementaryDefinition#background
+  model_name: Templates::SupplementaryDefinition
+  table_name: templates_supplementary_definitions
+  name: background
+  type: enum
+  'null': false
+  sql_type_metadata:
+    sql_type: supplementary_background
+    type: enum
+  default: none
   default_function: 
   has_default: true
   virtual: false

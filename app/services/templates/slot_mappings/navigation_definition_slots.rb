@@ -6,9 +6,7 @@ module Templates
     class NavigationDefinitionSlots < AbstractDefinitionSlots
       instance_slots_klass Templates::SlotMappings::NavigationInstanceSlots
 
-      block! :sample_block
-
-      inline! :sample_inline
+      inline! :entity_label
     end
   end
 end

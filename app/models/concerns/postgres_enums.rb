@@ -37,15 +37,25 @@ module PostgresEnums
     @@pg_enum_definitions = PostgresEnums.fetch_pg_enum_definitions.freeze
 
     # @param [#to_s] enum_name
+    # @param [String, Symbol] default
+    # @param [Boolean] symbolize
     # @return [Dry::Types::Type]
-    def dry_pg_enum(enum_name)
+    def dry_pg_enum(enum_name, default: nil, symbolize: false)
       values = pg_enum_values(enum_name)
 
-      Support::GlobalTypes::Coercible::String.enum(*values)
+      dry_pg_enum_base_type(symbolize:).then do |type|
+        if default.present? && default.in?(values)
+          type.default(default.freeze)
+        else
+          type
+        end
+      end.then do |type|
+        type.enum(*Support::GlobalTypes::Coercible::Array.of(type)[values])
+      end
     rescue KeyError
       # :nocov:
-      # During migrations, etc. Allow any string.
-      Support::GlobalTypes::Coercible::String
+      # During migrations, etc. Allow any string or symbol.
+      dry_pg_enum_base_type(symbolize:)
       # :nocov:
     end
 
@@ -87,6 +97,13 @@ module PostgresEnums
       # During migrations, etc. Provide an empty set of options.
       []
       # :nocov:
+    end
+
+    private
+
+    # @param [Boolean] symbolize
+    def dry_pg_enum_base_type(symbolize: false)
+      symbolize ? Support::GlobalTypes::Coercible::Symbol : Support::GlobalTypes::Coercible::String
     end
   end
 end

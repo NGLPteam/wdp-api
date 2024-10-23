@@ -33,6 +33,14 @@ class TemplateGenerator < Rails::Generators::NamedBase
 
   private
 
+  def heredoc_description_for(text)
+    [
+      "<<~TEXT",
+      text,
+      "TEXT"
+    ].compact_blank.join("\n").indent(8).strip
+  end
+
   def layout_kind
     @layout_kind ||= options.fetch(:layout_kind) do
       template_kind.in?(::Layouts::Types::Kind) ? template_kind : "main"
@@ -41,5 +49,51 @@ class TemplateGenerator < Rails::Generators::NamedBase
 
   def template_kind
     @template_kind ||= class_name.underscore
+  end
+
+  def enum_props
+    template_properties.select(&:any_enum?)
+  end
+
+  def ordering_definition_props
+    template_properties.select(&:ordering_definition?)
+  end
+
+  def enum_property_declaration_for(prop)
+    parts = [
+      "pg_enum! ",
+      prop.name.to_sym.inspect,
+      ", as: ",
+      prop.enum_property.name.to_sym.inspect,
+      ", allow_blank: false",
+      ", suffix: ",
+      prop.name.to_sym.inspect,
+    ]
+
+    if prop.enum_property.default.present?
+      parts << ", default: " << prop.enum_property.default.inspect
+    end
+
+    parts.join
+  end
+
+  def ordering_property_declaration_for(prop)
+    %[attribute #{prop.name.to_sym.inspect}, ::Schemas::Orderings::Definition.to_type]
+  end
+
+  def definition_property_declarations
+    @definition_property_declarations ||= [].tap do |decl|
+      enum_props.each do |prop|
+        decl << enum_property_declaration_for(prop)
+      end
+
+      ordering_definition_props.each do |prop|
+        decl << ordering_property_declaration_for(prop)
+      end
+    end.join("\n\n").indent(4)
+  end
+
+  def template_properties
+    @template_properties ||= TemplateProperty.for_template(template_kind).to_a
   end
 end
