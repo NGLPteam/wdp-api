@@ -17,6 +17,8 @@ module Schemas
 
       ColumnList = Coercible::Array.of(Coercible::Symbol).constrained(min_size: 1)
 
+      Direction = ::Support::GlobalTypes::SimpleSortDirection
+
       OrderingFilter = Instance(Schemas::Associations::OrderingFilter).constructor do |value|
         case value
         when Schemas::Associations::OrderingFilter then value
@@ -34,6 +36,16 @@ module Schemas
       }).with_key_transform(&:to_sym)
 
       OrderingFilters = Array.of(OrderingFilter)
+
+      PathForStatic = String.enum(*StaticOrderableProperty.pluck(:path))
+
+      PathForProps = String.constrained(format: Schemas::Orderings::OrderBuilder::PROPS_PATTERN)
+
+      Path = String.constrained(format: Schemas::Orderings::OrderBuilder::PATTERN)
+
+      RenderMode = Coercible::String.default("flat").enum("flat", "tree").fallback("flat")
+
+      SelectDirect = Coercible::String.default("children").enum("none", "children", "descendants").fallback("none")
     end
   end
 end

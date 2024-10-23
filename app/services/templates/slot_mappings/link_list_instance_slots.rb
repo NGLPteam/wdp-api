@@ -4,9 +4,10 @@ module Templates
   module SlotMappings
     # @see Templates::LinkListInstance
     class LinkListInstanceSlots < AbstractInstanceSlots
-      block! :sample_block
-
-      inline! :sample_inline
+      inline! :header
+      inline! :header_aside
+      inline! :metadata
+      inline! :subtitle
     end
   end
 end

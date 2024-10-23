@@ -10,6 +10,7 @@ module Templates
     template_kind! :hero
 
     graphql_node_type_name "::Types::Templates::HeroTemplateDefinitionType"
+    pg_enum! :background, as: :hero_background, allow_blank: false, suffix: :background, default: "none"
 
     attribute :slots, ::Templates::SlotMappings::HeroDefinitionSlots.to_type
 

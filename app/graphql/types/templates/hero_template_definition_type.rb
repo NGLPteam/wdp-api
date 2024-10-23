@@ -11,6 +11,76 @@ module Types
         Slot definitions for this template.
         TEXT
       end
+
+      field :background, ::Types::HeroBackgroundType, null: true do
+        description <<~TEXT
+        TEXT
+      end
+
+      field :descendant_search_prompt, String, null: true do
+        description <<~TEXT
+        TEXT
+      end
+
+      field :enable_descendant_browsing, Boolean, null: true do
+        description <<~TEXT
+        TEXT
+      end
+
+      field :enable_descendant_search, Boolean, null: true do
+        description <<~TEXT
+        TEXT
+      end
+
+      field :list_contributors, Boolean, null: true do
+        description <<~TEXT
+        TEXT
+      end
+
+      field :show_basic_view_metrics, Boolean, null: true do
+        description <<~TEXT
+        TEXT
+      end
+
+      field :show_big_search_prompt, Boolean, null: true do
+        description <<~TEXT
+        TEXT
+      end
+
+      field :show_breadcrumbs, Boolean, null: true do
+        description <<~TEXT
+        TEXT
+      end
+
+      field :show_doi, Boolean, null: true do
+        description <<~TEXT
+        TEXT
+      end
+
+      field :show_hero_image, Boolean, null: true do
+        description <<~TEXT
+        TEXT
+      end
+
+      field :show_issn, Boolean, null: true do
+        description <<~TEXT
+        TEXT
+      end
+
+      field :show_sharing_link, Boolean, null: true do
+        description <<~TEXT
+        TEXT
+      end
+
+      field :show_split_display, Boolean, null: true do
+        description <<~TEXT
+        TEXT
+      end
+
+      field :show_thumbnail_image, Boolean, null: true do
+        description <<~TEXT
+        TEXT
+      end
     end
   end
 end

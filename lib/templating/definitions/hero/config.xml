@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config layout="hero" has-background="true" has-variant="false">
+  <description>
+    A template for describing how an entity's header / hero should look.
+
+    Contained within the `HERO` layout.
+  </description>
+  <prop name="background" kind="background" enum="hero_background">
+    <default>
+      <![CDATA["none"]]>
+    </default>
+  </prop>
+  <prop name="descendant_search_prompt" kind="string">
+    <default>
+      <![CDATA["Search"]]>
+    </default>
+  </prop>
+  <prop name="enable_descendant_browsing" kind="boolean">
+    <default>
+      <![CDATA[false]]>
+    </default>
+  </prop>
+  <prop name="enable_descendant_search" kind="boolean">
+    <default>
+      <![CDATA[false]]>
+    </default>
+  </prop>
+  <prop name="list_contributors" kind="boolean">
+    <default>
+      <![CDATA[false]]>
+    </default>
+  </prop>
+  <prop name="show_basic_view_metrics" kind="boolean">
+    <default>
+      <![CDATA[false]]>
+    </default>
+  </prop>
+  <prop name="show_big_search_prompt" kind="boolean">
+    <default>
+      <![CDATA[false]]>
+    </default>
+  </prop>
+  <prop name="show_breadcrumbs" kind="boolean">
+    <default>
+      <![CDATA[false]]>
+    </default>
+  </prop>
+  <prop name="show_doi" kind="boolean">
+    <default>
+      <![CDATA[false]]>
+    </default>
+  </prop>
+  <prop name="show_hero_image" kind="boolean">
+    <default>
+      <![CDATA[false]]>
+    </default>
+  </prop>
+  <prop name="show_issn" kind="boolean">
+    <default>
+      <![CDATA[false]]>
+    </default>
+  </prop>
+  <prop name="show_sharing_link" kind="boolean">
+    <default>
+      <![CDATA[false]]>
+    </default>
+  </prop>
+  <prop name="show_split_display" kind="boolean">
+    <default>
+      <![CDATA[false]]>
+    </default>
+  </prop>
+  <prop name="show_thumbnail_image" kind="boolean">
+    <default>
+      <![CDATA[false]]>
+    </default>
+  </prop>
+</config>

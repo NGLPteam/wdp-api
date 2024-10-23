@@ -4,9 +4,8 @@ module Templates
   module SlotMappings
     # @see Templates::OrderingInstance
     class OrderingInstanceSlots < AbstractInstanceSlots
-      block! :sample_block
-
-      inline! :sample_inline
+      inline! :previous_label
+      inline! :next_label
     end
   end
 end

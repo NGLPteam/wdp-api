@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config layout="navigation" has-background="true" has-variant="false">
+  <description>
+    This controls the various tabs available to an entity when rendering
+    its `MAIN`, `METADATA`, `SUPPLEMENTARY` routes.
+
+    Contained within the `NAVIGATION` layout.
+  </description>
+  <prop name="background" kind="background" enum="navigation_background">
+    <default>
+      <![CDATA["none"]]>
+    </default>
+  </prop>
+</config>

@@ -1,23 +1,71 @@
 ---
 - template_kind: hero
   layout_kind: hero
+  description: |
+    A template for describing how an entity's header / hero should look.
+
+    Contained within the `HERO` layout.
 - template_kind: list_item
   layout_kind: list_item
+  description: |
+    A template for describing how an entity should appear when rendered in a list.
+
+    Contained within the `LIST_ITEM` layout.
 - template_kind: detail
   layout_kind: main
+  description: |
+    Describes details about an entity, its summary, etc.
+
+    Contained within the `MAIN` layout.
 - template_kind: descendant_list
   layout_kind: main
+  description: |
+    A template for rendering descendants of an entity on its main layout,
+    e.g. a journal listing some recent issues or a series listing featured papers.
+
+    Contained within the `MAIN` layout.
 - template_kind: link_list
   layout_kind: main
+  description: |
+    A template for listing entity links on the main layout of an entity.
+
+    Contained within the `MAIN` layout.
 - template_kind: page_list
   layout_kind: main
+  description: |
+    A template for listing pages on the main layout of an entity.
+
+    Contained within the `MAIN` layout.
 - template_kind: contributor_list
   layout_kind: main
+  description: |
+    A template for listing contributors of note on the main layout of an entity.
+
+    Contained within the `MAIN` layout.
 - template_kind: ordering
   layout_kind: main
+  description: |
+    For applicable entities, allows navigating through specific orderings,
+    e.g. going back and forth between articles in a specific issue.
+
+    Contained within the `MAIN` layout.
 - template_kind: navigation
   layout_kind: navigation
+  description: |
+    This controls the various tabs available to an entity when rendering
+    its `MAIN`, `METADATA`, `SUPPLEMENTARY` routes.
+
+    Contained within the `NAVIGATION` layout.
 - template_kind: metadata
   layout_kind: metadata
+  description: |
+    A template for describing how an entity's metadata should be displayed.
+
+    Contained within the `METADATA` layout.
 - template_kind: supplementary
   layout_kind: supplementary
+  description: |
+    A template for describing how an entity's supplementary pages
+    (contributors, metrics) should render.
+
+    Contained within the `SUPPLEMENTARY` layout.

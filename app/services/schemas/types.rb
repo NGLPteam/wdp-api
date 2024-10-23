@@ -7,6 +7,11 @@ module Schemas
 
     extend Support::EnhancedTypes
 
+    # The supported format. Alphanumeric with underscores, all lowercase.
+    #
+    # @see Component
+    COMPONENT_FORMAT = /\A[a-z][a-z0-9_]*?[a-z0-9]\z/
+
     # A pattern to match a semantic version.
     #
     # @api private
@@ -30,6 +35,11 @@ module Schemas
     #
     # @note This pattern supports only `namespace:identifier` usage.
     VERSION_DECLARATION_PATTERN = /\A(?<namespace>[a-z_]+):(?<identifier>[a-z_0-9]+):(?<version>[^:\s]+)\z/
+
+    # A name of a component within a schema. Identifiers, namespaces, ordering names, etc.
+    #
+    # @see COMPONENT_FORMAT
+    Component = Coercible::String.constrained(format: COMPONENT_FORMAT)
 
     # A type for matching a fully-qualified schema declaration.
     #

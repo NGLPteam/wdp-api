@@ -5,6 +5,8 @@ module Support
     module Types
       include Dry.Types
 
+      CalculatedAttributes = Hash.map(Coercible::String, Interface(:call))
+
       DefaultAttributes = Hash.map(Coercible::String, Any)
 
       DefaultSQLValues = Array.of(Symbol)

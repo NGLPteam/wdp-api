@@ -1,0 +1,45 @@
+---
+en:
+  template_enums:
+    default:
+      background:
+        none:
+          description: "No background is applied to this template."
+        light:
+          description: "A light gradient is applied to the background of this template."
+        dark:
+          description: "A dark gradient is applied to the background of this template."
+    descendant_list_selection_mode:
+      dynamic:
+        description: "Render descendants from a dynamic ordering, determined at query time."
+      manual:
+        description: "Render descendants from a manual ordering set on each individual entity."
+      named:
+        description: "Render descendants from a named ordering that exists on the source entity."
+    descendant_list_variant:
+      cards:
+        description: "A card list of entities."
+      compact:
+        description: "A compact list of entities."
+      grid:
+        description: "A grid of entities"
+      promos:
+        description: "A horizontal list of entities with promotional header."
+      summary:
+        description: "A vertical, summarized list of entities."
+    link_list_selection_mode:
+      dynamic:
+        description: "Render links from a dynamic list, determined at query time."
+      manual:
+        description: "Render links from a manual list set on each individual entity."
+    link_list_variant:
+      cards:
+        description: "A card list of entities."
+      compact:
+        description: "A compact list of entities."
+      grid:
+        description: "A grid of entities"
+      promos:
+        description: "A horizontal list of entities with promotional header."
+      summary:
+        description: "A vertical, summarized list of entities."

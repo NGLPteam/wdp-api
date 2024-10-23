@@ -23,11 +23,24 @@ RSpec.shared_examples_for "a graphql entity with layouts" do
               layoutKind
               templateKind
               lastRenderedAt
+              definition {
+                id
+              }
+
               slots {
-                sampleInline {
+                header {
                   content
                 }
-                sampleBlock {
+
+                headerAside {
+                  content
+                }
+
+                headerSidebar {
+                  content
+                }
+
+                headerSummary {
                   content
                 }
               }
@@ -40,6 +53,9 @@ RSpec.shared_examples_for "a graphql entity with layouts" do
               layoutKind
               templateKind
               lastRenderedAt
+              definition {
+                id
+              }
             }
           }
 
@@ -49,6 +65,9 @@ RSpec.shared_examples_for "a graphql entity with layouts" do
               layoutKind
               templateKind
               lastRenderedAt
+              definition {
+                id
+              }
             }
           }
 
@@ -58,6 +77,9 @@ RSpec.shared_examples_for "a graphql entity with layouts" do
               layoutKind
               templateKind
               lastRenderedAt
+              definition {
+                id
+              }
             }
           }
 
@@ -67,6 +89,9 @@ RSpec.shared_examples_for "a graphql entity with layouts" do
               layoutKind
               templateKind
               lastRenderedAt
+              definition {
+                id
+              }
             }
           }
 

@@ -1,0 +1,8 @@
+Description:
+    Explain the generator
+
+Example:
+    bin/rails generate template_enum_properties Thing
+
+    This will create:
+        what/will/it/create

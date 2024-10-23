@@ -1,0 +1,48 @@
+---
+- name: selection_source_mode
+  default: self
+- name: hero_background
+  category: background
+  default: none
+- name: detail_background
+  category: background
+  default: none
+- name: descendant_list_background
+  category: background
+  default: none
+- name: link_list_background
+  category: background
+  default: none
+- name: page_list_background
+  category: background
+  default: none
+- name: contributor_list_background
+  category: background
+  default: none
+- name: ordering_background
+  category: background
+  default: none
+- name: navigation_background
+  category: background
+  default: none
+- name: metadata_background
+  category: background
+  default: none
+- name: supplementary_background
+  category: background
+  default: none
+- name: detail_variant
+  category: variant
+  default: 
+- name: descendant_list_variant
+  category: variant
+  default: 
+- name: link_list_variant
+  category: variant
+  default: 
+- name: descendant_list_selection_mode
+  category: selection_mode
+  default: manual
+- name: link_list_selection_mode
+  category: selection_mode
+  default: manual

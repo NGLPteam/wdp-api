@@ -10,6 +10,9 @@ module Templates
     template_kind! :detail
 
     graphql_node_type_name "::Types::Templates::DetailTemplateDefinitionType"
+    pg_enum! :variant, as: :detail_variant, allow_blank: false, suffix: :variant
+
+    pg_enum! :background, as: :detail_background, allow_blank: false, suffix: :background, default: "none"
 
     attribute :slots, ::Templates::SlotMappings::DetailDefinitionSlots.to_type
 

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config layout="main" has-background="true" has-variant="false">
+  <description>
+    For applicable entities, allows navigating through specific orderings,
+    e.g. going back and forth between articles in a specific issue.
+
+    Contained within the `MAIN` layout.
+  </description>
+  <prop name="background" kind="background" enum="ordering_background">
+    <default>
+      <![CDATA["none"]]>
+    </default>
+  </prop>
+</config>
