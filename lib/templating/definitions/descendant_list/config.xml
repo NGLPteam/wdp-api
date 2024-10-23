@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config layout="main">
+  <description>
+    A template for rendering descendants of an entity on its main layout,
+    e.g. a journal listing some recent issues or a series listing featured papers.
+
+    Contained within the `MAIN` layout.
+  </description>
+  <prop name="title" kind="string"/>
+  <prop name="variant" kind="variant" enum="descendant_list_variant"/>
+  <prop name="background" kind="background" enum="descendant_list_background">
+    <default>
+      <![CDATA["none"]]>
+    </default>
+  </prop>
+  <prop name="selection_source" kind="selection_source"/>
+  <prop name="selection_mode" kind="ordering_mode"/>
+  <prop name="dynamic_selection_schema_declaration" kind="schema_declaration"/>
+  <prop name="dynamic_selection_ordering_spec" kind="ordering_spec"/>
+  <prop name="dynamic_selection_limit" kind="limit">
+    <default>
+      <![CDATA[3]]>
+    </default>
+  </prop>
+  <prop name="named_selection_ordering_name" kind="ordering_name"/>
+  <prop name="see_all_button_label" kind="string">
+    <default>
+      <![CDATA["See All"]]>
+    </default>
+  </prop>
+  <prop name="show_see_all_button" kind="boolean">
+    <default>
+      <![CDATA[false]]>
+    </default>
+  </prop>
+  <prop name="show_entity_context" kind="boolean">
+    <default>
+      <![CDATA[false]]>
+    </default>
+  </prop>
+</config>

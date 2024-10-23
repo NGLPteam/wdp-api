@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config layout="hero">
+  <description>
+    A template for describing how an entity's header / hero should look.
+
+    Contained within the `HERO` layout.
+  </description>
+  <prop name="background" kind="background" enum="hero_background">
+    <default>
+      <![CDATA["none"]]>
+    </default>
+  </prop>
+</config>

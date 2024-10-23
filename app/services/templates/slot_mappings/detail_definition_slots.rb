@@ -6,9 +6,9 @@ module Templates
     class DetailDefinitionSlots < AbstractDefinitionSlots
       instance_slots_klass Templates::SlotMappings::DetailInstanceSlots
 
-      block! :sample_block
-
-      inline! :sample_inline
+      inline! :header
+      inline! :subheader
+      block! :summary
     end
   end
 end

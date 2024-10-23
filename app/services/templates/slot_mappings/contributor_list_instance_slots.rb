@@ -4,9 +4,7 @@ module Templates
   module SlotMappings
     # @see Templates::ContributorListInstance
     class ContributorListInstanceSlots < AbstractInstanceSlots
-      block! :sample_block
-
-      inline! :sample_inline
+      inline! :header
     end
   end
 end

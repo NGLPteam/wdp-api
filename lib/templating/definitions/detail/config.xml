@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config layout="main">
+  <description>
+    Describes details about an entity, its summary, etc.
+
+    Contained within the `MAIN` layout.
+  </description>
+  <prop name="variant" kind="variant" enum="detail_variant"/>
+  <prop name="background" kind="background" enum="detail_background">
+    <default>
+      <![CDATA["none"]]>
+    </default>
+  </prop>
+  <prop name="show_announcements" kind="boolean">
+    <default>
+      <![CDATA[false]]>
+    </default>
+  </prop>
+  <prop name="show_hero_image" kind="boolean">
+    <default>
+      <![CDATA[false]]>
+    </default>
+  </prop>
+</config>

@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<slot kind="block">
+  <description/>
+  <template><![CDATA[<ul>
+  <li>List</li>
+  <li>Of</li>
+  <li>Items</li>
+</ul>]]></template>
+</slot>

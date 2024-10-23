@@ -1,0 +1,159 @@
+---
+- name: header
+  slot_kind: inline
+  template_kind: contributor_list
+  default_template: Contributors
+- name: header
+  slot_kind: inline
+  template_kind: descendant_list
+  default_template: Descendants
+- name: header_aside
+  slot_kind: inline
+  template_kind: descendant_list
+- name: metadata
+  slot_kind: inline
+  template_kind: descendant_list
+  default_template: |
+    Published {{ props.published }}
+- name: subtitle
+  slot_kind: inline
+  template_kind: descendant_list
+- name: header
+  slot_kind: inline
+  template_kind: detail
+  default_template: |
+    {{ entity.title }}
+- name: subheader
+  slot_kind: inline
+  template_kind: detail
+  default_template: |
+    {{ entity.subtitle }}
+- name: summary
+  slot_kind: block
+  template_kind: detail
+  default_template: |
+    {{ entity.summary }}
+- name: header
+  slot_kind: inline
+  template_kind: hero
+  default_template: |
+    {{ entity.title }}
+- name: header_aside
+  slot_kind: inline
+  template_kind: hero
+- name: header_sidebar
+  slot_kind: block
+  template_kind: hero
+- name: header_summary
+  slot_kind: block
+  template_kind: hero
+  default_template: |
+    <p>Welcome to this {{ schema.name }}.</p>
+- name: subheader
+  slot_kind: inline
+  template_kind: hero
+- name: subheader_aside
+  slot_kind: inline
+  template_kind: hero
+- name: subheader_summary
+  slot_kind: block
+  template_kind: hero
+- name: sidebar
+  slot_kind: block
+  template_kind: hero
+  default_template: |
+    <ul>
+      <li>List</li>
+      <li>Of</li>
+      <li>Items</li>
+    </ul>
+- name: metadata
+  slot_kind: inline
+  template_kind: hero
+  default_template: |
+    Published {{ props.published }}
+- name: summary
+  slot_kind: block
+  template_kind: hero
+  default_template: |
+    {{ entity.summary }}
+- name: call_to_action
+  slot_kind: inline
+  template_kind: hero
+- name: header
+  slot_kind: inline
+  template_kind: link_list
+  default_template: Links
+- name: header_aside
+  slot_kind: inline
+  template_kind: link_list
+- name: metadata
+  slot_kind: inline
+  template_kind: link_list
+  default_template: |
+    Published {{ props.published }}
+- name: subtitle
+  slot_kind: inline
+  template_kind: link_list
+- name: header
+  slot_kind: inline
+  template_kind: list_item
+  default_template: |
+    {{ entity.title }}
+- name: subheader
+  slot_kind: inline
+  template_kind: list_item
+  default_template: |
+    {{ entity.subtitle }}
+- name: description
+  slot_kind: block
+  template_kind: list_item
+- name: meta_a
+  slot_kind: inline
+  template_kind: list_item
+  default_template: |
+    Published {{ props.published }}
+- name: meta_b
+  slot_kind: inline
+  template_kind: list_item
+  default_template: |
+    Meta B
+- name: context_a
+  slot_kind: inline
+  template_kind: list_item
+- name: context_b
+  slot_kind: inline
+  template_kind: list_item
+- name: context_c
+  slot_kind: inline
+  template_kind: list_item
+- name: header
+  slot_kind: inline
+  template_kind: metadata
+- name: entity_label
+  slot_kind: inline
+  template_kind: navigation
+  default_template: |
+    Entity
+- name: previous_label
+  slot_kind: inline
+  template_kind: ordering
+  default_template: |
+    Previous Entity
+- name: next_label
+  slot_kind: inline
+  template_kind: ordering
+  default_template: |
+    Next Entity
+- name: header
+  slot_kind: inline
+  template_kind: page_list
+  default_template: Pages
+- name: contributors_label
+  slot_kind: inline
+  template_kind: supplementary
+  default_template: Contributors
+- name: metrics_label
+  slot_kind: inline
+  template_kind: supplementary
+  default_template: Metrics

@@ -170,6 +170,17 @@ CREATE TYPE public.contributor_kind AS ENUM (
 
 
 --
+-- Name: contributor_list_background; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.contributor_list_background AS ENUM (
+    'none',
+    'light',
+    'dark'
+);
+
+
+--
 -- Name: date_precision; Type: TYPE; Schema: public; Owner: -
 --
 
@@ -178,6 +189,51 @@ CREATE TYPE public.date_precision AS ENUM (
     'year',
     'month',
     'day'
+);
+
+
+--
+-- Name: descendant_list_background; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.descendant_list_background AS ENUM (
+    'none',
+    'light',
+    'dark'
+);
+
+
+--
+-- Name: descendant_list_variant; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.descendant_list_variant AS ENUM (
+    'cards',
+    'compact',
+    'grid',
+    'promos',
+    'summary'
+);
+
+
+--
+-- Name: detail_background; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.detail_background AS ENUM (
+    'none',
+    'light',
+    'dark'
+);
+
+
+--
+-- Name: detail_variant; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.detail_variant AS ENUM (
+    'full',
+    'summary'
 );
 
 
@@ -208,6 +264,17 @@ CREATE TYPE public.harvest_metadata_mapping_field AS ENUM (
     'relation',
     'title',
     'identifier'
+);
+
+
+--
+-- Name: hero_background; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.hero_background AS ENUM (
+    'none',
+    'light',
+    'dark'
 );
 
 
@@ -265,12 +332,47 @@ CREATE TYPE public.layout_kind AS ENUM (
 
 
 --
+-- Name: link_list_background; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.link_list_background AS ENUM (
+    'none',
+    'light',
+    'dark'
+);
+
+
+--
+-- Name: link_list_variant; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.link_list_variant AS ENUM (
+    'cards',
+    'compact',
+    'grid',
+    'promos',
+    'summary'
+);
+
+
+--
 -- Name: link_operator; Type: TYPE; Schema: public; Owner: -
 --
 
 CREATE TYPE public.link_operator AS ENUM (
     'contains',
     'references'
+);
+
+
+--
+-- Name: list_item_background; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.list_item_background AS ENUM (
+    'none',
+    'light',
+    'dark'
 );
 
 
@@ -298,6 +400,17 @@ CREATE TYPE public.main_template_kind AS ENUM (
 
 
 --
+-- Name: metadata_background; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.metadata_background AS ENUM (
+    'none',
+    'light',
+    'dark'
+);
+
+
+--
 -- Name: metadata_template_kind; Type: TYPE; Schema: public; Owner: -
 --
 
@@ -307,11 +420,44 @@ CREATE TYPE public.metadata_template_kind AS ENUM (
 
 
 --
+-- Name: navigation_background; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.navigation_background AS ENUM (
+    'none',
+    'light',
+    'dark'
+);
+
+
+--
 -- Name: navigation_template_kind; Type: TYPE; Schema: public; Owner: -
 --
 
 CREATE TYPE public.navigation_template_kind AS ENUM (
     'navigation'
+);
+
+
+--
+-- Name: ordering_background; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.ordering_background AS ENUM (
+    'none',
+    'light',
+    'dark'
+);
+
+
+--
+-- Name: page_list_background; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.page_list_background AS ENUM (
+    'none',
+    'light',
+    'dark'
 );
 
 
@@ -448,6 +594,17 @@ CREATE DOMAIN public.semantic_version AS public.citext DEFAULT '0.0.0'::public.c
 
 
 --
+-- Name: supplementary_background; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.supplementary_background AS ENUM (
+    'none',
+    'light',
+    'dark'
+);
+
+
+--
 -- Name: supplementary_template_kind; Type: TYPE; Schema: public; Owner: -
 --
 
@@ -472,6 +629,17 @@ CREATE TYPE public.template_kind AS ENUM (
     'page_list',
     'contributor_list',
     'ordering'
+);
+
+
+--
+-- Name: template_ordering_mode; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.template_ordering_mode AS ENUM (
+    'dynamic',
+    'named',
+    'manual'
 );
 
 
@@ -13929,6 +14097,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20240919170725'),
 ('20241009214736'),
 ('20241017174753'),
-('20241018223753');
+('20241018223753'),
+('20241021161712');
 
 

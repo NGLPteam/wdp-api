@@ -4,9 +4,8 @@ module Templates
   module SlotMappings
     # @see Templates::SupplementaryInstance
     class SupplementaryInstanceSlots < AbstractInstanceSlots
-      block! :sample_block
-
-      inline! :sample_inline
+      inline! :contributors_label
+      inline! :metrics_label
     end
   end
 end
