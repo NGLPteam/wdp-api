@@ -6,9 +6,7 @@ module Templates
     class MetadataDefinitionSlots < AbstractDefinitionSlots
       instance_slots_klass Templates::SlotMappings::MetadataInstanceSlots
 
-      block! :sample_block
-
-      inline! :sample_inline
+      inline! :header
     end
   end
 end

@@ -469,6 +469,7 @@ GEM
       tzinfo
       validate_url
       webfinger (~> 2.0)
+    ox (2.14.18)
     paco (0.2.3)
     parallel (1.24.0)
     parser (3.3.0.5)
@@ -812,6 +813,7 @@ DEPENDENCIES
   oily_png (~> 1.2.1)
   oj (= 3.16.3)
   openid_connect (~> 2.3.0)
+  ox (~> 2.14.18)
   pg (~> 1.5.4)
   pg_query (~> 5.1.0)
   pghero (~> 3.4.1)

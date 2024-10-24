@@ -1,0 +1,33 @@
+---
+en:
+  template_enums:
+    default:
+      background:
+        none:
+          description: "No background is applied to this template."
+        light:
+          description: "A light gradient is applied to the background of this template."
+        dark:
+          description: "A dark gradient is applied to the background of this template."
+    descendant_list_variant:
+      cards:
+        description: "A card list of entities."
+      compact:
+        description: "A compact list of entities."
+      grid:
+        description: "A grid of entities"
+      promos:
+        description: "A horizontal list of entities with promotional header."
+      summary:
+        description: "A vertical, summarized list of entities."
+    link_list_variant:
+      cards:
+        description: "A card list of entities."
+      compact:
+        description: "A compact list of entities."
+      grid:
+        description: "A grid of entities"
+      promos:
+        description: "A horizontal list of entities with promotional header."
+      summary:
+        description: "A vertical, summarized list of entities."

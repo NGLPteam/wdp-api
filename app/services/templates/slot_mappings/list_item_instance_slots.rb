@@ -4,9 +4,14 @@ module Templates
   module SlotMappings
     # @see Templates::ListItemInstance
     class ListItemInstanceSlots < AbstractInstanceSlots
-      block! :sample_block
-
-      inline! :sample_inline
+      inline! :header
+      inline! :subheader
+      block! :description
+      inline! :meta_a
+      inline! :meta_b
+      inline! :context_a
+      inline! :context_b
+      inline! :context_c
     end
   end
 end

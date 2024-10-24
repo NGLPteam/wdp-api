@@ -6,9 +6,7 @@ module Templates
     class ContributorListDefinitionSlots < AbstractDefinitionSlots
       instance_slots_klass Templates::SlotMappings::ContributorListInstanceSlots
 
-      block! :sample_block
-
-      inline! :sample_inline
+      inline! :header
     end
   end
 end

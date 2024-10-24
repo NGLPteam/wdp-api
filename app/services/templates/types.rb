@@ -14,13 +14,15 @@ module Templates
 
     Generation = String.constrained(uuid_v4: true)
 
-    Kind = ApplicationRecord.dry_pg_enum(:template_kind)
+    Kind = TemplateKind = ApplicationRecord.dry_pg_enum(:template_kind)
 
     Kinds = Array.of(Kind)
 
     LayoutDefinition = Instance(::LayoutDefinition)
 
     LayoutInstance = Instance(::LayoutInstance)
+
+    LayoutKind = ApplicationRecord.dry_pg_enum(:layout_kind)
 
     SlotKind = ::Types::TemplateSlotKindType.dry_type
 

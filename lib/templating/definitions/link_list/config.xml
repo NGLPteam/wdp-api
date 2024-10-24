@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config layout="main">
+  <description>
+    A template for listing entity links on the main layout of an entity.
+
+    Contained within the `MAIN` layout.
+  </description>
+  <prop name="title" kind="string"/>
+  <prop name="variant" kind="variant" enum="link_list_variant"/>
+  <prop name="background" kind="background" enum="link_list_background">
+    <default>
+      <![CDATA["none"]]>
+    </default>
+  </prop>
+  <prop name="see_all_button_label" kind="string">
+    <default>
+      <![CDATA["See All"]]>
+    </default>
+  </prop>
+  <prop name="show_see_all_button" kind="boolean">
+    <default>
+      <![CDATA[false]]>
+    </default>
+  </prop>
+  <prop name="show_entity_context" kind="boolean">
+    <default>
+      <![CDATA[false]]>
+    </default>
+  </prop>
+</config>

@@ -4,9 +4,7 @@ module Templates
   module SlotMappings
     # @see Templates::NavigationInstance
     class NavigationInstanceSlots < AbstractInstanceSlots
-      block! :sample_block
-
-      inline! :sample_inline
+      inline! :entity_label
     end
   end
 end
