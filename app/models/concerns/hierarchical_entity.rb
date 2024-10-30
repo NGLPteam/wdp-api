@@ -8,6 +8,8 @@ module HierarchicalEntity
   include EntityTemplating
   include HasSystemSlug
   include Liquifies
+  include ManualListSource
+  include ManualListTarget
   include SyncsEntities
   include TimestampScopes
   include ScopesForEntityComposedText
@@ -226,6 +228,15 @@ module HierarchicalEntity
   # @see Links::Maintain
   monadic_operation! def maintain_links
     call_operation("links.maintain", self)
+  end
+
+  # @see Schemas::Instances::FindOrderingEntry
+  # @param [String] identifier the name of an ordering (@see HierarchicalEntity#ordering)
+  # @param [HierarchicalEntity] target the entity to search for an entry for
+  # @return [Dry::Monads::Success(OrderingEntry)]
+  # @return [Dry::Monads::Failure(:ordering_entry_not_found)]
+  monadic_operation! def find_ordering_entry(identifier, target)
+    call_operation("schemas.instances.find_ordering_entry", self, identifier, target)
   end
 
   # @param [String] identifier

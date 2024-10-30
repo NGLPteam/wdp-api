@@ -1,6 +1,11 @@
 # frozen_string_literal: true
 
 module Templates
+  # @see Layouts::ListItemDefinition
+  # @see Templates::ListItemInstance
+  # @see Templates::Config::Template::ListItem
+  # @see Templates::SlotMappings::ListItemDefinitionSlots
+  # @see Types::Templates::ListItemTemplateDefinitionType
   class ListItemDefinition < ApplicationRecord
     include HasEphemeralSystemSlug
     include TemplateDefinition

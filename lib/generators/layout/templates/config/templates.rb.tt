@@ -1,0 +1,16 @@
+<%-
+# vim: set ft=ruby.eruby nosmartindent noautoindent :
+-%>
+# frozen_string_literal: true
+
+module Templates
+  module Config
+    module LayoutTemplates
+      # @see <%= layout_record.definition_klass_name %>
+      # @see <%= layout_record.config_klass_name %>
+      class <%= class_name %>Templates < ::Templates::Config::Utility::PolymorphicTemplateMapper
+        configures_templates_for_layout! <%= layout_kind.to_sym.inspect %>
+      end
+    end
+  end
+end

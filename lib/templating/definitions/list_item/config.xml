@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<config layout="list_item" has-background="false" has-variant="false">
-  <description>A template for describing how an entity should appear when rendered in a list.
-
-Contained within the `LIST_ITEM` layout.</description>
-</config>

@@ -35,6 +35,11 @@ class Ordering < ApplicationRecord
   has_many :ordering_entry_ancestor_links, inverse_of: :ordering, dependent: :delete_all
   has_many :ordering_entry_sibling_links, inverse_of: :ordering, dependent: :delete_all
 
+  has_many :ordering_template_instances,
+    class_name: "Templates::OrderingInstance",
+    inverse_of: :ordering,
+    dependent: :nullify
+
   # @!attribute [rw] definition
   # @return [Schemas::Orderings::Definition]
   attribute :definition, Schemas::Orderings::Definition.to_type, default: proc { {} }
@@ -110,6 +115,14 @@ class Ordering < ApplicationRecord
   # @return [void]
   def enable!
     update_attribute :disabled_at, nil
+  end
+
+  # @see Schemas::Orderings::FindEntry
+  # @param [HierarchicalEntity] entity
+  # @return [Dry::Monads::Success(OrderingEntry)]
+  # @return [Dry::Monads::Failure(:ordering_entry_not_found)]
+  monadic_operation! def find_entry(entity)
+    call_operation("schemas.orderings.find_entry", self, entity)
   end
 
   # @api private

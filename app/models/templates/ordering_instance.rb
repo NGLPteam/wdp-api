@@ -1,9 +1,14 @@
 # frozen_string_literal: true
 
 module Templates
+  # @see Layouts::MainInstance
+  # @see Templates::OrderingDefinition
+  # @see Templates::SlotMappings::OrderingInstanceSlots
+  # @see Types::Templates::OrderingTemplateInstanceType
   class OrderingInstance < ApplicationRecord
     include HasEphemeralSystemSlug
     include TemplateInstance
+    include Templates::Instances::HasOrderingPair
     include TimestampScopes
 
     layout_kind! :main

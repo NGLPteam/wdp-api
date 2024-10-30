@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config layout="metadata" has-background="true" has-variant="false">
+  <description>
+    A template for describing how an entity's metadata should be displayed.
+
+    Contained within the `METADATA` layout.
+  </description>
+  <prop name="background" kind="background">
+    <default>
+      <![CDATA[
+        "none"
+      ]]>
+    </default>
+  </prop>
+  <slot name="header" kind="inline"/>
+</config>

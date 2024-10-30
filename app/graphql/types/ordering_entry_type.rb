@@ -37,6 +37,12 @@ module Types
       TEXT
     end
 
+    field :position, Int, null: true do
+      description <<~TEXT
+      The 1-based position of this entry.
+      TEXT
+    end
+
     field :prev_sibling, "Types::OrderingEntryType", null: true do
       description <<~TEXT
       The previous entry in the current ordering, if one exists. This will be null if this entry is the first.

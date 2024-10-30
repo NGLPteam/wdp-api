@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 module Templates
+  # @see Layouts::SupplementaryInstance
+  # @see Templates::SupplementaryDefinition
+  # @see Templates::SlotMappings::SupplementaryInstanceSlots
+  # @see Types::Templates::SupplementaryTemplateInstanceType
   class SupplementaryInstance < ApplicationRecord
     include HasEphemeralSystemSlug
     include TemplateInstance

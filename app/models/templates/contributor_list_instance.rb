@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 module Templates
+  # @see Layouts::MainInstance
+  # @see Templates::ContributorListDefinition
+  # @see Templates::SlotMappings::ContributorListInstanceSlots
+  # @see Types::Templates::ContributorListTemplateInstanceType
   class ContributorListInstance < ApplicationRecord
     include HasEphemeralSystemSlug
     include TemplateInstance

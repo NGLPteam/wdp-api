@@ -5,6 +5,7 @@ module Types
     # @see ::Templates::LinkListInstance
     class LinkListTemplateInstanceType < AbstractModel
       implements ::Types::TemplateInstanceType
+      implements ::Types::TemplateHasEntityListType
 
       field :definition, ::Types::Templates::LinkListTemplateDefinitionType, null: false do
         description <<~TEXT

@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class TemplatePropertyKind < Support::FrozenRecordHelpers::AbstractRecord
+  include Dry::Core::Equalizer.new(:name)
+
   schema!(types: ::Templates::TypeRegistry) do
     required(:name).filled(:property_kind)
     required(:enum_category).maybe(:enum_property_category)
@@ -57,6 +59,14 @@ class TemplatePropertyKind < Support::FrozenRecordHelpers::AbstractRecord
       enum_property_for(template_kind).gql_type_full_klass_name
     else
       gql_type_name
+    end
+  end
+
+  def shale_mapper_type_klass_name_for(template_kind)
+    if any_enum?
+      enum_property_for(template_kind).shale_mapper_type_klass_name
+    else
+      "templates/config/properties/#{name}".classify
     end
   end
 

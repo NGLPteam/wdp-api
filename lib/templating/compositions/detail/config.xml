@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config layout="main" has-background="true" has-variant="true">
+  <description>
+    Describes details about an entity, its summary, etc.
+
+    Contained within the `MAIN` layout.
+  </description>
+  <prop name="variant" kind="variant">
+    <default>
+      <![CDATA[
+        "summary"
+      ]]>
+    </default>
+  </prop>
+  <prop name="background" kind="background">
+    <default>
+      <![CDATA[
+        "none"
+      ]]>
+    </default>
+  </prop>
+  <prop name="show_announcements" kind="boolean">
+    <default>
+      <![CDATA[
+        false
+      ]]>
+    </default>
+  </prop>
+  <prop name="show_hero_image" kind="boolean">
+    <default>
+      <![CDATA[
+        false
+      ]]>
+    </default>
+  </prop>
+  <slot name="header" kind="inline">
+    <default-template>
+      <![CDATA[
+        {{ entity.title }}
+      ]]>
+    </default-template>
+  </slot>
+  <slot name="subheader" kind="inline">
+    <default-template>
+      <![CDATA[
+        {{ entity.subtitle }}
+      ]]>
+    </default-template>
+  </slot>
+  <slot name="summary" kind="block">
+    <default-template>
+      <![CDATA[
+        {{ entity.summary }}
+      ]]>
+    </default-template>
+  </slot>
+</config>

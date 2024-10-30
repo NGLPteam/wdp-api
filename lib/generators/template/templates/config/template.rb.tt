@@ -1,0 +1,25 @@
+<%-
+# vim: set ft=ruby.eruby nosmartindent noautoindent :
+-%>
+# frozen_string_literal: true
+
+module Templates
+  module Config
+    module Template
+      # @see <%= template_record.definition_klass_name %>
+      # @see Templates::Config::TemplateSlots::<%= class_name %>Slots
+      # @see Templates::SlotMappings::<%= class_name %>Definition
+      class <%= class_name %> < ::Templates::Config::Utility::AbstractTemplate
+        configures_template! <%= template_kind.to_sym.inspect %>
+
+        <%= config_shale_attribute_declarations %>
+
+        xml do
+          root <%= template_record.root_tag.inspect %>
+
+          <%= config_shale_xml_mapper_declarations %>
+        end
+      end
+    end
+  end
+end

@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 module Layouts
+  # @see Layouts::SupplementaryInstance
+  # @see Types::Layouts::SupplementaryLayoutDefinitionType
+  # @see Templates::SupplementaryDefinition
   class SupplementaryDefinition < ApplicationRecord
     include HasEphemeralSystemSlug
     include LayoutDefinition

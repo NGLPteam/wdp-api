@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 module Templates
+  # @see Layouts::MainInstance
+  # @see Templates::PageListDefinition
+  # @see Templates::SlotMappings::PageListInstanceSlots
+  # @see Types::Templates::PageListTemplateInstanceType
   class PageListInstance < ApplicationRecord
     include HasEphemeralSystemSlug
     include TemplateInstance

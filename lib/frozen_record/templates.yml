@@ -7,18 +7,22 @@
     Contained within the `HERO` layout.
 - template_kind: list_item
   layout_kind: list_item
+  has_background: false
   description: |
     A template for describing how an entity should appear when rendered in a list.
 
     Contained within the `LIST_ITEM` layout.
 - template_kind: detail
   layout_kind: main
+  has_variant: true
   description: |
     Describes details about an entity, its summary, etc.
 
     Contained within the `MAIN` layout.
 - template_kind: descendant_list
   layout_kind: main
+  has_entity_list: true
+  has_variant: true
   description: |
     A template for rendering descendants of an entity on its main layout,
     e.g. a journal listing some recent issues or a series listing featured papers.
@@ -26,6 +30,8 @@
     Contained within the `MAIN` layout.
 - template_kind: link_list
   layout_kind: main
+  has_entity_list: true
+  has_variant: true
   description: |
     A template for listing entity links on the main layout of an entity.
 
@@ -44,6 +50,7 @@
     Contained within the `MAIN` layout.
 - template_kind: ordering
   layout_kind: main
+  has_ordering_pair: true
   description: |
     For applicable entities, allows navigating through specific orderings,
     e.g. going back and forth between articles in a specific issue.

@@ -3,6 +3,7 @@
 module Templates
   module SlotMappings
     # @see Templates::SupplementaryInstance
+    # @see Templates::SlotMappings::SupplementaryDefinitionSlots
     class SupplementaryInstanceSlots < AbstractInstanceSlots
       inline! :contributors_label
       inline! :metrics_label

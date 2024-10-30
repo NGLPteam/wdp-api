@@ -17,6 +17,8 @@ module LayoutInstance
 
     template_instance_names [].freeze
 
+    scope :root, -> { joins(:layout_definition).merge(layout_record.definition_klass.root) }
+
     scope :with_template_instances, -> { includes(*template_instance_names) }
 
     validates :generation, presence: true
@@ -43,6 +45,12 @@ module LayoutInstance
         li.generation = generation
         li.layout_definition = layout_definition
       end
+    end
+
+    # @param [<LayoutDefinition>] definitions
+    # @return [ActiveRecord::Relation<LayoutInstance>]
+    def limited_to_layout_definitions(*definitions)
+      joins(:layout_definition).merge(layout_record.definition_klass.limited_to(*definitions))
     end
 
     def template_kinds!(...)

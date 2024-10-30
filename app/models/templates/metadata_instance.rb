@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 module Templates
+  # @see Layouts::MetadataInstance
+  # @see Templates::MetadataDefinition
+  # @see Templates::SlotMappings::MetadataInstanceSlots
+  # @see Types::Templates::MetadataTemplateInstanceType
   class MetadataInstance < ApplicationRecord
     include HasEphemeralSystemSlug
     include TemplateInstance

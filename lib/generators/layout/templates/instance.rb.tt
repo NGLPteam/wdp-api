@@ -4,21 +4,26 @@
 # frozen_string_literal: true
 
 module Layouts
+  # @see <%= layout_record.definition_klass_name %>
+  # @see <%= layout_record.gql_instance_klass_name %>
+  <%- layout_record.templates.each do |template| -%>
+  # @see <%= template.instance_klass_name %>
+  <%- end -%>
   class <%= class_name %>Instance < ApplicationRecord
     include HasEphemeralSystemSlug
     include LayoutInstance
     include TimestampScopes
 
-    graphql_node_type_name "::Types::Layouts::<%= class_name %>LayoutInstanceType"
+    graphql_node_type_name "::<%= layout_record.gql_instance_klass_name %>"
 
     layout_kind! <%= layout_kind.to_sym.inspect %>
     template_kinds! <%= template_kinds.inspect %>.freeze
 
-    belongs_to :layout_definition, class_name: "Layouts::<%= class_name %>Definition", inverse_of: :layout_instances
-    <%- template_kinds.each do |template_kind| -%>
+    belongs_to :layout_definition, class_name: <%= layout_record.definition_klass_name.inspect %>, inverse_of: :layout_instances
+    <%- layout_record.templates.each do |template| -%>
 
-    has_many :<%= template_kind %>_template_instances,
-      class_name: "Templates::<%= template_kind.classify %>Instance",
+    has_many :<%= template.template_kind %>_template_instances,
+      class_name: <%= template.instance_klass_name.inspect %>,
       dependent: :destroy,
       inverse_of: :layout_instance,
       foreign_key: :layout_instance_id

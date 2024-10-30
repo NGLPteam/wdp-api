@@ -4,6 +4,11 @@
 # frozen_string_literal: true
 
 module Layouts
+  # @see <%= layout_record.instance_klass_name %>
+  # @see <%= layout_record.gql_definition_klass_name %>
+  <%- layout_record.templates.each do |template| -%>
+  # @see <%= template.definition_klass_name %>
+  <%- end -%>
   class <%= class_name %>Definition < ApplicationRecord
     include HasEphemeralSystemSlug
     include LayoutDefinition
@@ -12,20 +17,20 @@ module Layouts
     layout_kind! <%= layout_kind.to_sym.inspect %>
     template_kinds! <%= template_kinds.inspect %>.freeze
 
-    graphql_node_type_name "::Types::Layouts::<%= class_name %>LayoutDefinitionType"
+    graphql_node_type_name "::<%= layout_record.gql_definition_klass_name %>"
 
     belongs_to :schema_version, inverse_of: :<%= layout_kind %>_layout_definitions
     belongs_to :entity, polymorphic: true, optional: true
 
     has_many :layout_instances,
-      class_name: "Layouts::<%= class_name %>Instance",
+      class_name: <%= layout_record.instance_klass_name.inspect %>,
       dependent: :destroy,
       inverse_of: :layout_definition,
       foreign_key: :layout_definition_id
-    <%- template_kinds.each do |template_kind| -%>
+    <%- layout_record.templates.each do |template| -%>
 
-    has_many :<%= template_kind %>_template_definitions,
-      class_name: "Templates::<%= template_kind.classify %>Definition",
+    has_many :<%= template.template_kind %>_template_definitions,
+      class_name: <%= template.definition_klass_name.inspect %>,
       dependent: :destroy,
       inverse_of: :layout_definition,
       foreign_key: :layout_definition_id
@@ -34,7 +39,7 @@ module Layouts
 
     has_one :template_definition,
       -> { in_recent_order },
-      class_name: "Templates::<%= template_kinds.first.classify %>Definition",
+      class_name: <%= layout_record.templates.first.definition_klass_name.inspect %>,
       dependent: :destroy,
       inverse_of: :layout_definition,
       foreign_key: :layout_definition_id

@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 module Templates
+  # @see Layouts::HeroInstance
+  # @see Templates::HeroDefinition
+  # @see Templates::SlotMappings::HeroInstanceSlots
+  # @see Types::Templates::HeroTemplateInstanceType
   class HeroInstance < ApplicationRecord
     include HasEphemeralSystemSlug
     include TemplateInstance

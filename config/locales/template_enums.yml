@@ -13,9 +13,11 @@ en:
       dynamic:
         description: "Render descendants from a dynamic ordering, determined at query time."
       manual:
-        description: "Render descendants from a manual ordering set on each individual entity."
+        description: "Render descendants from a manual ordering set on each individual entity. See `manualListName` for how this works."
       named:
         description: "Render descendants from a named ordering that exists on the source entity."
+      property:
+        description: "Render entities from a schema property on the source entity."
     descendant_list_variant:
       cards:
         description: "A card list of entities."
@@ -31,7 +33,7 @@ en:
       dynamic:
         description: "Render links from a dynamic list, determined at query time."
       manual:
-        description: "Render links from a manual list set on each individual entity."
+        description: "Render links from a manual list set on each individual entity. See `manualListName` for how this works."
     link_list_variant:
       cards:
         description: "A card list of entities."
@@ -43,3 +45,10 @@ en:
         description: "A horizontal list of entities with promotional header."
       summary:
         description: "A vertical, summarized list of entities."
+    selection_source_mode:
+      ancestor:
+        description: "Selections should inherit from a named ancestor of this entity."
+      parent:
+        description: "Selections should inherit from the hierarchical parent of this entity."
+      self:
+        description: "Selections should inherit from the exact entity in question"

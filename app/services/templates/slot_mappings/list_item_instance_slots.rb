@@ -3,6 +3,7 @@
 module Templates
   module SlotMappings
     # @see Templates::ListItemInstance
+    # @see Templates::SlotMappings::ListItemDefinitionSlots
     class ListItemInstanceSlots < AbstractInstanceSlots
       inline! :header
       inline! :subheader

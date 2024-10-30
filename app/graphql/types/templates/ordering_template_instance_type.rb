@@ -5,6 +5,7 @@ module Types
     # @see ::Templates::OrderingInstance
     class OrderingTemplateInstanceType < AbstractModel
       implements ::Types::TemplateInstanceType
+      implements ::Types::TemplateHasOrderingPairType
 
       field :definition, ::Types::Templates::OrderingTemplateDefinitionType, null: false do
         description <<~TEXT

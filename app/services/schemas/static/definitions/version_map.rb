@@ -10,7 +10,7 @@ module Schemas
 
         delegate :kind, to: :latest, prefix: true
 
-        delegate :to_definition_attributes, :to_definition_tuple, to: :latest
+        delegate :to_definition_attributes, to: :latest
 
         def has_same_kind?
           all? do |version|

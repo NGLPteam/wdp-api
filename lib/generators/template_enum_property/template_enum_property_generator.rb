@@ -8,6 +8,13 @@ class TemplateEnumPropertyGenerator < Rails::Generators::NamedBase
     template "gql_type.rb", template_enum_property.gql_type_path_name
   end
 
+  def generate_config_prop!
+    root = Rails.root.join("app", "services", "templates", "config", "properties")
+    path = root.join("#{file_name}.rb")
+
+    template "config_prop.rb", path
+  end
+
   private
 
   def heredoc_description_for(value)
@@ -20,9 +27,5 @@ class TemplateEnumPropertyGenerator < Rails::Generators::NamedBase
 
   def template_enum_property
     @template_enum_property ||= TemplateEnumProperty.find file_name
-  end
-
-  def template_properties
-    @template_properties ||= TemplateProperty.for_template(file_name).to_a
   end
 end

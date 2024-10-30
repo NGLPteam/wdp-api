@@ -94,6 +94,16 @@ module Schemas
     # @see Property
     PropertyList = Array.of(Property)
 
+    SemanticVersion = Constructor(Semantic::Version) do |input|
+      # :nocov:
+      raise Dry::Types::ConstraintError.new(nil, input) if input.blank?
+
+      Semantic::Version.new input.to_s
+    rescue ArgumentError => e
+      raise Dry::Types::ConstraintError.new e.message, input
+      # :nocov:
+    end
+
     ValueHash = Instance(ActiveSupport::HashWithIndifferentAccess).constructor do |value|
       maybe_value = value.respond_to?(:to_h) ? value.to_h : value
 

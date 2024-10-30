@@ -8,6 +8,12 @@ module Types
     # @see ::Templates::<%= class_name %>Instance
     class <%= class_name %>TemplateInstanceType < AbstractModel
       implements ::Types::TemplateInstanceType
+      <%- if template_record.has_entity_list? -%>
+      implements ::Types::TemplateHasEntityListType
+      <%- end -%>
+      <%- if template_record.has_ordering_pair? -%>
+      implements ::Types::TemplateHasOrderingPairType
+      <%- end -%>
 
       field :definition, ::Types::Templates::<%= class_name %>TemplateDefinitionType, null: false do
         description <<~TEXT

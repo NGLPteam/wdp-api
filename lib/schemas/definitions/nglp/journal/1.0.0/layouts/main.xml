@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<main>
+  <templates>
+    <detail background="none" show-announcements="false" show-hero-image="false" variant="summary">
+      <slots>
+        <header>
+          <![CDATA[
+            {{ entity.title }}
+          ]]>
+        </header>
+        <subheader>
+          <![CDATA[
+            {{ entity.subtitle }}
+          ]]>
+        </subheader>
+        <summary>
+          <![CDATA[
+            {{ entity.summary }}
+          ]]>
+        </summary>
+      </slots>
+    </detail>
+    <descendant-list background="none" selection-mode="dynamic" variant="cards">
+      <title>Recent Volumes</title>
+      <selection-limit>5</selection-limit>
+      <selection-source>self</selection-source>
+      <dynamic-ordering-definition>
+        <filter>
+          <schema namespace="nglp" identifier="journal_volume"/>
+        </filter>
+        <order path="props.sortable_number" dir="desc"/>
+        <render mode="flat"/>
+        <select direct="descendants"/>
+      </dynamic-ordering-definition>
+      <slots>
+        <header>Recent Volumes</header>
+        <header-aside/>
+        <metadata/>
+        <subtitle/>
+      </slots>
+    </descendant-list>
+    <descendant-list background="light" selection-mode="dynamic" variant="grid">
+      <title>Recent Issues</title>
+      <selection-limit>5</selection-limit>
+      <selection-source>self</selection-source>
+      <dynamic-ordering-definition>
+        <filter>
+          <schema namespace="nglp" identifier="journal_issue"/>
+        </filter>
+        <order path="props.sortable_number" dir="desc"/>
+        <render mode="flat"/>
+        <select direct="descendants"/>
+      </dynamic-ordering-definition>
+      <slots>
+        <header>Recent Issues</header>
+        <header-aside/>
+        <metadata/>
+        <subtitle/>
+      </slots>
+    </descendant-list>
+    <descendant-list background="dark" selection-mode="dynamic" variant="promos">
+      <title>Recent Articles</title>
+      <selection-limit>5</selection-limit>
+      <selection-source>self</selection-source>
+      <dynamic-ordering-definition>
+        <filter>
+          <schema namespace="nglp" identifier="journal_article"/>
+        </filter>
+        <order path="entity.published" dir="desc"/>
+        <select direct="descendants"/>
+      </dynamic-ordering-definition>
+      <slots>
+        <header>Recent Articles</header>
+        <header-aside/>
+        <metadata/>
+        <subtitle/>
+      </slots>
+    </descendant-list>
+    <page-list background="none">
+      <slots>
+        <header>Pages</header>
+      </slots>
+    </page-list>
+    <contributor-list background="none">
+      <limit>3</limit>
+      <slots>
+        <header>Contributors</header>
+      </slots>
+    </contributor-list>
+  </templates>
+</main>

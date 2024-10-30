@@ -18,14 +18,17 @@ RSpec.shared_examples_for "a graphql entity with layouts" do
       entity: #{field_name}(slug: $slug) {
         layouts {
           hero {
-            lastRenderedAt
+            definition: layoutDefinition {
+              id
+            }
+            ... LayoutInstanceFragment
+
             template {
-              layoutKind
-              templateKind
-              lastRenderedAt
               definition {
                 id
               }
+
+              ... TemplateInstanceFragment
 
               slots {
                 header {
@@ -48,67 +51,152 @@ RSpec.shared_examples_for "a graphql entity with layouts" do
           }
 
           listItem {
-            lastRenderedAt
+            definition: layoutDefinition {
+              id
+            }
+            ... LayoutInstanceFragment
+
             template {
-              layoutKind
-              templateKind
-              lastRenderedAt
               definition {
                 id
               }
+              ... TemplateInstanceFragment
             }
           }
 
           navigation {
-            lastRenderedAt
+            definition: layoutDefinition {
+              id
+            }
+            ... LayoutInstanceFragment
+
             template {
-              layoutKind
-              templateKind
-              lastRenderedAt
               definition {
                 id
               }
+
+              ... TemplateInstanceFragment
             }
           }
 
           metadata {
-            lastRenderedAt
+            definition: layoutDefinition {
+              id
+            }
+            ... LayoutInstanceFragment
+
             template {
-              layoutKind
-              templateKind
-              lastRenderedAt
               definition {
                 id
               }
+
+              ... TemplateInstanceFragment
             }
           }
 
           supplementary {
-            lastRenderedAt
+            definition: layoutDefinition {
+              id
+            }
+            ... LayoutInstanceFragment
+
             template {
-              layoutKind
-              templateKind
-              lastRenderedAt
               definition {
                 id
               }
+
+              ... TemplateInstanceFragment
             }
           }
 
           main {
-            lastRenderedAt
+            definition: layoutDefinition {
+              id
+            }
+            ... LayoutInstanceFragment
 
             templates {
               __typename
 
               ... on TemplateInstance {
-                layoutKind
-                templateKind
-                lastRenderedAt
+                ... TemplateInstanceFragment
+              }
+
+              ... on DescendantListTemplateInstance {
+                definition {
+                  id
+                }
+                ... HasEntityListFragment
+              }
+
+              ... on LinkListTemplateInstance {
+                definition {
+                  id
+                }
+                ... HasEntityListFragment
+              }
+
+              ... on OrderingTemplateInstance {
+                definition {
+                  id
+                }
+                orderingPair {
+                  first
+                  last
+                  exists
+                  count
+                  position
+                  prevSibling {
+                    entrySlug
+                    entryTitle
+                    position
+
+                  }
+
+                  nextSibling {
+                    entrySlug
+                    entryTitle
+                    position
+                  }
+                }
               }
             }
           }
         }
+      }
+    }
+
+    fragment AnyEntityFragment on AnyEntity {
+      __typename
+
+      ... on Entity {
+        title
+        subtitle
+      }
+    }
+
+    fragment HasEntityListFragment on TemplateHasEntityList {
+      entityList {
+        count
+        entities {
+          ... AnyEntityFragment
+        }
+      }
+    }
+
+    fragment LayoutInstanceFragment on LayoutInstance {
+      lastRenderedAt
+      entity {
+        ... AnyEntityFragment
+      }
+    }
+
+    fragment TemplateInstanceFragment on TemplateInstance {
+      layoutKind
+      templateKind
+      lastRenderedAt
+      entity {
+        ... AnyEntityFragment
       }
     }
     GRAPHQL

@@ -8,10 +8,13 @@ module Support
       extend Dry::Core::ClassAttributes
       extend Support::DoFor
 
+      include Support::CallsCommonOperation
+
+      include Dry::Core::Constants
       include Dry::Effects::Handler.Interrupt(:halt_actor, as: :catch_actor_halt)
       include Dry::Effects.Interrupt(:halt_actor)
 
-      include Dry::Monads[:result, :try]
+      include Dry::Monads[:result, :maybe, :try]
 
       # @api private
       TO_RESULT = Support::MonadHelpers::ToResult.new
@@ -32,10 +35,6 @@ module Support
 
       # @return [Symbol]
       attr_reader :current_hook
-
-      def call_operation(name, ...)
-        ::Common::Container[name].(...)
-      end
 
       # @api private
       def inspect

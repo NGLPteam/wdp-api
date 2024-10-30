@@ -18,6 +18,11 @@ module Templates
         def kind
           self.class.kind
         end
+
+        # @return [String, nil]
+        def export_value
+          raw_template
+        end
       end
     end
   end

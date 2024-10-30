@@ -1,6 +1,11 @@
 # frozen_string_literal: true
 
 module Templates
+  # @see Layouts::MainDefinition
+  # @see Templates::DetailInstance
+  # @see Templates::Config::Template::Detail
+  # @see Templates::SlotMappings::DetailDefinitionSlots
+  # @see Types::Templates::DetailTemplateDefinitionType
   class DetailDefinition < ApplicationRecord
     include HasEphemeralSystemSlug
     include TemplateDefinition
@@ -10,6 +15,7 @@ module Templates
     template_kind! :detail
 
     graphql_node_type_name "::Types::Templates::DetailTemplateDefinitionType"
+
     pg_enum! :variant, as: :detail_variant, allow_blank: false, suffix: :variant
 
     pg_enum! :background, as: :detail_background, allow_blank: false, suffix: :background, default: "none"

@@ -14,7 +14,7 @@ module Mappers
 
     private
 
-    def to_pretty_xml?(pretty: false, **)
+    def to_pretty_xml?(*, pretty: false, **)
       pretty
     end
   end

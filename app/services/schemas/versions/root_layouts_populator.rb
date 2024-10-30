@@ -3,14 +3,19 @@
 module Schemas
   module Versions
     # @see Schemas::Versions::PopulateRootLayouts
-    # @todo Read from definition files
     class RootLayoutsPopulator < Support::HookBased::Actor
       include Dry::Initializer[undefined: false].define -> do
         param :schema_version, Schemas::Types::Version
+
+        option :skip_layout_invalidation, ::Schemas::Types::Bool, default: proc { false }
       end
 
       standard_execution!
 
+      # @return [<LayoutDefinition>]
+      attr_reader :layout_definitions
+
+      # @return [Dry::Monads::Success<LayoutDefinition>]
       def call
         run_callbacks :execute do
           yield build_each_root!
@@ -18,12 +23,16 @@ module Schemas
 
         schema_version.reload
 
-        Success schema_version
+        Success layout_definitions
       end
 
       wrapped_hook! def build_each_root
+        @layout_definitions = []
+
         Layout.each do |layout|
-          yield build_root_for layout.kind
+          definition = yield build_root_for layout.kind
+
+          layout_definitions << definition
         end
 
         super
@@ -34,29 +43,11 @@ module Schemas
       # @param [Layouts::Types::Kind] layout_kind
       # @return [Dry::Monads::Success(LayoutDefinition)]
       do_for! def build_root_for(layout_kind)
-        layout_definition = schema_version.root_layout_for(layout_kind)
+        layout_config = schema_version.root_layout_config_for(layout_kind)
 
-        layout_definition.save!
-
-        yield build_templates_for(layout_definition:)
+        layout_definition = yield layout_config.apply_to(schema_version, entity: nil, skip_layout_invalidation:)
 
         Success layout_definition
-      end
-
-      do_for! def build_templates_for(layout_definition:)
-        template_names = layout_definition.template_definition_names
-
-        template_names.each_with_index do |name, index|
-          layout_definition.__send__(name).delete_all
-
-          position = index + 1
-
-          template_def = layout_definition.__send__(name).build(position:)
-
-          template_def.save!
-        end
-
-        Success()
       end
     end
   end

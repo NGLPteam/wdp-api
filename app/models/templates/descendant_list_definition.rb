@@ -1,20 +1,25 @@
 # frozen_string_literal: true
 
 module Templates
+  # @see Layouts::MainDefinition
+  # @see Templates::DescendantListInstance
+  # @see Templates::Config::Template::DescendantList
+  # @see Templates::SlotMappings::DescendantListDefinitionSlots
+  # @see Types::Templates::DescendantListTemplateDefinitionType
   class DescendantListDefinition < ApplicationRecord
     include HasEphemeralSystemSlug
     include TemplateDefinition
+    include Templates::Definitions::HasEntityList
     include TimestampScopes
 
     layout_kind! :main
     template_kind! :descendant_list
 
     graphql_node_type_name "::Types::Templates::DescendantListTemplateDefinitionType"
+
     pg_enum! :variant, as: :descendant_list_variant, allow_blank: false, suffix: :variant
 
     pg_enum! :background, as: :descendant_list_background, allow_blank: false, suffix: :background, default: "none"
-
-    pg_enum! :selection_source_mode, as: :selection_source_mode, allow_blank: false, suffix: :selection_source_mode, default: "self"
 
     pg_enum! :selection_mode, as: :descendant_list_selection_mode, allow_blank: false, suffix: :selection_mode, default: "manual"
 

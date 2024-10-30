@@ -38,6 +38,8 @@ module Templates
 
     Entity = Instance(::HierarchicalEntity)
 
+    Entities = Coercible::Array.of(Entity)
+
     ErrorMode = Coercible::Symbol.default(:strict).enum(:strict, :warn, :lax).fallback(:strict)
 
     Generation = String.constrained(uuid_v4: true)
@@ -68,6 +70,12 @@ module Templates
 
     LinkListSelectionMode = ApplicationRecord.dry_pg_enum(:link_list_ordering_mode)
 
+    ManualListSource = Instance(::ManualListSource)
+
+    ManualListTarget = Instance(::ManualListTarget)
+
+    ManualListTargets = Coercible::Array.of(ManualListTarget)
+
     OrderingDefinition = Instance(::Schemas::Orderings::Definition).constructor do |value|
       case value
       when ::Schemas::Orderings::Definition then value
@@ -80,12 +88,26 @@ module Templates
       end
     end
 
+    RESERVED_PROPERTY_NAMES = %w[
+      layout_definition_id
+      layout
+      layout_kind
+      created_at
+      updated_at
+      config
+      position
+      slots
+      template
+      template_kind
+    ].freeze
+
     PropertyKind = Coercible::String.enum(
       "background",
       "boolean",
       "limit",
       "ordering_definition",
       "schema_component",
+      "schema_property_path",
       "selection_mode",
       "selection_source",
       "selection_source_mode",
@@ -93,7 +115,15 @@ module Templates
       "variant"
     )
 
+    PropertyName = Coercible::String.constrained(excluded_from: RESERVED_PROPERTY_NAMES)
+
+    SchemaComponent = ::Schemas::Types::Component
+
+    SchemaVersion = ModelInstance("SchemaVersion")
+
     SELECTION_SOURCE_SELF_PATTERN = /\Aself\z/
+
+    SELECTION_SOURCE_PARENT_PATTERN = /\Aparent\z/
 
     SELECTION_SOURCE_ANCESTOR_PATTERN = /
     ancestors
@@ -103,16 +133,22 @@ module Templates
 
     SelectionSourceSelf = Coercible::String.constrained(eql: "self")
 
+    SelectionSourceParent = Coercible::String.constrained(eql: "parent")
+
     SelectionSourceAncestor = Coercible::String.constrained(format: SELECTION_SOURCE_ANCESTOR_PATTERN)
 
     SELECTION_SOURCE_PATTERN = /\A
     (?:#{SELECTION_SOURCE_SELF_PATTERN})
+    |
+    (?:#{SELECTION_SOURCE_PARENT_PATTERN})
     |
     (?:#{SELECTION_SOURCE_ANCESTOR_PATTERN})
     \z
     /x
 
     SelectionSource = Coercible::String.default("self").constrained(format: SELECTION_SOURCE_PATTERN)
+
+    SelectionSourceMode = ApplicationRecord.dry_pg_enum(:selection_source_mode, default: "self").fallback("self")
 
     SlotKind = ::Types::TemplateSlotKindType.dry_type
 

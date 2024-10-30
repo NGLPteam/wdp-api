@@ -17,6 +17,13 @@ class OrderingEntry < ApplicationRecord
 
   has_many :ancestors, through: :ordering_entry_ancestor_links
 
+  has_many :ordering_template_instances,
+    class_name: "Templates::OrderingInstance",
+    inverse_of: :ordering_entry,
+    primary_key: %i[ordering_id id],
+    foreign_key: %i[ordering_id ordering_entry_id],
+    dependent: :nullify
+
   has_one :ordering_entry_sibling_link, foreign_key: %i[ordering_id sibling_id], dependent: :delete, inverse_of: :sibling
 
   has_one :prev_sibling, through: :ordering_entry_sibling_link, source: :prev

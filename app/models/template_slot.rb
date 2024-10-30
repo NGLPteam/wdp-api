@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class TemplateSlot < Support::FrozenRecordHelpers::AbstractRecord
+  include Dry::Core::Equalizer.new(:template_kind, :name)
   include Dry::Core::Memoizable
 
   schema!(types: ::Templates::TypeRegistry) do
@@ -27,24 +28,53 @@ class TemplateSlot < Support::FrozenRecordHelpers::AbstractRecord
 
   scope :for_template, ->(kind) { where(template_kind: kind.to_s) }
 
+  def has_default?
+    default_template.present?
+  end
+
   # @return [Template]
   memoize def template
     Template.find template_kind
   end
 
-  def define_slot!
-    # :nocov:
-    root = template.slot_definitions_root
+  # @return [Templates::Compositions::Slot]
+  def to_composition
+    Templates::Compositions::Slot.from_hash(to_composition_hash)
+  end
 
-    file = root.join("#{name}.xml")
+  # @return [{ String => Object }]
+  def to_composition_hash
+    slice(
+      :name,
+      :slot_kind,
+      :template_kind,
+      :default_template,
+      :description
+    ).stringify_keys
+  end
 
-    hsh = { slot_kind:, description: { content: description, }, default_template: { content: default_template }, }.deep_stringify_keys
-
-    mapper = ::Templates::Definitions::Slot.from_hash(hsh)
-
-    file.open("wb+") do |f|
-      f.write mapper.to_xml(declaration: true, pretty: true)
+  class << self
+    def default_templates
+      @default_templates ||= Concurrent::Map.new
     end
-    # :nocov:
+
+    # @return [Proc]
+    def default_template_for(id)
+      default_templates.compute_if_absent id do
+        slot = TemplateSlot.find id
+
+        slot.default_template&.freeze
+      end
+    end
+
+    def default_template_hash_for(id)
+      default_templates.compute_if_absent [id, :hash] do
+        slot = TemplateSlot.find id
+
+        raw_template = slot.default_template&.freeze
+
+        { raw_template:, }
+      end
+    end
   end
 end

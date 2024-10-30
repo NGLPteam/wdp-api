@@ -4,6 +4,8 @@ module Layouts
   module Types
     include Dry.Types
 
+    include Dry::Core::Constants
+
     extend Support::EnhancedTypes
 
     Association = Coercible::Symbol
@@ -14,11 +16,17 @@ module Layouts
 
     Generation = String.constrained(uuid_v4: true)
 
-    Kind = ApplicationRecord.dry_pg_enum(:layout_kind)
+    Kind = LayoutKind = ApplicationRecord.dry_pg_enum(:layout_kind)
 
     LayoutDefinition = Instance(::LayoutDefinition)
 
+    LayoutDefinitions = Coercible::Array.of(LayoutDefinition)
+
+    LayoutDefinitionMapping = Hash.map(Kind, LayoutDefinitions)
+
     LayoutInstance = Instance(::LayoutInstance)
+
+    LayoutInstances = Coercible::Array.of(LayoutInstance)
 
     TemplateMapping = ApplicationRecord.pg_enum_values(:layout_kind).index_with do |layout_kind|
       ApplicationRecord.pg_enum_values(:"#{layout_kind}_template_kind")

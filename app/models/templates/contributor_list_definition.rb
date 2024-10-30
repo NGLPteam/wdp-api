@@ -1,6 +1,11 @@
 # frozen_string_literal: true
 
 module Templates
+  # @see Layouts::MainDefinition
+  # @see Templates::ContributorListInstance
+  # @see Templates::Config::Template::ContributorList
+  # @see Templates::SlotMappings::ContributorListDefinitionSlots
+  # @see Types::Templates::ContributorListTemplateDefinitionType
   class ContributorListDefinition < ApplicationRecord
     include HasEphemeralSystemSlug
     include TemplateDefinition
@@ -10,6 +15,7 @@ module Templates
     template_kind! :contributor_list
 
     graphql_node_type_name "::Types::Templates::ContributorListTemplateDefinitionType"
+
     pg_enum! :background, as: :contributor_list_background, allow_blank: false, suffix: :background, default: "none"
 
     attribute :slots, ::Templates::SlotMappings::ContributorListDefinitionSlots.to_type

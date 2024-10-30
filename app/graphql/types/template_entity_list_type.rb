@@ -1,0 +1,47 @@
+# frozen_string_literal: true
+
+module Types
+  # @see Templates::EntityList
+  # @see Templates::Definitions::HasEntityList
+  # @see Templates::Instances::HasEntityList
+  # @see Types::TemplateHasEntityListType
+  class TemplateEntityListType < Types::BaseObject
+    description <<~TEXT
+    Some template instances return an ordered list of entities to render
+    within as part of their content.
+
+    This provides access to that list, as well as a shortcut to each entity's
+    associated `ListItemLayoutInstance`.
+    TEXT
+
+    field :count, Int, null: false do
+      description <<~TEXT
+      The size of the list.
+      TEXT
+    end
+
+    field :empty, Boolean, null: false do
+      description <<~TEXT
+      Whether the list is empty, provided for easier filtering and render-skipping.
+      TEXT
+    end
+
+    field :entities, ["::Types::AnyEntityType", { null: false }], null: false do
+      description <<~TEXT
+      The actual entity records within this list.
+
+      The order is deterministic.
+      TEXT
+    end
+
+    field :list_item_layouts, ["::Types::Layouts::ListItemLayoutInstanceType", { null: false }], null: false do
+      description <<~TEXT
+      A shortcut to access the list item layouts for each entity in `entities`.
+
+      The order is deterministic.
+
+      See `ListItemLayoutInstance`.
+      TEXT
+    end
+  end
+end
