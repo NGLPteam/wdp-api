@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<navigation>
+  <templates>
+    <navigation background="none">
+      <slots>
+        <entity-label>
+          <![CDATA[
+            Entity
+          ]]>
+        </entity-label>
+      </slots>
+    </navigation>
+  </templates>
+</navigation>

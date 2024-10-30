@@ -1,0 +1,24 @@
+<%-
+# vim: set ft=ruby.eruby nosmartindent noautoindent :
+-%>
+# frozen_string_literal: true
+
+module Templates
+  module Config
+    module Layout
+      # @see <%= layout_record.definition_klass_name %>
+      # @see <%= layout_record.config_templates_klass_name %>
+      class <%= class_name %> < ::Templates::Config::Utility::AbstractLayout
+        configures_layout! <%= layout_kind.to_sym.inspect %>
+
+        attribute :templates, ::<%= layout_record.config_templates_klass_name %>
+
+        xml do
+          root <%= layout_record.root_tag.inspect %>
+
+          map_element "templates", to: :templates
+        end
+      end
+    end
+  end
+end

@@ -5,19 +5,18 @@ module Schemas
     class LoadDefinition
       include Dry::Monads[:do, :result]
       include MonadicPersistence
-      include MeruAPI::Deps[load_version: "schemas.static.load_version", parse: "schemas.parse_full_identifier", reorder_versions: "schemas.versions.reorder"]
 
-      IDENTIFIER = /\A(?<namespace>[^.:]+)[.:](?<identifier>[^.:]+)\z/
+      include MeruAPI::Deps[
+        load_version: "schemas.static.load_version",
+        reorder_versions: "schemas.versions.reorder"
+      ]
 
-      # @param [String] identifier
-      # @param [Schemas::Static::Definitions::VersionMap] versions
+      # @param [StaticSchemaDefinition] static_definition
       # @return [SchemaDefinition]
-      def call(identifier, versions)
-        yield validate versions
+      def call(static_definition)
+        definition = yield find_or_create_definition static_definition
 
-        definition = yield find_or_create_definition identifier, versions
-
-        versions.each do |version|
+        static_definition.versions.each do |version|
           yield load_version.call(definition, version)
         end
 
@@ -28,22 +27,19 @@ module Schemas
 
       private
 
-      def find_or_create_definition(full_identifier, versions)
-        namespace, id = yield parse.call(full_identifier)
+      # @param [StaticSchemaDefinition] static_definition
+      # @return [Dry::Monads::Success(SchemaDefinition)]
+      def find_or_create_definition(static_definition)
+        static_definition => { namespace:, identifier:, kind:, name:, }
 
-        definition = SchemaDefinition.lookup_or_initialize namespace, id
+        definition = SchemaDefinition.lookup_or_initialize namespace, identifier
 
-        definition.assign_attributes versions.to_definition_attributes
+        definition.assign_attributes(kind:, name:)
 
-        monadic_save definition
-      end
+        # This should never fail at runtime.
+        definition.save!
 
-      def validate(versions)
-        if versions.valid?
-          Success nil
-        else
-          Failure[:invalid_version_map, versions.errors.full_messages.to_sentence]
-        end
+        Success definition
       end
     end
   end

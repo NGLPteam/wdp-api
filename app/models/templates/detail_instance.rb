@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 module Templates
+  # @see Layouts::MainInstance
+  # @see Templates::DetailDefinition
+  # @see Templates::SlotMappings::DetailInstanceSlots
+  # @see Types::Templates::DetailTemplateInstanceType
   class DetailInstance < ApplicationRecord
     include HasEphemeralSystemSlug
     include TemplateInstance

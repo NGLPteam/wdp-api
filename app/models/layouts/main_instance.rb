@@ -1,6 +1,14 @@
 # frozen_string_literal: true
 
 module Layouts
+  # @see Layouts::MainDefinition
+  # @see Types::Layouts::MainLayoutInstanceType
+  # @see Templates::DetailInstance
+  # @see Templates::DescendantListInstance
+  # @see Templates::LinkListInstance
+  # @see Templates::PageListInstance
+  # @see Templates::ContributorListInstance
+  # @see Templates::OrderingInstance
   class MainInstance < ApplicationRecord
     include HasEphemeralSystemSlug
     include LayoutInstance

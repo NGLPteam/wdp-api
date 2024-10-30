@@ -47,6 +47,21 @@ class ApplicationRecord < ActiveRecord::Base
       find id
     end
 
+    # @param [<ApplicationRecord>] records
+    # @return [ActiveRecord::Relation<ApplicationRecord>]
+    def limited_to(*records)
+      return all if records.flatten.blank?
+
+      id = records.flatten.map do |record|
+        case record
+        when self then record.id
+        when ::AppTypes::UUID then record
+        end
+      end.compact.uniq
+
+      id.blank? ? none : where(id:)
+    end
+
     def quoted_ids
       ids.map { |id| connection.quote id }
     end

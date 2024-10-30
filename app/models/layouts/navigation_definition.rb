@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 module Layouts
+  # @see Layouts::NavigationInstance
+  # @see Types::Layouts::NavigationLayoutDefinitionType
+  # @see Templates::NavigationDefinition
   class NavigationDefinition < ApplicationRecord
     include HasEphemeralSystemSlug
     include LayoutDefinition

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<main>
+  <templates>
+    <detail background="none" show-announcements="false" show-hero-image="false" variant="summary">
+      <slots>
+        <header>{{ entity.title }}</header>
+        <subheader>{{ entity.subtitle }}</subheader>
+        <summary>
+          <![CDATA[
+            {{ entity.summary }}
+          ]]>
+        </summary>
+      </slots>
+    </detail>
+    <descendant-list background="none" selection-mode="property" show-entity-context="false" show-see-all-button="false" variant="cards">
+      <selection-limit>3</selection-limit>
+      <selection-source>self</selection-source>
+      <selection-property-path>featured_articles</selection-property-path>
+      <title>Featured Articles</title>
+      <slots>
+        <header>Featured Articles</header>
+        <header-aside/>
+        <metadata/>
+        <subtitle/>
+      </slots>
+    </descendant-list>
+    <page-list background="none">
+      <slots>
+        <header>Pages</header>
+      </slots>
+    </page-list>
+    <ordering background="dark">
+      <slots>
+        <previous-label>Previous Issue</previous-label>
+        <next-label>Next Issue</next-label>
+      </slots>
+    </ordering>
+  </templates>
+</main>

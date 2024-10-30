@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
 class TemplateEnumProperty < Support::FrozenRecordHelpers::AbstractRecord
-  include ScopedTranslatableAttributes
+  include Dry::Core::Equalizer.new(:name)
   include Dry::Core::Memoizable
+  include ScopedTranslatableAttributes
 
   schema!(types: ::Templates::TypeRegistry) do
     required(:name).filled(:enum_property_name)
@@ -82,6 +83,11 @@ class TemplateEnumProperty < Support::FrozenRecordHelpers::AbstractRecord
   # @return [String]
   memoize def klass_name
     name.classify
+  end
+
+  # @return [String]
+  def shale_mapper_type_klass_name
+    "templates/config/properties/#{name}".classify
   end
 
   # @!endgroup

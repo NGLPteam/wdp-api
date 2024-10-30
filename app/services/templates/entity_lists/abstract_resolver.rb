@@ -1,0 +1,68 @@
+# frozen_string_literal: true
+
+module Templates
+  module EntityLists
+    # @abstract
+    class AbstractResolver < Support::HookBased::Actor
+      extend Dry::Initializer
+
+      option :source_entity, Templates::Types::Entity.optional, optional: true
+
+      option :selection_limit, ::Templates::Types::LimitWithFallback, default: proc { Templates::Types::LIMIT_DEFAULT }
+
+      option :template_kind, ::Templates::Types::TemplateKind
+
+      option :template_definition_id, ::Schemas::Types::String, default: proc { SecureRandom.uuid }
+
+      standard_execution!
+
+      # @return [<HierarchicalEntity>]
+      attr_reader :entities
+
+      # @return [Dry::Monads::Success(Templates::EntityList)]
+      def call
+        run_callbacks :execute do
+          yield prepare!
+
+          yield resolve!
+        end
+
+        entity_list = Templates::EntityList.new(entities:)
+
+        Success entity_list
+      end
+
+      wrapped_hook! def prepare
+        @entities = EMPTY_ARRAY
+
+        @entity_list = nil
+
+        super
+      end
+
+      wrapped_hook! def resolve
+        return super if source_entity.blank?
+
+        @entities = Array(resolve_entities.value_or(EMPTY_ARRAY)).take(selection_limit)
+
+        super
+      end
+
+      # @abstract
+      # @return [Dry::Monads::Success<HierarchicalEntity>]
+      do_for! def resolve_entities
+        # :nocov:
+        Success EMPTY_ARRAY
+        # :nocov:
+      end
+
+      class << self
+        def inherited(subclass)
+          super
+
+          subclass.do_for!(:resolve_entities)
+        end
+      end
+    end
+  end
+end

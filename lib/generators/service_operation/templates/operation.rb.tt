@@ -1,0 +1,11 @@
+<%-
+  # vim: set ft=ruby.eruby nosmartindent noautoindent :
+-%>
+# frozen_string_literal: true
+
+<%- nest do -%>
+# @see <%= service_full_name %>
+class <%= operation_name %> < Support::SimpleServiceOperation
+  service_klass <%= service_full_name %>
+end
+<%- end -%>

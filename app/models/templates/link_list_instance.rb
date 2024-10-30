@@ -1,9 +1,14 @@
 # frozen_string_literal: true
 
 module Templates
+  # @see Layouts::MainInstance
+  # @see Templates::LinkListDefinition
+  # @see Templates::SlotMappings::LinkListInstanceSlots
+  # @see Types::Templates::LinkListTemplateInstanceType
   class LinkListInstance < ApplicationRecord
     include HasEphemeralSystemSlug
     include TemplateInstance
+    include Templates::Instances::HasEntityList
     include TimestampScopes
 
     layout_kind! :main

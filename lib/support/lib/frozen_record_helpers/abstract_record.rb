@@ -8,6 +8,9 @@ module Support
     # @abstract
     class AbstractRecord < FrozenRecord::Base
       extend Dry::Core::ClassAttributes
+      extend DefinesMonadicOperation
+
+      include ::Support::DefinesKlassNamePair
 
       self.abstract_class = true
 
@@ -25,6 +28,13 @@ module Support
       default_sql_values []
 
       schema nil
+
+      # @see #slice
+      # @param [<Symbol>] keys
+      # @return [{ Symbol => Object }]
+      def deconstruct_keys(*keys)
+        slice(*keys)
+      end
 
       def slice(*keys)
         keys.flatten.index_with do |key|
@@ -95,7 +105,7 @@ module Support
 
           return result.to_monad.value! if result.failure?
 
-          result.to_h.stringify_keys
+          result.to_h.stringify_keys.transform_values(&:freeze)
         end
 
         def calculates!(attr, &calculator)

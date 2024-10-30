@@ -10,7 +10,7 @@ module Utility
       param :raw_xml, Support::Types::String
     end
 
-    CONTAINS_NEWLINES = /\w.*\n.*\w/
+    CONTAINS_NEWLINES = /\w.*\n.*\w/m
 
     standard_execution!
 
@@ -59,6 +59,8 @@ module Utility
     def adjust_text_node!(node)
       depth = node.ancestors.size - 1
 
+      depth += 1 if node.cdata?
+
       final = (depth - 1).clamp(0, depth)
 
       node.content = adjust_text_content(node.content, depth:, final:)
@@ -66,7 +68,9 @@ module Utility
 
     # @param [Nokogiri::XML::Text] node
     def skip_text?(node)
-      node.cdata? || skip_content?(node.content)
+      return false if node.cdata?
+
+      skip_content?(node.content)
     end
 
     def skip_content?(content)

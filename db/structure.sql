@@ -210,7 +210,8 @@ CREATE TYPE public.descendant_list_background AS ENUM (
 CREATE TYPE public.descendant_list_selection_mode AS ENUM (
     'dynamic',
     'named',
-    'manual'
+    'manual',
+    'property'
 );
 
 
@@ -601,7 +602,8 @@ CREATE TYPE public.schema_property_type AS ENUM (
 
 CREATE TYPE public.selection_source_mode AS ENUM (
     'self',
-    'ancestor'
+    'ancestor',
+    'parent'
 );
 
 
@@ -6145,10 +6147,13 @@ CREATE TABLE public.templates_descendant_list_definitions (
     title text,
     selection_limit integer,
     dynamic_ordering_definition jsonb,
-    ordering_name text,
+    ordering_identifier text,
     see_all_button_label text,
     show_see_all_button boolean DEFAULT false NOT NULL,
-    show_entity_context boolean DEFAULT false NOT NULL
+    show_entity_context boolean DEFAULT false NOT NULL,
+    manual_list_name text DEFAULT 'manual'::text NOT NULL,
+    selection_source_ancestor_name text,
+    selection_property_path text
 );
 
 
@@ -6297,7 +6302,9 @@ CREATE TABLE public.templates_link_list_definitions (
     dynamic_ordering_definition jsonb,
     see_all_button_label text,
     show_see_all_button boolean DEFAULT false NOT NULL,
-    show_entity_context boolean DEFAULT false NOT NULL
+    show_entity_context boolean DEFAULT false NOT NULL,
+    manual_list_name text DEFAULT 'manual'::text NOT NULL,
+    selection_source_ancestor_name text
 );
 
 
@@ -6361,6 +6368,42 @@ CREATE TABLE public.templates_list_item_instances (
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     config jsonb DEFAULT '{}'::jsonb NOT NULL,
     slots jsonb DEFAULT '{}'::jsonb NOT NULL
+);
+
+
+--
+-- Name: templates_manual_list_entries; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.templates_manual_list_entries (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    source_type character varying NOT NULL,
+    source_id uuid NOT NULL,
+    target_type character varying NOT NULL,
+    target_id uuid NOT NULL,
+    template_kind public.template_kind NOT NULL,
+    list_name text NOT NULL,
+    "position" integer,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+--
+-- Name: templates_manual_lists; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.templates_manual_lists (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    layout_definition_type character varying NOT NULL,
+    layout_definition_id uuid NOT NULL,
+    template_definition_type character varying NOT NULL,
+    template_definition_id uuid NOT NULL,
+    layout_kind public.layout_kind NOT NULL,
+    template_kind public.template_kind NOT NULL,
+    list_name text NOT NULL,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
 
@@ -6460,7 +6503,14 @@ CREATE TABLE public.templates_ordering_definitions (
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     config jsonb DEFAULT '{}'::jsonb NOT NULL,
     slots jsonb DEFAULT '{}'::jsonb NOT NULL,
-    background public.ordering_background DEFAULT 'none'::public.ordering_background NOT NULL
+    background public.ordering_background DEFAULT 'none'::public.ordering_background NOT NULL,
+    ordering_source_mode public.selection_source_mode DEFAULT 'parent'::public.selection_source_mode NOT NULL,
+    ordering_source text DEFAULT 'parent'::text NOT NULL,
+    ordering_source_ancestor_name text,
+    selection_source_mode public.selection_source_mode DEFAULT 'self'::public.selection_source_mode NOT NULL,
+    selection_source text DEFAULT 'self'::text NOT NULL,
+    selection_source_ancestor_name text,
+    ordering_identifier text
 );
 
 
@@ -6483,7 +6533,9 @@ CREATE TABLE public.templates_ordering_instances (
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     config jsonb DEFAULT '{}'::jsonb NOT NULL,
-    slots jsonb DEFAULT '{}'::jsonb NOT NULL
+    slots jsonb DEFAULT '{}'::jsonb NOT NULL,
+    ordering_id uuid,
+    ordering_entry_id uuid
 );
 
 
@@ -7724,6 +7776,22 @@ ALTER TABLE ONLY public.templates_list_item_definitions
 
 ALTER TABLE ONLY public.templates_list_item_instances
     ADD CONSTRAINT templates_list_item_instances_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: templates_manual_list_entries templates_manual_list_entries_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.templates_manual_list_entries
+    ADD CONSTRAINT templates_manual_list_entries_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: templates_manual_lists templates_manual_lists_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.templates_manual_lists
+    ADD CONSTRAINT templates_manual_lists_pkey PRIMARY KEY (id);
 
 
 --
@@ -9931,6 +9999,20 @@ CREATE INDEX index_layouts_supplementary_instances_on_last_rendered_at ON public
 
 
 --
+-- Name: index_manual_template_references_ordering; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_manual_template_references_ordering ON public.templates_manual_list_entries USING btree (source_type, source_id, template_kind, list_name, "position");
+
+
+--
+-- Name: index_manual_template_references_uniqueness; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_manual_template_references_uniqueness ON public.templates_manual_list_entries USING btree (source_type, source_id, target_type, target_id, template_kind, list_name);
+
+
+--
 -- Name: index_named_variable_dates_ascending; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -10708,6 +10790,34 @@ CREATE INDEX index_templates_list_item_instances_on_position ON public.templates
 
 
 --
+-- Name: index_templates_manual_list_entries_on_source; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_templates_manual_list_entries_on_source ON public.templates_manual_list_entries USING btree (source_type, source_id);
+
+
+--
+-- Name: index_templates_manual_list_entries_on_target; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_templates_manual_list_entries_on_target ON public.templates_manual_list_entries USING btree (target_type, target_id);
+
+
+--
+-- Name: index_templates_manual_lists_on_layout_definition; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_templates_manual_lists_on_layout_definition ON public.templates_manual_lists USING btree (layout_definition_type, layout_definition_id);
+
+
+--
+-- Name: index_templates_manual_lists_on_template_definition; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_templates_manual_lists_on_template_definition ON public.templates_manual_lists USING btree (template_definition_type, template_definition_id);
+
+
+--
 -- Name: index_templates_metadata_definitions_on_position; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -10785,6 +10895,13 @@ CREATE INDEX index_templates_ordering_definitions_on_position ON public.template
 
 
 --
+-- Name: index_templates_ordering_instances_entry; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_templates_ordering_instances_entry ON public.templates_ordering_instances USING btree (ordering_id, ordering_entry_id);
+
+
+--
 -- Name: index_templates_ordering_instances_on_entity; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -10803,6 +10920,13 @@ CREATE INDEX index_templates_ordering_instances_on_generation ON public.template
 --
 
 CREATE INDEX index_templates_ordering_instances_on_last_rendered_at ON public.templates_ordering_instances USING btree (last_rendered_at);
+
+
+--
+-- Name: index_templates_ordering_instances_on_ordering_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_templates_ordering_instances_on_ordering_id ON public.templates_ordering_instances USING btree (ordering_id);
 
 
 --
@@ -13815,6 +13939,14 @@ ALTER TABLE ONLY public.items
 
 
 --
+-- Name: templates_ordering_instances fk_rails_f141ddb5b6; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.templates_ordering_instances
+    ADD CONSTRAINT fk_rails_f141ddb5b6 FOREIGN KEY (ordering_id) REFERENCES public.orderings(id) ON DELETE SET NULL;
+
+
+--
 -- Name: ahoy_events fk_rails_f1ed9fc4a0; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -13940,6 +14072,14 @@ ALTER TABLE public.ordering_entry_sibling_links
 
 ALTER TABLE public.ordering_entry_sibling_links
     ADD CONSTRAINT ordering_entry_sibling_links_ordering_id_sibling_id_fkey FOREIGN KEY (ordering_id, sibling_id) REFERENCES public.ordering_entries(ordering_id, id) ON DELETE CASCADE;
+
+
+--
+-- Name: templates_ordering_instances ordering_instance_entry_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.templates_ordering_instances
+    ADD CONSTRAINT ordering_instance_entry_fk FOREIGN KEY (ordering_id, ordering_entry_id) REFERENCES public.ordering_entries(ordering_id, id) ON DELETE SET NULL (ordering_entry_id) DEFERRABLE INITIALLY DEFERRED;
 
 
 --
@@ -14156,6 +14296,8 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20241017174753'),
 ('20241018223753'),
 ('20241021161712'),
-('20241024210601');
+('20241024210601'),
+('20241105174558'),
+('20241105174753');
 
 

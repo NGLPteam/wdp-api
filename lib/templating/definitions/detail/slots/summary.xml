@@ -1,5 +1,0 @@
-<?xml version="1.0"?>
-<slot kind="block">
-  <description/>
-  <template><![CDATA[{{ entity.summary }}]]></template>
-</slot>

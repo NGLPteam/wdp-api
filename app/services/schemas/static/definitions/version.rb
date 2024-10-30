@@ -16,11 +16,6 @@ module Schemas
           self[:version]
         end
 
-        # @return [(String, String)]
-        def to_definition_tuple
-          [namespace, identifier]
-        end
-
         def to_definition_attributes
           {}.tap do |h|
             h[:kind] = kind

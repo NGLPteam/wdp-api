@@ -4,41 +4,50 @@ module Schemas
   module Static
     class LoadVersion
       include Dry::Monads[:do, :result]
-      include MonadicPersistence
-      include MeruAPI::Deps[validate_metaschema: "schemas.validate_metaschema"]
+      include Schemas::Static::SetsLayoutDefinitions
+
+      include MeruAPI::Deps[
+        validate_metaschema: "schemas.validate_metaschema",
+      ]
 
       # @param [SchemaDefinition] definition
-      # @param [Schemas::Static::Definitions::Version] static_version
+      # @param [StaticSchemaVersion] static_version
       # @return [SchemaVersion]
       def call(definition, static_version)
         configuration = yield validate static_version
 
-        version = lookup definition, static_version.number
+        version = definition.lookup(static_version.number)
 
         version.configuration = configuration
 
-        monadic_save version
+        creating = version.new_record?
+
+        # No validation errors should occur here during normal runtime.
+        version.save!
+
+        yield populate_root_layouts_for(version) unless creating
+
+        Success version
       end
 
       private
 
+      # @param [SchemaVersion] version
+      # @return [Dry::Monads::Result]
+      def populate_root_layouts_for(version)
+        defs = yield version.populate_root_layouts(skip_layout_invalidation:)
+
+        layout_definitions.concat defs
+
+        Success()
+      end
+
       # @param [Schemas::Static::Definitions::Version] static_version
       # @return [Dry::Monads::Result]
       def validate(static_version)
-        configuration = static_version.raw_data
+        static_version => { configuration: }
 
         validate_metaschema.call "entity-definition", configuration
-      end
-
-      # @param [SchemaDefinition] definition
-      # @param [String] number
-      # @return [Dry::Monads::Success(SchemaVersion)]
-      def lookup(definition, number)
-        found = SchemaVersion.by_schema_definition(definition).by_number(number).first
-
-        return found if found
-
-        SchemaVersion.by_schema_definition(definition).build
       end
     end
   end

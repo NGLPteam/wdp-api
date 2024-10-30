@@ -1,6 +1,11 @@
 # frozen_string_literal: true
 
 module Templates
+  # @see Layouts::SupplementaryDefinition
+  # @see Templates::SupplementaryInstance
+  # @see Templates::Config::Template::Supplementary
+  # @see Templates::SlotMappings::SupplementaryDefinitionSlots
+  # @see Types::Templates::SupplementaryTemplateDefinitionType
   class SupplementaryDefinition < ApplicationRecord
     include HasEphemeralSystemSlug
     include TemplateDefinition
@@ -10,6 +15,7 @@ module Templates
     template_kind! :supplementary
 
     graphql_node_type_name "::Types::Templates::SupplementaryTemplateDefinitionType"
+
     pg_enum! :background, as: :supplementary_background, allow_blank: false, suffix: :background, default: "none"
 
     attribute :slots, ::Templates::SlotMappings::SupplementaryDefinitionSlots.to_type

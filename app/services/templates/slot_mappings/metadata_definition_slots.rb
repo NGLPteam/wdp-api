@@ -3,6 +3,8 @@
 module Templates
   module SlotMappings
     # @see Templates::MetadataDefinition
+    # @see Templates::Config::TemplateSlots::MetadataSlots
+    # @see Templates::SlotMappings::MetadataInstanceSlots
     class MetadataDefinitionSlots < AbstractDefinitionSlots
       instance_slots_klass Templates::SlotMappings::MetadataInstanceSlots
 

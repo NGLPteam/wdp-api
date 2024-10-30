@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 module Layouts
+  # @see Layouts::MetadataInstance
+  # @see Types::Layouts::MetadataLayoutDefinitionType
+  # @see Templates::MetadataDefinition
   class MetadataDefinition < ApplicationRecord
     include HasEphemeralSystemSlug
     include LayoutDefinition

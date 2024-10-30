@@ -3,6 +3,7 @@
 module Templates
   module SlotMappings
     # @see Templates::HeroInstance
+    # @see Templates::SlotMappings::HeroDefinitionSlots
     class HeroInstanceSlots < AbstractInstanceSlots
       inline! :header
       inline! :header_aside

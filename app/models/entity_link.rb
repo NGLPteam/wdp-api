@@ -7,6 +7,7 @@
 # fetching.
 class EntityLink < ApplicationRecord
   include HasSystemSlug
+  include ManualListTarget
   include MatchesScopes
   include SyncsEntities
   include TimestampScopes

@@ -23,6 +23,18 @@ class LayoutGenerator < Rails::Generators::NamedBase
     template "gql/instance.rb", Rails.root.join("app", "graphql", "types", "layouts", "#{file_name}_layout_instance_type.rb")
   end
 
+  def generate_config!
+    root = Rails.root.join("app", "services", "templates", "config")
+
+    layout_path = root.join("layout", "#{file_name}.rb")
+
+    templates_path = root.join("layout_templates", "#{file_name}_templates.rb")
+
+    template "config/layout.rb", layout_path
+
+    template "config/templates.rb", templates_path
+  end
+
   private
 
   def has_single_template?
@@ -31,6 +43,10 @@ class LayoutGenerator < Rails::Generators::NamedBase
 
   def layout_kind
     @layout_kind ||= class_name.underscore
+  end
+
+  def layout_record
+    @layout_record ||= ::Layout.find(layout_kind)
   end
 
   def template_kinds

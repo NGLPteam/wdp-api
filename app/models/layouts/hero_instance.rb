@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 module Layouts
+  # @see Layouts::HeroDefinition
+  # @see Types::Layouts::HeroLayoutInstanceType
+  # @see Templates::HeroInstance
   class HeroInstance < ApplicationRecord
     include HasEphemeralSystemSlug
     include LayoutInstance

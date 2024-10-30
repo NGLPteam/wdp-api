@@ -14,7 +14,7 @@ module Types
 
     value "MANUAL", value: "manual" do
       description <<~TEXT
-      Render links from a manual list set on each individual entity.
+      Render links from a manual list set on each individual entity. See `manualListName` for how this works.
       TEXT
     end
   end

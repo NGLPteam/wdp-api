@@ -1,0 +1,14 @@
+<%-
+  # vim: set ft=ruby.eruby nosmartindent noautoindent :
+-%>
+# frozen_string_literal: true
+
+module Templates
+  module Config
+    module Properties
+      class <%= class_name %> < ::Mappers::AbstractDryType
+        accepts_type! TemplateEnumProperty.find(<%= file_name.inspect %>).dry_type
+      end
+    end
+  end
+end

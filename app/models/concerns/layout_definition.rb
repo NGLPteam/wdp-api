@@ -10,6 +10,11 @@ module LayoutDefinition
   included do
     extend Dry::Core::ClassAttributes
 
+    has_many :manual_lists,
+      class_name: "Templates::ManualList",
+      as: :layout_definition,
+      dependent: :destroy
+
     defines :template_definition_names, type: Layouts::Types::Associations
 
     template_definition_names [].freeze
@@ -20,8 +25,20 @@ module LayoutDefinition
     scope :with_template_definitions, -> { includes(*template_definition_names) }
   end
 
+  # @see Layouts::Config::Exporter
+  # @return [Dry::Monads::Success(Templates::Config::Utility::AbstractLayout)]
+  monadic_matcher! def export(...)
+    call_operation("layouts.config.export", self, ...)
+  end
+
+  # @see Layouts::Definitions::Invalidate
+  # @see Layouts::Definitions::Invalidator
+  monadic_matcher! def invalidate_instances(...)
+    call_operation("layouts.definitions.invalidate", self, ...)
+  end
+
   # @see Layouts::Renderer
-  # @return [Dry::Monads::Success(TemplateInstance)]
+  # @return [Dry::Monads::Success(LayoutInstance)]
   monadic_matcher! def render(...)
     call_operation("layouts.render", self, ...)
   end

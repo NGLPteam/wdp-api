@@ -1,6 +1,11 @@
 # frozen_string_literal: true
 
 module Templates
+  # @see Layouts::MainDefinition
+  # @see Templates::PageListInstance
+  # @see Templates::Config::Template::PageList
+  # @see Templates::SlotMappings::PageListDefinitionSlots
+  # @see Types::Templates::PageListTemplateDefinitionType
   class PageListDefinition < ApplicationRecord
     include HasEphemeralSystemSlug
     include TemplateDefinition
@@ -10,6 +15,7 @@ module Templates
     template_kind! :page_list
 
     graphql_node_type_name "::Types::Templates::PageListTemplateDefinitionType"
+
     pg_enum! :background, as: :page_list_background, allow_blank: false, suffix: :background, default: "none"
 
     attribute :slots, ::Templates::SlotMappings::PageListDefinitionSlots.to_type

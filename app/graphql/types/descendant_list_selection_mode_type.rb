@@ -20,7 +20,13 @@ module Types
 
     value "MANUAL", value: "manual" do
       description <<~TEXT
-      Render descendants from a manual ordering set on each individual entity.
+      Render descendants from a manual ordering set on each individual entity. See `manualListName` for how this works.
+      TEXT
+    end
+
+    value "PROPERTY", value: "property" do
+      description <<~TEXT
+      Render entities from a schema property on the source entity.
       TEXT
     end
   end

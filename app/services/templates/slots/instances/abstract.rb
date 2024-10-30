@@ -19,6 +19,11 @@ module Templates
 
         attribute :valid, :boolean, default: false
 
+        # @return [String, nil]
+        def export_value
+          content if valid
+        end
+
         # @return [Templates::Types::SlotKind]
         def kind
           self.class.kind

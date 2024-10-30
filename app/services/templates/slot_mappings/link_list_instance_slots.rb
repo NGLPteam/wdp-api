@@ -3,6 +3,7 @@
 module Templates
   module SlotMappings
     # @see Templates::LinkListInstance
+    # @see Templates::SlotMappings::LinkListDefinitionSlots
     class LinkListInstanceSlots < AbstractInstanceSlots
       inline! :header
       inline! :header_aside

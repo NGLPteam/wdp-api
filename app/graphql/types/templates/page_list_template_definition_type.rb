@@ -14,6 +14,7 @@ module Types
 
       field :background, ::Types::PageListBackgroundType, null: true do
         description <<~TEXT
+        The background gradient to use for this template. Affects presentation.
         TEXT
       end
     end

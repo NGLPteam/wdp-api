@@ -14,11 +14,13 @@ module Types
 
       field :variant, ::Types::DetailVariantType, null: true do
         description <<~TEXT
+        The variant rendering mode to use for this template. Affects presentation.
         TEXT
       end
 
       field :background, ::Types::DetailBackgroundType, null: true do
         description <<~TEXT
+        The background gradient to use for this template. Affects presentation.
         TEXT
       end
 

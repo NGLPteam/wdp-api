@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<hero>
+  <templates>
+    <hero background="dark" enable-descendant-browsing="false" enable-descendant-search="false" list-contributors="false" show-basic-view-metrics="false" show-big-search-prompt="false" show-breadcrumbs="false" show-doi="true" show-hero-image="false" show-issn="false" show-sharing-link="false" show-split-display="false" show-thumbnail-image="false">
+      <slots>
+        <header>
+          <![CDATA[
+            {{ entity.title }}
+          ]]>
+        </header>
+        <header-aside/>
+        <header-sidebar/>
+        <header-summary>
+          <![CDATA[
+            <p>Welcome to this {{ schema.name }}.</p>
+          ]]>
+        </header-summary>
+        <subheader/>
+        <subheader-aside/>
+        <subheader-summary/>
+        <sidebar>
+          <![CDATA[
+            <ul>
+              <li>List</li>
+              <li>Of</li>
+              <li>Items</li>
+            </ul>
+          ]]>
+        </sidebar>
+        <metadata>
+          <![CDATA[
+            Published {{ props.published }}
+          ]]>
+        </metadata>
+        <summary>
+          <![CDATA[
+            {{ entity.summary }}
+          ]]>
+        </summary>
+        <call-to-action/>
+      </slots>
+    </hero>
+  </templates>
+</hero>

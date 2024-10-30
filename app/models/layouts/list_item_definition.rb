@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 module Layouts
+  # @see Layouts::ListItemInstance
+  # @see Types::Layouts::ListItemLayoutDefinitionType
+  # @see Templates::ListItemDefinition
   class ListItemDefinition < ApplicationRecord
     include HasEphemeralSystemSlug
     include LayoutDefinition

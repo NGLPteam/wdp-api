@@ -100,7 +100,7 @@ module Schemas
         mappings = child.children.map do |grandchild|
           name, version_map = mapping.to_version_map grandchild, namespace: ns_name
 
-          [name, version_map].map(&:presence).compact.presence
+          [name, version_map].compact_blank.presence
         end.compact
 
         namespace ns_name do

@@ -5,16 +5,13 @@
 #
 # @subsystem Schema
 class SchemaDefinition < ApplicationRecord
+  include Schemas::Static::Namespaced
   include TimestampScopes
 
   # @!attribute [r] declaration
   # The combination of {#namespace} and {#identifier}.
   # @return [String]
   attr_readonly :declaration
-
-  # Schemas in these namespaces are considered "core" and ship with NGLP, rather
-  # than being something custom created by end-users.
-  BUILTIN_NAMESPACES = %w[default nglp testing].freeze
 
   # @!attribute [r] kind
   # @return ["community", "collection", "item"]
@@ -29,14 +26,7 @@ class SchemaDefinition < ApplicationRecord
 
   has_many :entity_hierarchies, dependent: :delete_all, inverse_of: :schema_definition
 
-  scope :by_namespace, ->(namespace) { where(namespace:) }
-  scope :by_identifier, ->(identifier) { where(identifier:) }
   scope :by_kind, ->(kind) { where(kind:) }
-  scope :by_tuple, ->(namespace, identifier) { by_namespace(namespace).by_identifier(identifier) }
-
-  scope :builtin, -> { by_namespace(BUILTIN_NAMESPACES) }
-  scope :custom, -> { where.not(namespace: BUILTIN_NAMESPACES) }
-  scope :non_default, -> { where.not(namespace: %w[default testing]) }
 
   scope :in_default_order, -> { order(namespace: :asc, name: :asc) }
 
@@ -50,12 +40,12 @@ class SchemaDefinition < ApplicationRecord
 
   alias_attribute :system_slug, :declaration
 
-  def builtin?
-    namespace.in? BUILTIN_NAMESPACES
-  end
-
-  def custom?
-    namespace? && !builtin?
+  # Find or initialize a {SchemaVersion} for the provided `number`.
+  #
+  # @param [String] number
+  # @return [SchemaVersion]
+  def lookup(number)
+    schema_versions.where(number:).first_or_initialize
   end
 
   # @return [void]

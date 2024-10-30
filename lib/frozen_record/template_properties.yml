@@ -24,8 +24,14 @@
   name: selection_source
   property_kind_name: selection_source
 - template_kind: descendant_list
+  name: selection_source_ancestor_name
+  property_kind_name: schema_component
+  skip_configuration: true
+- template_kind: descendant_list
   name: selection_source_mode
   property_kind_name: selection_source_mode
+  skip_configuration: true
+  skip_declaration: true
 - template_kind: descendant_list
   name: selection_mode
   property_kind_name: selection_mode
@@ -38,8 +44,15 @@
   name: dynamic_ordering_definition
   property_kind_name: ordering_definition
 - template_kind: descendant_list
-  name: ordering_name
+  name: ordering_identifier
   property_kind_name: schema_component
+- template_kind: descendant_list
+  name: manual_list_name
+  property_kind_name: schema_component
+  default: manual
+- template_kind: descendant_list
+  name: selection_property_path
+  property_kind_name: schema_property_path
 - template_kind: descendant_list
   name: see_all_button_label
   property_kind_name: string
@@ -145,6 +158,12 @@
 - template_kind: link_list
   name: selection_source_mode
   property_kind_name: selection_source_mode
+  skip_configuration: true
+  skip_declaration: true
+- template_kind: link_list
+  name: selection_source_ancestor_name
+  property_kind_name: schema_component
+  skip_configuration: true
 - template_kind: link_list
   name: selection_mode
   property_kind_name: selection_mode
@@ -156,6 +175,10 @@
 - template_kind: link_list
   name: dynamic_ordering_definition
   property_kind_name: ordering_definition
+- template_kind: link_list
+  name: manual_list_name
+  property_kind_name: schema_component
+  default: manual
 - template_kind: link_list
   name: see_all_button_label
   property_kind_name: string
@@ -183,6 +206,36 @@
   property_kind_name: background
   enum_name: ordering_background
   default: none
+- template_kind: ordering
+  name: ordering_identifier
+  property_kind_name: schema_component
+- template_kind: ordering
+  name: ordering_source
+  property_kind_name: selection_source
+  default: parent
+- template_kind: ordering
+  name: ordering_source_mode
+  property_kind_name: selection_source_mode
+  default: parent
+  skip_configuration: true
+  skip_declaration: true
+- template_kind: ordering
+  name: ordering_source_ancestor_name
+  property_kind_name: schema_component
+  skip_configuration: true
+- template_kind: ordering
+  name: selection_source
+  property_kind_name: selection_source
+  default: self
+- template_kind: ordering
+  name: selection_source_ancestor_name
+  property_kind_name: schema_component
+  skip_configuration: true
+- template_kind: ordering
+  name: selection_source_mode
+  property_kind_name: selection_source_mode
+  skip_configuration: true
+  skip_declaration: true
 - template_kind: page_list
   name: background
   property_kind_name: background

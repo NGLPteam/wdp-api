@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 module Templates
+  # @see Layouts::NavigationInstance
+  # @see Templates::NavigationDefinition
+  # @see Templates::SlotMappings::NavigationInstanceSlots
+  # @see Types::Templates::NavigationTemplateInstanceType
   class NavigationInstance < ApplicationRecord
     include HasEphemeralSystemSlug
     include TemplateInstance

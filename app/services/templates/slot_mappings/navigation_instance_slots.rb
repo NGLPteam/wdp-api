@@ -3,6 +3,7 @@
 module Templates
   module SlotMappings
     # @see Templates::NavigationInstance
+    # @see Templates::SlotMappings::NavigationDefinitionSlots
     class NavigationInstanceSlots < AbstractInstanceSlots
       inline! :entity_label
     end

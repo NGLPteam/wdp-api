@@ -5,8 +5,9 @@ module Schemas
     # Reload the static configuration for a specific {SchemaVersion}.
     class Reload
       include Dry::Monads[:do, :result]
+      include Schemas::Static::TracksLayoutDefinitions
+
       include MeruAPI::Deps[
-        fetch_static: "schemas.versions.fetch_static",
         load_version: "schemas.static.load_version"
       ]
 
@@ -16,9 +17,15 @@ module Schemas
       #   {SchemaVersion}.
       # @return [Dry::Monads::Success(SchemaVersion)]
       def call(schema_version)
-        static_version = yield fetch_static.call schema_version
+        # :nocov:
+        return Failure[:not_builtin] unless schema_version.builtin?
+        # :nocov:
 
-        updated_version = yield load_version.call schema_version.schema_definition, static_version
+        static_version = schema_version.static_record
+
+        updated_version = capture_layout_definitions_to_invalidate! do
+          yield load_version.call schema_version.schema_definition, static_version
+        end
 
         schema_version.reload
 

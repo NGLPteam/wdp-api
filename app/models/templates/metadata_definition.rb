@@ -1,6 +1,11 @@
 # frozen_string_literal: true
 
 module Templates
+  # @see Layouts::MetadataDefinition
+  # @see Templates::MetadataInstance
+  # @see Templates::Config::Template::Metadata
+  # @see Templates::SlotMappings::MetadataDefinitionSlots
+  # @see Types::Templates::MetadataTemplateDefinitionType
   class MetadataDefinition < ApplicationRecord
     include HasEphemeralSystemSlug
     include TemplateDefinition
@@ -10,6 +15,7 @@ module Templates
     template_kind! :metadata
 
     graphql_node_type_name "::Types::Templates::MetadataTemplateDefinitionType"
+
     pg_enum! :background, as: :metadata_background, allow_blank: false, suffix: :background, default: "none"
 
     attribute :slots, ::Templates::SlotMappings::MetadataDefinitionSlots.to_type

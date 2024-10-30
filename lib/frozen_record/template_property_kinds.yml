@@ -12,12 +12,15 @@
   gql_type_name: "Types::OrderingDefinitionType"
 - name: schema_component
   dry_type_key: "schema_component"
-  gql_type_name: String
+  gql_type_name: "Types::SchemaComponentType"
+- name: schema_property_path
+  dry_type_key: "schema_property_path"
+  gql_type_name: "Types::SchemaPropertyPathType"
 - name: selection_mode
   enum_category: "selection_mode"
 - name: selection_source
   dry_type_key: "selection_source"
-  gql_type_name: String
+  gql_type_name: "::Types::TemplateSelectionSourceType"
 - name: selection_source_mode
   enum_name: selection_source_mode
 - name: string

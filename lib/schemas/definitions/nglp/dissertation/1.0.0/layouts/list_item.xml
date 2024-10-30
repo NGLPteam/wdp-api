@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<list-item>
+  <templates>
+    <list-item>
+      <slots>
+        <header>
+          <![CDATA[
+            {{ entity.title }}
+          ]]>
+        </header>
+        <subheader>
+          <![CDATA[
+            {{ entity.subtitle }}
+          ]]>
+        </subheader>
+        <description/>
+        <meta-a>
+          <![CDATA[
+            Published {{ props.published }}
+          ]]>
+        </meta-a>
+        <meta-b>
+          <![CDATA[
+            Meta B
+          ]]>
+        </meta-b>
+        <context-a/>
+        <context-b/>
+        <context-c/>
+      </slots>
+    </list-item>
+  </templates>
+</list-item>

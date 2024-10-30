@@ -16,6 +16,14 @@ module Types
 
     field :layout_kind, Types::LayoutKindType, null: false
 
+    field :entity, Types::AnyEntityType, null: false do
+      description <<~TEXT
+      The associated entity for this layout instance.
+      TEXT
+    end
+
+    load_association! :entity
+
     load_association! :layout_definition
 
     def templates

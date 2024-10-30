@@ -14682,10 +14682,10 @@
   default_function: 
   has_default: false
   virtual: false
-- id: Templates::DescendantListDefinition#ordering_name
+- id: Templates::DescendantListDefinition#ordering_identifier
   model_name: Templates::DescendantListDefinition
   table_name: templates_descendant_list_definitions
-  name: ordering_name
+  name: ordering_identifier
   type: text
   'null': true
   sql_type_metadata:
@@ -14733,6 +14733,45 @@
   default: 'false'
   default_function: 
   has_default: true
+  virtual: false
+- id: Templates::DescendantListDefinition#manual_list_name
+  model_name: Templates::DescendantListDefinition
+  table_name: templates_descendant_list_definitions
+  name: manual_list_name
+  type: text
+  'null': false
+  sql_type_metadata:
+    sql_type: text
+    type: text
+  default: manual
+  default_function: 
+  has_default: true
+  virtual: false
+- id: Templates::DescendantListDefinition#selection_source_ancestor_name
+  model_name: Templates::DescendantListDefinition
+  table_name: templates_descendant_list_definitions
+  name: selection_source_ancestor_name
+  type: text
+  'null': true
+  sql_type_metadata:
+    sql_type: text
+    type: text
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: Templates::DescendantListDefinition#selection_property_path
+  model_name: Templates::DescendantListDefinition
+  table_name: templates_descendant_list_definitions
+  name: selection_property_path
+  type: text
+  'null': true
+  sql_type_metadata:
+    sql_type: text
+    type: text
+  default: 
+  default_function: 
+  has_default: false
   virtual: false
 - id: Templates::DescendantListInstance#id
   model_name: Templates::DescendantListInstance
@@ -16066,6 +16105,32 @@
   default_function: 
   has_default: true
   virtual: false
+- id: Templates::LinkListDefinition#manual_list_name
+  model_name: Templates::LinkListDefinition
+  table_name: templates_link_list_definitions
+  name: manual_list_name
+  type: text
+  'null': false
+  sql_type_metadata:
+    sql_type: text
+    type: text
+  default: manual
+  default_function: 
+  has_default: true
+  virtual: false
+- id: Templates::LinkListDefinition#selection_source_ancestor_name
+  model_name: Templates::LinkListDefinition
+  table_name: templates_link_list_definitions
+  name: selection_source_ancestor_name
+  type: text
+  'null': true
+  sql_type_metadata:
+    sql_type: text
+    type: text
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
 - id: Templates::LinkListInstance#id
   model_name: Templates::LinkListInstance
   table_name: templates_link_list_instances
@@ -16580,6 +16645,271 @@
     type: jsonb
   default: "{}"
   default_function: 
+  has_default: true
+  virtual: false
+- id: Templates::ManualList#id
+  model_name: Templates::ManualList
+  table_name: templates_manual_lists
+  name: id
+  type: uuid
+  'null': false
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default: 
+  default_function: gen_random_uuid()
+  has_default: true
+  virtual: false
+- id: Templates::ManualList#layout_definition_type
+  model_name: Templates::ManualList
+  table_name: templates_manual_lists
+  name: layout_definition_type
+  type: string
+  'null': false
+  sql_type_metadata:
+    sql_type: character varying
+    type: string
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: Templates::ManualList#layout_definition_id
+  model_name: Templates::ManualList
+  table_name: templates_manual_lists
+  name: layout_definition_id
+  type: uuid
+  'null': false
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: Templates::ManualList#template_definition_type
+  model_name: Templates::ManualList
+  table_name: templates_manual_lists
+  name: template_definition_type
+  type: string
+  'null': false
+  sql_type_metadata:
+    sql_type: character varying
+    type: string
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: Templates::ManualList#template_definition_id
+  model_name: Templates::ManualList
+  table_name: templates_manual_lists
+  name: template_definition_id
+  type: uuid
+  'null': false
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: Templates::ManualList#layout_kind
+  model_name: Templates::ManualList
+  table_name: templates_manual_lists
+  name: layout_kind
+  type: enum
+  'null': false
+  sql_type_metadata:
+    sql_type: layout_kind
+    type: enum
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: Templates::ManualList#template_kind
+  model_name: Templates::ManualList
+  table_name: templates_manual_lists
+  name: template_kind
+  type: enum
+  'null': false
+  sql_type_metadata:
+    sql_type: template_kind
+    type: enum
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: Templates::ManualList#list_name
+  model_name: Templates::ManualList
+  table_name: templates_manual_lists
+  name: list_name
+  type: text
+  'null': false
+  sql_type_metadata:
+    sql_type: text
+    type: text
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: Templates::ManualList#created_at
+  model_name: Templates::ManualList
+  table_name: templates_manual_lists
+  name: created_at
+  type: datetime
+  'null': false
+  sql_type_metadata:
+    sql_type: timestamp(6) without time zone
+    type: datetime
+    precision: 6
+  default: 
+  default_function: CURRENT_TIMESTAMP
+  has_default: true
+  virtual: false
+- id: Templates::ManualList#updated_at
+  model_name: Templates::ManualList
+  table_name: templates_manual_lists
+  name: updated_at
+  type: datetime
+  'null': false
+  sql_type_metadata:
+    sql_type: timestamp(6) without time zone
+    type: datetime
+    precision: 6
+  default: 
+  default_function: CURRENT_TIMESTAMP
+  has_default: true
+  virtual: false
+- id: Templates::ManualListEntry#id
+  model_name: Templates::ManualListEntry
+  table_name: templates_manual_list_entries
+  name: id
+  type: uuid
+  'null': false
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default: 
+  default_function: gen_random_uuid()
+  has_default: true
+  virtual: false
+- id: Templates::ManualListEntry#source_type
+  model_name: Templates::ManualListEntry
+  table_name: templates_manual_list_entries
+  name: source_type
+  type: string
+  'null': false
+  sql_type_metadata:
+    sql_type: character varying
+    type: string
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: Templates::ManualListEntry#source_id
+  model_name: Templates::ManualListEntry
+  table_name: templates_manual_list_entries
+  name: source_id
+  type: uuid
+  'null': false
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: Templates::ManualListEntry#target_type
+  model_name: Templates::ManualListEntry
+  table_name: templates_manual_list_entries
+  name: target_type
+  type: string
+  'null': false
+  sql_type_metadata:
+    sql_type: character varying
+    type: string
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: Templates::ManualListEntry#target_id
+  model_name: Templates::ManualListEntry
+  table_name: templates_manual_list_entries
+  name: target_id
+  type: uuid
+  'null': false
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: Templates::ManualListEntry#template_kind
+  model_name: Templates::ManualListEntry
+  table_name: templates_manual_list_entries
+  name: template_kind
+  type: enum
+  'null': false
+  sql_type_metadata:
+    sql_type: template_kind
+    type: enum
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: Templates::ManualListEntry#list_name
+  model_name: Templates::ManualListEntry
+  table_name: templates_manual_list_entries
+  name: list_name
+  type: text
+  'null': false
+  sql_type_metadata:
+    sql_type: text
+    type: text
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: Templates::ManualListEntry#position
+  model_name: Templates::ManualListEntry
+  table_name: templates_manual_list_entries
+  name: position
+  type: integer
+  'null': true
+  sql_type_metadata:
+    sql_type: integer
+    type: integer
+    limit: 4
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: Templates::ManualListEntry#created_at
+  model_name: Templates::ManualListEntry
+  table_name: templates_manual_list_entries
+  name: created_at
+  type: datetime
+  'null': false
+  sql_type_metadata:
+    sql_type: timestamp(6) without time zone
+    type: datetime
+    precision: 6
+  default: 
+  default_function: CURRENT_TIMESTAMP
+  has_default: true
+  virtual: false
+- id: Templates::ManualListEntry#updated_at
+  model_name: Templates::ManualListEntry
+  table_name: templates_manual_list_entries
+  name: updated_at
+  type: datetime
+  'null': false
+  sql_type_metadata:
+    sql_type: timestamp(6) without time zone
+    type: datetime
+    precision: 6
+  default: 
+  default_function: CURRENT_TIMESTAMP
   has_default: true
   virtual: false
 - id: Templates::MetadataDefinition#id
@@ -17377,6 +17707,97 @@
   default_function: 
   has_default: true
   virtual: false
+- id: Templates::OrderingDefinition#ordering_source_mode
+  model_name: Templates::OrderingDefinition
+  table_name: templates_ordering_definitions
+  name: ordering_source_mode
+  type: enum
+  'null': false
+  sql_type_metadata:
+    sql_type: selection_source_mode
+    type: enum
+  default: parent
+  default_function: 
+  has_default: true
+  virtual: false
+- id: Templates::OrderingDefinition#ordering_source
+  model_name: Templates::OrderingDefinition
+  table_name: templates_ordering_definitions
+  name: ordering_source
+  type: text
+  'null': false
+  sql_type_metadata:
+    sql_type: text
+    type: text
+  default: parent
+  default_function: 
+  has_default: true
+  virtual: false
+- id: Templates::OrderingDefinition#ordering_source_ancestor_name
+  model_name: Templates::OrderingDefinition
+  table_name: templates_ordering_definitions
+  name: ordering_source_ancestor_name
+  type: text
+  'null': true
+  sql_type_metadata:
+    sql_type: text
+    type: text
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: Templates::OrderingDefinition#selection_source_mode
+  model_name: Templates::OrderingDefinition
+  table_name: templates_ordering_definitions
+  name: selection_source_mode
+  type: enum
+  'null': false
+  sql_type_metadata:
+    sql_type: selection_source_mode
+    type: enum
+  default: self
+  default_function: 
+  has_default: true
+  virtual: false
+- id: Templates::OrderingDefinition#selection_source
+  model_name: Templates::OrderingDefinition
+  table_name: templates_ordering_definitions
+  name: selection_source
+  type: text
+  'null': false
+  sql_type_metadata:
+    sql_type: text
+    type: text
+  default: self
+  default_function: 
+  has_default: true
+  virtual: false
+- id: Templates::OrderingDefinition#selection_source_ancestor_name
+  model_name: Templates::OrderingDefinition
+  table_name: templates_ordering_definitions
+  name: selection_source_ancestor_name
+  type: text
+  'null': true
+  sql_type_metadata:
+    sql_type: text
+    type: text
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: Templates::OrderingDefinition#ordering_identifier
+  model_name: Templates::OrderingDefinition
+  table_name: templates_ordering_definitions
+  name: ordering_identifier
+  type: text
+  'null': true
+  sql_type_metadata:
+    sql_type: text
+    type: text
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
 - id: Templates::OrderingInstance#id
   model_name: Templates::OrderingInstance
   table_name: templates_ordering_instances
@@ -17574,6 +17995,32 @@
   default: "{}"
   default_function: 
   has_default: true
+  virtual: false
+- id: Templates::OrderingInstance#ordering_id
+  model_name: Templates::OrderingInstance
+  table_name: templates_ordering_instances
+  name: ordering_id
+  type: uuid
+  'null': true
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: Templates::OrderingInstance#ordering_entry_id
+  model_name: Templates::OrderingInstance
+  table_name: templates_ordering_instances
+  name: ordering_entry_id
+  type: uuid
+  'null': true
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default: 
+  default_function: 
+  has_default: false
   virtual: false
 - id: Templates::PageListDefinition#id
   model_name: Templates::PageListDefinition

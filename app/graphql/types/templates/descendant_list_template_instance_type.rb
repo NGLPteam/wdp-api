@@ -5,6 +5,7 @@ module Types
     # @see ::Templates::DescendantListInstance
     class DescendantListTemplateInstanceType < AbstractModel
       implements ::Types::TemplateInstanceType
+      implements ::Types::TemplateHasEntityListType
 
       field :definition, ::Types::Templates::DescendantListTemplateDefinitionType, null: false do
         description <<~TEXT

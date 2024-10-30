@@ -1,9 +1,14 @@
 # frozen_string_literal: true
 
 module Templates
+  # @see Layouts::MainInstance
+  # @see Templates::DescendantListDefinition
+  # @see Templates::SlotMappings::DescendantListInstanceSlots
+  # @see Types::Templates::DescendantListTemplateInstanceType
   class DescendantListInstance < ApplicationRecord
     include HasEphemeralSystemSlug
     include TemplateInstance
+    include Templates::Instances::HasEntityList
     include TimestampScopes
 
     layout_kind! :main

@@ -1,15 +1,22 @@
 # frozen_string_literal: true
 
 module Templates
+  # @see Layouts::MainDefinition
+  # @see Templates::OrderingInstance
+  # @see Templates::Config::Template::Ordering
+  # @see Templates::SlotMappings::OrderingDefinitionSlots
+  # @see Types::Templates::OrderingTemplateDefinitionType
   class OrderingDefinition < ApplicationRecord
     include HasEphemeralSystemSlug
     include TemplateDefinition
+    include Templates::Definitions::HasOrderingPair
     include TimestampScopes
 
     layout_kind! :main
     template_kind! :ordering
 
     graphql_node_type_name "::Types::Templates::OrderingTemplateDefinitionType"
+
     pg_enum! :background, as: :ordering_background, allow_blank: false, suffix: :background, default: "none"
 
     attribute :slots, ::Templates::SlotMappings::OrderingDefinitionSlots.to_type

@@ -3,6 +3,7 @@
 module Templates
   module SlotMappings
     # @see Templates::ContributorListInstance
+    # @see Templates::SlotMappings::ContributorListDefinitionSlots
     class ContributorListInstanceSlots < AbstractInstanceSlots
       inline! :header
     end

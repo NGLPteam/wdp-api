@@ -5,7 +5,8 @@
 
 module Templates
   module SlotMappings
-    # @see Templates::<%= class_name %>Instance
+    # @see <%= template_record.instance_klass %>
+    # @see <%= template_record.slot_definition_mapping_klass_name %>
     class <%= class_name %>InstanceSlots < AbstractInstanceSlots
       <%- ::TemplateSlot.for_template(template_kind).each do |slot| -%>
       <%= :"#{slot.slot_kind}!" %> <%= slot.name.to_sym.inspect %>

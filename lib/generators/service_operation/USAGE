@@ -1,0 +1,17 @@
+Description:
+    Create a service and operation pair using conventions.
+
+    The operation class will be a SimpleServiceOperation that
+    simply passes all arguments passed to `#call` on to the
+    initializer for the service.
+
+    The service will inherit from `Support::HookBased::Actor`
+    and use `standard_execution!`, with a `prepare!` hook and
+    its dry-initializer block prepopulated to save time.
+
+Example:
+    bin/rails generate service_operation Some::Namespace Create Creator
+
+    This will create:
+        app/operations/some/namespace/create.rb
+        app/services/some/namespace/creator.rb

@@ -8,6 +8,7 @@
 # @subsystem Schema
 class SchemaVersion < ApplicationRecord
   include Schemas::Properties::CompilesToSchema
+  include Schemas::Static::Namespaced
   include ExposesSchemaProperties
   include SchemaVersionTemplating
   include TimestampScopes
@@ -54,10 +55,6 @@ class SchemaVersion < ApplicationRecord
   # @return [Schemas::Versions::Configuration]
   attribute :configuration, Schemas::Versions::Configuration.to_type, default: -> { {} }
 
-  scope :by_namespace, ->(namespace) { where(namespace:) }
-  scope :by_identifier, ->(identifier) { where(identifier:) }
-  scope :by_tuple, ->(namespace, identifier) { by_namespace(namespace).by_identifier(identifier) }
-
   scope :by_number, ->(number) { where(number:) }
   scope :by_schema_definition, ->(schema_definition) { where(schema_definition:) if schema_definition.present? }
   scope :by_kind, ->(kind) { joins(:schema_definition).merge(SchemaDefinition.by_kind(kind)) }
@@ -79,8 +76,6 @@ class SchemaVersion < ApplicationRecord
   after_save :extract_ancestors!
 
   after_save :extract_properties!
-
-  after_save :populate_root_layouts!
 
   validates :configuration, store_model: true
 
@@ -109,12 +104,6 @@ class SchemaVersion < ApplicationRecord
 
   monadic_operation! def maintain_associations
     call_operation("schemas.versions.maintain_associations", self)
-  end
-
-  # @see Schemas::Versions::PopulateRootLayouts
-  # @see Schemas::Versions::RootLayoutsPopulator
-  monadic_operation! def populate_root_layouts
-    call_operation("schemas.versions.populate_root_layouts", self)
   end
 
   def read_searchable_properties

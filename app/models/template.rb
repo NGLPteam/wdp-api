@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class Template < Support::FrozenRecordHelpers::AbstractRecord
+  include ActiveModel::Validations
+  include Dry::Core::Equalizer.new(:template_kind)
   include Dry::Core::Memoizable
 
   schema!(types: ::Templates::TypeRegistry) do
@@ -8,14 +10,23 @@ class Template < Support::FrozenRecordHelpers::AbstractRecord
     required(:layout_kind).filled(:layout_kind)
     required(:description).maybe(:stripped_string)
     required(:has_background).value(:bool)
+    required(:has_entity_list).value(:bool)
+    required(:has_ordering_pair).value(:bool)
     required(:has_variant).value(:bool)
+    required(:root_tag).filled(:string)
   end
 
   default_attributes!(
     description: nil,
     has_background: true,
+    has_entity_list: false,
+    has_ordering_pair: false,
     has_variant: false,
   )
+
+  calculates! :root_tag do |record|
+    record["template_kind"].dasherize
+  end
 
   TEMPLATING_ROOT = Rails.root.join("lib", "templating")
 
@@ -25,117 +36,145 @@ class Template < Support::FrozenRecordHelpers::AbstractRecord
 
   alias_attribute :kind, :template_kind
 
-  memoize def definition_klass
-    definition_klass_name.constantize
-  end
+  validates :definition_klass, :instance_klass, presence: true
 
-  memoize def definition_klass_name
-    "templates/#{template_kind}_definition".classify
-  end
-
-  memoize def instance_klass
-    instance_klass_name.constantize
-  end
-
-  memoize def instance_klass_name
-    "templates/#{template_kind}_instance".classify
-  end
+  validate :all_props_accounted_for!
 
   # @return [Layout]
   memoize def layout
     Layout.find layout_kind
   end
 
-  # @!group Definitions
-
-  # @return [void]
-  def check_definitions!
-    definitions_root.mkpath
-
-    slot_definitions_root.mkpath
-
-    models = model_validator
-
-    unless models.valid?
-      models.errors.full_messages.each do |msg|
-        warn msg
-      end
-    end
+  # @return [<TemplateProperty>]
+  memoize def properties
+    TemplateProperty.for_template(template_kind).to_a
   end
 
-  # @return [Templates::Validators::ModelValidator]
-  def model_validator
-    Templates::Validators::ModelValidator.new(self)
+  memoize def property_names
+    properties.map(&:name)
   end
 
-  memoize def definitions_root
-    TEMPLATING_ROOT.join("definitions", template_kind)
+  memoize def property_names_for_configuration
+    properties.reject(&:skip_configuration?).map(&:name)
   end
 
-  memoize def config_definition
-    raw_content = config_definition_path.read
+  # @return [<TemplateSlot>]
+  memoize def slots
+    TemplateSlot.for_template(template_kind).to_a
+  end
 
-    ::Templates::Definitions::Configuration.from_xml(raw_content).tap do |config|
+  memoize def slot_names
+    slots.map(&:name)
+  end
+
+  # @!group Main Classes
+
+  klass_name_pair! :definition do
+    "templates/#{template_kind}_definition".classify
+  end
+
+  klass_name_pair! :instance do
+    "templates/#{template_kind}_instance".classify
+  end
+
+  klass_name_pair! :gql_definition do
+    "types/templates/#{template_kind}_template_definition_type".classify
+  end
+
+  klass_name_pair! :gql_instance do
+    "types/templates/#{template_kind}_template_instance_type".classify
+  end
+
+  klass_name_pair! :slot_definition_mapping do
+    "templates/slot_mappings/#{template_kind}_definition_slots".camelize(:upper)
+  end
+
+  klass_name_pair! :slot_instance_mapping do
+    "templates/slot_mappings/#{template_kind}_instance_slots".camelize(:upper)
+  end
+
+  # @!endgroup
+
+  # @!group Config
+
+  klass_name_pair! :config do
+    "templates/config/template/#{template_kind}".classify
+  end
+
+  klass_name_pair! :config_slots do
+    "templates/config/template_slots/#{template_kind}_slots".camelize(:upper)
+  end
+
+  # @!endgroup
+
+  # @!group Composition
+
+  memoize def composition_root
+    TEMPLATING_ROOT.join("compositions", template_kind)
+  end
+
+  def composition_configuration
+    raw_content = composition_configuration_path.read
+
+    ::Templates::Compositions::Configuration.from_xml(raw_content).tap do |config|
       config.template_kind = template_kind
     end
   end
 
-  memoize def defined_props
-    config_definition.props
+  memoize def composition_configuration_path
+    composition_root.join("config.xml")
   end
 
-  memoize def defined_prop_names
-    defined_props.map(&:name).sort
+  # @return [Templates::Compositions::Configuration]
+  def to_composition
+    Templates::Compositions::Configuration.from_hash(to_composition_hash)
   end
 
-  memoize def defined_prop_kinds
-    defined_props.map(&:kind).tally
+  def to_composition_hash
+    slice(
+      :template_kind,
+      :layout_kind,
+      :description,
+      :has_background,
+      :has_variant
+    ).merge(
+      props: properties.map(&:to_composition_hash),
+      slots: slots.map(&:to_composition_hash)
+    ).stringify_keys
   end
 
-  memoize def config_definition_path
-    definitions_root.join("config.xml")
+  def to_composition_xml
+    to_composition.to_xml(pretty: true, declaration: true, encoding: true)
   end
 
-  memoize def slot_definitions_root
-    definitions_root.join("slots")
-  end
+  # @return [void]
+  def write_composition!
+    composition_root.mkpath
 
-  # @return [<Templates::Definitions::Slot>]
-  memoize def slot_definitions
-    slot_definitions_root.glob("*.xml").map do |path|
-      content = path.read
-
-      name = path.basename(".xml").to_s
-
-      ::Templates::Definitions::Slot.from_xml(content).tap do |definition|
-        definition.name = name
-        definition.template_kind = template_kind
-      end
+    composition_configuration_path.open("wb+") do |f|
+      f.write to_composition_xml
     end
   end
 
   # @!endgroup
 
+  private
+
+  # @return [void]
+  def all_props_accounted_for!
+    # :nocov:
+    properties.each do |prop|
+      next if prop.exists_on_definition?
+
+      errors.add :base, "#{definition_klass} is missing property: #{prop.name}"
+    end
+    # :nocov:
+  end
+
   class << self
     # @return [void]
-    def check_definitions!
-      each(&:check_definitions!)
-    end
-
-    # @return [<Hash>]
-    def derive_properties
-      Template.order(template_kind: :asc).each_with_object([]) do |tpl, props|
-        base = { template_kind: tpl.template_kind }.stringify_keys
-
-        tpl.defined_props.each do |prop|
-          props << base.merge(prop.to_record)
-        end
-      end
-    end
-
-    # @return [String]
-    def derive_properties_yaml
-      derive_properties.to_yaml
+    def write_compositions!
+      each(&:write_composition!)
     end
   end
 end

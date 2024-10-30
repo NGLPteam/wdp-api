@@ -1,0 +1,82 @@
+---
+en:
+  template_properties:
+    _common:
+      background:
+        description: |
+          The background gradient to use for this template. Affects presentation.
+      dynamic_ordering_definition:
+        description: |
+          When `selectionMode` is set to `DYNAMIC`, this uses the same basic structure
+          as schemas to define a dynamic ordering that is resolved at runtime and based
+          on the `selectionSource`.
+      manual_list_name:
+        description: |
+          When `selectionMode` is set to `MANUAL`, the purpose of this property
+          is to specify a name under which all the manual selections (per entity)
+          will be stored. This allows a layout to have multiple templates of the
+          same type using different lists, that will persist across rearrangements
+          of the layout _without_ losing connections between entities.
+      selection_limit:
+        description: |
+          Regardless of `selectionMode`, this limit will be applied on whatever resulting
+          list of entities are produced, so that only up to that amount of entities are
+          rendered in the template proper.
+      selection_source:
+        description: |
+          When selecting entities based on `selectionMode`, this property determines
+          which entity (relevant to the rendering entity) should be used for lookups.
+
+          By default, it is `self`, which means the rendering entity itself.
+
+          It can also support things like `ancestor.journal`, `ancestor.issue`, etc.,
+          in order to render a list of values in its parent.
+      selection_source_mode:
+        description: |
+          An enum representing what mode `selectionSource` is in. Not directly set,
+          it is used internally for lookups.
+      selection_property_path:
+        description: |
+          When `selectionMode` is set to `PROPERTY`, this should be set to the full path
+          for a given schema property on the associated `selectionSource`
+      variant:
+        description: |
+          The variant rendering mode to use for this template. Affects presentation.
+    contributor_list:
+      limit:
+        description: |
+          Limit the number of contributors for this template.
+    descendant_list:
+      ordering_identifier:
+        description: |
+          When `selectionMode` is set to `NAMED`, this will look up the named ordering
+          on the resolved `selectionSource` and render up to `selectionLimit` entities.
+    ordering:
+      ordering_identifier:
+        description: |
+          The identifier for the ordering to derive next/prev siblings from.
+
+          Refer to `orderingSource` and `selectionSource` for more details.
+      ordering_source:
+        description: |
+          A reference to the entity that contains an ordering identified by `orderingIdentifier`.
+          It operates exactly like `selectionSource`. See that property for more documentation.
+
+          **Note**: While `self` is allowed here, it only makes sense if the rendering entity
+          is contained in one of its own orderings, which doesn't happen normally. The template
+          will still render, but it likely won't find siblings.
+      selection_source:
+        description: |
+          What entity to use for detecting the positional prev/next siblings.
+
+          By default, it is `self`. However, it can be overridden for creating templates that
+          navigate through parent issues, volumes, journals, etc. For instance, an article could
+          create an `<ordering />` template that has the following properties set:
+
+          * `selectionSource`: `"ancestors.issue"`
+          * `orderingSource`: `"ancestors.journal"`
+          * `orderingIdentifier`: `"issues"`
+
+          This would use the _journal's_ `issues` ordering to navigate through the article's
+          associated `issues`, and provide a quick way to navigate through varying levels of
+          the upper hierarchy from lower points in the tree.

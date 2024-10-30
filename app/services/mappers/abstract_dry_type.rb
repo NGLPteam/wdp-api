@@ -32,7 +32,7 @@ module Mappers
       # @param [#to_s] value a potential value for the associated {.dry_type}.
       # @return [Object] one of the accepted enum values
       def cast(value)
-        return default_value if value.blank?
+        return default_value if value != false && value.blank?
 
         dry_type[value]
       end
