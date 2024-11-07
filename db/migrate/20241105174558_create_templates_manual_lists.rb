@@ -7,18 +7,6 @@ class CreateTemplatesManualLists < ActiveRecord::Migration[7.0]
   ].freeze
 
   def change
-    reversible do |dir|
-      dir.up do
-        execute <<~SQL
-        ALTER TYPE descendant_list_selection_mode ADD VALUE IF NOT EXISTS 'property';
-        SQL
-
-        execute <<~SQL
-        ALTER TYPE selection_source_mode ADD VALUE IF NOT EXISTS 'parent';
-        SQL
-      end
-    end
-
     rename_column :templates_descendant_list_definitions, :ordering_name, :ordering_identifier
 
     TABLES.each do |table|
