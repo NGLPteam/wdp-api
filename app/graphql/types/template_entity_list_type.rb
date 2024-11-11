@@ -12,6 +12,11 @@ module Types
 
     This provides access to that list, as well as a shortcut to each entity's
     associated `ListItemLayoutInstance`.
+
+    **note** It's possible that entities could match the parameters of the list
+    but be skipped because they have no layouts (yet). This is intentional behavior,
+    and subsequent fetches should see the list populated as soon as the descendant
+    entities layouts have rendered.
     TEXT
 
     field :count, Int, null: false do
@@ -26,7 +31,7 @@ module Types
       TEXT
     end
 
-    field :entities, ["::Types::AnyEntityType", { null: false }], null: false do
+    field :entities, ["::Types::AnyEntityType", { null: false }], null: false, method: :valid_entities do
       description <<~TEXT
       The actual entity records within this list.
 

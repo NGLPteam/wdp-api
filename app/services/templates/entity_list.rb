@@ -18,7 +18,7 @@ module Templates
       option :entities, Templates::Types::Entities, default: proc { EMPTY_ARRAY }
     end
 
-    delegate :each, to: :entities
+    delegate :each, to: :valid_entities
 
     alias records entities
 
@@ -35,16 +35,26 @@ module Templates
     # @return [<Layouts::ListItemInstance>]
     attr_reader :list_item_layouts
 
+    # {#entities} that have valid list item layouts.
+    #
+    # It's possible for very new entities that have just been harvested
+    # to not have layouts yet, and we want to skip those entirely.
+    #
+    # @return [<HierarchicalEntity>]
+    attr_reader :valid_entities
+
     def initialize(...)
       super
 
       load_list_item_layouts!
 
-      @list_item_layouts = entities.map(&:list_item_layout_instance)
+      @valid_entities = entities.select { _1.list_item_layout_instance.present? }
 
-      @count = entities.size
+      @list_item_layouts = valid_entities.map(&:list_item_layout_instance).compact
 
-      @empty = entities.blank?
+      @count = valid_entities.size
+
+      @empty = valid_entities.blank?
     end
 
     private
@@ -54,23 +64,19 @@ module Templates
       fetch_or_store :built_associations do
         template_instance = list_item_template_instances = [
           :entity,
-          {
-            template_definition: [
-              :entity
-            ],
-          },
+          :template_definition,
         ].freeze
 
         [
           {
-            list_item_layout_instance: {
-              entity: true,
-              layout_definition: {
-                entity: true
-              },
-              template_instance:,
-              list_item_template_instances:,
-            }
+            list_item_layout_instance: [
+              :entity,
+              :layout_definition,
+              {
+                template_instance:,
+                list_item_template_instances:,
+              }
+            ],
           }
         ].freeze
       end

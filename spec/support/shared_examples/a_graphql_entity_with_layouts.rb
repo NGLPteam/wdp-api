@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 RSpec.shared_examples_for "a graphql entity with layouts" do
+  let_it_be(:manual_list_targets) do
+    FactoryBot.create_list(:item, 2)
+  end
+
   let(:entity) { raise "entity must be set" }
 
   let(:slug) { entity.system_slug }
@@ -178,8 +182,24 @@ RSpec.shared_examples_for "a graphql entity with layouts" do
     fragment HasEntityListFragment on TemplateHasEntityList {
       entityList {
         count
+        empty
         entities {
           ... AnyEntityFragment
+        }
+
+        listItemLayouts {
+          id
+
+          definition: layoutDefinition {
+            id
+          }
+
+          ... LayoutInstanceFragment
+
+          template {
+            ... TemplateInstanceFragment
+          }
+
         }
       }
     }
@@ -221,7 +241,15 @@ RSpec.shared_examples_for "a graphql entity with layouts" do
           lyts.prop :main do |main|
             main[:last_rendered_at] = be_present
 
-            main[:templates] = be_present
+            main[:templates] = all(satisfy("main template looks okay") do |template|
+              case template["__typename"]
+              when "DescendantListTemplateInstance"
+                # Only one of the list items should have a layout.
+                template.dig("entity_list", "count") == 1
+              else
+                true
+              end
+            end)
           end
         end
       end
@@ -229,6 +257,10 @@ RSpec.shared_examples_for "a graphql entity with layouts" do
   end
 
   before do
+    manual_list_targets.first.render_layouts!
+
+    entity.manual_list_assign!(list_name: "manual", template_kind: "descendant_list", targets: manual_list_targets)
+
     entity.render_layouts!
   end
 
