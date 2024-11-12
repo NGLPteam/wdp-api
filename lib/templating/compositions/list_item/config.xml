@@ -23,7 +23,7 @@
   <slot name="meta_a" kind="inline">
     <default-template>
       <![CDATA[
-        Published {{ props.published }}
+        Published {{ entity.published }}
       ]]>
     </default-template>
   </slot>

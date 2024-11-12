@@ -52,6 +52,10 @@ module Templates
     end
 
     wrapped_hook! def render
+      template_instance.slots = yield template_definition.render_slots(entity:)
+
+      template_instance.save!
+
       super
     end
 

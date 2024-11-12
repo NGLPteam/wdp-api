@@ -29,7 +29,7 @@
         </sidebar>
         <metadata>
           <![CDATA[
-            Published {{ props.published }}
+            Published {{ entity.published }}
           ]]>
         </metadata>
         <summary>

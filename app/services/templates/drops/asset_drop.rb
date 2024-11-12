@@ -24,6 +24,12 @@ module Templates
 
         @url = asset.generate_download_url!(expires_at: 7.years.from_now)
       end
+
+      def to_s
+        # :nocov:
+        call_operation!("templates.mdx.build_asset", asset: @asset, content: name)
+        # :nocov:
+      end
     end
   end
 end

@@ -3,20 +3,16 @@
 module Templates
   module Slots
     module Definitions
-      class Abstract
-        extend Dry::Core::ClassAttributes
-
-        include Support::EnhancedStoreModel
-
-        defines :kind, type: Templates::Types::SlotKind.optional
-
-        kind "block"
-
+      class Abstract < ::Templates::Slots::Abstract
         attribute :raw_template, :string
 
-        # @return [Templates::Types::SlotKind]
-        def kind
-          self.class.kind
+        # @see Templates::Slots::Render
+        # @see Templates::Slots::Renderer
+        # @param [{ String => Assigns }]
+        # @param [Boolean] force
+        # @return [Dry::Monads::Success(Templates::Slots::Instances::Abstract)]
+        def render(assigns: {}, force: false)
+          MeruAPI::Container["templates.slots.render"].(raw_template, assigns:, force:, kind:)
         end
 
         # @return [String, nil]

@@ -110,9 +110,18 @@ module HierarchicalEntity
   end
 
   # @param [String] ancestor_name
+  # @param [Boolean] enforce_known
   # @return [EntityAncestor, nil]
-  def ancestor_by_name(ancestor_name)
+  def ancestor_by_name(ancestor_name, enforce_known: false)
+    if enforce_known && !has_known_ancestor?(ancestor_name)
+      raise Entities::UnknownAncestor.new(entity: self, ancestor_name:)
+    end
+
     named_ancestors.by_name(ancestor_name).first&.ancestor
+  end
+
+  def has_known_ancestor?(name)
+    schema_version.has_ancestor?(name)
   end
 
   # @param [String] schema_name

@@ -1,23 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <main>
   <templates>
-    <detail background="none" show-announcements="false" show-hero-image="false" variant="summary">
+    <detail background="none" show-announcements="false" show-hero-image="false" show-body="true" variant="summary">
       <slots>
         <header>
-          <![CDATA[
-            {{ entity.title }}
-          ]]>
+          {{ entity.title }}
         </header>
         <subheader>
-          <![CDATA[
-            {{ entity.subtitle }}
-          ]]>
+          {{ entity.subtitle }}
         </subheader>
         <summary>
-          <![CDATA[
-            {{ entity.summary }}
-          ]]>
+          {% if props.abstract %}
+          {{props.abstract}}
+          {% else %}
+          {{entity.summary}}
+          {% endif %}
         </summary>
+        <body>
+          {% if props.pdf_version %}
+          {% pdfviewer props.pdf_version %}
+          {% elsif props.body %}
+          {{props.body}}
+          {% endif %}
+        </body>
       </slots>
     </detail>
     <link-list background="none" selection-mode="dynamic" show-entity-context="false" show-see-all-button="false" variant="cards">

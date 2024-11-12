@@ -19,7 +19,9 @@ module Templates
       end
 
       def to_s
-        raise "Tried to render group property #{@reader.path.inspect} in scalar context"
+        # :nocov:
+        raise Liquid::ContextError, "Tried to render group property #{@reader.path.inspect} in scalar context"
+        # :nocov:
       end
     end
   end

@@ -4,11 +4,9 @@ module Templates
   module Slots
     class Renderer < Support::HookBased::Actor
       include Dry::Initializer[undefined: false].define -> do
-        param :raw_template, Types::String
+        param :raw_template, Types::Coercible::String
 
         option :assigns, Types::Assigns, default: proc { {} }
-
-        option :error_mode, Types::ErrorMode, default: proc { :strict }
 
         option :force, Types::Bool, default: proc { false }
 
@@ -17,11 +15,21 @@ module Templates
 
       standard_execution!
 
+      # @return [Boolean]
+      attr_reader :compiled
+
+      alias compiled? compiled
+
       # @return [String]
       attr_reader :content
 
+      # @return [Boolean]
+      attr_reader :empty
+
+      alias empty? empty
+
       # @return [<String>, nil]
-      attr_reader :errors
+      attr_reader :liquid_errors
 
       # @return [Templates::Slots::Instances::Abstract]
       attr_reader :slot
@@ -33,9 +41,9 @@ module Templates
       attr_reader :template
 
       # @return [Boolean]
-      attr_reader :valid
+      attr_reader :rendered
 
-      alias valid? valid
+      alias rendered? rendered
 
       def call
         run_callbacks :execute do
@@ -52,37 +60,77 @@ module Templates
       end
 
       wrapped_hook! def prepare
-        @slot_klass = Templates::Slots::Instances::Abstract.klass_for(kind)
+        @slot_klass = Templates::Slots::Abstract.instance_klass_for(kind)
 
-        @content = @errors = @valid = nil
+        @empty = raw_template.blank?
+
+        @compiled = @rendered = false
+
+        @content = @template = nil
+
+        @liquid_errors = []
 
         super
       end
 
       wrapped_hook! def compile_template
-        compilation_options = { error_mode:, force:, kind:, }
+        if raw_template.blank?
+          @compiled = true
 
-        @template = yield call_operation("templates.slots.compile", raw_template, **compilation_options)
+          return super
+        end
+
+        result = call_operation("templates.slots.compile", raw_template, force:, kind:)
+
+        Dry::Matcher::ResultMatcher.call result do |m|
+          m.success do |template|
+            @compiled = true
+
+            @template = template
+          end
+
+          m.failure(:syntax_error) do |_, error|
+            @liquid_errors << Templates::Slots::Error.from(error)
+          end
+
+          m.failure do
+            # :nocov:
+            raise "Something went critically wrong with compilation process"
+            # :nocov:
+          end
+        end
 
         super
       end
 
       wrapped_hook! def render
-        rendered = template.render(assigns, strict_filters: true, strict_variables: true)
+        return super unless compiled?
 
-        @errors = template.errors.map(&:detailed_message)
+        if empty?
+          @rendered = false
 
-        @valid = errors.blank?
+          @content = ""
 
-        binding.pry unless valid?
+          return super
+        end
 
-        @content = yield call_operation("templates.slots.sanitize", rendered, kind:) if valid?
+        raw = template.render(assigns, strict_filters: true, strict_variables: true)
+
+        template.errors.each do |error|
+          @liquid_errors << Templates::Slots::Error.from(error)
+        end
+
+        @rendered = liquid_errors.blank?
+
+        @content = yield call_operation("templates.slots.sanitize", raw, kind:) if rendered?
 
         super
       end
 
       wrapped_hook! def build_slot
-        @slot = slot_klass.new(content:, errors:, valid:)
+        @liquid_errors = liquid_errors.compact_blank.presence
+
+        @slot = slot_klass.new(compiled:, content:, liquid_errors:, rendered:)
 
         super
       end

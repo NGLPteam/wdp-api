@@ -6,6 +6,10 @@ module Templates
     # @see Templates::SlotMappings::MetadataDefinitionSlots
     class MetadataInstanceSlots < AbstractInstanceSlots
       inline! :header
+      block! :items_a
+      block! :items_b
+      block! :items_c
+      block! :items_d
     end
   end
 end

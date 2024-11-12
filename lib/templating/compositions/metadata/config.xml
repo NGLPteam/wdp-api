@@ -6,6 +6,7 @@
     Contained within the `METADATA` layout.
   </description>
   <prop name="background" kind="background">
+    <description>The background gradient to use for this template. Affects presentation.</description>
     <default>
       <![CDATA[
         "none"
@@ -13,4 +14,32 @@
     </default>
   </prop>
   <slot name="header" kind="inline"/>
+  <slot name="items_a" kind="block">
+    <description>
+      Items column (1/4).
+      It is used to list arbitrary properties (metadata) associated
+      with the schema that lend themselves well to enumeration.
+    </description>
+  </slot>
+  <slot name="items_b" kind="block">
+    <description>
+      Items column (2/4).
+      It is used to list arbitrary properties (metadata) associated
+      with the schema that lend themselves well to enumeration.
+    </description>
+  </slot>
+  <slot name="items_c" kind="block">
+    <description>
+      Items column (3/4).
+      It is used to list arbitrary properties (metadata) associated
+      with the schema that lend themselves well to enumeration.
+    </description>
+  </slot>
+  <slot name="items_d" kind="block">
+    <description>
+      Items column (4/4).
+      It is used to list arbitrary properties (metadata) associated
+      with the schema that lend themselves well to enumeration.
+    </description>
+  </slot>
 </config>

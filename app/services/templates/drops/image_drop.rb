@@ -10,6 +10,14 @@ module Templates
 
         @image = image
       end
+
+      delegate :alt, :height, :width, :url, to: :@image
+
+      alias src url
+
+      def to_s
+        call_operation!("templates.mdx.build_image", src:, alt:, height:, width:)
+      end
     end
   end
 end

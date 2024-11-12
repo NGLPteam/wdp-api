@@ -32,7 +32,7 @@
         <header-aside/>
         <metadata>
           <![CDATA[
-            Published {{ props.published }}
+            Published {{ entity.published }}
           ]]>
         </metadata>
         <subtitle/>
@@ -50,7 +50,7 @@
         <header-aside/>
         <metadata>
           <![CDATA[
-            Published {{ props.published }}
+            Published {{ entity.published }}
           ]]>
         </metadata>
         <subtitle/>

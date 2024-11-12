@@ -18,6 +18,12 @@ module Templates
           raise Liquid::UndefinedDropMethod, "unknown entity property: #{name}"
         end
       end
+
+      def to_s
+        # :nocov:
+        raise Liquid::ContextError, "Tried to render `props` directly"
+        # :nocov:
+      end
     end
   end
 end

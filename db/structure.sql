@@ -1547,6 +1547,8 @@ CREATE TABLE public.schema_versions (
     enforces_children boolean DEFAULT false NOT NULL,
     enforced_parent_declarations text[] DEFAULT '{}'::text[] NOT NULL,
     enforced_child_declarations text[] DEFAULT '{}'::text[] NOT NULL,
+    has_ancestors boolean DEFAULT false NOT NULL,
+    ancestor_names text[] DEFAULT '{}'::text[] NOT NULL,
     CONSTRAINT configuration_has_identifier CHECK (((configuration ? 'identifier'::text) AND (jsonb_typeof((configuration -> 'identifier'::text)) = 'string'::text))),
     CONSTRAINT configuration_has_name CHECK (((configuration ? 'name'::text) AND (jsonb_typeof((configuration -> 'name'::text)) = 'string'::text))),
     CONSTRAINT configuration_has_namespace CHECK (((configuration ? 'namespace'::text) AND (jsonb_typeof((configuration -> 'namespace'::text)) = 'string'::text))),
@@ -6197,7 +6199,8 @@ CREATE TABLE public.templates_detail_definitions (
     background public.detail_background DEFAULT 'none'::public.detail_background NOT NULL,
     variant public.detail_variant DEFAULT 'summary'::public.detail_variant NOT NULL,
     show_announcements boolean DEFAULT false NOT NULL,
-    show_hero_image boolean DEFAULT false NOT NULL
+    show_hero_image boolean DEFAULT false NOT NULL,
+    show_body boolean DEFAULT false NOT NULL
 );
 
 
@@ -14299,6 +14302,8 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20241024210601'),
 ('20241104221045'),
 ('20241105174558'),
-('20241105174753');
+('20241105174753'),
+('20241113212205'),
+('20241119165014');
 
 

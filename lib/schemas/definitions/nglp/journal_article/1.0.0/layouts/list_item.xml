@@ -4,29 +4,31 @@
     <list-item>
       <slots>
         <header>
-          <![CDATA[
-            {{ entity.title }}
-          ]]>
+          {{entity.title}}
         </header>
         <subheader>
-          <![CDATA[
-            {{ entity.subtitle }}
-          ]]>
+          {{entity.subtitle}}
         </subheader>
-        <description/>
+        <description />
         <meta-a>
-          <![CDATA[
-            Published {{ props.published }}
-          ]]>
+          {% if entity.published %}
+          Published {{entity.published}}
+          {% endif %}
         </meta-a>
-        <meta-b>
-          <![CDATA[
-            Meta B
-          ]]>
-        </meta-b>
-        <context-a/>
-        <context-b/>
-        <context-c/>
+        <meta-b />
+        <context-a>
+          {{ancestors.journal.title}}
+        </context-a>
+        <context-b>
+          {% if ancestors.volume %}
+          {{ ancestors.volume.title }}
+          {% endif %}
+        </context-b>
+        <context-c>
+          {% if ancestors.issue %}
+          {{ ancestors.issue.title }}
+          {% endif %}
+        </context-c>
       </slots>
     </list-item>
   </templates>

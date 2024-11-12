@@ -4,42 +4,14 @@ module Templates
   module Slots
     module Instances
       # @abstract
-      class Abstract
-        extend Dry::Core::ClassAttributes
-
-        include Support::EnhancedStoreModel
-
-        defines :kind, type: Templates::Types::SlotKind.optional
-
-        kind "block"
-
+      class Abstract < ::Templates::Slots::Abstract
         attribute :content, :string
 
-        attribute :errors, :string_array
-
-        attribute :valid, :boolean, default: false
+        attribute :rendered, :boolean, default: false
 
         # @return [String, nil]
         def export_value
-          content if valid
-        end
-
-        # @return [Templates::Types::SlotKind]
-        def kind
-          self.class.kind
-        end
-
-        class << self
-          # @param [Templates::Types::SlotKind] kind
-          # @return [Class]
-          def klass_for(kind)
-            case kind.to_s
-            in "block"
-              Templates::Slots::Instances::Block
-            in "inline"
-              Templates::Slots::Instances::Inline
-            end
-          end
+          content if rendered?
         end
       end
     end

@@ -6,30 +6,35 @@ module Templates
       include Dry::Initializer[undefined: false].define -> do
         param :raw_template, Types::String
 
-        option :error_mode, Types::ErrorMode, default: proc { :strict }
-
-        option :force, Types::Bool, default: proc { false }
-
         option :kind, Types::SlotKind, default: proc { "block" }
       end
 
       standard_execution!
 
-      CACHE_KEY_FORMAT = "liquid/template/%<kind>s/%<error_mode>s/%<digest>s"
+      CACHE_KEY_FORMAT = "liquid/template/%<kind>s/%<digest>s"
 
       # @return [String]
       attr_reader :cache_key
 
       # @return [String]
-      attr_reader :digest
+      attr_reader :content
 
       # @return [String]
-      attr_reader :content
+      attr_reader :digest
+
+      # @see Templates::Slots::BuildEnvironment
+      # @see Templates::Slots::EnvironmentBuilder
+      # @return [Liquid::Environment]
+      attr_reader :environment
 
       # @return [Liquid::Template]
       attr_reader :template
 
+      # @return [{ Symbol => Object }]
+      attr_reader :template_options
+
       # @return [Dry::Monads::Success(Liquid::Template)]
+      # @return [Dry::Monads::Failure(:syntax_error, Liquid::SyntaxError)]
       def call
         run_callbacks :execute do
           yield prepare!
@@ -43,19 +48,23 @@ module Templates
       wrapped_hook! def prepare
         @digest = Digest::SHA512.hexdigest(raw_template)
 
-        @cache_key = CACHE_KEY_FORMAT % { kind:, error_mode:, digest:, }
+        @cache_key = CACHE_KEY_FORMAT % { kind:, digest:, }
+
+        @environment = yield call_operation("templates.slots.build_environment", kind:)
 
         super
       end
 
       wrapped_hook! def compile
-        # @environment = yield MeruAPI::Container["templates.environments.slot"].(kind:)
-
-        @template = Rails.cache.fetch(cache_key, force:, expires_in: 1.day) do
-          Liquid::Template.parse(raw_template, error_mode:)
-        end
+        @template = Liquid::Template.parse(
+          raw_template,
+          environment:,
+          line_numbers: true
+        )
 
         super
+      rescue Liquid::SyntaxError => e
+        Failure[:syntax_error, e]
       end
     end
   end

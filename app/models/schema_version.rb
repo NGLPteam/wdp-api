@@ -7,11 +7,14 @@
 # @see Schemas::Versions::Configuration
 # @subsystem Schema
 class SchemaVersion < ApplicationRecord
+  include Liquifies
   include Schemas::Properties::CompilesToSchema
   include Schemas::Static::Namespaced
   include ExposesSchemaProperties
   include SchemaVersionTemplating
   include TimestampScopes
+
+  drop_klass ::Templates::Drops::SchemaVersionDrop
 
   # @!attribute [r] kind
   # @return ["community", "collection", "item"]
@@ -67,6 +70,7 @@ class SchemaVersion < ApplicationRecord
   delegate :has_ordering?, :ordering_definition_for, :property_for, :property_paths, :type_mapping, to: :configuration, allow_nil: true
   delegate :identifier, :namespace, :version, to: :configuration, allow_nil: true, prefix: :configured
 
+  before_validation :extract_ancestor_data!
   before_validation :extract_reference_paths!
 
   after_create :reorder_versions!
@@ -89,6 +93,11 @@ class SchemaVersion < ApplicationRecord
   # @return [Gem::Version]
   def gem_version
     Gem::Version.new(number)
+  end
+
+  # @param [#to_s] name
+  def has_ancestor?(name)
+    name.to_s.in?(ancestor_names)
   end
 
   # @!attribute [r] label
@@ -172,22 +181,14 @@ class SchemaVersion < ApplicationRecord
 
   # @api private
   # @return [void]
-  def extract_ancestors!
-    call_operation("schemas.versions.extract_ancestors", self).value!
+  monadic_operation! def extract_ancestors
+    call_operation("schemas.versions.extract_ancestors", self)
   end
 
   # @api private
   # @return [void]
-  def extract_properties!
-    call_operation("schemas.versions.extract_properties", self).value!
-  end
-
-  # @api private
-  # @return [void]
-  def extract_reference_paths!
-    self.collected_reference_paths = Array(configuration&.collected_reference_paths)
-    self.scalar_reference_paths = Array(configuration&.scalar_reference_paths)
-    self.text_reference_paths = Array(configuration&.text_reference_paths)
+  monadic_operation! def extract_properties
+    call_operation("schemas.versions.extract_properties", self)
   end
 
   # @return [void]
@@ -202,8 +203,8 @@ class SchemaVersion < ApplicationRecord
   # @api private
   # @see Schemas::Versions::Reorder
   # @return [void]
-  def reorder_versions!
-    call_operation("schemas.versions.reorder", schema_definition).value!
+  monadic_operation! def reorder_versions
+    call_operation("schemas.versions.reorder", schema_definition)
   end
 
   # @!endgroup
@@ -228,6 +229,19 @@ class SchemaVersion < ApplicationRecord
   end
 
   private
+
+  # @return [void]
+  def extract_ancestor_data!
+    self.ancestor_names = Array(configuration.ancestors&.pluck(:name))
+    self.has_ancestors = ancestor_names.present?
+  end
+
+  # @return [void]
+  def extract_reference_paths!
+    self.collected_reference_paths = Array(configuration&.collected_reference_paths)
+    self.scalar_reference_paths = Array(configuration&.scalar_reference_paths)
+    self.text_reference_paths = Array(configuration&.text_reference_paths)
+  end
 
   def should_reorder_versions?
     saved_change_to_schema_definition_id? || saved_change_to_number?

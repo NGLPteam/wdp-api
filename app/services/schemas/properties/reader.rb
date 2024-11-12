@@ -45,9 +45,12 @@ module Schemas
       end
 
       def to_liquid
-        if property.array?
-          Array(value).map { _1.to_liquid }
-        elsif type == "variable_date"
+        return Array(value).map { _1.to_liquid } if property.array?
+
+        case type
+        in "full_text"
+          Templates::Drops::FullTextReferenceDrop.new(value) if value
+        in "variable_date"
           value.then { Templates::Drops::VariablePrecisionDateDrop.new(_1) if _1 }
         else
           value&.to_liquid

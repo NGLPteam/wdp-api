@@ -4,7 +4,7 @@ module Templates
   module Slots
     module Definitions
       class Inline < Abstract
-        kind "block"
+        kind "inline"
       end
     end
   end

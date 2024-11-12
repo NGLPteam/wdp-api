@@ -330,6 +330,10 @@ Rails/MigrationClassName: # new in 2.14
 Rails/NegateInclude:
   Enabled: false
 
+# That's what html_safe is for.
+Rails/OutputSafety:
+  Enabled: false
+
 Rails/Pluck:
   Enabled: true
 

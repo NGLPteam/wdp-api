@@ -83,6 +83,10 @@
   name: show_hero_image
   property_kind_name: boolean
   default: false
+- template_kind: detail
+  name: show_body
+  property_kind_name: boolean
+  default: false
 - template_kind: hero
   name: background
   property_kind_name: background

@@ -6,6 +6,7 @@
     Contained within the `MAIN` layout.
   </description>
   <prop name="background" kind="background">
+    <description>The background gradient to use for this template. Affects presentation.</description>
     <default>
       <![CDATA[
         "none"
