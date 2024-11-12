@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <hero>
   <templates>
-    <hero background="none" enable-descendant-browsing="false" enable-descendant-search="false" list-contributors="false" show-basic-view-metrics="false" show-big-search-prompt="false" show-breadcrumbs="false" show-doi="false" show-hero-image="false" show-issn="false" show-sharing-link="false" show-split-display="false" show-thumbnail-image="false">
+    <hero background="none" enable-descendant-browsing="false" enable-descendant-search="false" list-contributors="false" show-basic-view-metrics="true" show-big-search-prompt="false" show-breadcrumbs="true" show-doi="true" show-hero-image="true" show-issn="true" show-sharing-link="true" show-split-display="false" show-thumbnail-image="false">
       <slots>
         <header>
           <![CDATA[
