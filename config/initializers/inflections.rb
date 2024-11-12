@@ -24,6 +24,7 @@ ActiveSupport::Inflector.inflections(:en) do |inflect|
   inflect.acronym "IP"
   inflect.acronym "JATS"
   inflect.acronym "JSON"
+  inflect.acronym "MDX"
   inflect.acronym "METS"
   inflect.acronym "MODS"
   inflect.acronym "OAIDC"

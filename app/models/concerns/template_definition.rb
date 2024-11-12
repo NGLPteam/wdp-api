@@ -39,4 +39,8 @@ module TemplateDefinition
   monadic_matcher! def render(...)
     call_operation("templates.render", self, ...)
   end
+
+  monadic_operation! def render_slots(entity:)
+    call_operation("templates.definitions.render_slots", self, entity)
+  end
 end

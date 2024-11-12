@@ -6,6 +6,7 @@
     Contained within the `HERO` layout.
   </description>
   <prop name="background" kind="background">
+    <description>The background gradient to use for this template. Affects presentation.</description>
     <default>
       <![CDATA[
         "none"
@@ -136,7 +137,7 @@
   <slot name="metadata" kind="inline">
     <default-template>
       <![CDATA[
-        Published {{ props.published }}
+        Published {{ entity.published }}
       ]]>
     </default-template>
   </slot>

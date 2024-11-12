@@ -6,6 +6,7 @@
     Contained within the `MAIN` layout.
   </description>
   <prop name="background" kind="background">
+    <description>The background gradient to use for this template. Affects presentation.</description>
     <default>
       <![CDATA[
         "none"
@@ -13,6 +14,7 @@
     </default>
   </prop>
   <prop name="limit" kind="limit">
+    <description>Limit the number of contributors for this template.</description>
     <default>
       <![CDATA[
         3

@@ -9,16 +9,20 @@ module Templates
     # @see Templates::Drops::CollectionDrop
     # @see Templates::Drops::ItemDrop
     class AbstractEntityDrop < Templates::Drops::AbstractDrop
+      # @return [Templates::Drops::VariablePrecisionDateDrop]
+      attr_reader :published
+
+      # @return [Templates::Drops::SchemaVersionDrop]
+      attr_reader :schema
+
       # @param [HierarchicalEntity] entity
       def initialize(entity)
         super()
 
         @entity = entity
-      end
+        @schema = entity.schema_version.to_liquid
 
-      # @return [Templates::Drops::AncestorsDrop]
-      memoize def ancestors
-        Templates::Drops::AncestorsDrop.new(@entity)
+        @published = Templates::Drops::VariablePrecisionDateDrop.new(entity.try(:published))
       end
 
       # @return [Templates::Drops::PropsDrop]
@@ -32,8 +36,19 @@ module Templates
       end
 
       # @return [Templates::Drops::ImageDrop]
+      memoize def logo
+        @entity.logo&.to_liquid
+      end
+
+      # @return [Templates::Drops::ImageDrop]
       memoize def thumbnail
         @entity.thumbnail&.to_liquid
+      end
+
+      def to_s
+        # :nocov:
+        call_operation!("templates.mdx.build_entity_link", entity: @entity, content: title)
+        # :nocov:
       end
 
       class << self

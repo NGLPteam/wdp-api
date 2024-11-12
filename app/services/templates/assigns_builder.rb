@@ -33,10 +33,16 @@ module Templates
 
       drop = entity.to_liquid
 
+      ancestors = Templates::Drops::AncestorsDrop.new(entity)
+
+      community = entity.community.to_liquid
+
       assigns[:self] = assigns[:entity] = drop
 
-      assigns[:ancestors] = drop.ancestors
+      assigns[:ancestors] = ancestors
+      assigns[:community] = community
       assigns[:props] = drop.props
+      assigns[:schema] = drop.schema
 
       super
     end

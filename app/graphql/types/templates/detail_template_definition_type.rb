@@ -33,6 +33,13 @@ module Types
         description <<~TEXT
         TEXT
       end
+
+      field :show_body, Boolean, null: true do
+        description <<~TEXT
+        Whether to show and use the 'body' slot on a detail view.
+        Primarily intended for items with copious text to display.
+        TEXT
+      end
     end
   end
 end

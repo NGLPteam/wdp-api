@@ -16,7 +16,7 @@
         <description/>
         <meta-a>
           <![CDATA[
-            Published {{ props.published }}
+            Published {{ entity.published }}
           ]]>
         </meta-a>
         <meta-b>

@@ -5,7 +5,8 @@
 
 <%- nest do -%>
 # @see <%= operation_full_name %>
-class <%= service_name %> < Support::HookBased::Actor
+class <%= service_name %> < <%= abstract_service %>
+  <%- if standard_execution? -%>
   include Dry::Initializer[undefined: false].define -> do
   end
 
@@ -23,5 +24,6 @@ class <%= service_name %> < Support::HookBased::Actor
   wrapped_hook! def prepare
     super
   end
+  <%- end -%>
 end
 <%- end -%>

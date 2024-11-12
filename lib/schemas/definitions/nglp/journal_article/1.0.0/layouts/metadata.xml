@@ -3,7 +3,52 @@
   <templates>
     <metadata background="none">
       <slots>
-        <header/>
+        <header>
+          Article Metadata
+        </header>
+        <items-a>
+          {% mdvalue label: "Author" %}
+          TBI.
+          {% endmdvalue %}
+          {% mdvalue label: "Published" %}
+          {{ entity.published }}
+          {% endmdvalue %}
+          {% mdvalue label: "Collected" %}
+          {{ props.meta.collected }}
+          {% endmdvalue %}
+          {% mdvalue label: "Page count" %}
+          {{ props.meta.page_count }}
+          {% endmdvalue %}
+        </items-a>
+        <items-b>
+          {% mdvalue label: "Journal" %}
+          {{ancestors.journal}}
+          {% endmdvalue %}
+          {% mdvalue label: "DOI" %}
+          {{entity.doi}}
+          {% endmdvalue %}
+        </items-b>
+        <items-c>
+          {% mdvalue label: "Volume" %}
+          {% if ancestors.volume %}
+          {{ancestors.volume}}
+          {% endif %}
+          {% endmdvalue %}
+          {% mdvalue label: "License" %}
+          {% if ancestors.journal.props.cc_license %}
+          {{ ancestors.journal.props.cc_license }}
+          {% else %}
+          n/a
+          {% endif %}
+          {% endmdvalue %}
+        </items-c>
+        <items-d>
+          {% mdvalue label: "Issue" %}
+          {% if ancestors.issue %}
+          {{ancestors.issue}}
+          {% endif %}
+          {% endmdvalue %}
+        </items-d>
       </slots>
     </metadata>
   </templates>

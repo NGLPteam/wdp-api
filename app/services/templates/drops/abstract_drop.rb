@@ -8,6 +8,10 @@ module Templates
 
       private
 
+      def call_operation!(name, ...)
+        MeruAPI::Container[name].call(...).value!
+      end
+
       # @param [HierarchicalEntity] entity
       # @return [Templates::Drops::EntityDrop]
       def entity_drop_for(entity)

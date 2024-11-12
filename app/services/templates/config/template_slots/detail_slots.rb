@@ -15,6 +15,8 @@ module Templates
 
         attribute :summary, ::Mappers::StrippedString, default: -> { ::TemplateSlot.default_template_for("detail#summary") }
 
+        attribute :body, ::Mappers::StrippedString
+
         xml do
           root "slots"
 
@@ -23,6 +25,8 @@ module Templates
           map_element "subheader", to: :subheader, cdata: true, render_nil: true
 
           map_element "summary", to: :summary, cdata: true, render_nil: true
+
+          map_element "body", to: :body, cdata: true, render_nil: true
         end
       end
     end

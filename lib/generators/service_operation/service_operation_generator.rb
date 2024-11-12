@@ -5,6 +5,8 @@
 class ServiceOperationGenerator < Rails::Generators::Base
   source_root File.expand_path("templates", __dir__)
 
+  DEFAULT_ABSTRACT_SERVICE = "Support::HookBased::Actor"
+
   argument :namespace, type: :string, required: true,
     desc: "The namespace that the services and operations should live in"
 
@@ -14,11 +16,24 @@ class ServiceOperationGenerator < Rails::Generators::Base
   argument :service, type: :string, required: true,
     desc: "a noun, e.g. Creator"
 
+  class_option :abstract_service, type: :string, required: true,
+    default: DEFAULT_ABSTRACT_SERVICE,
+    desc: "The abstract class to inherit from."
+
+  class_option :standard_execution, type: :boolean,
+    #default: true,
+    desc: "Whether to populate the service with the standard execution pattern (or leave it blank)"
+
   OPERATIONS = Rails.root.join("app", "operations")
 
   SERVICES = Rails.root.join("app", "services")
 
   def prepare!
+    @abstract_service = options[:abstract_service].presence || DEFAULT_ABSTRACT_SERVICE
+    @standard_execution = @options.fetch(:standard_execution) do
+      abstract_service == DEFAULT_ABSTRACT_SERVICE
+    end
+
     @namespace_name = ensure_constant(namespace)
     @namespace_parts = namespace_name.split("::")
     @namespace_path = namespace_parts.map { _1.underscore }
@@ -55,6 +70,9 @@ class ServiceOperationGenerator < Rails::Generators::Base
   end
 
   # @return [String]
+  attr_reader :abstract_service
+
+  # @return [String]
   attr_reader :full_operation_name
 
   # @return [String]
@@ -86,6 +104,11 @@ class ServiceOperationGenerator < Rails::Generators::Base
 
   # @return [Pathname]
   attr_reader :service_path
+
+  # @return [Boolean]
+  attr_reader :standard_execution
+
+  alias standard_execution? standard_execution
 
   def nest(&)
     content = capture(&)

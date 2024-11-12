@@ -8,6 +8,7 @@ module Templates
       inline! :header
       inline! :subheader
       block! :summary
+      block! :body
     end
   end
 end

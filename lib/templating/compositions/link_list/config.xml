@@ -6,25 +6,69 @@
     Contained within the `MAIN` layout.
   </description>
   <prop name="title" kind="string"/>
-  <prop name="variant" kind="variant"/>
+  <prop name="variant" kind="variant">
+    <description>The variant rendering mode to use for this template. Affects presentation.</description>
+  </prop>
   <prop name="background" kind="background">
+    <description>The background gradient to use for this template. Affects presentation.</description>
     <default>
       <![CDATA[
         "none"
       ]]>
     </default>
   </prop>
-  <prop name="selection_source" kind="selection_source"/>
-  <prop name="selection_source_mode" kind="selection_source_mode"/>
+  <prop name="selection_source" kind="selection_source">
+    <description>
+      When selecting entities based on `selectionMode`, this property determines
+      which entity (relevant to the rendering entity) should be used for lookups.
+
+      By default, it is `self`, which means the rendering entity itself.
+
+      It can also support things like `ancestor.journal`, `ancestor.issue`, etc.,
+      in order to render a list of values in its parent.
+    </description>
+  </prop>
+  <prop name="selection_source_mode" kind="selection_source_mode">
+    <description>
+      An enum representing what mode `selectionSource` is in. Not directly set,
+      it is used internally for lookups.
+    </description>
+  </prop>
+  <prop name="selection_source_ancestor_name" kind="schema_component"/>
   <prop name="selection_mode" kind="selection_mode"/>
   <prop name="selection_limit" kind="limit">
+    <description>
+      Regardless of `selectionMode`, this limit will be applied on whatever resulting
+      list of entities are produced, so that only up to that amount of entities are
+      rendered in the template proper.
+    </description>
     <default>
       <![CDATA[
         3
       ]]>
     </default>
   </prop>
-  <prop name="dynamic_ordering_definition" kind="ordering_definition"/>
+  <prop name="dynamic_ordering_definition" kind="ordering_definition">
+    <description>
+      When `selectionMode` is set to `DYNAMIC`, this uses the same basic structure
+      as schemas to define a dynamic ordering that is resolved at runtime and based
+      on the `selectionSource`.
+    </description>
+  </prop>
+  <prop name="manual_list_name" kind="schema_component">
+    <description>
+      When `selectionMode` is set to `MANUAL`, the purpose of this property
+      is to specify a name under which all the manual selections (per entity)
+      will be stored. This allows a layout to have multiple templates of the
+      same type using different lists, that will persist across rearrangements
+      of the layout _without_ losing connections between entities.
+    </description>
+    <default>
+      <![CDATA[
+        "manual"
+      ]]>
+    </default>
+  </prop>
   <prop name="see_all_button_label" kind="string">
     <default>
       <![CDATA[
@@ -57,7 +101,7 @@
   <slot name="metadata" kind="inline">
     <default-template>
       <![CDATA[
-        Published {{ props.published }}
+        Published {{ entity.published }}
       ]]>
     </default-template>
   </slot>

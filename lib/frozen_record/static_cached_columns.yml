@@ -13147,6 +13147,32 @@
   default_function: 
   has_default: true
   virtual: false
+- id: SchemaVersion#has_ancestors
+  model_name: SchemaVersion
+  table_name: schema_versions
+  name: has_ancestors
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
+  default_function: 
+  has_default: true
+  virtual: false
+- id: SchemaVersion#ancestor_names
+  model_name: SchemaVersion
+  table_name: schema_versions
+  name: ancestor_names
+  type: text
+  'null': false
+  sql_type_metadata:
+    sql_type: text[]
+    type: text
+  default: "{}"
+  default_function: 
+  has_default: true
+  virtual: false
 - id: SchemaVersionAncestor#id
   model_name: SchemaVersionAncestor
   table_name: schema_version_ancestors
@@ -15134,6 +15160,19 @@
   model_name: Templates::DetailDefinition
   table_name: templates_detail_definitions
   name: show_hero_image
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
+  default_function: 
+  has_default: true
+  virtual: false
+- id: Templates::DetailDefinition#show_body
+  model_name: Templates::DetailDefinition
+  table_name: templates_detail_definitions
+  name: show_body
   type: boolean
   'null': false
   sql_type_metadata:

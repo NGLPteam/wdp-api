@@ -51,6 +51,11 @@ en:
         description: |
           When `selectionMode` is set to `NAMED`, this will look up the named ordering
           on the resolved `selectionSource` and render up to `selectionLimit` entities.
+    detail:
+      show_body:
+        description: |
+          Whether to show and use the 'body' slot on a detail view.
+          Primarily intended for items with copious text to display.
     ordering:
       ordering_identifier:
         description: |

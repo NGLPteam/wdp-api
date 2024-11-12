@@ -17,6 +17,8 @@ module Templates
 
         attribute :show_hero_image, ::Templates::Config::Properties::Boolean, default: -> { false }
 
+        attribute :show_body, ::Templates::Config::Properties::Boolean, default: -> { false }
+
         attribute :slots, Templates::Config::TemplateSlots::DetailSlots,
           default: -> { Templates::Config::TemplateSlots::DetailSlots.new }
 
@@ -26,6 +28,8 @@ module Templates
           map_attribute "background", to: :background
 
           map_attribute "show-announcements", to: :show_announcements
+
+          map_attribute "show-body", to: :show_body
 
           map_attribute "show-hero-image", to: :show_hero_image
 

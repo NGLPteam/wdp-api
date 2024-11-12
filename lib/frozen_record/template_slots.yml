@@ -14,7 +14,7 @@
   slot_kind: inline
   template_kind: descendant_list
   default_template: |
-    Published {{ props.published }}
+    Published {{ entity.published }}
 - name: subtitle
   slot_kind: inline
   template_kind: descendant_list
@@ -33,6 +33,9 @@
   template_kind: detail
   default_template: |
     {{ entity.summary }}
+- name: body
+  slot_kind: block
+  template_kind: detail
 - name: header
   slot_kind: inline
   template_kind: hero
@@ -71,7 +74,7 @@
   slot_kind: inline
   template_kind: hero
   default_template: |
-    Published {{ props.published }}
+    Published {{ entity.published }}
 - name: summary
   slot_kind: block
   template_kind: hero
@@ -91,7 +94,7 @@
   slot_kind: inline
   template_kind: link_list
   default_template: |
-    Published {{ props.published }}
+    Published {{ entity.published }}
 - name: subtitle
   slot_kind: inline
   template_kind: link_list
@@ -112,7 +115,7 @@
   slot_kind: inline
   template_kind: list_item
   default_template: |
-    Published {{ props.published }}
+    Published {{ entity.published }}
 - name: meta_b
   slot_kind: inline
   template_kind: list_item
@@ -130,6 +133,34 @@
 - name: header
   slot_kind: inline
   template_kind: metadata
+- name: items_a
+  slot_kind: block
+  template_kind: metadata
+  description: |
+    Items column (1/4).
+    It is used to list arbitrary properties (metadata) associated
+    with the schema that lend themselves well to enumeration.
+- name: items_b
+  slot_kind: block
+  template_kind: metadata
+  description: |
+    Items column (2/4).
+    It is used to list arbitrary properties (metadata) associated
+    with the schema that lend themselves well to enumeration.
+- name: items_c
+  slot_kind: block
+  template_kind: metadata
+  description: |
+    Items column (3/4).
+    It is used to list arbitrary properties (metadata) associated
+    with the schema that lend themselves well to enumeration.
+- name: items_d
+  slot_kind: block
+  template_kind: metadata
+  description: |
+    Items column (4/4).
+    It is used to list arbitrary properties (metadata) associated
+    with the schema that lend themselves well to enumeration.
 - name: entity_label
   slot_kind: inline
   template_kind: navigation

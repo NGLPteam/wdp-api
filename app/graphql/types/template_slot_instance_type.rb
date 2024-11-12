@@ -21,13 +21,13 @@ module Types
       TEXT
     end
 
-    field :errors, [String, { null: false }], null: true do
+    field :errors, [Types::TemplateSlotErrorType, { null: false }], null: true, method: :liquid_errors do
       description <<~TEXT
       Any errors for this slot that occurred during rendering, if applicable.
       TEXT
     end
 
-    field :valid, Boolean, null: false do
+    field :valid, Boolean, null: false, method: :rendered do
       description <<~TEXT
       Whether this slot rendered successfully (i.e. had no errors).
       TEXT

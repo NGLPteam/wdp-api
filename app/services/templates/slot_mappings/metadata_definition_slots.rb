@@ -9,6 +9,10 @@ module Templates
       instance_slots_klass Templates::SlotMappings::MetadataInstanceSlots
 
       inline! :header
+      block! :items_a
+      block! :items_b
+      block! :items_c
+      block! :items_d
     end
   end
 end

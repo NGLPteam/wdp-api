@@ -6,6 +6,8 @@ module Templates
 
     extend Support::EnhancedTypes
 
+    Asset = ModelInstance("Asset")
+
     Assigns = Hash.map(Coercible::String, Any)
 
     EnumPropertyCategory = Coercible::String.default("none").enum(
@@ -39,8 +41,6 @@ module Templates
     Entity = Instance(::HierarchicalEntity)
 
     Entities = Coercible::Array.of(Entity)
-
-    ErrorMode = Coercible::Symbol.default(:strict).enum(:strict, :warn, :lax).fallback(:strict)
 
     Generation = String.constrained(uuid_v4: true)
 

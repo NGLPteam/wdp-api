@@ -6,6 +6,7 @@
     Contained within the `MAIN` layout.
   </description>
   <prop name="variant" kind="variant">
+    <description>The variant rendering mode to use for this template. Affects presentation.</description>
     <default>
       <![CDATA[
         "summary"
@@ -13,6 +14,7 @@
     </default>
   </prop>
   <prop name="background" kind="background">
+    <description>The background gradient to use for this template. Affects presentation.</description>
     <default>
       <![CDATA[
         "none"
@@ -27,6 +29,17 @@
     </default>
   </prop>
   <prop name="show_hero_image" kind="boolean">
+    <default>
+      <![CDATA[
+        false
+      ]]>
+    </default>
+  </prop>
+  <prop name="show_body" kind="boolean">
+    <description>
+      Whether to show and use the 'body' slot on a detail view.
+      Primarily intended for items with copious text to display.
+    </description>
     <default>
       <![CDATA[
         false
@@ -54,4 +67,5 @@
       ]]>
     </default-template>
   </slot>
+  <slot name="body" kind="block"/>
 </config>
