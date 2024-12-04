@@ -1,25 +1,23 @@
 # frozen_string_literal: true
 
 module Types
+  # @see Contribution
+  # @see Types::ContributionBaseType
+  # @see Types::CollectionContributionType
+  # @see Types::ItemContributionType
   module ContributionType
     include Types::BaseInterface
 
-    description "A contribution from a certain contributor"
+    description <<~TEXT
+    An interface representing a contribution from a certain contributor.
+    TEXT
 
-    field :contributor, "Types::AnyContributorType", null: false
+    implements Types::ContributionBaseType
 
-    field :contributor_kind, Types::ContributorKindType, null: false
-
-    field :metadata, Types::ContributionMetadataType, null: false
-
-    field :role, String, null: true, description: "An arbitrary text value describing the role the contributor had"
-
-    field :display_name, String, null: false, description: "A potentially-overridden display name value for all contributor types"
-
-    field :title, String, null: true, description: "A potentially-overridden value from person contributors"
-
-    field :affiliation, String, null: true, description: "A potentially-overridden value from person contributors"
-
-    field :location, String, null: true, description: "A potentially-overridden value from organization contributors"
+    field :contributor, "Types::AnyContributorType", null: false do
+      description <<~TEXT
+      The contributor, loaded via union for the most control.
+      TEXT
+    end
   end
 end

@@ -4,7 +4,7 @@ module Templates
   module Slots
     module Definitions
       class Inline < Abstract
-        kind "inline"
+        kind! "inline"
       end
     end
   end

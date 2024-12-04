@@ -27,16 +27,17 @@ module Templates
         call_operation("templates.definitions.maintain_manual_list", self)
       end
 
-      def to_entity_list_resolution(source_entity: nil)
+      def to_entity_list_resolution(fallback: false, source_entity: nil)
         {
-          selection_mode:,
+          selection_mode: fallback ? selection_fallback_mode : selection_mode,
           selection_limit:,
           source_entity:,
           template_definition_id: id,
           template_kind:,
           layout_kind:,
+          fallback:,
         }.tap do |opt|
-          case selection_mode
+          case opt[:selection_mode]
           in "dynamic"
             opt.merge!(dynamic_ordering_definition:)
           in "manual"

@@ -1,152 +1,102 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <config layout="hero" has-background="true" has-variant="false">
-  <description>
-    A template for describing how an entity's header / hero should look.
+  <description>A template for describing how an entity's header / hero should look.
 
-    Contained within the `HERO` layout.
-  </description>
+Contained within the `HERO` layout.</description>
   <prop name="background" kind="background">
     <description>The background gradient to use for this template. Affects presentation.</description>
     <default>
-      <![CDATA[
-        "none"
-      ]]>
+      "none"
     </default>
   </prop>
-  <prop name="descendant_search_prompt" kind="string">
-    <default>
-      <![CDATA[
-        "Search"
-      ]]>
-    </default>
-  </prop>
+  <prop name="descendant_search_prompt" kind="string"/>
   <prop name="enable_descendant_browsing" kind="boolean">
     <default>
-      <![CDATA[
-        false
-      ]]>
+      false
     </default>
   </prop>
   <prop name="enable_descendant_search" kind="boolean">
     <default>
-      <![CDATA[
-        false
-      ]]>
+      false
     </default>
   </prop>
   <prop name="list_contributors" kind="boolean">
     <default>
-      <![CDATA[
-        false
-      ]]>
+      false
     </default>
   </prop>
   <prop name="show_basic_view_metrics" kind="boolean">
     <default>
-      <![CDATA[
-        false
-      ]]>
+      false
     </default>
   </prop>
   <prop name="show_big_search_prompt" kind="boolean">
     <default>
-      <![CDATA[
-        false
-      ]]>
+      false
     </default>
   </prop>
   <prop name="show_breadcrumbs" kind="boolean">
     <default>
-      <![CDATA[
-        false
-      ]]>
+      false
     </default>
   </prop>
   <prop name="show_doi" kind="boolean">
     <default>
-      <![CDATA[
-        false
-      ]]>
+      false
     </default>
   </prop>
   <prop name="show_hero_image" kind="boolean">
     <default>
-      <![CDATA[
-        false
-      ]]>
+      false
     </default>
   </prop>
   <prop name="show_issn" kind="boolean">
     <default>
-      <![CDATA[
-        false
-      ]]>
+      false
     </default>
   </prop>
   <prop name="show_sharing_link" kind="boolean">
     <default>
-      <![CDATA[
-        false
-      ]]>
+      false
     </default>
   </prop>
   <prop name="show_split_display" kind="boolean">
     <default>
-      <![CDATA[
-        false
-      ]]>
+      false
     </default>
   </prop>
   <prop name="show_thumbnail_image" kind="boolean">
     <default>
-      <![CDATA[
-        false
-      ]]>
+      false
     </default>
   </prop>
+  <slot name="big_search_prompt" kind="inline">
+    <default-template>
+      Search
+    </default-template>
+  </slot>
+  <slot name="call_to_action" kind="block"/>
+  <slot name="descendant_search_prompt" kind="inline">
+    <default-template>
+      Search
+    </default-template>
+  </slot>
   <slot name="header" kind="inline">
     <default-template>
-      <![CDATA[
-        {{ entity.title }}
-      ]]>
+      {{ entity.title }}
     </default-template>
   </slot>
   <slot name="header_aside" kind="inline"/>
   <slot name="header_sidebar" kind="block"/>
-  <slot name="header_summary" kind="block">
-    <default-template>
-      <![CDATA[
-        <p>Welcome to this {{ schema.name }}.</p>
-      ]]>
-    </default-template>
-  </slot>
+  <slot name="header_summary" kind="block"/>
+  <slot name="metadata" kind="inline"/>
+  <slot name="sidebar" kind="block"/>
   <slot name="subheader" kind="inline"/>
   <slot name="subheader_aside" kind="inline"/>
   <slot name="subheader_summary" kind="block"/>
-  <slot name="sidebar" kind="block">
-    <default-template>
-      <![CDATA[
-        <ul>
-          <li>List</li>
-          <li>Of</li>
-          <li>Items</li>
-        </ul>
-      ]]>
-    </default-template>
-  </slot>
-  <slot name="metadata" kind="inline">
-    <default-template>
-      <![CDATA[
-        Published {{ entity.published }}
-      ]]>
-    </default-template>
-  </slot>
   <slot name="summary" kind="block">
     <default-template>
-      <![CDATA[
-        {{ entity.summary }}
-      ]]>
+      {{ entity.summary }}
     </default-template>
   </slot>
-  <slot name="call_to_action" kind="inline"/>
 </config>

@@ -19,6 +19,8 @@ module Templates
 
     pg_enum! :background, as: :ordering_background, allow_blank: false, suffix: :background, default: "none"
 
+    pg_enum! :width, as: :template_width, allow_blank: false, suffix: :width, default: "full"
+
     attribute :slots, ::Templates::SlotMappings::OrderingDefinitionSlots.to_type
 
     belongs_to :layout_definition,

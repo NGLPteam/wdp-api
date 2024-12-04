@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <main>
   <templates>
-    <detail background="none" show-announcements="false" show-hero-image="false" show-body="true" variant="summary">
+    <detail>
+      <background>none</background>
+      <show-announcements>false</show-announcements>
+      <show-body>true</show-body>
+      <show-hero-image>false</show-hero-image>
+      <variant>summary</variant>
       <slots>
         <header>
           {{ entity.title }}
@@ -10,54 +15,65 @@
           {{ entity.subtitle }}
         </subheader>
         <summary>
-          {% if props.abstract %}
-          {{props.abstract}}
-          {% else %}
-          {{entity.summary}}
-          {% endif %}
+          {% if props.abstract %} {{props.abstract}} {% else %} {{entity.summary}} {% endif %}
         </summary>
         <body>
-          {% if props.pdf_version %}
-          {% pdfviewer props.pdf_version %}
-          {% elsif props.body %}
-          {{props.body}}
-          {% endif %}
+          {% if props.pdf_version %} {% pdfviewer props.pdf_version %} {% elsif props.body %} {{props.body}} {% endif %}
         </body>
       </slots>
     </detail>
-    <link-list background="none" selection-mode="dynamic" show-entity-context="false" show-see-all-button="false" variant="cards">
-      <selection-limit>6</selection-limit>
-      <selection-source>self</selection-source>
+    <contributor-list>
+      <background>light</background>
+      <filter>authors</filter>
+      <limit>3</limit>
+      <slots>
+        <header>
+          Contributors
+        </header>
+      </slots>
+    </contributor-list>
+    <link-list>
+      <background>light</background>
       <dynamic-ordering-definition>
         <filter>
           <schema namespace="nglp" identifier="journal_article"/>
         </filter>
-        <order path="entity.published" dir="desc"/>
+        <order path="entity.published" dir="desc" nulls="last"/>
         <render mode="flat"/>
         <select direct="none">
-          <links references="true"/>
+          <links contains="false" references="true"/>
         </select>
       </dynamic-ordering-definition>
+      <manual-list-name>manual</manual-list-name>
+      <selection-limit>6</selection-limit>
+      <selection-mode>dynamic</selection-mode>
+      <selection-source>self</selection-source>
+      <show-entity-context>false</show-entity-context>
+      <show-hero-image>false</show-hero-image>
+      <show-see-all-button>false</show-see-all-button>
+      <title>Related</title>
+      <variant>grid</variant>
       <slots>
-        <header>Referenced Articles</header>
+        <header>
+          Related Articles
+        </header>
         <header-aside/>
         <metadata/>
         <subtitle/>
       </slots>
     </link-list>
-    <contributor-list background="light">
-      <limit>3</limit>
-      <slots>
-        <header>Contributors</header>
-      </slots>
-    </contributor-list>
-    <ordering background="dark">
-      <ordering-source>parent</ordering-source>
+    <ordering>
+      <background>dark</background>
       <ordering-identifier>articles</ordering-identifier>
+      <ordering-source>parent</ordering-source>
       <selection-source>self</selection-source>
       <slots>
-        <previous-label>Previous Article</previous-label>
-        <next-label>Next Article</next-label>
+        <previous-label>
+          Previous Article
+        </previous-label>
+        <next-label>
+          Next Article
+        </next-label>
       </slots>
     </ordering>
   </templates>

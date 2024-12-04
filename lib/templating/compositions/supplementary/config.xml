@@ -1,31 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <config layout="supplementary" has-background="true" has-variant="false">
-  <description>
-    A template for describing how an entity's supplementary pages
-    (contributors, metrics) should render.
+  <description>A template for describing how an entity's supplementary pages
+(contributors, metrics) should render.
 
-    Contained within the `SUPPLEMENTARY` layout.
-  </description>
+Contained within the `SUPPLEMENTARY` layout.</description>
   <prop name="background" kind="background">
     <description>The background gradient to use for this template. Affects presentation.</description>
     <default>
-      <![CDATA[
-        "none"
-      ]]>
+      "none"
     </default>
   </prop>
   <slot name="contributors_label" kind="inline">
     <default-template>
-      <![CDATA[
-        Contributors
-      ]]>
+      Contributors
     </default-template>
   </slot>
   <slot name="metrics_label" kind="inline">
     <default-template>
-      <![CDATA[
-        Metrics
-      ]]>
+      Metrics
     </default-template>
   </slot>
 </config>

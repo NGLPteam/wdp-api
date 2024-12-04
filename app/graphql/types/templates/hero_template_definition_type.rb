@@ -18,7 +18,7 @@ module Types
         TEXT
       end
 
-      field :descendant_search_prompt, String, null: true do
+      field :descendant_search_prompt, String, null: true, deprecation_reason: "This is a slot now." do
         description <<~TEXT
         TEXT
       end

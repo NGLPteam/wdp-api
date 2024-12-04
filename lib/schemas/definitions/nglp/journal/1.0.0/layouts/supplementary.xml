@@ -1,17 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <supplementary>
   <templates>
-    <supplementary background="none">
+    <supplementary>
+      <background>none</background>
       <slots>
         <contributors-label>
-          <![CDATA[
-            Contributors
-          ]]>
+          Contributors
         </contributors-label>
         <metrics-label>
-          <![CDATA[
-            Metrics
-          ]]>
+          Metrics
         </metrics-label>
       </slots>
     </supplementary>

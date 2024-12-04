@@ -19,21 +19,25 @@ module Templates
 
         attribute :show_body, ::Templates::Config::Properties::Boolean, default: -> { false }
 
+        attribute :width, ::Templates::Config::Properties::TemplateWidth, default: -> { "full" }
+
         attribute :slots, Templates::Config::TemplateSlots::DetailSlots,
           default: -> { Templates::Config::TemplateSlots::DetailSlots.new }
 
         xml do
           root "detail"
 
-          map_attribute "background", to: :background
+          map_element "background", to: :background
 
-          map_attribute "show-announcements", to: :show_announcements
+          map_element "show-announcements", to: :show_announcements
 
-          map_attribute "show-body", to: :show_body
+          map_element "show-body", to: :show_body
 
-          map_attribute "show-hero-image", to: :show_hero_image
+          map_element "show-hero-image", to: :show_hero_image
 
-          map_attribute "variant", to: :variant
+          map_element "variant", to: :variant
+
+          map_element "width", to: :width
 
           map_element "slots", to: :slots
         end

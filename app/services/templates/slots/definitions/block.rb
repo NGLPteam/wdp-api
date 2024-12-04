@@ -4,7 +4,7 @@ module Templates
   module Slots
     module Definitions
       class Block < Abstract
-        kind "block"
+        kind! "block"
       end
     end
   end

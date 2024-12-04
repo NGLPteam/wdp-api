@@ -43,6 +43,7 @@
 
     Contained within the `MAIN` layout.
 - template_kind: contributor_list
+  has_contribution_list: true
   layout_kind: main
   description: |
     A template for listing contributors of note on the main layout of an entity.

@@ -26,6 +26,8 @@ class Contributor < ApplicationRecord
   scope :by_kind, ->(kind) { where(kind:) }
   scope :unharvested, -> { where.not(id: HarvestContributor.harvested_ids) }
 
+  scope :in_default_order, -> { order(sort_name: :asc) }
+
   validates :identifier, :kind, presence: true
   validates :identifier, uniqueness: true
   validates :orcid, orcid: { allow_blank: true }
@@ -92,6 +94,42 @@ class Contributor < ApplicationRecord
   def to_schematic_referent_label
     display_name
   end
+
+  # @!group Organization Accessors
+
+  def legal_name
+    properties&.organization&.legal_name if organization?
+  end
+
+  def location
+    properties&.organization&.location if organization?
+  end
+
+  # @!endgroup
+
+  # @!group Person Accessors
+
+  # @return [String, nil]
+  def given_name
+    properties&.person&.given_name if person?
+  end
+
+  # @return [String, nil]
+  def family_name
+    properties&.person&.family_name if person?
+  end
+
+  # @return [String, nil]
+  def title
+    properties&.person&.title if person?
+  end
+
+  # @return [String, nil]
+  def affiliation
+    properties&.person&.affiliation if person?
+  end
+
+  # @!endgroup
 
   class << self
     # @param [String] input

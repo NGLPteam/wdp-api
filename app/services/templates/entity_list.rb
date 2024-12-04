@@ -16,9 +16,12 @@ module Templates
     include Dry::Core::Equalizer.new(:entities)
     include Dry::Initializer[undefined: false].define -> do
       option :entities, Templates::Types::Entities, default: proc { EMPTY_ARRAY }
+      option :fallback, Templates::Types::Bool, default: proc { false }
     end
 
     delegate :each, to: :valid_entities
+
+    alias fallback? fallback
 
     alias records entities
 

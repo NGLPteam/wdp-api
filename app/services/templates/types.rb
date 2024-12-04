@@ -10,6 +10,12 @@ module Templates
 
     Assigns = Hash.map(Coercible::String, Any)
 
+    Contribution = Instance(::Contribution)
+
+    Contributions = Coercible::Array.of(Contribution)
+
+    ContributorListFilter = ApplicationRecord.dry_pg_enum("contributor_list_filter", default: "all").fallback("all")
+
     EnumPropertyCategory = Coercible::String.default("none").enum(
       "background",
       "none",
@@ -19,6 +25,7 @@ module Templates
 
     EnumPropertyName = Coercible::String.enum(
       "contributor_list_background",
+      "contributor_list_filter",
       "descendant_list_background",
       "descendant_list_selection_mode",
       "descendant_list_variant",
@@ -33,7 +40,8 @@ module Templates
       "ordering_background",
       "page_list_background",
       "selection_source_mode",
-      "supplementary_background"
+      "supplementary_background",
+      "template_width"
     )
 
     DescendantListSelectionMode = ApplicationRecord.dry_pg_enum(:descendant_list_ordering_mode)
@@ -58,7 +66,7 @@ module Templates
 
     LIMIT_MIN = 1
 
-    LIMIT_MAX = 24
+    LIMIT_MAX = 40
 
     LIMIT_RANGE = LIMIT_MIN..LIMIT_MAX
 
@@ -104,6 +112,7 @@ module Templates
     PropertyKind = Coercible::String.enum(
       "background",
       "boolean",
+      "contributor_list_filter",
       "limit",
       "ordering_definition",
       "schema_component",
@@ -112,7 +121,8 @@ module Templates
       "selection_source",
       "selection_source_mode",
       "string",
-      "variant"
+      "variant",
+      "width"
     )
 
     PropertyName = Coercible::String.constrained(excluded_from: RESERVED_PROPERTY_NAMES)
@@ -152,10 +162,14 @@ module Templates
 
     SlotKind = ::Types::TemplateSlotKindType.dry_type
 
+    SlotScope = Coercible::String.default("abstract").enum("abstract", "definition", "instance").fallback("abstract")
+
     StrippedString = Coercible::String.constructor { _1.to_s.strip_heredoc.strip }
 
     TemplateDefinition = Instance(::TemplateDefinition)
 
     TemplateInstance = Instance(::TemplateInstance)
+
+    TemplateWidth = ApplicationRecord.dry_pg_enum("template_width", default: "full").fallback("full")
   end
 end

@@ -32,7 +32,13 @@ class APISchema < GraphQL::Schema
     # :nocov:
   end
 
-  orphan_types Types::ContributorType, Types::OrganizationContributorType, Types::PersonContributorType
+  extra_types(
+    Types::ContributorType,
+    Types::ContributorBaseType,
+    Types::OrganizationContributorType,
+    Types::PersonContributorType,
+    Types::TemplateContributionType
+  )
 
   class << self
     def id_from_object(object, type_definition, query_ctx)
@@ -73,9 +79,9 @@ class APISchema < GraphQL::Schema
 
         case reason
         when GraphQL::ExecutionError then reason
-        when String then GraphQL::ExecutionError.new(reason, opts)
+        when String then GraphQL::ExecutionError.new(reason, **opts)
         else
-          raise GraphQL::ExecutionError.new("Unexpected object: #{object.inspect}", opts)
+          raise GraphQL::ExecutionError.new("Unexpected object: #{object.inspect}", **opts)
         end
         # :nocov:
       end

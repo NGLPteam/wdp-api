@@ -8,17 +8,19 @@ module Templates
     class HeroDefinitionSlots < AbstractDefinitionSlots
       instance_slots_klass Templates::SlotMappings::HeroInstanceSlots
 
+      inline! :big_search_prompt, default: proc { TemplateSlot.default_template_hash_for("hero#big_search_prompt") }
+      block! :call_to_action
+      inline! :descendant_search_prompt, default: proc { TemplateSlot.default_template_hash_for("hero#descendant_search_prompt") }
       inline! :header, default: proc { TemplateSlot.default_template_hash_for("hero#header") }
       inline! :header_aside
       block! :header_sidebar
-      block! :header_summary, default: proc { TemplateSlot.default_template_hash_for("hero#header_summary") }
+      block! :header_summary
+      inline! :metadata
+      block! :sidebar
       inline! :subheader
       inline! :subheader_aside
       block! :subheader_summary
-      block! :sidebar, default: proc { TemplateSlot.default_template_hash_for("hero#sidebar") }
-      inline! :metadata, default: proc { TemplateSlot.default_template_hash_for("hero#metadata") }
       block! :summary, default: proc { TemplateSlot.default_template_hash_for("hero#summary") }
-      inline! :call_to_action
     end
   end
 end

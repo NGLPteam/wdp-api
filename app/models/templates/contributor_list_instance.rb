@@ -8,6 +8,7 @@ module Templates
   class ContributorListInstance < ApplicationRecord
     include HasEphemeralSystemSlug
     include TemplateInstance
+    include Templates::Instances::HasContributionList
     include TimestampScopes
 
     layout_kind! :main

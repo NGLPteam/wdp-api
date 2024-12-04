@@ -181,6 +181,16 @@ CREATE TYPE public.contributor_list_background AS ENUM (
 
 
 --
+-- Name: contributor_list_filter; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.contributor_list_filter AS ENUM (
+    'all',
+    'authors'
+);
+
+
+--
 -- Name: date_precision; Type: TYPE; Schema: public; Owner: -
 --
 
@@ -661,6 +671,16 @@ CREATE TYPE public.template_kind AS ENUM (
 CREATE TYPE public.template_slot_kind AS ENUM (
     'block',
     'inline'
+);
+
+
+--
+-- Name: template_width; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.template_width AS ENUM (
+    'full',
+    'half'
 );
 
 
@@ -6100,7 +6120,9 @@ CREATE TABLE public.templates_contributor_list_definitions (
     config jsonb DEFAULT '{}'::jsonb NOT NULL,
     slots jsonb DEFAULT '{}'::jsonb NOT NULL,
     background public.contributor_list_background DEFAULT 'none'::public.contributor_list_background NOT NULL,
-    "limit" integer
+    "limit" integer,
+    filter public.contributor_list_filter DEFAULT 'all'::public.contributor_list_filter NOT NULL,
+    width public.template_width DEFAULT 'full'::public.template_width NOT NULL
 );
 
 
@@ -6155,7 +6177,11 @@ CREATE TABLE public.templates_descendant_list_definitions (
     show_entity_context boolean DEFAULT false NOT NULL,
     manual_list_name text DEFAULT 'manual'::text NOT NULL,
     selection_source_ancestor_name text,
-    selection_property_path text
+    selection_property_path text,
+    show_hero_image boolean DEFAULT false NOT NULL,
+    use_selection_fallback boolean DEFAULT false NOT NULL,
+    selection_fallback_mode public.descendant_list_selection_mode DEFAULT 'manual'::public.descendant_list_selection_mode NOT NULL,
+    width public.template_width DEFAULT 'full'::public.template_width NOT NULL
 );
 
 
@@ -6200,7 +6226,8 @@ CREATE TABLE public.templates_detail_definitions (
     variant public.detail_variant DEFAULT 'summary'::public.detail_variant NOT NULL,
     show_announcements boolean DEFAULT false NOT NULL,
     show_hero_image boolean DEFAULT false NOT NULL,
-    show_body boolean DEFAULT false NOT NULL
+    show_body boolean DEFAULT false NOT NULL,
+    width public.template_width DEFAULT 'full'::public.template_width NOT NULL
 );
 
 
@@ -6307,7 +6334,11 @@ CREATE TABLE public.templates_link_list_definitions (
     show_see_all_button boolean DEFAULT false NOT NULL,
     show_entity_context boolean DEFAULT false NOT NULL,
     manual_list_name text DEFAULT 'manual'::text NOT NULL,
-    selection_source_ancestor_name text
+    selection_source_ancestor_name text,
+    show_hero_image boolean DEFAULT false NOT NULL,
+    use_selection_fallback boolean DEFAULT false NOT NULL,
+    selection_fallback_mode public.link_list_selection_mode DEFAULT 'manual'::public.link_list_selection_mode NOT NULL,
+    width public.template_width DEFAULT 'full'::public.template_width NOT NULL
 );
 
 
@@ -6513,7 +6544,8 @@ CREATE TABLE public.templates_ordering_definitions (
     selection_source_mode public.selection_source_mode DEFAULT 'self'::public.selection_source_mode NOT NULL,
     selection_source text DEFAULT 'self'::text NOT NULL,
     selection_source_ancestor_name text,
-    ordering_identifier text
+    ordering_identifier text,
+    width public.template_width DEFAULT 'full'::public.template_width NOT NULL
 );
 
 
@@ -6556,7 +6588,8 @@ CREATE TABLE public.templates_page_list_definitions (
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     config jsonb DEFAULT '{}'::jsonb NOT NULL,
     slots jsonb DEFAULT '{}'::jsonb NOT NULL,
-    background public.page_list_background DEFAULT 'none'::public.page_list_background NOT NULL
+    background public.page_list_background DEFAULT 'none'::public.page_list_background NOT NULL,
+    width public.template_width DEFAULT 'full'::public.template_width NOT NULL
 );
 
 
@@ -14304,6 +14337,9 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20241105174558'),
 ('20241105174753'),
 ('20241113212205'),
-('20241119165014');
+('20241119165014'),
+('20241204230232'),
+('20241205194208'),
+('20241205225757');
 
 

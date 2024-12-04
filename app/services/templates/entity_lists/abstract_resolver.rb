@@ -6,6 +6,8 @@ module Templates
     class AbstractResolver < Support::HookBased::Actor
       extend Dry::Initializer
 
+      option :fallback, Templates::Types::Bool, default: proc { false }
+
       option :source_entity, Templates::Types::Entity.optional, optional: true
 
       option :selection_limit, ::Templates::Types::LimitWithFallback, default: proc { Templates::Types::LIMIT_DEFAULT }
@@ -27,7 +29,7 @@ module Templates
           yield resolve!
         end
 
-        entity_list = Templates::EntityList.new(entities:)
+        entity_list = Templates::EntityList.new(entities:, fallback:)
 
         Success entity_list
       end
@@ -35,15 +37,13 @@ module Templates
       wrapped_hook! def prepare
         @entities = EMPTY_ARRAY
 
-        @entity_list = nil
-
         super
       end
 
       wrapped_hook! def resolve
         return super if source_entity.blank?
 
-        @entities = Array(resolve_entities.value_or(EMPTY_ARRAY)).take(selection_limit)
+        @entities = Array(resolve_entities.value_or(EMPTY_ARRAY)).compact.take(selection_limit)
 
         super
       end

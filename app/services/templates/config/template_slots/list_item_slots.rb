@@ -15,9 +15,9 @@ module Templates
 
         attribute :description, ::Mappers::StrippedString
 
-        attribute :meta_a, ::Mappers::StrippedString, default: -> { ::TemplateSlot.default_template_for("list_item#meta_a") }
+        attribute :meta_a, ::Mappers::StrippedString
 
-        attribute :meta_b, ::Mappers::StrippedString, default: -> { ::TemplateSlot.default_template_for("list_item#meta_b") }
+        attribute :meta_b, ::Mappers::StrippedString
 
         attribute :context_a, ::Mappers::StrippedString
 

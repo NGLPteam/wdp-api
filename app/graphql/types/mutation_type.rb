@@ -101,5 +101,9 @@ module Types
     field :update_viewer_settings, mutation: Mutations::UpdateViewerSettings
 
     field :upsert_contribution, mutation: Mutations::UpsertContribution
+
+    field :render_layouts, mutation: Mutations::RenderLayouts
+
+    field :preview_slot, mutation: Mutations::PreviewSlot
   end
 end

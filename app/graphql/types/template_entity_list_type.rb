@@ -39,6 +39,14 @@ module Types
       TEXT
     end
 
+    field :fallback, Boolean, null: false do
+      description <<~TEXT
+      Whether the entity selection tried to use the fallback selection mode.
+
+      When true, the resulting list is fallback. It can still be empty.
+      TEXT
+    end
+
     field :list_item_layouts, ["::Types::Layouts::ListItemLayoutInstanceType", { null: false }], null: false do
       description <<~TEXT
       A shortcut to access the list item layouts for each entity in `entities`.

@@ -10,18 +10,26 @@ module Templates
 
       delegate :template_definition, to: :template_instance
 
-      delegate :selection_mode, to: :template_definition
+      delegate :selection_mode, :selection_fallback_mode, :use_selection_fallback?, to: :template_definition
 
       standard_execution!
 
       # @return [Templates::EntityList]
       attr_reader :entity_list
 
+      # @return [String, nil]
+      attr_reader :fallback_operation_name
+
       # @return [String]
       attr_reader :operation_name
 
       # @return [HierarchicalEntity]
       attr_reader :source_entity
+
+      # @return [Boolean]
+      attr_reader :try_fallback
+
+      alias try_fallback? try_fallback
 
       # @return [Dry::Monads::Success(Templates::EntityList)]
       def call
@@ -45,7 +53,11 @@ module Templates
 
         @source_entity = nil
 
-        @operation_name = derive_entity_list_resolver_operation_name
+        @operation_name = selection_mode_to_operation_name selection_mode
+
+        @fallback_operation_name = selection_mode_to_operation_name(selection_fallback_mode)
+
+        @try_fallback = use_selection_fallback? && selection_mode != selection_fallback_mode
 
         super
       end
@@ -61,13 +73,21 @@ module Templates
 
         @entity_list = yield call_operation(operation_name, **props)
 
+        if try_fallback? && @entity_list.empty?
+          fallback_props = template_definition.to_entity_list_resolution(source_entity:, fallback: true)
+
+          @entity_list = yield call_operation(fallback_operation_name, **fallback_props)
+        end
+
         super
       end
 
       private
 
-      def derive_entity_list_resolver_operation_name
-        case selection_mode
+      # @param [Templates::Types::DescendantListSelectionMode, Templates::Types::LinkListSelectionMode] mode
+      # @return [String]
+      def selection_mode_to_operation_name(mode)
+        case mode
         in "dynamic"
           "templates.entity_lists.resolve_dynamic"
         in "manual"
@@ -78,7 +98,7 @@ module Templates
           "templates.entity_lists.resolve_property"
         else
           # :nocov:
-          raise "Unsupported Entity Resolution Mode: #{selection_mode}"
+          raise "Unsupported Entity Resolution Mode: #{mode}"
           # :nocov:
         end
       end

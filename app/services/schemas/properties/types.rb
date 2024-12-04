@@ -115,7 +115,7 @@ module Schemas
       # A logical grouping for the kind of property.
       #
       # There's an associated enum type in the database: `schema_property_kind`.
-      Kind = Coercible::String.enum("complex", "group", "reference", "simple")
+      Kind = KindName = ApplicationRecord.dry_pg_enum(:schema_property_kind)
 
       # @api private
       #
@@ -133,7 +133,7 @@ module Schemas
       SchemaType = Instance(Dry::Types::Type) | String | Symbol
 
       # A known schema property type name.
-      TypeName = Coercible::String.default("unknown").enum(*KNOWN_TYPES)
+      TypeName = ApplicationRecord.dry_pg_enum(:schema_property_type, default: "unknown")
 
       # A key for a type mapping
       # @see Schemas::Properties::TypeMapping

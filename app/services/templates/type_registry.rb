@@ -3,6 +3,7 @@
 module Templates
   # The type registry used by {Template} and related records.
   TypeRegistry = Support::Schemas::TypeContainer.new.configure do |tc|
+    tc.add! :contributor_list_filter, Templates::Types::ContributorListFilter
     tc.add! :entity, Templates::Types::Entity
     tc.add! :entities, Templates::Types::Entities
     tc.add! :enum_property_category, Templates::Types::EnumPropertyCategory
@@ -19,5 +20,6 @@ module Templates
     tc.add! :stripped_string, Templates::Types::StrippedString
     tc.add! :template_kind, Templates::Types::Kind
     tc.add! :template_kinds, Templates::Types::Kinds
+    tc.add! :template_width, Templates::Types::TemplateWidth
   end
 end

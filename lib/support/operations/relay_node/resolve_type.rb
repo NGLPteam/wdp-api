@@ -16,7 +16,7 @@ module Support
           type_from_model.call(object)
         when Support::Types.Interface(:graphql_object_type)
           Success object.graphql_object_type
-        when GraphQL::Relay::Edge
+        when GraphQL::Types::Relay::EdgeBehaviors
           type_from_model.call(object.node).bind do |node_type|
             edge = node_type&.edge_type
 

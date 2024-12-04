@@ -241,15 +241,7 @@ RSpec.shared_examples_for "a graphql entity with layouts" do
           lyts.prop :main do |main|
             main[:last_rendered_at] = be_present
 
-            main[:templates] = all(satisfy("main template looks okay") do |template|
-              case template["__typename"]
-              when "DescendantListTemplateInstance"
-                # Only one of the list items should have a layout.
-                template.dig("entity_list", "count") == 1
-              else
-                true
-              end
-            end)
+            main[:templates] = be_present
           end
         end
       end

@@ -10,7 +10,7 @@ module Templates
 
       inline! :header, default: proc { TemplateSlot.default_template_hash_for("descendant_list#header") }
       inline! :header_aside
-      inline! :metadata, default: proc { TemplateSlot.default_template_hash_for("descendant_list#metadata") }
+      inline! :metadata
       inline! :subtitle
     end
   end

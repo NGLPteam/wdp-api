@@ -11,7 +11,7 @@ module Entities
     message_keys! :ancestor_name
 
     message_format! <<~MSG
-    %<declaration>s does not have ancestor: %<ancestor_name>s
+    [%<declaration>s] does not have ancestor: %<ancestor_name>s
     MSG
 
     did_you_mean_with! :ancestor_name, :available_ancestors

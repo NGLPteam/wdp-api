@@ -1,23 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <config layout="main" has-background="true" has-variant="false">
-  <description>
-    A template for listing pages on the main layout of an entity.
+  <description>A template for listing pages on the main layout of an entity.
 
-    Contained within the `MAIN` layout.
-  </description>
+Contained within the `MAIN` layout.</description>
   <prop name="background" kind="background">
     <description>The background gradient to use for this template. Affects presentation.</description>
     <default>
-      <![CDATA[
-        "none"
-      ]]>
+      "none"
     </default>
   </prop>
   <slot name="header" kind="inline">
     <default-template>
-      <![CDATA[
-        Pages
-      ]]>
+      Pages
     </default-template>
   </slot>
 </config>

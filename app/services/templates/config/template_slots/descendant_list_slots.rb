@@ -13,7 +13,7 @@ module Templates
 
         attribute :header_aside, ::Mappers::StrippedString
 
-        attribute :metadata, ::Mappers::StrippedString, default: -> { ::TemplateSlot.default_template_for("descendant_list#metadata") }
+        attribute :metadata, ::Mappers::StrippedString
 
         attribute :subtitle, ::Mappers::StrippedString
 

@@ -10,6 +10,7 @@ class Template < Support::FrozenRecordHelpers::AbstractRecord
     required(:layout_kind).filled(:layout_kind)
     required(:description).maybe(:stripped_string)
     required(:has_background).value(:bool)
+    required(:has_contribution_list).value(:bool)
     required(:has_entity_list).value(:bool)
     required(:has_ordering_pair).value(:bool)
     required(:has_variant).value(:bool)
@@ -19,6 +20,7 @@ class Template < Support::FrozenRecordHelpers::AbstractRecord
   default_attributes!(
     description: nil,
     has_background: true,
+    has_contribution_list: false,
     has_entity_list: false,
     has_ordering_pair: false,
     has_variant: false,
@@ -55,7 +57,7 @@ class Template < Support::FrozenRecordHelpers::AbstractRecord
   end
 
   memoize def property_names_for_configuration
-    properties.reject(&:skip_configuration?).map(&:name)
+    properties.reject(&:skip_configuration?).select(&:active?).map(&:name)
   end
 
   # @return [<TemplateSlot>]

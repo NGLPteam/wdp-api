@@ -41,7 +41,7 @@ module Templates
         def config_shale_attribute_declarations(indent: 8)
           build_declarations(indent:) do |decl|
             properties.each do |prop|
-              next if prop.skip_configuration?
+              next if prop.skip_configuration? || prop.deprecated?
 
               decl << prop.to_shale_attribute_declaration
             end
@@ -53,7 +53,7 @@ module Templates
         def config_shale_xml_mapper_declarations(indent: 10)
           build_declarations(indent:) do |decl|
             properties.each do |prop|
-              next if prop.skip_configuration?
+              next if prop.skip_configuration? || prop.deprecated?
 
               decl << prop.to_shale_xml_mapper_declaration
             end
@@ -138,21 +138,12 @@ module Templates
 
         def to_shale_xml_mapper_declaration
           <<~RUBY.strip_heredoc.strip
-          #{shale_mapper_verb} #{shale_mapper_element}, to: #{name.to_sym.inspect}
+          map_element #{shale_mapper_element}, to: #{name.to_sym.inspect}
           RUBY
         end
 
         def shale_mapper_element
           name.dasherize.inspect
-        end
-
-        def shale_mapper_verb
-          case property_kind_name
-          when "boolean", "background", "variant"
-            "map_attribute"
-          else
-            any_enum? ? "map_attribute" : "map_element"
-          end
         end
       end
 

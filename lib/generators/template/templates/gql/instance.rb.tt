@@ -8,6 +8,9 @@ module Types
     # @see ::Templates::<%= class_name %>Instance
     class <%= class_name %>TemplateInstanceType < AbstractModel
       implements ::Types::TemplateInstanceType
+      <%- if template_record.has_contribution_list? -%>
+      implements ::Types::TemplateHasContributionListType
+      <%- end -%>
       <%- if template_record.has_entity_list? -%>
       implements ::Types::TemplateHasEntityListType
       <%- end -%>

@@ -1,0 +1,120 @@
+# frozen_string_literal: true
+
+module Templates
+  module Drops
+    # This serves as a wrapper around schema properties that provides a slightly
+    # more fluent interface for interacting with them than just inserting the
+    # raw values into the liquid context.
+    #
+    # It allows for things like:
+    #
+    # ```liquid
+    # {% if props.foo.exists %}
+    #   Foo: {{props.foo}}
+    # {% else %}
+    #   Foo: Was Not Set
+    # {% endif %}
+    # ```
+    #
+    # @see Schemas::Properties::Reader#to_liquid
+    class PropertyValueDrop < Templates::Drops::AbstractDrop
+      include Enumerable
+
+      # @param [Schemas::Properties::Reader] reader
+      def initialize(reader)
+        super()
+
+        @reader = reader
+        @property = reader.property
+        @value = reader.value
+
+        @full_path = property.full_path
+        @type = property.type
+
+        @inner_representation = build_inner_representation
+      end
+
+      def each
+        # :nocov:
+        raise Liquid::ContextError, "tried to enumerate non-enumerable property: #{@full_path}" unless array?
+        # :nocov:
+
+        @inner_representation.each do |elm|
+          yield elm
+        end
+      end
+
+      # Boolean complement of {#missing}. Works like `#present?` in Rails parlance.
+      #
+      # @return [Boolean]
+      def exists
+        !missing
+      end
+
+      # @note This defers to the inner representation in case we are wrapping
+      #   around a drop class that adds further methods for the property.
+      # @param [#to_s] method_or_key
+      # @raise [Liquid::UndefinedDropMethod]
+      def liquid_method_missing(method_or_key)
+        case @inner_representation
+        in ::Liquid::Drop
+          @inner_representation.invoke_drop(method_or_key)
+        else
+          super
+        end
+      end
+
+      # Boolean complement of {#exists}. Works like `#blank?` in Rails parlance.
+      #
+      # @return [Boolean]
+      def missing
+        case @value
+        when VariablePrecisionDate
+          @value.none?
+        else
+          @value.present?
+        end
+      end
+
+      def to_s
+        if array?
+          @inner_representation.map(&:to_s).to_sentence
+        else
+          @inner_representation.to_s
+        end
+      end
+
+      private
+
+      # @return [Schemas::Properties::Scalar::Base]
+      attr_reader :property
+
+      delegate :array?, to: :property
+
+      # @return [Liquid::Drop, Object, nil]
+      def build_inner_representation
+        return Array(@value).map { build_inner_representation_for(_1) } if array?
+
+        case @type
+        in "full_text"
+          Templates::Drops::FullTextReferenceDrop.new @value
+        in "variable_date"
+          Templates::Drops::VariablePrecisionDateDrop.new @value
+        else
+          build_inner_representation_for(@value)
+        end
+      end
+
+      # @param [Object] value
+      # @return [Object, nil]
+      def build_inner_representation_for(value)
+        case value
+        when ::Liquifies
+          value.to_liquid
+        else
+          value&.to_liquid
+        end
+      end
+    end
+  end
+end

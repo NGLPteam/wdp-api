@@ -12,6 +12,9 @@ module Templates
   class <%= class_name %>Definition < ApplicationRecord
     include HasEphemeralSystemSlug
     include TemplateDefinition
+    <%- if template_record.has_contribution_list? -%>
+    include Templates::Definitions::HasContributionList
+    <%- end -%>
     <%- if template_record.has_entity_list? -%>
     include Templates::Definitions::HasEntityList
     <%- end -%>

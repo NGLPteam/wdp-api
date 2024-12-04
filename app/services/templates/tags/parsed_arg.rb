@@ -51,6 +51,8 @@ module Templates
         case source
         in ::Templates::Drops::AssetDrop
           asset_from(source.asset)
+        in ::Templates::Drops::PropertyValueDrop
+          asset_from(source.asset)
         in ::Asset
           source
         else
@@ -61,6 +63,8 @@ module Templates
       def entity_from(source)
         case source
         in Templates::Drops::AbstractEntityDrop
+          entity_from source.entity
+        in Templates::Drops::PropertyValueDrop
           entity_from source.entity
         in HierarchicalEntity
           source
