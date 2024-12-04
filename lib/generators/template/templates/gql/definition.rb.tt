@@ -15,7 +15,7 @@ module Types
         TEXT
       end<% template_properties.each do |prop| %>
 
-      field <%= prop.name.to_sym.inspect %>, <%= prop.gql_type_name %>, null: true do
+      field <%= prop.name.to_sym.inspect %>, <%= prop.gql_type_name %>, null: true<% if prop.deprecated? %>, deprecation_reason: <%= prop.deprecation_reason.inspect %><% end %> do
         description <%= heredoc_description_for(prop.description) %>
       end<% end %>
     end

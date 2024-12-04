@@ -4,6 +4,10 @@
 - name: boolean
   dry_type_key: "params.bool"
   gql_type_name: "Boolean"
+- name: contributor_list_filter
+  enum_name: contributor_list_filter
+  dry_type_key: contributor_list_filter
+  gql_type_name: "Types::ContributorListFilterType"
 - name: limit
   dry_type_key: "limit"
   gql_type_name: Int
@@ -28,3 +32,7 @@
   gql_type_name: String
 - name: variant
   enum_category: "variant"
+- name: width
+  enum_name: template_width
+  dry_type_key: "template_width"
+  gql_type_name: "::Types::TemplateWidthType"

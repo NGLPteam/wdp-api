@@ -4,7 +4,7 @@ module Templates
   module Slots
     module Instances
       class Inline < Abstract
-        kind "inline"
+        kind! "inline"
       end
     end
   end

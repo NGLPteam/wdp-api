@@ -4,26 +4,14 @@
     <list-item>
       <slots>
         <header>
-          <![CDATA[
-            {{ entity.title }}
-          ]]>
+          {{ entity.title }}
         </header>
         <subheader>
-          <![CDATA[
-            {{ entity.subtitle }}
-          ]]>
+          {{ entity.subtitle }}
         </subheader>
         <description/>
-        <meta-a>
-          <![CDATA[
-            Published {{ entity.published }}
-          ]]>
-        </meta-a>
-        <meta-b>
-          <![CDATA[
-            Meta B
-          ]]>
-        </meta-b>
+        <meta-a/>
+        <meta-b/>
         <context-a/>
         <context-b/>
         <context-c/>

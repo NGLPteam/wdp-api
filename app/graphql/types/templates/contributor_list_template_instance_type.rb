@@ -5,6 +5,7 @@ module Types
     # @see ::Templates::ContributorListInstance
     class ContributorListTemplateInstanceType < AbstractModel
       implements ::Types::TemplateInstanceType
+      implements ::Types::TemplateHasContributionListType
 
       field :definition, ::Types::Templates::ContributorListTemplateDefinitionType, null: false do
         description <<~TEXT

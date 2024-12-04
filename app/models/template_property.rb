@@ -14,10 +14,14 @@ class TemplateProperty < Support::FrozenRecordHelpers::AbstractRecord
     required(:default).maybe(:any)
     required(:skip_configuration).value(:bool)
     required(:skip_declaration).value(:bool)
+    required(:deprecation_reason).maybe(:stripped_string)
+    required(:deprecated).value(:bool)
+    required(:active).value(:bool)
   end
 
   default_attributes!(
     default: nil,
+    deprecation_reason: nil,
     skip_configuration: false,
     skip_declaration: false,
   )
@@ -36,6 +40,14 @@ class TemplateProperty < Support::FrozenRecordHelpers::AbstractRecord
     ::TemplatePropertyKind.find(record.fetch("property_kind_name"))
   end
 
+  calculates! :deprecated do |record|
+    record["deprecation_reason"].present?
+  end
+
+  calculates! :active do |record|
+    record["deprecated"].blank?
+  end
+
   self.primary_key = :id
 
   add_index :id, unique: true
@@ -49,7 +61,9 @@ class TemplateProperty < Support::FrozenRecordHelpers::AbstractRecord
     :instance_klass, :instance_klass_name,
     to: :template
 
+  scope :active, -> { where(active: true) }
   scope :for_template, ->(kind) { where(template_kind: kind.to_s) }
+  scope :deprecated, -> { where(deprecated: true) }
 
   def has_default?
     !default.nil?

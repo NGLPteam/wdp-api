@@ -1,93 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <main>
   <templates>
-    <detail background="none" show-announcements="false" show-hero-image="false" variant="summary">
+    <detail>
+      <variant>summary</variant>
       <slots>
         <header>
-          <![CDATA[
-            {{ entity.title }}
-          ]]>
+          {{ entity.title }}
         </header>
         <subheader>
-          <![CDATA[
-            {{ entity.subtitle }}
-          ]]>
+          {{ entity.subtitle }}
         </subheader>
         <summary>
-          <![CDATA[
-            {{ entity.summary }}
-          ]]>
+          {{ entity.summary }}
         </summary>
       </slots>
     </detail>
-    <descendant-list background="none" selection-mode="manual" show-entity-context="false" show-see-all-button="false" variant="cards">
-      <selection-limit>3</selection-limit>
-      <selection-source>self</selection-source>
+    <page-list>
+      <background>none</background>
       <slots>
         <header>
-          <![CDATA[
-            Descendants
-          ]]>
-        </header>
-        <header-aside/>
-        <metadata>
-          <![CDATA[
-            Published {{ entity.published }}
-          ]]>
-        </metadata>
-        <subtitle/>
-      </slots>
-    </descendant-list>
-    <link-list background="none" selection-mode="manual" show-entity-context="false" show-see-all-button="false" variant="cards">
-      <selection-limit>3</selection-limit>
-      <selection-source>self</selection-source>
-      <slots>
-        <header>
-          <![CDATA[
-            Links
-          ]]>
-        </header>
-        <header-aside/>
-        <metadata>
-          <![CDATA[
-            Published {{ entity.published }}
-          ]]>
-        </metadata>
-        <subtitle/>
-      </slots>
-    </link-list>
-    <page-list background="none">
-      <slots>
-        <header>
-          <![CDATA[
-            Pages
-          ]]>
+          Pages
         </header>
       </slots>
     </page-list>
-    <contributor-list background="none">
-      <limit>3</limit>
-      <slots>
-        <header>
-          <![CDATA[
-            Contributors
-          ]]>
-        </header>
-      </slots>
-    </contributor-list>
-    <ordering background="none">
-      <slots>
-        <previous-label>
-          <![CDATA[
-            Previous Entity
-          ]]>
-        </previous-label>
-        <next-label>
-          <![CDATA[
-            Next Entity
-          ]]>
-        </next-label>
-      </slots>
-    </ordering>
   </templates>
 </main>

@@ -95,6 +95,8 @@ module MutationOperations
     end
 
     # Attach a `value` on `key` of the GraphQL response.
+    #
+    # @see #attach_many!
     # @param [Symbol] key
     # @param [Object] value
     # @return [void]
@@ -104,6 +106,15 @@ module MutationOperations
       end
 
       graphql_response[key] = value
+    end
+
+    # @see #attach!
+    # @param [{ Symbol => Object }] pairs
+    # @return [void]
+    def attach_many!(**pairs)
+      pairs.each do |key, value|
+        attach! key, value
+      end
     end
 
     # @param [String] message
@@ -289,8 +300,37 @@ module MutationOperations
       with_result!(result, &)
     end
 
+    # @param [Dry::Monads::Result] result
+    # @yield [matcher] instance of `Dry::Result::ResultMatcher`
+    # @return [Object]
     def with_result!(result, &)
       Dry::Matcher::ResultMatcher.call(result, &)
+    end
+
+    # @see #something_went_wrong!
+    # @param [Dry::Monads::Result] result
+    # @param [String] error_message
+    # @return [Object] if the result was successful, whatever was in the success monad will be returned
+    def check_result!(result, error_message: I18n.t("server_messages.errors.something_went_wrong"))
+      with_result!(result) do |m|
+        m.success do |value|
+          value
+        end
+
+        m.failure do |failure|
+          something_went_wrong!(error_message:)
+        end
+      end
+    end
+
+    # Short-circuit and end the mutation execution.
+    #
+    # @param [String] error_message
+    # @return [void]
+    def something_went_wrong!(error_message: I18n.t("server_messages.errors.something_went_wrong"))
+      add_global_error! error_message
+
+      throw_invalid
     end
 
     def with_operation_result!(result)

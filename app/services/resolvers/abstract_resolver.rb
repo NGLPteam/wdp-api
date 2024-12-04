@@ -8,6 +8,7 @@ module Resolvers
     extend Dry::Core::ClassAttributes
 
     include SearchObject.module(:graphql)
+    include GraphQL::FragmentCache::ObjectHelpers
     include Resolvers::AbstractOrdering
 
     argument_class ::Types::BaseArgument

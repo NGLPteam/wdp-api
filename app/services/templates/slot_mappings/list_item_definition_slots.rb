@@ -11,8 +11,8 @@ module Templates
       inline! :header, default: proc { TemplateSlot.default_template_hash_for("list_item#header") }
       inline! :subheader, default: proc { TemplateSlot.default_template_hash_for("list_item#subheader") }
       block! :description
-      inline! :meta_a, default: proc { TemplateSlot.default_template_hash_for("list_item#meta_a") }
-      inline! :meta_b, default: proc { TemplateSlot.default_template_hash_for("list_item#meta_b") }
+      inline! :meta_a
+      inline! :meta_b
       inline! :context_a
       inline! :context_b
       inline! :context_c

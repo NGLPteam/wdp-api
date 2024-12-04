@@ -1,38 +1,57 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <main>
   <templates>
-    <detail background="none" show-announcements="false" show-hero-image="false" variant="summary">
-      <slots>
-        <header>{{ entity.title }}</header>
-        <subheader>{{ entity.subtitle }}</subheader>
-        <summary>
-          <![CDATA[
-            {{ entity.summary }}
-          ]]>
-        </summary>
-      </slots>
-    </detail>
-    <descendant-list background="none" selection-mode="property" show-entity-context="false" show-see-all-button="false" variant="cards">
-      <selection-limit>3</selection-limit>
+    <descendant-list>
+      <background>none</background>
+      <ordering-identifier>articles</ordering-identifier>
+      <see-all-button-label>See All Articles</see-all-button-label>
+      <selection-limit>40</selection-limit>
+      <selection-mode>named</selection-mode>
       <selection-source>self</selection-source>
-      <selection-property-path>featured_articles</selection-property-path>
-      <title>Featured Articles</title>
+      <show-entity-context>false</show-entity-context>
+      <show-hero-image>false</show-hero-image>
+      <show-see-all-button>true</show-see-all-button>
+      <title>Articles</title>
+      <variant>summary</variant>
+      <width>half</width>
       <slots>
-        <header>Featured Articles</header>
+        <header>
+          Articles
+        </header>
         <header-aside/>
         <metadata/>
         <subtitle/>
       </slots>
     </descendant-list>
-    <page-list background="none">
+    <page-list>
+      <background>none</background>
+      <width>half</width>
       <slots>
-        <header>Pages</header>
+        <header>
+          Pages
+        </header>
       </slots>
     </page-list>
-    <ordering background="dark">
+    <contributor-list>
+      <background>light</background>
+      <limit>3</limit>
       <slots>
-        <previous-label>Previous Issue</previous-label>
-        <next-label>Next Issue</next-label>
+        <header>
+          Contributors
+        </header>
+      </slots>
+    </contributor-list>
+    <ordering>
+      <background>dark</background>
+      <ordering-source>parent</ordering-source>
+      <selection-source>self</selection-source>
+      <slots>
+        <previous-label>
+          Previous Issue
+        </previous-label>
+        <next-label>
+          Next Issue
+        </next-label>
       </slots>
     </ordering>
   </templates>

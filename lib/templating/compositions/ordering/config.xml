@@ -1,90 +1,68 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <config layout="main" has-background="true" has-variant="false">
-  <description>
-    For applicable entities, allows navigating through specific orderings,
-    e.g. going back and forth between articles in a specific issue.
+  <description>For applicable entities, allows navigating through specific orderings,
+e.g. going back and forth between articles in a specific issue.
 
-    Contained within the `MAIN` layout.
-  </description>
+Contained within the `MAIN` layout.</description>
   <prop name="background" kind="background">
     <description>The background gradient to use for this template. Affects presentation.</description>
     <default>
-      <![CDATA[
-        "none"
-      ]]>
+      "none"
     </default>
   </prop>
   <prop name="ordering_identifier" kind="schema_component">
-    <description>
-      The identifier for the ordering to derive next/prev siblings from.
+    <description>The identifier for the ordering to derive next/prev siblings from.
 
-      Refer to `orderingSource` and `selectionSource` for more details.
-    </description>
+Refer to `orderingSource` and `selectionSource` for more details.</description>
   </prop>
   <prop name="ordering_source" kind="selection_source">
-    <description>
-      A reference to the entity that contains an ordering identified by `orderingIdentifier`.
-      It operates exactly like `selectionSource`. See that property for more documentation.
+    <description>A reference to the entity that contains an ordering identified by `orderingIdentifier`.
+It operates exactly like `selectionSource`. See that property for more documentation.
 
-      **Note**: While `self` is allowed here, it only makes sense if the rendering entity
-      is contained in one of its own orderings, which doesn't happen normally. The template
-      will still render, but it likely won't find siblings.
-    </description>
+**Note**: While `self` is allowed here, it only makes sense if the rendering entity
+is contained in one of its own orderings, which doesn't happen normally. The template
+will still render, but it likely won't find siblings.</description>
     <default>
-      <![CDATA[
-        "parent"
-      ]]>
+      "parent"
     </default>
   </prop>
   <prop name="ordering_source_mode" kind="selection_source_mode">
     <default>
-      <![CDATA[
-        "parent"
-      ]]>
+      "parent"
     </default>
   </prop>
   <prop name="ordering_source_ancestor_name" kind="schema_component"/>
   <prop name="selection_source" kind="selection_source">
-    <description>
-      What entity to use for detecting the positional prev/next siblings.
+    <description>What entity to use for detecting the positional prev/next siblings.
 
-      By default, it is `self`. However, it can be overridden for creating templates that
-      navigate through parent issues, volumes, journals, etc. For instance, an article could
-      create an `&lt;ordering /&gt;` template that has the following properties set:
+By default, it is `self`. However, it can be overridden for creating templates that
+navigate through parent issues, volumes, journals, etc. For instance, an article could
+create an `&lt;ordering /&gt;` template that has the following properties set:
 
-      * `selectionSource`: `"ancestors.issue"`
-      * `orderingSource`: `"ancestors.journal"`
-      * `orderingIdentifier`: `"issues"`
+* `selectionSource`: `"ancestors.issue"`
+* `orderingSource`: `"ancestors.journal"`
+* `orderingIdentifier`: `"issues"`
 
-      This would use the _journal's_ `issues` ordering to navigate through the article's
-      associated `issues`, and provide a quick way to navigate through varying levels of
-      the upper hierarchy from lower points in the tree.
-    </description>
+This would use the _journal's_ `issues` ordering to navigate through the article's
+associated `issues`, and provide a quick way to navigate through varying levels of
+the upper hierarchy from lower points in the tree.</description>
     <default>
-      <![CDATA[
-        "self"
-      ]]>
+      "self"
     </default>
   </prop>
   <prop name="selection_source_ancestor_name" kind="schema_component"/>
   <prop name="selection_source_mode" kind="selection_source_mode">
-    <description>
-      An enum representing what mode `selectionSource` is in. Not directly set,
-      it is used internally for lookups.
-    </description>
+    <description>An enum representing what mode `selectionSource` is in. Not directly set,
+it is used internally for lookups.</description>
   </prop>
   <slot name="previous_label" kind="inline">
     <default-template>
-      <![CDATA[
-        Previous Entity
-      ]]>
+      Previous Entity
     </default-template>
   </slot>
   <slot name="next_label" kind="inline">
     <default-template>
-      <![CDATA[
-        Next Entity
-      ]]>
+      Next Entity
     </default-template>
   </slot>
 </config>

@@ -23,6 +23,10 @@ module Templates
 
     pg_enum! :selection_mode, as: :link_list_selection_mode, allow_blank: false, suffix: :selection_mode, default: "manual"
 
+    pg_enum! :selection_fallback_mode, as: :link_list_selection_mode, allow_blank: false, suffix: :selection_fallback_mode, default: "manual"
+
+    pg_enum! :width, as: :template_width, allow_blank: false, suffix: :width, default: "full"
+
     attribute :dynamic_ordering_definition, ::Schemas::Orderings::Definition.to_type
 
     attribute :slots, ::Templates::SlotMappings::LinkListDefinitionSlots.to_type

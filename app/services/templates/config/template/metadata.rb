@@ -17,7 +17,7 @@ module Templates
         xml do
           root "metadata"
 
-          map_attribute "background", to: :background
+          map_element "background", to: :background
 
           map_element "slots", to: :slots
         end

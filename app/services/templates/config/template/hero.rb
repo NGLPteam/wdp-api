@@ -11,8 +11,6 @@ module Templates
 
         attribute :background, ::Templates::Config::Properties::HeroBackground, default: -> { "none" }
 
-        attribute :descendant_search_prompt, ::Templates::Config::Properties::String, default: -> { "Search" }
-
         attribute :enable_descendant_browsing, ::Templates::Config::Properties::Boolean, default: -> { false }
 
         attribute :enable_descendant_search, ::Templates::Config::Properties::Boolean, default: -> { false }
@@ -43,33 +41,31 @@ module Templates
         xml do
           root "hero"
 
-          map_attribute "background", to: :background
+          map_element "background", to: :background
 
-          map_attribute "enable-descendant-browsing", to: :enable_descendant_browsing
+          map_element "enable-descendant-browsing", to: :enable_descendant_browsing
 
-          map_attribute "enable-descendant-search", to: :enable_descendant_search
+          map_element "enable-descendant-search", to: :enable_descendant_search
 
-          map_attribute "list-contributors", to: :list_contributors
+          map_element "list-contributors", to: :list_contributors
 
-          map_attribute "show-basic-view-metrics", to: :show_basic_view_metrics
+          map_element "show-basic-view-metrics", to: :show_basic_view_metrics
 
-          map_attribute "show-big-search-prompt", to: :show_big_search_prompt
+          map_element "show-big-search-prompt", to: :show_big_search_prompt
 
-          map_attribute "show-breadcrumbs", to: :show_breadcrumbs
+          map_element "show-breadcrumbs", to: :show_breadcrumbs
 
-          map_attribute "show-doi", to: :show_doi
+          map_element "show-doi", to: :show_doi
 
-          map_attribute "show-hero-image", to: :show_hero_image
+          map_element "show-hero-image", to: :show_hero_image
 
-          map_attribute "show-issn", to: :show_issn
+          map_element "show-issn", to: :show_issn
 
-          map_attribute "show-sharing-link", to: :show_sharing_link
+          map_element "show-sharing-link", to: :show_sharing_link
 
-          map_attribute "show-split-display", to: :show_split_display
+          map_element "show-split-display", to: :show_split_display
 
-          map_attribute "show-thumbnail-image", to: :show_thumbnail_image
-
-          map_element "descendant-search-prompt", to: :descendant_search_prompt
+          map_element "show-thumbnail-image", to: :show_thumbnail_image
 
           map_element "slots", to: :slots
         end

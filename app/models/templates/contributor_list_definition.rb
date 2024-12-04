@@ -9,6 +9,7 @@ module Templates
   class ContributorListDefinition < ApplicationRecord
     include HasEphemeralSystemSlug
     include TemplateDefinition
+    include Templates::Definitions::HasContributionList
     include TimestampScopes
 
     layout_kind! :main
@@ -17,6 +18,10 @@ module Templates
     graphql_node_type_name "::Types::Templates::ContributorListTemplateDefinitionType"
 
     pg_enum! :background, as: :contributor_list_background, allow_blank: false, suffix: :background, default: "none"
+
+    pg_enum! :filter, as: :contributor_list_filter, allow_blank: false, suffix: :filter, default: "all"
+
+    pg_enum! :width, as: :template_width, allow_blank: false, suffix: :width, default: "full"
 
     attribute :slots, ::Templates::SlotMappings::ContributorListDefinitionSlots.to_type
 

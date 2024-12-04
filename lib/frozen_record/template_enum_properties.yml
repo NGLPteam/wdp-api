@@ -33,16 +33,20 @@
   default: none
 - name: detail_variant
   category: variant
-  default: 
+  default:
 - name: descendant_list_variant
   category: variant
-  default: 
+  default:
 - name: link_list_variant
   category: variant
-  default: 
+  default:
 - name: descendant_list_selection_mode
   category: selection_mode
   default: manual
 - name: link_list_selection_mode
   category: selection_mode
   default: manual
+- name: contributor_list_filter
+  default: all
+- name: template_width
+  default: full

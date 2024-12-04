@@ -20,7 +20,7 @@ class TemplateEnumPropertyGenerator < Rails::Generators::NamedBase
   def heredoc_description_for(value)
     [
       "<<~TEXT",
-      template_enum_property.scoped_description_for(value),
+      template_enum_property.scoped_description_for(value).strip,
       "TEXT"
     ].compact_blank.join("\n").indent(6).strip
   end

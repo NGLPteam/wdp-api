@@ -16,7 +16,7 @@ module Templates
           Success reader.value
         in "entity"
           # :nocov:
-          Success [reader.value]
+          Success [reader.value].compact
           # :nocov:
         else
           # :nocov:

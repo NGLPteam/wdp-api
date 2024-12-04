@@ -428,9 +428,19 @@ module HierarchicalEntity
 
   # @!endgroup
 
+  # @!group Templates / Slots
+
+  # @see Entities::PreviewSlot
+  # @return [Dry::Monads::Success(Templates::Slots::Instances::Abstract)]
+  monadic_operation! def preview_slot(**options)
+    call_operation("entities.preview_slot", self, **options)
+  end
+
   monadic_operation! def to_liquid_assigns(**options)
     call_operation("templates.build_assigns", **options, entity: self)
   end
+
+  # @!endgroup
 
   module ClassMethods
     # @param [User] user

@@ -20,6 +20,20 @@ module Templates
         # @return [Asset]
         attr_reader :asset
       end
+
+      refine ::Templates::Drops::PropertyValueDrop do
+        def asset
+          # :nocov:
+          @value if @type == "asset"
+          # :nocov:
+        end
+
+        def entity
+          # :nocov:
+          @value if @type == "entity"
+          # :nocov:
+        end
+      end
     end
   end
 end

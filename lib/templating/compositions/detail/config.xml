@@ -1,70 +1,50 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <config layout="main" has-background="true" has-variant="true">
-  <description>
-    Describes details about an entity, its summary, etc.
+  <description>Describes details about an entity, its summary, etc.
 
-    Contained within the `MAIN` layout.
-  </description>
+Contained within the `MAIN` layout.</description>
   <prop name="variant" kind="variant">
     <description>The variant rendering mode to use for this template. Affects presentation.</description>
     <default>
-      <![CDATA[
-        "summary"
-      ]]>
+      "summary"
     </default>
   </prop>
   <prop name="background" kind="background">
     <description>The background gradient to use for this template. Affects presentation.</description>
     <default>
-      <![CDATA[
-        "none"
-      ]]>
+      "none"
     </default>
   </prop>
   <prop name="show_announcements" kind="boolean">
     <default>
-      <![CDATA[
-        false
-      ]]>
+      false
     </default>
   </prop>
   <prop name="show_hero_image" kind="boolean">
     <default>
-      <![CDATA[
-        false
-      ]]>
+      false
     </default>
   </prop>
   <prop name="show_body" kind="boolean">
-    <description>
-      Whether to show and use the 'body' slot on a detail view.
-      Primarily intended for items with copious text to display.
-    </description>
+    <description>Whether to show and use the 'body' slot on a detail view.
+Primarily intended for items with copious text to display.</description>
     <default>
-      <![CDATA[
-        false
-      ]]>
+      false
     </default>
   </prop>
   <slot name="header" kind="inline">
     <default-template>
-      <![CDATA[
-        {{ entity.title }}
-      ]]>
+      {{ entity.title }}
     </default-template>
   </slot>
   <slot name="subheader" kind="inline">
     <default-template>
-      <![CDATA[
-        {{ entity.subtitle }}
-      ]]>
+      {{ entity.subtitle }}
     </default-template>
   </slot>
   <slot name="summary" kind="block">
     <default-template>
-      <![CDATA[
-        {{ entity.summary }}
-      ]]>
+      {{ entity.summary }}
     </default-template>
   </slot>
   <slot name="body" kind="block"/>

@@ -1,9 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <metadata>
   <templates>
-    <metadata background="none">
+    <metadata>
+      <background>none</background>
       <slots>
         <header/>
+        <items-a/>
+        <items-b/>
+        <items-c/>
+        <items-d/>
       </slots>
     </metadata>
   </templates>

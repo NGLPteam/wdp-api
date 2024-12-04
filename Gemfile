@@ -34,11 +34,11 @@ gem "redis-objects", ">= 2.0.0.beta"
 gem "job-iteration", "~> 1.4.1"
 
 # GraphQL
-gem "graphql", "2.1.1"
+gem "graphql", "2.4.4"
 gem "graphql-anycable", "1.1.5"
-gem "graphql-batch", "~> 0.5.3"
+gem "graphql-batch", "~> 0.6.0"
 gem "graphql-client", "~> 0.21.0"
-gem "graphql-fragment_cache", "~> 1.19.0"
+gem "graphql-fragment_cache", "~> 1.20.5"
 gem "search_object_graphql", "~> 1.0.5", require: %w[search_object search_object/plugin/graphql]
 
 # dry-rb
@@ -75,6 +75,7 @@ gem "faraday-retry", "~> 2.2.1"
 gem "geocoder", "~> 1.8.0"
 gem "groupdate", "~> 6.1.0"
 gem "hashids", "~> 1.0.6"
+gem "htmlbeautifier", "~> 1.4.3"
 gem "iso-639", "~> 0.3.6"
 gem "jbuilder", "~> 2.11.5"
 gem "json-schema", "~> 2.8.1"

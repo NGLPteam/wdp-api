@@ -1,43 +1,44 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <hero>
   <templates>
-    <hero background="none" enable-descendant-browsing="false" enable-descendant-search="false" list-contributors="false" show-basic-view-metrics="false" show-big-search-prompt="false" show-breadcrumbs="false" show-doi="false" show-hero-image="false" show-issn="false" show-sharing-link="false" show-split-display="false" show-thumbnail-image="false">
+    <hero>
+      <background>none</background>
+      <enable-descendant-browsing>false</enable-descendant-browsing>
+      <enable-descendant-search>false</enable-descendant-search>
+      <list-contributors>false</list-contributors>
+      <show-basic-view-metrics>false</show-basic-view-metrics>
+      <show-big-search-prompt>false</show-big-search-prompt>
+      <show-breadcrumbs>false</show-breadcrumbs>
+      <show-doi>false</show-doi>
+      <show-hero-image>false</show-hero-image>
+      <show-issn>false</show-issn>
+      <show-sharing-link>false</show-sharing-link>
+      <show-split-display>false</show-split-display>
+      <show-thumbnail-image>false</show-thumbnail-image>
       <slots>
+        <big-search-prompt>
+          Search
+        </big-search-prompt>
+        <call-to-action/>
+        <descendant-search-prompt>
+          Search
+        </descendant-search-prompt>
         <header>
-          <![CDATA[
-            {{ entity.title }}
-          ]]>
+          {{ entity.title }}
         </header>
         <header-aside/>
         <header-sidebar/>
-        <header-summary>
-          <![CDATA[
-            <p>Welcome to this {{ schema.name }}.</p>
-          ]]>
-        </header-summary>
+        <header-summary/>
+        <metadata>
+          Published {{ entity.published }}
+        </metadata>
+        <sidebar/>
         <subheader/>
         <subheader-aside/>
         <subheader-summary/>
-        <sidebar>
-          <![CDATA[
-            <ul>
-              <li>List</li>
-              <li>Of</li>
-              <li>Items</li>
-            </ul>
-          ]]>
-        </sidebar>
-        <metadata>
-          <![CDATA[
-            Published {{ entity.published }}
-          ]]>
-        </metadata>
         <summary>
-          <![CDATA[
-            {{ entity.summary }}
-          ]]>
+          {{ entity.summary }}
         </summary>
-        <call-to-action/>
       </slots>
     </hero>
   </templates>

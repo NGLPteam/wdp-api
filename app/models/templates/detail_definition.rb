@@ -20,6 +20,8 @@ module Templates
 
     pg_enum! :background, as: :detail_background, allow_blank: false, suffix: :background, default: "none"
 
+    pg_enum! :width, as: :template_width, allow_blank: false, suffix: :width, default: "full"
+
     attribute :slots, ::Templates::SlotMappings::DetailDefinitionSlots.to_type
 
     belongs_to :layout_definition,

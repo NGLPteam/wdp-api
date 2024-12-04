@@ -1,93 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <main>
   <templates>
-    <detail background="none" show-announcements="false" show-hero-image="false" variant="summary">
-      <slots>
-        <header>
-          <![CDATA[
-            {{ entity.title }}
-          ]]>
-        </header>
-        <subheader>
-          <![CDATA[
-            {{ entity.subtitle }}
-          ]]>
-        </subheader>
-        <summary>
-          <![CDATA[
-            {{ entity.summary }}
-          ]]>
-        </summary>
-      </slots>
-    </detail>
-    <descendant-list background="none" selection-mode="manual" show-entity-context="false" show-see-all-button="false" variant="cards">
+    <descendant-list>
+      <background>light</background>
+      <dynamic-ordering-definition>
+        <filter>
+          <schema namespace="cvocab" identifier="test_item"/>
+        </filter>
+        <order path="entity.published" dir="desc"/>
+        <order path="entity.created_at" dir="desc"/>
+        <render mode="flat"/>
+        <select direct="descendants"/>
+      </dynamic-ordering-definition>
+      <see-all-button-label>See All</see-all-button-label>
       <selection-limit>3</selection-limit>
+      <selection-mode>dynamic</selection-mode>
       <selection-source>self</selection-source>
+      <show-entity-context>false</show-entity-context>
+      <show-hero-image>false</show-hero-image>
+      <show-see-all-button>false</show-see-all-button>
+      <use-selection-fallback>false</use-selection-fallback>
+      <variant>cards</variant>
       <slots>
         <header>
-          <![CDATA[
-            Descendants
-          ]]>
+          Test Items
         </header>
         <header-aside/>
-        <metadata>
-          <![CDATA[
-            Published {{ entity.published }}
-          ]]>
-        </metadata>
+        <metadata/>
         <subtitle/>
       </slots>
     </descendant-list>
-    <link-list background="none" selection-mode="manual" show-entity-context="false" show-see-all-button="false" variant="cards">
-      <selection-limit>3</selection-limit>
-      <selection-source>self</selection-source>
-      <slots>
-        <header>
-          <![CDATA[
-            Links
-          ]]>
-        </header>
-        <header-aside/>
-        <metadata>
-          <![CDATA[
-            Published {{ entity.published }}
-          ]]>
-        </metadata>
-        <subtitle/>
-      </slots>
-    </link-list>
-    <page-list background="none">
-      <slots>
-        <header>
-          <![CDATA[
-            Pages
-          ]]>
-        </header>
-      </slots>
-    </page-list>
-    <contributor-list background="none">
-      <limit>3</limit>
-      <slots>
-        <header>
-          <![CDATA[
-            Contributors
-          ]]>
-        </header>
-      </slots>
-    </contributor-list>
-    <ordering background="none">
-      <slots>
-        <previous-label>
-          <![CDATA[
-            Previous Entity
-          ]]>
-        </previous-label>
-        <next-label>
-          <![CDATA[
-            Next Entity
-          ]]>
-        </next-label>
-      </slots>
-    </ordering>
   </templates>
 </main>

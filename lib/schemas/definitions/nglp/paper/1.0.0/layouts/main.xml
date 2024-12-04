@@ -1,91 +1,78 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <main>
   <templates>
-    <detail background="none" show-announcements="false" show-hero-image="false" variant="summary">
+    <detail>
+      <background>none</background>
+      <show-announcements>false</show-announcements>
+      <show-body>true</show-body>
+      <show-hero-image>false</show-hero-image>
+      <variant>summary</variant>
       <slots>
         <header>
-          <![CDATA[
-            {{ entity.title }}
-          ]]>
+          {{ entity.title }}
         </header>
         <subheader>
-          <![CDATA[
-            {{ entity.subtitle }}
-          ]]>
+          {{ entity.subtitle }}
         </subheader>
         <summary>
-          <![CDATA[
-            {{ entity.summary }}
-          ]]>
+          {% if props.abstract %} {{props.abstract}} {% else %} {{entity.summary}} {% endif %}
         </summary>
+        <body>
+          {% if props.pdf_version %} {% pdfviewer props.pdf_version %} {% elsif props.body %} {{props.body}} {% endif %}
+        </body>
       </slots>
     </detail>
-    <descendant-list background="none" selection-mode="manual" show-entity-context="false" show-see-all-button="false" variant="cards">
-      <selection-limit>3</selection-limit>
-      <selection-source>self</selection-source>
-      <slots>
-        <header>
-          <![CDATA[
-            Descendants
-          ]]>
-        </header>
-        <header-aside/>
-        <metadata>
-          <![CDATA[
-            Published {{ entity.published }}
-          ]]>
-        </metadata>
-        <subtitle/>
-      </slots>
-    </descendant-list>
-    <link-list background="none" selection-mode="manual" show-entity-context="false" show-see-all-button="false" variant="cards">
-      <selection-limit>3</selection-limit>
-      <selection-source>self</selection-source>
-      <slots>
-        <header>
-          <![CDATA[
-            Links
-          ]]>
-        </header>
-        <header-aside/>
-        <metadata>
-          <![CDATA[
-            Published {{ entity.published }}
-          ]]>
-        </metadata>
-        <subtitle/>
-      </slots>
-    </link-list>
-    <page-list background="none">
-      <slots>
-        <header>
-          <![CDATA[
-            Pages
-          ]]>
-        </header>
-      </slots>
-    </page-list>
-    <contributor-list background="none">
+    <contributor-list>
+      <background>light</background>
+      <filter>authors</filter>
       <limit>3</limit>
       <slots>
         <header>
-          <![CDATA[
-            Contributors
-          ]]>
+          Contributors
         </header>
       </slots>
     </contributor-list>
-    <ordering background="none">
+    <link-list>
+      <background>light</background>
+      <dynamic-ordering-definition>
+        <filter>
+          <schema namespace="nglp" identifier="paper"/>
+        </filter>
+        <order path="entity.published" dir="desc" nulls="last"/>
+        <render mode="flat"/>
+        <select direct="none">
+          <links contains="false" references="true"/>
+        </select>
+      </dynamic-ordering-definition>
+      <manual-list-name>manual</manual-list-name>
+      <selection-limit>6</selection-limit>
+      <selection-mode>dynamic</selection-mode>
+      <selection-source>self</selection-source>
+      <show-entity-context>false</show-entity-context>
+      <show-hero-image>false</show-hero-image>
+      <show-see-all-button>false</show-see-all-button>
+      <title>Related</title>
+      <variant>grid</variant>
+      <slots>
+        <header>
+          Related Papers
+        </header>
+        <header-aside/>
+        <metadata/>
+        <subtitle/>
+      </slots>
+    </link-list>
+    <ordering>
+      <background>dark</background>
+      <ordering-identifier>papers</ordering-identifier>
+      <ordering-source>parent</ordering-source>
+      <selection-source>self</selection-source>
       <slots>
         <previous-label>
-          <![CDATA[
-            Previous Entity
-          ]]>
+          Previous Paper
         </previous-label>
         <next-label>
-          <![CDATA[
-            Next Entity
-          ]]>
+          Next Paper
         </next-label>
       </slots>
     </ordering>

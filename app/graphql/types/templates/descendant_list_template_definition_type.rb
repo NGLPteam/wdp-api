@@ -55,6 +55,16 @@ module Types
 
       field :selection_mode, ::Types::DescendantListSelectionModeType, null: true do
         description <<~TEXT
+        The default mode to use when rendering a list of entities.
+
+        See also `selectionFallbackMode` and `useSelectionFallback`.
+        TEXT
+      end
+
+      field :selection_fallback_mode, ::Types::DescendantListSelectionModeType, null: true do
+        description <<~TEXT
+        The fallback mode to use when rendering a list of entities, when the list from
+        `selectionMode` is empty and `useSelectionFallback` has been set to true.
         TEXT
       end
 
@@ -110,6 +120,28 @@ module Types
 
       field :show_entity_context, Boolean, null: true do
         description <<~TEXT
+        Show additional context about each entity in the selection.
+        TEXT
+      end
+
+      field :show_hero_image, Boolean, null: true do
+        description <<~TEXT
+        TEXT
+      end
+
+      field :use_selection_fallback, Boolean, null: true do
+        description <<~TEXT
+        Controls whether or not to use `selectionFallbackMode` if the entity list returned
+        via `selectionMode` turns out to be empty at runtime.
+        TEXT
+      end
+
+      field :width, ::Types::TemplateWidthType, null: true do
+        description <<~TEXT
+        This controls how wide the template should render.
+
+        **Note**: When using `HALF`, you should take care to make sure that there is an adjacent
+        template that also uses `HALF`.
         TEXT
       end
     end

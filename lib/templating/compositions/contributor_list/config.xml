@@ -1,31 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <config layout="main" has-background="true" has-variant="false">
-  <description>
-    A template for listing contributors of note on the main layout of an entity.
+  <description>A template for listing contributors of note on the main layout of an entity.
 
-    Contained within the `MAIN` layout.
-  </description>
+Contained within the `MAIN` layout.</description>
   <prop name="background" kind="background">
     <description>The background gradient to use for this template. Affects presentation.</description>
     <default>
-      <![CDATA[
-        "none"
-      ]]>
+      "none"
     </default>
+  </prop>
+  <prop name="filter" kind="contributor_list_filter">
+    <description>Filter which contributors may appear based on their contribution role.</description>
   </prop>
   <prop name="limit" kind="limit">
     <description>Limit the number of contributors for this template.</description>
     <default>
-      <![CDATA[
-        3
-      ]]>
+      3
     </default>
   </prop>
   <slot name="header" kind="inline">
     <default-template>
-      <![CDATA[
-        Contributors
-      ]]>
+      Contributors
     </default-template>
   </slot>
 </config>

@@ -13,8 +13,6 @@
 - name: metadata
   slot_kind: inline
   template_kind: descendant_list
-  default_template: |
-    Published {{ entity.published }}
 - name: subtitle
   slot_kind: inline
   template_kind: descendant_list
@@ -36,6 +34,17 @@
 - name: body
   slot_kind: block
   template_kind: detail
+- name: big_search_prompt
+  slot_kind: inline
+  template_kind: hero
+  default_template: Search
+- name: call_to_action
+  slot_kind: block
+  template_kind: hero
+- name: descendant_search_prompt
+  slot_kind: inline
+  template_kind: hero
+  default_template: Search
 - name: header
   slot_kind: inline
   template_kind: hero
@@ -50,8 +59,12 @@
 - name: header_summary
   slot_kind: block
   template_kind: hero
-  default_template: |
-    <p>Welcome to this {{ schema.name }}.</p>
+- name: metadata
+  slot_kind: inline
+  template_kind: hero
+- name: sidebar
+  slot_kind: block
+  template_kind: hero
 - name: subheader
   slot_kind: inline
   template_kind: hero
@@ -61,28 +74,11 @@
 - name: subheader_summary
   slot_kind: block
   template_kind: hero
-- name: sidebar
-  slot_kind: block
-  template_kind: hero
-  default_template: |
-    <ul>
-      <li>List</li>
-      <li>Of</li>
-      <li>Items</li>
-    </ul>
-- name: metadata
-  slot_kind: inline
-  template_kind: hero
-  default_template: |
-    Published {{ entity.published }}
 - name: summary
   slot_kind: block
   template_kind: hero
   default_template: |
     {{ entity.summary }}
-- name: call_to_action
-  slot_kind: inline
-  template_kind: hero
 - name: header
   slot_kind: inline
   template_kind: link_list
@@ -114,13 +110,9 @@
 - name: meta_a
   slot_kind: inline
   template_kind: list_item
-  default_template: |
-    Published {{ entity.published }}
 - name: meta_b
   slot_kind: inline
   template_kind: list_item
-  default_template: |
-    Meta B
 - name: context_a
   slot_kind: inline
   template_kind: list_item

@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <config layout="main" has-background="true" has-variant="true">
-  <description>
-    A template for listing entity links on the main layout of an entity.
+  <description>A template for listing entity links on the main layout of an entity.
 
-    Contained within the `MAIN` layout.
-  </description>
+Contained within the `MAIN` layout.</description>
   <prop name="title" kind="string"/>
   <prop name="variant" kind="variant">
     <description>The variant rendering mode to use for this template. Affects presentation.</description>
@@ -12,97 +10,92 @@
   <prop name="background" kind="background">
     <description>The background gradient to use for this template. Affects presentation.</description>
     <default>
-      <![CDATA[
-        "none"
-      ]]>
+      "none"
     </default>
   </prop>
   <prop name="selection_source" kind="selection_source">
-    <description>
-      When selecting entities based on `selectionMode`, this property determines
-      which entity (relevant to the rendering entity) should be used for lookups.
+    <description>When selecting entities based on `selectionMode`, this property determines
+which entity (relevant to the rendering entity) should be used for lookups.
 
-      By default, it is `self`, which means the rendering entity itself.
+By default, it is `self`, which means the rendering entity itself.
 
-      It can also support things like `ancestor.journal`, `ancestor.issue`, etc.,
-      in order to render a list of values in its parent.
-    </description>
+It can also support things like `ancestor.journal`, `ancestor.issue`, etc.,
+in order to render a list of values in its parent.</description>
   </prop>
   <prop name="selection_source_mode" kind="selection_source_mode">
-    <description>
-      An enum representing what mode `selectionSource` is in. Not directly set,
-      it is used internally for lookups.
-    </description>
+    <description>An enum representing what mode `selectionSource` is in. Not directly set,
+it is used internally for lookups.</description>
   </prop>
   <prop name="selection_source_ancestor_name" kind="schema_component"/>
-  <prop name="selection_mode" kind="selection_mode"/>
+  <prop name="selection_mode" kind="selection_mode">
+    <description>The default mode to use when rendering a list of entities.
+
+See also `selectionFallbackMode` and `useSelectionFallback`.</description>
+  </prop>
+  <prop name="selection_fallback_mode" kind="selection_mode">
+    <description>The fallback mode to use when rendering a list of entities, when the list from
+`selectionMode` is empty and `useSelectionFallback` has been set to true.</description>
+  </prop>
   <prop name="selection_limit" kind="limit">
-    <description>
-      Regardless of `selectionMode`, this limit will be applied on whatever resulting
-      list of entities are produced, so that only up to that amount of entities are
-      rendered in the template proper.
-    </description>
+    <description>Regardless of `selectionMode`, this limit will be applied on whatever resulting
+list of entities are produced, so that only up to that amount of entities are
+rendered in the template proper.</description>
     <default>
-      <![CDATA[
-        3
-      ]]>
+      3
     </default>
   </prop>
   <prop name="dynamic_ordering_definition" kind="ordering_definition">
-    <description>
-      When `selectionMode` is set to `DYNAMIC`, this uses the same basic structure
-      as schemas to define a dynamic ordering that is resolved at runtime and based
-      on the `selectionSource`.
-    </description>
+    <description>When `selectionMode` is set to `DYNAMIC`, this uses the same basic structure
+as schemas to define a dynamic ordering that is resolved at runtime and based
+on the `selectionSource`.</description>
   </prop>
   <prop name="manual_list_name" kind="schema_component">
-    <description>
-      When `selectionMode` is set to `MANUAL`, the purpose of this property
-      is to specify a name under which all the manual selections (per entity)
-      will be stored. This allows a layout to have multiple templates of the
-      same type using different lists, that will persist across rearrangements
-      of the layout _without_ losing connections between entities.
-    </description>
+    <description>When `selectionMode` is set to `MANUAL`, the purpose of this property
+is to specify a name under which all the manual selections (per entity)
+will be stored. This allows a layout to have multiple templates of the
+same type using different lists, that will persist across rearrangements
+of the layout _without_ losing connections between entities.</description>
     <default>
-      <![CDATA[
-        "manual"
-      ]]>
+      "manual"
     </default>
   </prop>
   <prop name="see_all_button_label" kind="string">
     <default>
-      <![CDATA[
-        "See All"
-      ]]>
+      "See All"
     </default>
   </prop>
   <prop name="show_see_all_button" kind="boolean">
     <default>
-      <![CDATA[
-        false
-      ]]>
+      false
     </default>
   </prop>
   <prop name="show_entity_context" kind="boolean">
+    <description>Show additional context about each entity in the selection.</description>
     <default>
-      <![CDATA[
-        false
-      ]]>
+      false
+    </default>
+  </prop>
+  <prop name="show_hero_image" kind="boolean">
+    <default>
+      false
+    </default>
+  </prop>
+  <prop name="use_selection_fallback" kind="boolean">
+    <description>Controls whether or not to use `selectionFallbackMode` if the entity list returned
+via `selectionMode` turns out to be empty at runtime.</description>
+    <default>
+      false
     </default>
   </prop>
   <slot name="header" kind="inline">
     <default-template>
-      <![CDATA[
-        Links
-      ]]>
+      Links
     </default-template>
   </slot>
   <slot name="header_aside" kind="inline"/>
   <slot name="metadata" kind="inline">
     <default-template>
-      <![CDATA[
-        Published {{ entity.published }}
-      ]]>
+      Published {{ entity.published }}
     </default-template>
   </slot>
   <slot name="subtitle" kind="inline"/>

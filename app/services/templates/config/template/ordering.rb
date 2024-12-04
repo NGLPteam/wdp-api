@@ -17,19 +17,23 @@ module Templates
 
         attribute :selection_source, ::Templates::Config::Properties::SelectionSource, default: -> { "self" }
 
+        attribute :width, ::Templates::Config::Properties::TemplateWidth, default: -> { "full" }
+
         attribute :slots, Templates::Config::TemplateSlots::OrderingSlots,
           default: -> { Templates::Config::TemplateSlots::OrderingSlots.new }
 
         xml do
           root "ordering"
 
-          map_attribute "background", to: :background
+          map_element "background", to: :background
 
           map_element "ordering-identifier", to: :ordering_identifier
 
           map_element "ordering-source", to: :ordering_source
 
           map_element "selection-source", to: :selection_source
+
+          map_element "width", to: :width
 
           map_element "slots", to: :slots
         end

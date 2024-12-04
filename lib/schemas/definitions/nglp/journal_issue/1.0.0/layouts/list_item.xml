@@ -10,15 +10,13 @@
           {{entity.subtitle}}
         </subheader>
         <description/>
-        <meta-a />
+        <meta-a/>
         <meta-b/>
         <context-a>
           {{ancestors.journal.title}}
         </context-a>
         <context-b>
-          {% if ancestors.volume %}
-          {{ancestors.volume.title}}
-          {% endif %}
+          {% if ancestors.volume %} {{ancestors.volume.title}} {% endif %}
         </context-b>
         <context-c/>
       </slots>

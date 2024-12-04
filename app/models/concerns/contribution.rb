@@ -15,6 +15,10 @@ module Contribution
 
     delegate :kind, to: :contributor, prefix: true
 
+    scope :authors, -> { where(kind: "author") }
+
+    scope :in_default_contributor_order, -> { joins(:contributor).merge(Contributor.in_default_order) }
+
     after_save :reload_contributor!
 
     after_destroy :recount_contributor_contributions!
@@ -68,6 +72,25 @@ module Contribution
   end
 
   module ClassMethods
+    # @param [Templates::Types::ContributionListFilter] all
+    # @param [Templates::Types::LimitWithFallback] limit
+    # @return [ActiveRecord::Relation<Contribution>]
+    def for_template_list(filter: "all", limit: Templates::Types::LIMIT_DEFAULT)
+      filter = Templates::Types::ContributorListFilter[filter]
+
+      limit = Templates::Types::LimitWithFallback[limit]
+
+      base =
+        case filter
+        in "authors"
+          authors
+        else
+          all
+        end
+
+      base.limit(limit).in_default_contributor_order
+    end
+
     # @param ["asc", "desc"] direction
     # @return [ActiveRecord::Relation<Contribution>]
     def with_ordered_target_title(direction: "asc")

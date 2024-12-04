@@ -1,24 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <config layout="navigation" has-background="true" has-variant="false">
-  <description>
-    This controls the various tabs available to an entity when rendering
-    its `MAIN`, `METADATA`, `SUPPLEMENTARY` routes.
+  <description>This controls the various tabs available to an entity when rendering
+its `MAIN`, `METADATA`, `SUPPLEMENTARY` routes.
 
-    Contained within the `NAVIGATION` layout.
-  </description>
+Contained within the `NAVIGATION` layout.</description>
   <prop name="background" kind="background">
     <description>The background gradient to use for this template. Affects presentation.</description>
     <default>
-      <![CDATA[
-        "none"
-      ]]>
+      "none"
     </default>
   </prop>
   <slot name="entity_label" kind="inline">
     <default-template>
-      <![CDATA[
-        Entity
-      ]]>
+      Entity
     </default-template>
   </slot>
 </config>

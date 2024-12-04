@@ -5,6 +5,10 @@
   enum_name: contributor_list_background
   default: none
 - template_kind: contributor_list
+  name: filter
+  property_kind_name: contributor_list_filter
+  enum_name: contributor_list_filter
+- template_kind: contributor_list
   name: limit
   property_kind_name: limit
   default: 3
@@ -37,6 +41,10 @@
   property_kind_name: selection_mode
   enum_name: descendant_list_selection_mode
 - template_kind: descendant_list
+  name: selection_fallback_mode
+  property_kind_name: selection_mode
+  enum_name: descendant_list_selection_mode
+- template_kind: descendant_list
   name: selection_limit
   property_kind_name: limit
   default: 3
@@ -63,6 +71,14 @@
   default: false
 - template_kind: descendant_list
   name: show_entity_context
+  property_kind_name: boolean
+  default: false
+- template_kind: descendant_list
+  name: show_hero_image
+  property_kind_name: boolean
+  default: false
+- template_kind: descendant_list
+  name: use_selection_fallback
   property_kind_name: boolean
   default: false
 - template_kind: detail
@@ -95,7 +111,7 @@
 - template_kind: hero
   name: descendant_search_prompt
   property_kind_name: string
-  default: Search
+  deprecation_reason: "This is a slot now."
 - template_kind: hero
   name: enable_descendant_browsing
   property_kind_name: boolean
@@ -173,6 +189,10 @@
   property_kind_name: selection_mode
   enum_name: link_list_selection_mode
 - template_kind: link_list
+  name: selection_fallback_mode
+  property_kind_name: selection_mode
+  enum_name: link_list_selection_mode
+- template_kind: link_list
   name: selection_limit
   property_kind_name: limit
   default: 3
@@ -193,6 +213,14 @@
   default: false
 - template_kind: link_list
   name: show_entity_context
+  property_kind_name: boolean
+  default: false
+- template_kind: link_list
+  name: show_hero_image
+  property_kind_name: boolean
+  default: false
+- template_kind: link_list
+  name: use_selection_fallback
   property_kind_name: boolean
   default: false
 - template_kind: metadata
@@ -250,3 +278,33 @@
   property_kind_name: background
   enum_name: supplementary_background
   default: none
+- template_kind: detail
+  name: width
+  property_kind_name: width
+  enum_name: template_width
+  default: full
+- template_kind: descendant_list
+  name: width
+  property_kind_name: width
+  enum_name: template_width
+  default: full
+- template_kind: link_list
+  name: width
+  property_kind_name: width
+  enum_name: template_width
+  default: full
+- template_kind: page_list
+  name: width
+  property_kind_name: width
+  enum_name: template_width
+  default: full
+- template_kind: contributor_list
+  name: width
+  property_kind_name: width
+  enum_name: template_width
+  default: full
+- template_kind: ordering
+  name: width
+  property_kind_name: width
+  enum_name: template_width
+  default: full

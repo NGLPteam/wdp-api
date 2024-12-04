@@ -36,6 +36,11 @@ class Community < ApplicationRecord
     self
   end
 
+  # @return [ActiveRecord::Relation<Contribution>] a null relation
+  def contributions
+    CollectionContribution.none
+  end
+
   def hierarchical_parent
     nil
   end

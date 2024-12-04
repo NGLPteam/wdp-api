@@ -9,6 +9,11 @@ en:
           description: "A light gradient is applied to the background of this template."
         dark:
           description: "A dark gradient is applied to the background of this template."
+    contributor_list_filter:
+      all:
+        description: "Show all contributors, regardless of role."
+      authors:
+        description: "Show only authors."
     descendant_list_selection_mode:
       dynamic:
         description: "Render descendants from a dynamic ordering, determined at query time."
@@ -52,3 +57,12 @@ en:
         description: "Selections should inherit from the hierarchical parent of this entity."
       self:
         description: "Selections should inherit from the exact entity in question"
+    template_width:
+      full:
+        description: "This template should occupy the full-width of the layout."
+      half:
+        description: |
+          This template should occupy half of the width of the layout.
+
+          **Note**: This should be used in concert with an adjacent HALF-width template.
+          The server will not validate this is the case.

@@ -11,13 +11,17 @@ module Templates
 
         attribute :background, ::Templates::Config::Properties::PageListBackground, default: -> { "none" }
 
+        attribute :width, ::Templates::Config::Properties::TemplateWidth, default: -> { "full" }
+
         attribute :slots, Templates::Config::TemplateSlots::PageListSlots,
           default: -> { Templates::Config::TemplateSlots::PageListSlots.new }
 
         xml do
           root "page-list"
 
-          map_attribute "background", to: :background
+          map_element "background", to: :background
+
+          map_element "width", to: :width
 
           map_element "slots", to: :slots
         end

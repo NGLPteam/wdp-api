@@ -14285,6 +14285,32 @@
   default_function: 
   has_default: false
   virtual: false
+- id: Templates::ContributorListDefinition#filter
+  model_name: Templates::ContributorListDefinition
+  table_name: templates_contributor_list_definitions
+  name: filter
+  type: enum
+  'null': false
+  sql_type_metadata:
+    sql_type: contributor_list_filter
+    type: enum
+  default: all
+  default_function: 
+  has_default: true
+  virtual: false
+- id: Templates::ContributorListDefinition#width
+  model_name: Templates::ContributorListDefinition
+  table_name: templates_contributor_list_definitions
+  name: width
+  type: enum
+  'null': false
+  sql_type_metadata:
+    sql_type: template_width
+    type: enum
+  default: full
+  default_function: 
+  has_default: true
+  virtual: false
 - id: Templates::ContributorListInstance#id
   model_name: Templates::ContributorListInstance
   table_name: templates_contributor_list_instances
@@ -14799,6 +14825,58 @@
   default_function: 
   has_default: false
   virtual: false
+- id: Templates::DescendantListDefinition#show_hero_image
+  model_name: Templates::DescendantListDefinition
+  table_name: templates_descendant_list_definitions
+  name: show_hero_image
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
+  default_function: 
+  has_default: true
+  virtual: false
+- id: Templates::DescendantListDefinition#use_selection_fallback
+  model_name: Templates::DescendantListDefinition
+  table_name: templates_descendant_list_definitions
+  name: use_selection_fallback
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
+  default_function: 
+  has_default: true
+  virtual: false
+- id: Templates::DescendantListDefinition#selection_fallback_mode
+  model_name: Templates::DescendantListDefinition
+  table_name: templates_descendant_list_definitions
+  name: selection_fallback_mode
+  type: enum
+  'null': false
+  sql_type_metadata:
+    sql_type: descendant_list_selection_mode
+    type: enum
+  default: manual
+  default_function: 
+  has_default: true
+  virtual: false
+- id: Templates::DescendantListDefinition#width
+  model_name: Templates::DescendantListDefinition
+  table_name: templates_descendant_list_definitions
+  name: width
+  type: enum
+  'null': false
+  sql_type_metadata:
+    sql_type: template_width
+    type: enum
+  default: full
+  default_function: 
+  has_default: true
+  virtual: false
 - id: Templates::DescendantListInstance#id
   model_name: Templates::DescendantListInstance
   table_name: templates_descendant_list_instances
@@ -15179,6 +15257,19 @@
     sql_type: boolean
     type: boolean
   default: 'false'
+  default_function: 
+  has_default: true
+  virtual: false
+- id: Templates::DetailDefinition#width
+  model_name: Templates::DetailDefinition
+  table_name: templates_detail_definitions
+  name: width
+  type: enum
+  'null': false
+  sql_type_metadata:
+    sql_type: template_width
+    type: enum
+  default: full
   default_function: 
   has_default: true
   virtual: false
@@ -16169,6 +16260,58 @@
   default: 
   default_function: 
   has_default: false
+  virtual: false
+- id: Templates::LinkListDefinition#show_hero_image
+  model_name: Templates::LinkListDefinition
+  table_name: templates_link_list_definitions
+  name: show_hero_image
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
+  default_function: 
+  has_default: true
+  virtual: false
+- id: Templates::LinkListDefinition#use_selection_fallback
+  model_name: Templates::LinkListDefinition
+  table_name: templates_link_list_definitions
+  name: use_selection_fallback
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
+  default_function: 
+  has_default: true
+  virtual: false
+- id: Templates::LinkListDefinition#selection_fallback_mode
+  model_name: Templates::LinkListDefinition
+  table_name: templates_link_list_definitions
+  name: selection_fallback_mode
+  type: enum
+  'null': false
+  sql_type_metadata:
+    sql_type: link_list_selection_mode
+    type: enum
+  default: manual
+  default_function: 
+  has_default: true
+  virtual: false
+- id: Templates::LinkListDefinition#width
+  model_name: Templates::LinkListDefinition
+  table_name: templates_link_list_definitions
+  name: width
+  type: enum
+  'null': false
+  sql_type_metadata:
+    sql_type: template_width
+    type: enum
+  default: full
+  default_function: 
+  has_default: true
   virtual: false
 - id: Templates::LinkListInstance#id
   model_name: Templates::LinkListInstance
@@ -17837,6 +17980,19 @@
   default_function: 
   has_default: false
   virtual: false
+- id: Templates::OrderingDefinition#width
+  model_name: Templates::OrderingDefinition
+  table_name: templates_ordering_definitions
+  name: width
+  type: enum
+  'null': false
+  sql_type_metadata:
+    sql_type: template_width
+    type: enum
+  default: full
+  default_function: 
+  has_default: true
+  virtual: false
 - id: Templates::OrderingInstance#id
   model_name: Templates::OrderingInstance
   table_name: templates_ordering_instances
@@ -18191,6 +18347,19 @@
     sql_type: page_list_background
     type: enum
   default: none
+  default_function: 
+  has_default: true
+  virtual: false
+- id: Templates::PageListDefinition#width
+  model_name: Templates::PageListDefinition
+  table_name: templates_page_list_definitions
+  name: width
+  type: enum
+  'null': false
+  sql_type_metadata:
+    sql_type: template_width
+    type: enum
+  default: full
   default_function: 
   has_default: true
   virtual: false

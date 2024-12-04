@@ -46,6 +46,19 @@ module Utility
 
     private
 
+    # @param [Nokogiri::XML::CDATA, Nokogiri::XML::Text] node
+    def actual_cdata?(node)
+      return false unless node.cdata?
+
+      content = node.content
+
+      return true if CONTAINS_NEWLINES.match?(content)
+
+      fragment = Nokogiri::HTML.fragment(content)
+
+      fragment.children.any?(&:element?)
+    end
+
     # @param [String] content
     # @param [Integer] depth
     # @param [Integer] final
@@ -56,14 +69,33 @@ module Utility
 
     # @param [Nokogiri::XML::Text] node
     # @return [void]
-    def adjust_text_node!(node)
-      depth = node.ancestors.size - 1
+    def adjust_text_node!(original_node)
+      node = maybe_replace_cdata!(original_node)
 
-      depth += 1 if node.cdata?
+      return unless node.cdata?
+
+      depth = node.ancestors.size
 
       final = (depth - 1).clamp(0, depth)
 
-      node.content = adjust_text_content(node.content, depth:, final:)
+      content = HtmlBeautifier.beautify(node.content.strip)
+
+      node.content = adjust_text_content(content, depth:, final:)
+    end
+
+    # @return [Hash]
+    def maybe_replace_cdata!(original_node)
+      actual_cdata = actual_cdata?(original_node)
+
+      if original_node.cdata? && !actual_cdata
+        node = Nokogiri::XML::Text.new(original_node.content, doc)
+
+        original_node.replace(node)
+
+        return node
+      end
+
+      return original_node
     end
 
     # @param [Nokogiri::XML::Text] node
