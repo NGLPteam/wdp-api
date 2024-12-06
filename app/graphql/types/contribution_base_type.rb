@@ -18,8 +18,6 @@ module Types
     See `Contribution` and `TemplateContribution`.
     TEXT
 
-    field :contributor, "Types::AnyContributorType", null: false
-
     field :contributor_kind, Types::ContributorKindType, null: false
 
     field :metadata, Types::ContributionMetadataType, null: false
