@@ -219,7 +219,9 @@ class OrderingEntryCandidate < ApplicationRecord
     # @param [HasSchemaDefinition] entity
     # @return [Arel::Nodes::Subtraction(Arel::Attribute, Arel::Nodes::Quoted)]
     def arel_relative_depth_for(entity)
-      arel_table[:entity_depth] - arel_quote(entity.hierarchical_depth)
+      hierarchical_depth = [entity.hierarchical_depth, 1].compact.max
+
+      arel_table[:entity_depth] - arel_quote(hierarchical_depth)
     end
 
     # @param [<Arel::Nodes::Ordering>] order_statements

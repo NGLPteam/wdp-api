@@ -9,7 +9,9 @@ module Templates
       def resolve_entities
         ordering = yield Maybe(source_entity.ordering(ordering_identifier))
 
-        Success ordering.ordering_entries.limit(selection_limit).to_a
+        entries_scope = ordering.ordering_entries.in_default_order.includes(:entity).limit(selection_limit)
+
+        Success entries_scope.map(&:entity).compact
       end
     end
   end

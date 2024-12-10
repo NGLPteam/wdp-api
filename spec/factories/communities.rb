@@ -10,6 +10,8 @@ FactoryBot.define do
 
     schema_version { schema.present? ? SchemaVersion[schema] : SchemaVersion.default_community }
 
+    pending_properties { {} }
+
     trait :simple do
       association :schema_version, :simple_community, :v1
     end
