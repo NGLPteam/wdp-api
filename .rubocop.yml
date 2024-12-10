@@ -474,6 +474,9 @@ RSpec/VerifiedDoubles:
   IgnoreNameless: true
   IgnoreSymbolicNames: true
 
+RSpec/VoidExpect:
+  Enabled: false
+
 Security/CompoundHash:
   Enabled: true
 

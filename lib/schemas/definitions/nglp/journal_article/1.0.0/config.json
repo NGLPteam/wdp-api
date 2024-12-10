@@ -53,10 +53,10 @@
       "path": "issue",
       "legend": "Issue Metadata",
       "properties": [
-        { "path": "title", "label": "Title", "type": "string", "wide": true, "function": "metadata", "required": true, "unorderable": true },
-        { "path": "number", "label": "Number", "type": "string", "function": "metadata", "required": true, "unorderable": true },
-        { "path": "sortable_number", "label": "Sortable Number", "type": "integer", "function": "sorting", "required": true, "unorderable": true },
-        { "path": "id", "label": "ID", "type": "string", "function": "metadata", "required": true, "unorderable": true },
+        { "path": "title", "label": "Title", "type": "string", "wide": true, "function": "metadata", "required": false, "unorderable": true },
+        { "path": "number", "label": "Number", "type": "string", "function": "metadata", "required": false, "unorderable": true },
+        { "path": "sortable_number", "label": "Sortable Number", "type": "integer", "function": "sorting", "required": false, "unorderable": true },
+        { "path": "id", "label": "ID", "type": "string", "function": "metadata", "required": false, "unorderable": true },
         { "path": "fpage", "label": "Start Page (of Issue)", "type": "integer", "function": "metadata" },
         { "path": "lpage", "label": "Ending Page (of Issue)", "type": "integer", "function": "metadata", "unorderable": true }
       ],
