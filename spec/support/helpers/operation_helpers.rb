@@ -5,12 +5,44 @@ module TestHelpers
     module ExampleHelpers
       extend RSpec::Matchers::DSL
 
+      # @return [Dry::Monads::Result]
+      attr_reader :last_result
+
+      # @return [Object]
+      attr_reader :last_success
+
+      # @return [Object]
+      attr_reader :last_failure
+
       def expect_calling
-        expect(operation.call)
+        @last_result = operation.call
+
+        expect(@last_result)
+      ensure
+        extract_last_result!
       end
 
       def expect_calling_with(...)
-        expect(operation.call(...))
+        @last_result = operation.call(...)
+
+        expect(@last_result)
+      ensure
+        extract_last_result!
+      end
+
+      # @api private
+      # @return [void]
+      def extract_last_result!
+        case @last_result
+        in Dry::Monads::Success
+          @last_success = @last_result.value!
+          @last_failure = nil
+        in Dry::Monads::Failure
+          @last_success = nil
+          @last_failure = @last_result.failure
+        else
+          @last_success = @last_failure = nil
+        end
       end
 
       matcher :be_the_result_with do |*args, **kwargs|

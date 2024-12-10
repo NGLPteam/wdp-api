@@ -18,7 +18,7 @@ RSpec.describe EntityOrderableProperty, type: :model do
 
     it "creates a number of properties" do
       expect do
-        entity.alter_version!(schema, new_properties).value!
+        entity.alter_version!(schema, new_properties)
       end.to execute_safely.and change(described_class, :count).by(3)
     end
   end

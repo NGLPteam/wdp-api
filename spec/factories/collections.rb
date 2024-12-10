@@ -18,6 +18,8 @@ FactoryBot.define do
 
     visibility { :visible }
 
+    pending_properties { {} }
+
     trait :hidden do
       visibility { :hidden }
     end

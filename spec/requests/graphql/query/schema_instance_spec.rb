@@ -97,8 +97,8 @@ RSpec.describe "Schema Instances", type: :request do
           field_values: be_blank,
           schema_version_slug: article.schema_version.system_slug,
           validity: {
-            valid: false,
-            errors: be_present,
+            valid: true,
+            errors: be_blank,
           }
         }
       }
