@@ -58,30 +58,55 @@ module HasSchemaDefinition
     before_validation :enforce_schema_definition!, if: :schema_version_id_changed?
     before_validation :maybe_sign_properties!
 
+    after_save :apply_pending_properties!
+
     delegate :kind, to: :schema_version, prefix: true, allow_nil: true
 
     validate :enforce_schema_kind!, if: :should_check_schema_kind?
   end
 
+  # @return [Hash, nil]
+  attr_accessor :pending_properties
+
   # @param [SchemaVersion] schema_version
   # @param [Hash] new_values
   # @return [Dry::Monads::Result]
-  def alter_version!(schema_version, new_values, strategy: :apply)
+  monadic_operation! def alter_version(schema_version, new_values, strategy: :apply)
     call_operation("schemas.instances.alter_version", self, schema_version, new_values, strategy:)
   end
 
   # @param [SchemaVersion] schema_version
   # @param [Hash] new_values
   # @return [Dry::Monads::Result]
-  def alter_version_only!(schema_version)
+  monadic_operation! def alter_version_only(schema_version)
     call_operation("schemas.instances.alter_version", self, schema_version, {}, strategy: :skip)
   end
 
   # @see Schemas::Instances::Apply
   # @param [Hash] values
   # @return [Dry::Monads::Result]
-  def apply_properties!(values)
+  monadic_operation! def apply_properties(values)
     call_operation("schemas.instances.apply", self, values)
+  end
+
+  # @api private
+  # @return [void]
+  def apply_pending_properties!
+    return if pending_properties.blank?
+
+    begin
+      pending = pending_properties
+
+      self.pending_properties = nil
+
+      apply_properties!(pending)
+    rescue Dry::Monads::UnwrapError => e
+      # :nocov:
+      self.pending_properties = pending
+
+      raise e
+      # :nocov:
+    end
   end
 
   # @see Schemas::Instances::ExtractOrderableProperties

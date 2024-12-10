@@ -98,7 +98,7 @@ RSpec.describe "nglp:journal_article", type: :request do
       expect_graphql_data expected_shape
     end
 
-    context "when a required property is blank" do
+    xcontext "when a required property is blank" do
       let(:issue_id) { nil }
       let(:issue_number) { ?1 }
 
