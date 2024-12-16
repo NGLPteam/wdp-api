@@ -96,10 +96,14 @@ module Harvesting
             when :volume, :issue
               h[key] = value.first.presence
             when :pages
-              fpage, lpage = value.first.scan(/\d+/)
+              if value.present? && value.first.kind_of?(String)
+                fpage, lpage = value.first.scan(/\d+/)
 
-              h[:fpage] = fpage
-              h[:lpage] = lpage
+                h[:fpage] = fpage
+                h[:lpage] = lpage
+              else
+                h[:fpage] = h[:lpage] = nil
+              end
             when :date
               h[:year] = extract_year.(value.first).value_or(nil)
             end

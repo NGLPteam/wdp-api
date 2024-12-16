@@ -4,6 +4,7 @@ module Harvesting
   module Attempts
     # @see Harvesting::Actions::ExtractRecords
     class ExtractRecords
+      include Harvesting::WithLogger
       include Dry::Monads[:result]
       include Dry::Effects.Resolve(:protocol)
       include Dry::Effects::Handler.Interrupt(:no_records, as: :catch_no_records)
