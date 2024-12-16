@@ -284,3 +284,70 @@
     - identifier: uiowa-iwpar
       field: title
       pattern: "^The International Writing Program at the University of Iowa annual report.*"
+- seed_identifier: btaa-indiana
+  identifier: "indiana"
+  metadata_format: oaidc
+  title: "Indiana University"
+  journals:
+  - url: https://scholarworks.iu.edu/journals/index.php/josotl/oai
+    identifier: indiana-josotl
+    metadata_format: oaidc
+    title: Journal of the Scholarship of Teaching and Learning
+  - url: https://scholarworks.iu.edu/journals/index.php/sdh/oai
+    identifier: indiana-sdh
+    metadata_format: oaidc
+    title: Studies in Digital Heritage (SDH)
+  - url: https://scholarworks.iu.edu/journals/index.php/tmr/oai
+    identifier: indiana-tmr
+    metadata_format: oaidc
+    title: The Medieval Review
+  - url: https://scholarworks.iu.edu/journals/index.php/jfrr/oai
+    identifier: indiana-jfrr
+    metadata_format: oaidc
+    title: Journal of Folklore Research Reviews
+  - url: https://scholarworks.iu.edu/journals/index.php/ijdl/oai
+    identifier: indiana-ijdl
+    metadata_format: oaidc
+    title: International Journal of Designs for Learning
+  #series:
+  #- url: https://scholarworks.iu.edu/iuswrrest/oai/
+    #identifier: indiana-dissertations
+    #metadata_format: oaidc
+    #title: "Dissertations"
+- seed_identifier: btaa-penn-state
+  identifier: penn-state
+  metadata_format: oaidc
+  title: "Penn State"
+  journals:
+  - url: https://journals.psu.edu/artsculturedevelopment/oai
+    identifier: penn-state-artsculturedevelopment
+    metadata_format: oaidc
+    title: Arts, Culture, Development
+  - url: https://journals.psu.edu/dls/oai
+    identifier: penn-state-dls
+    metadata_format: oaidc
+    title: Digital Literary Studies
+  - url: https://journals.psu.edu/geomorphica/oai
+    identifier: penn-state-geomorphica
+    metadata_format: oaidc
+    title: Geomorphica
+  - url: https://journals.psu.edu/ik/oai
+    identifier: penn-state-ik
+    metadata_format: oaidc
+    title: "IK: Other Ways of Knowing"
+  - url: https://journals.psu.edu/medicine/oai
+    identifier: penn-state-medicine
+    metadata_format: oaidc
+    title: "Penn State Journal of Medicine"
+  - url: https://journals.psu.edu/ruralpolicy/oai
+    identifier: penn-state-ruralpolicy
+    metadata_format: oaidc
+    title: "Rural Policy"
+  - url: https://journals.psu.edu/strokeclinician/oai
+    identifier: penn-state-strokeclinician
+    metadata_format: oaidc
+    title: "Stroke Clinician"
+  # - url: https://journals.psu.edu/mentor/oai
+    # identifier: penn-state-mentor
+    # metadata_format: oaidc
+    # title: The Mentor
