@@ -12,6 +12,15 @@
     A template for describing how an entity should appear when rendered in a list.
 
     Contained within the `LIST_ITEM` layout.
+- template_kind: blurb
+  layout_kind: main
+  has_background: true
+  has_variant: false
+  description: |
+    An arbitrary text blurb that can be used for describing citations or other
+    runs of content that don't neatly fit within the prescribed hierarchies.
+
+    Contained within the `MAIN` layout
 - template_kind: detail
   layout_kind: main
   has_variant: true
@@ -73,7 +82,7 @@
 - template_kind: supplementary
   layout_kind: supplementary
   description: |
-    A template for describing how an entity's supplementary pages
-    (contributors, metrics) should render.
+    A template for describing how an entity's supplementary pages (contributors, metrics)
+    should render.
 
     Contained within the `SUPPLEMENTARY` layout.

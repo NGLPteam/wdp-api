@@ -96,6 +96,15 @@ via `selectionMode` turns out to be empty at runtime.</description>
       false
     </default>
   </prop>
+  <prop name="width" kind="width">
+    <description>This controls how wide the template should render.
+
+**Note**: When using `HALF`, you should take care to make sure that there is an adjacent
+template that also uses `HALF`.</description>
+    <default>
+      "full"
+    </default>
+  </prop>
   <slot name="header" kind="inline">
     <default-template>
       Descendants

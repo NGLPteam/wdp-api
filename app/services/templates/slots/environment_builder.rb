@@ -57,6 +57,7 @@ module Templates
       # @return [void]
       def configure_block!(env)
         env.register_tag "asset", Templates::Tags::Blocks::Asset
+        env.register_tag "copylink", Templates::Tags::Blocks::CopyLink
         env.register_tag "entitylink", Templates::Tags::Blocks::EntityLink
         env.register_tag "pdfviewer", Templates::Tags::Flat::PDFViewer
 
@@ -67,6 +68,7 @@ module Templates
       # @param [Liquid::Environment] env
       # @return [void]
       def configure_inline!(env)
+        env.register_tag "copylink", Templates::Tags::Blocks::CopyLink
         env.register_tag "entitylink", Templates::Tags::Blocks::EntityLink
       end
 

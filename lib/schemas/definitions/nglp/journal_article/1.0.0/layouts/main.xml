@@ -6,7 +6,7 @@
       <show-announcements>false</show-announcements>
       <show-body>true</show-body>
       <show-hero-image>false</show-hero-image>
-      <variant>summary</variant>
+      <variant>full</variant>
       <slots>
         <header>
           {{ entity.title }}
@@ -32,6 +32,20 @@
         </header>
       </slots>
     </contributor-list>
+    <blurb>
+      <background>none</background>
+      <width>full</width>
+      <slots>
+        <header>How to Cite</header>
+        <body>
+          {% if props.citation.exists %}
+          {% copylink "Citation" %}
+          {{props.citation}}
+          {% endcopylink %}
+          {% endif %}
+        </body>
+      </slots>
+    </blurb>
     <link-list>
       <background>light</background>
       <dynamic-ordering-definition>

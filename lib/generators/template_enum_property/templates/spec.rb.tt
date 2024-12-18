@@ -1,0 +1,8 @@
+<%-
+  # vim: set ft=ruby.eruby nosmartindent noautoindent :
+-%>
+# frozen_string_literal: true
+
+RSpec.describe Types::<%= template_enum_property.gql_type_klass_name %>, type: :graphql_enum do
+  it_behaves_like "a database-backed graphql enum", <%= template_enum_property.name.to_sym.inspect %>
+end

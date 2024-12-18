@@ -41,7 +41,7 @@ RSpec.describe Schemas::Instances::RefreshOrderings, type: :operation do
       it "only refreshes the right number of orderings" do
         expect do
           expect_calling_with(issue)
-        end.not_to have_enqueued_job(Schemas::Orderings::RefreshJob)
+        end.to keep_the_same(OrderingInvalidation, :count)
 
         expect(refresh_ordering).to have_received(:call).exactly(issue_orderings_count).times
         expect(calculate_initial).to have_received(:call).once
@@ -54,7 +54,7 @@ RSpec.describe Schemas::Instances::RefreshOrderings, type: :operation do
       it "only refreshes the right number of orderings" do
         expect do
           expect_calling_with(article).to succeed
-        end.not_to have_enqueued_job(Schemas::Orderings::RefreshJob)
+        end.to keep_the_same(OrderingInvalidation, :count)
 
         expect(refresh_ordering).to have_received(:call).exactly(article_orderings_count).times
         expect(calculate_initial).not_to have_received(:call)
@@ -71,7 +71,7 @@ RSpec.describe Schemas::Instances::RefreshOrderings, type: :operation do
       it "enqueues the right number of jobs" do
         expect do
           expect_calling_with(article).to succeed
-        end.to have_enqueued_job(Schemas::Orderings::RefreshJob).exactly(article_orderings_count).times
+        end.to change(OrderingInvalidation, :count).by(article_orderings_count)
 
         expect(refresh_ordering).not_to have_received(:call)
         expect(calculate_initial).not_to have_received(:call)
@@ -82,19 +82,9 @@ RSpec.describe Schemas::Instances::RefreshOrderings, type: :operation do
       it "defers enqueuing the right number of jobs until the block exits" do
         expect do
           Schemas::Orderings.with_deferred_refresh do
-            expect do
-              expect_calling_with(article).to succeed
-            end.not_to have_enqueued_job(Schemas::Orderings::RefreshJob)
+            expect_calling_with(article).to succeed
           end
-
-          # This is necessary because of how dry-effects and rspec interact
-          sleep 0.1
-
-          # now the block has exited so we can have the jobs be enqueued
-          expect do
-            operation.refresh_status
-          end.to raise_error Dry::Effects::Errors::UnhandledEffectError
-        end.to have_enqueued_job(Schemas::Orderings::RefreshJob).exactly(article_orderings_count).times
+        end.to change(OrderingInvalidation, :count).by(article_orderings_count)
 
         expect(refresh_ordering).not_to have_received(:call)
         expect(calculate_initial).not_to have_received(:call)

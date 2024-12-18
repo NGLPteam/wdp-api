@@ -35,6 +35,8 @@ class Ordering < ApplicationRecord
   has_many :ordering_entry_ancestor_links, inverse_of: :ordering, dependent: :delete_all
   has_many :ordering_entry_sibling_links, inverse_of: :ordering, dependent: :delete_all
 
+  has_many :ordering_invalidations, inverse_of: :ordering, dependent: :delete_all
+
   has_many :ordering_template_instances,
     class_name: "Templates::OrderingInstance",
     inverse_of: :ordering,
@@ -123,6 +125,11 @@ class Ordering < ApplicationRecord
   # @return [Dry::Monads::Failure(:ordering_entry_not_found)]
   monadic_operation! def find_entry(entity)
     call_operation("schemas.orderings.find_entry", self, entity)
+  end
+
+  # @see Schemas::Orderings::Invalidate
+  monadic_operation! def invalidate(...)
+    call_operation("schemas.orderings.invalidate", self, ...)
   end
 
   # @api private

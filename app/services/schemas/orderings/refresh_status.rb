@@ -38,9 +38,7 @@ module Schemas
       # @return [void]
       def wrap
         provide build_provisions do
-          maybe_with_deferred do
-            yield
-          end
+          yield
         end
       end
 
@@ -66,6 +64,8 @@ module Schemas
       alias async? asynchronous
 
       # @!attribute [r] deferred
+      # @note This exists for legacy reasons until harvesting refactor,
+      #   but is for now ultimately equivalent to async.
       # @return [Boolean]
       memoize def deferred
         currently_deferred || inherit_deferred
@@ -150,18 +150,6 @@ module Schemas
 
       def inherit_skip_schemas
         Array(parent_status&.skipped_schemas)
-      end
-
-      # Wrap the provided block `with_defer` if this status is the specific
-      # one set to be deferred.
-      #
-      # @return [void]
-      def maybe_with_deferred
-        return yield unless currently_deferred
-
-        with_defer executor: :fast do
-          yield
-        end
       end
 
       # @return [Schemas::Orderings::RefreshStatus, nil]

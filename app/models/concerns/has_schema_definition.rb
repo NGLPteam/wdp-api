@@ -129,6 +129,15 @@ module HasSchemaDefinition
     call_operation("schemas.instances.reindex", self)
   end
 
+  # Write a single property value to a schema.
+  #
+  # @see #apply_properties
+  # @see Schemas::Instances::PropertyWriter
+  # @see Schemas::Instances::WriteProperty
+  monadic_operation! def write_property(path, value)
+    call_operation("schemas.instances.write_property", self, path, value)
+  end
+
   # @return [String]
   def inspect
     schema_suffix = properties&.schema&.suffix

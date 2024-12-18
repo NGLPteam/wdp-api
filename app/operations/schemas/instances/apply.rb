@@ -44,6 +44,10 @@ module Schemas
 
         yield extract_composed_text.(target)
 
+        target.schematic_collected_references.reload
+        target.schematic_scalar_references.reload
+        target.schematic_texts.reload
+
         Success target
       end
 

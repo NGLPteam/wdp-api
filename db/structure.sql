@@ -140,6 +140,17 @@ CREATE TYPE public.asset_kind AS ENUM (
 
 
 --
+-- Name: blurb_background; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.blurb_background AS ENUM (
+    'none',
+    'light',
+    'dark'
+);
+
+
+--
 -- Name: collection_link_operator; Type: TYPE; Schema: public; Owner: -
 --
 
@@ -416,7 +427,8 @@ CREATE TYPE public.main_template_kind AS ENUM (
     'link_list',
     'page_list',
     'contributor_list',
-    'ordering'
+    'ordering',
+    'blurb'
 );
 
 
@@ -660,7 +672,8 @@ CREATE TYPE public.template_kind AS ENUM (
     'link_list',
     'page_list',
     'contributor_list',
-    'ordering'
+    'ordering',
+    'blurb'
 );
 
 
@@ -5751,6 +5764,19 @@ CREATE TABLE public.ordering_entry_sibling_links_part_8 (
 
 
 --
+-- Name: ordering_invalidations; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.ordering_invalidations (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    ordering_id uuid NOT NULL,
+    stale_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+--
 -- Name: pages; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -6102,6 +6128,48 @@ CREATE TABLE public.schematic_texts (
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     document tsvector GENERATED ALWAYS AS (setweight(to_tsvector(dictionary, text_content), (weight)::"char")) STORED,
     schema_version_property_id uuid
+);
+
+
+--
+-- Name: templates_blurb_definitions; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.templates_blurb_definitions (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    layout_definition_id uuid NOT NULL,
+    layout_kind public.layout_kind DEFAULT 'main'::public.layout_kind NOT NULL,
+    template_kind public.template_kind DEFAULT 'blurb'::public.template_kind NOT NULL,
+    background public.blurb_background DEFAULT 'none'::public.blurb_background NOT NULL,
+    width public.template_width DEFAULT 'full'::public.template_width NOT NULL,
+    "position" bigint NOT NULL,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    config jsonb DEFAULT '{}'::jsonb NOT NULL,
+    slots jsonb DEFAULT '{}'::jsonb NOT NULL
+);
+
+
+--
+-- Name: templates_blurb_instances; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.templates_blurb_instances (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    layout_instance_id uuid NOT NULL,
+    template_definition_id uuid NOT NULL,
+    entity_type character varying NOT NULL,
+    entity_id uuid NOT NULL,
+    layout_kind public.layout_kind DEFAULT 'main'::public.layout_kind NOT NULL,
+    template_kind public.template_kind DEFAULT 'blurb'::public.template_kind NOT NULL,
+    generation uuid NOT NULL,
+    "position" bigint NOT NULL,
+    last_rendered_at timestamp without time zone,
+    render_duration numeric,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    config jsonb DEFAULT '{}'::jsonb NOT NULL,
+    slots jsonb DEFAULT '{}'::jsonb NOT NULL
 );
 
 
@@ -7567,6 +7635,14 @@ ALTER TABLE ONLY public.ordering_entry_sibling_links_part_8
 
 
 --
+-- Name: ordering_invalidations ordering_invalidations_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.ordering_invalidations
+    ADD CONSTRAINT ordering_invalidations_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: orderings orderings_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -7716,6 +7792,22 @@ ALTER TABLE ONLY public.schematic_scalar_references
 
 ALTER TABLE ONLY public.schematic_texts
     ADD CONSTRAINT schematic_texts_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: templates_blurb_definitions templates_blurb_definitions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.templates_blurb_definitions
+    ADD CONSTRAINT templates_blurb_definitions_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: templates_blurb_instances templates_blurb_instances_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.templates_blurb_instances
+    ADD CONSTRAINT templates_blurb_instances_pkey PRIMARY KEY (id);
 
 
 --
@@ -8044,6 +8136,27 @@ CREATE INDEX idx_layouts_navigation_instances_defn ON public.layouts_navigation_
 --
 
 CREATE INDEX idx_layouts_supplementary_instances_defn ON public.layouts_supplementary_instances USING btree (layout_definition_id);
+
+
+--
+-- Name: idx_templates_blurb_definitions_layout; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_templates_blurb_definitions_layout ON public.templates_blurb_definitions USING btree (layout_definition_id);
+
+
+--
+-- Name: idx_templates_blurb_instances_defn; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_templates_blurb_instances_defn ON public.templates_blurb_instances USING btree (template_definition_id);
+
+
+--
+-- Name: idx_templates_blurb_instances_layout; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_templates_blurb_instances_layout ON public.templates_blurb_instances USING btree (layout_instance_id);
 
 
 --
@@ -10203,6 +10316,13 @@ CREATE UNIQUE INDEX index_ordering_entry_ancestor_links_uniqueness ON ONLY publi
 
 
 --
+-- Name: index_ordering_invalidations_distinct_staleness; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_ordering_invalidations_distinct_staleness ON public.ordering_invalidations USING btree (ordering_id, stale_at DESC);
+
+
+--
 -- Name: index_orderings_deterministic_by_position; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -10613,6 +10733,41 @@ CREATE INDEX index_schematic_texts_on_document ON public.schematic_texts USING g
 --
 
 CREATE INDEX index_schematic_texts_on_schema_version_property_id ON public.schematic_texts USING btree (schema_version_property_id);
+
+
+--
+-- Name: index_templates_blurb_definitions_on_position; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_templates_blurb_definitions_on_position ON public.templates_blurb_definitions USING btree ("position");
+
+
+--
+-- Name: index_templates_blurb_instances_on_entity; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_templates_blurb_instances_on_entity ON public.templates_blurb_instances USING btree (entity_type, entity_id);
+
+
+--
+-- Name: index_templates_blurb_instances_on_generation; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_templates_blurb_instances_on_generation ON public.templates_blurb_instances USING btree (generation);
+
+
+--
+-- Name: index_templates_blurb_instances_on_last_rendered_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_templates_blurb_instances_on_last_rendered_at ON public.templates_blurb_instances USING btree (last_rendered_at);
+
+
+--
+-- Name: index_templates_blurb_instances_on_position; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_templates_blurb_instances_on_position ON public.templates_blurb_instances USING btree ("position");
 
 
 --
@@ -13039,6 +13194,14 @@ ALTER TABLE ONLY public.templates_link_list_definitions
 
 
 --
+-- Name: templates_blurb_definitions fk_rails_1a625c1710; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.templates_blurb_definitions
+    ADD CONSTRAINT fk_rails_1a625c1710 FOREIGN KEY (layout_definition_id) REFERENCES public.layouts_main_definitions(id) ON DELETE CASCADE;
+
+
+--
 -- Name: schema_version_properties fk_rails_1f31833d7c; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -13527,6 +13690,14 @@ ALTER TABLE ONLY public.collection_linked_items
 
 
 --
+-- Name: ordering_invalidations fk_rails_80f155549c; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.ordering_invalidations
+    ADD CONSTRAINT fk_rails_80f155549c FOREIGN KEY (ordering_id) REFERENCES public.orderings(id) ON DELETE CASCADE;
+
+
+--
 -- Name: entity_links fk_rails_8181666751; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -13679,6 +13850,14 @@ ALTER TABLE ONLY public.user_group_memberships
 
 
 --
+-- Name: templates_blurb_instances fk_rails_afc21fc6b2; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.templates_blurb_instances
+    ADD CONSTRAINT fk_rails_afc21fc6b2 FOREIGN KEY (template_definition_id) REFERENCES public.templates_blurb_definitions(id) ON DELETE CASCADE;
+
+
+--
 -- Name: schema_version_associations fk_rails_b2a9ef07e9; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -13756,6 +13935,14 @@ ALTER TABLE ONLY public.entity_hierarchies
 
 ALTER TABLE ONLY public.layouts_list_item_instances
     ADD CONSTRAINT fk_rails_c42661f077 FOREIGN KEY (layout_definition_id) REFERENCES public.layouts_list_item_definitions(id) ON DELETE CASCADE;
+
+
+--
+-- Name: templates_blurb_instances fk_rails_c45a8f037b; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.templates_blurb_instances
+    ADD CONSTRAINT fk_rails_c45a8f037b FOREIGN KEY (layout_instance_id) REFERENCES public.layouts_main_instances(id) ON DELETE CASCADE;
 
 
 --
@@ -14340,6 +14527,9 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20241119165014'),
 ('20241204230232'),
 ('20241205194208'),
-('20241205225757');
+('20241205225757'),
+('20241217175355'),
+('20241217175502'),
+('20241217203803');
 
 

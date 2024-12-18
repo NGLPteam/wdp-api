@@ -4,6 +4,9 @@
 - name: hero_background
   category: background
   default: none
+- name: blurb_background
+  category: background
+  default: none
 - name: detail_background
   category: background
   default: none

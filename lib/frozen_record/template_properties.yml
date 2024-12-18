@@ -1,4 +1,13 @@
 ---
+- template_kind: blurb
+  name: background
+  property_kind_name: background
+  default: none
+- template_kind: blurb
+  name: width
+  property_kind_name: width
+  enum_name: template_width
+  default: full
 - template_kind: contributor_list
   name: background
   property_kind_name: background

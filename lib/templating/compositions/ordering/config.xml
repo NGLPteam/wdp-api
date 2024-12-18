@@ -55,6 +55,15 @@ the upper hierarchy from lower points in the tree.</description>
     <description>An enum representing what mode `selectionSource` is in. Not directly set,
 it is used internally for lookups.</description>
   </prop>
+  <prop name="width" kind="width">
+    <description>This controls how wide the template should render.
+
+**Note**: When using `HALF`, you should take care to make sure that there is an adjacent
+template that also uses `HALF`.</description>
+    <default>
+      "full"
+    </default>
+  </prop>
   <slot name="previous_label" kind="inline">
     <default-template>
       Previous Entity

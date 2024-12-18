@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 module Types
+  # @see Template
+  # @see Templates::Types::Kind
   class TemplateKindType < Types::BaseEnum
     description <<~TEXT
     Discriminator for the various types of templates available to an entity,
@@ -10,6 +12,8 @@ module Types
     value "HERO", value: "hero" do
       description <<~TEXT
       A template for describing how an entity's header / hero should look.
+
+      Contained within the `HERO` layout.
       TEXT
     end
 
@@ -18,6 +22,15 @@ module Types
       A template for describing how an entity should appear when rendered in a list.
 
       Contained within the `LIST_ITEM` layout.
+      TEXT
+    end
+
+    value "BLURB", value: "blurb" do
+      description <<~TEXT
+      An arbitrary text blurb that can be used for describing citations or other
+      runs of content that don't neatly fit within the prescribed hierarchies.
+
+      Contained within the `MAIN` layout
       TEXT
     end
 
