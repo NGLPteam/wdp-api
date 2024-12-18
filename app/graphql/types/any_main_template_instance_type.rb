@@ -12,6 +12,7 @@ module Types
       "Types::Templates::LinkListTemplateInstanceType",
       "Types::Templates::PageListTemplateInstanceType",
       "Types::Templates::ContributorListTemplateInstanceType",
-      "Types::Templates::OrderingTemplateInstanceType"
+      "Types::Templates::OrderingTemplateInstanceType",
+      "Types::Templates::BlurbTemplateInstanceType"
   end
 end

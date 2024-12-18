@@ -1,9 +1,23 @@
 ---
 - layout_kind: hero
+  description: |
+    The "hero" layout for an Entity.
 - layout_kind: list_item
+  description: |
+    A layout describing how an entity should look when it is being rendered.
 - layout_kind: main
   default_templates:
     - detail
+  description: |
+    The "main" layout for the landing page of an entity.
+
+    It is where most of the detail on an entity should go.
 - layout_kind: navigation
+  description: |
+    A layout describing how an entity should be navigated.
 - layout_kind: metadata
+  description: |
+    A layout for controlling how metadata should render.
 - layout_kind: supplementary
+  description: |
+    A shared layout for certain supplementary routes like contributors and metrics.

@@ -12,6 +12,7 @@ module Types
       "Types::Templates::LinkListTemplateDefinitionType",
       "Types::Templates::PageListTemplateDefinitionType",
       "Types::Templates::ContributorListTemplateDefinitionType",
-      "Types::Templates::OrderingTemplateDefinitionType"
+      "Types::Templates::OrderingTemplateDefinitionType",
+      "Types::Templates::BlurbTemplateDefinitionType"
   end
 end

@@ -32,6 +32,14 @@
         </header>
       </slots>
     </contributor-list>
+    <blurb>
+      <background>none</background>
+      <width>full</width>
+      <slots>
+        <header/>
+        <body/>
+      </slots>
+    </blurb>
     <link-list>
       <background>light</background>
       <dynamic-ordering-definition>

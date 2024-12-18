@@ -24,6 +24,12 @@ module Schemas
 
       delegate :has_any_types?, :has_contributors?, :has_type?, to: :type_mapping
 
+      # @!attribute [r] current_values
+      # @return [Hash]
+      memoize def current_values
+        calculate_current_values
+      end
+
       # @!attribute [r] default_values
       # @return [Hash]
       memoize def default_values
@@ -31,7 +37,7 @@ module Schemas
       end
 
       # @!attribute [r] field_values
-      # @return [PropertyHash]
+      # @return [Hash]
       memoize def field_values
         calculate_field_values
       end
@@ -67,6 +73,17 @@ module Schemas
       end
 
       private
+
+      # @return [Hash]
+      def calculate_current_values
+        property_hash = filter_values
+
+        property_hash.merge! collected_references
+        property_hash.merge! scalar_references
+        property_hash.merge! full_texts
+
+        property_hash.to_h
+      end
 
       # @return [PropertyHash]
       def calculate_field_values

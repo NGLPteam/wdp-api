@@ -3,6 +3,7 @@
 module Layouts
   # @see Layouts::MainDefinition
   # @see Types::Layouts::MainLayoutInstanceType
+  # @see Templates::BlurbInstance
   # @see Templates::DetailInstance
   # @see Templates::DescendantListInstance
   # @see Templates::LinkListInstance
@@ -17,9 +18,15 @@ module Layouts
     graphql_node_type_name "::Types::Layouts::MainLayoutInstanceType"
 
     layout_kind! :main
-    template_kinds! ["detail", "descendant_list", "link_list", "page_list", "contributor_list", "ordering"].freeze
+    template_kinds! ["detail", "descendant_list", "link_list", "page_list", "contributor_list", "ordering", "blurb"].freeze
 
     belongs_to :layout_definition, class_name: "Layouts::MainDefinition", inverse_of: :layout_instances
+
+    has_many :blurb_template_instances,
+      class_name: "Templates::BlurbInstance",
+      dependent: :destroy,
+      inverse_of: :layout_instance,
+      foreign_key: :layout_instance_id
 
     has_many :detail_template_instances,
       class_name: "Templates::DetailInstance",

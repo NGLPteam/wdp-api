@@ -3,6 +3,7 @@
 module Layouts
   # @see Layouts::MainInstance
   # @see Types::Layouts::MainLayoutDefinitionType
+  # @see Templates::BlurbDefinition
   # @see Templates::DetailDefinition
   # @see Templates::DescendantListDefinition
   # @see Templates::LinkListDefinition
@@ -15,7 +16,7 @@ module Layouts
     include TimestampScopes
 
     layout_kind! :main
-    template_kinds! ["detail", "descendant_list", "link_list", "page_list", "contributor_list", "ordering"].freeze
+    template_kinds! ["detail", "descendant_list", "link_list", "page_list", "contributor_list", "ordering", "blurb"].freeze
 
     graphql_node_type_name "::Types::Layouts::MainLayoutDefinitionType"
 
@@ -24,6 +25,12 @@ module Layouts
 
     has_many :layout_instances,
       class_name: "Layouts::MainInstance",
+      dependent: :destroy,
+      inverse_of: :layout_definition,
+      foreign_key: :layout_definition_id
+
+    has_many :blurb_template_definitions,
+      class_name: "Templates::BlurbDefinition",
       dependent: :destroy,
       inverse_of: :layout_definition,
       foreign_key: :layout_definition_id

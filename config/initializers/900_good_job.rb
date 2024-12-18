@@ -57,6 +57,12 @@ Rails.application.configure do
       class: "Entities::PopulateVisibilitiesJob",
       description: "Populate entity visibilities",
     },
+    "ordering_invalidations.process_all": {
+      cron: "*/5 * * * *",
+      class: "OrderingInvalidations::ProcessAllJob",
+      description: "Process stale orderings",
+      args: -> { [Time.current.iso8601] },
+    },
     "rendering.process_layout_invalidations": {
       cron: "*/5 * * * *",
       class: "Rendering::ProcessLayoutInvalidationsJob",

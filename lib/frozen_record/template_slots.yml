@@ -1,4 +1,13 @@
 ---
+- template_kind: blurb
+  name: header
+  slot_kind: inline
+- template_kind: blurb
+  name: subheader
+  slot_kind: inline
+- template_kind: blurb
+  name: body
+  slot_kind: block
 - name: header
   slot_kind: inline
   template_kind: contributor_list

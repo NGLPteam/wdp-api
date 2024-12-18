@@ -20,6 +20,16 @@ module Templates
     class PropertyValueDrop < Templates::Drops::AbstractDrop
       include Enumerable
 
+      # Boolean complement of {#missing}. Works like `#present?` in Rails parlance.
+      #
+      # @return [Boolean]
+      attr_reader :exists
+
+      # Boolean complement of {#exists}. Works like `#blank?` in Rails parlance.
+      #
+      # @return [Boolean]
+      attr_reader :missing
+
       # @param [Schemas::Properties::Reader] reader
       def initialize(reader)
         super()
@@ -27,6 +37,9 @@ module Templates
         @reader = reader
         @property = reader.property
         @value = reader.value
+
+        @missing = calculate_missing
+        @exists = !@missing
 
         @full_path = property.full_path
         @type = property.type
@@ -44,13 +57,6 @@ module Templates
         end
       end
 
-      # Boolean complement of {#missing}. Works like `#present?` in Rails parlance.
-      #
-      # @return [Boolean]
-      def exists
-        !missing
-      end
-
       # @note This defers to the inner representation in case we are wrapping
       #   around a drop class that adds further methods for the property.
       # @param [#to_s] method_or_key
@@ -61,18 +67,6 @@ module Templates
           @inner_representation.invoke_drop(method_or_key)
         else
           super
-        end
-      end
-
-      # Boolean complement of {#exists}. Works like `#blank?` in Rails parlance.
-      #
-      # @return [Boolean]
-      def missing
-        case @value
-        when VariablePrecisionDate
-          @value.none?
-        else
-          @value.present?
         end
       end
 
@@ -113,6 +107,16 @@ module Templates
           value.to_liquid
         else
           value&.to_liquid
+        end
+      end
+
+      # @return [Boolean]
+      def calculate_missing
+        case @value
+        when VariablePrecisionDate
+          @value.none?
+        else
+          @value.blank?
         end
       end
     end

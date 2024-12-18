@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config layout="main" has-background="true" has-variant="false">
+  <description>An arbitrary text blurb that can be used for describing citations or other
+runs of content that don't neatly fit within the prescribed hierarchies.
+
+Contained within the `MAIN` layout</description>
+  <prop name="background" kind="background">
+    <description>The background gradient to use for this template. Affects presentation.</description>
+    <default>
+      "none"
+    </default>
+  </prop>
+  <prop name="width" kind="width">
+    <description>This controls how wide the template should render.
+
+**Note**: When using `HALF`, you should take care to make sure that there is an adjacent
+template that also uses `HALF`.</description>
+    <default>
+      "full"
+    </default>
+  </prop>
+  <slot name="header" kind="inline"/>
+  <slot name="subheader" kind="inline"/>
+  <slot name="body" kind="block"/>
+</config>

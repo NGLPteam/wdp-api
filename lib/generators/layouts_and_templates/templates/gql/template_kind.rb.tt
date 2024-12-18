@@ -1,0 +1,23 @@
+<%-
+  # vim: set ft=ruby.eruby nosmartindent noautoindent :
+-%>
+# frozen_string_literal: true
+
+module Types
+  # @see Template
+  # @see Templates::Types::Kind
+  class TemplateKindType < Types::BaseEnum
+    description <<~TEXT
+    Discriminator for the various types of templates available to an entity,
+    based on its schema.
+    TEXT
+    <%- Template.each do |template| -%>
+
+    value <%= template.template_kind.to_s.upcase.inspect %>, value: <%= template.template_kind.to_s.inspect %> do
+      description <<~TEXT
+      <%= template.description.to_s.strip.indent(6).strip %>
+      TEXT
+    end
+    <%- end -%>
+  end
+end

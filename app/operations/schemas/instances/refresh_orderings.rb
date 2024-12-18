@@ -6,7 +6,6 @@ module Schemas
     #
     # @see Schemas::Orderings::RefreshStatus
     class RefreshOrderings
-      include Dry::Effects.Defer
       include Dry::Effects.Resolve(:refresh_status)
       include Dry::Monads[:do, :result]
       include MonadicPersistence
@@ -25,12 +24,8 @@ module Schemas
 
           next unless ordering.refreshes_for? entity
 
-          if status.deferred?
-            later do
-              Schemas::Orderings::RefreshJob.perform_later ordering
-            end
-          elsif status.async?
-            Schemas::Orderings::RefreshJob.perform_later ordering
+          if status.deferred? || status.async?
+            ordering.invalidate!
           else
             yield refresh.(ordering)
           end

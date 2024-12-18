@@ -20,6 +20,11 @@ class LayoutsAndTemplatesGenerator < Rails::Generators::Base
     template "gql/entity_layouts.rb", Rails.root.join("app", "graphql", "types", "entity_layouts_type.rb")
   end
 
+  def generate_kind_enums!
+    template "gql/layout_kind.rb", Rails.root.join("app", "graphql", "types", "layout_kind_type.rb")
+    template "gql/template_kind.rb", Rails.root.join("app", "graphql", "types", "template_kind_type.rb")
+  end
+
   private
 
   def layout_kinds

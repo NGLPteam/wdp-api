@@ -1,0 +1,22 @@
+<%-
+  # vim: set ft=ruby.eruby nosmartindent noautoindent :
+-%>
+# frozen_string_literal: true
+
+module Types
+  # @see Layout
+  # @see Layouts::Types::Kind
+  class LayoutKindType < Types::BaseEnum
+    description <<~TEXT
+    The various kinds of `Layout`s in the system.
+    TEXT
+    <%- Layout.each do |layout| -%>
+
+    value <%= layout.layout_kind.to_s.upcase.inspect %>, value: <%= layout.layout_kind.to_s.inspect %> do
+      description <<~TEXT
+      <%= layout.description.to_s.strip.indent(6).strip %>
+      TEXT
+    end
+    <%- end -%>
+  end
+end

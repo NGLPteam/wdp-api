@@ -15,6 +15,12 @@ class TemplateEnumPropertyGenerator < Rails::Generators::NamedBase
     template "config_prop.rb", path
   end
 
+  def generate_spec!
+    path = Rails.root.join("spec", "graphql", "types", "#{file_name}_spec.rb")
+
+    template "spec.rb", path
+  end
+
   private
 
   def heredoc_description_for(value)

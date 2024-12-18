@@ -24,6 +24,7 @@ module Templates
     ).fallback("none")
 
     EnumPropertyName = Coercible::String.enum(
+      "blurb_background",
       "contributor_list_background",
       "contributor_list_filter",
       "descendant_list_background",

@@ -15,19 +15,19 @@ class TemplateGenerator < Rails::Generators::NamedBase
 
   SLOTS_CONFIG_ROOT = CONFIG_ROOT.join("template_slots")
 
+  def generate_slot_mappings!
+    slot_mappings = Rails.root.join("app", "services", "templates", "slot_mappings")
+
+    template "instance_slots.rb", slot_mappings.join("#{file_name}_instance_slots.rb")
+    template "definition_slots.rb", slot_mappings.join("#{file_name}_definition_slots.rb")
+  end
+
   def generate_definition!
     template "definition.rb", MODELS.join("#{file_name}_definition.rb")
   end
 
   def generate_instance!
     template "instance.rb", MODELS.join("#{file_name}_instance.rb")
-  end
-
-  def generate_slot_mappings!
-    slot_mappings = Rails.root.join("app", "services", "templates", "slot_mappings")
-
-    template "definition_slots.rb", slot_mappings.join("#{file_name}_definition_slots.rb")
-    template "instance_slots.rb", slot_mappings.join("#{file_name}_instance_slots.rb")
   end
 
   def generate_gql!
