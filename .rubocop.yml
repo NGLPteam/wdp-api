@@ -278,8 +278,9 @@ Rails/Date:
 Rails/Delegate:
   Enabled: false
 
+# False positives
 Rails/DeprecatedActiveModelErrorsMethods: # new in 2.14
-  Enabled: true
+  Enabled: false
 
 Rails/DuplicateAssociation: # new in 2.14
   Enabled: true

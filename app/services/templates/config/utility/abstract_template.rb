@@ -20,6 +20,18 @@ module Templates
           MeruAPI::Container["templates.config.apply_template"].(self, layout_definition, **options)
         end
 
+        def introspect
+          props = to_template_definition_props
+
+          slots = self.slots.as_json
+
+          {
+            template_kind:,
+            props:,
+            slots:,
+          }
+        end
+
         # @return [Ox::Element]
         def to_ox_element
           Ox.load(to_xml)
