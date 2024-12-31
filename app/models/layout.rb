@@ -57,6 +57,10 @@ class Layout < Support::FrozenRecordHelpers::AbstractRecord
     wrong_length: "has the wrong number of templates (should be %{count})",
   }
 
+  def introspect
+    slice(:layout_kind, :description).merge(templates: templates.map(&:introspect))
+  end
+
   # @return [Templates::Config::Utility::AbstractLayout]
   def build_default
     config_klass.build_default
@@ -129,6 +133,13 @@ class Layout < Support::FrozenRecordHelpers::AbstractRecord
       layout = find layout_kind.to_s
 
       layout.build_default
+    end
+
+    # @return [{ Symbol => Regexp }]
+    def constraints
+      @constraints ||= {}.tap do |c|
+        c[:layout_kind] = Regexp.union(pluck(:layout_kind))
+      end.freeze
     end
   end
 end

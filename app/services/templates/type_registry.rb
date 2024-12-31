@@ -21,5 +21,6 @@ module Templates
     tc.add! :template_kind, Templates::Types::Kind
     tc.add! :template_kinds, Templates::Types::Kinds
     tc.add! :template_width, Templates::Types::TemplateWidth
+    tc.add! :uploaded_file, Templates::Types.Instance(ActionDispatch::Http::UploadedFile)
   end
 end

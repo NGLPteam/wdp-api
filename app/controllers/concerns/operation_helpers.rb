@@ -14,10 +14,10 @@ module OperationHelpers
   # @yieldparam [Dry::Matcher::ResultMatcher] matcher
   # @yieldreturn [void]
   # @return [void]
-  def perform_operation(name, *args, &)
+  def perform_operation(name, *args, **kwargs, &)
     operation = resolve name
 
-    result = operation.call(*args)
+    result = operation.call(*args, **kwargs)
 
     Dry::Matcher::ResultMatcher.call(result, &)
   end

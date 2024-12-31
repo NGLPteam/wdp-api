@@ -42,6 +42,10 @@ class Template < Support::FrozenRecordHelpers::AbstractRecord
 
   validate :all_props_accounted_for!
 
+  def introspect
+    slice(:template_kind, :description, :properties, :slots)
+  end
+
   # @return [Layout]
   memoize def layout
     Layout.find layout_kind
