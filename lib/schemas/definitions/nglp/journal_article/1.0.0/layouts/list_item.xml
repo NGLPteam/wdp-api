@@ -9,20 +9,21 @@
         <subheader>
           {{entity.subtitle}}
         </subheader>
-        <description/>
-        <meta-a>
-          {% if entity.published %} Published {{entity.published}} {% endif %}
-        </meta-a>
+        <description>
+          {% if entity.summary %} {{ entity.summary }} {% endif %}
+        </description>
         <meta-b/>
         <context-a>
-          {{ancestors.journal.title}}
+          {% if ancestors.issue or ancestors.volume or ancestors.journal %}
+          {% assign journal = ancestors.journal.title | split: "*" %}
+          {% assign volume = ancestors.volume.title | split: "*" %}
+          {% assign issue = ancestors.issue.title | split: "*" %}
+          {% assign ancestors = journal | concat: volume | concat: issue %}
+            {{ ancestors | join: ", " }}
+          {% endif %}
         </context-a>
-        <context-b>
-          {% if ancestors.volume %} {{ ancestors.volume.title }} {% endif %}
-        </context-b>
-        <context-c>
-          {% if ancestors.issue %} {{ ancestors.issue.title }} {% endif %}
-        </context-c>
+        <context-b/>
+        <context-c/>
       </slots>
     </list-item>
   </templates>
