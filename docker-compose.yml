@@ -72,8 +72,9 @@ services:
         max-size: "10m"
         max-file: "10"
     volumes:
+      - ./:/srv/app
       - bundle_cache:/bundle
-      - meru-api-sync:/srv/app:nocopy
+      - minio_storage:/minio
     ports:
       - "6222:8080"
     restart: unless-stopped
@@ -104,8 +105,8 @@ services:
         max-size: "10m"
         max-file: "10"
     volumes:
+      - ./:/srv/app
       - bundle_cache:/bundle
-      - meru-api-sync:/srv/app:nocopy
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "-s", "-o", "/dev/null", "http://localhost:7001/status/started"]
@@ -139,8 +140,8 @@ services:
         max-size: "10m"
         max-file: "10"
     volumes:
+      - ./:/srv/app
       - bundle_cache:/bundle
-      - meru-api-sync:/srv/app:nocopy
     restart: unless-stopped
   mailcatcher:
     image: "sj26/mailcatcher:v0.8.2"
@@ -208,11 +209,9 @@ services:
     restart: "no"
     volumes:
       - bundle_cache:/bundle
-      - meru-api-sync:/srv/app:nocopy
+      - ./:/srv/app
 
 volumes:
-  meru-api-sync:
-    external: true
   bundle_cache:
     driver: local
   minio_storage:
