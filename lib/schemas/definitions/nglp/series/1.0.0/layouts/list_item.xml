@@ -9,13 +9,13 @@
         <subheader>
           {{ entity.subtitle }}
         </subheader>
-        <description/>
+        <description>
+          {% if entity.summary %} {{ entity.summary }} {% endif %}
+        </description>
         <meta-a>
-          Published {{ entity.published }}
+          Last Paper Published [[ Publish date ]]
         </meta-a>
-        <meta-b>
-          Meta B
-        </meta-b>
+        <meta-b/>
         <context-a/>
         <context-b/>
         <context-c/>

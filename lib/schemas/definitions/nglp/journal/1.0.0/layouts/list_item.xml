@@ -9,9 +9,15 @@
         <subheader>
           {{ entity.subtitle }}
         </subheader>
-        <description/>
-        <meta-a/>
-        <meta-b/>
+        <description>
+          {% if entity.summary %} {{ entity.summary }} {% endif %}
+        </description>
+        <meta-a>
+          Most Recent Issue [[ Publish date ]]
+        </meta-a>
+        <meta-b>
+          [[ Issue count ]], [[ Article count ]]
+        </meta-b>
         <context-a/>
         <context-b/>
         <context-c/>
