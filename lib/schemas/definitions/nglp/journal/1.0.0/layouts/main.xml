@@ -8,14 +8,10 @@
       <show-hero-image>false</show-hero-image>
       <variant>summary</variant>
       <slots>
-        <header>
-          {{ entity.title }}
-        </header>
-        <subheader>
-          {{ entity.subtitle }}
-        </subheader>
+        <header/>
+        <subheader/>
         <summary>
-          {{ entity.summary }}
+          {{ props.description.content }}
         </summary>
       </slots>
     </detail>
@@ -43,10 +39,15 @@
       <use-selection-fallback>true</use-selection-fallback>
       <variant>summary</variant>
       <slots>
-        <header>Current Issue</header>
-        <header-aside/>
-        <metadata/>
-        <subtitle/>
+        <header>[[ Current Issue Title ]]</header>
+        <header-aside>[[ Vol # ]]</header-aside>
+        <metadata>
+          {% assign published = "[[ Current issue published ]]" | split: "*" %}
+          {% assign articles = "[[ Article count ]]" | split: "*" %}
+          {% assign meta = published | concat: articles %}
+          {{ meta | join: ", " }}
+        </metadata>
+        <subtitle>[[ Current issue subtitle ]]</subtitle>
       </slots>
     </descendant-list>
     <descendant-list>
@@ -64,9 +65,9 @@
       <selection-limit>4</selection-limit>
       <selection-mode>dynamic</selection-mode>
       <selection-source>self</selection-source>
-      <show-entity-context>false</show-entity-context>
+      <show-entity-context>true</show-entity-context>
       <show-hero-image>false</show-hero-image>
-      <title>Recent Issues</title>
+      <title/>
       <variant>summary</variant>
       <slots>
         <header>Recent Issues</header>
@@ -86,11 +87,11 @@
           <links references="true" />
         </select>
       </dynamic-ordering-definition>
-      <title>Related Journals</title>
+      <title/>
       <selection-limit>4</selection-limit>
       <selection-mode>dynamic</selection-mode>
       <selection-source>self</selection-source>
-      <variant>promos</variant>
+      <variant>grid</variant>
       <slots>
         <header>Related Journals</header>
         <header-aside/>

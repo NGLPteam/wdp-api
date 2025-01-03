@@ -17,21 +17,26 @@
       <show-thumbnail-image>false</show-thumbnail-image>
       <slots>
         <call-to-action/>
-        <descendant-search-prompt>Search {{entity.title}}</descendant-search-prompt>
+        <descendant-search-prompt>Search {{ entity.title }}</descendant-search-prompt>
         <header>
           {{ entity.title }}
         </header>
+        <summary/>
+        <header-summary>{{ entity.subtitle }}</header-summary>
         <header-aside/>
-        <header-sidebar/>
-        <header-summary/>
-        <metadata>
-          Published {{ entity.published }}
-        </metadata>
+        <header-sidebar>
+          {% if props.cc_license %}
+            {% sbitem icon: "cc" %} {{ props.cc_license }} {% endsbitem %}
+          {% endif %}
+          {% if props.peer_reviewed %}
+            {% sbitem icon: "user" %} Peer Reviewed {% endsbitem %}
+          {% endif %}
+        </header-sidebar>
+        <metadata/>
         <sidebar/>
         <subheader/>
         <subheader-aside/>
         <subheader-summary/>
-        <summary/>
       </slots>
     </hero>
   </templates>

@@ -9,14 +9,16 @@
         <subheader>
           {{ entity.subtitle }}
         </subheader>
-        <description/>
+        <description>
+          {% if entity.summary %} {{ entity.summary }} {% endif %}
+        </description>
         <meta-a>
           Published {{ entity.published }}
         </meta-a>
-        <meta-b>
-          Meta B
-        </meta-b>
-        <context-a/>
+        <meta-b/>
+        <context-a>
+          {% if ancestors.series %} {{ancestors.series.title}} {% endif %}
+        </context-a>
         <context-b/>
         <context-c/>
       </slots>

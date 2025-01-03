@@ -2,7 +2,7 @@
 <main>
   <templates>
     <descendant-list>
-      <background>dark</background>
+      <background>none</background>
       <see-all-button-label>See All Journals</see-all-button-label>
       <selection-limit>3</selection-limit>
       <selection-mode>property</selection-mode>
@@ -41,7 +41,7 @@
       <selection-source>self</selection-source>
       <show-entity-context>true</show-entity-context>
       <show-hero-image>true</show-hero-image>
-      <show-see-all-button>false</show-see-all-button>
+      <show-see-all-button>true</show-see-all-button>
       <title>Featured Issue</title>
       <variant>summary</variant>
     </descendant-list>

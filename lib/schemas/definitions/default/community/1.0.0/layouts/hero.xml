@@ -20,19 +20,17 @@
           What are you looking for?
         </big-search-prompt>
         <header>
-          {{ entity.title }}
+          {{ entity.tagline }}
         </header>
+        <header-summary>{{ entity.summary }}</header-summary>
         <header-aside/>
         <header-sidebar/>
-        <header-summary/>
         <subheader/>
         <subheader-aside/>
         <subheader-summary/>
         <sidebar/>
         <metadata/>
-        <summary>
-          {{ entity.summary }}
-        </summary>
+        <summary/>
         <call-to-action/>
       </slots>
     </hero>
