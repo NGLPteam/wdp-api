@@ -4,37 +4,26 @@
     <descendant-list>
       <background>none</background>
       <ordering-identifier>articles</ordering-identifier>
-      <see-all-button-label>See All Articles</see-all-button-label>
-      <selection-limit>40</selection-limit>
+      <see-all-button-label/>
+      <selection-limit/>
       <selection-mode>named</selection-mode>
       <selection-source>self</selection-source>
       <show-entity-context>false</show-entity-context>
       <show-hero-image>false</show-hero-image>
-      <show-see-all-button>true</show-see-all-button>
-      <title>Articles</title>
+      <show-see-all-button>false</show-see-all-button>
+      <title/>
       <variant>summary</variant>
-      <width>half</width>
+      <width>full</width>
       <slots>
-        <header>
-          Articles
-        </header>
+        <header>Articles</header>
         <header-aside/>
         <metadata/>
         <subtitle/>
       </slots>
     </descendant-list>
-    <page-list>
-      <background>none</background>
-      <width>half</width>
-      <slots>
-        <header>
-          Pages
-        </header>
-      </slots>
-    </page-list>
     <contributor-list>
       <background>light</background>
-      <limit>3</limit>
+      <limit>4</limit>
       <slots>
         <header>
           Contributors
@@ -42,7 +31,7 @@
       </slots>
     </contributor-list>
     <ordering>
-      <background>dark</background>
+      <background>light</background>
       <ordering-source>parent</ordering-source>
       <selection-source>self</selection-source>
       <slots>
@@ -54,5 +43,28 @@
         </next-label>
       </slots>
     </ordering>
+    <link-list>
+      <background>light</background>
+      <dynamic-ordering-definition>
+        <filter>
+          <schema namespace="nglp" identifier="journal_issue"/>
+        </filter>
+        <order path="entity.published" dir="desc"/>
+        <select direct="descendants">
+          <links references="true" />
+        </select>
+      </dynamic-ordering-definition>
+      <title/>
+      <selection-limit>8</selection-limit>
+      <selection-mode>dynamic</selection-mode>
+      <selection-source>self</selection-source>
+      <variant>grid</variant>
+      <slots>
+        <header>Related Issues</header>
+        <header-aside/>
+        <metadata/>
+        <subtitle/>
+      </slots>
+    </link-list>
   </templates>
 </main>
