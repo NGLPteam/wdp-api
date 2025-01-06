@@ -10,8 +10,8 @@
       <show-big-search-prompt>false</show-big-search-prompt>
       <show-breadcrumbs>true</show-breadcrumbs>
       <show-doi>true</show-doi>
-      <show-hero-image>true</show-hero-image>
-      <show-issn>false</show-issn>
+      <show-hero-image>false</show-hero-image>
+      <show-issn>true</show-issn>
       <show-sharing-link>true</show-sharing-link>
       <show-split-display>true</show-split-display>
       <show-thumbnail-image>false</show-thumbnail-image>
@@ -20,21 +20,37 @@
         <call-to-action/>
         <descendant-search-prompt/>
         <header>
-          {{ entity.title }}
+          {{ ancestors.journal.title }}
         </header>
         <header-aside/>
         <header-sidebar/>
-        <header-summary/>
+        <header-summary>
+          {% if ancestors.issue or ancestors.volume %}
+          {% assign volume = ancestors.volume.title | split: "*" %}
+          {% assign issue = ancestors.issue.title | split: "*" %}
+          {% assign ancestors = issue | concat: volume %}
+            {{ ancestors | join: ", " }}
+          {% endif %}
+        </header-summary>
         <metadata>
-          Published {{ entity.published }}
+          {{ entity.published }}
         </metadata>
-        <sidebar/>
-        <subheader/>
+        <sidebar>
+          {% if props.cc_license %}
+            {% sbitem icon: "cc" %} {{ props.cc_license }} {% endsbitem %}
+          {% endif %}
+          {% if props.peer_reviewed %}
+            {% sbitem icon: "user" %} Peer Reviewed {% endsbitem %}
+          {% endif %}
+        </sidebar>
+        <subheader>
+          {{ entity.title }}
+        </subheader>
         <subheader-aside/>
-        <subheader-summary/>
-        <summary>
+        <summary/>
+        <subheader-summary>
           {{ entity.summary }}
-        </summary>
+        </subheader-summary>
       </slots>
     </hero>
   </templates>
