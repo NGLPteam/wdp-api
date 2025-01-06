@@ -5,7 +5,7 @@
       <background>none</background>
       <slots>
         <entity-label>
-          Entity
+          Article
         </entity-label>
       </slots>
     </navigation>

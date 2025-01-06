@@ -8,16 +8,72 @@
           Article Metadata
         </header>
         <items-a>
-          {% mdvalue label: "Author" %} TBI. {% endmdvalue %} {% mdvalue label: "Published" %} {{ entity.published }} {% endmdvalue %} {% mdvalue label: "Collected" %} {{ props.meta.collected }} {% endmdvalue %} {% mdvalue label: "Page count" %} {{ props.meta.page_count }} {% endmdvalue %}
+          {% mdvalue label: "Author" %}
+            [[ Author name(s) ]]
+          {% endmdvalue %}
+          {% mdvalue label: "Published" %}
+            {{ entity.published }}
+          {% endmdvalue %}
+          {% if props.meta.collected.value %}
+            {% mdvalue label: "Collected" %}
+              {{ props.meta.collected }}
+            {% endmdvalue %}
+          {% endif %}
         </items-a>
         <items-b>
-          {% mdvalue label: "Journal" %} {{ancestors.journal}} {% endmdvalue %} {% mdvalue label: "DOI" %} {{entity.doi}} {% endmdvalue %}
+          {% mdvalue label: "Journal" %}
+            {{ ancestors.journal }}
+          {% endmdvalue %}
+          {% if ancestors.volume %}
+            {% mdvalue label: "Volume" %}
+              {{ancestors.volume}}
+            {% endmdvalue %}
+          {% endif %}
+          {% if ancestors.issue %}
+            {% mdvalue label: "Issue" %}
+              {{ancestors.issue}}
+            {% endmdvalue %}
+          {% endif %}
         </items-b>
         <items-c>
-          {% mdvalue label: "Volume" %} {% if ancestors.volume %} {{ancestors.volume}} {% endif %} {% endmdvalue %} {% mdvalue label: "License" %} {% if ancestors.journal.props.cc_license %} {{ ancestors.journal.props.cc_license }} {% else %} n/a {% endif %} {% endmdvalue %}
+          {% if props.meta.page_count.exists %}
+            {% mdvalue label: "Page Count" %}
+              {{ props.meta.page_count }}
+            {% endmdvalue %}
+          {% endif %}
+          {% if entity.doi %}
+            {% mdvalue label: "DOI" %}
+              {{ entity.doi }}
+            {% endmdvalue %}
+          {% endif %}
+          {% if ancestors.journal.props.cc_license %}
+            {% mdvalue label: "License" %}
+              {{ ancestors.journal.props.cc_license }}
+            {% endmdvalue %}
+          {% endif %}
         </items-c>
         <items-d>
-          {% mdvalue label: "Issue" %} {% if ancestors.issue %} {{ancestors.issue}} {% endif %} {% endmdvalue %}
+          {% if props.pdf_version %}
+            {% mdvalue label: "PDF Version" %}
+              {% asset props.pdf_version %}
+                {{ props.pdf_version.name }}
+              {% endasset %}
+            {% endmdvalue %}
+          {% endif %}
+          {% if props.preprint_version %}
+            {% mdvalue label: "Pre-Print Version" %}
+              {% asset props.preprint_version %}
+                {{ props.preprint_version.name }}
+              {% endasset %}
+            {% endmdvalue %}
+          {% endif %}
+          {% if props.online_version %}
+            {% mdvalue label: "Online Version" %}
+              <a href="{{ props.online_version.href }}">
+                {{ props.online_version.label }}
+              </a>
+            {% endmdvalue %}
+          {% endif %}
         </items-d>
       </slots>
     </metadata>
