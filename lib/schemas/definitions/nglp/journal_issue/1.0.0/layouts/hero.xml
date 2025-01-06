@@ -3,10 +3,10 @@
   <templates>
     <hero>
       <background>light</background>
-      <enable-descendant-browsing>false</enable-descendant-browsing>
-      <enable-descendant-search>false</enable-descendant-search>
+      <enable-descendant-browsing>true</enable-descendant-browsing>
+      <enable-descendant-search>true</enable-descendant-search>
       <list-contributors>false</list-contributors>
-      <show-basic-view-metrics>false</show-basic-view-metrics>
+      <show-basic-view-metrics>true</show-basic-view-metrics>
       <show-big-search-prompt>false</show-big-search-prompt>
       <show-breadcrumbs>true</show-breadcrumbs>
       <show-doi>true</show-doi>
@@ -18,21 +18,46 @@
       <slots>
         <big-search-prompt/>
         <call-to-action/>
-        <descendant-search-prompt/>
+        <descendant-search-prompt>
+          Search {{ entity.title }}
+        </descendant-search-prompt>
         <header>
-          {{entity.title}}
+          {{ ancestors.journal.title }}
         </header>
         <header-aside/>
-        <header-sidebar/>
-        <header-summary/>
-        <metadata/>
-        <sidebar/>
-        <subheader/>
-        <subheader-aside/>
-        <subheader-summary/>
-        <summary>
-          {{entity.summary}}
-        </summary>
+        <header-sidebar>
+          {% if ancestors.journal %}
+            {% sbitem %} ISSN: {{ ancestors.journal.issn }} {% endsbitem %}
+          {% endif %}
+        </header-sidebar>
+        <header-summary>
+          {{ ancestors.journal.subtitle }}
+        </header-summary>
+        <sidebar>
+          {% if props.cc_license %}
+            {% sbitem icon: "cc" %} {{ props.cc_license }} {% endsbitem %}
+          {% endif %}
+          {% if props.peer_reviewed %}
+            {% sbitem icon: "user" %} Peer Reviewed {% endsbitem %}
+          {% endif %}
+        </sidebar>
+        <subheader>
+          {{ entity.title }}
+        </subheader>
+        <subheader-aside>
+          {% if ancestors.volume %}
+            {{ ancestors.volume.title }}
+          {% endif %}
+        </subheader-aside>
+        <metadata>
+          {% if entity.published %}
+            Published {{ entity.published }}
+          {% endif %}
+        </metadata>
+        <subheader-summary>
+          {{ entity.summary }}
+        </subheader-summary>
+        <summary/>
       </slots>
     </hero>
   </templates>
