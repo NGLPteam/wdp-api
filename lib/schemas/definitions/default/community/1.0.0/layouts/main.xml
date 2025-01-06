@@ -8,18 +8,21 @@
       <selection-mode>property</selection-mode>
       <selection-property-path>featured.journals</selection-property-path>
       <selection-source>self</selection-source>
+      <show-entity-context>false</show-entity-context>
       <show-see-all-button>true</show-see-all-button>
-      <title>Featured Journals</title>
+      <title>Recent Journals</title>
       <variant>cards</variant>
     </descendant-list>
     <descendant-list>
       <background>light</background>
-      <selection-limit>6</selection-limit>
+      <selection-limit>3</selection-limit>
       <selection-mode>property</selection-mode>
-      <selection-property-path>featured.series</selection-property-path>
+      <ordering-identifier>series</ordering-identifier>
+      <selection-mode>named</selection-mode>
       <selection-source>self</selection-source>
+      <show-hero-image>false</show-hero-image>
       <show-see-all-button>false</show-see-all-button>
-      <title>Featured Series</title>
+      <title>Recently Updated Paper Series</title>
       <variant>promos</variant>
     </descendant-list>
     <descendant-list>
@@ -33,17 +36,43 @@
       <variant>compact</variant>
     </descendant-list>
     <descendant-list>
+      <background>light</background>
+      <selection-mode>property</selection-mode>
+      <selection-property-path>featured.issues</selection-property-path>
+      <see-all-button-label>See All Issues</see-all-button-label>
+      <selection-limit>5</selection-limit>
+      <selection-source>self</selection-source>
+      <show-entity-context>false</show-entity-context>
+      <show-hero-image>false</show-hero-image>
+      <show-see-all-button>true</show-see-all-button>
+      <title/>
+      <variant>summary</variant>
+      <slots>
+        <header>Recent Issues</header>
+        <header-aside/>
+        <metadata/>
+        <subtitle/>
+      </slots>
+    </descendant-list>
+    <descendant-list>
       <background>none</background>
       <selection-mode>property</selection-mode>
-      <see-all-button-label>See All Issues</see-all-button-label>
+      <see-all-button-label/>
       <selection-limit>1</selection-limit>
       <selection-property-path>featured.issue</selection-property-path>
       <selection-source>self</selection-source>
       <show-entity-context>true</show-entity-context>
       <show-hero-image>true</show-hero-image>
       <show-see-all-button>true</show-see-all-button>
-      <title>Featured Issue</title>
+      <title>Most Recent Issue</title>
+      <use-selection-fallback>true</use-selection-fallback>
       <variant>summary</variant>
+      <slots>
+        <header>[[ Issue Title ]]</header>
+        <header-aside>[[ Vol # ]]</header-aside>
+        <metadata>[[ Issue published ]]</metadata>
+        <subtitle>[[ Issue subtitle ]]</subtitle>
+      </slots>
     </descendant-list>
   </templates>
 </main>
