@@ -23,7 +23,11 @@
           {{ ancestors.journal.title }}
         </header>
         <header-aside/>
-        <header-sidebar/>
+        <header-sidebar>
+          {% if ancestors.journal.issn %}
+            {% sbitem %} ISSN: {{ ancestors.journal.issn }} {% endsbitem %}
+          {% endif %}
+        </header-sidebar>
         <header-summary>
           {% if ancestors.issue or ancestors.volume %}
           {% assign volume = ancestors.volume.title | split: "*" %}
