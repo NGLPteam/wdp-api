@@ -2,43 +2,39 @@
 <hero>
   <templates>
     <hero>
-      <background>none</background>
-      <enable-descendant-browsing>false</enable-descendant-browsing>
-      <enable-descendant-search>false</enable-descendant-search>
+      <background>light</background>
+      <enable-descendant-browsing>true</enable-descendant-browsing>
+      <enable-descendant-search>true</enable-descendant-search>
       <list-contributors>false</list-contributors>
       <show-basic-view-metrics>false</show-basic-view-metrics>
       <show-big-search-prompt>false</show-big-search-prompt>
-      <show-breadcrumbs>false</show-breadcrumbs>
+      <show-breadcrumbs>true</show-breadcrumbs>
       <show-doi>false</show-doi>
       <show-hero-image>false</show-hero-image>
       <show-issn>false</show-issn>
-      <show-sharing-link>false</show-sharing-link>
+      <show-sharing-link>true</show-sharing-link>
       <show-split-display>false</show-split-display>
       <show-thumbnail-image>false</show-thumbnail-image>
       <slots>
-        <big-search-prompt>
-          Search
-        </big-search-prompt>
+        <big-search-prompt/>
         <call-to-action/>
         <descendant-search-prompt>
-          Search
+          Search {{ entity.title }}
         </descendant-search-prompt>
         <header>
           {{ entity.title }}
         </header>
         <header-aside/>
         <header-sidebar/>
-        <header-summary/>
-        <metadata>
-          Published {{ entity.published }}
-        </metadata>
+        <header-summary>
+          {{ entity.summary }}
+        </header-summary>
+        <metadata/>
         <sidebar/>
         <subheader/>
         <subheader-aside/>
         <subheader-summary/>
-        <summary>
-          {{ entity.summary }}
-        </summary>
+        <summary/>
       </slots>
     </hero>
   </templates>
