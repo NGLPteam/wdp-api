@@ -59,8 +59,8 @@ class RebuildOrderableProperties < ActiveRecord::Migration[6.1]
 
     def create_generate_fn_expression
       <<~SQL.strip_heredoc
-      CREATE OR REPLACE FUNCTION #{generate_fn_signature} RETURNS #{quoted_pg_type} AS $$
-      SELECT CASE WHEN $1 = #{quoted_type} THEN #{convert_fn}($2) ELSE NULL END;
+      CREATE OR REPLACE FUNCTION #{pg_schema}.#{generate_fn_signature} RETURNS #{quoted_pg_type} AS $$
+      SELECT CASE WHEN $1 = #{quoted_type} THEN #{pg_schema}.#{convert_fn}($2) ELSE NULL END;
       $$ LANGUAGE #{LANG} IMMUTABLE STRICT PARALLEL SAFE;
       SQL
     end

@@ -11028,6 +11028,19 @@
   default_function: 
   has_default: false
   virtual: false
+- id: OrderingEntry#entity_type
+  model_name: OrderingEntry
+  table_name: ordering_entries
+  name: entity_type
+  type: string
+  'null': false
+  sql_type_metadata:
+    sql_type: character varying
+    type: string
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
 - id: OrderingEntry#entity_id
   model_name: OrderingEntry
   table_name: ordering_entries
@@ -11041,23 +11054,24 @@
   default_function: 
   has_default: false
   virtual: false
-- id: OrderingEntry#entity_type
-  model_name: OrderingEntry
-  table_name: ordering_entries
-  name: entity_type
-  type: text
-  'null': false
-  sql_type_metadata:
-    sql_type: text
-    type: text
-  default: 
-  default_function: 
-  has_default: false
-  virtual: false
 - id: OrderingEntry#position
   model_name: OrderingEntry
   table_name: ordering_entries
   name: position
+  type: integer
+  'null': false
+  sql_type_metadata:
+    sql_type: bigint
+    type: integer
+    limit: 8
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: OrderingEntry#inverse_position
+  model_name: OrderingEntry
+  table_name: ordering_entries
+  name: inverse_position
   type: integer
   'null': false
   sql_type_metadata:
@@ -11121,6 +11135,60 @@
   default_function: 
   has_default: false
   virtual: false
+- id: OrderingEntry#tree_depth
+  model_name: OrderingEntry
+  table_name: ordering_entries
+  name: tree_depth
+  type: integer
+  'null': true
+  sql_type_metadata:
+    sql_type: bigint
+    type: integer
+    limit: 8
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: OrderingEntry#tree_parent_type
+  model_name: OrderingEntry
+  table_name: ordering_entries
+  name: tree_parent_type
+  type: string
+  'null': true
+  sql_type_metadata:
+    sql_type: character varying
+    type: string
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: OrderingEntry#tree_parent_id
+  model_name: OrderingEntry
+  table_name: ordering_entries
+  name: tree_parent_id
+  type: uuid
+  'null': true
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: OrderingEntry#stale_at
+  model_name: OrderingEntry
+  table_name: ordering_entries
+  name: stale_at
+  type: datetime
+  'null': true
+  sql_type_metadata:
+    sql_type: timestamp(6) without time zone
+    type: datetime
+    precision: 6
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
 - id: OrderingEntry#created_at
   model_name: OrderingEntry
   table_name: ordering_entries
@@ -11148,73 +11216,6 @@
   default: 
   default_function: CURRENT_TIMESTAMP
   has_default: true
-  virtual: false
-- id: OrderingEntry#inverse_position
-  model_name: OrderingEntry
-  table_name: ordering_entries
-  name: inverse_position
-  type: integer
-  'null': false
-  sql_type_metadata:
-    sql_type: bigint
-    type: integer
-    limit: 8
-  default: 
-  default_function: 
-  has_default: false
-  virtual: false
-- id: OrderingEntry#stale_at
-  model_name: OrderingEntry
-  table_name: ordering_entries
-  name: stale_at
-  type: datetime
-  'null': true
-  sql_type_metadata:
-    sql_type: timestamp without time zone
-    type: datetime
-  default: 
-  default_function: 
-  has_default: false
-  virtual: false
-- id: OrderingEntry#tree_depth
-  model_name: OrderingEntry
-  table_name: ordering_entries
-  name: tree_depth
-  type: integer
-  'null': true
-  sql_type_metadata:
-    sql_type: bigint
-    type: integer
-    limit: 8
-  default: 
-  default_function: 
-  has_default: false
-  virtual: false
-- id: OrderingEntry#tree_parent_id
-  model_name: OrderingEntry
-  table_name: ordering_entries
-  name: tree_parent_id
-  type: uuid
-  'null': true
-  sql_type_metadata:
-    sql_type: uuid
-    type: uuid
-  default: 
-  default_function: 
-  has_default: false
-  virtual: false
-- id: OrderingEntry#tree_parent_type
-  model_name: OrderingEntry
-  table_name: ordering_entries
-  name: tree_parent_type
-  type: text
-  'null': true
-  sql_type_metadata:
-    sql_type: text
-    type: text
-  default: 
-  default_function: 
-  has_default: false
   virtual: false
 - id: OrderingEntryAncestorLink#id
   model_name: OrderingEntryAncestorLink
@@ -11613,6 +11614,19 @@
   default: 
   default_function: 
   has_default: false
+  virtual: false
+- id: OrderingEntrySiblingLink#id
+  model_name: OrderingEntrySiblingLink
+  table_name: ordering_entry_sibling_links
+  name: id
+  type: uuid
+  'null': false
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default: 
+  default_function: gen_random_uuid()
+  has_default: true
   virtual: false
 - id: OrderingEntrySiblingLink#ordering_id
   model_name: OrderingEntrySiblingLink
@@ -12065,28 +12079,6 @@
   default_function: string_to_array((path)::text, '.'::text)
   has_default: false
   virtual: true
-- id: Permission#self_path_old
-  model_name: Permission
-  table_name: permissions
-  name: self_path_old
-  type: ltree
-  'null': true
-  sql_type_metadata:
-    sql_type: ltree
-    type: ltree
-  default: 
-  default_function: |2-
-
-    CASE kind
-        WHEN 'contextual'::permission_kind THEN
-        CASE subpath(path, 0, '-1'::integer)
-            WHEN 'self'::ltree THEN NULL::ltree
-            ELSE (ltree2text('self'::ltree) || subpath(path, '-1'::integer, 1))
-        END
-        ELSE NULL::ltree
-    END
-  has_default: false
-  virtual: true
 - id: Permission#self_prefixed
   model_name: Permission
   table_name: permissions
@@ -12124,28 +12116,6 @@
     type: ltree
   default: 
   default_function: subpath(path, 1, (nlevel(path) - 1))
-  has_default: false
-  virtual: true
-- id: Permission#self_path
-  model_name: Permission
-  table_name: permissions
-  name: self_path
-  type: ltree
-  'null': true
-  sql_type_metadata:
-    sql_type: ltree
-    type: ltree
-  default: 
-  default_function: |2-
-
-    CASE kind
-        WHEN 'contextual'::permission_kind THEN
-        CASE subpath(path, 0, 1)
-            WHEN 'self'::ltree THEN NULL::ltree
-            ELSE (ltree2text('self'::ltree) || subpath(path, 1, (nlevel(path) - 1)))
-        END
-        ELSE NULL::ltree
-    END
   has_default: false
   virtual: true
 - id: Permission#head
