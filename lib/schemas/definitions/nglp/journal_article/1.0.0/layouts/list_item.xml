@@ -12,6 +12,9 @@
         <description>
           {% if entity.summary %} {{ entity.summary }} {% endif %}
         </description>
+        <meta-a>
+          Published {{ entity.published }}
+        </meta-a>
         <meta-b/>
         <context-a>
           {% if ancestors.issue or ancestors.volume or ancestors.journal %}

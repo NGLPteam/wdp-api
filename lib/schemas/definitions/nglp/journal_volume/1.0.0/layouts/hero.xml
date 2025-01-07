@@ -34,10 +34,10 @@
           {{ ancestors.journal.subtitle }}
         </header-summary>
         <sidebar>
-          {% if props.cc_license %}
+          {% if props.cc_license.exists %}
             {% sbitem icon: "cc" %} {{ props.cc_license }} {% endsbitem %}
           {% endif %}
-          {% if props.peer_reviewed %}
+          {% if props.peer_reviewed.exists %}
             {% sbitem icon: "user" %} Peer Reviewed {% endsbitem %}
           {% endif %}
         </sidebar>
