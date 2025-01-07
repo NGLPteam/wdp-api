@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <main>
   <templates>
+    {% if props.description.content.size > 0 %}
     <detail>
       <background>light</background>
       <show-announcements>true</show-announcements>
@@ -15,6 +16,7 @@
         </summary>
       </slots>
     </detail>
+    {% endif %}
     <descendant-list>
       <background>none</background>
       <dynamic-ordering-definition>
@@ -65,7 +67,7 @@
       <selection-limit>4</selection-limit>
       <selection-mode>dynamic</selection-mode>
       <selection-source>self</selection-source>
-      <show-entity-context>true</show-entity-context>
+      <show-entity-context>false</show-entity-context>
       <show-hero-image>false</show-hero-image>
       <title/>
       <variant>summary</variant>

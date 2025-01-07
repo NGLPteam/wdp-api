@@ -40,10 +40,10 @@
           {{ entity.published }}
         </metadata>
         <sidebar>
-          {% if props.cc_license %}
-            {% sbitem icon: "cc" %} {{ props.cc_license }} {% endsbitem %}
+          {% if ancestors.journal.props.cc_license.exists %}
+            {% sbitem icon: "cc" %} {{ ancestors.journal.props.cc_license }} {% endsbitem %}
           {% endif %}
-          {% if props.peer_reviewed %}
+          {% if props.peer_reviewed.exists %}
             {% sbitem icon: "user" %} Peer Reviewed {% endsbitem %}
           {% endif %}
         </sidebar>

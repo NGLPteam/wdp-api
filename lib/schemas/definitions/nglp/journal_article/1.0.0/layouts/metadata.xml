@@ -46,7 +46,7 @@
               {{ entity.doi }}
             {% endmdvalue %}
           {% endif %}
-          {% if ancestors.journal.props.cc_license %}
+          {% if ancestors.journal.props.cc_license.exists %}
             {% mdvalue label: "License" %}
               {{ ancestors.journal.props.cc_license }}
             {% endmdvalue %}
