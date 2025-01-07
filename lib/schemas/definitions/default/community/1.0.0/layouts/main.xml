@@ -32,6 +32,7 @@
       <selection-property-path>featured.units</selection-property-path>
       <selection-source>self</selection-source>
       <show-see-all-button>false</show-see-all-button>
+      <show-hero-image>true</show-hero-image>
       <title>Research Units</title>
       <variant>compact</variant>
     </descendant-list>
