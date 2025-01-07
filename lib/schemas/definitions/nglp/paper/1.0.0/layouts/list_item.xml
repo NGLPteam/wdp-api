@@ -10,7 +10,12 @@
           {{ entity.subtitle }}
         </subheader>
         <description>
-          {% if entity.summary %} {{ entity.summary }} {% endif %}
+          {% if props.abstract %}
+            {{ props.abstract }}
+            {% elseif entity.summary %}
+              {{ entity.summary }}
+            {% endif %}
+          {% endif %}
         </description>
         <meta-a>
           Published {{ entity.published }}
