@@ -26,7 +26,7 @@
         </header>
         <header-aside/>
         <header-sidebar>
-          {% if ancestors.journal.issn %}
+          {% if ancestors.journal.issn.size > 0 %}
             {% sbitem %} ISSN: {{ ancestors.journal.issn }} {% endsbitem %}
           {% endif %}
         </header-sidebar>

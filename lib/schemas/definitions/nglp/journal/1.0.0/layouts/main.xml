@@ -53,7 +53,7 @@
       </slots>
     </descendant-list>
     <descendant-list>
-      <background>dark</background>
+      <background>light</background>
       <dynamic-ordering-definition>
         <filter>
           <schema namespace="nglp" identifier="journal_issue"/>
