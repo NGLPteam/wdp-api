@@ -5,8 +5,16 @@
       <background>none</background>
       <see-all-button-label>See All Journals</see-all-button-label>
       <selection-limit>3</selection-limit>
-      <selection-mode>property</selection-mode>
-      <selection-property-path>featured.journals</selection-property-path>
+      <selection-mode>dynamic</selection-mode>
+      <dynamic-ordering-definition>
+        <filter>
+          <schema namespace="nglp" identifier="journal"/>
+        </filter>
+        <order path="entity.published" dir="desc"/>
+        <order path="entity.created_at" dir="desc"/>
+        <render mode="flat"/>
+        <select direct="descendants"/>
+      </dynamic-ordering-definition>
       <selection-source>self</selection-source>
       <show-entity-context>false</show-entity-context>
       <show-see-all-button>true</show-see-all-button>
@@ -16,8 +24,16 @@
     <descendant-list>
       <background>light</background>
       <selection-limit>3</selection-limit>
-      <selection-mode>property</selection-mode>
-      <ordering-identifier>series</ordering-identifier>
+      <selection-mode>dynamic</selection-mode>
+      <dynamic-ordering-definition>
+        <filter>
+          <schema namespace="nglp" identifier="series"/>
+        </filter>
+        <order path="entity.published" dir="desc"/>
+        <order path="entity.created_at" dir="desc"/>
+        <render mode="flat"/>
+        <select direct="descendants"/>
+      </dynamic-ordering-definition>
       <selection-mode>named</selection-mode>
       <selection-source>self</selection-source>
       <show-hero-image>false</show-hero-image>
@@ -27,9 +43,17 @@
     </descendant-list>
     <descendant-list>
       <background>dark</background>
-      <selection-limit>6</selection-limit>
-      <selection-mode>property</selection-mode>
-      <selection-property-path>featured.units</selection-property-path>
+      <selection-limit>12</selection-limit>
+      <selection-mode>dynamic</selection-mode>
+      <dynamic-ordering-definition>
+        <filter>
+          <schema namespace="nglp" identifier="unit"/>
+        </filter>
+        <order path="entity.published" dir="desc"/>
+        <order path="entity.created_at" dir="desc"/>
+        <render mode="flat"/>
+        <select direct="descendants"/>
+      </dynamic-ordering-definition>
       <selection-source>self</selection-source>
       <show-see-all-button>false</show-see-all-button>
       <show-hero-image>true</show-hero-image>
@@ -38,8 +62,16 @@
     </descendant-list>
     <descendant-list>
       <background>light</background>
-      <selection-mode>property</selection-mode>
-      <selection-property-path>featured.issues</selection-property-path>
+      <selection-mode>dynamic</selection-mode>
+      <dynamic-ordering-definition>
+        <filter>
+          <schema namespace="nglp" identifier="journal_issue"/>
+        </filter>
+        <order path="entity.published" dir="desc"/>
+        <order path="entity.created_at" dir="desc"/>
+        <render mode="flat"/>
+        <select direct="descendants"/>
+      </dynamic-ordering-definition>
       <see-all-button-label>See All Issues</see-all-button-label>
       <selection-limit>5</selection-limit>
       <selection-source>self</selection-source>
@@ -60,7 +92,16 @@
       <selection-mode>property</selection-mode>
       <see-all-button-label/>
       <selection-limit>1</selection-limit>
-      <selection-property-path>featured.issue</selection-property-path>
+      <selection-mode>dynamic</selection-mode>
+      <dynamic-ordering-definition>
+        <filter>
+          <schema namespace="nglp" identifier="journal_issue"/>
+        </filter>
+        <order path="entity.published" dir="desc"/>
+        <order path="entity.created_at" dir="desc"/>
+        <render mode="flat"/>
+        <select direct="descendants"/>
+      </dynamic-ordering-definition>
       <selection-source>self</selection-source>
       <show-entity-context>true</show-entity-context>
       <show-hero-image>true</show-hero-image>
