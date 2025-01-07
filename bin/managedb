@@ -57,7 +57,9 @@ show_help() {
 backup_dump_db() {
   warn "** Dumping the database..."
 
-  pg_dump -O -x --clean --if-exists --column-inserts -w > $SQL_FILE
+  pg_dump -O -x --clean --if-exists -w -f $SQL_FILE
+
+  sed -i 's/DROP TYPE IF EXISTS public.variable_precision_date;/DROP TYPE IF EXISTS public.variable_precision_date CASCADE;/' "${SQL_FILE}"
 }
 
 backup_make_tarball() {
@@ -120,7 +122,7 @@ restore_db() {
   local dumpfile="${RESTORE_TMP}/${SQL_FILE}"
 
   if [ -f "$dumpfile" ]; then
-    psql -o /dev/null -q -P pager=off -f "$dumpfile"
+    psql -o /dev/null -q -P pager=off -v ON_ERROR_STOP=1 --single-transaction -f "$dumpfile"
   else
     warn "'${SQL_FILE}' not in backup, skipping"
   fi
