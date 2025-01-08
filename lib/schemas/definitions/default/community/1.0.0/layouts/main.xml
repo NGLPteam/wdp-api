@@ -34,7 +34,6 @@
         <render mode="flat"/>
         <select direct="descendants"/>
       </dynamic-ordering-definition>
-      <selection-mode>named</selection-mode>
       <selection-source>self</selection-source>
       <show-hero-image>false</show-hero-image>
       <show-see-all-button>false</show-see-all-button>
@@ -105,7 +104,7 @@
       <selection-source>self</selection-source>
       <show-entity-context>true</show-entity-context>
       <show-hero-image>true</show-hero-image>
-      <show-see-all-button>true</show-see-all-button>
+      <show-see-all-button>false</show-see-all-button>
       <title>Most Recent Issue</title>
       <use-selection-fallback>true</use-selection-fallback>
       <variant>summary</variant>

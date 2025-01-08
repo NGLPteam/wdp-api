@@ -69,6 +69,8 @@
       <selection-source>self</selection-source>
       <show-entity-context>false</show-entity-context>
       <show-hero-image>false</show-hero-image>
+      <show-see-all-button>true</show-see-all-button>
+      <see-all-button-label>See All Issues</see-all-button-label>
       <title/>
       <variant>summary</variant>
       <slots>

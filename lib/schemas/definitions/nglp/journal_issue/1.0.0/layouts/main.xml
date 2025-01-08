@@ -5,7 +5,7 @@
       <background>none</background>
       <ordering-identifier>articles</ordering-identifier>
       <see-all-button-label/>
-      <selection-limit>20</selection-limit>
+      <selection-limit>40</selection-limit>
       <selection-mode>named</selection-mode>
       <selection-source>self</selection-source>
       <show-entity-context>false</show-entity-context>
@@ -15,7 +15,7 @@
       <variant>summary</variant>
       <width>full</width>
       <slots>
-        <header>Articles</header>
+        <header/>
         <header-aside/>
         <metadata/>
         <subtitle/>
