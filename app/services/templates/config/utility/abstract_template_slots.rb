@@ -10,12 +10,28 @@ module Templates
         include Dry::Core::Constants
         include Dry::Core::Memoizable
 
+        ALWAYS_HIDE_OVERRIDES = {
+          blurb: {
+            body: true
+          },
+        }.with_indifferent_access.freeze
+
         # @see Templates::Slots::Definitions::Abstract
-        # @return [{ Symbol => { :raw_template => String }}]
+        # @return [{ Symbol => Hash }]
         def to_template_definition_slots
           template_record.slot_names.index_with do |raw_template|
-            { raw_template: __send__(raw_template), }
-          end.symbolize_keys
+            overrides = build_overrides_for raw_template
+
+            Hash(__send__(raw_template).try(:to_hash)).merge(overrides)
+          end.deep_symbolize_keys
+        end
+
+        private
+
+        def build_overrides_for(raw_template)
+          hide_when_empty = ALWAYS_HIDE_OVERRIDES.dig(template_record.template_kind, raw_template)
+
+          { hide_when_empty:, }.compact_blank
         end
 
         class << self

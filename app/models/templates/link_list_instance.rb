@@ -9,6 +9,7 @@ module Templates
     include HasEphemeralSystemSlug
     include TemplateInstance
     include Templates::Instances::HasEntityList
+    include Templates::Instances::HasSeeAllOrdering
     include TimestampScopes
 
     layout_kind! :main

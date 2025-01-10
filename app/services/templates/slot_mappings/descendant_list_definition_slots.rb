@@ -8,8 +8,12 @@ module Templates
     class DescendantListDefinitionSlots < AbstractDefinitionSlots
       instance_slots_klass Templates::SlotMappings::DescendantListInstanceSlots
 
+      inline! :block_header
+      inline! :block_header_fallback
       inline! :header, default: proc { TemplateSlot.default_template_hash_for("descendant_list#header") }
+      inline! :header_fallback
       inline! :header_aside
+      inline! :list_context
       inline! :metadata
       inline! :subtitle
     end

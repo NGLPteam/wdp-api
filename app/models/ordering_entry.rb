@@ -5,7 +5,7 @@ class OrderingEntry < ApplicationRecord
   include EntityAdjacent
   include TimestampScopes
 
-  self.primary_key = %i[ordering_id id]
+  ENTITY_TUPLE = %i[entity_type entity_id].freeze
 
   belongs_to :ordering, inverse_of: :ordering_entries
 
@@ -30,6 +30,8 @@ class OrderingEntry < ApplicationRecord
   has_one :next_sibling, through: :ordering_entry_sibling_link, source: :next
 
   belongs_to :entity, polymorphic: true, inverse_of: :ordering_entries
+
+  has_many_readonly :named_variable_dates, primary_key: ENTITY_TUPLE, foreign_key: ENTITY_TUPLE
 
   scope :to_preload, -> { includes(:entity, ancestors: %i[entity]) }
 

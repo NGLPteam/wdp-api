@@ -21,6 +21,9 @@ module Templates
     <%- if template_record.has_ordering_pair? -%>
     include Templates::Definitions::HasOrderingPair
     <%- end -%>
+    <%- if template_record.has_see_all_ordering? -%>
+    include Templates::Definitions::HasSeeAllOrdering
+    <%- end -%>
     include TimestampScopes
 
     layout_kind! <%= layout_kind.to_sym.inspect %>

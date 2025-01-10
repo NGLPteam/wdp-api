@@ -16,7 +16,14 @@
           {% if entity.published %} Published {{entity.published}} {% endif %}
         </meta-a>
         <meta-b>
-          [[ Issue count ]], [[ Article count ]]
+          {% dotlist %}
+          {% dotitem %}
+          {{orderings.issues.count}} Issue(s)
+          {% enddotitem %}
+          {% dotitem %}
+          {{orderings.articles.count}} Article(s)
+          {% enddotitem %}
+          {% enddotlist %}
         </meta-b>
         <context-a>
           {% if ancestors.journal %} {{ancestors.journal.title}} {% endif %}

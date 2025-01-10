@@ -9,12 +9,12 @@ module Templates
       class NavigationSlots < ::Templates::Config::Utility::AbstractTemplateSlots
         configures_template! :navigation
 
-        attribute :entity_label, ::Mappers::StrippedString, default: -> { ::TemplateSlot.default_template_for("navigation#entity_label") }
+        attribute :entity_label, ::Templates::Config::Utility::SlotValue, default: -> { ::TemplateSlot.default_slot_value_for("navigation#entity_label") }
 
         xml do
           root "slots"
 
-          map_element "entity-label", to: :entity_label, cdata: true, render_nil: true
+          map_element "entity-label", to: :entity_label, render_nil: true
         end
       end
     end

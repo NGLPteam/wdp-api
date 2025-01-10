@@ -33,11 +33,10 @@
         <subheader-aside/>
         <subheader-summary/>
         <summary>
-          {% if props.abstract %}
-            {{ props.abstract }}
-            {% elseif entity.summary %}
-              {{ entity.summary }}
-            {% endif %}
+          {% if props.abstract.exists %}
+            {{props.abstract}}
+          {% else %}
+            {{entity.summary}}
           {% endif %}
         </summary>
       </slots>

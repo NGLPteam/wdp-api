@@ -24,6 +24,14 @@ module Types
 
     field :template_kind, Types::TemplateKindType, null: false
 
+    field :hidden, Boolean, null: false do
+      description <<~TEXT
+      Whether this template instance should be hidden based on some logic.
+
+      At present, this only occurs if certain slots are empty.
+      TEXT
+    end
+
     load_association! :entity
   end
 end

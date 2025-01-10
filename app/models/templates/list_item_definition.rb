@@ -9,12 +9,19 @@ module Templates
   class ListItemDefinition < ApplicationRecord
     include HasEphemeralSystemSlug
     include TemplateDefinition
+    include Templates::Definitions::HasEntityList
     include TimestampScopes
 
     layout_kind! :list_item
     template_kind! :list_item
 
     graphql_node_type_name "::Types::Templates::ListItemTemplateDefinitionType"
+
+    pg_enum! :selection_mode, as: :list_item_selection_mode, allow_blank: false, suffix: :selection_mode, default: "manual"
+
+    pg_enum! :selection_fallback_mode, as: :list_item_selection_mode, allow_blank: false, suffix: :selection_fallback_mode, default: "manual"
+
+    attribute :dynamic_ordering_definition, ::Schemas::Orderings::Definition.to_type
 
     attribute :slots, ::Templates::SlotMappings::ListItemDefinitionSlots.to_type
 

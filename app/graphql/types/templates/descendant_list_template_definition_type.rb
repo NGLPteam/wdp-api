@@ -43,6 +43,9 @@ module Types
 
       field :selection_source_ancestor_name, Types::SchemaComponentType, null: true do
         description <<~TEXT
+        The derived name of the ancestor used for the `selectionSource`.
+
+        Exposed for introspection only.
         TEXT
       end
 
@@ -110,6 +113,26 @@ module Types
 
       field :see_all_button_label, String, null: true do
         description <<~TEXT
+        TEXT
+      end
+
+      field :see_all_ordering_identifier, Types::SchemaComponentType, null: true do
+        description <<~TEXT
+        If provided, this will expose an ordering on the template instance that can
+        be used to generate a link to the ordering in the frontend.
+        TEXT
+      end
+
+      field :show_contributors, Boolean, null: true do
+        description <<~TEXT
+        Show contributors when listing entities.
+        TEXT
+      end
+
+      field :show_nested_entities, Boolean, null: true do
+        description <<~TEXT
+        Show nested items from the associated listItemLayouts in order to generate
+        a two-tier list.
         TEXT
       end
 

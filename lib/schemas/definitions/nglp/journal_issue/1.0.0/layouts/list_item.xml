@@ -10,23 +10,30 @@
           {{entity.subtitle}}
         </subheader>
         <description>
-          {% if entity.summary %} {{ entity.summary }} {% endif %}
+          {% if entity.summary %}
+          {{entity.summary}}
+          {% endif %}
         </description>
         <meta-a>
-          {% if entity.published %} Published {{entity.published}} {% endif %}
+          {% if entity.published %}
+          Published {{entity.published}}
+          {% endif %}
         </meta-a>
         <meta-b>
-          [[ Article count ]]
+          {{ordering.articles.count}}
         </meta-b>
+        <context-full>
+          {{ancestors.journal.title}}, {{ancestors.journal}}
+        </context-full>
+        <context-abbr>
+          {{ancestors.volume.title}}
+        </context-abbr>
         <context-a>
-          {% if ancestors.volume or ancestors.journal %}
-            {% assign journal = ancestors.journal.title | split: "*" %}
-            {% assign volume = ancestors.volume.title | split: "*" %}
-            {% assign ancestors = journal | concat: volume %}
-            {{ ancestors | join: ", " }}
-          {% endif %}
+          {{ancestors.journal.title}}
         </context-a>
-        <context-b/>
+        <context-b>
+          {{ancestors.volume.title}}
+        </context-b>
         <context-c/>
       </slots>
     </list-item>

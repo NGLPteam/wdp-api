@@ -4,16 +4,26 @@
     <list-item>
       <slots>
         <header>
-          {{ entity.title }}
+          {{entity.title}}
         </header>
         <subheader>
-          {{ entity.subtitle }}
+          {{entity.subtitle}}
         </subheader>
         <description>
-          {% if entity.summary %} {{ entity.summary }} {% endif %}
+          {% if entity.summary %} {{entity.summary}} {% endif %}
         </description>
         <meta-a>
-          [[ Series count ]], [[ Paper count ]], [[ Sub-unit count ]]
+          {% dotlist %}
+          {% dotitem %}
+          {{orderings.series.count}} Series
+          {% enddotitem %}
+          {% dotitem %}
+          {{orderings.papers.count}} Paper(s)
+          {% enddotitem %}
+          {% dotitem %}
+          {{orderings.units.count}} Sub-unit(s)
+          {% enddotitem %}
+          {% enddotlist %}
         </meta-a>
         <meta-b/>
         <context-a/>

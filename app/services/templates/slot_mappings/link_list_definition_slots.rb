@@ -8,8 +8,12 @@ module Templates
     class LinkListDefinitionSlots < AbstractDefinitionSlots
       instance_slots_klass Templates::SlotMappings::LinkListInstanceSlots
 
+      inline! :block_header
+      inline! :block_header_fallback
       inline! :header, default: proc { TemplateSlot.default_template_hash_for("link_list#header") }
+      inline! :header_fallback, default: proc { TemplateSlot.default_template_hash_for("link_list#header_fallback") }
       inline! :header_aside
+      inline! :list_context
       inline! :metadata, default: proc { TemplateSlot.default_template_hash_for("link_list#metadata") }
       inline! :subtitle
     end

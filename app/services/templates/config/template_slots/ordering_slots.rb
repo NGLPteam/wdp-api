@@ -9,16 +9,16 @@ module Templates
       class OrderingSlots < ::Templates::Config::Utility::AbstractTemplateSlots
         configures_template! :ordering
 
-        attribute :previous_label, ::Mappers::StrippedString, default: -> { ::TemplateSlot.default_template_for("ordering#previous_label") }
+        attribute :previous_label, ::Templates::Config::Utility::SlotValue, default: -> { ::TemplateSlot.default_slot_value_for("ordering#previous_label") }
 
-        attribute :next_label, ::Mappers::StrippedString, default: -> { ::TemplateSlot.default_template_for("ordering#next_label") }
+        attribute :next_label, ::Templates::Config::Utility::SlotValue, default: -> { ::TemplateSlot.default_slot_value_for("ordering#next_label") }
 
         xml do
           root "slots"
 
-          map_element "previous-label", to: :previous_label, cdata: true, render_nil: true
+          map_element "previous-label", to: :previous_label, render_nil: true
 
-          map_element "next-label", to: :next_label, cdata: true, render_nil: true
+          map_element "next-label", to: :next_label, render_nil: true
         end
       end
     end

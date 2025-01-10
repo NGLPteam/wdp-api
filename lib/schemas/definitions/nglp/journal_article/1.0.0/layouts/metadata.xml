@@ -9,12 +9,12 @@
         </header>
         <items-a>
           {% mdvalue label: "Author" %}
-            [[ Author name(s) ]]
+            {{authors}}
           {% endmdvalue %}
           {% mdvalue label: "Published" %}
-            {{ entity.published }}
+            {{entity.published}}
           {% endmdvalue %}
-          {% if props.meta.collected.value %}
+          {% if props.meta.collected.exists %}
             {% mdvalue label: "Collected" %}
               {{ props.meta.collected }}
             {% endmdvalue %}
@@ -38,40 +38,36 @@
         <items-c>
           {% if props.meta.page_count.exists %}
             {% mdvalue label: "Page Count" %}
-              {{ props.meta.page_count }}
+              {{props.meta.page_count}}
             {% endmdvalue %}
           {% endif %}
           {% if entity.doi %}
             {% mdvalue label: "DOI" %}
-              {{ entity.doi }}
+              {{entity.doi}}
             {% endmdvalue %}
           {% endif %}
           {% if ancestors.journal.props.cc_license.exists %}
             {% mdvalue label: "License" %}
-              {{ ancestors.journal.props.cc_license }}
+              {{ancestors.journal.props.cc_license}}
             {% endmdvalue %}
           {% endif %}
         </items-c>
         <items-d>
-          {% if props.pdf_version %}
+          {% if props.pdf_version.exists %}
             {% mdvalue label: "PDF Version" %}
               {% asset props.pdf_version %}
-                {{ props.pdf_version.name }}
+                {{props.pdf_version.name}}
               {% endasset %}
             {% endmdvalue %}
           {% endif %}
-          {% if props.preprint_version %}
+          {% if props.preprint_version.exists %}
             {% mdvalue label: "Pre-Print Version" %}
-              {% asset props.preprint_version %}
-                {{ props.preprint_version.name }}
-              {% endasset %}
+              Yes
             {% endmdvalue %}
           {% endif %}
-          {% if props.online_version %}
+          {% if props.online_version.exists %}
             {% mdvalue label: "Online Version" %}
-              <a href="{{ props.online_version.href }}">
-                {{ props.online_version.label }}
-              </a>
+              {{props.online_version}}
             {% endmdvalue %}
           {% endif %}
         </items-d>

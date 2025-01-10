@@ -15258,6 +15258,45 @@
   default_function: 
   has_default: true
   virtual: false
+- id: Templates::DescendantListDefinition#see_all_ordering_identifier
+  model_name: Templates::DescendantListDefinition
+  table_name: templates_descendant_list_definitions
+  name: see_all_ordering_identifier
+  type: text
+  'null': true
+  sql_type_metadata:
+    sql_type: text
+    type: text
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: Templates::DescendantListDefinition#show_contributors
+  model_name: Templates::DescendantListDefinition
+  table_name: templates_descendant_list_definitions
+  name: show_contributors
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
+  default_function: 
+  has_default: true
+  virtual: false
+- id: Templates::DescendantListDefinition#show_nested_entities
+  model_name: Templates::DescendantListDefinition
+  table_name: templates_descendant_list_definitions
+  name: show_nested_entities
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
+  default_function: 
+  has_default: true
+  virtual: false
 - id: Templates::DescendantListInstance#id
   model_name: Templates::DescendantListInstance
   table_name: templates_descendant_list_instances
@@ -15455,6 +15494,19 @@
   default: "{}"
   default_function: 
   has_default: true
+  virtual: false
+- id: Templates::DescendantListInstance#see_all_ordering_id
+  model_name: Templates::DescendantListInstance
+  table_name: templates_descendant_list_instances
+  name: see_all_ordering_id
+  type: uuid
+  'null': true
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default: 
+  default_function: 
+  has_default: false
   virtual: false
 - id: Templates::DetailDefinition#id
   model_name: Templates::DetailDefinition
@@ -16694,6 +16746,45 @@
   default_function: 
   has_default: true
   virtual: false
+- id: Templates::LinkListDefinition#see_all_ordering_identifier
+  model_name: Templates::LinkListDefinition
+  table_name: templates_link_list_definitions
+  name: see_all_ordering_identifier
+  type: text
+  'null': true
+  sql_type_metadata:
+    sql_type: text
+    type: text
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: Templates::LinkListDefinition#show_contributors
+  model_name: Templates::LinkListDefinition
+  table_name: templates_link_list_definitions
+  name: show_contributors
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
+  default_function: 
+  has_default: true
+  virtual: false
+- id: Templates::LinkListDefinition#show_nested_entities
+  model_name: Templates::LinkListDefinition
+  table_name: templates_link_list_definitions
+  name: show_nested_entities
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
+  default_function: 
+  has_default: true
+  virtual: false
 - id: Templates::LinkListInstance#id
   model_name: Templates::LinkListInstance
   table_name: templates_link_list_instances
@@ -16892,6 +16983,19 @@
   default_function: 
   has_default: true
   virtual: false
+- id: Templates::LinkListInstance#see_all_ordering_id
+  model_name: Templates::LinkListInstance
+  table_name: templates_link_list_instances
+  name: see_all_ordering_id
+  type: uuid
+  'null': true
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
 - id: Templates::ListItemDefinition#id
   model_name: Templates::ListItemDefinition
   table_name: templates_list_item_definitions
@@ -17011,6 +17115,150 @@
   default: "{}"
   default_function: 
   has_default: true
+  virtual: false
+- id: Templates::ListItemDefinition#use_selection_fallback
+  model_name: Templates::ListItemDefinition
+  table_name: templates_list_item_definitions
+  name: use_selection_fallback
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
+  default_function: 
+  has_default: true
+  virtual: false
+- id: Templates::ListItemDefinition#selection_limit
+  model_name: Templates::ListItemDefinition
+  table_name: templates_list_item_definitions
+  name: selection_limit
+  type: integer
+  'null': true
+  sql_type_metadata:
+    sql_type: integer
+    type: integer
+    limit: 4
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: Templates::ListItemDefinition#selection_mode
+  model_name: Templates::ListItemDefinition
+  table_name: templates_list_item_definitions
+  name: selection_mode
+  type: enum
+  'null': false
+  sql_type_metadata:
+    sql_type: list_item_selection_mode
+    type: enum
+  default: manual
+  default_function: 
+  has_default: true
+  virtual: false
+- id: Templates::ListItemDefinition#selection_fallback_mode
+  model_name: Templates::ListItemDefinition
+  table_name: templates_list_item_definitions
+  name: selection_fallback_mode
+  type: enum
+  'null': false
+  sql_type_metadata:
+    sql_type: list_item_selection_mode
+    type: enum
+  default: manual
+  default_function: 
+  has_default: true
+  virtual: false
+- id: Templates::ListItemDefinition#selection_source_mode
+  model_name: Templates::ListItemDefinition
+  table_name: templates_list_item_definitions
+  name: selection_source_mode
+  type: enum
+  'null': false
+  sql_type_metadata:
+    sql_type: selection_source_mode
+    type: enum
+  default: self
+  default_function: 
+  has_default: true
+  virtual: false
+- id: Templates::ListItemDefinition#dynamic_ordering_definition
+  model_name: Templates::ListItemDefinition
+  table_name: templates_list_item_definitions
+  name: dynamic_ordering_definition
+  type: jsonb
+  'null': true
+  sql_type_metadata:
+    sql_type: jsonb
+    type: jsonb
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: Templates::ListItemDefinition#ordering_identifier
+  model_name: Templates::ListItemDefinition
+  table_name: templates_list_item_definitions
+  name: ordering_identifier
+  type: text
+  'null': true
+  sql_type_metadata:
+    sql_type: text
+    type: text
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: Templates::ListItemDefinition#selection_source
+  model_name: Templates::ListItemDefinition
+  table_name: templates_list_item_definitions
+  name: selection_source
+  type: text
+  'null': false
+  sql_type_metadata:
+    sql_type: text
+    type: text
+  default: self
+  default_function: 
+  has_default: true
+  virtual: false
+- id: Templates::ListItemDefinition#manual_list_name
+  model_name: Templates::ListItemDefinition
+  table_name: templates_list_item_definitions
+  name: manual_list_name
+  type: text
+  'null': false
+  sql_type_metadata:
+    sql_type: text
+    type: text
+  default: manual
+  default_function: 
+  has_default: true
+  virtual: false
+- id: Templates::ListItemDefinition#selection_source_ancestor_name
+  model_name: Templates::ListItemDefinition
+  table_name: templates_list_item_definitions
+  name: selection_source_ancestor_name
+  type: text
+  'null': true
+  sql_type_metadata:
+    sql_type: text
+    type: text
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: Templates::ListItemDefinition#selection_property_path
+  model_name: Templates::ListItemDefinition
+  table_name: templates_list_item_definitions
+  name: selection_property_path
+  type: text
+  'null': true
+  sql_type_metadata:
+    sql_type: text
+    type: text
+  default: 
+  default_function: 
+  has_default: false
   virtual: false
 - id: Templates::ListItemInstance#id
   model_name: Templates::ListItemInstance

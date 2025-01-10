@@ -4,6 +4,7 @@
     <descendant-list>
       <background>none</background>
       <see-all-button-label>See All Journals</see-all-button-label>
+      <see-all-ordering-identifier>journals</see-all-ordering-identifier>
       <selection-limit>3</selection-limit>
       <selection-mode>dynamic</selection-mode>
       <dynamic-ordering-definition>
@@ -17,12 +18,13 @@
       </dynamic-ordering-definition>
       <selection-source>self</selection-source>
       <show-entity-context>false</show-entity-context>
-      <show-see-all-button>true</show-see-all-button>
+      <show-see-all-button>false</show-see-all-button>
       <title>Recent Journals</title>
       <variant>cards</variant>
     </descendant-list>
     <descendant-list>
       <background>light</background>
+      <see-all-ordering-identifier>series</see-all-ordering-identifier>
       <selection-limit>3</selection-limit>
       <selection-mode>dynamic</selection-mode>
       <dynamic-ordering-definition>
@@ -34,6 +36,7 @@
         <render mode="flat"/>
         <select direct="descendants"/>
       </dynamic-ordering-definition>
+      <show-contributors>true</show-contributors>
       <selection-source>self</selection-source>
       <show-hero-image>false</show-hero-image>
       <show-see-all-button>false</show-see-all-button>
@@ -42,6 +45,7 @@
     </descendant-list>
     <descendant-list>
       <background>dark</background>
+      <see-all-ordering-identifier>units</see-all-ordering-identifier>
       <selection-limit>12</selection-limit>
       <selection-mode>dynamic</selection-mode>
       <dynamic-ordering-definition>
@@ -61,6 +65,7 @@
     </descendant-list>
     <descendant-list>
       <background>light</background>
+      <see-all-ordering-identifier>issues</see-all-ordering-identifier>
       <selection-mode>dynamic</selection-mode>
       <dynamic-ordering-definition>
         <filter>
@@ -76,7 +81,7 @@
       <selection-source>self</selection-source>
       <show-entity-context>false</show-entity-context>
       <show-hero-image>false</show-hero-image>
-      <show-see-all-button>true</show-see-all-button>
+      <show-see-all-button>false</show-see-all-button>
       <title/>
       <variant>summary</variant>
       <slots>
@@ -88,7 +93,6 @@
     </descendant-list>
     <descendant-list>
       <background>none</background>
-      <selection-mode>property</selection-mode>
       <see-all-button-label/>
       <selection-limit>1</selection-limit>
       <selection-mode>dynamic</selection-mode>
@@ -106,13 +110,10 @@
       <show-hero-image>true</show-hero-image>
       <show-see-all-button>false</show-see-all-button>
       <title>Most Recent Issue</title>
-      <use-selection-fallback>true</use-selection-fallback>
+      <use-selection-fallback>false</use-selection-fallback>
       <variant>summary</variant>
       <slots>
-        <header>[[ Issue Title ]]</header>
-        <header-aside>[[ Vol # ]]</header-aside>
-        <metadata>[[ Issue published ]]</metadata>
-        <subtitle>[[ Issue subtitle ]]</subtitle>
+        <block-header>Most Recent Issue</block-header>
       </slots>
     </descendant-list>
   </templates>

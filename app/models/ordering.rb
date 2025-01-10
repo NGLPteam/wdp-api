@@ -8,8 +8,11 @@
 # @see Schemas::Versions::Configuration#orderings
 class Ordering < ApplicationRecord
   include AssignsPolymorphicForeignKey
+  include Liquifies
   include ReloadAfterSave
   include TimestampScopes
+
+  drop_klass Templates::Drops::OrderingDrop
 
   attr_readonly :constant, :disabled, :hidden, :identifier, :name
 
@@ -34,6 +37,8 @@ class Ordering < ApplicationRecord
 
   has_many :ordering_entry_ancestor_links, inverse_of: :ordering, dependent: :delete_all
   has_many :ordering_entry_sibling_links, inverse_of: :ordering, dependent: :delete_all
+
+  has_many :named_variable_dates, through: :ordering_entries
 
   has_many :ordering_invalidations, inverse_of: :ordering, dependent: :delete_all
 
@@ -204,6 +209,20 @@ class Ordering < ApplicationRecord
   def set_handled_schema_definition!
     self.handled_schema_definition = definition.handled_schema_definition
   end
+
+  # @!group Variable Date Accessors
+
+  # @return [VariablePrecisionDate, nil]
+  def latest_published
+    named_variable_dates.for_latest.published.pick(:normalized)
+  end
+
+  # @return [VariablePrecisionDate, nil]
+  def oldest_published
+    named_variable_dates.for_oldest.published.pick(:normalized)
+  end
+
+  # @!endgroup
 
   class << self
     # @see Schemas::Definitions::Find

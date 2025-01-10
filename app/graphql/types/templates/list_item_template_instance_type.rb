@@ -5,6 +5,7 @@ module Types
     # @see ::Templates::ListItemInstance
     class ListItemTemplateInstanceType < AbstractModel
       implements ::Types::TemplateInstanceType
+      implements ::Types::TemplateHasEntityListType
 
       field :definition, ::Types::Templates::ListItemTemplateDefinitionType, null: false do
         description <<~TEXT

@@ -4,17 +4,17 @@ module Templates
   module Drops
     # @see SchematicText
     # @see Schemas::Properties::Scalar::FullText
-    class FullTextReferenceDrop < Templates::Drops::AbstractDrop
+    class FullTextDrop < Templates::Drops::AbstractDrop
       # @return [String]
       attr_reader :content
 
-      # @param [Hash, String, nil] reference
-      def initialize(reference)
+      # @param [Schemas::PropertyValues::FullText] value
+      def initialize(value)
         super()
 
-        @reference = MeruAPI::Container["full_text.normalizer"].(reference)
+        @value = Schemas::PropertyValues::FullText.normalize(value)
 
-        @reference => { content:, kind:, lang:, }
+        @value => { content:, kind:, lang:, }
 
         @content = content
         @kind = kind
