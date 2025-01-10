@@ -17,6 +17,9 @@ module Types
       <%- if template_record.has_ordering_pair? -%>
       implements ::Types::TemplateHasOrderingPairType
       <%- end -%>
+      <%- if template_record.has_see_all_ordering? -%>
+      implements ::Types::TemplateHasSeeAllOrderingType
+      <%- end -%>
 
       field :definition, ::Types::Templates::<%= class_name %>TemplateDefinitionType, null: false do
         description <<~TEXT

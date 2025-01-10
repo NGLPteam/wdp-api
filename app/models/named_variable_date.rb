@@ -22,6 +22,11 @@ class NamedVariableDate < ApplicationRecord
 
   scope :by_path, ->(path) { where(path:) }
 
+  scope :published, -> { by_path("$published$") }
+
+  scope :for_latest, -> { where.not(precision: nil).reorder(value: :desc, precision: :desc) }
+  scope :for_oldest, -> { where.not(precision: nil).reorder(value: :asc, precision: :desc) }
+
   validates :path, uniqueness: { scope: %i[entity_id entity_type] }
 
   class << self

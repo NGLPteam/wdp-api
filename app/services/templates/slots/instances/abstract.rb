@@ -5,6 +5,8 @@ module Templates
     module Instances
       # @abstract
       class Abstract < ::Templates::Slots::Abstract
+        attribute :hides_template, :boolean, default: false
+
         attribute :content, :string
 
         attribute :rendered, :boolean, default: false

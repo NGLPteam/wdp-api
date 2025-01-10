@@ -4,10 +4,13 @@ module Contribution
   extend ActiveSupport::Concern
 
   include HasEphemeralSystemSlug
+  include Liquifies
   include TimestampScopes
 
   included do
     attribute :metadata, Contributions::Metadata.to_type, default: proc { {} }
+
+    drop_klass Templates::Drops::ContributionDrop
 
     alias_attribute :role, :kind
 

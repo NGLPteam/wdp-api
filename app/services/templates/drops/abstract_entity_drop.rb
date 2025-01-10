@@ -25,6 +25,21 @@ module Templates
         @published = Templates::Drops::VariablePrecisionDateDrop.new(entity.try(:published))
       end
 
+      # @return [Templates::Drops::AuthorsDrop]
+      memoize def authors
+        Templates::Drops::AuthorsDrop.new(@entity)
+      end
+
+      # @return [Templates::Drops::ContributionsDrop]
+      memoize def contributions
+        Templates::Drops::ContributionsDrop.new(@entity)
+      end
+
+      # @return [Templates::Drops::OrderingsDrop]
+      memoize def orderings
+        Templates::Drops::OrderingsDrop.new(@entity)
+      end
+
       # @return [Templates::Drops::PropsDrop]
       memoize def props
         Templates::Drops::PropsDrop.new(@entity)

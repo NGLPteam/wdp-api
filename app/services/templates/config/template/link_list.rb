@@ -29,6 +29,12 @@ module Templates
 
         attribute :see_all_button_label, ::Templates::Config::Properties::String, default: -> { "See All" }
 
+        attribute :see_all_ordering_identifier, ::Templates::Config::Properties::SchemaComponent
+
+        attribute :show_contributors, ::Templates::Config::Properties::Boolean
+
+        attribute :show_nested_entities, ::Templates::Config::Properties::Boolean
+
         attribute :show_see_all_button, ::Templates::Config::Properties::Boolean, default: -> { false }
 
         attribute :show_entity_context, ::Templates::Config::Properties::Boolean, default: -> { false }
@@ -53,6 +59,8 @@ module Templates
 
           map_element "see-all-button-label", to: :see_all_button_label
 
+          map_element "see-all-ordering-identifier", to: :see_all_ordering_identifier
+
           map_element "selection-fallback-mode", to: :selection_fallback_mode
 
           map_element "selection-limit", to: :selection_limit
@@ -61,9 +69,13 @@ module Templates
 
           map_element "selection-source", to: :selection_source
 
+          map_element "show-contributors", to: :show_contributors
+
           map_element "show-entity-context", to: :show_entity_context
 
           map_element "show-hero-image", to: :show_hero_image
+
+          map_element "show-nested-entities", to: :show_nested_entities
 
           map_element "show-see-all-button", to: :show_see_all_button
 

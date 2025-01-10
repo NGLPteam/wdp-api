@@ -75,6 +75,15 @@
   property_kind_name: string
   default: See All
 - template_kind: descendant_list
+  name: see_all_ordering_identifier
+  property_kind_name: schema_component
+- template_kind: descendant_list
+  name: show_contributors
+  property_kind_name: boolean
+- template_kind: descendant_list
+  name: show_nested_entities
+  property_kind_name: boolean
+- template_kind: descendant_list
   name: show_see_all_button
   property_kind_name: boolean
   default: false
@@ -217,6 +226,15 @@
   property_kind_name: string
   default: See All
 - template_kind: link_list
+  name: see_all_ordering_identifier
+  property_kind_name: schema_component
+- template_kind: link_list
+  name: show_contributors
+  property_kind_name: boolean
+- template_kind: link_list
+  name: show_nested_entities
+  property_kind_name: boolean
+- template_kind: link_list
   name: show_see_all_button
   property_kind_name: boolean
   default: false
@@ -229,6 +247,47 @@
   property_kind_name: boolean
   default: false
 - template_kind: link_list
+  name: use_selection_fallback
+  property_kind_name: boolean
+  default: false
+- template_kind: list_item
+  name: selection_source
+  property_kind_name: selection_source
+- template_kind: list_item
+  name: selection_source_ancestor_name
+  property_kind_name: schema_component
+  skip_configuration: true
+- template_kind: list_item
+  name: selection_source_mode
+  property_kind_name: selection_source_mode
+  skip_configuration: true
+  skip_declaration: true
+- template_kind: list_item
+  name: selection_mode
+  property_kind_name: selection_mode
+  enum_name: list_item_selection_mode
+- template_kind: list_item
+  name: selection_fallback_mode
+  property_kind_name: selection_mode
+  enum_name: list_item_selection_mode
+- template_kind: list_item
+  name: selection_limit
+  property_kind_name: limit
+  default: 3
+- template_kind: list_item
+  name: dynamic_ordering_definition
+  property_kind_name: ordering_definition
+- template_kind: list_item
+  name: ordering_identifier
+  property_kind_name: schema_component
+- template_kind: list_item
+  name: manual_list_name
+  property_kind_name: schema_component
+  default: manual
+- template_kind: list_item
+  name: selection_property_path
+  property_kind_name: schema_property_path
+- template_kind: list_item
   name: use_selection_fallback
   property_kind_name: boolean
   default: false

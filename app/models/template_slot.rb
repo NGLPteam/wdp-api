@@ -59,12 +59,10 @@ class TemplateSlot < Support::FrozenRecordHelpers::AbstractRecord
     end
 
     # @return [Proc]
-    def default_template_for(id)
-      default_templates.compute_if_absent id do
-        slot = TemplateSlot.find id
+    def default_slot_value_for(id)
+      value = default_template_hash_for(id)
 
-        slot.default_template&.freeze
-      end
+      Templates::Config::Utility::SlotValue.from_hash(value)
     end
 
     def default_template_hash_for(id)

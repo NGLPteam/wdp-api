@@ -27,6 +27,15 @@ module Types
       TEXT
     end
 
+    field :hides_template, Boolean, null: false do
+      description <<~TEXT
+      Whether this slot should cause its parent template to hide.
+
+      **Note**: This is exposed for introspection, but does not need
+      to be checked on the frontend. Defer to `TemplateInstance.hidden`.
+      TEXT
+    end
+
     field :valid, Boolean, null: false, method: :rendered do
       description <<~TEXT
       Whether this slot rendered successfully (i.e. had no errors).

@@ -12,10 +12,10 @@
         <subheader/>
         <summary/>
         <body>
-          {% if props.pdf_version %}
+          {% if props.pdf_version.exists %}
             {% pdfviewer props.pdf_version %}
-            {% elsif props.body %}
-              {{ props.body }}
+          {% else %}
+            {{props.body}}
           {% endif %}
         </body>
       </slots>
@@ -30,20 +30,20 @@
         </header>
       </slots>
     </contributor-list>
-    {% if props.citation.exists %}
-      <blurb>
-        <background>light</background>
-        <width>full</width>
-        <slots>
-          <header>How to Cite</header>
-          <body>
-            {% copylink "Citation" %}
-              {{ props.citation }}
-            {% endcopylink %}
-          </body>
-        </slots>
-      </blurb>
-    {% endif %}
+    <blurb>
+      <background>light</background>
+      <width>full</width>
+      <slots>
+        <header>How to Cite</header>
+        <body>
+          {% if props.citation.exists %}
+          {% copylink "Citation" %}
+            {{props.citation}}
+          {% endcopylink %}
+          {% endif %}
+        </body>
+      </slots>
+    </blurb>
     <ordering>
       <background>light</background>
       <ordering-identifier>etd</ordering-identifier>

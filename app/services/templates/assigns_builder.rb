@@ -40,11 +40,25 @@ module Templates
       assigns[:self] = assigns[:entity] = drop
 
       assigns[:ancestors] = ancestors
+      assigns[:authors] = drop.authors
       assigns[:community] = community
+      assigns[:contributions] = drop.contributions
+      assigns[:orderings] = drop.orderings
+      assigns[:parent] = parent_drop_for entity.hierarchical_parent
       assigns[:props] = drop.props
       assigns[:schema] = drop.schema
 
       super
+    end
+
+    private
+
+    # @param [HierarchicalEntity, nil] parent
+    # @return [Templates::Drops::ParentDrop, nil]
+    def parent_drop_for(parent)
+      return if parent.nil?
+
+      Templates::Drops::ParentDrop.new(entity)
     end
   end
 end

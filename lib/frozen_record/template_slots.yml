@@ -12,11 +12,31 @@
   slot_kind: inline
   template_kind: contributor_list
   default_template: Contributors
+- name: block_header
+  slot_kind: inline
+  template_kind: descendant_list
+  description: |
+    Differs from the `header` where its value could be "Most Recent Issue", while header is that entity's title/number.
+    It's for when the block should have the content of it's title field visible, but we decided to never render
+    the title field itself.
+- name: block_header_fallback
+  slot_kind: inline
+  template_kind: descendant_list
+  description: |
+    The template to use for the block header when the fallback logic was used (if applicable).
 - name: header
   slot_kind: inline
   template_kind: descendant_list
   default_template: Descendants
+- name: header_fallback
+  slot_kind: inline
+  template_kind: descendant_list
+  description: |
+    The template to use for the header when the fallback logic was used (if applicable).
 - name: header_aside
+  slot_kind: inline
+  template_kind: descendant_list
+- name: list_context
   slot_kind: inline
   template_kind: descendant_list
 - name: metadata
@@ -88,11 +108,32 @@
   template_kind: hero
   default_template: |
     {{ entity.summary }}
+- name: block_header
+  slot_kind: inline
+  template_kind: link_list
+  description: |
+    Differs from the `header` where its value could be "Most Recent Issue", while header is that entity's title/number.
+    It's for when the block should have the content of it's title field visible, but we decided to never render
+    the title field itself.
+- name: block_header_fallback
+  slot_kind: inline
+  template_kind: link_list
+  description: |
+    The template to use for the block header when the fallback logic was used (if applicable).
 - name: header
   slot_kind: inline
   template_kind: link_list
   default_template: Links
+- name: header_fallback
+  slot_kind: inline
+  template_kind: link_list
+  default_template: Links
+  description: |
+    The template to use for the header when the fallback logic was used (if applicable).
 - name: header_aside
+  slot_kind: inline
+  template_kind: link_list
+- name: list_context
   slot_kind: inline
   template_kind: link_list
 - name: metadata
@@ -120,6 +161,12 @@
   slot_kind: inline
   template_kind: list_item
 - name: meta_b
+  slot_kind: inline
+  template_kind: list_item
+- name: context_abbr
+  slot_kind: inline
+  template_kind: list_item
+- name: context_full
   slot_kind: inline
   template_kind: list_item
 - name: context_a

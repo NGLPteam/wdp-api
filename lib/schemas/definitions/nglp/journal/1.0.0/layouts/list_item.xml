@@ -13,10 +13,20 @@
           {% if entity.summary %} {{ entity.summary }} {% endif %}
         </description>
         <meta-a>
-          Most Recent Issue [[ Publish date ]]
+          {%- assign latest_published = orderings.issues.latest_published -%}
+          {%- if latest_published -%}
+          Most Recent Issue: {{latest_published | date: "%b %Y"}}
+          {%- endif -%}
         </meta-a>
         <meta-b>
-          [[ Issue count ]], [[ Article count ]]
+          {% dotlist %}
+          {% dotitem %}
+          {{orderings.issues.count}} Issue(s)
+          {% enddotitem %}
+          {% dotitem %}
+          {{orderings.articles.count}} Article(s)
+          {% enddotitem %}
+          {% enddotlist %}
         </meta-b>
         <context-a/>
         <context-b/>

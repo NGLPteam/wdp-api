@@ -49,6 +49,9 @@
 - name: link_list_selection_mode
   category: selection_mode
   default: manual
+- name: list_item_selection_mode
+  category: selection_mode
+  default: manual
 - name: contributor_list_filter
   default: all
 - name: template_width

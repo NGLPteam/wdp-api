@@ -13,6 +13,7 @@ class Template < Support::FrozenRecordHelpers::AbstractRecord
     required(:has_contribution_list).value(:bool)
     required(:has_entity_list).value(:bool)
     required(:has_ordering_pair).value(:bool)
+    required(:has_see_all_ordering).value(:bool)
     required(:has_variant).value(:bool)
     required(:root_tag).filled(:string)
   end
@@ -23,6 +24,7 @@ class Template < Support::FrozenRecordHelpers::AbstractRecord
     has_contribution_list: false,
     has_entity_list: false,
     has_ordering_pair: false,
+    has_see_all_ordering: false,
     has_variant: false,
   )
 

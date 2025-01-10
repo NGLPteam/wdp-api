@@ -3,8 +3,6 @@
 module Templates
   module Drops
     # A wrapper around {Community a community}.
-    #
-    # @abstract
     class CommunityDrop < Templates::Drops::AbstractEntityDrop
       entity_delegates! :tagline
     end

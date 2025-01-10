@@ -57,9 +57,9 @@ module Templates
       # @return [void]
       def configure_block!(env)
         env.register_tag "asset", Templates::Tags::Blocks::Asset
-        env.register_tag "copylink", Templates::Tags::Blocks::CopyLink
-        env.register_tag "entitylink", Templates::Tags::Blocks::EntityLink
         env.register_tag "pdfviewer", Templates::Tags::Flat::PDFViewer
+
+        configure_common! env
 
         register_metadata! env
         register_sidebar! env
@@ -67,9 +67,24 @@ module Templates
 
       # @param [Liquid::Environment] env
       # @return [void]
-      def configure_inline!(env)
+      def configure_common!(env)
         env.register_tag "copylink", Templates::Tags::Blocks::CopyLink
         env.register_tag "entitylink", Templates::Tags::Blocks::EntityLink
+
+        env.register_filter Templates::Filters::CommonFilters
+
+        register_dot_list! env
+      end
+
+      # @param [Liquid::Environment] env
+      # @return [void]
+      def configure_inline!(env)
+        configure_common! env
+      end
+
+      def register_dot_list!(env)
+        env.register_tag "dotlist", Templates::Tags::Blocks::DotList
+        env.register_tag "dotitem", Templates::Tags::Blocks::DotItem
       end
 
       # @param [Liquid::Environment] env

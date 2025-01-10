@@ -402,6 +402,18 @@ CREATE TYPE public.link_operator AS ENUM (
 
 
 --
+-- Name: list_item_selection_mode; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.list_item_selection_mode AS ENUM (
+    'dynamic',
+    'named',
+    'manual',
+    'property'
+);
+
+
+--
 -- Name: list_item_template_kind; Type: TYPE; Schema: public; Owner: -
 --
 
@@ -2560,25 +2572,6 @@ COMMENT ON OPERATOR public.&& (public.variable_precision_date, public.variable_p
 
 CREATE OPERATOR public.&& (
     FUNCTION = public.vpdate_overlaps,
-    LEFTARG = public.variable_precision_date,
-    RIGHTARG = daterange,
-    COMMUTATOR = OPERATOR(public.&&)
-);
-
-
---
--- Name: OPERATOR && (public.variable_precision_date, daterange); Type: COMMENT; Schema: public; Owner: -
---
-
-COMMENT ON OPERATOR public.&& (public.variable_precision_date, daterange) IS 'overlaps';
-
-
---
--- Name: &&; Type: OPERATOR; Schema: public; Owner: -
---
-
-CREATE OPERATOR public.&& (
-    FUNCTION = public.vpdate_overlaps,
     LEFTARG = daterange,
     RIGHTARG = public.variable_precision_date,
     COMMUTATOR = OPERATOR(public.&&)
@@ -2593,22 +2586,22 @@ COMMENT ON OPERATOR public.&& (daterange, public.variable_precision_date) IS 'ov
 
 
 --
--- Name: +; Type: OPERATOR; Schema: public; Owner: -
+-- Name: &&; Type: OPERATOR; Schema: public; Owner: -
 --
 
-CREATE OPERATOR public.+ (
-    FUNCTION = public.variable_precision,
-    LEFTARG = date,
-    RIGHTARG = public.date_precision,
-    COMMUTATOR = OPERATOR(public.+)
+CREATE OPERATOR public.&& (
+    FUNCTION = public.vpdate_overlaps,
+    LEFTARG = public.variable_precision_date,
+    RIGHTARG = daterange,
+    COMMUTATOR = OPERATOR(public.&&)
 );
 
 
 --
--- Name: OPERATOR + (date, public.date_precision); Type: COMMENT; Schema: public; Owner: -
+-- Name: OPERATOR && (public.variable_precision_date, daterange); Type: COMMENT; Schema: public; Owner: -
 --
 
-COMMENT ON OPERATOR public.+ (date, public.date_precision) IS 'Construct a variable precision date';
+COMMENT ON OPERATOR public.&& (public.variable_precision_date, daterange) IS 'overlaps';
 
 
 --
@@ -2628,6 +2621,25 @@ CREATE OPERATOR public.+ (
 --
 
 COMMENT ON OPERATOR public.+ (public.date_precision, date) IS 'Construct a variable precision date';
+
+
+--
+-- Name: +; Type: OPERATOR; Schema: public; Owner: -
+--
+
+CREATE OPERATOR public.+ (
+    FUNCTION = public.variable_precision,
+    LEFTARG = date,
+    RIGHTARG = public.date_precision,
+    COMMUTATOR = OPERATOR(public.+)
+);
+
+
+--
+-- Name: OPERATOR + (date, public.date_precision); Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON OPERATOR public.+ (date, public.date_precision) IS 'Construct a variable precision date';
 
 
 --
@@ -3540,8 +3552,8 @@ CREATE TABLE public.announcements (
 CREATE TABLE public.ar_internal_metadata (
     key character varying NOT NULL,
     value character varying,
-    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
 );
 
 
@@ -5809,7 +5821,10 @@ CREATE TABLE public.templates_descendant_list_definitions (
     show_hero_image boolean DEFAULT false NOT NULL,
     use_selection_fallback boolean DEFAULT false NOT NULL,
     selection_fallback_mode public.descendant_list_selection_mode DEFAULT 'manual'::public.descendant_list_selection_mode NOT NULL,
-    width public.template_width DEFAULT 'full'::public.template_width NOT NULL
+    width public.template_width DEFAULT 'full'::public.template_width NOT NULL,
+    see_all_ordering_identifier text,
+    show_contributors boolean DEFAULT false NOT NULL,
+    show_nested_entities boolean DEFAULT false NOT NULL
 );
 
 
@@ -5832,7 +5847,8 @@ CREATE TABLE public.templates_descendant_list_instances (
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     config jsonb DEFAULT '{}'::jsonb NOT NULL,
-    slots jsonb DEFAULT '{}'::jsonb NOT NULL
+    slots jsonb DEFAULT '{}'::jsonb NOT NULL,
+    see_all_ordering_id uuid
 );
 
 
@@ -5966,7 +5982,10 @@ CREATE TABLE public.templates_link_list_definitions (
     show_hero_image boolean DEFAULT false NOT NULL,
     use_selection_fallback boolean DEFAULT false NOT NULL,
     selection_fallback_mode public.link_list_selection_mode DEFAULT 'manual'::public.link_list_selection_mode NOT NULL,
-    width public.template_width DEFAULT 'full'::public.template_width NOT NULL
+    width public.template_width DEFAULT 'full'::public.template_width NOT NULL,
+    see_all_ordering_identifier text,
+    show_contributors boolean DEFAULT false NOT NULL,
+    show_nested_entities boolean DEFAULT false NOT NULL
 );
 
 
@@ -5989,7 +6008,8 @@ CREATE TABLE public.templates_link_list_instances (
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     config jsonb DEFAULT '{}'::jsonb NOT NULL,
-    slots jsonb DEFAULT '{}'::jsonb NOT NULL
+    slots jsonb DEFAULT '{}'::jsonb NOT NULL,
+    see_all_ordering_id uuid
 );
 
 
@@ -6006,7 +6026,18 @@ CREATE TABLE public.templates_list_item_definitions (
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     config jsonb DEFAULT '{}'::jsonb NOT NULL,
-    slots jsonb DEFAULT '{}'::jsonb NOT NULL
+    slots jsonb DEFAULT '{}'::jsonb NOT NULL,
+    use_selection_fallback boolean DEFAULT false NOT NULL,
+    selection_limit integer,
+    selection_mode public.list_item_selection_mode DEFAULT 'manual'::public.list_item_selection_mode NOT NULL,
+    selection_fallback_mode public.list_item_selection_mode DEFAULT 'manual'::public.list_item_selection_mode NOT NULL,
+    selection_source_mode public.selection_source_mode DEFAULT 'self'::public.selection_source_mode NOT NULL,
+    dynamic_ordering_definition jsonb,
+    ordering_identifier text,
+    selection_source text DEFAULT 'self'::text NOT NULL,
+    manual_list_name text DEFAULT 'manual'::text NOT NULL,
+    selection_source_ancestor_name text,
+    selection_property_path text
 );
 
 
@@ -10083,6 +10114,13 @@ CREATE INDEX index_templates_descendant_list_instances_on_position ON public.tem
 
 
 --
+-- Name: index_templates_descendant_list_instances_see_all_ordering; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_templates_descendant_list_instances_see_all_ordering ON public.templates_descendant_list_instances USING btree (see_all_ordering_id);
+
+
+--
 -- Name: index_templates_detail_definitions_on_position; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -10185,6 +10223,13 @@ CREATE INDEX index_templates_link_list_instances_on_last_rendered_at ON public.t
 --
 
 CREATE INDEX index_templates_link_list_instances_on_position ON public.templates_link_list_instances USING btree ("position");
+
+
+--
+-- Name: index_templates_link_list_instances_see_all_ordering; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_templates_link_list_instances_see_all_ordering ON public.templates_link_list_instances USING btree (see_all_ordering_id);
 
 
 --
@@ -11348,6 +11393,14 @@ ALTER TABLE ONLY public.collection_linked_items
 
 
 --
+-- Name: templates_link_list_instances fk_rails_80199b8bb1; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.templates_link_list_instances
+    ADD CONSTRAINT fk_rails_80199b8bb1 FOREIGN KEY (see_all_ordering_id) REFERENCES public.orderings(id) ON DELETE SET NULL;
+
+
+--
 -- Name: ordering_invalidations fk_rails_80f155549c; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -11780,6 +11833,14 @@ ALTER TABLE ONLY public.harvest_cached_asset_references
 
 
 --
+-- Name: templates_descendant_list_instances fk_rails_e502dd111b; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.templates_descendant_list_instances
+    ADD CONSTRAINT fk_rails_e502dd111b FOREIGN KEY (see_all_ordering_id) REFERENCES public.orderings(id) ON DELETE SET NULL;
+
+
+--
 -- Name: templates_ordering_definitions fk_rails_e611341ed0; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -12153,6 +12214,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20250107201204'),
 ('20250107202700'),
 ('20250107205521'),
-('20250107212233');
+('20250107212233'),
+('20250108190032');
 
 

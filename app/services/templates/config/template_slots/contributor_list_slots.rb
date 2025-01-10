@@ -9,12 +9,12 @@ module Templates
       class ContributorListSlots < ::Templates::Config::Utility::AbstractTemplateSlots
         configures_template! :contributor_list
 
-        attribute :header, ::Mappers::StrippedString, default: -> { ::TemplateSlot.default_template_for("contributor_list#header") }
+        attribute :header, ::Templates::Config::Utility::SlotValue, default: -> { ::TemplateSlot.default_slot_value_for("contributor_list#header") }
 
         xml do
           root "slots"
 
-          map_element "header", to: :header, cdata: true, render_nil: true
+          map_element "header", to: :header, render_nil: true
         end
       end
     end

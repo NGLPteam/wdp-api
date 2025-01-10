@@ -36,13 +36,13 @@ module Templates
 
         @reader = reader
         @property = reader.property
-        @value = reader.value
+        @full_path = property.full_path
+        @type = property.type
+
+        @value = normalize_value reader.value
 
         @missing = calculate_missing
         @exists = !@missing
-
-        @full_path = property.full_path
-        @type = property.type
 
         @inner_representation = build_inner_representation
       end
@@ -90,8 +90,14 @@ module Templates
         return Array(@value).map { build_inner_representation_for(_1) } if array?
 
         case @type
+        in "boolean"
+          Templates::Drops::BooleanDrop.new @value
         in "full_text"
-          Templates::Drops::FullTextReferenceDrop.new @value
+          Templates::Drops::FullTextDrop.new @value
+        in "markdown"
+          Templates::Drops::FullTextDrop.new @value
+        in "url"
+          Templates::Drops::URLDrop.new @value
         in "variable_date"
           Templates::Drops::VariablePrecisionDateDrop.new @value
         else
@@ -117,6 +123,21 @@ module Templates
           @value.none?
         else
           @value.blank?
+        end
+      end
+
+      # @param [Object] raw_value
+      # @return [Object]
+      def normalize_value(raw_value)
+        case @type
+        in "full_text"
+          Schemas::PropertyValues::FullText.normalize(raw_value)
+        in "markdown"
+          Schemas::PropertyValues::FullText.markdown(raw_value)
+        in "url"
+          Schemas::PropertyValues::URL.normalize(raw_value).presence
+        else
+          raw_value
         end
       end
     end

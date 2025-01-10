@@ -150,17 +150,17 @@ module Templates
       refine ::TemplateSlot do
         def to_shale_attribute_declaration
           [].tap do |x|
-            x << %[attribute #{name.to_sym.inspect}, ::Mappers::StrippedString]
+            x << %[attribute #{name.to_sym.inspect}, ::Templates::Config::Utility::SlotValue]
 
             if has_default?
-              x << %[, default: -> { ::TemplateSlot.default_template_for(#{id.inspect}) }]
+              x << %[, default: -> { ::TemplateSlot.default_slot_value_for(#{id.inspect}) }]
             end
           end.join
         end
 
         def to_shale_xml_mapper_declaration
           <<~RUBY.strip_heredoc.strip
-          map_element #{shale_mapper_element}, to: #{name.to_sym.inspect}, cdata: true, render_nil: true
+          map_element #{shale_mapper_element}, to: #{name.to_sym.inspect}, render_nil: true
           RUBY
         end
 

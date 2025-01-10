@@ -21,6 +21,10 @@ en:
           will be stored. This allows a layout to have multiple templates of the
           same type using different lists, that will persist across rearrangements
           of the layout _without_ losing connections between entities.
+      ordering_identifier:
+        description: |
+          This can be set to specify the named ordering on the `selectionSource`
+          that should be used to populate the associated entity list.
       selection_limit:
         description: |
           Regardless of `selectionMode`, this limit will be applied on whatever resulting
@@ -40,6 +44,11 @@ en:
 
           It can also support things like `ancestor.journal`, `ancestor.issue`, etc.,
           in order to render a list of values in its parent.
+      selection_source_ancestor_name:
+        description: |
+          The derived name of the ancestor used for the `selectionSource`.
+
+          Exposed for introspection only.
       selection_source_mode:
         description: |
           An enum representing what mode `selectionSource` is in. Not directly set,
@@ -48,6 +57,13 @@ en:
         description: |
           When `selectionMode` is set to `PROPERTY`, this should be set to the full path
           for a given schema property on the associated `selectionSource`
+      show_contributors:
+        description: |
+          Show contributors when listing entities.
+      show_nested_entities:
+        description: |
+          Show nested items from the associated listItemLayouts in order to generate
+          a two-tier list.
       use_selection_fallback:
         description: |
           Controls whether or not to use `selectionFallbackMode` if the entity list returned
@@ -69,6 +85,10 @@ en:
         description: |
           Limit the number of contributors for this template.
     descendant_list:
+      see_all_ordering_identifier:
+        description: |
+          If provided, this will expose an ordering on the template instance that can
+          be used to generate a link to the ordering in the frontend.
       ordering_identifier:
         description: |
           When `selectionMode` is set to `NAMED`, this will look up the named ordering
@@ -82,6 +102,10 @@ en:
           Whether to show and use the 'body' slot on a detail view.
           Primarily intended for items with copious text to display.
     link_list:
+      see_all_ordering_identifier:
+        description: |
+          If provided, this will expose an ordering on the template instance that can
+          be used to generate a link to the ordering in the frontend.
       show_entity_context:
         description: |
           Show additional context about each entity in the selection.

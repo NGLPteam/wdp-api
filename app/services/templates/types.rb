@@ -36,6 +36,7 @@ module Templates
       "link_list_background",
       "link_list_selection_mode",
       "link_list_variant",
+      "list_item_selection_mode",
       "metadata_background",
       "navigation_background",
       "ordering_background",

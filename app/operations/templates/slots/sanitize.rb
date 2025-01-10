@@ -10,6 +10,8 @@ module Templates
       MDX_ATTRS = {
         "Asset" => :all,
         "CopyLink" =>  %w[label].freeze,
+        "DotList" => EMPTY_ARRAY,
+        "DotItem" => EMPTY_ARRAY,
         "EntityLink" => %w[kind slug].freeze,
         "MeruImage" => %w[src alt caption height width].freeze,
         "MetadataList" => EMPTY_ARRAY,
@@ -25,6 +27,8 @@ module Templates
       BLOCK_MDX_TAGS = %w[
         Asset
         CopyLink
+        DotList
+        DotItem
         EntityLink
         MeruImage
         MetadataList
@@ -40,6 +44,8 @@ module Templates
       # @api private
       INLINE_MDX_TAGS = %w[
         CopyLink
+        DotList
+        DotItem
         EntityLink
         VariablePrecisionDate
       ].freeze

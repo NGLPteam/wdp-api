@@ -13,7 +13,10 @@
           {% if entity.summary %} {{ entity.summary }} {% endif %}
         </description>
         <meta-a>
-          Last Paper Published [[ Publish date ]]
+          {%- assign latest_published = orderings.papers.latest_published -%}
+          {%- if latest_published -%}
+          Last Paper Published {{latest_published | date: "%b %Y"}}
+          {%- endif -%}
         </meta-a>
         <meta-b/>
         <context-a/>

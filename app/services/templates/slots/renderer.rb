@@ -10,6 +10,8 @@ module Templates
 
         option :force, Types::Bool, default: proc { false }
 
+        option :hide_when_empty, Types::Bool, default: proc { false }
+
         option :kind, Types::SlotKind, default: proc { "block" }
       end
 
@@ -27,6 +29,9 @@ module Templates
       attr_reader :empty
 
       alias empty? empty
+
+      # @return [Boolean]
+      attr_reader :hides_template
 
       # @return [<String>, nil]
       attr_reader :liquid_errors
@@ -64,7 +69,7 @@ module Templates
 
         @empty = raw_template.blank?
 
-        @compiled = @rendered = false
+        @compiled = @hides_template = @rendered = false
 
         @content = @template = nil
 
@@ -124,13 +129,15 @@ module Templates
 
         @content = yield call_operation("templates.slots.sanitize", raw, kind:) if rendered?
 
+        @hides_template = content.blank? if hide_when_empty
+
         super
       end
 
       wrapped_hook! def build_slot
         @liquid_errors = liquid_errors.compact_blank.presence
 
-        @slot = slot_klass.new(compiled:, content:, liquid_errors:, rendered:)
+        @slot = slot_klass.new(compiled:, content:, hides_template:, liquid_errors:, rendered:)
 
         super
       end

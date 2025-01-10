@@ -15,12 +15,14 @@ module Schemas
 
       HypertextURL = String.constrained(http_uri: true)
 
+      DEFAULT_URL_LABEL = "URL"
+
       # The shape of the object that backs a `URL` schema property.
       #
       # @see Schemas::Properties::Scalar::URL
       URLShape = Hash.schema(
         href: HypertextURL,
-        label: String.default("URL"),
+        label: String.default(DEFAULT_URL_LABEL),
         title?: String.default("").optional,
       ).with_key_transform(&:to_sym)
 
@@ -29,7 +31,7 @@ module Schemas
         when Schemas::Properties::Types::URLShape
           Schemas::Properties::Types::URLShape[value]
         when HypertextURL
-          { href: value, label: "URL", title: "" }
+          { href: value, label: DEFAULT_URL_LABEL }
         end
       end
 

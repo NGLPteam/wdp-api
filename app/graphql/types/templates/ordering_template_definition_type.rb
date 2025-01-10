@@ -67,6 +67,9 @@ module Types
 
       field :selection_source_ancestor_name, Types::SchemaComponentType, null: true do
         description <<~TEXT
+        The derived name of the ancestor used for the `selectionSource`.
+
+        Exposed for introspection only.
         TEXT
       end
 

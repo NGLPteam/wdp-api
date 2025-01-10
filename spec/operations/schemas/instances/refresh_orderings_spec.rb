@@ -21,7 +21,7 @@ RSpec.describe Schemas::Instances::RefreshOrderings, type: :operation do
     FactoryBot.create :item, schema: "nglp:journal_article", collection: issue
   end
 
-  let(:issue_orderings_count) { 3 }
+  let(:issue_orderings_count) { 4 }
   let(:article_orderings_count) { 3 }
 
   let!(:refresh_ordering) { TestHelpers::TestOperation.new }

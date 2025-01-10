@@ -8,6 +8,7 @@ module Templates
   class ListItemInstance < ApplicationRecord
     include HasEphemeralSystemSlug
     include TemplateInstance
+    include Templates::Instances::HasEntityList
     include TimestampScopes
 
     layout_kind! :list_item

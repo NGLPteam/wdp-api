@@ -3,10 +3,8 @@
 module Templates
   module Drops
     # A wrapper around {Item an item}.
-    #
-    # @abstract
     class ItemDrop < Templates::Drops::AbstractEntityDrop
-      delegate :doi, :issn, to: :@entity
+      entity_delegates! :doi, :issn
     end
   end
 end

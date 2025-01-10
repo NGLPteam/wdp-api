@@ -62,6 +62,52 @@
         "mode": "tree"
       },
       "position": 2
+    },
+    {
+      "id": "etd",
+      "name": "Electronic Theses and Dissertations",
+      "filter": {
+        "schemas": [
+          {
+            "namespace": "nglp",
+            "identifier": "dissertation"
+          }
+        ]
+      },
+      "select": {
+        "direct": "children",
+        "links": {
+          "contains": true
+        }
+      },
+      "order": [
+        { "path": "entity.published", "direction": "desc", "nulls": "last" },
+        { "path": "entity.title", "direction": "asc" }
+      ],
+      "position": 3
+    },
+    {
+      "id": "papers",
+      "name": "Papers",
+      "filter": {
+        "schemas": [
+          {
+            "namespace": "nglp",
+            "identifier": "paper"
+          }
+        ]
+      },
+      "select": {
+        "direct": "children",
+        "links": {
+          "contains": true
+        }
+      },
+      "order": [
+        { "path": "entity.published", "direction": "desc", "nulls": "last" },
+        { "path": "entity.title", "direction": "asc" }
+      ],
+      "position": 4
     }
   ],
   "render": {

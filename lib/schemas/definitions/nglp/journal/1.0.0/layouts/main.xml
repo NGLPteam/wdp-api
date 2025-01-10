@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <main>
   <templates>
-    {% if props.description.content.size > 0 %}
     <detail>
       <background>light</background>
       <show-announcements>true</show-announcements>
@@ -11,45 +10,37 @@
       <slots>
         <header/>
         <subheader/>
-        <summary>
+        <summary hide-when-empty="true">
           {{ props.description.content }}
         </summary>
       </slots>
     </detail>
-    {% endif %}
     <descendant-list>
       <background>none</background>
       <dynamic-ordering-definition>
         <filter>
-          <schema namespace="nglp" identifier="journal_article"/>
+          <schema namespace="nglp" identifier="journal_issue"/>
         </filter>
         <order path="entity.published" dir="desc"/>
         <order path="entity.created_at" dir="desc"/>
         <render mode="flat"/>
         <select direct="descendants"/>
       </dynamic-ordering-definition>
+      <ordering-identifier>issues</ordering-identifier>
       <see-all-button-label>See All Articles</see-all-button-label>
       <selection-fallback-mode>dynamic</selection-fallback-mode>
-      <selection-limit>5</selection-limit>
-      <selection-mode>property</selection-mode>
-      <selection-property-path>featured_articles</selection-property-path>
+      <selection-limit>1</selection-limit>
+      <selection-mode>named</selection-mode>
       <selection-source>self</selection-source>
       <show-entity-context>false</show-entity-context>
       <show-hero-image>true</show-hero-image>
+      <show-nested-entities>true</show-nested-entities>
       <show-see-all-button>false</show-see-all-button>
       <title>Current Issue</title>
       <use-selection-fallback>true</use-selection-fallback>
       <variant>summary</variant>
       <slots>
-        <header>[[ Current Issue Title ]]</header>
-        <header-aside>[[ Vol # ]]</header-aside>
-        <metadata>
-          {% assign published = "[[ Current issue published ]]" | split: "*" %}
-          {% assign articles = "[[ Article count ]]" | split: "*" %}
-          {% assign meta = published | concat: articles %}
-          {{ meta | join: ", " }}
-        </metadata>
-        <subtitle>[[ Current issue subtitle ]]</subtitle>
+        <block-header>Current Issue</block-header>
       </slots>
     </descendant-list>
     <descendant-list>
