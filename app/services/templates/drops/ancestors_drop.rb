@@ -15,8 +15,6 @@ module Templates
         ancestor = @entity.ancestor_by_name(name, enforce_known: true)
 
         return entity_drop_for(ancestor) if ancestor
-
-        super
       rescue Entities::UnknownAncestor => e
         # :nocov:
         raise Liquid::UndefinedDropMethod, e.message
