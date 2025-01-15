@@ -84,7 +84,7 @@
         </select>
       </dynamic-ordering-definition>
       <title/>
-      <selection-limit>4</selection-limit>
+      <selection-limit>8</selection-limit>
       <selection-mode>dynamic</selection-mode>
       <selection-source>self</selection-source>
       <variant>grid</variant>

@@ -2,34 +2,40 @@
 <hero>
   <templates>
     <hero>
-      <background>none</background>
-      <enable-descendant-browsing>false</enable-descendant-browsing>
-      <enable-descendant-search>false</enable-descendant-search>
+      <background>light</background>
+      <enable-descendant-browsing>true</enable-descendant-browsing>
+      <enable-descendant-search>true</enable-descendant-search>
       <list-contributors>false</list-contributors>
       <show-basic-view-metrics>false</show-basic-view-metrics>
       <show-big-search-prompt>false</show-big-search-prompt>
-      <show-breadcrumbs>false</show-breadcrumbs>
+      <show-breadcrumbs>true</show-breadcrumbs>
       <show-doi>false</show-doi>
-      <show-hero-image>false</show-hero-image>
-      <show-issn>false</show-issn>
-      <show-sharing-link>false</show-sharing-link>
+      <show-hero-image>true</show-hero-image>
+      <show-issn>true</show-issn>
+      <show-sharing-link>true</show-sharing-link>
       <show-split-display>false</show-split-display>
       <show-thumbnail-image>false</show-thumbnail-image>
       <slots>
         <header>
           {{ entity.title }}
         </header>
+        <descendant-search-prompt>Search {{ entity.title }}</descendant-search-prompt>
         <header-aside/>
         <header-sidebar/>
-        <header-summary/>
+        <header-summary>{{ entity.subtitle }}</header-summary>
         <subheader/>
         <subheader-aside/>
         <subheader-summary/>
-        <sidebar/>
+        <header-sidebar>
+          {% if props.cc_license.exists %}
+            {% sbitem icon: "cc" %} {{ props.cc_license }} {% endsbitem %}
+          {% endif %}
+          {% if props.peer_reviewed.exists %}
+            {% sbitem icon: "user" %} Peer Reviewed {% endsbitem %}
+          {% endif %}
+        </header-sidebar>
         <metadata/>
-        <summary>
-          {{ entity.summary }}
-        </summary>
+        <summary/>
         <call-to-action/>
       </slots>
     </hero>

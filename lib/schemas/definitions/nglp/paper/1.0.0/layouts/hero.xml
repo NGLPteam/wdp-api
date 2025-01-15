@@ -20,7 +20,7 @@
         <call-to-action/>
         <descendant-search-prompt/>
         <header>
-          {{ entity.title }}
+          {{ parent.title }}
         </header>
         <header-aside/>
         <header-sidebar/>
@@ -29,7 +29,7 @@
           Published {{ entity.published }}
         </metadata>
         <sidebar/>
-        <subheader/>
+        <subheader>{{entity.title}}</subheader>
         <subheader-aside/>
         <subheader-summary/>
         <summary>
