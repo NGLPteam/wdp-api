@@ -60,7 +60,7 @@
       <selection-source>self</selection-source>
       <variant>grid</variant>
       <slots>
-        <header>Related Issues</header>
+        <block-header>Related Issues</block-header>
         <header-aside/>
         <metadata/>
         <subtitle/>

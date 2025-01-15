@@ -78,9 +78,9 @@
       <title>Related Papers</title>
       <variant>grid</variant>
       <slots>
-        <header>
+        <block-header>
           Related Papers
-        </header>
+        </block-header>
         <header-aside/>
         <metadata/>
         <subtitle/>

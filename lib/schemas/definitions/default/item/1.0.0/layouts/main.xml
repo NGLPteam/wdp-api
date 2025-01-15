@@ -67,9 +67,9 @@
       <title>Related Items</title>
       <variant>grid</variant>
       <slots>
-        <header>
+        <block-header>
           Related Items
-        </header>
+        </block-header>
         <header-aside/>
         <metadata/>
         <subtitle/>
