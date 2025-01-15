@@ -50,7 +50,7 @@
       <selection-source>self</selection-source>
       <variant>grid</variant>
       <slots>
-        <header>Related Volumes</header>
+        <block-header>Related Volumes</block-header>
         <header-aside/>
         <metadata/>
         <subtitle/>
