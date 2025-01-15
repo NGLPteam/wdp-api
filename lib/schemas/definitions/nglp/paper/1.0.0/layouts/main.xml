@@ -75,6 +75,8 @@
       <selection-source>self</selection-source>
       <show-entity-context>false</show-entity-context>
       <show-hero-image>false</show-hero-image>
+      <show-entity-context>true</show-entity-context>
+      <show-contributors>true</show-contributors>
       <title>Related Papers</title>
       <variant>grid</variant>
       <slots>

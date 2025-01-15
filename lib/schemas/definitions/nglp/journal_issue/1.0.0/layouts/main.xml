@@ -59,6 +59,7 @@
       <selection-mode>dynamic</selection-mode>
       <selection-source>self</selection-source>
       <variant>grid</variant>
+      <show-entity-context>true</show-entity-context>
       <slots>
         <block-header>Related Issues</block-header>
         <header-aside/>

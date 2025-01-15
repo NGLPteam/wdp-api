@@ -73,6 +73,7 @@
       <selection-source>self</selection-source>
       <variant>grid</variant>
       <show-contributors>false</show-contributors>
+      <show-entity-context>true</show-entity-context>
       <slots>
         <block-header>Related Series</block-header>
         <header-aside/>

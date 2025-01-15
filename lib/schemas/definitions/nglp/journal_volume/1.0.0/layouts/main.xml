@@ -48,6 +48,7 @@
       <selection-limit>8</selection-limit>
       <selection-mode>dynamic</selection-mode>
       <selection-source>self</selection-source>
+      <show-entity-context>true</show-entity-context>
       <variant>grid</variant>
       <slots>
         <block-header>Related Volumes</block-header>
