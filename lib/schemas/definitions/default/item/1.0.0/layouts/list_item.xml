@@ -13,12 +13,14 @@
           {% if entity.summary %} {{ entity.summary }} {% endif %}
         </description>
         <meta-a>
-          Published {{ entity.published }}
+          {% if entity.published %} Published {{ entity.published }} {% endif %}
         </meta-a>
         <meta-b/>
-        <context-a/>
-        <context-b/>
-        <context-c/>
+        <context-full>
+          {% if parent.title %}
+            {{ parent.title }}
+          {% endif %}
+        </context-full>
       </slots>
     </list-item>
   </templates>

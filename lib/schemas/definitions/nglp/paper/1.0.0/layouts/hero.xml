@@ -26,7 +26,7 @@
         <header-sidebar/>
         <header-summary/>
         <metadata>
-          Published {{ entity.published }}
+          {% if entity.published %} Published {{ entity.published }} {% endif %}
         </metadata>
         <sidebar/>
         <subheader>{{entity.title}}</subheader>

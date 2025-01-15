@@ -2,33 +2,46 @@
 <hero>
   <templates>
     <hero>
-      <background>none</background>
+      <background>light</background>
       <enable-descendant-browsing>false</enable-descendant-browsing>
       <enable-descendant-search>false</enable-descendant-search>
-      <list-contributors>false</list-contributors>
-      <show-basic-view-metrics>false</show-basic-view-metrics>
+      <list-contributors>true</list-contributors>
+      <show-basic-view-metrics>true</show-basic-view-metrics>
       <show-big-search-prompt>false</show-big-search-prompt>
-      <show-breadcrumbs>false</show-breadcrumbs>
-      <show-doi>false</show-doi>
+      <show-breadcrumbs>true</show-breadcrumbs>
+      <show-doi>true</show-doi>
       <show-hero-image>false</show-hero-image>
       <show-issn>false</show-issn>
-      <show-sharing-link>false</show-sharing-link>
-      <show-split-display>false</show-split-display>
+      <show-sharing-link>true</show-sharing-link>
+      <show-split-display>true</show-split-display>
       <show-thumbnail-image>false</show-thumbnail-image>
       <slots>
         <call-to-action/>
         <header>
-          {{ entity.title }}
+          {{parent.title}}
         </header>
         <header-aside/>
         <header-sidebar/>
         <header-summary/>
-        <subheader/>
+        <subheader>
+          {{entity.title}}
+        </subheader>
         <subheader-aside/>
         <subheader-summary/>
-        <sidebar/>
-        <metadata/>
-        <summary/>
+        <sidebar>
+          {% if parent.cc_license.exists %}
+            {% sbitem icon: "cc" %} {{ props.cc_license }} {% endsbitem %}
+          {% endif %}
+          {% if parent.peer_reviewed.exists %}
+            {% sbitem icon: "user" %} Peer Reviewed {% endsbitem %}
+          {% endif %}
+        </sidebar>
+        <metadata>
+          {% if entity.published %} {{ entity.published }} {% endif %}
+        </metadata>
+        <summary>
+          {{entity.summary}}
+        </summary>
       </slots>
     </hero>
   </templates>
