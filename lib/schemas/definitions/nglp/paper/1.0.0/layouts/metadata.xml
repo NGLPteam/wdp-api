@@ -4,11 +4,73 @@
     <metadata>
       <background>none</background>
       <slots>
-        <header/>
-        <items-a/>
-        <items-b/>
-        <items-c/>
-        <items-d/>
+        <header>
+          Paper Metadata
+        </header>
+        <items-a>
+          {% mditem %}
+            {% mdvalue label: "Author" %}
+              {{authors}}
+            {% endmdvalue %}
+          {% endmditem %}
+          {% mditem %}
+            {% mdvalue label: "Published" %}
+              {{entity.published}}
+            {% endmdvalue %}
+          {% endmditem %}
+        </items-a>
+        <items-b>
+          {% if props.accessioned.exists %}
+            {% mditem %}
+              {% mdvalue label: "Accessioned" %}
+                {{ props.accessioned }}
+              {% endmdvalue %}
+            {% endmditem %}
+          {% endif %}
+          {% if props.available.exists %}
+            {% mditem %}
+              {% mdvalue label: "Available" %}
+                {{ props.available }}
+              {% endmdvalue %}
+            {% endmditem %}
+          {% endif %}
+        </items-b>
+        <items-c>
+          {% if entity.issn %}
+            {% mditem %}
+              {% mdvalue label: "ISSN" %}
+                {{entity.issn}}
+              {% endmdvalue %}
+            {% endmditem %}
+          {% endif %}
+          {% if entity.doi %}
+            {% mditem %}
+              {% mdvalue label: "DOI" %}
+                {{entity.doi}}
+              {% endmdvalue %}
+            {% endmditem %}
+          {% endif %}
+        </items-c>
+        <items-d>
+          {% if props.pdf_version.exists %}
+            {% mditem %}
+              {% mdvalue label: "PDF Version" %}
+                {% asset props.pdf_version %}
+                  {{props.pdf_version.name}}
+                {% endasset %}
+              {% endmdvalue %}
+            {% endmditem %}
+          {% endif %}
+          {% if props.text_version.exists %}
+            {% mditem %}
+              {% mdvalue label: "Text Version" %}
+                {% asset props.text_version %}
+                  {{props.text_version.name}}
+                {% endasset %}
+              {% endmdvalue %}
+            {% endmditem %}
+          {% endif %}
+        </items-d>
       </slots>
     </metadata>
   </templates>

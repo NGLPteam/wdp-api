@@ -32,7 +32,6 @@
     </contributor-list>
     <blurb>
       <background>light</background>
-      <width>full</width>
       <slots>
         <header>How to Cite</header>
         <body>
@@ -76,7 +75,6 @@
       <selection-source>self</selection-source>
       <show-entity-context>false</show-entity-context>
       <show-hero-image>false</show-hero-image>
-      <show-see-all-button>false</show-see-all-button>
       <title>Related Papers</title>
       <variant>grid</variant>
       <slots>
