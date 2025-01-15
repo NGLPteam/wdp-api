@@ -18,10 +18,10 @@
           {{orderings.series.count}} Series
           {% enddotitem %}
           {% dotitem %}
-          {{orderings.papers.count}} Paper(s)
+          {{orderings.papers.count}} {% if orderings.papers.count == 1 %}Paper{% else %}Papers{% endif %}
           {% enddotitem %}
           {% dotitem %}
-          {{orderings.units.count}} Sub-unit(s)
+          {{orderings.units.count}} {% if orderings.units.count == 1 %}Sub-unit{% else %}Sub-units{% endif %}
           {% enddotitem %}
           {% enddotlist %}
         </meta-a>

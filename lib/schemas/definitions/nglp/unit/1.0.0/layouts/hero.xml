@@ -10,7 +10,7 @@
       <show-big-search-prompt>false</show-big-search-prompt>
       <show-breadcrumbs>true</show-breadcrumbs>
       <show-doi>false</show-doi>
-      <show-hero-image>false</show-hero-image>
+      <show-hero-image>true</show-hero-image>
       <show-issn>false</show-issn>
       <show-sharing-link>true</show-sharing-link>
       <show-split-display>false</show-split-display>
