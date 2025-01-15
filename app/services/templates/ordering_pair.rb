@@ -33,6 +33,21 @@ module Templates
 
     alias last? last
 
+    # @return [Boolean]
+    attr_reader :has_either_sibling
+
+    alias has_either_sibling? has_either_sibling
+
+    # @return [Boolean]
+    attr_reader :in_ordering
+
+    alias in_ordering? in_ordering
+
+    # @return [Boolean]
+    attr_reader :only
+
+    alias only? only
+
     # @return [Integer, nil]
     attr_reader :position
 
@@ -47,7 +62,7 @@ module Templates
 
       @count = instance.ordering_entry_count&.visible_count
 
-      @exists = instance.ordering.present? && instance.ordering_entry.present?
+      @in_ordering = instance.ordering.present? && instance.ordering_entry.present?
 
       @position = instance.ordering_entry&.position
 
@@ -55,8 +70,13 @@ module Templates
 
       @next_sibling = instance.next_sibling
 
-      @first = exists? && prev_sibling.blank?
-      @last = exists? && next_sibling.blank?
+      @first = in_ordering? && prev_sibling.blank?
+      @last = in_ordering? && next_sibling.blank?
+      @only = first? && last?
+
+      @has_either_sibling = (@prev_sibling.present? || @next_sibling.present?)
+
+      @exists = in_ordering? && has_either_sibling?
     end
   end
 end

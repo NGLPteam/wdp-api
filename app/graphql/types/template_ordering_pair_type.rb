@@ -15,7 +15,15 @@ module Types
 
     field :exists, Boolean, null: false do
       description <<~TEXT
-      Whether or not the ordering / entry actually exists—can be used to skip rendering.
+      Whether or not the ordering / entry actually exists and has siblings—can be used to skip rendering.
+
+      Implies `inOrdering && !only`.
+      TEXT
+    end
+
+    field :in_ordering, Boolean, null: false do
+      description <<~TEXT
+      Whether or not the entity is present in the associated ordering / entry.
       TEXT
     end
 
@@ -28,6 +36,14 @@ module Types
     field :last, Boolean, null: false do
       description <<~TEXT
       Whether the source entity is the _last_ entity in the ordering.
+      TEXT
+    end
+
+    field :only, Boolean, null: false do
+      description <<~TEXT
+      Whether the source entity is the _only_ entity in the ordering.
+
+      Implies `first && last`.
       TEXT
     end
 
