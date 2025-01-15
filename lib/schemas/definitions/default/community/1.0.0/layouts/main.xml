@@ -42,6 +42,9 @@
       <show-see-all-button>false</show-see-all-button>
       <title>Recently Updated Paper Series</title>
       <variant>promos</variant>
+      <slots>
+        <block-header>Recently Updated Paper Series</block-header>
+      </slots>
     </descendant-list>
     <descendant-list>
       <background>dark</background>
@@ -62,6 +65,9 @@
       <show-hero-image>true</show-hero-image>
       <title>Research Units</title>
       <variant>compact</variant>
+      <slots>
+        <block-header>Research Units</block-header>
+      </slots>
     </descendant-list>
     <descendant-list>
       <background>light</background>
@@ -85,7 +91,8 @@
       <title/>
       <variant>summary</variant>
       <slots>
-        <header>Recent Issues</header>
+        <block-header>Recent Issues</block-header>
+        <header/>
         <header-aside/>
         <metadata/>
         <subtitle/>
@@ -93,7 +100,7 @@
     </descendant-list>
     <descendant-list>
       <background>none</background>
-      <see-all-button-label/>
+      <see-all-button-label>See All Articles</see-all-button-label>
       <selection-limit>1</selection-limit>
       <selection-mode>dynamic</selection-mode>
       <dynamic-ordering-definition>
@@ -106,11 +113,13 @@
         <select direct="descendants"/>
       </dynamic-ordering-definition>
       <selection-source>self</selection-source>
-      <show-entity-context>true</show-entity-context>
+      <show-entity-context>false</show-entity-context>
       <show-hero-image>true</show-hero-image>
       <show-see-all-button>false</show-see-all-button>
+      <see-all-ordering-identifier>issues</see-all-ordering-identifier>
       <title>Most Recent Issue</title>
       <use-selection-fallback>false</use-selection-fallback>
+      <show-nested-entities>true</show-nested-entities>
       <variant>summary</variant>
       <slots>
         <block-header>Most Recent Issue</block-header>

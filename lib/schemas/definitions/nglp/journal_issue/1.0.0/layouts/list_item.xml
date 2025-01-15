@@ -2,6 +2,11 @@
 <list-item>
   <templates>
     <list-item>
+      <ordering-identifier>articles</ordering-identifier>
+      <selection-limit>5</selection-limit>
+      <selection-mode>named</selection-mode>
+      <selection-source>self</selection-source>
+      <show-entity-context>false</show-entity-context>
       <slots>
         <header>
           {{entity.title}}
@@ -20,21 +25,18 @@
           {% endif %}
         </meta-a>
         <meta-b>
-          {{ordering.articles.count}}
+          {{orderings.articles.count}} {% if orderings.articles.count == 1 %}Article{% else %}Articles{% endif %}
         </meta-b>
         <context-full>
-          {{ancestors.journal.title}}, {{ancestors.journal}}
+          {% if ancestors.volume %}
+            {{ancestors.journal.title}}, {{ancestors.volume.title}}
+          {% else %}
+            {{ancestors.journal.title}}
+          {% endif %}
         </context-full>
         <context-abbr>
           {{ancestors.volume.title}}
         </context-abbr>
-        <context-a>
-          {{ancestors.journal.title}}
-        </context-a>
-        <context-b>
-          {{ancestors.volume.title}}
-        </context-b>
-        <context-c/>
       </slots>
     </list-item>
   </templates>

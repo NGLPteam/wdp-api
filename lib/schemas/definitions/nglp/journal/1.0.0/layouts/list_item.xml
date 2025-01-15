@@ -15,16 +15,16 @@
         <meta-a>
           {%- assign latest_published = orderings.issues.latest_published -%}
           {%- if latest_published -%}
-          Most Recent Issue: {{latest_published | date: "%b %Y"}}
+          Last Issue Published {{latest_published | date: "%b %Y"}}
           {%- endif -%}
         </meta-a>
         <meta-b>
           {% dotlist %}
           {% dotitem %}
-          {{orderings.issues.count}} Issue(s)
+          {{orderings.issues.count}} {% if orderings.issues.count == 1 %}Issue{% else %}Issues{% endif %}
           {% enddotitem %}
           {% dotitem %}
-          {{orderings.articles.count}} Article(s)
+          {{orderings.articles.count}} {% if orderings.articles.count == 1 %}Article{% else %}Articles{% endif %}
           {% enddotitem %}
           {% enddotlist %}
         </meta-b>
