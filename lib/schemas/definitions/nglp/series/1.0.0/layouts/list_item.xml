@@ -18,7 +18,18 @@
           Last Paper Published {{latest_published | date: "%b %Y"}}
           {%- endif -%}
         </meta-a>
-        <meta-b/>
+        <meta-b>
+          {% dotlist %}
+          {% dotitem %}
+          {{orderings.papers.count}} {% if orderings.papers.count == 1 %}Paper{% else %}Papers{% endif %}
+          {% enddotitem %}
+          {% if orderings.etd.count > 0 %}
+            {% dotitem %}
+            {{orderings.etd.count}} {% if orderings.etd.count == 1 %}Dissertation{% else %}Dissertations{% endif %}
+            {% enddotitem %}
+          {% endif %}
+          {% enddotlist %}
+        </meta-b>
         <context-a/>
         <context-b/>
         <context-c/>
