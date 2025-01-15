@@ -5,7 +5,7 @@
       <background>none</background>
       <slots>
         <entity-label>
-          Entity
+          Full Text
         </entity-label>
       </slots>
     </navigation>
