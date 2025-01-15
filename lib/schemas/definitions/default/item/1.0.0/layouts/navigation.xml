@@ -4,7 +4,7 @@
     <navigation>
       <background>none</background>
       <slots>
-        <entity-label>Item</entity-label>
+        <entity-label>Full Text</entity-label>
       </slots>
     </navigation>
   </templates>
