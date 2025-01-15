@@ -58,7 +58,7 @@ module Templates
     def parent_drop_for(parent)
       return if parent.nil?
 
-      Templates::Drops::ParentDrop.new(entity)
+      Templates::Drops::ParentDrop.new(parent)
     end
   end
 end
