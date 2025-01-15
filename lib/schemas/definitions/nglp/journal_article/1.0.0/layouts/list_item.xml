@@ -16,17 +16,20 @@
           Published {{ entity.published }}
         </meta-a>
         <meta-b/>
-        <context-a>
-          {% if ancestors.issue or ancestors.volume or ancestors.journal %}
-          {% assign journal = ancestors.journal.title | split: "*" %}
-          {% assign volume = ancestors.volume.title | split: "*" %}
-          {% assign issue = ancestors.issue.title | split: "*" %}
-          {% assign ancestors = journal | concat: volume | concat: issue %}
-            {{ ancestors | join: ", " }}
+        <context-full>
+          {% if ancestors.volume %}
+            {{ancestors.journal.title}}, {{ancestors.volume.title}}, {{ancestors.issue.title}}
+          {% else %}
+            {{ancestors.journal.title}}, {{ancestors.issue.title}}
           {% endif %}
-        </context-a>
-        <context-b/>
-        <context-c/>
+        </context-full>
+        <context-abbr>
+          {% if ancestors.volume %}
+            {{ancestors.volume.title}}, {{ancestors.issue.title}}
+          {% else %}
+            {{ancestors.issue.title}}
+          {% endif %}
+        </context-abbr>
       </slots>
     </list-item>
   </templates>

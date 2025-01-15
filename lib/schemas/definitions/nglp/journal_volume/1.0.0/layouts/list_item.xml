@@ -18,18 +18,16 @@
         <meta-b>
           {% dotlist %}
           {% dotitem %}
-          {{orderings.issues.count}} Issue(s)
+          {{orderings.issues.count}} {% if orderings.issues.count == 1 %}Issue{% else %}Issues{% endif %}
           {% enddotitem %}
           {% dotitem %}
-          {{orderings.articles.count}} Article(s)
+          {{orderings.articles.count}} {% if orderings.articles.count == 1 %}Article{% else %}Articles{% endif %}
           {% enddotitem %}
           {% enddotlist %}
         </meta-b>
-        <context-a>
-          {% if ancestors.journal %} {{ancestors.journal.title}} {% endif %}
-        </context-a>
-        <context-b/>
-        <context-c/>
+        <context-full>
+          {{ancestors.journal.title}}
+        </context-full>
       </slots>
     </list-item>
   </templates>

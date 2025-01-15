@@ -60,12 +60,13 @@
       <selection-source>self</selection-source>
       <show-entity-context>false</show-entity-context>
       <show-hero-image>false</show-hero-image>
-      <show-see-all-button>true</show-see-all-button>
+      <show-see-all-button>false</show-see-all-button>
       <see-all-button-label>See All Issues</see-all-button-label>
+      <see-all-ordering-identifier>issues</see-all-ordering-identifier>
       <title/>
       <variant>summary</variant>
       <slots>
-        <header>Recent Issues</header>
+        <block-header>Recent Issues</block-header>
         <header-aside/>
         <metadata/>
         <subtitle/>
@@ -87,8 +88,9 @@
       <selection-mode>dynamic</selection-mode>
       <selection-source>self</selection-source>
       <variant>grid</variant>
+      <show-contributors>false</show-contributors>
       <slots>
-        <header>Related Journals</header>
+        <block-header>Related Journals</block-header>
         <header-aside/>
         <metadata/>
         <subtitle/>
