@@ -8,61 +8,35 @@
           Metadata
         </header>
         <items-a>
-          {% mdvalue label: "Author" %}
-            {{authors}}
-          {% endmdvalue %}
-          {% mdvalue label: "Published" %}
-            {{entity.published}}
-          {% endmdvalue %}
-          {% if props.meta.collected.exists %}
-            {% mdvalue label: "Collected" %}
-              {{ props.meta.collected }}
+          {% mditem %}
+            {% mdvalue label: "Author" %}
+              {{authors}}
             {% endmdvalue %}
-          {% endif %}
+          {% endmditem %}
+          {% mditem %}
+            {% mdvalue label: "Published" %}
+              {{entity.published}}
+            {% endmdvalue %}
+          {% endmditem %}
         </items-a>
         <items-b>
           {% if parent.title %}
-            {% mdvalue label: "Collection" %}
-              {{parent.title}}
-            {% endmdvalue %}
+            {% mditem %}
+              {% mdvalue label: "Collection" %}
+                {{parent.title}}
+              {% endmdvalue %}
+            {% endmditem %}
           {% endif %}
           {% if parent.props.cc_license.exists %}
-            {% mdvalue label: "License" %}
-              {{parent.props.cc_license}}
-            {% endmdvalue %}
+            {% mditem %}
+              {% mdvalue label: "License" %}
+                {{parent.props.cc_license}}
+              {% endmdvalue %}
+            {% endmditem %}
           {% endif %}
         </items-b>
-        <items-c>
-          {% if props.meta.page_count.exists %}
-            {% mdvalue label: "Page Count" %}
-              {{props.meta.page_count}}
-            {% endmdvalue %}
-          {% endif %}
-          {% if entity.doi %}
-            {% mdvalue label: "DOI" %}
-              {{entity.doi}}
-            {% endmdvalue %}
-          {% endif %}
-        </items-c>
-        <items-d>
-          {% if props.pdf_version.exists %}
-            {% mdvalue label: "PDF Version" %}
-              {% asset props.pdf_version %}
-                {{props.pdf_version.name}}
-              {% endasset %}
-            {% endmdvalue %}
-          {% endif %}
-          {% if props.preprint_version.exists %}
-            {% mdvalue label: "Pre-Print Version" %}
-              Yes
-            {% endmdvalue %}
-          {% endif %}
-          {% if props.online_version.exists %}
-            {% mdvalue label: "Online Version" %}
-              {{props.online_version}}
-            {% endmdvalue %}
-          {% endif %}
-        </items-d>
+        <items-c/>
+        <items-d/>
       </slots>
     </metadata>
   </templates>
