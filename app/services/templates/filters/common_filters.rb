@@ -12,6 +12,8 @@ module Templates
         "CC BY-NC-ND" => "https://creativecommons.org/licenses/by-nc-nd/2.5/"
       }.with_indifferent_access.freeze
 
+      SAFE_COUNT = Templates::Types::Coercible::Integer.constrained(gteq: 0).fallback(1)
+
       STANDARD = Object.new.tap do |x|
         x.extend Liquid::StandardFilters
       end
@@ -42,6 +44,16 @@ module Templates
         unwrapped = unwrap_date(input)
 
         STANDARD.date(unwrapped, format)
+      end
+
+      # @param [#to_i] raw_count
+      # @param [#to_s] raw_term
+      def pluralize(raw_count, raw_term)
+        count = SAFE_COUNT[raw_count]
+
+        singular = raw_term.to_s.singularize
+
+        "#{count.to_fs(:delimited)} #{singular.pluralize(count)}"
       end
 
       private
