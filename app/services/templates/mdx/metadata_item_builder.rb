@@ -6,6 +6,8 @@ module Templates
     class MetadataItemBuilder < ::Templates::MDX::AbstractBuilder
       include Templates::MDX::ContentWrapper
 
+      display_checks_children true
+
       tag_name "MetadataItem"
     end
   end
