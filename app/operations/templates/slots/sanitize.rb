@@ -15,6 +15,7 @@ module Templates
         "DotList" => WRAPPED_CONTENT,
         "DotItem" => WRAPPED_CONTENT,
         "EntityLink" => %w[kind slug].freeze,
+        "LineBreak" => EMPTY_ARRAY,
         "MeruImage" => %w[src alt caption height width].freeze,
         "MetadataItem" => WRAPPED_CONTENT,
         "MetadataList" => WRAPPED_CONTENT,
@@ -33,6 +34,7 @@ module Templates
         DotList
         DotItem
         EntityLink
+        LineBreak
         MeruImage
         MetadataList
         MetadataItem
@@ -79,17 +81,67 @@ module Templates
         end
       end
 
+      BR_TO_LINEBREAK = ->(env) do
+        next unless env[:node_name] == "br"
+
+        env => { node:, }
+
+        node.name = "LineBreak"
+
+        node.content = "&nbsp;".html_safe
+
+        { node_allowlist: [node], }
+      end
+
+      P_FIXER = ->(env) do
+        next unless env[:node_name] == ?p
+
+        env => { node:, }
+
+        node.attributes.each do |name, _|
+          node.remove_attribute(name)
+        end
+
+        node.children.each do |child|
+          next unless child.text?
+
+          content = child.content
+
+          fixed = [].tap do |a|
+            a << " " if content.match?(/\A\s+/)
+            a << content.squish
+            a << " " if content.match?(/\s+\z/)
+          end.join
+
+          child.content = fixed
+        end
+
+        { node_allowlist: [node], }
+      end
+
+      REFENCE_CODEBLOCK = ->(env) do
+        next unless env[:node_name] == "pre" && env[:node].children.first.try(:name) == "code"
+
+        env => { node:, }
+
+        text = node.replace(ReverseMarkdown.convert(node.to_html, github_flavored: true))
+
+        { node_allowlist: [text] }
+      end
+
+      BASE_BLOCK_TRANSFORMERS = [BR_TO_LINEBREAK, P_FIXER, REFENCE_CODEBLOCK].freeze
+
       # @api private
       # @see BUILD_TRANSFORMER
-      BLOCK_MDX_TRANSFORMERS = BLOCK_MDX_TAGS.map do |tag_name|
+      BLOCK_MDX_TRANSFORMERS = (BASE_BLOCK_TRANSFORMERS + BLOCK_MDX_TAGS.map do |tag_name|
         BUILD_TRANSFORMER["BLOCK", tag_name]
-      end
+      end).freeze
 
       # @api private
       # @see BUILD_TRANSFORMER
       INLINE_MDX_TRANSFORMERS = INLINE_MDX_TAGS.map do |tag_name|
         BUILD_TRANSFORMER["INLINE", tag_name]
-      end
+      end.freeze
 
       # @api private
       EXTRA_BLOCK_TAGS = %w[h1 h2 h3 h4 h5 h6].freeze
