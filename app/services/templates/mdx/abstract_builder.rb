@@ -28,10 +28,16 @@ module Templates
       # @return [Dry::Monads::Success(ActiveSupport::SafeBuffer)]
       def call
         run_callbacks :execute do
+          yield prepare!
+
           yield render!
         end
 
         Success output
+      end
+
+      wrapped_hook! def prepare
+        super
       end
 
       wrapped_hook! def render

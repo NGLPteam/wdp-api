@@ -6,20 +6,23 @@ module Templates
       include Dry::Core::Constants
       include Dry::Monads[:result]
 
+      WRAPPED_CONTENT = %w[display].freeze
+
       # @api private
       MDX_ATTRS = {
         "Asset" => :all,
         "CopyLink" =>  %w[label].freeze,
-        "DotList" => EMPTY_ARRAY,
-        "DotItem" => EMPTY_ARRAY,
+        "DotList" => WRAPPED_CONTENT,
+        "DotItem" => WRAPPED_CONTENT,
         "EntityLink" => %w[kind slug].freeze,
         "MeruImage" => %w[src alt caption height width].freeze,
-        "MetadataList" => EMPTY_ARRAY,
-        "MetadataLabel" => EMPTY_ARRAY,
-        "MetadataValue" => EMPTY_ARRAY,
+        "MetadataItem" => WRAPPED_CONTENT,
+        "MetadataList" => WRAPPED_CONTENT,
+        "MetadataLabel" => WRAPPED_CONTENT,
+        "MetadataValue" => WRAPPED_CONTENT,
         "PDFViewer" => %w[name size slug url].freeze,
-        "SidebarItem" => %w[icon url].freeze,
-        "SidebarList" => EMPTY_ARRAY,
+        "SidebarItem" => (WRAPPED_CONTENT | %w[icon url]).freeze,
+        "SidebarList" => WRAPPED_CONTENT,
         "VariablePrecisionDate" => %w[precision value].freeze,
       }.freeze
 
