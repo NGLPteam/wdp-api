@@ -8,16 +8,20 @@
           Paper Metadata
         </header>
         <items-a>
-          {% mditem %}
-            {% mdvalue label: "Author" %}
-              {{authors}}
-            {% endmdvalue %}
-          {% endmditem %}
-          {% mditem %}
-            {% mdvalue label: "Published" %}
-              {{entity.published}}
-            {% endmdvalue %}
-          {% endmditem %}
+          {% if authors.exists %}
+            {% mditem %}
+              {% mdvalue label: "Author" %}
+                {{authors}}
+              {% endmdvalue %}
+            {% endmditem %}
+          {% endif %}
+          {% if entity.published %}
+            {% mditem %}
+              {% mdvalue label: "Published" %}
+                {{entity.published}}
+              {% endmdvalue %}
+            {% endmditem %}
+          {% endif %}
         </items-a>
         <items-b>
           {% if props.accessioned.exists %}
