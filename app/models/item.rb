@@ -19,6 +19,7 @@ class Item < ApplicationRecord
 
   belongs_to :collection, inverse_of: :items
 
+  has_many :attributions, -> { in_default_order }, class_name: "ItemAttribution", dependent: :delete_all, inverse_of: :item
   has_many :contributions, class_name: "ItemContribution", dependent: :destroy, inverse_of: :item
   has_many :contributors, through: :contributions
 

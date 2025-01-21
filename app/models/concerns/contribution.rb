@@ -1,30 +1,80 @@
 # frozen_string_literal: true
 
+# A contribution from a {Contributor} to a {Contributable}.
 module Contribution
   extend ActiveSupport::Concern
+  extend DefinesMonadicOperation
 
   include HasEphemeralSystemSlug
   include Liquifies
   include TimestampScopes
 
   included do
+    extend Dry::Core::ClassAttributes
+
+    defines :contributable_key, type: Contributions::Types::ContributableKey
+    defines :contributables_key, type: Contributions::Types::ContributablesKey
+    defines :contributable_foreign_key, type: Contributions::Types::ContributableForeignKey
+    defines :contributable_klass_name, type: Contributions::Types::ContributableKlassName
+
+    contributable_key :"#{model_name.singular[/\A(.+)_contribution\z/, 1]}"
+    contributables_key contributable_key.to_s.pluralize.to_sym
+    contributable_foreign_key :"#{contributable_key}_id"
+    contributable_klass_name model_name.to_s[/\A(.+)Contribution\z/, 1]
+
+    belongs_to :role, class_name: "ControlledVocabularyItem", inverse_of: table_name
+
     attribute :metadata, Contributions::Metadata.to_type, default: proc { {} }
 
     drop_klass Templates::Drops::ContributionDrop
-
-    alias_attribute :role, :kind
 
     delegate :target_association, :target_association_name, :target_klass, to: :class
 
     delegate :kind, to: :contributor, prefix: true
 
-    scope :authors, -> { where(kind: "author") }
+    scope :authors, -> { where(role_id: ControlledVocabularyItem.tagged_with("author").select(:id)) }
 
     scope :in_default_contributor_order, -> { joins(:contributor).merge(Contributor.in_default_order) }
+
+    validates :role_id, uniqueness: { scope: %I[contributor_id #{contributable_foreign_key}] }
+
+    before_validation :set_default_role!, on: :create
 
     after_save :reload_contributor!
 
     after_destroy :recount_contributor_contributions!
+
+    after_commit :manage_attributions!
+  end
+
+  # @!attribute [r] contributable
+  # @return [Contributable]
+  def contributable
+    __send__(contributable_key)
+  end
+
+  # @!attribute [r] contributable_key
+  # @return [Contributions::Types::ContributableKey]
+  def contributable_key
+    self.class.contributable_key
+  end
+
+  # @!attribute [r] contributable_foreign_key
+  # @return [Contributions::Types::ContributableForeignKey]
+  def contributable_foreign_key
+    self.class.contributable_foreign_key
+  end
+
+  # @!attribute [r] contributable_klass_name
+  # @return [Contributions::Types::ContributionKlassName]
+  def contributable_klass_name
+    self.class.contributable_klass_name
+  end
+
+  # @!attribute [r] contributables_key
+  # @return [Contributions::Types::ContributablesKey]
+  def contributables_key
+    self.class.contributables_key
   end
 
   def display_name
@@ -41,6 +91,15 @@ module Contribution
 
   def location
     overridable_contributor_attribute :location, kind: :organization
+  end
+
+  # @see Attributions::Collections::Manage
+  # @see Attributions::Items::Manage
+  # @return [Dry::Monads::Result]
+  monadic_operation! def manage_attributions
+    options = { contributable_key => __send__(contributable_key) }
+
+    call_operation("attributions.#{contributables_key}.manage", **options)
   end
 
   private
@@ -72,6 +131,15 @@ module Contribution
     return unless association(:contributor).loaded?
 
     contributor.reload
+  end
+
+  # @return [void]
+  def set_default_role!
+    return if role.present?
+
+    contributable = __send__(contributable_key)
+
+    self.role = call_operation("contribution_roles.fetch_default", contributable:).value!
   end
 
   module ClassMethods

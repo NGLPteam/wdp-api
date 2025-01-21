@@ -22,6 +22,16 @@ Rails.application.configure do
   config.good_job.shutdown_timeout = 25 # seconds
   config.good_job.enable_cron = true
   config.good_job.cron = {
+    "attributions.collections.manage": {
+      cron: "*/10 * * * *",
+      class: "Attributions::Collections::ManageJob",
+      description: "Ensure collection attributions are up to date",
+    },
+    "attributions.items.manage": {
+      cron: "*/10 * * * *",
+      class: "Attributions::Items::ManageJob",
+      description: "Ensure item attributions are up to date",
+    },
     "contributors.audit_contribution_counts": {
       cron: "*/5 * * * *",
       class: "Contributors::AuditContributionCountsJob",

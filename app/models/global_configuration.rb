@@ -8,6 +8,7 @@
 # @see Settings::Theme
 # @see SiteLogoUploader
 class GlobalConfiguration < ApplicationRecord
+  include ConfiguresContributionRole
   include SiteLogoUploader::Attachment.new(:logo)
   include TimestampScopes
 
@@ -22,11 +23,17 @@ class GlobalConfiguration < ApplicationRecord
 
   validates :entities, :institution, :site, :theme, store_model: true
 
+  validates :contribution_role_configuration, presence: { on: :update }
+
   before_validation :maybe_clear_logo_mode!
+
+  before_validation :enforce_contribution_role_config!
 
   # @api private
   # @return [void]
   def reset!
+    contribution_role_configuration.try(:reset!)
+
     entities.reset!
 
     institution.reset!
@@ -37,6 +44,13 @@ class GlobalConfiguration < ApplicationRecord
   end
 
   private
+
+  # Ensures that a {ContributionRoleConfig} exists on the {GlobalConfiguration}.
+  #
+  # @return [void]
+  def enforce_contribution_role_config!
+    contribution_role_configuration || build_contribution_role_configuration
+  end
 
   # If a logo is set, we should set the logo mode to `with_text` or `sans_text`.
   #

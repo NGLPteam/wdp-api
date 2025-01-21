@@ -4,7 +4,7 @@ module Contributors
   module Types
     include Dry.Types
 
-    extend Shared::EnhancedTypes
+    extend Support::EnhancedTypes
 
     ORCID_FORMAT = %r,\Ahttps://orcid.org/(?<identifier>\d{4}(?:-\d{4}){3})\z,
 

@@ -3843,6 +3843,20 @@ CREATE VIEW public.audits_mismatched_item_parents AS
 
 
 --
+-- Name: collection_attributions; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.collection_attributions (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    collection_id uuid NOT NULL,
+    contributor_id uuid NOT NULL,
+    "position" bigint NOT NULL,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+--
 -- Name: collection_authorizations; Type: MATERIALIZED VIEW; Schema: public; Owner: -
 --
 
@@ -3879,7 +3893,9 @@ CREATE TABLE public.collection_contributions (
     kind public.citext,
     metadata jsonb,
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    role_id uuid NOT NULL,
+    "position" bigint
 );
 
 
@@ -4007,6 +4023,22 @@ CREATE VIEW public.contextually_assigned_roles AS
 
 
 --
+-- Name: contribution_role_configurations; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.contribution_role_configurations (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    controlled_vocabulary_id uuid NOT NULL,
+    default_item_id uuid NOT NULL,
+    other_item_id uuid,
+    source_type character varying NOT NULL,
+    source_id uuid NOT NULL,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+--
 -- Name: contributors; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -4081,7 +4113,10 @@ CREATE TABLE public.controlled_vocabulary_items (
     url text,
     unselectable boolean DEFAULT false NOT NULL,
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    priority bigint DEFAULT 0 NOT NULL,
+    ranking bigint,
+    tags public.citext[] DEFAULT '{}'::public.citext[] NOT NULL
 );
 
 
@@ -4882,6 +4917,20 @@ CREATE TABLE public.initial_ordering_selections (
 
 
 --
+-- Name: item_attributions; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.item_attributions (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    item_id uuid NOT NULL,
+    contributor_id uuid NOT NULL,
+    "position" bigint NOT NULL,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+--
 -- Name: item_authorizations; Type: MATERIALIZED VIEW; Schema: public; Owner: -
 --
 
@@ -4935,7 +4984,9 @@ CREATE TABLE public.item_contributions (
     kind public.citext,
     metadata jsonb,
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    role_id uuid NOT NULL,
+    "position" bigint
 );
 
 
@@ -6394,6 +6445,14 @@ ALTER TABLE ONLY public.assets
 
 
 --
+-- Name: collection_attributions collection_attributions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.collection_attributions
+    ADD CONSTRAINT collection_attributions_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: collection_contributions collection_contributions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -6439,6 +6498,14 @@ ALTER TABLE ONLY public.communities
 
 ALTER TABLE ONLY public.community_memberships
     ADD CONSTRAINT community_memberships_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: contribution_role_configurations contribution_role_configurations_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.contribution_role_configurations
+    ADD CONSTRAINT contribution_role_configurations_pkey PRIMARY KEY (id);
 
 
 --
@@ -6703,6 +6770,14 @@ ALTER TABLE ONLY public.initial_ordering_links
 
 ALTER TABLE ONLY public.initial_ordering_selections
     ADD CONSTRAINT initial_ordering_selections_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: item_attributions item_attributions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.item_attributions
+    ADD CONSTRAINT item_attributions_pkey PRIMARY KEY (id);
 
 
 --
@@ -7930,6 +8005,20 @@ CREATE INDEX index_authorizing_entities_single_user ON public.authorizing_entiti
 
 
 --
+-- Name: index_collection_attributions_ordering; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_collection_attributions_ordering ON public.collection_attributions USING btree (collection_id, "position");
+
+
+--
+-- Name: index_collection_attributions_uniqueness; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_collection_attributions_uniqueness ON public.collection_attributions USING btree (collection_id, contributor_id);
+
+
+--
 -- Name: index_collection_authorizations_on_auth_path; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -7951,6 +8040,13 @@ CREATE INDEX index_collection_authorizations_on_community_id ON public.collectio
 
 
 --
+-- Name: index_collection_contributions_assigned_uniqueness; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_collection_contributions_assigned_uniqueness ON public.collection_contributions USING btree (contributor_id, collection_id, role_id);
+
+
+--
 -- Name: index_collection_contributions_on_collection_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -7958,10 +8054,10 @@ CREATE INDEX index_collection_contributions_on_collection_id ON public.collectio
 
 
 --
--- Name: index_collection_contributions_uniqueness; Type: INDEX; Schema: public; Owner: -
+-- Name: index_collection_contributions_on_role_id; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE UNIQUE INDEX index_collection_contributions_uniqueness ON public.collection_contributions USING btree (contributor_id, collection_id);
+CREATE INDEX index_collection_contributions_on_role_id ON public.collection_contributions USING btree (role_id);
 
 
 --
@@ -8140,6 +8236,34 @@ CREATE UNIQUE INDEX index_community_memberships_uniqueness ON public.community_m
 
 
 --
+-- Name: index_contribution_role_configurations_on_default_item_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_contribution_role_configurations_on_default_item_id ON public.contribution_role_configurations USING btree (default_item_id);
+
+
+--
+-- Name: index_contribution_role_configurations_on_other_item_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_contribution_role_configurations_on_other_item_id ON public.contribution_role_configurations USING btree (other_item_id);
+
+
+--
+-- Name: index_contribution_role_configurations_on_source; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_contribution_role_configurations_on_source ON public.contribution_role_configurations USING btree (source_type, source_id);
+
+
+--
+-- Name: index_contribution_role_configurations_vocabulary; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_contribution_role_configurations_vocabulary ON public.contribution_role_configurations USING btree (controlled_vocabulary_id);
+
+
+--
 -- Name: index_contributors_on_affiliation; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -8214,6 +8338,27 @@ CREATE UNIQUE INDEX index_controlled_vocabularies_uniqueness ON public.controlle
 --
 
 CREATE INDEX index_controlled_vocabulary_items_on_parent_id ON public.controlled_vocabulary_items USING btree (parent_id);
+
+
+--
+-- Name: index_controlled_vocabulary_items_on_tags; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_controlled_vocabulary_items_on_tags ON public.controlled_vocabulary_items USING gin (tags);
+
+
+--
+-- Name: index_controlled_vocabulary_items_ranking; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_controlled_vocabulary_items_ranking ON public.controlled_vocabulary_items USING btree (parent_id, ranking, "position");
+
+
+--
+-- Name: index_controlled_vocabulary_items_sort_order; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_controlled_vocabulary_items_sort_order ON public.controlled_vocabulary_items USING btree (priority DESC, "position", identifier);
 
 
 --
@@ -9113,6 +9258,20 @@ CREATE INDEX index_initial_ordering_selections_on_ordering_id ON public.initial_
 
 
 --
+-- Name: index_item_attributions_ordering; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_item_attributions_ordering ON public.item_attributions USING btree (item_id, "position");
+
+
+--
+-- Name: index_item_attributions_uniqueness; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_item_attributions_uniqueness ON public.item_attributions USING btree (item_id, contributor_id);
+
+
+--
 -- Name: index_item_authorizations_on_auth_path; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -9141,6 +9300,13 @@ CREATE UNIQUE INDEX index_item_authorizations_on_item_id ON public.item_authoriz
 
 
 --
+-- Name: index_item_contributions_assigned_uniqueness; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_item_contributions_assigned_uniqueness ON public.item_contributions USING btree (contributor_id, item_id, role_id);
+
+
+--
 -- Name: index_item_contributions_on_item_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -9148,10 +9314,10 @@ CREATE INDEX index_item_contributions_on_item_id ON public.item_contributions US
 
 
 --
--- Name: index_item_contributions_uniqueness; Type: INDEX; Schema: public; Owner: -
+-- Name: index_item_contributions_on_role_id; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE UNIQUE INDEX index_item_contributions_uniqueness ON public.item_contributions USING btree (contributor_id, item_id);
+CREATE INDEX index_item_contributions_on_role_id ON public.item_contributions USING btree (role_id);
 
 
 --
@@ -10857,6 +11023,14 @@ ALTER TABLE ONLY public.templates_link_list_definitions
 
 
 --
+-- Name: contribution_role_configurations fk_rails_1a50c10011; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.contribution_role_configurations
+    ADD CONSTRAINT fk_rails_1a50c10011 FOREIGN KEY (default_item_id) REFERENCES public.controlled_vocabulary_items(id) ON DELETE RESTRICT;
+
+
+--
 -- Name: templates_blurb_definitions fk_rails_1a625c1710; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -11113,6 +11287,14 @@ ALTER TABLE ONLY public.controlled_vocabulary_sources
 
 
 --
+-- Name: item_attributions fk_rails_53a0a2efb6; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.item_attributions
+    ADD CONSTRAINT fk_rails_53a0a2efb6 FOREIGN KEY (contributor_id) REFERENCES public.contributors(id) ON DELETE CASCADE;
+
+
+--
 -- Name: templates_metadata_instances fk_rails_54e69d62be; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -11142,6 +11324,14 @@ ALTER TABLE ONLY public.harvest_contributions
 
 ALTER TABLE ONLY public.templates_list_item_instances
     ADD CONSTRAINT fk_rails_5a96c21277 FOREIGN KEY (template_definition_id) REFERENCES public.templates_list_item_definitions(id) ON DELETE CASCADE;
+
+
+--
+-- Name: item_attributions fk_rails_5d6b986800; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.item_attributions
+    ADD CONSTRAINT fk_rails_5d6b986800 FOREIGN KEY (item_id) REFERENCES public.items(id) ON DELETE CASCADE;
 
 
 --
@@ -11465,6 +11655,14 @@ ALTER TABLE ONLY public.templates_ordering_instances
 
 
 --
+-- Name: contribution_role_configurations fk_rails_934d649642; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.contribution_role_configurations
+    ADD CONSTRAINT fk_rails_934d649642 FOREIGN KEY (other_item_id) REFERENCES public.controlled_vocabulary_items(id) ON DELETE RESTRICT;
+
+
+--
 -- Name: harvest_entities fk_rails_96a93b8164; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -11545,11 +11743,27 @@ ALTER TABLE ONLY public.items
 
 
 --
+-- Name: contribution_role_configurations fk_rails_a7327c6253; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.contribution_role_configurations
+    ADD CONSTRAINT fk_rails_a7327c6253 FOREIGN KEY (controlled_vocabulary_id) REFERENCES public.controlled_vocabularies(id) ON DELETE RESTRICT;
+
+
+--
 -- Name: assets fk_rails_a8a9ebb434; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.assets
     ADD CONSTRAINT fk_rails_a8a9ebb434 FOREIGN KEY (collection_id) REFERENCES public.collections(id) ON DELETE RESTRICT;
+
+
+--
+-- Name: item_contributions fk_rails_ad054be81e; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.item_contributions
+    ADD CONSTRAINT fk_rails_ad054be81e FOREIGN KEY (role_id) REFERENCES public.controlled_vocabulary_items(id) ON DELETE RESTRICT;
 
 
 --
@@ -11673,6 +11887,14 @@ ALTER TABLE ONLY public.templates_descendant_list_instances
 
 
 --
+-- Name: collection_contributions fk_rails_c5801bead3; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.collection_contributions
+    ADD CONSTRAINT fk_rails_c5801bead3 FOREIGN KEY (role_id) REFERENCES public.controlled_vocabulary_items(id) ON DELETE RESTRICT;
+
+
+--
 -- Name: schema_version_associations fk_rails_c9a308a9e8; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -11766,6 +11988,14 @@ ALTER TABLE ONLY public.templates_supplementary_definitions
 
 ALTER TABLE ONLY public.orderings
     ADD CONSTRAINT fk_rails_d762d1c80c FOREIGN KEY (handled_schema_definition_id) REFERENCES public.schema_definitions(id) ON DELETE CASCADE;
+
+
+--
+-- Name: collection_attributions fk_rails_d870ec7ace; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.collection_attributions
+    ADD CONSTRAINT fk_rails_d870ec7ace FOREIGN KEY (contributor_id) REFERENCES public.contributors(id) ON DELETE CASCADE;
 
 
 --
@@ -11942,6 +12172,14 @@ ALTER TABLE ONLY public.templates_ordering_instances
 
 ALTER TABLE ONLY public.entity_links
     ADD CONSTRAINT fk_rails_f54d4f5cb3 FOREIGN KEY (source_community_id) REFERENCES public.communities(id) ON DELETE CASCADE;
+
+
+--
+-- Name: collection_attributions fk_rails_f57c9589dd; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.collection_attributions
+    ADD CONSTRAINT fk_rails_f57c9589dd FOREIGN KEY (collection_id) REFERENCES public.collections(id) ON DELETE CASCADE;
 
 
 --
@@ -12215,6 +12453,11 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20250107202700'),
 ('20250107205521'),
 ('20250107212233'),
-('20250108190032');
+('20250108190032'),
+('20250114203526'),
+('20250114204050'),
+('20250114204917'),
+('20250117193735'),
+('20250117193744');
 
 

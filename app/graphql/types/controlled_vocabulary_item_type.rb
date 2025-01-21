@@ -25,6 +25,18 @@ module Types
       TEXT
     end
 
+    field :priority, Integer, null: true do
+      description <<~TEXT
+      An optional priority for certain programmatic sorting tasks within Meru API.
+      TEXT
+    end
+
+    field :tags, [String, { null: false }], null: false do
+      description <<~TEXT
+      Optional tags used for certain programmatic tasks within Meru API.
+      TEXT
+    end
+
     field :url, String, null: true do
       description <<~TEXT
       An optional URL that should be linked to if present, using the `label` as link text,

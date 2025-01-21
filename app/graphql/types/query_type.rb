@@ -99,6 +99,14 @@ module Types
       end
     end
 
+    field :contribution_roles, Types::ContributionRoleConfigurationType, null: false do
+      description "Look up contribution role configuration for a given contributable (or globally)."
+
+      argument :contributable_id, ID, loads: Types::ContributableType, required: false do
+        description "The contributable to load for, if applicable."
+      end
+    end
+
     field :contributors, resolver: Resolvers::ContributorResolver do
       description "A list of all contributors in the system"
     end
@@ -191,6 +199,12 @@ module Types
       Community.by_title(title).first.tap do |community|
         track_entity_event! community
       end
+    end
+
+    # @param [Contributable, nil] contributable
+    # @return [ContributionRoleConfiguration]
+    def contribution_roles(contributable: nil)
+      call_operation("contribution_roles.fetch_config", contributable:).value_or(nil)
     end
 
     def contributor(slug:)

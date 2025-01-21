@@ -11,7 +11,7 @@ module Mutations
 
       attachment! :logo, image: true
 
-      def call(entities: nil, institution: nil, site: nil, theme: nil, **args)
+      def call(contribution_roles: nil, entities: nil, institution: nil, site: nil, theme: nil, **args)
         config = GlobalConfiguration.fetch
 
         authorize config, :update?
@@ -31,6 +31,10 @@ module Mutations
         config.theme = theme if theme.present?
 
         assign_attributes!(config, **args)
+
+        if contribution_roles.present?
+          config.contribution_role_configuration.assign_attributes(contribution_roles)
+        end
 
         persist_model! config, attach_to: :global_configuration
       end

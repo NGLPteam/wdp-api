@@ -7,6 +7,7 @@
 # @see Schemas::Versions::Configuration
 # @subsystem Schema
 class SchemaVersion < ApplicationRecord
+  include ConfiguresContributionRole
   include Liquifies
   include Schemas::Properties::CompilesToSchema
   include Schemas::Static::Namespaced

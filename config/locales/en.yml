@@ -53,6 +53,7 @@ en:
       limited_visibility_requires_range: "must have a range set when visibility is limited"
       linked_to_parent: "cannot be linked to its parent"
       linked_to_itself: "cannot be linked to itself"
+      mismatched_vocabulary_item: "is not a part of the provided vocabulary"
       must_be_associated_with_entity: "must be associated with the provided entity"
       must_be_email: "must be an email"
       must_be_entity: "must be an entity"

@@ -3,6 +3,7 @@
 module Types
   class CollectionType < Types::AbstractModel
     implements Types::AccessibleType
+    implements Types::AttributableType
     implements Types::EntityType
     implements Types::ChildEntityType
     implements Types::HasEntityAnalytics
@@ -17,6 +18,10 @@ module Types
     use_direct_connection_and_edge!
 
     description "A collection of items"
+
+    field :attributions, [Types::CollectionAttributionType, { null: false }], null: false do
+      description "Attributions for the collection."
+    end
 
     field :community, Types::CommunityType, null: false
 
@@ -43,6 +48,8 @@ module Types
 
     field :user_group_access_grants, resolver: Resolvers::AccessGrants::UserGroupCollectionResolver,
       description: "Not presently used"
+
+    load_association! :attributions
 
     # @return [Boolean]
     def has_collections

@@ -5,6 +5,12 @@ module Mutations
     # @see Mutations::Operations::UpdateGlobalConfiguration
     class UpdateGlobalConfiguration < ApplicationContract
       json do
+        optional(:contribution_roles).maybe(:hash) do
+          required(:controlled_vocabulary).value(:controlled_vocabulary)
+          required(:default_item).value(:controlled_vocabulary_item)
+          optional(:other_item).value(:controlled_vocabulary_item)
+        end
+
         optional(:entities).maybe(:hash) do
           required(:suppress_external_links).value(:bool)
         end
@@ -27,6 +33,22 @@ module Mutations
           required(:color).value(included_in?: Settings::Types::COLOR_SCHEMES)
           required(:font).value(included_in?: Settings::Types::FONT_SCHEMES)
         end
+      end
+
+      rule("contribution_roles.default_item") do
+        vocab = values.dig(:contribution_roles, :controlled_vocabulary)
+
+        next if value.blank? || vocab.blank? || value.controlled_vocabulary == vocab
+
+        key.failure(:mismatched_vocabulary_item)
+      end
+
+      rule("contribution_roles.other_item") do
+        vocab = values.dig(:contribution_roles, :controlled_vocabulary)
+
+        next if value.blank? || vocab.blank? || value.controlled_vocabulary == vocab
+
+        key.failure(:mismatched_vocabulary_item)
       end
     end
   end

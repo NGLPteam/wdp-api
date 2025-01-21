@@ -22,14 +22,46 @@ module Types
 
     field :metadata, Types::ContributionMetadataType, null: false
 
-    field :role, String, null: true, description: "An arbitrary text value describing the role the contributor had"
+    field :contribution_role, Types::ControlledVocabularyItemType, null: false, description: "The actual role"
 
-    field :display_name, String, null: false, description: "A potentially-overridden display name value for all contributor types"
+    field :position, Int, null: true do
+      description <<~TEXT
+      An optional sorting discriminator to decide which contribution ranks higher.
+      TEXT
+    end
 
-    field :title, String, null: true, description: "A potentially-overridden value from person contributors"
+    field :role, String, null: true, description: "An arbitrary text value describing the role the contributor had",
+      deprecation_reason: "Use `roleLabel` instead."
 
-    field :affiliation, String, null: true, description: "A potentially-overridden value from person contributors"
+    field :role_label, String, null: true do
+      description "An arbitrary text value describing the role the contributor had"
+    end
 
-    field :location, String, null: true, description: "A potentially-overridden value from organization contributors"
+    field :display_name, String, null: false do
+      description "A potentially-overridden display name value for all contributor types"
+    end
+
+    field :title, String, null: true do
+      description "A potentially-overridden value from person contributors"
+    end
+
+    field :affiliation, String, null: true do
+      description "A potentially-overridden value from person contributors"
+    end
+
+    field :location, String, null: true do
+      description "A potentially-overridden value from organization contributors"
+    end
+
+    load_association! :role, as: :contribution_role
+
+    def role
+      role_label
+    end
+
+    # @return [Promise(String)]
+    def role_label
+      contribution_role.then(&:label)
+    end
   end
 end

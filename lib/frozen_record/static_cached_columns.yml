@@ -1743,6 +1743,87 @@
   default_function: 
   has_default: false
   virtual: false
+- id: CollectionAttribution#id
+  model_name: CollectionAttribution
+  table_name: collection_attributions
+  name: id
+  type: uuid
+  'null': false
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default: 
+  default_function: gen_random_uuid()
+  has_default: true
+  virtual: false
+- id: CollectionAttribution#collection_id
+  model_name: CollectionAttribution
+  table_name: collection_attributions
+  name: collection_id
+  type: uuid
+  'null': false
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: CollectionAttribution#contributor_id
+  model_name: CollectionAttribution
+  table_name: collection_attributions
+  name: contributor_id
+  type: uuid
+  'null': false
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: CollectionAttribution#position
+  model_name: CollectionAttribution
+  table_name: collection_attributions
+  name: position
+  type: integer
+  'null': false
+  sql_type_metadata:
+    sql_type: bigint
+    type: integer
+    limit: 8
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: CollectionAttribution#created_at
+  model_name: CollectionAttribution
+  table_name: collection_attributions
+  name: created_at
+  type: datetime
+  'null': false
+  sql_type_metadata:
+    sql_type: timestamp(6) without time zone
+    type: datetime
+    precision: 6
+  default: 
+  default_function: CURRENT_TIMESTAMP
+  has_default: true
+  virtual: false
+- id: CollectionAttribution#updated_at
+  model_name: CollectionAttribution
+  table_name: collection_attributions
+  name: updated_at
+  type: datetime
+  'null': false
+  sql_type_metadata:
+    sql_type: timestamp(6) without time zone
+    type: datetime
+    precision: 6
+  default: 
+  default_function: CURRENT_TIMESTAMP
+  has_default: true
+  virtual: false
 - id: CollectionAuthorization#community_id
   model_name: CollectionAuthorization
   table_name: collection_authorizations
@@ -1874,6 +1955,33 @@
   default: 
   default_function: CURRENT_TIMESTAMP
   has_default: true
+  virtual: false
+- id: CollectionContribution#role_id
+  model_name: CollectionContribution
+  table_name: collection_contributions
+  name: role_id
+  type: uuid
+  'null': false
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: CollectionContribution#position
+  model_name: CollectionContribution
+  table_name: collection_contributions
+  name: position
+  type: integer
+  'null': true
+  sql_type_metadata:
+    sql_type: bigint
+    type: integer
+    limit: 8
+  default: 
+  default_function: 
+  has_default: false
   virtual: false
 - id: CollectionHierarchy#ancestor_id
   model_name: CollectionHierarchy
@@ -2689,6 +2797,112 @@
   default_function: 
   has_default: false
   virtual: false
+- id: ContributionRoleConfiguration#id
+  model_name: ContributionRoleConfiguration
+  table_name: contribution_role_configurations
+  name: id
+  type: uuid
+  'null': false
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default: 
+  default_function: gen_random_uuid()
+  has_default: true
+  virtual: false
+- id: ContributionRoleConfiguration#controlled_vocabulary_id
+  model_name: ContributionRoleConfiguration
+  table_name: contribution_role_configurations
+  name: controlled_vocabulary_id
+  type: uuid
+  'null': false
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: ContributionRoleConfiguration#default_item_id
+  model_name: ContributionRoleConfiguration
+  table_name: contribution_role_configurations
+  name: default_item_id
+  type: uuid
+  'null': false
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: ContributionRoleConfiguration#other_item_id
+  model_name: ContributionRoleConfiguration
+  table_name: contribution_role_configurations
+  name: other_item_id
+  type: uuid
+  'null': true
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: ContributionRoleConfiguration#source_type
+  model_name: ContributionRoleConfiguration
+  table_name: contribution_role_configurations
+  name: source_type
+  type: string
+  'null': false
+  sql_type_metadata:
+    sql_type: character varying
+    type: string
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: ContributionRoleConfiguration#source_id
+  model_name: ContributionRoleConfiguration
+  table_name: contribution_role_configurations
+  name: source_id
+  type: uuid
+  'null': false
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: ContributionRoleConfiguration#created_at
+  model_name: ContributionRoleConfiguration
+  table_name: contribution_role_configurations
+  name: created_at
+  type: datetime
+  'null': false
+  sql_type_metadata:
+    sql_type: timestamp(6) without time zone
+    type: datetime
+    precision: 6
+  default: 
+  default_function: CURRENT_TIMESTAMP
+  has_default: true
+  virtual: false
+- id: ContributionRoleConfiguration#updated_at
+  model_name: ContributionRoleConfiguration
+  table_name: contribution_role_configurations
+  name: updated_at
+  type: datetime
+  'null': false
+  sql_type_metadata:
+    sql_type: timestamp(6) without time zone
+    type: datetime
+    precision: 6
+  default: 
+  default_function: CURRENT_TIMESTAMP
+  has_default: true
+  virtual: false
 - id: Contributor#id
   model_name: Contributor
   table_name: contributors
@@ -3271,6 +3485,47 @@
     precision: 6
   default: 
   default_function: CURRENT_TIMESTAMP
+  has_default: true
+  virtual: false
+- id: ControlledVocabularyItem#priority
+  model_name: ControlledVocabularyItem
+  table_name: controlled_vocabulary_items
+  name: priority
+  type: integer
+  'null': false
+  sql_type_metadata:
+    sql_type: bigint
+    type: integer
+    limit: 8
+  default: '0'
+  default_function: 
+  has_default: true
+  virtual: false
+- id: ControlledVocabularyItem#ranking
+  model_name: ControlledVocabularyItem
+  table_name: controlled_vocabulary_items
+  name: ranking
+  type: integer
+  'null': true
+  sql_type_metadata:
+    sql_type: bigint
+    type: integer
+    limit: 8
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: ControlledVocabularyItem#tags
+  model_name: ControlledVocabularyItem
+  table_name: controlled_vocabulary_items
+  name: tags
+  type: citext
+  'null': false
+  sql_type_metadata:
+    sql_type: citext[]
+    type: citext
+  default: "{}"
+  default_function: 
   has_default: true
   virtual: false
 - id: ControlledVocabularyItemHierarchy#ancestor_id
@@ -8345,6 +8600,87 @@
   default_function: 
   has_default: false
   virtual: false
+- id: ItemAttribution#id
+  model_name: ItemAttribution
+  table_name: item_attributions
+  name: id
+  type: uuid
+  'null': false
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default: 
+  default_function: gen_random_uuid()
+  has_default: true
+  virtual: false
+- id: ItemAttribution#item_id
+  model_name: ItemAttribution
+  table_name: item_attributions
+  name: item_id
+  type: uuid
+  'null': false
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: ItemAttribution#contributor_id
+  model_name: ItemAttribution
+  table_name: item_attributions
+  name: contributor_id
+  type: uuid
+  'null': false
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: ItemAttribution#position
+  model_name: ItemAttribution
+  table_name: item_attributions
+  name: position
+  type: integer
+  'null': false
+  sql_type_metadata:
+    sql_type: bigint
+    type: integer
+    limit: 8
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: ItemAttribution#created_at
+  model_name: ItemAttribution
+  table_name: item_attributions
+  name: created_at
+  type: datetime
+  'null': false
+  sql_type_metadata:
+    sql_type: timestamp(6) without time zone
+    type: datetime
+    precision: 6
+  default: 
+  default_function: CURRENT_TIMESTAMP
+  has_default: true
+  virtual: false
+- id: ItemAttribution#updated_at
+  model_name: ItemAttribution
+  table_name: item_attributions
+  name: updated_at
+  type: datetime
+  'null': false
+  sql_type_metadata:
+    sql_type: timestamp(6) without time zone
+    type: datetime
+    precision: 6
+  default: 
+  default_function: CURRENT_TIMESTAMP
+  has_default: true
+  virtual: false
 - id: ItemAuthorization#community_id
   model_name: ItemAuthorization
   table_name: item_authorizations
@@ -8489,6 +8825,33 @@
   default: 
   default_function: CURRENT_TIMESTAMP
   has_default: true
+  virtual: false
+- id: ItemContribution#role_id
+  model_name: ItemContribution
+  table_name: item_contributions
+  name: role_id
+  type: uuid
+  'null': false
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: ItemContribution#position
+  model_name: ItemContribution
+  table_name: item_contributions
+  name: position
+  type: integer
+  'null': true
+  sql_type_metadata:
+    sql_type: bigint
+    type: integer
+    limit: 8
+  default: 
+  default_function: 
+  has_default: false
   virtual: false
 - id: ItemHierarchy#ancestor_id
   model_name: ItemHierarchy

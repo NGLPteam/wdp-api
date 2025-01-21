@@ -5,6 +5,20 @@ RSpec.describe Mutations::UpdateGlobalConfiguration, type: :request, graphql: :m
   mutation updateGlobalConfiguration($input: UpdateGlobalConfigurationInput!) {
     updateGlobalConfiguration(input: $input) {
       globalConfiguration {
+        contributionRoles {
+          controlledVocabulary {
+            id
+          }
+
+          defaultItem {
+            id
+          }
+
+          otherItem {
+            id
+          }
+        }
+
         entities {
           suppressExternalLinks
         }
@@ -311,6 +325,108 @@ RSpec.describe Mutations::UpdateGlobalConfiguration, type: :request, graphql: :m
         gql.attribute_errors do |eb|
           eb.error "theme.font" do |e|
             e.included_in Settings::Types::FONT_SCHEMES
+          end
+        end
+      end
+    end
+
+    context "when configuring contributor roles" do
+      let_it_be(:global_configuration, refind: true) { GlobalConfiguration.fetch }
+      let_it_be(:vocab_1) { FactoryBot.create :controlled_vocabulary }
+      let_it_be(:item_1) { FactoryBot.create :controlled_vocabulary_item, controlled_vocabulary: vocab_1 }
+
+      let_it_be(:vocab_2) { FactoryBot.create :controlled_vocabulary }
+      let_it_be(:item_2) { FactoryBot.create :controlled_vocabulary_item, controlled_vocabulary: vocab_2 }
+
+      context "when providing valid data" do
+        let_mutation_input!(:contribution_roles) do
+          {
+            controlled_vocabulary_id: vocab_1.to_encoded_id,
+            default_item_id: item_1.to_encoded_id,
+            other_item_id: item_1.to_encoded_id,
+          }
+        end
+
+        let(:expected_shape) do
+          gql.mutation :update_global_configuration, no_errors: true do |m|
+            m.prop :global_configuration do |gc|
+              gc.prop :contribution_roles do |cr|
+                cr.prop :controlled_vocabulary do |cv|
+                  cv[:id] = vocab_1.to_encoded_id
+                end
+
+                cr.prop :default_item do |di|
+                  di[:id] = item_1.to_encoded_id
+                end
+
+                cr.prop :other_item do |oi|
+                  oi[:id] = item_1.to_encoded_id
+                end
+              end
+            end
+          end
+        end
+
+        it "updates the contributor roles correctly" do
+          expect_request! do |req|
+            req.effect! change { global_configuration.reload_contribution_role_configuration.controlled_vocabulary_id }
+
+            req.data! expected_shape
+          end
+        end
+      end
+
+      context "when providing mismatched default item" do
+        let_mutation_input!(:contribution_roles) do
+          {
+            controlled_vocabulary_id: vocab_1.to_encoded_id,
+            default_item_id: item_2.to_encoded_id,
+          }
+        end
+
+        let(:expected_shape) do
+          gql.mutation :update_global_configuration, no_errors: false do |m|
+            m[:global_configuration] = be_blank
+
+            m.attribute_errors do |ae|
+              ae.error "contributionRoles.defaultItem", :mismatched_vocabulary_item
+            end
+          end
+        end
+
+        it "fails gracefully" do
+          expect_request! do |req|
+            req.effect! keep_the_same { global_configuration.reload_contribution_role_configuration.controlled_vocabulary_id }
+
+            req.data! expected_shape
+          end
+        end
+      end
+
+      context "when providing mismatched other item" do
+        let_mutation_input!(:contribution_roles) do
+          {
+            controlled_vocabulary_id: vocab_1.to_encoded_id,
+            default_item_id: item_1.to_encoded_id,
+            other_item_id: item_2.to_encoded_id,
+          }
+        end
+
+        let(:expected_shape) do
+          gql.mutation :update_global_configuration, no_errors: false do |m|
+            m[:global_configuration] = be_blank
+
+            m.attribute_errors do |ae|
+              ae.error "contributionRoles.otherItem", :mismatched_vocabulary_item
+            end
+          end
+        end
+
+        it "fails gracefully" do
+          expect_request! do |req|
+            req.effect! keep_the_same { global_configuration.reload_contribution_role_configuration.controlled_vocabulary_id }
+
+            req.data! expected_shape
           end
         end
       end

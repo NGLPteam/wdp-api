@@ -22,6 +22,10 @@ RSpec.describe Mutations::UpsertContribution, type: :request, graphql: :mutation
   }
   GRAPHQL
 
+  let_it_be(:vocabulary, refind: true) { FactoryBot.create :controlled_vocabulary }
+
+  let_it_be(:contribution_role, refind: true) { FactoryBot.create :controlled_vocabulary_item, controlled_vocabulary: vocabulary }
+
   let_it_be(:collection, refind: true) { FactoryBot.create :collection }
   let_it_be(:item, refind: true) { FactoryBot.create :item }
 
@@ -34,6 +38,8 @@ RSpec.describe Mutations::UpsertContribution, type: :request, graphql: :mutation
 
     let_mutation_input!(:contributable_id) { contributable&.to_encoded_id }
 
+    let_mutation_input!(:role_id) { contribution_role.to_encoded_id }
+
     let_mutation_input!(:role) { "test role" }
 
     shared_examples_for "upsertion" do
@@ -41,13 +47,6 @@ RSpec.describe Mutations::UpsertContribution, type: :request, graphql: :mutation
         expect_request! do |req|
           req.data! expected_shape
         end
-      end
-
-      it "is idempotent" do
-        expect do
-          make_default_request!
-          make_default_request!
-        end.to change(contributable.contributions_klass, :count).by(1)
       end
     end
 

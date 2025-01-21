@@ -12,12 +12,32 @@ class ControlledVocabularyItem < ApplicationRecord
 
   belongs_to :controlled_vocabulary, inverse_of: :controlled_vocabulary_items
 
-  has_closure_tree order: "position", numeric_order: true, dont_order_roots: true
+  has_many :collection_contributions, inverse_of: :role, foreign_key: :role_id, dependent: :restrict_with_error
+  has_many :item_contributions, inverse_of: :role, foreign_key: :role_id, dependent: :restrict_with_error
 
-  scope :in_default_order, -> { order(position: :asc) }
+  has_many :default_item_configurations, class_name: "ContributionRoleConfiguration", inverse_of: :default_item, dependent: :restrict_with_error
+  has_many :other_item_configurations, class_name: "ContributionRoleConfiguration", inverse_of: :other_item, dependent: :restrict_with_error
+
+  has_closure_tree order: "ranking", numeric_order: true, dont_order_roots: true
+
+  scope :in_default_order, -> { reorder(arel_table[:priority].desc.nulls_last).order(position: :asc, identifier: :asc) }
+
+  scope :tagged_with, ->(tag) { where(arel_value_in_array(tag, arel_table[:tags])) }
 
   validates :identifier, presence: true, uniqueness: { scope: :controlled_vocabulary_id }
   validates :label, presence: true
+
+  after_commit :rerank_parent!, unless: :skip_rerank?
+
+  # @return [void]
+  def rerank_parent!
+    controlled_vocabulary.rerank_items
+  end
+
+  # @return [Boolean]
+  attr_accessor :skip_rerank
+
+  alias skip_rerank? skip_rerank
 
   # @return [Hash]
   def to_item_set
@@ -28,5 +48,11 @@ class ControlledVocabularyItem < ApplicationRecord
       children:,
       unselectable:,
     ).compact
+  end
+
+  class << self
+    def first_tagged_with(tag)
+      tagged_with(tag).in_default_order.first
+    end
   end
 end

@@ -10,6 +10,8 @@ class ControlledVocabulary < ApplicationRecord
 
   DEFAULT_NAMESPACE = "meru.host"
 
+  has_many :contribution_role_configurations, inverse_of: :controlled_vocabulary, dependent: :restrict_with_error
+
   has_many :controlled_vocabulary_items, -> { in_default_order }, inverse_of: :controlled_vocabulary, dependent: :destroy
   has_many :controlled_vocabulary_sources, inverse_of: :controlled_vocabulary, dependent: :nullify
 
@@ -32,6 +34,14 @@ class ControlledVocabulary < ApplicationRecord
   # @return [ControlledVocabulary, nil]
   def item_for(identifier)
     controlled_vocabulary_items.where(identifier:).first
+  end
+
+  alias fetch_item item_for
+
+  # @see ControlledVocabularies::RerankItems
+  # @return [Dry::Monads::Success(Integer)]
+  monadic_operation! def rerank_items
+    call_operation("controlled_vocabularies.rerank_items", controlled_vocabulary: self)
   end
 
   # @api private
@@ -59,11 +69,25 @@ class ControlledVocabulary < ApplicationRecord
   end
 
   class << self
+    # @raise [ActiveRecord::RecordNotFound]
+    # @return [ControlledVocabulary]
+    def system_default_contribution_roles
+      latest_for!("marc_codes")
+    end
+
     # @param [String] identifier
     # @param [String] namespace
     # @return [ControlledVocabulary, nil]
     def latest_for(identifier, namespace: DEFAULT_NAMESPACE)
       where(namespace:, identifier:).order(version: :desc).first
+    end
+
+    # @param [String] identifier
+    # @param [String] namespace
+    # @raise [ActiveRecord::RecordNotFound]
+    # @return [ControlledVocabulary]
+    def latest_for!(identifier, namespace: DEFAULT_NAMESPACE)
+      where(namespace:, identifier:).order(version: :desc).first!
     end
   end
 end

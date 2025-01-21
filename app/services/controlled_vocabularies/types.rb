@@ -3,6 +3,7 @@
 module ControlledVocabularies
   module Types
     include Dry.Types
+    include Dry::Core::Constants
 
     extend Support::EnhancedTypes
 
@@ -21,6 +22,12 @@ module ControlledVocabularies
     Label = Name
 
     Description = String.optional
+
+    Priority = Integer.default(0).fallback(0)
+
+    Tag = Coercible::String.constructor { _1.to_s.strip }.constrained(filled: true, rails_present: true)
+
+    Tags = Coercible::Array.of(Tag).default(EMPTY_ARRAY).fallback(EMPTY_ARRAY)
 
     URL = String.constrained(format: /\A#{Support::GlobalTypes::URL_PATTERN}\z/)
 

@@ -11,6 +11,14 @@ module Mutations
       description "Though a global configuration always exists, this will be null if it fails to apply for some reason."
     end
 
+    argument :contribution_roles, Types::ContributionRoleConfigurationInputType, required: false, attribute: true do
+      description <<~TEXT
+      Optional settings for configuring contribution roles globally.
+
+      **Note**: If left blank, it will not apply anything.
+      TEXT
+    end
+
     argument :entities, Types::Settings::EntitiesSettingsInputType, required: false, attribute: true do
       description "Possible new settings for entity behavior"
     end
