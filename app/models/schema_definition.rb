@@ -5,6 +5,7 @@
 #
 # @subsystem Schema
 class SchemaDefinition < ApplicationRecord
+  include ConfiguresContributionRole
   include Schemas::Static::Namespaced
   include TimestampScopes
 

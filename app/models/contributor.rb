@@ -17,9 +17,11 @@ class Contributor < ApplicationRecord
 
   has_many :harvest_contributors, inverse_of: :contributor, dependent: :nullify
 
+  has_many :collection_attributions, dependent: :delete_all, inverse_of: :contributor
   has_many :collection_contributions, dependent: :destroy, inverse_of: :contributor
   has_many :collections, through: :collection_contributions
 
+  has_many :item_attributions, dependent: :delete_all, inverse_of: :contributor
   has_many :item_contributions, dependent: :destroy, inverse_of: :contributor
   has_many :items, through: :item_contributions
 

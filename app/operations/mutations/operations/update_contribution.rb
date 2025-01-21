@@ -8,6 +8,8 @@ module Mutations
       def call(contribution:, **attributes)
         authorize contribution, :update?
 
+        attributes.delete(:deprecated_role)
+
         contribution.assign_attributes attributes
 
         persist_model! contribution, attach_to: :contribution

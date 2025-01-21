@@ -12,6 +12,8 @@ module ControlledVocabularies
         required(:identifier).value(:identifier)
         required(:label).value(:label)
         optional(:description).maybe(:description)
+        optional(:priority).maybe(:priority)
+        optional(:tags).maybe(:tags)
         optional(:url).maybe(:url)
         optional(:unselectable).value(:bool)
         optional(:children).array(:hash)

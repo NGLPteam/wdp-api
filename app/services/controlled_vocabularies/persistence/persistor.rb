@@ -74,13 +74,16 @@ module ControlledVocabularies
 
         @items_count = item_identifiers.size
         @item_identifiers = item_identifiers.to_a
-        @item_set = controlled_vocabulary.calculate_item_set!
 
         super
       end
 
       wrapped_hook! def clean_up
         controlled_vocabulary.controlled_vocabulary_items.where.not(identifier: item_identifiers).destroy_all
+
+        @item_set = controlled_vocabulary.calculate_item_set!
+
+        yield controlled_vocabulary.rerank_items
 
         controlled_vocabulary.update_columns(item_identifiers:, item_set:, items_count:)
 

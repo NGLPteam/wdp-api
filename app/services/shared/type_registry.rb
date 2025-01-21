@@ -8,6 +8,7 @@ module Shared
     tc.add_model! "Collection"
     tc.add_model! "Community"
     tc.add_model! "ControlledVocabulary"
+    tc.add_model! "ControlledVocabularyItem"
     tc.add_model! "ControlledVocabularySource"
     tc.add_model! "Item"
     tc.add_model! "SchemaDefinition"

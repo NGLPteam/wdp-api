@@ -3,6 +3,7 @@
 module Types
   class ItemType < Types::AbstractModel
     implements Types::AccessibleType
+    implements Types::AttributableType
     implements Types::EntityType
     implements Types::ChildEntityType
     implements Types::HasEntityAnalytics
@@ -17,6 +18,10 @@ module Types
     use_direct_connection_and_edge!
 
     description "An item that belongs to a collection"
+
+    field :attributions, [Types::ItemAttributionType, { null: false }], null: false do
+      description "Attributions for the item."
+    end
 
     field :collection, Types::CollectionType, null: false
     field :community, Types::CommunityType, null: false
@@ -38,6 +43,8 @@ module Types
 
     field :user_group_access_grants, resolver: Resolvers::AccessGrants::UserGroupCollectionResolver,
       description: "Not presently used"
+
+    load_association! :attributions
 
     # @return [Boolean]
     def has_items

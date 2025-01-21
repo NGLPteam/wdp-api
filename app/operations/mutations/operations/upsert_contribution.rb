@@ -8,13 +8,11 @@ module Mutations
       def call(contributable:, contributor:, **inputs)
         authorize contributable, :update?
 
-        klass, attributes, unique_by = contributable.for_upsert_contribution_mutation(contributor:)
+        inputs.delete(:deprecated_role)
 
-        # Currently aliased
-        attributes[:kind] = inputs[:role] if inputs.key?(:role)
-        attributes[:metadata] = inputs[:metadata] if inputs[:metadata].present?
+        result = contributable.attach_contribution(contributor, **inputs)
 
-        upsert_model! klass, attributes, unique_by:, attach_to: :contribution
+        with_attached_result! :contribution, result
       end
     end
   end

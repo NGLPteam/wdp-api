@@ -44,6 +44,8 @@ module ControlledVocabularies
 
         @controlled_vocabulary_item.assign_attributes(parent:, position:)
 
+        @controlled_vocabulary_item.skip_rerank = true
+
         yield monadic_save controlled_vocabulary_item
 
         item_identifiers << item.identifier

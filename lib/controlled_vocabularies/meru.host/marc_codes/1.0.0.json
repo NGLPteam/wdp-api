@@ -126,7 +126,7 @@
       "identifier": "aut",
       "description": "A person, family, or organization responsible for creating a work that is primarily textual in content, regardless of media type (e.g., printed text, spoken word, electronic text, tactile text) or genre (e.g., poems, novels, screenplays, blogs). Use also for persons, etc., creating a new work by paraphrasing, rewriting, or adapting works by another creator such that the modification has substantially changed the nature and content of the original or changed the medium of expression.",
       "priority": 10000,
-      "include_in_feed": true
+      "tags": ["author"]
     },
     {
       "label": "Author in quotations or text abstracts",
@@ -341,7 +341,8 @@
     {
       "label": "Contributor",
       "identifier": "ctb",
-      "description": "A person, family or organization responsible for making contributions to the resource. This includes those whose work has been contributed to a larger work, such as an anthology, serial publication, or other compilation of individual works. If a more specific role is available, prefer that, e.g. editor, compiler, illustrator."
+      "description": "A person, family or organization responsible for making contributions to the resource. This includes those whose work has been contributed to a larger work, such as an anthology, serial publication, or other compilation of individual works. If a more specific role is available, prefer that, e.g. editor, compiler, illustrator.",
+      "tags": ["contributor", "default"]
     },
     {
       "label": "Copyright claimant",
@@ -503,7 +504,7 @@
       "identifier": "edt",
       "description": "A person, family, or organization contributing to a resource by revising or elucidating the content, e.g., adding an introduction, notes, or other critical matter. An editor may also prepare a resource for production, publication, or distribution. For major revisions, adaptations, etc., that substantially change the nature and content of the original work, resulting in a new work, see author.",
       "priority": 9000,
-      "include_in_feed": true
+      "tags": ["editor"]
     },
     {
       "label": "Editor of compilation",
@@ -638,7 +639,8 @@
     {
       "label": "Host institution",
       "identifier": "his",
-      "description": "An organization hosting the event, exhibit, conference, etc., which gave rise to a resource, but having little or no responsibility for the content of the resource."
+      "description": "An organization hosting the event, exhibit, conference, etc., which gave rise to a resource, but having little or no responsibility for the content of the resource.",
+      "tags": ["affiliated_institution"]
     },
     {
       "label": "Illuminator",
@@ -868,7 +870,9 @@
     {
       "label": "Other",
       "identifier": "oth",
-      "description": "A role that has no equivalent in the MARC list."
+      "description": "A role that has no equivalent in the MARC list.",
+      "priority": -10000,
+      "tags": ["other"]
     },
     {
       "label": "Owner",
@@ -1288,7 +1292,8 @@
     {
       "label": "Thesis advisor",
       "identifier": "ths",
-      "description": "A person under whose supervision a degree candidate develops and presents a thesis, mémoire, or text of a dissertation."
+      "description": "A person under whose supervision a degree candidate develops and presents a thesis, mémoire, or text of a dissertation.",
+      "tags": ["advisor"]
     },
     {
       "label": "Transcriber",
@@ -1299,8 +1304,8 @@
       "label": "Translator",
       "identifier": "trl",
       "description": "A person or organization who renders a text from one language into another, or from an older form of a language into the modern form.",
-      "include_in_feed": true,
-      "priority": 8500
+      "priority": 8500,
+      "tags": ["translator"]
     },
     {
       "label": "Type designer",

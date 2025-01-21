@@ -20,6 +20,7 @@ class Collection < ApplicationRecord
 
   belongs_to :community, inverse_of: :collections
 
+  has_many :attributions, -> { in_default_order }, class_name: "CollectionAttribution", dependent: :delete_all, inverse_of: :collection
   has_many :contributions, class_name: "CollectionContribution", dependent: :destroy, inverse_of: :collection
 
   has_many :contributors, through: :contributions

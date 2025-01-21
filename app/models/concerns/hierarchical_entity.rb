@@ -5,6 +5,7 @@ module HierarchicalEntity
   extend DefinesMonadicOperation
 
   include AssociationHelpers
+  include ConfiguresContributionRole
   include EntityTemplating
   include HasSystemSlug
   include Liquifies

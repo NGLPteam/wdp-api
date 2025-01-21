@@ -16,6 +16,12 @@ module ArelHelpers
 
   MANY_ARRAY = Support::ArelExt::Types::ManyArray
 
+  def arel_value_in_array(value, array)
+    any_array = arel_named_fn("ANY", arel_quote(array))
+
+    arel_quote(value).eq(any_array)
+  end
+
   def arel_text_contains(field, value)
     arel_table[field].matches("%#{escape_ilike_needle(value)}%")
   end
