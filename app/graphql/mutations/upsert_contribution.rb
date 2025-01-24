@@ -12,8 +12,9 @@ module Mutations
     argument :contributable_id, ID, loads: Types::ContributableType, required: true
     argument :contributor_id, ID, loads: Types::AnyContributorType, required: true
 
-    argument :role_id, ID, loads: Types::ControlledVocabularyItemType, required: false,
-      description: "If not provided, it will use the default role."
+    argument :role_id, ID, loads: Types::ControlledVocabularyItemType, required: false do
+      description "If not provided, it will use the default role."
+    end
 
     argument :role, String, as: :deprecated_role, required: false, transient: true, description: "An arbitrary text value that describes the kind of contribution",
       deprecation_reason: "No longer used"

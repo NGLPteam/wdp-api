@@ -14,6 +14,10 @@ RSpec.describe Mutations::UpsertContribution, type: :request, graphql: :mutation
         ... on Contribution {
           contributorKind
           displayName
+
+          contributionRole {
+            id
+          }
         }
       }
 
@@ -61,6 +65,10 @@ RSpec.describe Mutations::UpsertContribution, type: :request, graphql: :mutation
             c[:id] = be_an_encoded_id
             c[:contributor_kind] = "person"
             c[:display_name] = contributor.display_name
+
+            c.prop :contribution_role do |cr|
+              cr[:id] = role_id
+            end
           end
         end
       end
@@ -79,6 +87,10 @@ RSpec.describe Mutations::UpsertContribution, type: :request, graphql: :mutation
             c[:id] = be_an_encoded_id
             c[:contributor_kind] = "person"
             c[:display_name] = contributor.display_name
+
+            c.prop :contribution_role do |cr|
+              cr[:id] = role_id
+            end
           end
         end
       end
