@@ -42,7 +42,7 @@ module Types
     # @yieldreturn [Boolean]
     # @return [<String>]
     def argument_paths_for_if(names: [], parent: nil, &block)
-      argument_name = [parent, name].compact.join(?.)
+      argument_name = [parent, keyword || name].compact.join(?.)
 
       names << argument_name if yield(self)
 
@@ -70,7 +70,7 @@ module Types
     # @return [<Symbol>]
     def transient_arguments(names: [], parent: nil)
       argument_paths_for_if(&:transient?).map do |arg|
-        arg.to_s.underscore.to_sym
+        arg.split(?.).map { _1.to_s.underscore }.join(?.).to_sym
       end
     end
 

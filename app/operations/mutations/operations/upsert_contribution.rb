@@ -8,8 +8,6 @@ module Mutations
       def call(contributable:, contributor:, **inputs)
         authorize contributable, :update?
 
-        inputs.delete(:deprecated_role)
-
         result = contributable.attach_contribution(contributor, **inputs)
 
         with_attached_result! :contribution, result
