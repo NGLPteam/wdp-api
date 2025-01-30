@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 module Types
+  # @see Attribution
+  # @see Types::CollectionAttributionType
+  # @see Types::ContributorAttributionType
+  # @see Types::ItemAttributionType
   module AttributionType
     include Types::BaseInterface
 

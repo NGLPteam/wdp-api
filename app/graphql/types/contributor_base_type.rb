@@ -13,6 +13,8 @@ module Types
     in order to prevent inordinately long nesting in GQL fetches in certain situations.
     TEXT
 
+    implements Types::Sluggable
+
     field :kind, Types::ContributorKindType, null: false
 
     field :identifier, String, null: false

@@ -3182,6 +3182,218 @@
   default_function: to_prefix_search(derive_contributor_name(kind, properties))
   has_default: false
   virtual: true
+- id: ContributorAttribution#attribution_id
+  model_name: ContributorAttribution
+  table_name: contributor_attributions
+  name: attribution_id
+  type: uuid
+  'null': true
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: ContributorAttribution#attribution_type
+  model_name: ContributorAttribution
+  table_name: contributor_attributions
+  name: attribution_type
+  type: text
+  'null': true
+  sql_type_metadata:
+    sql_type: text
+    type: text
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: ContributorAttribution#contributor_id
+  model_name: ContributorAttribution
+  table_name: contributor_attributions
+  name: contributor_id
+  type: uuid
+  'null': true
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: ContributorAttribution#collection_id
+  model_name: ContributorAttribution
+  table_name: contributor_attributions
+  name: collection_id
+  type: uuid
+  'null': true
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: ContributorAttribution#item_id
+  model_name: ContributorAttribution
+  table_name: contributor_attributions
+  name: item_id
+  type: uuid
+  'null': true
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: ContributorAttribution#entity_id
+  model_name: ContributorAttribution
+  table_name: contributor_attributions
+  name: entity_id
+  type: uuid
+  'null': true
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: ContributorAttribution#entity_type
+  model_name: ContributorAttribution
+  table_name: contributor_attributions
+  name: entity_type
+  type: text
+  'null': true
+  sql_type_metadata:
+    sql_type: text
+    type: text
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: ContributorAttribution#kind
+  model_name: ContributorAttribution
+  table_name: contributor_attributions
+  name: kind
+  type: enum
+  'null': true
+  sql_type_metadata:
+    sql_type: child_entity_kind
+    type: enum
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: ContributorAttribution#title
+  model_name: ContributorAttribution
+  table_name: contributor_attributions
+  name: title
+  type: citext
+  'null': true
+  sql_type_metadata:
+    sql_type: citext
+    type: citext
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: ContributorAttribution#has_published
+  model_name: ContributorAttribution
+  table_name: contributor_attributions
+  name: has_published
+  type: boolean
+  'null': true
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: ContributorAttribution#published
+  model_name: ContributorAttribution
+  table_name: contributor_attributions
+  name: published
+  type: variable_precision_date
+  'null': true
+  sql_type_metadata:
+    sql_type: variable_precision_date
+    type: variable_precision_date
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: ContributorAttribution#published_on
+  model_name: ContributorAttribution
+  table_name: contributor_attributions
+  name: published_on
+  type: date
+  'null': true
+  sql_type_metadata:
+    sql_type: date
+    type: date
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: ContributorAttribution#published_rank
+  model_name: ContributorAttribution
+  table_name: contributor_attributions
+  name: published_rank
+  type: integer
+  'null': true
+  sql_type_metadata:
+    sql_type: bigint
+    type: integer
+    limit: 8
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: ContributorAttribution#title_rank
+  model_name: ContributorAttribution
+  table_name: contributor_attributions
+  name: title_rank
+  type: integer
+  'null': true
+  sql_type_metadata:
+    sql_type: bigint
+    type: integer
+    limit: 8
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: ContributorAttribution#created_at
+  model_name: ContributorAttribution
+  table_name: contributor_attributions
+  name: created_at
+  type: datetime
+  'null': true
+  sql_type_metadata:
+    sql_type: timestamp(6) without time zone
+    type: datetime
+    precision: 6
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: ContributorAttribution#updated_at
+  model_name: ContributorAttribution
+  table_name: contributor_attributions
+  name: updated_at
+  type: datetime
+  'null': true
+  sql_type_metadata:
+    sql_type: timestamp(6) without time zone
+    type: datetime
+    precision: 6
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
 - id: ControlledVocabulary#id
   model_name: ControlledVocabulary
   table_name: controlled_vocabularies

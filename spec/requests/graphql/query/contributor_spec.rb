@@ -32,6 +32,38 @@ RSpec.describe "Query.contributor", type: :request, disable_ordering_refresh: tr
 
       kind
 
+      attributions {
+        nodes {
+          ... on ContributorAttribution {
+            entitySlug
+            kind
+            published {
+              precision
+              value
+            }
+            publishedOn
+
+            roles {
+              label
+            }
+
+            title
+          }
+
+          ... on ContributorCollectionAttribution {
+            collection {
+              id
+            }
+          }
+
+          ... on ContributorItemAttribution {
+            item {
+              id
+            }
+          }
+        }
+      }
+
       collectionContributions {
         nodes {
           id

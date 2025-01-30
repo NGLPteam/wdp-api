@@ -10,6 +10,7 @@ class ApplicationRecord < ActiveRecord::Base
   include CountFromSubquery
   include DistinctOnOrderValues
   include GraphQLModelSupport
+  include LazyOrdering
   include LimitToOne
   include PostgresEnums
   include StoreModelIntrospection

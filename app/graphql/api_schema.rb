@@ -35,6 +35,11 @@ class APISchema < GraphQL::Schema
   extra_types(
     Types::ContributorType,
     Types::ContributorBaseType,
+    Types::ContributorAttributionType,
+    Types::ContributorAttributionConnectionType,
+    Types::ContributorAttributionEdgeType,
+    Types::ContributorCollectionAttributionType,
+    Types::ContributorItemAttributionType,
     Types::OrganizationContributorType,
     Types::PersonContributorType,
     Types::TemplateContributionType

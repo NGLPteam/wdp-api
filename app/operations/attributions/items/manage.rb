@@ -23,6 +23,8 @@ module Attributions
 
         pruned = yield prune.(item:)
 
+        ContributorAttribution.refresh!
+
         status = { upserted:, pruned:, }
 
         Success status

@@ -144,6 +144,16 @@ CREATE TYPE public.blurb_background AS ENUM (
 
 
 --
+-- Name: child_entity_kind; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.child_entity_kind AS ENUM (
+    'collection',
+    'item'
+);
+
+
+--
 -- Name: collection_link_operator; Type: TYPE; Schema: public; Owner: -
 --
 
@@ -4039,6 +4049,118 @@ CREATE TABLE public.contribution_role_configurations (
 
 
 --
+-- Name: item_attributions; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.item_attributions (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    item_id uuid NOT NULL,
+    contributor_id uuid NOT NULL,
+    "position" bigint NOT NULL,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+--
+-- Name: named_variable_dates; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.named_variable_dates (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    entity_type text NOT NULL,
+    entity_id uuid NOT NULL,
+    schema_version_property_id uuid,
+    path text NOT NULL,
+    actual public.variable_precision_date DEFAULT '(,none)'::public.variable_precision_date NOT NULL,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    actual_precision public.date_precision GENERATED ALWAYS AS ((OPERATOR(public.~>) actual)) STORED NOT NULL,
+    "precision" public.date_precision GENERATED ALWAYS AS (
+CASE
+    WHEN (OPERATOR(public.?^) actual) THEN (OPERATOR(public.~>) actual)
+    ELSE NULL::public.date_precision
+END) STORED,
+    coverage daterange GENERATED ALWAYS AS ((OPERATOR(public.@&) actual)) STORED,
+    normalized public.variable_precision_date GENERATED ALWAYS AS ((OPERATOR(public.#) actual)) STORED,
+    value date GENERATED ALWAYS AS ((OPERATOR(public.~^) actual)) STORED
+);
+
+
+--
+-- Name: contributor_attributions; Type: MATERIALIZED VIEW; Schema: public; Owner: -
+--
+
+CREATE MATERIALIZED VIEW public.contributor_attributions AS
+ WITH raw_attributions AS (
+         SELECT att_1.id AS attribution_id,
+            'CollectionAttribution'::text AS attribution_type,
+            att_1.contributor_id,
+            att_1.collection_id,
+            NULL::uuid AS item_id,
+            att_1.collection_id AS entity_id,
+            'Collection'::text AS entity_type,
+            'collection'::public.child_entity_kind AS kind,
+            ent.title,
+            att_1.created_at,
+            att_1.updated_at
+           FROM (public.collection_attributions att_1
+             JOIN public.collections ent ON ((ent.id = att_1.collection_id)))
+        UNION ALL
+         SELECT att_1.id AS attribution_id,
+            'ItemAttribution'::text AS attribution_type,
+            att_1.contributor_id,
+            NULL::uuid AS collection_id,
+            att_1.item_id,
+            att_1.item_id AS entity_id,
+            'Item'::text AS entity_type,
+            'item'::public.child_entity_kind AS kind,
+            ent.title,
+            att_1.created_at,
+            att_1.updated_at
+           FROM (public.item_attributions att_1
+             JOIN public.items ent ON ((ent.id = att_1.item_id)))
+        ), hydrated_attributions AS (
+         SELECT raw.attribution_id,
+            raw.attribution_type,
+            raw.contributor_id,
+            raw.collection_id,
+            raw.item_id,
+            raw.entity_id,
+            raw.entity_type,
+            raw.kind,
+            raw.title,
+            (nvd.value IS NOT NULL) AS has_published,
+            nvd.normalized AS published,
+            nvd.value AS published_on,
+            raw.created_at,
+            raw.updated_at
+           FROM (raw_attributions raw
+             LEFT JOIN public.named_variable_dates nvd USING (entity_id, entity_type))
+          WHERE (nvd.path = '$published$'::text)
+        )
+ SELECT att.attribution_id,
+    att.attribution_type,
+    att.contributor_id,
+    att.collection_id,
+    att.item_id,
+    att.entity_id,
+    att.entity_type,
+    att.kind,
+    att.title,
+    att.has_published,
+    att.published,
+    att.published_on,
+    dense_rank() OVER publish_w AS published_rank,
+    dense_rank() OVER title_w AS title_rank,
+    att.created_at,
+    att.updated_at
+   FROM hydrated_attributions att
+  WINDOW publish_w AS (PARTITION BY att.contributor_id ORDER BY COALESCE(att.published_on, (att.created_at)::date), att.title, att.created_at), title_w AS (PARTITION BY att.contributor_id ORDER BY att.title, att.created_at)
+  WITH NO DATA;
+
+
+--
 -- Name: contributors; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -4917,20 +5039,6 @@ CREATE TABLE public.initial_ordering_selections (
 
 
 --
--- Name: item_attributions; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.item_attributions (
-    id uuid DEFAULT gen_random_uuid() NOT NULL,
-    item_id uuid NOT NULL,
-    contributor_id uuid NOT NULL,
-    "position" bigint NOT NULL,
-    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
-);
-
-
---
 -- Name: item_authorizations; Type: MATERIALIZED VIEW; Schema: public; Owner: -
 --
 
@@ -5281,31 +5389,6 @@ CREATE VIEW public.link_target_candidates AS
      JOIN public.entities target ON (((target.entity_type = ANY (ARRAY['Collection'::text, 'Item'::text])) AND (NOT (src.auth_path OPERATOR(public.<@) target.auth_path)) AND (src.auth_path OPERATOR(public.<>) target.auth_path) AND (NOT (src.auth_path OPERATOR(public.@>) target.auth_path)))))
      LEFT JOIN public.entity_links existing_link ON (((src.entity_type = (existing_link.source_type)::text) AND (src.entity_id = existing_link.source_id) AND (target.entity_type = (existing_link.target_type)::text) AND (target.entity_id = existing_link.target_id))))
   WHERE (existing_link.id IS NULL);
-
-
---
--- Name: named_variable_dates; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.named_variable_dates (
-    id uuid DEFAULT gen_random_uuid() NOT NULL,
-    entity_type text NOT NULL,
-    entity_id uuid NOT NULL,
-    schema_version_property_id uuid,
-    path text NOT NULL,
-    actual public.variable_precision_date DEFAULT '(,none)'::public.variable_precision_date NOT NULL,
-    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    actual_precision public.date_precision GENERATED ALWAYS AS ((OPERATOR(public.~>) actual)) STORED NOT NULL,
-    "precision" public.date_precision GENERATED ALWAYS AS (
-CASE
-    WHEN (OPERATOR(public.?^) actual) THEN (OPERATOR(public.~>) actual)
-    ELSE NULL::public.date_precision
-END) STORED,
-    coverage daterange GENERATED ALWAYS AS ((OPERATOR(public.@&) actual)) STORED,
-    normalized public.variable_precision_date GENERATED ALWAYS AS ((OPERATOR(public.#) actual)) STORED,
-    value date GENERATED ALWAYS AS ((OPERATOR(public.~^) actual)) STORED
-);
 
 
 --
@@ -8261,6 +8344,48 @@ CREATE UNIQUE INDEX index_contribution_role_configurations_on_source ON public.c
 --
 
 CREATE INDEX index_contribution_role_configurations_vocabulary ON public.contribution_role_configurations USING btree (controlled_vocabulary_id);
+
+
+--
+-- Name: index_contributor_attributions_entity; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_contributor_attributions_entity ON public.contributor_attributions USING btree (entity_type, entity_id);
+
+
+--
+-- Name: index_contributor_attributions_on_attribution_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_contributor_attributions_on_attribution_id ON public.contributor_attributions USING btree (attribution_id);
+
+
+--
+-- Name: index_contributor_attributions_on_item_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_contributor_attributions_on_item_id ON public.contributor_attributions USING btree (item_id);
+
+
+--
+-- Name: index_contributor_attributions_source; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_contributor_attributions_source ON public.contributor_attributions USING btree (attribution_type, attribution_id);
+
+
+--
+-- Name: index_contributor_published_ranking; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_contributor_published_ranking ON public.contributor_attributions USING btree (contributor_id, published_rank);
+
+
+--
+-- Name: index_contributor_title_ranking; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_contributor_title_ranking ON public.contributor_attributions USING btree (contributor_id, title_rank);
 
 
 --
@@ -12458,6 +12583,8 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20250114204050'),
 ('20250114204917'),
 ('20250117193735'),
-('20250117193744');
+('20250117193744'),
+('20250129171809'),
+('20250129171943');
 
 
