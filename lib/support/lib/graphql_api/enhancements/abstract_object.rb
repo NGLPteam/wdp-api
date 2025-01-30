@@ -7,6 +7,7 @@ module Support
         extend ActiveSupport::Concern
 
         include Support::GraphQLAPI::AssociationHelpers
+        include Support::GraphQLAPI::DirectConnectionAndEdgeSupport
         include Support::GraphQLAPI::ImageAttachmentSupport
         include Support::GraphQLAPI::PunditHelpers
 

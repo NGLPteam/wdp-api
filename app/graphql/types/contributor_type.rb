@@ -15,6 +15,8 @@ module Types
 
     implements Types::ContributorBaseType
 
+    field :attributions, resolver: Resolvers::ContributorAttributionResolver, connection: true
+
     field :collection_contributions, resolver: Resolvers::CollectionContributionResolver, connection: true
 
     field :item_contributions, resolver: Resolvers::ItemContributionResolver, connection: true
