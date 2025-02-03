@@ -30,7 +30,7 @@
         </metadata>
         <sidebar>
           {% if props.cc_license.exists %}
-            {% sbitem icon: "cc" %} {{ props.cc_license }} {% endsbitem %}
+            {% sbitem icon: "cc" %} {{ props.cc_license }} License {% endsbitem %}
           {% endif %}
           {% if props.peer_reviewed.exists %}
             {% sbitem icon: "user" %} Peer Reviewed {% endsbitem %}
