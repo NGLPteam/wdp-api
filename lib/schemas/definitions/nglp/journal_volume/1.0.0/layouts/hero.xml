@@ -35,7 +35,7 @@
         </header-summary>
         <sidebar>
           {% if ancestors.journal.props.cc_license.exists %}
-            {% sbitem icon: "cc" %} {{ ancestors.journal.props.cc_license }} {% endsbitem %}
+            {% sbitem icon: "cc" %} {{ ancestors.journal.props.cc_license }} License {% endsbitem %}
           {% endif %}
           {% if ancestors.journal.props.peer_reviewed.exists %}
             {% sbitem icon: "user" %} Peer Reviewed {% endsbitem %}

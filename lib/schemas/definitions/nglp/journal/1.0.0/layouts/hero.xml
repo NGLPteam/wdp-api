@@ -6,10 +6,10 @@
       <enable-descendant-browsing>true</enable-descendant-browsing>
       <enable-descendant-search>true</enable-descendant-search>
       <list-contributors>false</list-contributors>
-      <show-basic-view-metrics>false</show-basic-view-metrics>
+      <show-basic-view-metrics>true</show-basic-view-metrics>
       <show-big-search-prompt>false</show-big-search-prompt>
       <show-breadcrumbs>true</show-breadcrumbs>
-      <show-doi>false</show-doi>
+      <show-doi>true</show-doi>
       <show-hero-image>true</show-hero-image>
       <show-issn>true</show-issn>
       <show-sharing-link>true</show-sharing-link>
@@ -26,7 +26,7 @@
         <header-aside/>
         <header-sidebar>
           {% if props.cc_license.exists %}
-            {% sbitem icon: "cc" %} {{ props.cc_license }} {% endsbitem %}
+            {% sbitem icon: "cc" %} {{ props.cc_license }} License {% endsbitem %}
           {% endif %}
           {% if props.peer_reviewed.exists %}
             {% sbitem icon: "user" %} Peer Reviewed {% endsbitem %}
