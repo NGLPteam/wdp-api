@@ -39,6 +39,11 @@
             {{entity.summary}}
           {% endif %}
         </summary>
+        <call-to-action>
+          {% asset props.pdf_version %}
+            Download PDF
+          {% endasset %}
+        </call-to-action>
       </slots>
     </hero>
   </templates>
