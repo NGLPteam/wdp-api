@@ -62,6 +62,7 @@
     { "path": "number", "label": "Issue Number", "type": "string", "function": "metadata" },
     { "path": "sortable_number", "label": "Sortable Issue Number", "type": "integer", "function": "sorting" },
     { "path": "id", "label": "Harvesting Issue Identifier", "type": "string", "function": "metadata" },
+    { "path": "pdf_version", "label": "PDF Version", "type": "asset", "required": false, "function": "content" },
     {
       "path": "featured_articles",
       "label": "Featured Articles",
