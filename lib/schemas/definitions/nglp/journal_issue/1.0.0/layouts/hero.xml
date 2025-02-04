@@ -11,7 +11,7 @@
       <show-breadcrumbs>true</show-breadcrumbs>
       <show-doi>true</show-doi>
       <show-hero-image>false</show-hero-image>
-      <show-issn>true</show-issn>
+      <show-issn>false</show-issn>
       <show-sharing-link>true</show-sharing-link>
       <show-split-display>true</show-split-display>
       <show-thumbnail-image>true</show-thumbnail-image>
