@@ -50,9 +50,11 @@
         </subheader-summary>
         <summary/>
         <call-to-action>
-          {% asset props.pdf_version %}
-            Download PDF
-          {% endasset %}
+          {% if props.pdf_version.exists %}
+            {% asset props.pdf_version %}
+              Download PDF
+            {% endasset %}
+          {% endif %}
         </call-to-action>
       </slots>
     </hero>
