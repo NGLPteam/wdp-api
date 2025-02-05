@@ -79,7 +79,7 @@
             {% mditem %}
               {% mdvalue label: "PDF Version" %}
                 {% asset props.pdf_version %}
-                  {{props.pdf_version.name}}
+                  Download
                 {% endasset %}
               {% endmdvalue %}
             {% endmditem %}
