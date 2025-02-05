@@ -37,7 +37,7 @@
           {% endif %}
         </header-summary>
         <metadata>
-          {% if entity.published %} {{ entity.published }} {% endif %}
+          {% if entity.published %} Published {{ entity.published }} {% endif %}
         </metadata>
         <sidebar>
           {% if ancestors.journal.props.cc_license.exists %}
