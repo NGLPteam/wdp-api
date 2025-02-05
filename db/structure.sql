@@ -412,6 +412,17 @@ CREATE TYPE public.link_operator AS ENUM (
 
 
 --
+-- Name: list_entity_context; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.list_entity_context AS ENUM (
+    'full',
+    'abbr',
+    'none'
+);
+
+
+--
 -- Name: list_item_selection_mode; Type: TYPE; Schema: public; Owner: -
 --
 
@@ -5958,7 +5969,9 @@ CREATE TABLE public.templates_descendant_list_definitions (
     width public.template_width DEFAULT 'full'::public.template_width NOT NULL,
     see_all_ordering_identifier text,
     show_contributors boolean DEFAULT false NOT NULL,
-    show_nested_entities boolean DEFAULT false NOT NULL
+    show_nested_entities boolean DEFAULT false NOT NULL,
+    entity_context public.list_entity_context DEFAULT 'none'::public.list_entity_context NOT NULL,
+    browse_style boolean DEFAULT false NOT NULL
 );
 
 
@@ -6119,7 +6132,9 @@ CREATE TABLE public.templates_link_list_definitions (
     width public.template_width DEFAULT 'full'::public.template_width NOT NULL,
     see_all_ordering_identifier text,
     show_contributors boolean DEFAULT false NOT NULL,
-    show_nested_entities boolean DEFAULT false NOT NULL
+    show_nested_entities boolean DEFAULT false NOT NULL,
+    entity_context public.list_entity_context DEFAULT 'none'::public.list_entity_context NOT NULL,
+    browse_style boolean DEFAULT false NOT NULL
 );
 
 
@@ -12585,6 +12600,8 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20250117193735'),
 ('20250117193744'),
 ('20250129171809'),
-('20250129171943');
+('20250129171943'),
+('20250205024007'),
+('20250205025649');
 
 

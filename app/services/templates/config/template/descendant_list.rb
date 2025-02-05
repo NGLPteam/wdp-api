@@ -15,6 +15,10 @@ module Templates
 
         attribute :background, ::Templates::Config::Properties::DescendantListBackground, default: -> { "none" }
 
+        attribute :browse_style, ::Templates::Config::Properties::Boolean, default: -> { false }
+
+        attribute :entity_context, ::Templates::Config::Properties::ListEntityContext, default: -> { "none" }
+
         attribute :selection_source, ::Templates::Config::Properties::SelectionSource
 
         attribute :selection_mode, ::Templates::Config::Properties::DescendantListSelectionMode
@@ -41,8 +45,6 @@ module Templates
 
         attribute :show_see_all_button, ::Templates::Config::Properties::Boolean, default: -> { false }
 
-        attribute :show_entity_context, ::Templates::Config::Properties::Boolean, default: -> { false }
-
         attribute :show_hero_image, ::Templates::Config::Properties::Boolean, default: -> { false }
 
         attribute :use_selection_fallback, ::Templates::Config::Properties::Boolean, default: -> { false }
@@ -57,7 +59,11 @@ module Templates
 
           map_element "background", to: :background
 
+          map_element "browse-style", to: :browse_style
+
           map_element "dynamic-ordering-definition", to: :dynamic_ordering_definition
+
+          map_element "entity-context", to: :entity_context
 
           map_element "manual-list-name", to: :manual_list_name
 
@@ -78,8 +84,6 @@ module Templates
           map_element "selection-source", to: :selection_source
 
           map_element "show-contributors", to: :show_contributors
-
-          map_element "show-entity-context", to: :show_entity_context
 
           map_element "show-hero-image", to: :show_hero_image
 

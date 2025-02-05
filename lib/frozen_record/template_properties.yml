@@ -34,6 +34,14 @@
   enum_name: descendant_list_background
   default: none
 - template_kind: descendant_list
+  name: browse_style
+  property_kind_name: boolean
+  default: false
+- template_kind: descendant_list
+  name: entity_context
+  property_kind_name: list_entity_context
+  default: "none"
+- template_kind: descendant_list
   name: selection_source
   property_kind_name: selection_source
 - template_kind: descendant_list
@@ -91,6 +99,7 @@
   name: show_entity_context
   property_kind_name: boolean
   default: false
+  deprecation_reason: "Use entity_context enum instead"
 - template_kind: descendant_list
   name: show_hero_image
   property_kind_name: boolean
@@ -191,6 +200,14 @@
   enum_name: link_list_background
   default: none
 - template_kind: link_list
+  name: browse_style
+  property_kind_name: boolean
+  default: false
+- template_kind: link_list
+  name: entity_context
+  property_kind_name: list_entity_context
+  default: "none"
+- template_kind: link_list
   name: selection_source
   property_kind_name: selection_source
 - template_kind: link_list
@@ -242,6 +259,7 @@
   name: show_entity_context
   property_kind_name: boolean
   default: false
+  deprecation_reason: "Use entity_context enum instead"
 - template_kind: link_list
   name: show_hero_image
   property_kind_name: boolean

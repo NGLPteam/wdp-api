@@ -178,6 +178,18 @@
 - name: context_c
   slot_kind: inline
   template_kind: list_item
+- name: nested_header
+  slot_kind: inline
+  template_kind: list_item
+- name: nested_subheader
+  slot_kind: inline
+  template_kind: list_item
+- name: nested_context
+  slot_kind: inline
+  template_kind: list_item
+- name: nested_metadata
+  slot_kind: inline
+  template_kind: list_item
 - name: header
   slot_kind: inline
   template_kind: metadata
