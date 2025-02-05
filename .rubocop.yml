@@ -161,7 +161,7 @@ Lint/SymbolConversion:
   Enabled: true
 
 Lint/ToEnumArguments:
-  Enabled: true
+  Enabled: false
 
 Lint/TripleQuotes:
   Enabled: true

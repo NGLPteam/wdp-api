@@ -12,15 +12,12 @@ module Mutations
 
       # Update an entity and potentially update its schema properties.
       #
+      # @see #persist_entity!
       # @param [HierarchicalEntity] entity
       # @param [{ Symbol => Object }] attributes core attributes to apply
       # @return [void]
       def update_entity!(entity, **attributes)
-        assign_attributes! entity, **attributes
-
-        persist_model! entity
-
-        maybe_apply_schema_properties! entity
+        persist_entity! entity, **attributes
       end
     end
   end

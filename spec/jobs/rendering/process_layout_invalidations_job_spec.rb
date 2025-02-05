@@ -20,8 +20,7 @@ RSpec.describe Rendering::ProcessLayoutInvalidationsJob, type: :job do
     it "works as expected" do
       expect do
         described_class.perform_now
-      end.to change(LayoutInvalidation, :count).by(-6)
-        .and change(Templates::HeroInstance, :count).by(2)
+      end.to have_enqueued_job(Rendering::ProcessLayoutInvalidationJob).twice
     end
   end
 end

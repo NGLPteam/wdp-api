@@ -58,9 +58,14 @@ RSpec.describe Mutations::UpdateCollection, type: :request, graphql: :mutation d
     end
 
     it "updates a collection" do
-      expect_the_default_request.to change { collection.reload.title }.from(old_title).to(new_title)
+      expect_request! do |req|
+        req.effect! change { collection.reload.title }.from(old_title).to(new_title)
+        req.effect! change(Layouts::MainInstance, :count).by(1)
+        req.effect! have_enqueued_job(Entities::InvalidateAncestorLayoutsJob).once
+        req.effect! have_enqueued_job(Entities::InvalidateDescendantLayoutsJob).once
 
-      expect_graphql_data expected_shape
+        req.data! expected_shape
+      end
     end
 
     context "with a blank title" do
