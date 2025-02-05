@@ -113,7 +113,7 @@
         <select direct="descendants"/>
       </dynamic-ordering-definition>
       <selection-source>self</selection-source>
-      <entity-context>none</entity-context>
+      <entity-context>full</entity-context>
       <show-hero-image>true</show-hero-image>
       <show-see-all-button>false</show-see-all-button>
       <see-all-ordering-identifier>issues</see-all-ordering-identifier>

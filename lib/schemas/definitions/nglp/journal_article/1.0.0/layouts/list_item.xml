@@ -30,6 +30,14 @@
             {{ancestors.issue.title}}
           {% endif %}
         </context-abbr>
+        <nested-header>
+          {{entity.title}}
+        </nested-header>
+        <nested-subheader>
+          {{entity.subtitle}}
+        </nested-subheader>
+        <nested-metadata/>
+        <nested-context/>
       </slots>
     </list-item>
   </templates>
