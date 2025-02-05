@@ -37,7 +37,7 @@
           {% endif %}
         </sidebar>
         <metadata>
-          {% if entity.published %} {{ entity.published }} {% endif %}
+          {% if entity.published %} Published {{ entity.published }} {% endif %}
         </metadata>
         <summary>
           {{entity.summary}}
