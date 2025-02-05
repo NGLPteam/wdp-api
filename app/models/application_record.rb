@@ -12,6 +12,7 @@ class ApplicationRecord < ActiveRecord::Base
   include GraphQLModelSupport
   include LazyOrdering
   include LimitToOne
+  include ModelMutationSupport
   include PostgresEnums
   include StoreModelIntrospection
   include WhereMatches

@@ -7,11 +7,12 @@ Rails.application.configure do
   queues = [
     "maintenance:1",
     "rendering:1",
-    "+hierarchies,entities,orderings:5",
+    "+hierarchies,entities,orderings,invalidations,layouts:10",
     "+extraction,harvesting,asset_fetching:5",
     "permissions,processing,default,mailers,ahoy:5",
   ].join(?;)
 
+  config.good_job.cleanup_preserved_jobs_before_seconds_ago = 43_200 # half-day
   config.good_job.preserve_job_records = true
   config.good_job.retry_on_unhandled_error = true
   # config.good_job.on_thread_error = ->(exception) { Rollbar.error(exception) }

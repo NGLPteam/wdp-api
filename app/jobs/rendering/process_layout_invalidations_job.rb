@@ -29,7 +29,7 @@ module Rendering
     # @param [String] _before
     # @return [void]
     def each_iteration(layout_invalidation, _before = Time.current.iso8601)
-      layout_invalidation.process!
+      Rendering::ProcessLayoutInvalidationJob.perform_later layout_invalidation
     end
   end
 end

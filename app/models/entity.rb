@@ -122,6 +122,14 @@ class Entity < ApplicationRecord
       where matches
     end
 
+    # @param [#auth_path] child
+    # @return [ActiveRecord::Relation<Entity>]
+    def containing(child)
+      return none unless child.present? && child.respond_to?(:auth_path) && child.auth_path.present?
+
+      where arel_auth_path_containing child.auth_path
+    end
+
     # @param [#auth_path] parent
     # @return [ActiveRecord::Relation<Entity>]
     def descending_from(parent)
@@ -202,6 +210,18 @@ class Entity < ApplicationRecord
       not_same = auth_path.not_eq(containing_auth_path)
 
       contained = arel_infix("<@", auth_path, arel_quote(containing_auth_path))
+
+      not_same.and(contained)
+    end
+
+    # @param [String] contained_auth_path
+    # @return [Arel::Nodes::And(Arel::Nodes::Inequality, Arel::Nodes::InfixOperation("<@"))]
+    def arel_auth_path_containing(contained_auth_path)
+      auth_path = arel_table[:auth_path]
+
+      not_same = auth_path.not_eq(contained_auth_path)
+
+      contained = arel_infix("@>", auth_path, arel_quote(contained_auth_path))
 
       not_same.and(contained)
     end

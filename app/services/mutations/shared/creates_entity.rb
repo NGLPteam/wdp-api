@@ -13,17 +13,14 @@ module Mutations
 
       # Create an entity and potentially assign its schema properties.
       #
+      # @see #persist_entity!
       # @param [HierarchicalEntity] entity
       # @param [{ Symbol => Object }] attributes core attributes to apply
       # @return [void]
       def create_entity!(entity, **attributes)
         attributes[:schema_version] = loaded_schema_version
 
-        assign_attributes! entity, **attributes
-
-        persist_model! entity
-
-        maybe_apply_schema_properties! entity
+        persist_entity! entity, **attributes
       end
     end
   end

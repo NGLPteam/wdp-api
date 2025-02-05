@@ -26,8 +26,9 @@ RSpec.describe Mutations::CreateCollection, type: :request, graphql: :mutation d
   context "as an admin" do
     let(:token) { token_helper.build_token has_global_admin: true }
 
-    let!(:community) { FactoryBot.create :community }
-    let!(:parent_collection) { FactoryBot.create :collection, community: }
+    let_it_be(:community, refind: true) { FactoryBot.create :community }
+    let_it_be(:parent_collection, refind: true) { FactoryBot.create :collection, community: }
+
     let!(:parent) { community }
 
     let(:alt_text) { "Some Alt Text" }
@@ -63,23 +64,36 @@ RSpec.describe Mutations::CreateCollection, type: :request, graphql: :mutation d
       let(:parent) { community }
 
       it "works" do
-        expect_the_default_request.to change(Collection, :count).by(1)
+        expect_request! do |req|
+          req.effect! change(Collection, :count).by(1)
+          req.effect! change(Layouts::MainInstance, :count).by(1)
+          req.effect! have_enqueued_job(Entities::InvalidateAncestorLayoutsJob).once
+          req.effect! have_enqueued_job(Entities::InvalidateDescendantLayoutsJob).once
+          req.effect! have_enqueued_job(Entities::SyncHierarchiesJob).once
 
-        expect_graphql_data expected_shape
+          req.data! expected_shape
+        end
       end
 
       context "when creating with a schema that defines orderings" do
-        let!(:simple_community) { FactoryBot.create :schema_version, :simple_community }
-        let!(:simple_collection) { FactoryBot.create :schema_version, :simple_collection }
+        let_it_be(:simple_community) { FactoryBot.create :schema_version, :simple_community }
+        let_it_be(:simple_collection) { FactoryBot.create :schema_version, :simple_collection }
 
-        let!(:community) { FactoryBot.create :community, schema_version: simple_community }
+        let_it_be(:community, refind: true) { FactoryBot.create :community, schema_version: simple_community }
 
         let_mutation_input!(:schema_version_slug) { simple_collection.declaration }
 
         it "creates the orderings" do
-          expect_the_default_request.to change(Ordering, :count).by(2)
+          expect_request! do |req|
+            req.effect! change(Collection, :count).by(1)
+            req.effect! change(Layouts::MainInstance, :count).by(1)
+            req.effect! change(Ordering, :count).by(2)
+            req.effect! have_enqueued_job(Entities::InvalidateAncestorLayoutsJob).once
+            req.effect! have_enqueued_job(Entities::InvalidateDescendantLayoutsJob).once
+            req.effect! have_enqueued_job(Entities::SyncHierarchiesJob).once
 
-          expect_graphql_data expected_shape
+            req.data! expected_shape
+          end
         end
       end
     end
@@ -88,9 +102,15 @@ RSpec.describe Mutations::CreateCollection, type: :request, graphql: :mutation d
       let(:parent) { parent_collection }
 
       it "works" do
-        expect_the_default_request.to change(Collection, :count).by(1)
+        expect_request! do |req|
+          req.effect! change(Collection, :count).by(1)
+          req.effect! change(Layouts::MainInstance, :count).by(1)
+          req.effect! have_enqueued_job(Entities::InvalidateAncestorLayoutsJob).once
+          req.effect! have_enqueued_job(Entities::InvalidateDescendantLayoutsJob).once
+          req.effect! have_enqueued_job(Entities::SyncHierarchiesJob).once
 
-        expect_graphql_data expected_shape
+          req.data! expected_shape
+        end
       end
 
       context "with a blank schema_version_slug" do
@@ -107,9 +127,11 @@ RSpec.describe Mutations::CreateCollection, type: :request, graphql: :mutation d
         end
 
         it "fails" do
-          expect_the_default_request.to keep_the_same(Collection, :count)
+          expect_request! do |req|
+            req.effect! keep_the_same(Collection, :count)
 
-          expect_graphql_data expected_shape
+            req.data! expected_shape
+          end
         end
       end
     end

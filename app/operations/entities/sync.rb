@@ -4,6 +4,7 @@ module Entities
   # Synchronizes a {SyncsEntities model} into an {Entity} representation.
   class Sync
     include Dry::Monads[:do, :result]
+    include Entities::Captors::Syncs::Interface
     include MonadicPersistence
     include MeruAPI::Deps[
       calculate_authorizing: "entities.calculate_authorizing",
@@ -23,7 +24,9 @@ module Entities
 
       yield maybe_upsert_visibility! source
 
-      Entities::SyncHierarchiesJob.perform_later source
+      unless entity_sync_captured?(source)
+        Entities::SyncHierarchiesJob.perform_later source
+      end
 
       yield calculate_authorizing! source
 

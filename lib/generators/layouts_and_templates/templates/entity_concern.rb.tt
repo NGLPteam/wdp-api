@@ -8,14 +8,17 @@ module EntityTemplating
   extend ActiveSupport::Concern
   extend DefinesMonadicOperation
 
+  include ModelMutationSupport
+
   included do
     has_many :layout_invalidations, as: :entity, inverse_of: :entity, dependent: :delete_all
-
     <%- layout_kinds.each do |layout_kind| -%>
+
     has_many :<%= layout_kind %>_layout_definitions,
       class_name: "Layouts::<%= layout_kind.classify %>Definition",
       as: :entity,
       dependent: :destroy
+
     has_one :<%= layout_kind %>_layout_instance,
       class_name: "Layouts::<%= layout_kind.classify %>Instance",
       as: :entity,
@@ -23,13 +26,29 @@ module EntityTemplating
       dependent: :destroy
     <%- end -%>
 
-    after_save_commit :invalidate_layouts!
+    after_save :invalidate_layouts!, unless: :in_graphql_mutation?
+    after_save :invalidate_related_layouts!, unless: :in_graphql_mutation?
+  end
+
+  # @see #invalidate_layouts
+  # @see #invalidate_related_layouts
+  # @return [Dry::Monads::Success(void)]
+  monadic_operation! def invalidate_all_layouts
+    invalidate_layouts.bind do
+      invalidate_related_layouts
+    end
   end
 
   # @see Entities::InvalidateLayouts
   # @return [Dry::Monads::Success(void)]
   monadic_operation! def invalidate_layouts
     call_operation("entities.invalidate_layouts", self)
+  end
+
+  # @see Entities::InvalidateRelatedLayouts
+  # @return [Dry::Monads::Success(void)]
+  monadic_operation! def invalidate_related_layouts
+    call_operation("entities.invalidate_related_layouts", self)
   end
 
   # @see Entities::RenderLayout

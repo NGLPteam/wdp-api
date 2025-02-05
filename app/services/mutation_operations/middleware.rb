@@ -28,9 +28,11 @@ module MutationOperations
     # @param [Array] args
     def call(operation, **args)
       response, result = with_graphql_response(base_response) do
-        with_transaction do
-          with_effects_stack do
-            operation.perform!(**args)
+        Mutations.with_active! do
+          with_transaction do
+            with_effects_stack do
+              operation.perform!(**args)
+            end
           end
         end
       end

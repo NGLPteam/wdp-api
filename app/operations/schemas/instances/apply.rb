@@ -30,23 +30,27 @@ module Schemas
       def call(entity, values)
         target, _definition, version = yield validate_target! entity
 
-        yield check_and_assign_version! target, version
+        target.with_active_mutation! do
+          yield check_and_assign_version! target, version
 
-        validated_values = yield validate_properties! version, values, target
+          validated_values = yield validate_properties! version, values, target
 
-        yield write_values! target, version, validated_values
+          yield write_values! target, version, validated_values
 
-        yield monadic_save target
+          yield monadic_save target
 
-        yield extract_orderable_properties.call target
+          yield extract_orderable_properties.call target
 
-        yield extract_searchable_properties.call target
+          yield extract_searchable_properties.call target
 
-        yield extract_composed_text.(target)
+          yield extract_composed_text.(target)
 
-        target.schematic_collected_references.reload
-        target.schematic_scalar_references.reload
-        target.schematic_texts.reload
+          target.schematic_collected_references.reload
+          target.schematic_scalar_references.reload
+          target.schematic_texts.reload
+        end
+
+        yield target.invalidate_all_layouts unless target.in_graphql_mutation?
 
         Success target
       end
