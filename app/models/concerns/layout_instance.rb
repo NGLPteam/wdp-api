@@ -22,6 +22,14 @@ module LayoutInstance
     scope :with_template_instances, -> { includes(*template_instance_names) }
 
     validates :generation, presence: true
+
+    after_save :clear_template_instances!
+  end
+
+  # @!attribute [r] all_hidden
+  # @return [Boolean]
+  def all_hidden
+    template_instances.blank? || template_instances.all?(&:hidden?)
   end
 
   # @return [<Symbol>]
@@ -31,6 +39,18 @@ module LayoutInstance
 
   # @return [<TemplateInstance>]
   def template_instances
+    @template_instances ||= fetch_template_instances
+  end
+
+  private
+
+  # @return [void]
+  def clear_template_instances!
+    @template_instances = false
+  end
+
+  # @return [<TemplateInstance>]
+  def fetch_template_instances
     template_instance_names.map do |assoc|
       __send__(assoc).to_a
     end.reduce(&:+).sort_by(&:position)

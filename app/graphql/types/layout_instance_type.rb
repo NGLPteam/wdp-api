@@ -14,6 +14,12 @@ module Types
 
     implements Types::RenderableType
 
+    field :all_hidden, Boolean, null: false do
+      description <<~TEXT
+      Whether all templates in this instance are hidden.
+      TEXT
+    end
+
     field :layout_kind, Types::LayoutKindType, null: false
 
     field :entity, Types::AnyEntityType, null: false do
