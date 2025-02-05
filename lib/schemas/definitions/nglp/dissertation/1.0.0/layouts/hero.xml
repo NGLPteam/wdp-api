@@ -11,7 +11,7 @@
       <show-breadcrumbs>true</show-breadcrumbs>
       <show-doi>true</show-doi>
       <show-hero-image>false</show-hero-image>
-      <show-issn>true</show-issn>
+      <show-issn>false</show-issn>
       <show-sharing-link>true</show-sharing-link>
       <show-split-display>true</show-split-display>
       <show-thumbnail-image>false</show-thumbnail-image>
@@ -24,7 +24,9 @@
         </header>
         <header-aside/>
         <header-sidebar/>
-        <header-summary/>
+        <header-summary>
+          {{parent.subtitle}}
+        </header-summary>
         <metadata>
           {% if entity.published %} Published {{ entity.published }} {% endif %}
         </metadata>
@@ -40,10 +42,14 @@
           {{entity.title}}
         </subheader>
         <subheader-aside/>
-        <subheader-summary/>
-        <summary>
-          {{ entity.summary }}
-        </summary>
+        <subheader-summary>
+          {% if props.abstract.exists %}
+            {{ props.abstract }}
+            {% elsif entity.summary %}
+              {{ entity.summary }}
+          {% endif %}
+        </subheader-summary>
+        <summary/>
         <call-to-action>
           {% asset props.pdf_version %}
             Download PDF
