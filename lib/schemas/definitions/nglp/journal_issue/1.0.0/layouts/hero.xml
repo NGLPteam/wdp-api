@@ -17,7 +17,6 @@
       <show-thumbnail-image>true</show-thumbnail-image>
       <slots>
         <big-search-prompt/>
-        <call-to-action/>
         <descendant-search-prompt>
           Search {{ entity.title }}
         </descendant-search-prompt>
@@ -58,6 +57,11 @@
           {{ entity.summary }}
         </subheader-summary>
         <summary/>
+        <call-to-action>
+          {% asset props.pdf_version %}
+            Download PDF
+          {% endasset %}
+        </call-to-action>
       </slots>
     </hero>
   </templates>

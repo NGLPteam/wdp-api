@@ -17,7 +17,6 @@
       <show-thumbnail-image>false</show-thumbnail-image>
       <slots>
         <big-search-prompt/>
-        <call-to-action/>
         <descendant-search-prompt/>
         <header>
           {{parent.title}}
