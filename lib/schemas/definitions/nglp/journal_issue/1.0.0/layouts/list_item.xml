@@ -37,6 +37,24 @@
         <context-abbr>
           {{ancestors.volume.title}}
         </context-abbr>
+        <nested-header>
+          {% if ancestors.volume %}
+            {{ancestors.volume.title}}, {{entity.title}}
+          {% else %}
+            {{entity.title}}
+          {% endif %}
+        </nested-header>
+        <nested-subheader>
+          {{entity.subtitle}}
+        </nested-subheader>
+        <nested-metadata>
+          {% if entity.published %}
+          Published {{entity.published}}
+          {% endif %}
+        </nested-metadata>
+        <nested-context>
+          {{ancestors.journal.title}}
+        </nested-context>
       </slots>
     </list-item>
   </templates>
