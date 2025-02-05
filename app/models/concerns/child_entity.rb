@@ -5,6 +5,7 @@
 module ChildEntity
   extend ActiveSupport::Concern
 
+  include HasDOI
   include HasSchemaDefinition
   include HierarchicalEntity
   include ReferencesNamedVariableDates

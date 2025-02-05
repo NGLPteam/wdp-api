@@ -40,6 +40,18 @@ module Templates
         MeruAPI::Container["templates.mdx.build_anchor"].(href:, label:).value_or("")
       end
 
+      def doi_link(value)
+        input = unwrap_property(value)
+
+        MeruAPI::Container["entities.extract_doi"].(input).fmap(&:link).value_or(value)
+      end
+
+      def doi_url(value)
+        input = unwrap_property(value)
+
+        MeruAPI::Container["entities.extract_doi"].(input).fmap(&:url).value_or(value)
+      end
+
       def date(input, format)
         unwrapped = unwrap_date(input)
 

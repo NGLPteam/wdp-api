@@ -15,6 +15,10 @@ module Templates
       # @return [Templates::Drops::SchemaVersionDrop]
       attr_reader :schema
 
+      # @see HasDOI#has_doi?
+      # @return [Boolean]
+      attr_reader :has_doi
+
       # @param [HierarchicalEntity] entity
       def initialize(entity)
         super()
@@ -23,6 +27,8 @@ module Templates
         @schema = entity.schema_version.to_liquid
 
         @published = Templates::Drops::VariablePrecisionDateDrop.new(entity.try(:published))
+
+        @has_doi = entity.respond_to?(:has_doi?) && entity.has_doi?
       end
 
       # @return [Templates::Drops::AuthorsDrop]
