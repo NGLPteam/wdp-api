@@ -29,6 +29,20 @@ module Types
         TEXT
       end
 
+      field :browse_style, Boolean, null: true do
+        description <<~TEXT
+        A boolean used to describe list templates that should match browse style as close as possible.
+        TEXT
+      end
+
+      field :entity_context, ::Types::ListEntityContextType, null: true do
+        description <<~TEXT
+        Enumerate how much context to show when listing entities.
+
+        Replaces `showEntityContext`.
+        TEXT
+      end
+
       field :selection_source, ::Types::TemplateSelectionSourceType, null: true do
         description <<~TEXT
         When selecting entities based on `selectionMode`, this property determines
@@ -141,7 +155,7 @@ module Types
         TEXT
       end
 
-      field :show_entity_context, Boolean, null: true do
+      field :show_entity_context, Boolean, null: true, deprecation_reason: "Use entity_context enum instead" do
         description <<~TEXT
         Show additional context about each entity in the selection.
         TEXT

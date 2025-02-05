@@ -8,7 +8,7 @@
       <selection-limit>40</selection-limit>
       <selection-mode>named</selection-mode>
       <selection-source>self</selection-source>
-      <show-entity-context>false</show-entity-context>
+      <entity-context>none</entity-context>
       <show-hero-image>false</show-hero-image>
       <show-see-all-button>false</show-see-all-button>
       <title/>
@@ -59,7 +59,7 @@
       <selection-mode>dynamic</selection-mode>
       <selection-source>self</selection-source>
       <variant>grid</variant>
-      <show-entity-context>true</show-entity-context>
+      <entity-context>full</entity-context>
       <slots>
         <block-header>Related Issues</block-header>
         <header-aside/>

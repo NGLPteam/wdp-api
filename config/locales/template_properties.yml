@@ -5,11 +5,19 @@ en:
       background:
         description: |
           The background gradient to use for this template. Affects presentation.
+      browse_style:
+        description: |
+          A boolean used to describe list templates that should match browse style as close as possible.
       dynamic_ordering_definition:
         description: |
           When `selectionMode` is set to `DYNAMIC`, this uses the same basic structure
           as schemas to define a dynamic ordering that is resolved at runtime and based
           on the `selectionSource`.
+      entity_context:
+        description: |
+          Enumerate how much context to show when listing entities.
+
+          Replaces `showEntityContext`.
       selection_fallback_mode:
         description: |
           The fallback mode to use when rendering a list of entities, when the list from

@@ -61,10 +61,10 @@
       <selection-limit>8</selection-limit>
       <selection-mode>dynamic</selection-mode>
       <selection-source>self</selection-source>
-      <show-entity-context>false</show-entity-context>
+      <entity-context>none</entity-context>
       <show-hero-image>false</show-hero-image>
       <show-see-all-button>false</show-see-all-button>
-      <show-entity-context>true</show-entity-context>
+      <entity-context>full</entity-context>
       <show-contributors>true</show-contributors>
       <title>Related Items</title>
       <variant>grid</variant>

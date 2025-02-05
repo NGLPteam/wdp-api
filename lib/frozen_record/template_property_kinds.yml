@@ -11,6 +11,10 @@
 - name: limit
   dry_type_key: "limit"
   gql_type_name: Int
+- name: list_entity_context
+  enum_name: list_entity_context
+  dry_type_key: "list_entity_context"
+  gql_type_name: "::Types::ListEntityContextType"
 - name: ordering_definition
   dry_type_key: "ordering_definition"
   gql_type_name: "Types::OrderingDefinitionType"

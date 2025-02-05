@@ -17,7 +17,7 @@
         <select direct="descendants"/>
       </dynamic-ordering-definition>
       <selection-source>self</selection-source>
-      <show-entity-context>false</show-entity-context>
+      <entity-context>none</entity-context>
       <show-see-all-button>false</show-see-all-button>
       <title>Recent Journals</title>
       <variant>cards</variant>
@@ -85,7 +85,7 @@
       <see-all-button-label>See All Issues</see-all-button-label>
       <selection-limit>5</selection-limit>
       <selection-source>self</selection-source>
-      <show-entity-context>false</show-entity-context>
+      <entity-context>none</entity-context>
       <show-hero-image>false</show-hero-image>
       <show-see-all-button>false</show-see-all-button>
       <title/>
@@ -113,7 +113,7 @@
         <select direct="descendants"/>
       </dynamic-ordering-definition>
       <selection-source>self</selection-source>
-      <show-entity-context>false</show-entity-context>
+      <entity-context>none</entity-context>
       <show-hero-image>true</show-hero-image>
       <show-see-all-button>false</show-see-all-button>
       <see-all-ordering-identifier>issues</see-all-ordering-identifier>

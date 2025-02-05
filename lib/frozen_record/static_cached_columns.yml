@@ -15872,6 +15872,32 @@
   default_function: 
   has_default: true
   virtual: false
+- id: Templates::DescendantListDefinition#entity_context
+  model_name: Templates::DescendantListDefinition
+  table_name: templates_descendant_list_definitions
+  name: entity_context
+  type: enum
+  'null': false
+  sql_type_metadata:
+    sql_type: list_entity_context
+    type: enum
+  default: none
+  default_function: 
+  has_default: true
+  virtual: false
+- id: Templates::DescendantListDefinition#browse_style
+  model_name: Templates::DescendantListDefinition
+  table_name: templates_descendant_list_definitions
+  name: browse_style
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
+  default_function: 
+  has_default: true
+  virtual: false
 - id: Templates::DescendantListInstance#id
   model_name: Templates::DescendantListInstance
   table_name: templates_descendant_list_instances
@@ -17351,6 +17377,32 @@
   model_name: Templates::LinkListDefinition
   table_name: templates_link_list_definitions
   name: show_nested_entities
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
+  default_function: 
+  has_default: true
+  virtual: false
+- id: Templates::LinkListDefinition#entity_context
+  model_name: Templates::LinkListDefinition
+  table_name: templates_link_list_definitions
+  name: entity_context
+  type: enum
+  'null': false
+  sql_type_metadata:
+    sql_type: list_entity_context
+    type: enum
+  default: none
+  default_function: 
+  has_default: true
+  virtual: false
+- id: Templates::LinkListDefinition#browse_style
+  model_name: Templates::LinkListDefinition
+  table_name: templates_link_list_definitions
+  name: browse_style
   type: boolean
   'null': false
   sql_type_metadata:

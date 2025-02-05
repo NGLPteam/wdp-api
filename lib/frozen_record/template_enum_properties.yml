@@ -56,3 +56,5 @@
   default: all
 - name: template_width
   default: full
+- name: list_entity_context
+  default: "none"

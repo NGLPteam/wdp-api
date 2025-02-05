@@ -15,6 +15,10 @@ module Templates
       inline! :context_a
       inline! :context_b
       inline! :context_c
+      inline! :nested_header
+      inline! :nested_subheader
+      inline! :nested_context
+      inline! :nested_metadata
     end
   end
 end

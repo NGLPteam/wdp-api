@@ -29,6 +29,14 @@ module Templates
 
         attribute :context_c, ::Templates::Config::Utility::SlotValue
 
+        attribute :nested_header, ::Templates::Config::Utility::SlotValue
+
+        attribute :nested_subheader, ::Templates::Config::Utility::SlotValue
+
+        attribute :nested_context, ::Templates::Config::Utility::SlotValue
+
+        attribute :nested_metadata, ::Templates::Config::Utility::SlotValue
+
         xml do
           root "slots"
 
@@ -51,6 +59,14 @@ module Templates
           map_element "context-b", to: :context_b, render_nil: true
 
           map_element "context-c", to: :context_c, render_nil: true
+
+          map_element "nested-header", to: :nested_header, render_nil: true
+
+          map_element "nested-subheader", to: :nested_subheader, render_nil: true
+
+          map_element "nested-context", to: :nested_context, render_nil: true
+
+          map_element "nested-metadata", to: :nested_metadata, render_nil: true
         end
       end
     end
