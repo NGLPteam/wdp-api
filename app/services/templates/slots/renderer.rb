@@ -137,7 +137,7 @@ module Templates
       wrapped_hook! def build_slot
         @liquid_errors = liquid_errors.compact_blank.presence
 
-        @slot = slot_klass.new(compiled:, content:, hides_template:, liquid_errors:, rendered:)
+        @slot = slot_klass.new(compiled:, content:, empty: content.blank?, hides_template:, liquid_errors:, rendered:)
 
         super
       end

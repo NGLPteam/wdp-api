@@ -11,6 +11,15 @@ module TemplateInstance
     belongs_to :entity, polymorphic: true
   end
 
+  # @!attribute [r] all_slots_empty
+  # @see Templates::SlotMappings::AbstractInstanceSlots#all_empty?
+  # @return [Boolean]
+  def all_slots_empty
+    slots.all_empty?
+  end
+
+  alias all_slots_empty? all_slots_empty
+
   # @!attribute [r] hidden
   # Currently derived from {#hidden_by_empty_slots}.
   # @return [Boolean]

@@ -9,6 +9,8 @@ module Templates
 
         attribute :content, :string
 
+        attribute :empty, :boolean, default: false
+
         attribute :rendered, :boolean, default: false
 
         # @return [String, nil]
