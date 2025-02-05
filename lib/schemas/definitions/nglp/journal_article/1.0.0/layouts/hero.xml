@@ -53,7 +53,7 @@
         <subheader-aside/>
         <summary/>
         <subheader-summary>
-          {% if props.abstract %}
+          {% if props.abstract.exists %}
             {{ props.abstract }}
             {% elsif entity.summary %}
               {{ entity.summary }}
