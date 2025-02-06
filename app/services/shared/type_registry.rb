@@ -4,9 +4,11 @@ module Shared
   # The shared type registry used by {ApplicationContract}.
   TypeRegistry = Support::Schemas::TypeContainer.new.configure do |tc|
     tc.add! :any_entity, Entities::Types::Entity
+    tc.add! :contributable, Contributions::Types::Contributable
 
     tc.add_model! "Collection"
     tc.add_model! "Community"
+    tc.add_model! "Contributor"
     tc.add_model! "ControlledVocabulary"
     tc.add_model! "ControlledVocabularyItem"
     tc.add_model! "ControlledVocabularySource"

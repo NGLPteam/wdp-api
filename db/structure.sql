@@ -3916,7 +3916,8 @@ CREATE TABLE public.collection_contributions (
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     role_id uuid NOT NULL,
-    "position" bigint
+    inner_position bigint,
+    outer_position bigint
 );
 
 
@@ -5105,7 +5106,8 @@ CREATE TABLE public.item_contributions (
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     role_id uuid NOT NULL,
-    "position" bigint
+    inner_position bigint,
+    outer_position bigint
 );
 
 
@@ -12602,6 +12604,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20250129171809'),
 ('20250129171943'),
 ('20250205024007'),
-('20250205025649');
+('20250205025649'),
+('20250205231244');
 
 

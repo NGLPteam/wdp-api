@@ -5,6 +5,8 @@ module Mutations
     class UpsertContribution
       include MutationOperations::Base
 
+      use_contract! :upsert_contribution
+
       def call(contributable:, contributor:, **inputs)
         authorize contributable, :update?
 
