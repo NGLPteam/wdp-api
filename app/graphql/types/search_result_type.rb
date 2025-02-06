@@ -19,12 +19,10 @@ module Types
 
     field :title, String, null: false
 
-    # @return [HierarchicalEntity]
-    def entity
-      Support::Loaders::AssociationLoader.for(object.class, :hierarchical).load(object)
-    end
+    load_association! :entity
+    load_association! :schema_version
 
-    # @return [String]
+    # @return [Promise(String)]
     def id
       entity.then do |ent|
         Promise.resolve(ent.to_encoded_id)
@@ -34,11 +32,6 @@ module Types
     # @return [String]
     def kind
       object.hierarchical_type
-    end
-
-    # @return [SchemaVersion]
-    def schema_version
-      Support::Loaders::AssociationLoader.for(object.class, :schema_version).load(object)
     end
 
     # @return [String]

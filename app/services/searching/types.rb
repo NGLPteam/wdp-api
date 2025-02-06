@@ -5,7 +5,7 @@ module Searching
   module Types
     include Dry.Types
 
-    extend Shared::EnhancedTypes
+    extend Support::EnhancedTypes
 
     # @api private
     OPERATOR_NAMES = %w[
@@ -18,21 +18,26 @@ module Searching
       numeric_lte
     ].freeze
 
-    EntityOrigin = Instance(::HierarchicalEntity)
+    EntityOrigin = Entities::Types::Entity
 
     GlobalOrigin = Value(:global)
 
     JoinEncoder = Interface(:call)
 
-    SchemaOrigin = Instance(::SchemaVersion)
+    MaxDepth = Searching::Types::Integer.constrained(gt: 0)
 
-    OperatorName = String.enum(*OPERATOR_NAMES)
+    OrderingOrigin = ModelInstance("Ordering")
 
-    OriginModel = GlobalOrigin | EntityOrigin | SchemaOrigin
+    SchemaOrigin = ModelInstance("SchemaVersion")
 
-    OriginType = Symbol.enum(:entity, :global, :schema).constructor do |value|
+    OperatorName = Coercible::String.enum(*OPERATOR_NAMES)
+
+    OriginModel = GlobalOrigin | EntityOrigin | OrderingOrigin | SchemaOrigin
+
+    OriginType = Symbol.enum(:entity, :global, :ordering, :schema).constructor do |value|
       case value
       when EntityOrigin then :entity
+      when OrderingOrigin then :ordering
       when SchemaOrigin then :schema
       else
         value
@@ -44,7 +49,7 @@ module Searching
     # @see Searching::Origin
     Origin = Instance(::Searching::Origin).constructor do |value|
       case value
-      when OriginModel then ::Searching::Origin.new(value)
+      when OriginModel, nil then ::Searching::Origin.new(value)
       else
         value
       end
