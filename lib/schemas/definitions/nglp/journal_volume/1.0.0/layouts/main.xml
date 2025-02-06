@@ -10,11 +10,13 @@
       <selection-source>self</selection-source>
       <entity-context>none</entity-context>
       <show-hero-image>false</show-hero-image>
-      <show-see-all-button>false</show-see-all-button>
+      <show-see-all-button>true</show-see-all-button>
+      <see-all-ordering-identifier>issues</see-all-ordering-identifier>
+      <browse-style>true</browse-style>
       <title/>
       <variant>summary</variant>
       <slots>
-        <header/>
+        <block-header>Issues</block-header>
         <header-aside/>
         <metadata/>
         <subtitle/>
