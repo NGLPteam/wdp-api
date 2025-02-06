@@ -503,7 +503,7 @@
       "label": "Editor",
       "identifier": "edt",
       "description": "A person, family, or organization contributing to a resource by revising or elucidating the content, e.g., adding an introduction, notes, or other critical matter. An editor may also prepare a resource for production, publication, or distribution. For major revisions, adaptations, etc., that substantially change the nature and content of the original work, resulting in a new work, see author.",
-      "priority": 9000,
+      "priority": 12000,
       "tags": ["editor"]
     },
     {

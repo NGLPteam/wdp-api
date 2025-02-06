@@ -12,12 +12,16 @@ RSpec.describe Mutations::UpsertContribution, type: :request, graphql: :mutation
         }
 
         ... on Contribution {
-          contributorKind
-          displayName
-
           contributionRole {
             id
           }
+
+          contributorKind
+          displayName
+
+          innerPosition
+          outerPosition
+          roleLabel
         }
       }
 
@@ -46,6 +50,10 @@ RSpec.describe Mutations::UpsertContribution, type: :request, graphql: :mutation
 
     let_mutation_input!(:role) { "test role" }
 
+    let_mutation_input!(:outer_position) { 5 }
+
+    let_mutation_input!(:inner_position) { 10 }
+
     shared_examples_for "upsertion" do
       it "upserts the contribution" do
         expect_request! do |req|
@@ -65,6 +73,9 @@ RSpec.describe Mutations::UpsertContribution, type: :request, graphql: :mutation
             c[:id] = be_an_encoded_id
             c[:contributor_kind] = "person"
             c[:display_name] = contributor.display_name
+            c[:inner_position] = inner_position
+            c[:outer_position] = outer_position
+            c[:role_label] = contribution_role.label
 
             c.prop :contribution_role do |cr|
               cr[:id] = role_id
@@ -87,6 +98,9 @@ RSpec.describe Mutations::UpsertContribution, type: :request, graphql: :mutation
             c[:id] = be_an_encoded_id
             c[:contributor_kind] = "person"
             c[:display_name] = contributor.display_name
+            c[:inner_position] = inner_position
+            c[:outer_position] = outer_position
+            c[:role_label] = contribution_role.label
 
             c.prop :contribution_role do |cr|
               cr[:id] = role_id

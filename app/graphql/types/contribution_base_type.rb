@@ -24,9 +24,19 @@ module Types
 
     field :contribution_role, Types::ControlledVocabularyItemType, null: false, description: "The actual role"
 
-    field :position, Int, null: true do
+    field :inner_position, Int, null: true do
       description <<~TEXT
       An optional sorting discriminator to decide which contribution ranks higher.
+
+      Applies _after_ contribution role ranking.
+      TEXT
+    end
+
+    field :outer_position, Int, null: true do
+      description <<~TEXT
+      An optional sorting discriminator to decide which contribution ranks higher.
+
+      Applies _before_ contribution role ranking, superseding everything else.
       TEXT
     end
 

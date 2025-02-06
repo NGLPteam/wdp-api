@@ -12,7 +12,9 @@ module Contributions
 
       option :role, Contributions::Types::Role.optional, as: :provided_role, optional: true
 
-      option :position, Contributions::Types::Integer.optional, optional: true
+      option :inner_position, Contributions::Types::Integer.optional, optional: true
+
+      option :outer_position, Contributions::Types::Integer.optional, optional: true
     end
 
     standard_execution!
@@ -94,7 +96,7 @@ module Contributions
     private
 
     def build_tuple
-      { contributor_id:, role_id:, position:, }.compact.tap do |h|
+      { contributor_id:, role_id:, inner_position:, outer_position:, }.compact.tap do |h|
         h[contributable_foreign_key] = contributable_id
       end
     end

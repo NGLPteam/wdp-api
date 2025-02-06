@@ -1969,10 +1969,24 @@
   default_function: 
   has_default: false
   virtual: false
-- id: CollectionContribution#position
+- id: CollectionContribution#inner_position
   model_name: CollectionContribution
   table_name: collection_contributions
-  name: position
+  name: inner_position
+  type: integer
+  'null': true
+  sql_type_metadata:
+    sql_type: bigint
+    type: integer
+    limit: 8
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: CollectionContribution#outer_position
+  model_name: CollectionContribution
+  table_name: collection_contributions
+  name: outer_position
   type: integer
   'null': true
   sql_type_metadata:
@@ -9051,10 +9065,24 @@
   default_function: 
   has_default: false
   virtual: false
-- id: ItemContribution#position
+- id: ItemContribution#inner_position
   model_name: ItemContribution
   table_name: item_contributions
-  name: position
+  name: inner_position
+  type: integer
+  'null': true
+  sql_type_metadata:
+    sql_type: bigint
+    type: integer
+    limit: 8
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: ItemContribution#outer_position
+  model_name: ItemContribution
+  table_name: item_contributions
+  name: outer_position
   type: integer
   'null': true
   sql_type_metadata:

@@ -27,7 +27,7 @@ module Attributions
       SUFFIX = <<~SQL
         WINDOW w AS (
           PARTITION BY cont.collection_id
-          ORDER BY cvi.priority DESC NULLS LAST, cvi.position ASC, cvi.identifier ASC, cont.position ASC NULLS LAST, cbtr.sort_name ASC
+          ORDER BY cont.outer_position ASC NULLS LAST, cvi.priority DESC NULLS LAST, cvi.position ASC, cvi.identifier ASC, cont.inner_position ASC NULLS LAST, cbtr.sort_name ASC
         )
       )
       INSERT INTO collection_attributions (collection_id, contributor_id, position, created_at, updated_at)
