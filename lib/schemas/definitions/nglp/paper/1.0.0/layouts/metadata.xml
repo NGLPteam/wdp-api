@@ -69,7 +69,7 @@
             {% mditem %}
               {% mdvalue label: "Text Version" %}
                 {% asset props.text_version %}
-                  {{props.text_version.name}}
+                  Download
                 {% endasset %}
               {% endmdvalue %}
             {% endmditem %}
