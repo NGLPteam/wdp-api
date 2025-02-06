@@ -7,7 +7,14 @@ module Mutations
       extend ActiveSupport::Concern
 
       included do
-        argument :doi, String, required: false, description: "Digital Object Identifier (see: https://doi.org)", attribute: true
+        argument :doi, String, required: false, description: "", attribute: true do
+          description <<~TEXT
+          Digital Object Identifier (see: https://doi.org)
+
+          **Note**: This actually gets assigned to the entity's `rawDOI`, and will be sanitized to get set on `DOI`.
+          TEXT
+        end
+
         argument :issn, String, required: false, description: "International Standard Serial Number (see: https://issn.org)", attribute: true
       end
     end

@@ -8,7 +8,6 @@ class Item < ApplicationRecord
   include HasEntityVisibility
   include HasSchemaDefinition
   include HasSystemSlug
-  include HasUniqueDOI
   include HierarchicalEntity
   include ChildEntity
   include ScopesForIdentifier

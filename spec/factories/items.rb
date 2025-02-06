@@ -13,7 +13,7 @@ FactoryBot.define do
     title { Faker::Lorem.sentence }
     identifier { title.parameterize }
 
-    doi { SecureRandom.uuid }
+    raw_doi { nil }
     summary { Faker::Lorem.paragraph }
 
     visibility { :visible }

@@ -14,9 +14,9 @@ module Entities
     def call(input)
       return Success(input) if input.kind_of?(Entities::DOIReference)
 
-      doi = yield extract input
+      doi, host = yield extract input
 
-      reference = Entities::DOIReference.new(doi:)
+      reference = Entities::DOIReference.new(doi:, host:)
 
       Success reference
     end
@@ -24,19 +24,38 @@ module Entities
     private
 
     # @param [ChildEntity, String, #doi] input
-    # @return [Dry::Monads::Success(Entities::Types::DOI)]
+    # @return [Dry::Monads::Success(Entities::Types::DOI, String)]
     # @return [Dry::Monads::Failure(:invalid_doi, Object)]
-    def extract(input)
+    def extract(input, host: nil)
       case input
       when Entities::Types::DOI
-        Success(input)
+        Success([input, host])
       when Entities::Types::DOI_URL_PATTERN
         extract(Regexp.last_match[:doi])
-      when ChildEntity, QUACKS_DOI
+      when Entities::Types::URL
+        extract_from_other_url(input)
+      when ChildEntity
+        extract(input.raw_doi)
+      when QUACKS_DOI
         extract(input.doi)
       else
+        Failure()
+      end.or do
+        # Ensure that the _original_ value is what we return.
         Failure[:invalid_doi, input]
       end
+    end
+
+    def extract_from_other_url(input)
+      uri = URI(input)
+
+      host = uri.host
+
+      extract(uri.path&.delete_prefix(?/), host:)
+    rescue URI::Error
+      # :nocov:
+      extract(nil)
+      # :nocov:
     end
   end
 end

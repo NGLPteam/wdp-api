@@ -17,7 +17,7 @@ module Entities
 
     DOI_SQL_PATTERN = %|^10\\.[0-9]{4,9}/[-._;()/:A-Z0-9]+$|
 
-    DOI_URL_PATTERN = %r|\A(?:https?://)#{DOI_DOMAIN}/(?<doi>10\.\d{4,9}/[-._;()/:A-Z0-9]+)\z|i
+    DOI_URL_PATTERN = %r|\A(?:https?://)?#{DOI_DOMAIN}/(?<doi>10\.\d{4,9}/[-._;()/:A-Z0-9]+)\z|i
 
     HIERARCHICAL_TYPES = %w[Community Collection Item].freeze
 
@@ -50,6 +50,8 @@ module Entities
     Syncable = Instance(::SyncsEntities)
 
     Syncables = Array.of(Syncable)
+
+    URL = String.constrained(http_uri: true)
 
     # @see ::Types::EntityVisibilityFilterType
     Visibility = Symbol.enum(:all, :visible, :hidden).fallback(:visible)

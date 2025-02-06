@@ -6,6 +6,8 @@ module Entities
 
     attribute :doi, Entities::Types::DOI
 
+    attribute? :host, Entities::Types::String.default(DOMAIN)
+
     alias label doi
 
     # @see Templates::MDX::BuildAnchor
@@ -20,9 +22,16 @@ module Entities
     def initialize(...)
       super
 
-      @url = URI.join("https://#{DOMAIN}", doi).to_s
+      @url = URI.join("https://#{host}", doi).to_s
 
       @link = MeruAPI::Container["templates.mdx.build_anchor"].(href:, label:).value!
+    end
+
+    # @return [Entities::DOIData]
+    def to_doi_data
+      crossref = host == DOMAIN
+
+      Entities::DOIData.new(crossref:, doi:, url:, host:, ok: true)
     end
   end
 end
