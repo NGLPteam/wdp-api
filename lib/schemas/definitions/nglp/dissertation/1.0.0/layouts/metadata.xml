@@ -68,10 +68,10 @@
               {% endmdvalue %}
             {% endmditem %}
           {% endif %}
-          {% if entity.doi %}
+          {% if entity.has_doi %}
             {% mditem %}
               {% mdvalue label: "DOI" %}
-                {{entity.doi}}
+                {{entity | doi_link}}
               {% endmdvalue %}
             {% endmditem %}
           {% endif %}
