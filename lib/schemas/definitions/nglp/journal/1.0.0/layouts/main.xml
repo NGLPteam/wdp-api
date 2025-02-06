@@ -58,7 +58,7 @@
       <selection-limit>4</selection-limit>
       <selection-mode>dynamic</selection-mode>
       <selection-source>self</selection-source>
-      <entity-context>none</entity-context>
+      <entity-context>abbr</entity-context>
       <show-hero-image>false</show-hero-image>
       <show-see-all-button>false</show-see-all-button>
       <see-all-button-label>See All Issues</see-all-button-label>

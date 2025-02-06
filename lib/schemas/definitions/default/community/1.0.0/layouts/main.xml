@@ -85,7 +85,7 @@
       <see-all-button-label>See All Issues</see-all-button-label>
       <selection-limit>5</selection-limit>
       <selection-source>self</selection-source>
-      <entity-context>none</entity-context>
+      <entity-context>full</entity-context>
       <show-hero-image>false</show-hero-image>
       <show-see-all-button>false</show-see-all-button>
       <title/>
