@@ -24,6 +24,12 @@ module Types
 
     field :template_kind, Types::TemplateKindType, null: false
 
+    field :all_slots_empty, Boolean, null: false do
+      description <<~TEXT
+      Whether all slots in this template are empty.
+      TEXT
+    end
+
     field :hidden, Boolean, null: false do
       description <<~TEXT
       Whether this template instance should be hidden based on some logic.

@@ -21,6 +21,12 @@ module Types
       TEXT
     end
 
+    field :empty, Boolean, null: false do
+      description <<~TEXT
+      Whether this slot is empty.
+      TEXT
+    end
+
     field :errors, [Types::TemplateSlotErrorType, { null: false }], null: true, method: :liquid_errors do
       description <<~TEXT
       Any errors for this slot that occurred during rendering, if applicable.

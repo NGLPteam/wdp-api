@@ -32,6 +32,14 @@ module LayoutInstance
     template_instances.blank? || template_instances.all?(&:hidden?)
   end
 
+  # @!attribute [r] all_slots_empty
+  # @return [Boolean]
+  def all_slots_empty
+    template_instances.blank? || template_instances.all?(&:all_slots_empty?)
+  end
+
+  alias all_slots_empty? all_slots_empty
+
   # @return [<Symbol>]
   def template_instance_names
     self.class.template_instance_names
