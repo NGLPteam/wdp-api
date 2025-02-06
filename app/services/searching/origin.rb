@@ -12,6 +12,8 @@ module Searching
     def relation
       if entity?
         ::Entity.descending_from model
+      elsif ordering?
+        model.normalized_entities
       elsif schema?
         model.entities.real
       else
@@ -33,6 +35,10 @@ module Searching
 
     def global?
       type == :global
+    end
+
+    def ordering?
+      type == :ordering
     end
 
     def schema?

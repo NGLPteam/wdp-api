@@ -40,6 +40,8 @@ class Ordering < ApplicationRecord
 
   has_many :named_variable_dates, through: :ordering_entries
 
+  has_many :normalized_entities, through: :ordering_entries
+
   has_many :ordering_invalidations, inverse_of: :ordering, dependent: :delete_all
 
   has_many :ordering_template_instances,

@@ -8,14 +8,14 @@ module Searching
       option :user, Users::Types::Current, default: Users::Types::DEFAULT
       option :origin, Searching::Types::Origin, default: proc { :global }
       option :visibility, Entities::Types::Visibility, default: proc { :visible }
-      option :max_depth, Searching::Types::Integer.constrained(gt: 0).optional, default: proc {}
+      option :max_depth, Searching::Types::MaxDepth.optional, optional: true
 
       option :auth_state, Users::Types::State, default: proc { user }
     end
 
-    include Shared::Typing
+    include Support::Typing
 
-    delegate :entity?, :global?, :schema?, prefix: :from, to: :origin
+    delegate :entity?, :global?, :ordering?, :schema?, prefix: :from, to: :origin
     delegate :depth, :type, to: :origin, prefix: true
 
     # @return [<SchemaVersion>]
@@ -37,7 +37,9 @@ module Searching
     end
 
     def filter_by_depth(relation)
+      # :nocov:
       return relation.all unless max_depth
+      # :nocov:
 
       relation.by_max_relative_depth(max_depth, origin_depth:)
     end

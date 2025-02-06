@@ -5,6 +5,8 @@ module Types
   class OrderingType < Types::AbstractModel
     description "An ordering that belongs to an entity and arranges its children in a pre-configured way"
 
+    implements Types::SearchableType
+
     field :entity, Types::AnyEntityType, null: false do
       description "The entity that owns the ordering"
     end

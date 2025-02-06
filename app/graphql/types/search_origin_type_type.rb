@@ -9,6 +9,7 @@ module Types
 
     value "ENTITY", value: :entity
     value "GLOBAL", value: :global
+    value "ORDERING", value: :ordering
     value "SCHEMA", value: :schema
   end
 end

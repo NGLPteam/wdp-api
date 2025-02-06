@@ -31,6 +31,8 @@ class OrderingEntry < ApplicationRecord
 
   belongs_to :entity, polymorphic: true, inverse_of: :ordering_entries
 
+  belongs_to_readonly :normalized_entity, class_name: "Entity", primary_key: ENTITY_TUPLE, foreign_key: ENTITY_TUPLE
+
   has_many_readonly :named_variable_dates, primary_key: ENTITY_TUPLE, foreign_key: ENTITY_TUPLE
 
   scope :to_preload, -> { includes(:entity, ancestors: %i[entity]) }
