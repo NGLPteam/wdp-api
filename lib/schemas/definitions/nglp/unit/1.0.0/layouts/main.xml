@@ -62,7 +62,7 @@
       <selection-limit>8</selection-limit>
       <selection-mode>named</selection-mode>
       <selection-source>self</selection-source>
-      <entity-context>none</entity-context>
+      <entity-context>full</entity-context>
       <show-hero-image>false</show-hero-image>
       <see-all-button-label>See All Papers</see-all-button-label>
       <see-all-ordering-identifier>papers</see-all-ordering-identifier>
@@ -82,7 +82,7 @@
       <selection-limit>8</selection-limit>
       <selection-mode>named</selection-mode>
       <selection-source>self</selection-source>
-      <entity-context>none</entity-context>
+      <entity-context>full</entity-context>
       <show-hero-image>false</show-hero-image>
       <show-see-all-button>false</show-see-all-button>
       <see-all-button-label>See All Dissertations</see-all-button-label>

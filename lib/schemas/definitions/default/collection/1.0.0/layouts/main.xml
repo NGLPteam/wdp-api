@@ -57,7 +57,7 @@
       <selection-limit>10</selection-limit>
       <selection-mode>dynamic</selection-mode>
       <selection-source>self</selection-source>
-      <entity-context>none</entity-context>
+      <entity-context>full</entity-context>
       <show-hero-image>false</show-hero-image>
       <title/>
       <variant>summary</variant>
