@@ -206,6 +206,7 @@ RSpec.shared_examples_for "a graphql entity with layouts" do
 
     fragment LayoutInstanceFragment on LayoutInstance {
       allHidden
+      allSlotsEmpty
       lastRenderedAt
       layoutKind
       entity {
@@ -214,6 +215,7 @@ RSpec.shared_examples_for "a graphql entity with layouts" do
     }
 
     fragment TemplateInstanceFragment on TemplateInstance {
+      allSlotsEmpty
       hidden
       layoutKind
       templateKind

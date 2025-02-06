@@ -20,6 +20,12 @@ module Types
       TEXT
     end
 
+    field :all_slots_empty, Boolean, null: false do
+      description <<~TEXT
+      Whether all slots in all template instances in this layout are empty.
+      TEXT
+    end
+
     field :layout_kind, Types::LayoutKindType, null: false
 
     field :entity, Types::AnyEntityType, null: false do
