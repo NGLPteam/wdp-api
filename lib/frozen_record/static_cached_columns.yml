@@ -1584,10 +1584,10 @@
   default_function: 
   has_default: false
   virtual: false
-- id: Collection#doi
+- id: Collection#raw_doi
   model_name: Collection
   table_name: collections
-  name: doi
+  name: raw_doi
   type: citext
   'null': true
   sql_type_metadata:
@@ -1743,6 +1743,45 @@
   default_function: 
   has_default: false
   virtual: false
+- id: Collection#has_doi
+  model_name: Collection
+  table_name: collections
+  name: has_doi
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
+  default_function: 
+  has_default: true
+  virtual: false
+- id: Collection#doi_data
+  model_name: Collection
+  table_name: collections
+  name: doi_data
+  type: jsonb
+  'null': false
+  sql_type_metadata:
+    sql_type: jsonb
+    type: jsonb
+  default: "{}"
+  default_function: 
+  has_default: true
+  virtual: false
+- id: Collection#doi
+  model_name: Collection
+  table_name: collections
+  name: doi
+  type: citext
+  'null': true
+  sql_type_metadata:
+    sql_type: citext
+    type: citext
+  default: 
+  default_function: extract_doi_from_data(doi_data)
+  has_default: false
+  virtual: true
 - id: CollectionAttribution#id
   model_name: CollectionAttribution
   table_name: collection_attributions
@@ -8667,10 +8706,10 @@
   default_function: 
   has_default: false
   virtual: false
-- id: Item#doi
+- id: Item#raw_doi
   model_name: Item
   table_name: items
-  name: doi
+  name: raw_doi
   type: citext
   'null': true
   sql_type_metadata:
@@ -8826,6 +8865,45 @@
   default_function: 
   has_default: false
   virtual: false
+- id: Item#has_doi
+  model_name: Item
+  table_name: items
+  name: has_doi
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
+  default_function: 
+  has_default: true
+  virtual: false
+- id: Item#doi_data
+  model_name: Item
+  table_name: items
+  name: doi_data
+  type: jsonb
+  'null': false
+  sql_type_metadata:
+    sql_type: jsonb
+    type: jsonb
+  default: "{}"
+  default_function: 
+  has_default: true
+  virtual: false
+- id: Item#doi
+  model_name: Item
+  table_name: items
+  name: doi
+  type: citext
+  'null': true
+  sql_type_metadata:
+    sql_type: citext
+    type: citext
+  default: 
+  default_function: extract_doi_from_data(doi_data)
+  has_default: false
+  virtual: true
 - id: ItemAttribution#id
   model_name: ItemAttribution
   table_name: item_attributions

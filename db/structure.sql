@@ -1086,6 +1086,17 @@ $_$;
 
 
 --
+-- Name: extract_doi_from_data(jsonb); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.extract_doi_from_data(jsonb) RETURNS public.citext
+    LANGUAGE sql IMMUTABLE STRICT PARALLEL SAFE
+    AS $_$
+SELECT ($1 ->> 'doi')::citext WHERE $1 @> jsonb_build_object('ok', true);
+$_$;
+
+
+--
 -- Name: generate_boolean_value(public.schema_property_type, jsonb); Type: FUNCTION; Schema: public; Owner: -
 --
 
@@ -3691,7 +3702,7 @@ CREATE TABLE public.collections (
     identifier public.citext NOT NULL,
     system_slug public.citext NOT NULL,
     title public.citext NOT NULL,
-    doi public.citext,
+    raw_doi public.citext,
     summary text DEFAULT ''::text,
     thumbnail_data jsonb,
     properties jsonb,
@@ -3702,7 +3713,10 @@ CREATE TABLE public.collections (
     schema_version_id uuid NOT NULL,
     hero_image_data jsonb,
     subtitle text,
-    issn text
+    issn text,
+    has_doi boolean DEFAULT false NOT NULL,
+    doi_data jsonb DEFAULT '{}'::jsonb NOT NULL,
+    doi public.citext GENERATED ALWAYS AS (public.extract_doi_from_data(doi_data)) STORED
 );
 
 
@@ -3788,7 +3802,7 @@ CREATE TABLE public.items (
     identifier public.citext NOT NULL,
     system_slug public.citext NOT NULL,
     title public.citext NOT NULL,
-    doi public.citext,
+    raw_doi public.citext,
     summary text DEFAULT ''::text,
     thumbnail_data jsonb,
     properties jsonb,
@@ -3799,7 +3813,10 @@ CREATE TABLE public.items (
     schema_version_id uuid NOT NULL,
     hero_image_data jsonb,
     subtitle text,
-    issn text
+    issn text,
+    has_doi boolean DEFAULT false NOT NULL,
+    doi_data jsonb DEFAULT '{}'::jsonb NOT NULL,
+    doi public.citext GENERATED ALWAYS AS (public.extract_doi_from_data(doi_data)) STORED
 );
 
 
@@ -8210,6 +8227,13 @@ CREATE INDEX index_collections_on_doi ON public.collections USING btree (doi);
 
 
 --
+-- Name: index_collections_on_has_doi; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_collections_on_has_doi ON public.collections USING btree (has_doi);
+
+
+--
 -- Name: index_collections_on_issn; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -8228,6 +8252,13 @@ CREATE INDEX index_collections_on_parent_id ON public.collections USING btree (p
 --
 
 CREATE INDEX index_collections_on_properties ON public.collections USING gin (properties);
+
+
+--
+-- Name: index_collections_on_raw_doi; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_collections_on_raw_doi ON public.collections USING btree (raw_doi);
 
 
 --
@@ -9498,6 +9529,13 @@ CREATE INDEX index_items_on_doi ON public.items USING btree (doi);
 
 
 --
+-- Name: index_items_on_has_doi; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_items_on_has_doi ON public.items USING btree (has_doi);
+
+
+--
 -- Name: index_items_on_issn; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -9516,6 +9554,13 @@ CREATE INDEX index_items_on_parent_id ON public.items USING btree (parent_id);
 --
 
 CREATE INDEX index_items_on_properties ON public.items USING gin (properties);
+
+
+--
+-- Name: index_items_on_raw_doi; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_items_on_raw_doi ON public.items USING btree (raw_doi);
 
 
 --
@@ -12605,6 +12650,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20250129171943'),
 ('20250205024007'),
 ('20250205025649'),
-('20250205231244');
+('20250205231244'),
+('20250206183714');
 
 
