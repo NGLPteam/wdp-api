@@ -24,7 +24,6 @@
     </descendant-list>
     <descendant-list>
       <background>light</background>
-      <see-all-ordering-identifier>series</see-all-ordering-identifier>
       <selection-limit>3</selection-limit>
       <selection-mode>dynamic</selection-mode>
       <dynamic-ordering-definition>
