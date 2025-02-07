@@ -18,7 +18,7 @@ module Searching
         model.entities.real
       else
         ::Entity.all
-      end
+      end.real
     end
 
     # @!attribute [r] depth

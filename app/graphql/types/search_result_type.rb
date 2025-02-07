@@ -7,19 +7,43 @@ module Types
     An entity that's the result of a search.
     TEXT
 
-    field :entity, Types::AnyEntityType, null: false
+    field :entity, Types::AnyEntityType, null: false do
+      description <<~TEXT
+      A reference to the actual entity returned by the search query.
+      TEXT
+    end
 
-    field :kind, Types::EntityKindType, null: false
+    field :kind, Types::EntityKindType, null: false do
+      description <<~TEXT
+      The kind of entity returned by the search results.
+      TEXT
+    end
 
-    field :id, ID, null: false
+    field :id, ID, null: false do
+      description <<~TEXT
+      The encoded ID for the entity itself, not a special ID for the search result record.
+      TEXT
+    end
 
-    field :schema_version, Types::SchemaVersionType, null: false
+    field :schema_version, Types::SchemaVersionType, null: false do
+      description <<~TEXT
+      The schema version of the returned entity.
+      TEXT
+    end
 
-    field :slug, Types::SlugType, null: false
+    field :slug, Types::SlugType, null: false do
+      description <<~TEXT
+      The slug for the entity.
+      TEXT
+    end
 
-    field :title, String, null: false
+    field :title, String, null: false do
+      description <<~TEXT
+      The title for the entity.
+      TEXT
+    end
 
-    load_association! :entity
+    load_association! :hierarchical, as: :entity
     load_association! :schema_version
 
     # @return [Promise(String)]
