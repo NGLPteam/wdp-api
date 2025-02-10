@@ -1,0 +1,20 @@
+default: &default
+  tenant_id: "meru"
+  tenant_name: "Meru"
+  serialize_rendering: false
+
+development:
+  <<: *default
+  tenant_id: "meru-dev"
+
+test:
+  <<: *default
+  tenant_id: "meru-tst"
+
+staging:
+  <<: *default
+  tenant_id: "meru-stg"
+
+production:
+  <<: *default
+  tenant_id: "meru-prd"
