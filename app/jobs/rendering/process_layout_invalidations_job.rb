@@ -29,7 +29,11 @@ module Rendering
     # @param [String] _before
     # @return [void]
     def each_iteration(layout_invalidation, _before = Time.current.iso8601)
-      Rendering::ProcessLayoutInvalidationJob.perform_later layout_invalidation
+      unless MeruConfig.serialize_rendering?
+        Rendering::ProcessLayoutInvalidationJob.perform_later layout_invalidation
+      else
+        layout_invalidation.process!
+      end
     end
   end
 end
