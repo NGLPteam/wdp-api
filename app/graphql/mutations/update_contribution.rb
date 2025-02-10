@@ -24,9 +24,19 @@ module Mutations
       TEXT
     end
 
-    argument :position, Int, required: false do
+    argument :outer_position, Int, required: false do
       description <<~TEXT
-      Sorting discriminator for the contribution. If not provided, it will keep whatever is there.
+      "Outer" sorting discriminator for the contribution. If not provided, it will keep whatever is there.
+
+      It applies _before_ the contribution role.
+      TEXT
+    end
+
+    argument :inner_position, Int, required: false do
+      description <<~TEXT
+      "Inner" sorting discriminator for the contribution. If not provided, it will keep whatever is there.
+
+      It applies _after_ the contribution role.
       TEXT
     end
 
