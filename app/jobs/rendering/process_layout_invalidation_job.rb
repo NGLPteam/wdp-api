@@ -5,7 +5,7 @@ module Rendering
     queue_as :layouts
 
     good_job_control_concurrency_with(
-      perform_limit: 1,
+      total_limit: 1,
       key: -> { "#{self.class.name}-#{queue_name}-#{arguments.first.entity_id}" }
     )
 
