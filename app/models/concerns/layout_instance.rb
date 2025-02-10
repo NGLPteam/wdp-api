@@ -13,6 +13,8 @@ module LayoutInstance
 
     belongs_to :entity, polymorphic: true
 
+    has_many :template_instance_digests, as: :layout_instance, inverse_of: :layout_instance, class_name: "Templates::InstanceDigest", dependent: :delete_all
+
     defines :template_instance_names, type: Layouts::Types::Associations
 
     template_instance_names [].freeze
@@ -48,6 +50,11 @@ module LayoutInstance
   # @return [<TemplateInstance>]
   def template_instances
     @template_instances ||= fetch_template_instances
+  end
+
+  # @see Templates::Digests::Instances::LayoutUpserter
+  monadic_operation! def upsert_template_instance_digests
+    call_operation("templates.digests.instances.upsert_for_layout", self)
   end
 
   private

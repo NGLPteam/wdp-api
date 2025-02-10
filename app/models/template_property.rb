@@ -113,6 +113,10 @@ class TemplateProperty < Support::FrozenRecordHelpers::AbstractRecord
     ).stringify_keys
   end
 
+  def width?
+    name == "width" && property_kind_name == "width"
+  end
+
   class << self
     # @param [Templates::Types::Kind] template_kind
     # @param [Templates::Types::PropertyName] property_name

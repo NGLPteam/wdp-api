@@ -9,6 +9,8 @@ module Support
 
       define_model_callbacks :request, :connection
 
+      around_request :provide_vog_cache!
+
       def initialize
         @lookups = Concurrent::Map.new
       end
@@ -19,6 +21,12 @@ module Support
         run_callbacks :request do
           yield
         end
+      end
+
+      private
+
+      def provide_vog_cache!(&)
+        Support::Caching.with_vog_cache(&)
       end
     end
   end

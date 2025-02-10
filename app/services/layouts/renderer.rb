@@ -29,6 +29,8 @@ module Layouts
         yield persist_instance!
 
         yield render_each_template!
+
+        yield upsert_digests!
       end
 
       Success entity
@@ -60,6 +62,12 @@ module Layouts
     end
 
     around_render_each_template :track_render!
+
+    wrapped_hook! def upsert_digests
+      yield layout_instance.upsert_template_instance_digests
+
+      super
+    end
 
     private
 

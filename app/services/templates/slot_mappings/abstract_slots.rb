@@ -15,6 +15,8 @@ module Templates
       defines :inline_slots, :block_slots, :all_slots, type: SlotList
       defines :inline_slot_klass, :block_slot_klass, type: SlotKlass.optional
 
+      attribute :template_kind, :string
+
       block_slots [].freeze
       inline_slots [].freeze
       all_slots [].freeze

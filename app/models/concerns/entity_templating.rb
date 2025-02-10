@@ -10,6 +10,8 @@ module EntityTemplating
   included do
     has_many :layout_invalidations, as: :entity, inverse_of: :entity, dependent: :delete_all
 
+    has_many :template_instance_digests, as: :entity, inverse_of: :entity, class_name: "Templates::InstanceDigest", dependent: :delete_all
+
     has_many :hero_layout_definitions,
       class_name: "Layouts::HeroDefinition",
       as: :entity,

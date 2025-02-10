@@ -15,6 +15,8 @@ module LayoutDefinition
       as: :layout_definition,
       dependent: :destroy
 
+    has_many :template_instance_digests, as: :layout_definition, inverse_of: :layout_definition, class_name: "Templates::InstanceDigest", dependent: :delete_all
+
     defines :template_definition_names, type: Layouts::Types::Associations
 
     template_definition_names [].freeze
