@@ -38,6 +38,26 @@ module Types
       TEXT
     end
 
+    field :prev_siblings, [Types::TemplateInstanceSiblingType, { null: false }], null: false do
+      description <<~TEXT
+      Return all preceding siblings to the current template in order of proximity.
+
+      If a template is at position 3 of 5, then this field will return position 2 and 1 in that order.
+      TEXT
+    end
+
+    field :next_siblings, [Types::TemplateInstanceSiblingType, { null: false }], null: false do
+      description <<~TEXT
+      Return all preceding siblings to the current template in order of proximity.
+
+      If a template is at position 3 of 5, then this field will return position 4 and 5 in that order.
+      TEXT
+    end
+
     load_association! :entity
+
+    load_association! :prev_siblings
+
+    load_association! :next_siblings
   end
 end

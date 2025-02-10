@@ -73,11 +73,11 @@ class Layout < Support::FrozenRecordHelpers::AbstractRecord
 
   # @!group Main Classes
 
-  klass_name_pair! :definition do
+  klass_name_pair! :definition, model: true do
     "layouts/#{layout_kind}_definition".classify
   end
 
-  klass_name_pair! :instance do
+  klass_name_pair! :instance, model: true do
     "layouts/#{layout_kind}_instance".classify
   end
 

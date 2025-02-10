@@ -8,6 +8,10 @@ module TemplateDefinition
   include HasTemplateKind
 
   included do
+    attribute :config, Templates::Definitions::Config.to_type
+
+    has_many :instance_digests, as: :template_definition, inverse_of: :template_definition, class_name: "Templates::InstanceDigest", dependent: :delete_all
+
     scope :sans_positions, ->(*positions) do
       positions.flatten!.uniq!
 
@@ -15,6 +19,14 @@ module TemplateDefinition
 
       where.not(position: positions)
     end
+
+    before_validation :infer_config!
+  end
+
+  # @see Templates::Definitions::BuildConfig
+  # @see Templates::Definitions::ConfigBuilder
+  monadic_operation! def build_config
+    call_operation("templates.definitions.build_config", self)
   end
 
   monadic_matcher! def export(...)
@@ -42,5 +54,12 @@ module TemplateDefinition
 
   monadic_operation! def render_slots(entity:)
     call_operation("templates.definitions.render_slots", self, entity)
+  end
+
+  private
+
+  # @return [void]
+  def infer_config!
+    self.config = build_config!
   end
 end

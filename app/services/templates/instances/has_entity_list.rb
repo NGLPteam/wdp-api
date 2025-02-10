@@ -28,7 +28,7 @@ module Templates
         call_operation("templates.instances.fetch_entity_list", self)
       end
 
-      def hidden?
+      def calculate_hidden
         super || hidden_by_entity_list?
       end
 

@@ -223,6 +223,24 @@ RSpec.shared_examples_for "a graphql entity with layouts" do
       entity {
         ... AnyEntityFragment
       }
+
+      prevSiblings {
+        ... SiblingFragment
+      }
+
+      nextSiblings {
+        ... SiblingFragment
+      }
+    }
+
+    fragment SiblingFragment on TemplateInstanceSibling {
+      dark
+      hidden
+      width
+
+      layoutKind
+      templateKind
+      position
     }
     GRAPHQL
   end

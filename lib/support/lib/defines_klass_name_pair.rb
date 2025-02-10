@@ -34,8 +34,8 @@ module Support
     end
 
     module ClassMethods
-      def klass_name_pair!(prefix, &)
-        mod = KlassNamePair.new(prefix)
+      def klass_name_pair!(prefix, model: false, &)
+        mod = KlassNamePair.new(prefix, model:)
 
         define_method(mod.build_method, &)
 
@@ -54,10 +54,14 @@ module Support
       include Dry::Initializer[undefined: false].define -> do
         param :prefix, Support::Types::Coercible::Symbol
 
+        option :model, Support::Types::Bool, default: proc { false }
+
         option :build_method, Support::Types::Symbol, default: proc { :"build_#{prefix}_klass_name" }
         option :klass_method, Support::Types::Symbol, default: proc { :"#{prefix}_klass" }
         option :klass_name_method, Support::Types::Symbol, default: proc { :"#{prefix}_klass_name" }
         option :exist_method, Support::Types::Symbol, default: proc { :"#{prefix}_klass_exists?" }
+        option :table_method, Support::Types::Symbol, default: proc { :"#{prefix}_table" }
+        option :type_method, Support::Types::Symbol, default: proc { :"#{prefix}_type" }
       end
 
       def included(base)
@@ -81,6 +85,22 @@ module Support
             #{build_method}
           end
         end
+        RUBY
+
+        model_methods!(base)
+      end
+
+      private
+
+      def model_methods!(base)
+        return unless model
+
+        base.class_eval <<~RUBY, __FILE__, __LINE__ + 1
+        def #{table_method}
+          #{klass_method}.arel_table
+        end
+
+        alias #{type_method} #{klass_name_method}
         RUBY
       end
     end

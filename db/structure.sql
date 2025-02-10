@@ -664,6 +664,16 @@ CREATE DOMAIN public.semantic_version AS public.citext DEFAULT '0.0.0'::public.c
 
 
 --
+-- Name: sibling_kind; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.sibling_kind AS ENUM (
+    'prev',
+    'next'
+);
+
+
+--
 -- Name: supplementary_background; Type: TYPE; Schema: public; Owner: -
 --
 
@@ -6233,42 +6243,6 @@ CREATE TABLE public.templates_list_item_instances (
 
 
 --
--- Name: templates_manual_list_entries; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.templates_manual_list_entries (
-    id uuid DEFAULT gen_random_uuid() NOT NULL,
-    source_type character varying NOT NULL,
-    source_id uuid NOT NULL,
-    target_type character varying NOT NULL,
-    target_id uuid NOT NULL,
-    template_kind public.template_kind NOT NULL,
-    list_name text NOT NULL,
-    "position" integer,
-    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
-);
-
-
---
--- Name: templates_manual_lists; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.templates_manual_lists (
-    id uuid DEFAULT gen_random_uuid() NOT NULL,
-    layout_definition_type character varying NOT NULL,
-    layout_definition_id uuid NOT NULL,
-    template_definition_type character varying NOT NULL,
-    template_definition_id uuid NOT NULL,
-    layout_kind public.layout_kind NOT NULL,
-    template_kind public.template_kind NOT NULL,
-    list_name text NOT NULL,
-    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
-);
-
-
---
 -- Name: templates_metadata_definitions; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -6481,6 +6455,426 @@ CREATE TABLE public.templates_supplementary_instances (
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     config jsonb DEFAULT '{}'::jsonb NOT NULL,
     slots jsonb DEFAULT '{}'::jsonb NOT NULL
+);
+
+
+--
+-- Name: templates_derived_instance_digests; Type: VIEW; Schema: public; Owner: -
+--
+
+CREATE VIEW public.templates_derived_instance_digests AS
+ WITH digested_template_instances AS (
+         SELECT templates_hero_instances.id AS template_instance_id,
+            'Templates::HeroInstance'::text AS template_instance_type,
+            templates_hero_instances.template_definition_id,
+            'Templates::HeroDefinition'::text AS template_definition_type,
+            templates_hero_instances.layout_instance_id,
+            'Layouts::HeroInstance'::text AS layout_instance_type,
+            layouts_hero_instances.layout_definition_id,
+            'Layouts::HeroDefinition'::text AS layout_definition_type,
+            templates_hero_instances.entity_id,
+            templates_hero_instances.entity_type,
+            templates_hero_instances."position",
+            templates_hero_instances.layout_kind,
+            templates_hero_instances.template_kind,
+            NULL::public.template_width AS width,
+            templates_hero_instances.generation,
+            templates_hero_instances.config,
+            (templates_hero_instances.slots || jsonb_build_object('template_kind', templates_hero_instances.template_kind)) AS slots,
+            templates_hero_instances.render_duration,
+            templates_hero_instances.last_rendered_at,
+            templates_hero_instances.created_at,
+            templates_hero_instances.updated_at
+           FROM ((public.templates_hero_instances
+             JOIN public.layouts_hero_instances ON ((layouts_hero_instances.id = templates_hero_instances.layout_instance_id)))
+             JOIN public.templates_hero_definitions ON ((templates_hero_definitions.id = templates_hero_instances.template_definition_id)))
+        UNION ALL
+         SELECT templates_list_item_instances.id AS template_instance_id,
+            'Templates::ListItemInstance'::text AS template_instance_type,
+            templates_list_item_instances.template_definition_id,
+            'Templates::ListItemDefinition'::text AS template_definition_type,
+            templates_list_item_instances.layout_instance_id,
+            'Layouts::ListItemInstance'::text AS layout_instance_type,
+            layouts_list_item_instances.layout_definition_id,
+            'Layouts::ListItemDefinition'::text AS layout_definition_type,
+            templates_list_item_instances.entity_id,
+            templates_list_item_instances.entity_type,
+            templates_list_item_instances."position",
+            templates_list_item_instances.layout_kind,
+            templates_list_item_instances.template_kind,
+            NULL::public.template_width AS width,
+            templates_list_item_instances.generation,
+            templates_list_item_instances.config,
+            (templates_list_item_instances.slots || jsonb_build_object('template_kind', templates_list_item_instances.template_kind)) AS slots,
+            templates_list_item_instances.render_duration,
+            templates_list_item_instances.last_rendered_at,
+            templates_list_item_instances.created_at,
+            templates_list_item_instances.updated_at
+           FROM ((public.templates_list_item_instances
+             JOIN public.layouts_list_item_instances ON ((layouts_list_item_instances.id = templates_list_item_instances.layout_instance_id)))
+             JOIN public.templates_list_item_definitions ON ((templates_list_item_definitions.id = templates_list_item_instances.template_definition_id)))
+        UNION ALL
+         SELECT templates_blurb_instances.id AS template_instance_id,
+            'Templates::BlurbInstance'::text AS template_instance_type,
+            templates_blurb_instances.template_definition_id,
+            'Templates::BlurbDefinition'::text AS template_definition_type,
+            templates_blurb_instances.layout_instance_id,
+            'Layouts::MainInstance'::text AS layout_instance_type,
+            layouts_main_instances.layout_definition_id,
+            'Layouts::MainDefinition'::text AS layout_definition_type,
+            templates_blurb_instances.entity_id,
+            templates_blurb_instances.entity_type,
+            templates_blurb_instances."position",
+            templates_blurb_instances.layout_kind,
+            templates_blurb_instances.template_kind,
+            templates_blurb_definitions.width,
+            templates_blurb_instances.generation,
+            templates_blurb_instances.config,
+            (templates_blurb_instances.slots || jsonb_build_object('template_kind', templates_blurb_instances.template_kind)) AS slots,
+            templates_blurb_instances.render_duration,
+            templates_blurb_instances.last_rendered_at,
+            templates_blurb_instances.created_at,
+            templates_blurb_instances.updated_at
+           FROM ((public.templates_blurb_instances
+             JOIN public.layouts_main_instances ON ((layouts_main_instances.id = templates_blurb_instances.layout_instance_id)))
+             JOIN public.templates_blurb_definitions ON ((templates_blurb_definitions.id = templates_blurb_instances.template_definition_id)))
+        UNION ALL
+         SELECT templates_detail_instances.id AS template_instance_id,
+            'Templates::DetailInstance'::text AS template_instance_type,
+            templates_detail_instances.template_definition_id,
+            'Templates::DetailDefinition'::text AS template_definition_type,
+            templates_detail_instances.layout_instance_id,
+            'Layouts::MainInstance'::text AS layout_instance_type,
+            layouts_main_instances.layout_definition_id,
+            'Layouts::MainDefinition'::text AS layout_definition_type,
+            templates_detail_instances.entity_id,
+            templates_detail_instances.entity_type,
+            templates_detail_instances."position",
+            templates_detail_instances.layout_kind,
+            templates_detail_instances.template_kind,
+            templates_detail_definitions.width,
+            templates_detail_instances.generation,
+            templates_detail_instances.config,
+            (templates_detail_instances.slots || jsonb_build_object('template_kind', templates_detail_instances.template_kind)) AS slots,
+            templates_detail_instances.render_duration,
+            templates_detail_instances.last_rendered_at,
+            templates_detail_instances.created_at,
+            templates_detail_instances.updated_at
+           FROM ((public.templates_detail_instances
+             JOIN public.layouts_main_instances ON ((layouts_main_instances.id = templates_detail_instances.layout_instance_id)))
+             JOIN public.templates_detail_definitions ON ((templates_detail_definitions.id = templates_detail_instances.template_definition_id)))
+        UNION ALL
+         SELECT templates_descendant_list_instances.id AS template_instance_id,
+            'Templates::DescendantListInstance'::text AS template_instance_type,
+            templates_descendant_list_instances.template_definition_id,
+            'Templates::DescendantListDefinition'::text AS template_definition_type,
+            templates_descendant_list_instances.layout_instance_id,
+            'Layouts::MainInstance'::text AS layout_instance_type,
+            layouts_main_instances.layout_definition_id,
+            'Layouts::MainDefinition'::text AS layout_definition_type,
+            templates_descendant_list_instances.entity_id,
+            templates_descendant_list_instances.entity_type,
+            templates_descendant_list_instances."position",
+            templates_descendant_list_instances.layout_kind,
+            templates_descendant_list_instances.template_kind,
+            templates_descendant_list_definitions.width,
+            templates_descendant_list_instances.generation,
+            templates_descendant_list_instances.config,
+            (templates_descendant_list_instances.slots || jsonb_build_object('template_kind', templates_descendant_list_instances.template_kind)) AS slots,
+            templates_descendant_list_instances.render_duration,
+            templates_descendant_list_instances.last_rendered_at,
+            templates_descendant_list_instances.created_at,
+            templates_descendant_list_instances.updated_at
+           FROM ((public.templates_descendant_list_instances
+             JOIN public.layouts_main_instances ON ((layouts_main_instances.id = templates_descendant_list_instances.layout_instance_id)))
+             JOIN public.templates_descendant_list_definitions ON ((templates_descendant_list_definitions.id = templates_descendant_list_instances.template_definition_id)))
+        UNION ALL
+         SELECT templates_link_list_instances.id AS template_instance_id,
+            'Templates::LinkListInstance'::text AS template_instance_type,
+            templates_link_list_instances.template_definition_id,
+            'Templates::LinkListDefinition'::text AS template_definition_type,
+            templates_link_list_instances.layout_instance_id,
+            'Layouts::MainInstance'::text AS layout_instance_type,
+            layouts_main_instances.layout_definition_id,
+            'Layouts::MainDefinition'::text AS layout_definition_type,
+            templates_link_list_instances.entity_id,
+            templates_link_list_instances.entity_type,
+            templates_link_list_instances."position",
+            templates_link_list_instances.layout_kind,
+            templates_link_list_instances.template_kind,
+            templates_link_list_definitions.width,
+            templates_link_list_instances.generation,
+            templates_link_list_instances.config,
+            (templates_link_list_instances.slots || jsonb_build_object('template_kind', templates_link_list_instances.template_kind)) AS slots,
+            templates_link_list_instances.render_duration,
+            templates_link_list_instances.last_rendered_at,
+            templates_link_list_instances.created_at,
+            templates_link_list_instances.updated_at
+           FROM ((public.templates_link_list_instances
+             JOIN public.layouts_main_instances ON ((layouts_main_instances.id = templates_link_list_instances.layout_instance_id)))
+             JOIN public.templates_link_list_definitions ON ((templates_link_list_definitions.id = templates_link_list_instances.template_definition_id)))
+        UNION ALL
+         SELECT templates_page_list_instances.id AS template_instance_id,
+            'Templates::PageListInstance'::text AS template_instance_type,
+            templates_page_list_instances.template_definition_id,
+            'Templates::PageListDefinition'::text AS template_definition_type,
+            templates_page_list_instances.layout_instance_id,
+            'Layouts::MainInstance'::text AS layout_instance_type,
+            layouts_main_instances.layout_definition_id,
+            'Layouts::MainDefinition'::text AS layout_definition_type,
+            templates_page_list_instances.entity_id,
+            templates_page_list_instances.entity_type,
+            templates_page_list_instances."position",
+            templates_page_list_instances.layout_kind,
+            templates_page_list_instances.template_kind,
+            templates_page_list_definitions.width,
+            templates_page_list_instances.generation,
+            templates_page_list_instances.config,
+            (templates_page_list_instances.slots || jsonb_build_object('template_kind', templates_page_list_instances.template_kind)) AS slots,
+            templates_page_list_instances.render_duration,
+            templates_page_list_instances.last_rendered_at,
+            templates_page_list_instances.created_at,
+            templates_page_list_instances.updated_at
+           FROM ((public.templates_page_list_instances
+             JOIN public.layouts_main_instances ON ((layouts_main_instances.id = templates_page_list_instances.layout_instance_id)))
+             JOIN public.templates_page_list_definitions ON ((templates_page_list_definitions.id = templates_page_list_instances.template_definition_id)))
+        UNION ALL
+         SELECT templates_contributor_list_instances.id AS template_instance_id,
+            'Templates::ContributorListInstance'::text AS template_instance_type,
+            templates_contributor_list_instances.template_definition_id,
+            'Templates::ContributorListDefinition'::text AS template_definition_type,
+            templates_contributor_list_instances.layout_instance_id,
+            'Layouts::MainInstance'::text AS layout_instance_type,
+            layouts_main_instances.layout_definition_id,
+            'Layouts::MainDefinition'::text AS layout_definition_type,
+            templates_contributor_list_instances.entity_id,
+            templates_contributor_list_instances.entity_type,
+            templates_contributor_list_instances."position",
+            templates_contributor_list_instances.layout_kind,
+            templates_contributor_list_instances.template_kind,
+            templates_contributor_list_definitions.width,
+            templates_contributor_list_instances.generation,
+            templates_contributor_list_instances.config,
+            (templates_contributor_list_instances.slots || jsonb_build_object('template_kind', templates_contributor_list_instances.template_kind)) AS slots,
+            templates_contributor_list_instances.render_duration,
+            templates_contributor_list_instances.last_rendered_at,
+            templates_contributor_list_instances.created_at,
+            templates_contributor_list_instances.updated_at
+           FROM ((public.templates_contributor_list_instances
+             JOIN public.layouts_main_instances ON ((layouts_main_instances.id = templates_contributor_list_instances.layout_instance_id)))
+             JOIN public.templates_contributor_list_definitions ON ((templates_contributor_list_definitions.id = templates_contributor_list_instances.template_definition_id)))
+        UNION ALL
+         SELECT templates_ordering_instances.id AS template_instance_id,
+            'Templates::OrderingInstance'::text AS template_instance_type,
+            templates_ordering_instances.template_definition_id,
+            'Templates::OrderingDefinition'::text AS template_definition_type,
+            templates_ordering_instances.layout_instance_id,
+            'Layouts::MainInstance'::text AS layout_instance_type,
+            layouts_main_instances.layout_definition_id,
+            'Layouts::MainDefinition'::text AS layout_definition_type,
+            templates_ordering_instances.entity_id,
+            templates_ordering_instances.entity_type,
+            templates_ordering_instances."position",
+            templates_ordering_instances.layout_kind,
+            templates_ordering_instances.template_kind,
+            templates_ordering_definitions.width,
+            templates_ordering_instances.generation,
+            templates_ordering_instances.config,
+            (templates_ordering_instances.slots || jsonb_build_object('template_kind', templates_ordering_instances.template_kind)) AS slots,
+            templates_ordering_instances.render_duration,
+            templates_ordering_instances.last_rendered_at,
+            templates_ordering_instances.created_at,
+            templates_ordering_instances.updated_at
+           FROM ((public.templates_ordering_instances
+             JOIN public.layouts_main_instances ON ((layouts_main_instances.id = templates_ordering_instances.layout_instance_id)))
+             JOIN public.templates_ordering_definitions ON ((templates_ordering_definitions.id = templates_ordering_instances.template_definition_id)))
+        UNION ALL
+         SELECT templates_navigation_instances.id AS template_instance_id,
+            'Templates::NavigationInstance'::text AS template_instance_type,
+            templates_navigation_instances.template_definition_id,
+            'Templates::NavigationDefinition'::text AS template_definition_type,
+            templates_navigation_instances.layout_instance_id,
+            'Layouts::NavigationInstance'::text AS layout_instance_type,
+            layouts_navigation_instances.layout_definition_id,
+            'Layouts::NavigationDefinition'::text AS layout_definition_type,
+            templates_navigation_instances.entity_id,
+            templates_navigation_instances.entity_type,
+            templates_navigation_instances."position",
+            templates_navigation_instances.layout_kind,
+            templates_navigation_instances.template_kind,
+            NULL::public.template_width AS width,
+            templates_navigation_instances.generation,
+            templates_navigation_instances.config,
+            (templates_navigation_instances.slots || jsonb_build_object('template_kind', templates_navigation_instances.template_kind)) AS slots,
+            templates_navigation_instances.render_duration,
+            templates_navigation_instances.last_rendered_at,
+            templates_navigation_instances.created_at,
+            templates_navigation_instances.updated_at
+           FROM ((public.templates_navigation_instances
+             JOIN public.layouts_navigation_instances ON ((layouts_navigation_instances.id = templates_navigation_instances.layout_instance_id)))
+             JOIN public.templates_navigation_definitions ON ((templates_navigation_definitions.id = templates_navigation_instances.template_definition_id)))
+        UNION ALL
+         SELECT templates_metadata_instances.id AS template_instance_id,
+            'Templates::MetadataInstance'::text AS template_instance_type,
+            templates_metadata_instances.template_definition_id,
+            'Templates::MetadataDefinition'::text AS template_definition_type,
+            templates_metadata_instances.layout_instance_id,
+            'Layouts::MetadataInstance'::text AS layout_instance_type,
+            layouts_metadata_instances.layout_definition_id,
+            'Layouts::MetadataDefinition'::text AS layout_definition_type,
+            templates_metadata_instances.entity_id,
+            templates_metadata_instances.entity_type,
+            templates_metadata_instances."position",
+            templates_metadata_instances.layout_kind,
+            templates_metadata_instances.template_kind,
+            NULL::public.template_width AS width,
+            templates_metadata_instances.generation,
+            templates_metadata_instances.config,
+            (templates_metadata_instances.slots || jsonb_build_object('template_kind', templates_metadata_instances.template_kind)) AS slots,
+            templates_metadata_instances.render_duration,
+            templates_metadata_instances.last_rendered_at,
+            templates_metadata_instances.created_at,
+            templates_metadata_instances.updated_at
+           FROM ((public.templates_metadata_instances
+             JOIN public.layouts_metadata_instances ON ((layouts_metadata_instances.id = templates_metadata_instances.layout_instance_id)))
+             JOIN public.templates_metadata_definitions ON ((templates_metadata_definitions.id = templates_metadata_instances.template_definition_id)))
+        UNION ALL
+         SELECT templates_supplementary_instances.id AS template_instance_id,
+            'Templates::SupplementaryInstance'::text AS template_instance_type,
+            templates_supplementary_instances.template_definition_id,
+            'Templates::SupplementaryDefinition'::text AS template_definition_type,
+            templates_supplementary_instances.layout_instance_id,
+            'Layouts::SupplementaryInstance'::text AS layout_instance_type,
+            layouts_supplementary_instances.layout_definition_id,
+            'Layouts::SupplementaryDefinition'::text AS layout_definition_type,
+            templates_supplementary_instances.entity_id,
+            templates_supplementary_instances.entity_type,
+            templates_supplementary_instances."position",
+            templates_supplementary_instances.layout_kind,
+            templates_supplementary_instances.template_kind,
+            NULL::public.template_width AS width,
+            templates_supplementary_instances.generation,
+            templates_supplementary_instances.config,
+            (templates_supplementary_instances.slots || jsonb_build_object('template_kind', templates_supplementary_instances.template_kind)) AS slots,
+            templates_supplementary_instances.render_duration,
+            templates_supplementary_instances.last_rendered_at,
+            templates_supplementary_instances.created_at,
+            templates_supplementary_instances.updated_at
+           FROM ((public.templates_supplementary_instances
+             JOIN public.layouts_supplementary_instances ON ((layouts_supplementary_instances.id = templates_supplementary_instances.layout_instance_id)))
+             JOIN public.templates_supplementary_definitions ON ((templates_supplementary_definitions.id = templates_supplementary_instances.template_definition_id)))
+        )
+ SELECT digested_template_instances.template_instance_id,
+    digested_template_instances.template_instance_type,
+    digested_template_instances.template_definition_id,
+    digested_template_instances.template_definition_type,
+    digested_template_instances.layout_instance_id,
+    digested_template_instances.layout_instance_type,
+    digested_template_instances.layout_definition_id,
+    digested_template_instances.layout_definition_type,
+    digested_template_instances.entity_id,
+    digested_template_instances.entity_type,
+    digested_template_instances."position",
+    digested_template_instances.layout_kind,
+    digested_template_instances.template_kind,
+    digested_template_instances.width,
+    digested_template_instances.generation,
+    digested_template_instances.config,
+    digested_template_instances.slots,
+    digested_template_instances.last_rendered_at,
+    digested_template_instances.render_duration,
+    digested_template_instances.created_at,
+    digested_template_instances.updated_at
+   FROM digested_template_instances;
+
+
+--
+-- Name: templates_instance_digests; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.templates_instance_digests (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    template_instance_type character varying NOT NULL,
+    template_instance_id uuid NOT NULL,
+    template_definition_type character varying NOT NULL,
+    template_definition_id uuid NOT NULL,
+    layout_instance_type character varying NOT NULL,
+    layout_instance_id uuid NOT NULL,
+    layout_definition_type character varying NOT NULL,
+    layout_definition_id uuid NOT NULL,
+    entity_type character varying NOT NULL,
+    entity_id uuid NOT NULL,
+    "position" bigint NOT NULL,
+    layout_kind public.layout_kind NOT NULL,
+    template_kind public.template_kind NOT NULL,
+    width public.template_width,
+    generation uuid NOT NULL,
+    config jsonb DEFAULT '{}'::jsonb NOT NULL,
+    slots jsonb DEFAULT '{}'::jsonb NOT NULL,
+    render_duration numeric,
+    last_rendered_at timestamp without time zone,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+--
+-- Name: templates_instance_siblings; Type: VIEW; Schema: public; Owner: -
+--
+
+CREATE VIEW public.templates_instance_siblings AS
+ SELECT source.template_instance_type,
+    source.template_instance_id,
+    sibling.template_instance_type AS sibling_instance_type,
+    sibling.template_instance_id AS sibling_instance_id,
+    sibling."position",
+        CASE
+            WHEN (sibling."position" > source."position") THEN 'next'::public.sibling_kind
+            ELSE 'prev'::public.sibling_kind
+        END AS kind,
+    COALESCE((sibling.config @> '{"dark": true}'::jsonb), false) AS dark,
+    sibling.config,
+    sibling.layout_kind,
+    sibling.template_kind,
+    sibling.width
+   FROM (public.templates_instance_digests source
+     JOIN public.templates_instance_digests sibling USING (layout_instance_type, layout_instance_id))
+  WHERE (source.template_instance_id <> sibling.template_instance_id);
+
+
+--
+-- Name: templates_manual_list_entries; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.templates_manual_list_entries (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    source_type character varying NOT NULL,
+    source_id uuid NOT NULL,
+    target_type character varying NOT NULL,
+    target_id uuid NOT NULL,
+    template_kind public.template_kind NOT NULL,
+    list_name text NOT NULL,
+    "position" integer,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+--
+-- Name: templates_manual_lists; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.templates_manual_lists (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    layout_definition_type character varying NOT NULL,
+    layout_definition_id uuid NOT NULL,
+    template_definition_type character varying NOT NULL,
+    template_definition_id uuid NOT NULL,
+    layout_kind public.layout_kind NOT NULL,
+    template_kind public.template_kind NOT NULL,
+    list_name text NOT NULL,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
 
@@ -7298,6 +7692,14 @@ ALTER TABLE ONLY public.templates_hero_instances
 
 
 --
+-- Name: templates_instance_digests templates_instance_digests_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.templates_instance_digests
+    ADD CONSTRAINT templates_instance_digests_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: templates_link_list_definitions templates_link_list_definitions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -7664,6 +8066,62 @@ CREATE INDEX idx_templates_hero_instances_defn ON public.templates_hero_instance
 --
 
 CREATE INDEX idx_templates_hero_instances_layout ON public.templates_hero_instances USING btree (layout_instance_id);
+
+
+--
+-- Name: idx_templates_instance_digest_entity; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_templates_instance_digest_entity ON public.templates_instance_digests USING btree (entity_type, entity_id);
+
+
+--
+-- Name: idx_templates_instance_digests_layout_definition; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_templates_instance_digests_layout_definition ON public.templates_instance_digests USING btree (layout_definition_type, layout_definition_id);
+
+
+--
+-- Name: idx_templates_instance_digests_layout_instance; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_templates_instance_digests_layout_instance ON public.templates_instance_digests USING btree (layout_instance_type, layout_instance_id);
+
+
+--
+-- Name: idx_templates_instance_digests_rendered_by_entity; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_templates_instance_digests_rendered_by_entity ON public.templates_instance_digests USING btree (last_rendered_at, entity_type, entity_id);
+
+
+--
+-- Name: idx_templates_instance_digests_rendering_by_template; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_templates_instance_digests_rendering_by_template ON public.templates_instance_digests USING btree (template_kind, render_duration);
+
+
+--
+-- Name: idx_templates_instance_digests_siblings; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_templates_instance_digests_siblings ON public.templates_instance_digests USING btree (template_instance_type, template_instance_id, layout_instance_type, layout_instance_id, "position") INCLUDE (config, layout_kind, template_kind, width);
+
+
+--
+-- Name: idx_templates_instance_digests_template_definition; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_templates_instance_digests_template_definition ON public.templates_instance_digests USING btree (template_definition_type, template_definition_id);
+
+
+--
+-- Name: idx_templates_instance_digests_uniqueness; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX idx_templates_instance_digests_uniqueness ON public.templates_instance_digests USING btree (template_instance_type, template_instance_id);
 
 
 --
@@ -12651,6 +13109,10 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20250205024007'),
 ('20250205025649'),
 ('20250205231244'),
-('20250206183714');
+('20250206183714'),
+('20250206231134'),
+('20250206231834'),
+('20250206232440'),
+('20250207184954');
 
 

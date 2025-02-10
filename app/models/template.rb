@@ -40,9 +40,15 @@ class Template < Support::FrozenRecordHelpers::AbstractRecord
 
   alias_attribute :kind, :template_kind
 
+  delegate :definition_klass, :definition_table, :definition_type, :instance_klass, :instance_table, :instance_type, to: :layout, prefix: true
+
   validates :definition_klass, :instance_klass, presence: true
 
   validate :all_props_accounted_for!
+
+  def has_width?
+    properties.one?(&:width?)
+  end
 
   def introspect
     slice(:template_kind, :description, :properties, :slots)
@@ -77,11 +83,11 @@ class Template < Support::FrozenRecordHelpers::AbstractRecord
 
   # @!group Main Classes
 
-  klass_name_pair! :definition do
+  klass_name_pair! :definition, model: true do
     "templates/#{template_kind}_definition".classify
   end
 
-  klass_name_pair! :instance do
+  klass_name_pair! :instance, model: true do
     "templates/#{template_kind}_instance".classify
   end
 
