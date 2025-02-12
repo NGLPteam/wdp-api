@@ -28,6 +28,8 @@ class HarvestEntity < ApplicationRecord
 
   scope :latest_attempt, -> { where(harvest_record_id: HarvestRecord.latest_attempt.select(:id)) }
 
+  scope :in_default_order, -> { build_default_order_scope }
+
   scope :filtered_by_schema_version, ->(schemas) { where(schema_version: SchemaVersion.filtered_by(schemas)) }
   scope :by_metadata_kind, ->(kind) { where(metadata_kind: kind) }
   scope :for_metadata_format, ->(metadata_format) { joins(:harvest_record).merge(HarvestRecord.for_metadata_format(metadata_format)) }
@@ -121,6 +123,22 @@ class HarvestEntity < ApplicationRecord
       expr = arel_quote %{$.scalar[*].full_path ? (@ == #{full_path.to_s.inspect})}
 
       arel_infix "@?", arel_table[:extracted_assets], expr
+    end
+
+    def build_default_order_scope
+      roots_first = arel_case do |stmt|
+        stmt.when(arel_table[:parent_id].eq(nil)).then(1)
+        stmt.else(999)
+      end.asc
+
+      kind_order = arel_case(arel_table[:metadata_kind]) do |stmt|
+        stmt.when("volume").then(1)
+        stmt.when("issue").then(2)
+        stmt.when("article").then(3)
+        stmt.else(99)
+      end.asc
+
+      order(roots_first, kind_order)
     end
   end
 end

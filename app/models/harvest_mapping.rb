@@ -12,6 +12,9 @@ class HarvestMapping < ApplicationRecord
   scope :by_target, ->(entity) { where(target_entity: entity) }
   scope :by_set, ->(set) { where(harvest_set: set) }
 
+  scope :in_default_order, -> { in_recent_order }
+  scope :in_inverse_order, -> { in_oldest_order }
+
   has_one_readonly :latest_harvest_attempt_link, inverse_of: :harvest_mapping
 
   has_many :harvest_attempts, inverse_of: :harvest_mapping, dependent: :destroy

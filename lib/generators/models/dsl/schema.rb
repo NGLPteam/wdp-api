@@ -55,10 +55,6 @@ module DSL
       models.any? { |m| m.state_machine? }
     end
 
-    def any_tenant_models?
-      models.any? { |m| m.tenant_model? }
-    end
-
     def model_registered?(key)
       find_model(key).present?
     end

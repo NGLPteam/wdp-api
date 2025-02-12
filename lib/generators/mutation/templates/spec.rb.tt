@@ -4,9 +4,6 @@
 # frozen_string_literal: true
 
 RSpec.describe <%= mutation_class_name %>, type: :request, graphql: :mutation do
-<% if tenant_schema? -%>
-  include_context "with tenant"
-<% end -%>
   mutation_query! <<~GRAPHQL
   mutation <%= query_name %>($input: <%= input_name %>!) {
     <%= graphql_mutation %>(input: $input) {

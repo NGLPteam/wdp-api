@@ -399,6 +399,10 @@ RSpec/DescribeClass:
   Exclude:
     - spec/requests/**/*.rb
 
+RSpec/EmptyExampleGroup:
+  Exclude:
+    - spec/policies/**/*.rb
+
 RSpec/EmptyLineAfterFinalLet:
   Enabled: false
 

@@ -7,12 +7,7 @@ module DSL
     def options_for_migration
       options.slice(*MIGRATION_ALLOWED_OPTIONS).tap do |migration_options|
         migration_options[:polymorphic] = true if migration_options.key?(:polymorphic)
-        migration_options.delete :foreign_key if tenant_foreign_key?
       end
-    end
-
-    def tenant_foreign_key?
-      false
     end
 
     def stringify_value(v)

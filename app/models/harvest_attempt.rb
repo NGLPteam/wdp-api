@@ -20,9 +20,14 @@ class HarvestAttempt < ApplicationRecord
   scope :current, -> { where(id: LatestHarvestAttemptLink.select(:harvest_attempt_id)) }
   scope :previous, -> { where.not(id: LatestHarvestAttemptLink.select(:harvest_attempt_id)) }
 
+  scope :in_default_order, -> { in_recent_order }
+  scope :in_inverse_order, -> { in_oldest_order }
+
   validates :metadata_format, harvesting_metadata_format: true
 
   attribute :metadata, Harvesting::Attempts::Metadata.to_type, default: proc { {} }
+
+  alias_attribute :note, :description
 
   delegate :max_record_count, to: :metadata
 

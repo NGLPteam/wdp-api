@@ -20,7 +20,6 @@ module DSL
         args << "--force" if forced
         args << "--fields=#{model.mutation_fields.to_json}"
         args << "--required=#{required_for_verb.to_json}"
-        args << "--schema=tenant" if model.tenant_model?
       end
     end
 

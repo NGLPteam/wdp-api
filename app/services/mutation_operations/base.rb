@@ -34,19 +34,27 @@ module MutationOperations
       extend ActiveModel::Callbacks
 
       include Dry::Effects.CurrentTime
+      include Dry::Effects::Handler.State(:args)
+      include Dry::Effects::Handler.State(:execution_args)
       include Dry::Effects.Resolve(:current_user)
       include Dry::Effects.Resolve(:graphql_context)
       include Dry::Effects.Resolve(:local_context)
       include Dry::Effects.Resolve(:edges)
       include Dry::Effects.Resolve(:attribute_names)
       include Dry::Effects.Resolve(:error_compiler)
+      include Dry::Effects.Resolve(:provided_args)
       include Dry::Effects.Resolve(:transient_arguments)
+      include Dry::Effects.State(:args)
+      include Dry::Effects.State(:execution_args)
       include Dry::Effects.State(:graphql_response)
       include Dry::Effects.Interrupt(:throw_invalid)
       include Dry::Effects.Interrupt(:throw_unauthorized)
       include Dry::Monads[:result, :validated, :list]
 
-      define_model_callbacks :prepare, :edges, :contracts, :validation, :execution
+      define_model_callbacks :mutation, :prepare, :authorization, :edges, :contracts, :validation, :execution
+
+      around_mutation :set_up_args!
+      around_mutation :set_up_execution_args!
     end
 
     # @abstract The main logic of the mutation must be implemented in this method.
@@ -62,13 +70,13 @@ module MutationOperations
 
     # @api private
     # @return [void]
-    def perform!(**args)
-      local_context[:args] = args
-
-      local_context[:execution_args] = args.dup
-
+    def perform_mutation!
       run_callbacks :prepare do
-        prepare!(**args)
+        prepare!
+      end
+
+      run_callbacks :authorization do
+        authorize!
       end
 
       run_callbacks :edges do
@@ -77,10 +85,10 @@ module MutationOperations
 
       run_callbacks :validation do
         run_callbacks :contracts do
-          check_contracts!(**args)
+          check_contracts!
         end
 
-        validate!(**args)
+        validate!
       end
 
       halt_if_errors!
@@ -88,9 +96,15 @@ module MutationOperations
       unset_transient_arguments!
 
       run_callbacks :execution do
-        exec_args = local_context.fetch(:execution_args).deep_symbolize_keys
+        call(**execution_args)
+      end
+    end
 
-        call(**exec_args)
+    # @see #perform_mutation!
+    # @return [void]
+    def perform!
+      run_callbacks :mutation do
+        perform_mutation!
       end
     end
 
@@ -160,12 +174,22 @@ module MutationOperations
     end
 
     # @abstract
+    # Set the execution args as a dup of the actual args.
     # @return [void]
-    def prepare!(**args); end
+    def prepare!
+      self.execution_args = args.dup.deep_symbolize_keys
+    end
+
+    # @abstract
+    # A hook that checks for authorization to perform the mutation.
+    #
+    # Runs after prepare, but before validation.
+    # @return [void]
+    def authorize!; end
 
     # @abstract
     # @return [void]
-    def validate!(**args); end
+    def validate!; end
 
     # @return [void]
     def unset_transient_arguments!
@@ -279,7 +303,7 @@ module MutationOperations
     # @return [void]
     def unset_arg_for_execution!(*keys)
       keys.flatten.each do |key|
-        local_context[:execution_args].delete key
+        execution_args.delete key
       end
     end
 
@@ -370,5 +394,55 @@ module MutationOperations
     end
 
     # @!endgroup
+
+    # @!group Mutation State
+
+    # @api private
+    # @return [void]
+    def set_up_args!
+      local_context[:args] = provided_args
+
+      with_args(provided_args.dup.deep_symbolize_keys) do
+        yield
+      end
+    end
+
+    # @api private
+    # @return [void]
+    def set_up_execution_args!
+      with_execution_args(nil) do
+        yield
+      end
+    end
+
+    # @!endgroup
+
+    module ClassMethods
+      # Declare that the mutation requires the permission described by `with`
+      # on a model instance stored in {#args} with the key `arg_key`.
+      #
+      # This can be called multiple times if a mutation requires multiple auth checks.
+      #
+      # @example Require update permissions for an account
+      #   authorizes! :account, with:: update?
+      # @param [Symbol] arg_key
+      # @param [Symbol] with the verb to authorize with
+      # @return [void]
+      def authorizes!(arg_key, with:)
+        key = MutationOperations::Types::ArgKey[arg_key]
+
+        predicate = MutationOperations::Types::AuthPredicate[with]
+
+        verb = predicate.to_s.chomp(??)
+
+        class_eval <<~RUBY, __FILE__, __LINE__ + 1
+        before_authorization def authorize_#{arg_key}_to_#{verb}!
+          model = args.fetch(#{key.inspect})
+
+          authorize model, #{predicate.inspect}
+        end
+        RUBY
+      end
+    end
   end
 end

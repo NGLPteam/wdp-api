@@ -30,8 +30,8 @@ module MutationOperations
       response, result = with_graphql_response(base_response) do
         Mutations.with_active! do
           with_transaction do
-            with_effects_stack do
-              operation.perform!(**args)
+            with_effects_stack(args:) do
+              operation.perform!
             end
           end
         end
@@ -82,20 +82,21 @@ module MutationOperations
       context[:current_user].presence || AnonymousUser.new
     end
 
-    def dependency_injections
+    def dependency_injections(args: {})
       {
         attribute_names:,
         current_user:,
         error_compiler:,
         graphql_context: context,
         local_context: base_local_context,
+        provided_args: args.freeze,
         transient_arguments:,
       }
     end
 
-    def with_effects_stack
+    def with_effects_stack(args: {})
       with_current_time(now) do
-        provide(dependency_injections) do
+        provide(dependency_injections(args:)) do
           yield
         end
       end

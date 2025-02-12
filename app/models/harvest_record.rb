@@ -12,7 +12,7 @@ class HarvestRecord < ApplicationRecord
   has_one :harvest_mapping, through: :harvest_attempt
   has_one :harvest_set, through: :harvest_attempt
 
-  has_many :harvest_entities, inverse_of: :harvest_record, dependent: :destroy
+  has_many :harvest_entities, -> { in_default_order }, inverse_of: :harvest_record, dependent: :destroy
   has_many :harvest_contributions, through: :harvest_entities
   has_many :harvest_contributors, through: :harvest_contributions
 
@@ -35,6 +35,9 @@ class HarvestRecord < ApplicationRecord
 
   scope :sans_extracted_scalar_asset, ->(full_path) { with_entities.where.not(id: unscoped.with_extracted_scalar_asset(full_path)) }
   scope :with_extracted_scalar_asset, ->(full_path) { where(id: HarvestEntity.with_extracted_scalar_asset(full_path).select(:harvest_record_id)) }
+
+  scope :in_default_order, -> { in_recent_order }
+  scope :in_inverse_order, -> { in_oldest_order }
 
   # @api private
   # @return [void]

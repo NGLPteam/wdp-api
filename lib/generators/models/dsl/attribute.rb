@@ -147,8 +147,6 @@ module DSL
     def order_scopes
       [].tap do |os|
         os.concat(options[:order_scopes]) if options[:order_scopes].is_a?(Array)
-      end.tap do |os|
-        os.push(:tenant_id) if @model.tenant_model?
       end
     end
   end

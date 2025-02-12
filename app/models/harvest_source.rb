@@ -11,7 +11,7 @@ class HarvestSource < ApplicationRecord
   has_many :harvest_contributors, inverse_of: :harvest_source, dependent: :destroy
   has_many :harvest_mappings, inverse_of: :harvest_source, dependent: :destroy
   has_many :harvest_metadata_mappings, inverse_of: :harvest_source, dependent: :destroy
-  has_many :harvest_sets, inverse_of: :harvest_source, dependent: :destroy
+  has_many :harvest_sets, -> { in_default_order }, inverse_of: :harvest_source, dependent: :destroy
 
   has_many_readonly :latest_harvest_attempt_links, inverse_of: :harvest_source
 
@@ -22,6 +22,9 @@ class HarvestSource < ApplicationRecord
 
   scope :for_protocol, ->(protocol) { where(protocol:) }
   scope :with_oai_protocol, -> { for_protocol "oai" }
+
+  scope :in_default_order, -> { lazily_order(:name, :asc) }
+  scope :in_inverse_order, -> { lazily_order(:name, :desc) }
 
   validates :name, uniqueness: true
   validates :identifier, :name, :protocol, :base_url, presence: true

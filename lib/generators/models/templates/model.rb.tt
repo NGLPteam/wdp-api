@@ -5,9 +5,6 @@ class <%= model.class_name %> < ApplicationRecord
 <% if model.slug_type == :ephemeral -%>
   include HasEphemeralSystemSlug
 <% end -%>
-<% if model.tenant? -%>
-  include BelongsToTenant
-<% end -%>
 <% if model.state_machine? -%>
   include UsesStatesman
 <% end -%>

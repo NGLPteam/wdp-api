@@ -60,6 +60,22 @@ module Types
 
     field :grant_access, mutation: Mutations::GrantAccess
 
+    field :harvest_attempt_from_source, mutation: Mutations::HarvestAttemptFromSource
+
+    field :harvest_attempt_from_mapping, mutation: Mutations::HarvestAttemptFromMapping
+
+    field :harvest_mapping_create, mutation: Mutations::HarvestMappingCreate
+
+    field :harvest_mapping_destroy, mutation: Mutations::HarvestMappingDestroy
+
+    field :harvest_mapping_update, mutation: Mutations::HarvestMappingUpdate
+
+    field :harvest_source_create, mutation: Mutations::HarvestSourceCreate
+
+    field :harvest_source_destroy, mutation: Mutations::HarvestSourceDestroy
+
+    field :harvest_source_update, mutation: Mutations::HarvestSourceUpdate
+
     field :link_entity, mutation: Mutations::LinkEntity
 
     field :reparent_entity, mutation: Mutations::ReparentEntity

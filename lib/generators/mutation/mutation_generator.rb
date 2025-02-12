@@ -17,7 +17,6 @@ class MutationGenerator < Rails::Generators::NamedBase
   class_option :skip_operation, type: :boolean, default: false
   class_option :skip_spec, type: :boolean, default: false
   class_option :skip_operation_implementation, type: :boolean, default: false
-  class_option :schema, type: :string, default: :all, desc: "Indicates which schemas will contain the mutation", banner: "tenant|control|all"
   class_option :fields, type: :string
   class_option :required, type: :string
   class_option :rules, type: :string
@@ -69,32 +68,10 @@ class MutationGenerator < Rails::Generators::NamedBase
   private
 
   def target_mutation
-    return "app/graphql/types/mutation_type_control.rb" if control_schema?
-    return "app/graphql/types/mutation_type_tenant.rb" if tenant_schema?
-
     "app/graphql/types/mutation_type.rb"
   end
 
-  def schema
-    options[:schema].to_sym
-  end
-
-  def tenant_schema?
-    schema == :tenant
-  end
-
-  def control_schema?
-    schema == :control
-  end
-
-  def both_schemas?
-    !(tenant_schema? || control_schema?)
-  end
-
   def spec_path
-    return "spec/requests/graphql/tenant" if tenant_schema?
-    return "spec/requests/graphql/control" if control_schema?
-
     "spec/requests/graphql"
   end
 

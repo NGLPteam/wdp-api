@@ -42,18 +42,6 @@ module DSL
       schema.find_model(target)
     end
 
-    def to_tenant_model?
-      target_model&.tenant_model?
-    end
-
-    def from_tenant_model?
-      source_model&.tenant_model?
-    end
-
-    def tenant_foreign_key?
-      from_tenant_model? && to_tenant_model?
-    end
-
     def polymorphic?
       @options.key? :polymorphic
     end
