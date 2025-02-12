@@ -4,10 +4,6 @@
 # frozen_string_literal: true
 
 RSpec.describe "Query.<%= graphql_collection_field_name %>", type: :request do
-<%- if tenant_schema? -%>
-  include_context "with tenant"
-
-<%- end -%>
   context "when ordering" do
     let(:query) do
       <<~GRAPHQL

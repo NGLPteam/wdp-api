@@ -9,7 +9,6 @@ class MutationScaffoldGenerator < Rails::Generators::NamedBase
   class_option :skip_create, type: :boolean, default: false
   class_option :skip_destroy, type: :boolean, default: false
   class_option :skip_update, type: :boolean, default: false
-  class_option :schema, type: :string, default: :tenant, desc: "Indicates which schemas will contain the mutation", banner: "tenant|control|all"
 
   # @return [void]
   def generate_mutations!
@@ -41,7 +40,6 @@ class MutationScaffoldGenerator < Rails::Generators::NamedBase
       args << "--unique-identifier" if options[:unique_identifier]
       args << "--unique-title" if has_unique_title?
       args << "--optional-description" if options[:optional_description]
-      args << "--schema=#{options[:schema]}"
     end
   end
 

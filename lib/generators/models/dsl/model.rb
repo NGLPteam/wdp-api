@@ -13,7 +13,7 @@ module DSL
 
     attr_reader :attributes, :state_machine, :references, :schema, :verbs
 
-    default_options tenant: false, gql_type: true, slug: :ephemeral, gql_interface: false
+    default_options gql_type: true, slug: :ephemeral, gql_interface: false
 
     def initialize(schema, name, **options, &)
       @schema = schema
@@ -109,10 +109,6 @@ module DSL
       end
     end
 
-    def tenant_model_references
-      references.filter { |r| r.tenant_foreign_key? }
-    end
-
     def orderable?
       order_on_attribute.present?
     end
@@ -128,12 +124,6 @@ module DSL
     def state_machine?
       state_machine.present?
     end
-
-    def tenant_model?
-      @options[:tenant] == true
-    end
-
-    alias tenant? tenant_model?
 
     def file_name
       @file_name ||= class_name.underscore

@@ -6,6 +6,7 @@ module Types
     implements Types::AttributableType
     implements Types::EntityType
     implements Types::ChildEntityType
+    implements Types::HarvestTargetType
     implements Types::HasEntityAnalytics
     implements Types::HasDOIType
     implements Types::HasISSNType

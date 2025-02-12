@@ -39,7 +39,7 @@ module DSL
       model_name = "#{model.singular_name}_transition"
       index_name = "#{model.singular_name}_state_index"
       @transition_model ||= begin
-        transition_model = Model.new(schema, model_name, tenant: model.tenant_model?, slug: :none) do
+        transition_model = Model.new(schema, model_name, slug: :none) do
           description "A #{parent_model_name} state machine transition"
           r ref, on_delete: :cascade, index: { name: index_name }
           a :most_recent, :default_false
@@ -50,10 +50,6 @@ module DSL
         schema.register_model transition_model
         transition_model
       end
-    end
-
-    def tenant?
-      tenant
     end
   end
 end

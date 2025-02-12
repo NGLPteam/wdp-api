@@ -2,7 +2,8 @@
 
 FactoryBot.define do
   factory :harvest_set do
-    harvest_source { nil }
+    association(:harvest_source)
+
     sequence(:identifier) do |n|
       "hs-#{n}"
     end

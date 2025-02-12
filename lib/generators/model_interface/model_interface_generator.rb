@@ -12,7 +12,6 @@ class ModelInterfaceGenerator < Rails::Generators::NamedBase
   class_option :order_enum, type: :boolean, default: true
   class_option :simply_ordered, type: :boolean, default: true
   class_option :skip_resolver, type: :boolean, default: false
-  class_option :schema, type: :string, default: :both
 
   def create_order_enum!
     return unless use_custom_enum?
@@ -50,26 +49,7 @@ class ModelInterfaceGenerator < Rails::Generators::NamedBase
   private
 
   def spec_path
-    return "spec/requests/graphql/tenant" if tenant_schema?
-    return "spec/requests/graphql/control" if control_schema?
-
     "spec/requests/graphql"
-  end
-
-  def schema
-    options[:schema].to_sym
-  end
-
-  def tenant_schema?
-    schema == :tenant
-  end
-
-  def control_schema?
-    schema == :control
-  end
-
-  def both_schemas?
-    schema == :both
   end
 
   def field_collection_name
@@ -117,11 +97,7 @@ class ModelInterfaceGenerator < Rails::Generators::NamedBase
   end
 
   def target_query
-    return "app/graphql/types/query_type_control.rb" if control_schema?
-    return "app/graphql/types/query_type_tenant.rb" if tenant_schema?
-    return "app/graphql/types/query_type.rb" if both_schemas?
-
-    nil
+    "app/graphql/types/query_type.rb"
   end
 
   def inject_query!(text)

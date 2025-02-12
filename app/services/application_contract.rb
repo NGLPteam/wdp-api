@@ -10,6 +10,10 @@ class ApplicationContract < Dry::Validation::Contract
     key.failure(:must_be_entity) unless value.kind_of?(::HierarchicalEntity)
   end
 
+  register_macro :harvest_identifier_format do
+    key.failure(:invalid_harvest_identifier) unless value.present? && Harvesting::Types::VALID_IDENTIFIER.match?(value)
+  end
+
   register_macro :slug_format do
     key.failure(:must_be_slug) unless AppTypes::SLUG_PATTERN.match? value
   end

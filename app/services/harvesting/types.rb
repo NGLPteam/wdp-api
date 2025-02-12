@@ -10,6 +10,8 @@ module Harvesting
 
     VALID_NAME = /\A([a-z_][a-zA-Z_0-9]*)\z/
 
+    VALID_IDENTIFIER = /\A(?![_-])(?!.*[_-]{2,})[a-z0-9_-]{3,}(?<![_-])\z/
+
     VALID_PATH = /\A(?<part>[a-z_][a-zA-Z_0-9]*)\.\g<part>\z/
 
     # @see ::HarvestAttempt

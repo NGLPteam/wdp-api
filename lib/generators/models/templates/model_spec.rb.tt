@@ -5,9 +5,6 @@
 
 <% module_namespacing do -%>
 RSpec.describe <%= model.class_name %>, type: :model do
-<% if model.tenant? -%>
-  include_context "with tenant"
-<% end -%>
   let(:factory) { :<%= model.factory_name %> }
 
   it "has a valid factory" do

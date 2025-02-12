@@ -29,7 +29,9 @@ module Mutations
         persist_model! contributor, attach_to: :contributor
       end
 
-      def validate!(contributor:, **_)
+      def validate!
+        args => { contributor: }
+
         add_error! "Mismatched contributor type.", path: "contributorId" unless contributor.person?
       end
     end

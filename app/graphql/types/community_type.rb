@@ -5,6 +5,7 @@ module Types
   class CommunityType < Types::AbstractModel
     implements Types::AccessibleType
     implements Types::EntityType
+    implements Types::HarvestTargetType
     implements Types::HasEntityAnalytics
     implements Types::HasSchemaPropertiesType
     implements Types::AttachableType

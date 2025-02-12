@@ -4,10 +4,6 @@
 # frozen_string_literal: true
 
 RSpec.describe "Query.<%= graphql_single_field_name %>", type: :request do
-<%- if tenant_schema? -%>
-  include_context "with tenant"
-
-<%- end -%>
   let(:query) do
     <<~GRAPHQL
     query get<%= model_name %>($slug: Slug!) {

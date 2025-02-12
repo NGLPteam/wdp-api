@@ -35,7 +35,7 @@ module MutationOperations
     # Run all the contracts defined for this mutation within the `validations` => `contracts` substep.
     # @api private
     # @return [void]
-    def check_contracts!(**args)
+    def check_contracts!
       applicable_contracts.each do |contract|
         check_contract! contract, **args
       end

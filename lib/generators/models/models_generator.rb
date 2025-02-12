@@ -35,13 +35,6 @@ class ModelsGenerator < Rails::Generators::Base
     template "timestamp_scopes.rb", File.join("app/models/concerns", "timestamp_scopes.rb")
   end
 
-  def ensure_migration_helpers
-    return unless @schema.any_tenant_models?
-    return if skip_migration_creation?
-
-    template "multi_tenant_migration_helper.rb", File.join("lib/migration", "multi_tenant_helper.rb")
-  end
-
   def scaffold_models
     @schema.models.each do |model|
       set_current_model(model)
@@ -90,7 +83,6 @@ class ModelsGenerator < Rails::Generators::Base
     return unless @model.gql_interface?
 
     args = [@model.class_name]
-    args.push "--schema=tenant" if @model.tenant_model?
     args.push "--force" if forced?
     Rails::Generators.invoke("model_interface", args)
   end

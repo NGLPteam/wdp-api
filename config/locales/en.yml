@@ -44,6 +44,7 @@ en:
       destroy_collection_with_items: "This collection must have all its items removed prior to deletion."
       destroy_community_with_collections: "This community must have all of its collections removed prior to deletion."
       destroy_item_with_subitems: "This item must have all its items removed prior to deletion."
+      invalid_harvest_identifier: "must be a valid harvest identifier (at least three characters, all lowercase, alphanumeric, hyphens and underscores allowed, no consecutive hyphens / underscores)"
       invalid_identifier: "must be a valid identifier (at least three characters, must start with a letter, all lowercase, alphanumeric, dashes allowed)"
       invalid_new_schema_for_parent: "has a parent that does not accept an entity of type %{declaration} as a child"
       invalid_parent_for_schema: "cannot be assigned to an entity with a parent of type %{declaration}"
@@ -60,8 +61,9 @@ en:
       must_be_orcid: "must be a valid ORCID URL: https://orcid.org/xxxx-xxxx-xxxx-xxxx"
       must_be_ordering: "must be an ordering"
       must_be_slug: "must be a valid slug (all lowercase, no whitespace)"
+      must_be_unique: "must be unique"
       must_be_unique_doi: "must be a unique DOI"
-      must_be_unique_identifier: "must be a unique slug for the entity"
+      must_be_unique_identifier: "must be unique identifier for the entity"
       must_be_unique_orcid: "has already been assigned to another contributor"
       must_be_unique_slug: "must be a unique slug for the entity"
       must_be_url: "must be a valid HTTP URL"
@@ -76,6 +78,8 @@ en:
           must_match: "received an instance of %{actual}, but expected %{models}"
       unacceptable_edge: "An entity of type '%{parent}' cannot be a direct parent of '%{child}'"
       update_and_clear_attachment: "cannot receive a new attachment while also clearing it"
+      rules:
+        not_yet_implemented: "This mutation is not yet implemented."
   frozen:
     static_property:
       title:

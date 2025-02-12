@@ -150,6 +150,8 @@ module Resolvers
 
         option :filters, **options
         option :or_filters, **or_options
+
+        hashes_args! :filters, :or_filters
       end
 
       # @param [<Symbol>] args
