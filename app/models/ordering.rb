@@ -29,9 +29,6 @@ class Ordering < ApplicationRecord
   has_one :schema_definition, through: :schema_version
 
   has_one_readonly :ordering_entry_count, inverse_of: :ordering
-  has_one_readonly :initial_ordering_derivation, inverse_of: :ordering
-  has_one :initial_ordering_selection, dependent: :destroy, inverse_of: :ordering
-  has_one :initial_ordering_link, dependent: :destroy, inverse_of: :ordering
 
   has_many :ordering_entries, -> { to_preload }, inverse_of: :ordering, dependent: :delete_all
 
@@ -57,15 +54,12 @@ class Ordering < ApplicationRecord
   scope :by_identifier, ->(identifier) { where(identifier:) }
 
   scope :deterministically_ordered, -> { reorder(position: :asc, name: :asc, identifier: :asc) }
-  scope :initially_ordered, -> { reorder(entity_id: :asc, position: :asc, name: :asc, identifier: :asc) }
 
   scope :enabled, -> { where(disabled_at: nil) }
   scope :disabled, -> { where.not(disabled_at: nil) }
   scope :hidden, -> { where(hidden: true) }
   scope :visible, -> { where(hidden: false) }
   scope :with_visible_entries, -> { where(id: OrderingEntry.currently_visible.select(:ordering_id)) }
-
-  scope :initial, -> { initially_ordered.enabled.visible.with_visible_entries.distinct_on(:entity_id) }
 
   delegate :header, :footer, :covers_schema?, :tree_mode?, to: :definition
 
@@ -82,13 +76,9 @@ class Ordering < ApplicationRecord
   validates :identifier, presence: true, format: { with: IDENTIFIER_FORMAT }, uniqueness: { scope: %i[entity_type entity_id] }
   validates :definition, store_model: true
 
-  after_destroy :recalculate_initial_ordering!
-
   after_save :refresh!
 
   assign_polymorphic_foreign_key! :entity, :community, :collection, :item
-
-  after_commit :maybe_purge_initial_ordering_selection!, on: :update
 
   # @return [void]
   def asynchronously_refresh!
@@ -139,28 +129,9 @@ class Ordering < ApplicationRecord
     call_operation("schemas.orderings.invalidate", self, ...)
   end
 
-  # @api private
-  # @return [void]
-  def maybe_purge_initial_ordering_selection!
-    if disabled?
-      initial_ordering_link&.destroy!
-      initial_ordering_selection&.destroy!
-    end
-
-    call_operation("schemas.orderings.calculate_initial", entity:)
-  end
-
   # @return [<Schemas::Orderings::OrderDefinition>]
   def order_definitions
     Array(definition.order)
-  end
-
-  # @api private
-  # @return [void]
-  def recalculate_initial_ordering!
-    return if destroyed_by_association
-
-    call_operation("schemas.orderings.calculate_initial", entity:)
   end
 
   # @param [HierarchicalEntity] refreshing_entity

@@ -71,12 +71,6 @@ module Types
 
     field :orderings, resolver: Resolvers::OrderingResolver
 
-    field :initial_ordering, Types::OrderingType, null: true do
-      description <<~TEXT
-      The initial ordering to display for this entity.
-      TEXT
-    end
-
     field :page, Types::PageType, null: true do
       description "Look up a page for this entity by slug"
 
@@ -106,8 +100,6 @@ module Types
     load_association! :entity_links, as: :links
 
     load_association! :hierarchical_schema_ranks, as: :schema_ranks
-
-    load_association! :initial_ordering
 
     # @!group Contextual Permission Support
 
