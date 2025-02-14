@@ -392,9 +392,7 @@ module HierarchicalEntity
   # @!scope private
   # @return [void]
   def track_parent_changes!
-    return if kind_of?(Community)
-
-    return unless should_update_hierarchical_children_after_save?
+    return unless respond_to?(:children) && should_update_hierarchical_children_after_save?
 
     Schemas::Orderings.with_asynchronous_refresh do
       # This will have a cascading effect on all descendants, as they should each inherit
