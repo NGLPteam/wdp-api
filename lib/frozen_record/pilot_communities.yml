@@ -351,3 +351,11 @@
     # identifier: penn-state-mentor
     # metadata_format: oaidc
     # title: The Mentor
+- seed_identifier: uncw
+  identifier: uncw
+  title: UNC Wilmington
+  journals:
+  - url: https://janeway.uncpress.org/jethe/api/oai/
+    identifier: jethe
+    metadata_format: jats
+    title: Journal of Effective Teaching in Higher Education
