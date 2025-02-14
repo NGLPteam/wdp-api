@@ -5,7 +5,7 @@ module Templates
     include Support::Caching::Usage
     include View
 
-    self.primary_key = :template_instance_id
+    self.primary_key = %i[template_instance_id sibling_instance_id]
 
     pg_enum! :kind, as: :sibling_kind, suffix: :sibling
     pg_enum! :layout_kind, as: :layout_kind, suffix: :layout
