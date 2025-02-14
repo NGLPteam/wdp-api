@@ -21,10 +21,6 @@ module Types
       description "A unique identifier for the ordering within the context of its parent entity."
     end
 
-    field :initial, Boolean, null: false do
-      description "Whether this ordering serves as the initial ordering for its parent entity"
-    end
-
     field :disabled, Boolean, null: false, method: :disabled? do
       description "Whether the ordering has been disabled—orderings inherited from schemas will be disabled if deleted."
     end
@@ -109,15 +105,6 @@ module Types
         Promise.resolve(object.entity)
       else
         Support::Loaders::AssociationLoader.for(object.class, :entity).load(object)
-      end
-    end
-
-    # @return [Promise<Boolean>]
-    def initial
-      entity.then do |ent|
-        Support::Loaders::AssociationLoader.for(ent.class, :initial_ordering).load(ent).then do |initial_ordering|
-          object == initial_ordering
-        end
       end
     end
 

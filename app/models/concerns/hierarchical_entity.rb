@@ -57,19 +57,6 @@ module HierarchicalEntity
 
     has_many :ordering_entries, dependent: :delete_all, as: :entity
 
-    has_one_readonly :initial_ordering_derivation, as: :entity
-
-    has_one :initially_derived_ordering, through: :initial_ordering_derivation, source: :ordering
-
-    has_one :initial_ordering_selection, dependent: :destroy, as: :entity, autosave: true
-
-    has_one :initially_selected_ordering, through: :initial_ordering_selection, source: :ordering
-
-    has_one :initial_ordering_link, dependent: :destroy, as: :entity, autosave: true
-
-    # @return [Ordering, nil]
-    has_one :initial_ordering, through: :initial_ordering_link, source: :ordering
-
     has_many_readonly :parent_orderings, through: :ordering_entries, source: :ordering
 
     has_many :pages, -> { in_default_order }, as: :entity, dependent: :destroy, inverse_of: :entity
@@ -409,23 +396,6 @@ module HierarchicalEntity
   def set_temporary_auth_path!
     self.auth_path = system_slug
   end
-
-  # @!group Initial Orderings
-
-  # @see Schemas::Instances::ClearInitialOrdering
-  # @return [Dry::Monads::Result]
-  monadic_operation! def clear_initial_ordering
-    call_operation("schemas.instances.clear_initial_ordering", self)
-  end
-
-  # @see Schemas::Instances::SelectInitialOrdering
-  # @param [Ordering] ordering
-  # @return [Dry::Monads::Result]
-  monadic_operation! def select_initial_ordering(ordering)
-    call_operation("schemas.instances.select_initial_ordering", self, ordering)
-  end
-
-  # @!endgroup
 
   # @!group Templates / Slots
 

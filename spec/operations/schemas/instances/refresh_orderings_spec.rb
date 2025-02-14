@@ -25,15 +25,13 @@ RSpec.describe Schemas::Instances::RefreshOrderings, type: :operation do
   let(:article_orderings_count) { 3 }
 
   let!(:refresh_ordering) { TestHelpers::TestOperation.new }
-  let!(:calculate_initial) { TestHelpers::TestOperation.new }
 
   before do
     allow(refresh_ordering).to receive(:call).and_call_original
-    allow(calculate_initial).to receive(:call).and_call_original
   end
 
   let(:operation) do
-    described_class.new refresh: refresh_ordering, calculate_initial:
+    described_class.new(refresh: refresh_ordering)
   end
 
   context "when refreshing an issue" do
@@ -44,7 +42,6 @@ RSpec.describe Schemas::Instances::RefreshOrderings, type: :operation do
         end.to keep_the_same(OrderingInvalidation, :count)
 
         expect(refresh_ordering).to have_received(:call).exactly(issue_orderings_count).times
-        expect(calculate_initial).to have_received(:call).once
       end
     end
   end
@@ -57,7 +54,6 @@ RSpec.describe Schemas::Instances::RefreshOrderings, type: :operation do
         end.to keep_the_same(OrderingInvalidation, :count)
 
         expect(refresh_ordering).to have_received(:call).exactly(article_orderings_count).times
-        expect(calculate_initial).not_to have_received(:call)
       end
     end
 
@@ -74,7 +70,6 @@ RSpec.describe Schemas::Instances::RefreshOrderings, type: :operation do
         end.to change(OrderingInvalidation, :count).by(article_orderings_count)
 
         expect(refresh_ordering).not_to have_received(:call)
-        expect(calculate_initial).not_to have_received(:call)
       end
     end
 
@@ -87,7 +82,6 @@ RSpec.describe Schemas::Instances::RefreshOrderings, type: :operation do
         end.to change(OrderingInvalidation, :count).by(article_orderings_count)
 
         expect(refresh_ordering).not_to have_received(:call)
-        expect(calculate_initial).not_to have_received(:call)
       end
     end
   end

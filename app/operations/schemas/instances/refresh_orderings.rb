@@ -10,7 +10,7 @@ module Schemas
       include Dry::Monads[:do, :result]
       include MonadicPersistence
 
-      include MeruAPI::Deps[refresh: "schemas.orderings.refresh", calculate_initial: "schemas.orderings.calculate_initial"]
+      include MeruAPI::Deps[refresh: "schemas.orderings.refresh"]
 
       # @param [HierarchicalEntity] entity
       # @return [Dry::Monads::Result]
@@ -30,8 +30,6 @@ module Schemas
             yield refresh.(ordering)
           end
         end
-
-        yield calculate_initial.(entity:) if entity.orderings.exists?
 
         return Success()
       end
