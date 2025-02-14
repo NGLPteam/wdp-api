@@ -46,8 +46,8 @@ class APISchema < GraphQL::Schema
   )
 
   class << self
-    def id_from_object(object, type_definition, query_ctx)
-      Support::System["relay_node.id_from_object"].call(object, type_definition:, query_context: query_ctx) do |m|
+    def id_from_object(object, type_definition, query_context)
+      Support::System["relay_node.id_from_object"].call(object, type_definition:, query_context:) do |m|
         m.success do |id|
           id
         end
@@ -60,8 +60,8 @@ class APISchema < GraphQL::Schema
       end
     end
 
-    def object_from_id(id, query_ctx)
-      Support::System["relay_node.object_from_id"].call(id, query_context: query_ctx) do |m|
+    def object_from_id(id, query_context)
+      Support::System["relay_node.object_from_id"].call(id, query_context:) do |m|
         m.success do |object|
           object
         end

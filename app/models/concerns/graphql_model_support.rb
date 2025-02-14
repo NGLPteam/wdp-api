@@ -19,8 +19,8 @@ module GraphQLModelSupport
   #
   # @see RelayNode::IdFromObject
   # @return [String, nil] the Relay-acc
-  def to_encoded_id
-    Support::System["relay_node.id_from_object"].(self).value! if persisted?
+  def to_encoded_id(...)
+    Support::System["relay_node.id_from_object"].(self, ...).value! if persisted?
   end
 
   module ClassMethods

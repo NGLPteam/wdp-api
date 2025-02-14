@@ -3,9 +3,18 @@
 module Types
   # @see Resolvers::SearchResultResolver
   class SearchResultType < Types::BaseObject
+    implements GraphQL::Types::Relay::Node
+    implements Types::Sluggable
+
     description <<~TEXT
     An entity that's the result of a search.
     TEXT
+
+    field :id, ID, null: false do
+      description <<~TEXT
+      The encoded ID that will point to the entity itself, not a special ID for the search result record.
+      TEXT
+    end
 
     field :entity, Types::AnyEntityType, null: false do
       description <<~TEXT
@@ -16,12 +25,6 @@ module Types
     field :kind, Types::EntityKindType, null: false do
       description <<~TEXT
       The kind of entity returned by the search results.
-      TEXT
-    end
-
-    field :id, ID, null: false do
-      description <<~TEXT
-      The encoded ID for the entity itself, not a special ID for the search result record.
       TEXT
     end
 
@@ -49,7 +52,7 @@ module Types
     # @return [Promise(String)]
     def id
       entity.then do |ent|
-        Promise.resolve(ent.to_encoded_id)
+        context.schema.id_from_object(ent, self.class, context)
       end
     end
 

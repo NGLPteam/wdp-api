@@ -57,9 +57,11 @@ RSpec.describe "Query.viewer", type: :request do
     let(:token) { token_helper.build_token from_user: current_user }
 
     it "fetches the right values" do
-      expect_the_default_request.to execute_safely
+      expect_request! do |req|
+        req.effect! execute_safely
 
-      expect_graphql_data expected_shape
+        req.data! expected_shape
+      end
     end
   end
 
@@ -67,9 +69,11 @@ RSpec.describe "Query.viewer", type: :request do
     let(:token) { nil }
 
     it "fetches the right values" do
-      expect_the_default_request.to execute_safely
+      expect_request! do |req|
+        req.effect! execute_safely
 
-      expect_graphql_data expected_shape
+        req.data! expected_shape
+      end
     end
   end
 end

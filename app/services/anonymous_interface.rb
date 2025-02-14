@@ -65,6 +65,11 @@ module AnonymousInterface
 
   alias email_verified? email_verified
 
+  # @return [Class(Types::UserType)]
+  def graphql_node_type
+    ::Types::UserType
+  end
+
   # @see User#has_global_admin_access?
   def has_global_admin_access?
     false
