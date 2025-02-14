@@ -134,9 +134,9 @@ RSpec.describe "Query.search", type: :request do
 
   def to_search_result(entity)
     node = {
-      id: entity.to_encoded_id,
+      id: entity.to_encoded_id(type: "SearchResult"),
       kind: Types::EntityKindType.name_for_value(entity.entity_type),
-      slug: be_present,
+      slug: entity.system_slug,
       title: entity.title,
     }
 
