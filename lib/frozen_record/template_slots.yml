@@ -79,6 +79,9 @@
   template_kind: hero
   default_template: |
     {{ entity.title }}
+- name: header_subtitle
+  slot_kind: inline
+  template_kind: hero
 - name: header_aside
   slot_kind: inline
   template_kind: hero
@@ -95,6 +98,9 @@
   slot_kind: block
   template_kind: hero
 - name: subheader
+  slot_kind: inline
+  template_kind: hero
+- name: subheader_subtitle
   slot_kind: inline
   template_kind: hero
 - name: subheader_aside
