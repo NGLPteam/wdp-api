@@ -17,9 +17,9 @@ module Schemas
               yield load_definition.call(static_definition)
             end
           end
-
-          SchemaVersion.builtin.find_each(&:maintain_associations!)
         end
+
+        SchemaVersion.builtin.find_each(&:maintain_associations!)
 
         Success true
       end

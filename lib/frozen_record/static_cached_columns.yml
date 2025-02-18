@@ -8390,231 +8390,6 @@
   default_function: 
   has_default: false
   virtual: false
-- id: InitialOrderingDerivation#entity_id
-  model_name: InitialOrderingDerivation
-  table_name: initial_ordering_derivations
-  name: entity_id
-  type: uuid
-  'null': true
-  sql_type_metadata:
-    sql_type: uuid
-    type: uuid
-  default: 
-  default_function: 
-  has_default: false
-  virtual: false
-- id: InitialOrderingDerivation#entity_type
-  model_name: InitialOrderingDerivation
-  table_name: initial_ordering_derivations
-  name: entity_type
-  type: string
-  'null': true
-  sql_type_metadata:
-    sql_type: character varying
-    type: string
-  default: 
-  default_function: 
-  has_default: false
-  virtual: false
-- id: InitialOrderingDerivation#ordering_id
-  model_name: InitialOrderingDerivation
-  table_name: initial_ordering_derivations
-  name: ordering_id
-  type: uuid
-  'null': true
-  sql_type_metadata:
-    sql_type: uuid
-    type: uuid
-  default: 
-  default_function: 
-  has_default: false
-  virtual: false
-- id: InitialOrderingDerivation#identifier
-  model_name: InitialOrderingDerivation
-  table_name: initial_ordering_derivations
-  name: identifier
-  type: citext
-  'null': true
-  sql_type_metadata:
-    sql_type: citext
-    type: citext
-  default: 
-  default_function: 
-  has_default: false
-  virtual: false
-- id: InitialOrderingLink#id
-  model_name: InitialOrderingLink
-  table_name: initial_ordering_links
-  name: id
-  type: uuid
-  'null': false
-  sql_type_metadata:
-    sql_type: uuid
-    type: uuid
-  default: 
-  default_function: gen_random_uuid()
-  has_default: true
-  virtual: false
-- id: InitialOrderingLink#entity_type
-  model_name: InitialOrderingLink
-  table_name: initial_ordering_links
-  name: entity_type
-  type: text
-  'null': false
-  sql_type_metadata:
-    sql_type: text
-    type: text
-  default: 
-  default_function: 
-  has_default: false
-  virtual: false
-- id: InitialOrderingLink#entity_id
-  model_name: InitialOrderingLink
-  table_name: initial_ordering_links
-  name: entity_id
-  type: uuid
-  'null': false
-  sql_type_metadata:
-    sql_type: uuid
-    type: uuid
-  default: 
-  default_function: 
-  has_default: false
-  virtual: false
-- id: InitialOrderingLink#ordering_id
-  model_name: InitialOrderingLink
-  table_name: initial_ordering_links
-  name: ordering_id
-  type: uuid
-  'null': false
-  sql_type_metadata:
-    sql_type: uuid
-    type: uuid
-  default: 
-  default_function: 
-  has_default: false
-  virtual: false
-- id: InitialOrderingLink#kind
-  model_name: InitialOrderingLink
-  table_name: initial_ordering_links
-  name: kind
-  type: enum
-  'null': false
-  sql_type_metadata:
-    sql_type: initial_ordering_kind
-    type: enum
-  default: 
-  default_function: 
-  has_default: false
-  virtual: false
-- id: InitialOrderingLink#created_at
-  model_name: InitialOrderingLink
-  table_name: initial_ordering_links
-  name: created_at
-  type: datetime
-  'null': false
-  sql_type_metadata:
-    sql_type: timestamp(6) without time zone
-    type: datetime
-    precision: 6
-  default: 
-  default_function: CURRENT_TIMESTAMP
-  has_default: true
-  virtual: false
-- id: InitialOrderingLink#updated_at
-  model_name: InitialOrderingLink
-  table_name: initial_ordering_links
-  name: updated_at
-  type: datetime
-  'null': false
-  sql_type_metadata:
-    sql_type: timestamp(6) without time zone
-    type: datetime
-    precision: 6
-  default: 
-  default_function: CURRENT_TIMESTAMP
-  has_default: true
-  virtual: false
-- id: InitialOrderingSelection#id
-  model_name: InitialOrderingSelection
-  table_name: initial_ordering_selections
-  name: id
-  type: uuid
-  'null': false
-  sql_type_metadata:
-    sql_type: uuid
-    type: uuid
-  default: 
-  default_function: gen_random_uuid()
-  has_default: true
-  virtual: false
-- id: InitialOrderingSelection#entity_type
-  model_name: InitialOrderingSelection
-  table_name: initial_ordering_selections
-  name: entity_type
-  type: string
-  'null': false
-  sql_type_metadata:
-    sql_type: character varying
-    type: string
-  default: 
-  default_function: 
-  has_default: false
-  virtual: false
-- id: InitialOrderingSelection#entity_id
-  model_name: InitialOrderingSelection
-  table_name: initial_ordering_selections
-  name: entity_id
-  type: uuid
-  'null': false
-  sql_type_metadata:
-    sql_type: uuid
-    type: uuid
-  default: 
-  default_function: 
-  has_default: false
-  virtual: false
-- id: InitialOrderingSelection#ordering_id
-  model_name: InitialOrderingSelection
-  table_name: initial_ordering_selections
-  name: ordering_id
-  type: uuid
-  'null': false
-  sql_type_metadata:
-    sql_type: uuid
-    type: uuid
-  default: 
-  default_function: 
-  has_default: false
-  virtual: false
-- id: InitialOrderingSelection#created_at
-  model_name: InitialOrderingSelection
-  table_name: initial_ordering_selections
-  name: created_at
-  type: datetime
-  'null': false
-  sql_type_metadata:
-    sql_type: timestamp(6) without time zone
-    type: datetime
-    precision: 6
-  default: 
-  default_function: CURRENT_TIMESTAMP
-  has_default: true
-  virtual: false
-- id: InitialOrderingSelection#updated_at
-  model_name: InitialOrderingSelection
-  table_name: initial_ordering_selections
-  name: updated_at
-  type: datetime
-  'null': false
-  sql_type_metadata:
-    sql_type: timestamp(6) without time zone
-    type: datetime
-    precision: 6
-  default: 
-  default_function: CURRENT_TIMESTAMP
-  has_default: true
-  virtual: false
 - id: Item#id
   model_name: Item
   table_name: items
@@ -13888,6 +13663,32 @@
     sql_type: text[]
     type: text
   default: "{}"
+  default_function: 
+  has_default: true
+  virtual: false
+- id: SchemaVersion#enforced_parent_kinds
+  model_name: SchemaVersion
+  table_name: schema_versions
+  name: enforced_parent_kinds
+  type: enum
+  'null': false
+  sql_type_metadata:
+    sql_type: schema_kind[]
+    type: enum
+  default: "{community,collection,item}"
+  default_function: 
+  has_default: true
+  virtual: false
+- id: SchemaVersion#enforced_child_kinds
+  model_name: SchemaVersion
+  table_name: schema_versions
+  name: enforced_child_kinds
+  type: enum
+  'null': false
+  sql_type_metadata:
+    sql_type: child_entity_kind[]
+    type: enum
+  default: "{collection,item}"
   default_function: 
   has_default: true
   virtual: false

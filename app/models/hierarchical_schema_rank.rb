@@ -16,7 +16,7 @@ class HierarchicalSchemaRank < ApplicationRecord
   scope :in_default_order, -> { reorder(schema_rank: :asc, schema_count: :desc) }
   scope :for_association, -> { in_default_order }
 
-  delegate :kind, :identifier, :name, :namespace, to: :schema_definition
+  delegate :declaration, :kind, :identifier, :name, :namespace, to: :schema_definition
 
   def schema_slug
     schema_definition.system_slug

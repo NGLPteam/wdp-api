@@ -33,6 +33,12 @@ module Types
       TEXT
     end
 
+    field :enforced_parent_kinds, [::Types::SchemaKindType, { null: false }], null: false do
+      description <<~TEXT
+      A list of entity kinds that make acceptable parents for this schema.
+      TEXT
+    end
+
     field :enforced_parent_versions, [Types::SchemaVersionType, { null: false }], null: false do
       description <<~TEXT
       The versions that are allowed to parent this schema.
@@ -44,6 +50,12 @@ module Types
     field :enforced_child_declarations, [Types::SlugType, { null: false }], null: false do
       description <<~TEXT
       Declarations / slugs for `enforcedChildVersions`.
+      TEXT
+    end
+
+    field :enforced_child_kinds, [::Types::ChildEntityKindType, { null: false }], null: false do
+      description <<~TEXT
+      A list of entity kinds that make acceptable children for this schema.
       TEXT
     end
 
