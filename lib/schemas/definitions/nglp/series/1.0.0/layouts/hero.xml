@@ -23,6 +23,9 @@
         <header>
           {{ entity.title }}
         </header>
+        <header-subtitle>
+          {{entity.subtitle}}
+        </header-subtitle>
         <header-aside/>
         <header-sidebar/>
         <header-summary>

@@ -19,6 +19,9 @@
         <header>
           {{parent.title}}
         </header>
+        <header-subtitle>
+          {{parent.subtitle}}
+        </header-subtitle>
         <header-aside/>
         <header-sidebar/>
         <header-summary/>

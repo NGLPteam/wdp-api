@@ -20,20 +20,18 @@
         <header>
           {{ ancestors.journal.title }}
         </header>
+        <header-subtitle>
+          {% if ancestors.issue or ancestors.volume %}
+            {{ancestors.issue.title}} {{ancestors.volume.title}}
+          {% endif %}
+        </header-subtitle>
         <header-aside/>
         <header-sidebar>
           {% if ancestors.journal.props.issn.exists %}
             {% sbitem %} ISSN: {{ ancestors.journal.props.issn }} {% endsbitem %}
           {% endif %}
         </header-sidebar>
-        <header-summary>
-          {% if ancestors.issue or ancestors.volume %}
-          {% assign volume = ancestors.volume.title | split: "*" %}
-          {% assign issue = ancestors.issue.title | split: "*" %}
-          {% assign ancestors = issue | concat: volume %}
-            {{ ancestors | join: ", " }}
-          {% endif %}
-        </header-summary>
+        <header-summary/>
         <metadata>
           {% if entity.published %} Published {{ entity.published }} {% endif %}
         </metadata>
@@ -48,6 +46,9 @@
         <subheader>
           {{ entity.title }}
         </subheader>
+        <subheader-subtitle>
+          {{entity.subtitle}}
+        </subheader-subtitle>
         <subheader-aside/>
         <summary/>
         <subheader-summary>
