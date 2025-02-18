@@ -22,6 +22,7 @@ class HierarchicalSchemaVersionRank < ApplicationRecord
   scope :for_association, -> { with_details.in_default_order }
 
   delegate :kind, :identifier, :name, :namespace, to: :schema_definition
+  delegate :declaration, to: :schema_version
   delegate :number, to: :schema_version, prefix: :version
 
   def schema_slug

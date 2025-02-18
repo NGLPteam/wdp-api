@@ -1656,6 +1656,8 @@ CREATE TABLE public.schema_versions (
     enforced_child_declarations text[] DEFAULT '{}'::text[] NOT NULL,
     has_ancestors boolean DEFAULT false NOT NULL,
     ancestor_names text[] DEFAULT '{}'::text[] NOT NULL,
+    enforced_parent_kinds public.schema_kind[] DEFAULT '{community,collection,item}'::public.schema_kind[] NOT NULL,
+    enforced_child_kinds public.child_entity_kind[] DEFAULT '{collection,item}'::public.child_entity_kind[] NOT NULL,
     CONSTRAINT configuration_has_identifier CHECK (((configuration ? 'identifier'::text) AND (jsonb_typeof((configuration -> 'identifier'::text)) = 'string'::text))),
     CONSTRAINT configuration_has_name CHECK (((configuration ? 'name'::text) AND (jsonb_typeof((configuration -> 'name'::text)) = 'string'::text))),
     CONSTRAINT configuration_has_namespace CHECK (((configuration ? 'namespace'::text) AND (jsonb_typeof((configuration -> 'namespace'::text)) = 'string'::text))),
@@ -13113,6 +13115,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20250206231134'),
 ('20250206231834'),
 ('20250206232440'),
-('20250207184954');
+('20250207184954'),
+('20250217215855');
 
 

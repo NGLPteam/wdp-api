@@ -13,16 +13,34 @@ module Types
     a version, or an aggregate based on the former types.
     TEXT
 
-    field :kind, Types::SchemaKindType, null: false,
-      description: "The kind of entity this schema applies to"
+    field :declaration, String, null: false do
+      description <<~TEXT
+      The full declaration for this schema, including namespace, identifier, and version (if available).
+      TEXT
+    end
 
-    field :identifier, String, null: false,
-      description: "A unique (per-namespace) value that names the schema within the system."
+    field :kind, Types::SchemaKindType, null: false do
+      description <<~TEXT
+      The kind of entity this schema applies to.
+      TEXT
+    end
 
-    field :name, String, null: false,
-      description: "A human-readable name for the schema"
+    field :identifier, String, null: false do
+      description <<~TEXT
+      A unique (per-namespace) value that names the schema within the system.
+      TEXT
+    end
 
-    field :namespace, String, null: false,
-      description: "A unique namespace the schema lives in"
+    field :name, String, null: false do
+      description <<~TEXT
+      A human-readable name for the schema.
+      TEXT
+    end
+
+    field :namespace, String, null: false do
+      description <<~TEXT
+      A unique namespace the schema lives in.
+      TEXT
+    end
   end
 end
