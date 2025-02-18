@@ -14,8 +14,6 @@ module Mutations
           **Note**: This actually gets assigned to the entity's `rawDOI`, and will be sanitized to get set on `DOI`.
           TEXT
         end
-
-        argument :issn, String, required: false, description: "International Standard Serial Number (see: https://issn.org)", attribute: true
       end
     end
   end

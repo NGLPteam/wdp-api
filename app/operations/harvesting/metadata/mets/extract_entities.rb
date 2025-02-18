@@ -13,7 +13,6 @@ module Harvesting
         DISSERTATION_ATTRS = {
           doi: "details.doi",
           title: "details.title",
-          issn: "details.issn",
           published: "details.issued",
           thumbnail_remote_url: "thumbnail_remote_url",
         }.freeze
@@ -28,7 +27,6 @@ module Harvesting
         PAPER_ATTRS = {
           doi: "details.doi",
           title: "details.title",
-          issn: "details.issn",
           published: "details.issued",
           thumbnail_remote_url: "thumbnail_remote_url",
         }.freeze

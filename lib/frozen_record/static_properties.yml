@@ -11,12 +11,6 @@
   search_strategy: property
   search_operators:
     - equals
-- path: issn
-  searchable: false
-  type: string
-  search_strategy: property
-  search_operators:
-    - equals
 - path: summary
   type: string
   search_strategy: text

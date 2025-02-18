@@ -1,1 +1,2 @@
 vendor/seeds
+lib/graphql/client_schema.json

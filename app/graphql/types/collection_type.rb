@@ -9,7 +9,6 @@ module Types
     implements Types::HarvestTargetType
     implements Types::HasEntityAnalytics
     implements Types::HasDOIType
-    implements Types::HasISSNType
     implements Types::ContributableType
     implements Types::HasSchemaPropertiesType
     implements Types::AttachableType

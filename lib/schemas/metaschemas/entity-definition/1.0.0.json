@@ -1172,9 +1172,6 @@
           "$ref": "#/$defs/Associations",
           "description": "The type(s) of direct children this schema accepts."
         },
-        "core": {
-          "$ref": "#/$defs/SchemaCoreDefinition"
-        },
         "orderings": {
           "title": "Orderings",
           "description": "A schema can provide default orderings, which an instance can override.",
@@ -1193,32 +1190,6 @@
         },
         "render": {
           "$ref": "#/$defs/SchemaRenderDefinition"
-        }
-      }
-    },
-    "SchemaCoreDefinition": {
-      "type": "object",
-      "title": "Core Properties",
-      "description": "Options for controlling certain optional core properties that may not be used on all entities, but are specific enough to not be set as a schema property. Note: these are mostly ignored for community schemas.",
-      "additionalProperties": false,
-      "properties": {
-        "doi": {
-          "type": "boolean",
-          "title": "Expose DOI?",
-          "description": "Whether the implementing instance should expose a DOI (https://doi.org)",
-          "default": true
-        },
-        "issn": {
-          "type": "boolean",
-          "title": "Expose ISSN?",
-          "description": "Whether the implementing instance should expose its ISSN (https://issn.org)",
-          "default": false
-        },
-        "subtitle": {
-          "type": "boolean",
-          "title": "Expose Subtitle?",
-          "description": "Whether the implementing instance should expose a subtitle",
-          "default": true
         }
       }
     },

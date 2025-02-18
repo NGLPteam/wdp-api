@@ -20,7 +20,7 @@ module Seeding
           attribute? :thumbnail, Seeding::Import::Structs::Assets::Any.optional
 
           def core_properties
-            slice(:subtitle, :doi, :issn)
+            slice(:subtitle, :doi)
           end
 
           def images

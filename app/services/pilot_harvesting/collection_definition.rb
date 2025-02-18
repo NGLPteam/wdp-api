@@ -22,7 +22,7 @@ module PilotHarvesting
 
     do_for! def upsert
       provide default_collection_schema: schema do
-        call_operation("collections.upsert", identifier, title:, parent: collection_parent, issn:, properties:) do |collection|
+        call_operation("collections.upsert", identifier, title:, parent: collection_parent, properties:) do |collection|
           upsert_source_for! collection
         end
       end

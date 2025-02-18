@@ -6,5 +6,9 @@ module PilotHarvesting
     metadata_format "jats"
 
     schema_name "nglp:journal"
+
+    def properties
+      super.merge(issn:)
+    end
   end
 end

@@ -11,7 +11,6 @@
       <show-breadcrumbs>true</show-breadcrumbs>
       <show-doi>true</show-doi>
       <show-hero-image>true</show-hero-image>
-      <show-issn>true</show-issn>
       <show-sharing-link>true</show-sharing-link>
       <show-split-display>false</show-split-display>
       <show-thumbnail-image>false</show-thumbnail-image>
@@ -25,6 +24,9 @@
         <header-summary>{{ entity.subtitle }}</header-summary>
         <header-aside/>
         <header-sidebar>
+          {% if props.issn.exists %}
+            {% sbitem icon: "issn" %} ISSN: {{ props.issn }} {% endsbitem %}
+          {% endif %}
           {% if props.cc_license.exists %}
             {% sbitem icon: "cc" %} {{ props.cc_license }} License {% endsbitem %}
           {% endif %}

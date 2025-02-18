@@ -23,7 +23,6 @@ module ChildEntity
   def to_entity_properties
     super.tap do |props|
       props["doi"] = doi
-      props["issn"] = issn
       props["subtitle"] = subtitle
     end
   end
