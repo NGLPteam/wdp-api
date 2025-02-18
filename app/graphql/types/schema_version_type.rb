@@ -11,20 +11,28 @@ module Types
     implements Types::SearchableType
     implements HasSchemaPropertiesType
 
-    field :schema_definition, Types::SchemaDefinitionType, null: false,
-      description: "The shared schema definition for all versions of this namespace and identifier"
+    field :schema_definition, Types::SchemaDefinitionType, null: false do
+      description <<~TEXT
+      The shared schema definition for all versions of this namespace and identifier.
+      TEXT
+    end
 
-    field :number, String, null: false,
-      description: "A semantic version for the schema"
+    field :number, String, null: false do
+      description <<~TEXT
+      A semantic version for the schema
+      TEXT
+    end
 
-    field :core, Types::SchemaCoreDefinitionType, null: false,
-      description: "Configuration for controlling how instances of a schema handle certain optional core properties."
-
-    field :render, Types::SchemaRenderDefinitionType, null: false,
-      description: "Configuration for rendering schema instances outside of orderings"
+    field :render, Types::SchemaRenderDefinitionType, null: false do
+      description <<~TEXT
+      Configuration for rendering schema instances outside of orderings.
+      TEXT
+    end
 
     field :searchable_properties, [Types::AnySearchablePropertyType, { null: false }], null: false do
-      description "A subset of properties that can be searched for this schema."
+      description <<~TEXT
+      A subset of properties that can be searched for this schema.
+      TEXT
     end
 
     field :enforced_parent_declarations, [Types::SlugType, { null: false }], null: false do
@@ -81,12 +89,6 @@ module Types
 
     def enforced_child_versions
       Support::Loaders::AssociationLoader.for(object.class, :enforced_child_versions).load(object)
-    end
-
-    # @see Schemas::Versions::Configuration#core
-    # @return [Schemas::Versions::CoreDefinition]
-    def core
-      object.configuration.core
     end
 
     # @see Schemas::Versions::Configuration#render

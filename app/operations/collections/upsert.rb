@@ -17,7 +17,7 @@ module Collections
     # @param [String] identifier
     # @param [String] title
     # @param [Collection, Community] parent
-    def call(identifier, title:, parent:, properties: {}, subtitle: nil, issn: nil)
+    def call(identifier, title:, parent:, properties: {}, subtitle: nil)
       scope = yield scope_for parent
 
       collection = scope.by_identifier(identifier).first_or_initialize
@@ -25,8 +25,6 @@ module Collections
       collection.title = title
 
       collection.subtitle ||= subtitle
-
-      collection.issn ||= issn
 
       collection.schema_version = collection_schema
 

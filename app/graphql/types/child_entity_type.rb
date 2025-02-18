@@ -12,7 +12,6 @@ module Types
     implements Types::HasDefaultTimestamps
     implements Types::HasSchemaPropertiesType
     implements Types::HasDOIType
-    implements Types::HasISSNType
     implements Types::ReferencesEntityVisibilityType
     implements Types::ReferencesGlobalEntityDatesType
     implements Types::SearchableType

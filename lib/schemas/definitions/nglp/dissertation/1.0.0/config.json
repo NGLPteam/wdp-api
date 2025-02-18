@@ -5,9 +5,6 @@
   "version": "1.0.0",
   "kind": "item",
   "orderings": [],
-  "core": {
-    "issn": true
-  },
   "properties": [
     { "path": "abstract", "label": "Abstract", "type": "full_text", "required": false, "wide": true, "function": "content" },
     { "path": "citation", "label": "How to Cite", "type": "markdown", "required": false, "function": "content" },

@@ -40,13 +40,6 @@
           {% endif %}
         </items-b>
         <items-c>
-          {% if entity.issn %}
-            {% mditem %}
-              {% mdvalue label: "ISSN" %}
-                {{entity.issn}}
-              {% endmdvalue %}
-            {% endmditem %}
-          {% endif %}
           {% if entity.has_doi %}
             {% mditem %}
               {% mdvalue label: "DOI" %}

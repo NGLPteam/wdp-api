@@ -63,11 +63,6 @@ module Types
         TEXT
       end
 
-      field :show_issn, Boolean, null: true do
-        description <<~TEXT
-        TEXT
-      end
-
       field :show_sharing_link, Boolean, null: true do
         description <<~TEXT
         TEXT

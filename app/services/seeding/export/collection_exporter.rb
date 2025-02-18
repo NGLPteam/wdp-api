@@ -6,7 +6,7 @@ module Seeding
       alias collection input
 
       def export!(json)
-        json.merge! collection.slice(:identifier, :title, :subtitle, :doi, :issn).transform_values(&:presence).compact
+        json.merge! collection.slice(:identifier, :title, :subtitle, :doi).transform_values(&:presence).compact
 
         json.schema collection.schema_definition.declaration
 

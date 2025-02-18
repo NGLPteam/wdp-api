@@ -172,10 +172,6 @@
   property_kind_name: boolean
   default: false
 - template_kind: hero
-  name: show_issn
-  property_kind_name: boolean
-  default: false
-- template_kind: hero
   name: show_sharing_link
   property_kind_name: boolean
   default: false

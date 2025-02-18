@@ -76,6 +76,13 @@
     }
   ],
   "properties": [
+    {
+      "path": "issn",
+      "label": "ISSN",
+      "type": "string",
+      "function": "metadata",
+      "description": "The International Standard Serial Number for this journal."
+    },
     { "path": "description", "label": "Description", "type": "full_text", "required": false, "function": "presentation" },
     { "type": "boolean", "path": "peer_reviewed", "label": "Peer Reviewed", "function": "metadata" },
     {

@@ -11,7 +11,6 @@
       <show-breadcrumbs>true</show-breadcrumbs>
       <show-doi>true</show-doi>
       <show-hero-image>false</show-hero-image>
-      <show-issn>false</show-issn>
       <show-sharing-link>true</show-sharing-link>
       <show-split-display>true</show-split-display>
       <show-thumbnail-image>true</show-thumbnail-image>
@@ -26,8 +25,8 @@
         </header>
         <header-aside/>
         <header-sidebar>
-          {% if ancestors.journal.issn.size > 0 %}
-            {% sbitem %} ISSN: {{ ancestors.journal.issn }} {% endsbitem %}
+          {% if ancestors.journal.props.issn.exists %}
+            {% sbitem %} ISSN: {{ ancestors.journal.props.issn }} {% endsbitem %}
           {% endif %}
         </header-sidebar>
         <header-summary>

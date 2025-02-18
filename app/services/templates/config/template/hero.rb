@@ -27,8 +27,6 @@ module Templates
 
         attribute :show_hero_image, ::Templates::Config::Properties::Boolean, default: -> { false }
 
-        attribute :show_issn, ::Templates::Config::Properties::Boolean, default: -> { false }
-
         attribute :show_sharing_link, ::Templates::Config::Properties::Boolean, default: -> { false }
 
         attribute :show_split_display, ::Templates::Config::Properties::Boolean, default: -> { false }
@@ -58,8 +56,6 @@ module Templates
           map_element "show-doi", to: :show_doi
 
           map_element "show-hero-image", to: :show_hero_image
-
-          map_element "show-issn", to: :show_issn
 
           map_element "show-sharing-link", to: :show_sharing_link
 

@@ -50,11 +50,6 @@ Contained within the `HERO` layout.</description>
       false
     </default>
   </prop>
-  <prop name="show_issn" kind="boolean">
-    <default>
-      false
-    </default>
-  </prop>
   <prop name="show_sharing_link" kind="boolean">
     <default>
       false

@@ -73,11 +73,11 @@ module Harvesting
             end
           end
 
-          compose_value :issn, from: :sources, type: AppTypes::ISSN, require_match: false do
-            pipeline! do
-              first_conforming_to AppTypes::ISSN
-            end
-          end
+          # compose_value :issn, from: :sources, type: AppTypes::ISSN, require_match: false do
+          #   pipeline! do
+          #     first_conforming_to AppTypes::ISSN
+          #   end
+          # end
 
           compose_value :issue_doi, from: :sources, type: AppTypes::DOI, require_match: false do
             pipeline! do
@@ -166,21 +166,21 @@ module Harvesting
           set :volume do
             journal_source_volume_attrs! from: :journal, xpath_query: ".//dc:volume"
 
-            compose_value :issn, from: :sources, type: AppTypes::ISSN, require_match: false do
-              pipeline! do
-                first_conforming_to AppTypes::ISSN
-              end
-            end
+            # compose_value :issn, from: :sources, type: AppTypes::ISSN, require_match: false do
+            #   pipeline! do
+            #     first_conforming_to AppTypes::ISSN
+            #   end
+            # end
           end
 
           set :issue do
             journal_source_issue_attrs! from: :journal, xpath_query: ".//dc:issue"
 
-            compose_value :issn, from: :sources, type: AppTypes::ISSN, require_match: false do
-              pipeline! do
-                first_conforming_to AppTypes::ISSN
-              end
-            end
+            # compose_value :issn, from: :sources, type: AppTypes::ISSN, require_match: false do
+            #   pipeline! do
+            #     first_conforming_to AppTypes::ISSN
+            #   end
+            # end
 
             compose_value :doi, from: :sources, type: AppTypes::DOI, require_match: false do
               pipeline! do

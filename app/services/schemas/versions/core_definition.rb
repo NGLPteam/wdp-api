@@ -16,13 +16,6 @@ module Schemas
       # @return [Boolean]
       attribute :doi, :boolean, default: true
 
-      # @!attribute [rw] issn
-      # Whether to expose or hide the ISSN core property.
-      #
-      # @see https://issn.org
-      # @return [Boolean]
-      attribute :issn, :boolean, default: false
-
       # @!attribute [rw] subtitle
       # Whether to expose or hide the subtitle core property.
       # @return [Boolean]
