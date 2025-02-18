@@ -21,6 +21,9 @@
         <header>
           {{parent.title}}
         </header>
+        <header-subtitle>
+          {{parent.subtitle}}
+        </header-subtitle>
         <header-aside/>
         <header-sidebar/>
         <header-summary/>
@@ -29,15 +32,18 @@
         </metadata>
         <sidebar/>
         <subheader>{{entity.title}}</subheader>
+        <subheader-subtitle>
+          {{entity.subtitle}}
+        </subheader-subtitle>
         <subheader-aside/>
-        <subheader-summary/>
-        <summary>
+        <summary/>
+        <subheader-summary>
           {% if props.abstract.exists %}
             {{props.abstract}}
           {% else %}
             {{entity.summary}}
           {% endif %}
-        </summary>
+        </subheader-summary>
         <call-to-action>
           {% if props.pdf_version.exists %}
             {% asset props.pdf_version %}

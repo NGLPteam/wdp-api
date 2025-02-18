@@ -21,11 +21,12 @@
         <header>
           {{parent.title}}
         </header>
+        <header-subtitle>
+          {{parent.subtitle}}
+        </header-subtitle>
         <header-aside/>
         <header-sidebar/>
-        <header-summary>
-          {{parent.subtitle}}
-        </header-summary>
+        <header-summary/>
         <metadata>
           {% if entity.published %} Published {{ entity.published }} {% endif %}
         </metadata>
@@ -40,6 +41,9 @@
         <subheader>
           {{entity.title}}
         </subheader>
+        <subheader-subtitle>
+          {{entity.subtitle}}
+        </subheader-subtitle>
         <subheader-aside/>
         <subheader-summary>
           {% if props.abstract.exists %}

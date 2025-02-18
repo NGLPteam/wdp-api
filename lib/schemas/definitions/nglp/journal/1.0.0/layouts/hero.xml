@@ -21,8 +21,11 @@
         <header>
           {{ entity.title }}
         </header>
+        <header-subtitle>
+          {{entity.subtitle}}
+        </header-subtitle>
         <summary/>
-        <header-summary>{{ entity.subtitle }}</header-summary>
+        <header-summary>{{ entity.summary }}</header-summary>
         <header-aside/>
         <header-sidebar>
           {% if props.cc_license.exists %}

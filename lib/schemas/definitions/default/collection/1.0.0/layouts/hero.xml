@@ -19,10 +19,13 @@
         <header>
           {{ entity.title }}
         </header>
+        <header-subtitle>
+          {{ entity.subtitle }}
+        </header-subtitle>
         <descendant-search-prompt>Search {{ entity.title }}</descendant-search-prompt>
         <header-aside/>
         <header-sidebar/>
-        <header-summary>{{ entity.subtitle }}</header-summary>
+        <header-summary>{{ entity.summary }}</header-summary>
         <subheader/>
         <subheader-aside/>
         <subheader-summary/>
