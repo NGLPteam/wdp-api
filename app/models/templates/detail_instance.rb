@@ -8,6 +8,7 @@ module Templates
   class DetailInstance < ApplicationRecord
     include HasEphemeralSystemSlug
     include TemplateInstance
+    include Templates::Instances::HasAnnouncements
     include TimestampScopes
 
     layout_kind! :main
