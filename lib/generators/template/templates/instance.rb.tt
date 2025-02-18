@@ -11,6 +11,9 @@ module Templates
   class <%= class_name %>Instance < ApplicationRecord
     include HasEphemeralSystemSlug
     include TemplateInstance
+    <%- if template_record.has_announcements? -%>
+    include Templates::Instances::HasAnnouncements
+    <%- end -%>
     <%- if template_record.has_contribution_list? -%>
     include Templates::Instances::HasContributionList
     <%- end -%>

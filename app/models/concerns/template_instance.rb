@@ -31,6 +31,13 @@ module TemplateInstance
 
   alias all_slots_empty? all_slots_empty
 
+  # Boolean complement of {#force_show?}.
+  #
+  # Used in {#hidden} to bypass the hide logic.
+  def allow_hide?
+    !force_show?
+  end
+
   # @see Templates::Instances::BuildConfig
   # @see Templates::Instances::ConfigBuilder
   monadic_operation! def build_config
@@ -41,6 +48,18 @@ module TemplateInstance
   # @see Templates::Instances::DigestAttributesBuilder
   monadic_operation! def build_digest_attributes
     call_operation("templates.instances.build_digest_attributes", self)
+  end
+
+  # @api private
+  # @abstract
+  # @return [Boolean]
+  def force_show
+    false
+  end
+
+  # @see #force_show
+  def force_show?
+    force_show
   end
 
   # For most templates, it is just derived from from {#hidden_by_empty_slots}.
@@ -61,7 +80,7 @@ module TemplateInstance
   # @return [Boolean]
   def hidden
     vog_cache cache_key, :hidden do
-      calculate_hidden
+      allow_hide? && calculate_hidden
     end
   end
 

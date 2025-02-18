@@ -9,6 +9,7 @@ class Template < Support::FrozenRecordHelpers::AbstractRecord
     required(:template_kind).filled(:template_kind)
     required(:layout_kind).filled(:layout_kind)
     required(:description).maybe(:stripped_string)
+    required(:has_announcements).value(:bool)
     required(:has_background).value(:bool)
     required(:has_contribution_list).value(:bool)
     required(:has_entity_list).value(:bool)
@@ -20,6 +21,7 @@ class Template < Support::FrozenRecordHelpers::AbstractRecord
 
   default_attributes!(
     description: nil,
+    has_announcements: false,
     has_background: true,
     has_contribution_list: false,
     has_entity_list: false,

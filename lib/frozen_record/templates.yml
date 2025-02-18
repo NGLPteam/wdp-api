@@ -24,6 +24,7 @@
     Contained within the `MAIN` layout
 - template_kind: detail
   layout_kind: main
+  has_announcements: true
   has_variant: true
   description: |
     Describes details about an entity, its summary, etc.
