@@ -21,9 +21,7 @@
           {{ ancestors.journal.title }}
         </header>
         <header-subtitle>
-          {% if ancestors.issue or ancestors.volume %}
-            {{ancestors.issue.title}} {{ancestors.volume.title}}
-          {% endif %}
+          {% if ancestors.volume %} {{ancestors.volume.title}}, {% endif %} {% if ancestors.issue %} {{ ancestors.issue.title}} {% endif %}
         </header-subtitle>
         <header-aside/>
         <header-sidebar>

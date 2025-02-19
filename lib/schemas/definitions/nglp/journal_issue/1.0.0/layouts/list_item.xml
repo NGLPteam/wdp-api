@@ -9,7 +9,7 @@
       <entity-context>none</entity-context>
       <slots>
         <header>
-          {{entity.title}}
+          {% if ancestors.volume %} {{ancestors.volume.title}}, {% endif %} {{entity.title}}
         </header>
         <subheader>
           {{entity.subtitle}}
@@ -28,21 +28,11 @@
           {{orderings.articles.count}} {% if orderings.articles.count == 1 %}Article{% else %}Articles{% endif %}
         </meta-b>
         <context-full>
-          {% if ancestors.volume %}
-            {{ancestors.journal.title}}, {{ancestors.volume.title}}
-          {% else %}
-            {{ancestors.journal.title}}
-          {% endif %}
+          {{ancestors.journal.title}}
         </context-full>
-        <context-abbr>
-          {{ancestors.volume.title}}
-        </context-abbr>
+        <context-abbr/>
         <nested-header>
-          {% if ancestors.volume %}
-            {{ancestors.volume.title}}, {{entity.title}}
-          {% else %}
-            {{entity.title}}
-          {% endif %}
+          {% if ancestors.volume %} {{ancestors.volume.title}}, {% endif %} {{entity.title}}
         </nested-header>
         <nested-subheader>
           {{entity.subtitle}}
