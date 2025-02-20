@@ -52,7 +52,7 @@
     },
     {
       "id": "etd",
-      "name": "Electronic Theses and Dissertations",
+      "name": "Theses & Dissertations",
       "filter": {
         "schemas": [
           {
