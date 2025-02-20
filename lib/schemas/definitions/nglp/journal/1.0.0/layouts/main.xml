@@ -35,7 +35,6 @@
       <entity-context>none</entity-context>
       <show-hero-image>true</show-hero-image>
       <show-nested-entities>true</show-nested-entities>
-      <show-see-all-button>false</show-see-all-button>
       <title>Current Issue</title>
       <use-selection-fallback>true</use-selection-fallback>
       <variant>summary</variant>
@@ -60,7 +59,6 @@
       <selection-source>self</selection-source>
       <entity-context>abbr</entity-context>
       <show-hero-image>false</show-hero-image>
-      <show-see-all-button>false</show-see-all-button>
       <see-all-button-label>See All Issues</see-all-button-label>
       <see-all-ordering-identifier>issues</see-all-ordering-identifier>
       <title/>

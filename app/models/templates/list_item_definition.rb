@@ -10,6 +10,7 @@ module Templates
     include HasEphemeralSystemSlug
     include TemplateDefinition
     include Templates::Definitions::HasEntityList
+    include Templates::Definitions::HasSeeAllOrdering
     include TimestampScopes
 
     layout_kind! :list_item

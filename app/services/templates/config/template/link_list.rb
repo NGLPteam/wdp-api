@@ -39,8 +39,6 @@ module Templates
 
         attribute :show_nested_entities, ::Templates::Config::Properties::Boolean
 
-        attribute :show_see_all_button, ::Templates::Config::Properties::Boolean, default: -> { false }
-
         attribute :show_hero_image, ::Templates::Config::Properties::Boolean, default: -> { false }
 
         attribute :use_selection_fallback, ::Templates::Config::Properties::Boolean, default: -> { false }
@@ -80,8 +78,6 @@ module Templates
           map_element "show-hero-image", to: :show_hero_image
 
           map_element "show-nested-entities", to: :show_nested_entities
-
-          map_element "show-see-all-button", to: :show_see_all_button
 
           map_element "title", to: :title
 

@@ -64,7 +64,6 @@
       <selection-source>self</selection-source>
       <entity-context>none</entity-context>
       <show-hero-image>false</show-hero-image>
-      <show-see-all-button>false</show-see-all-button>
       <title>Related</title>
       <variant>grid</variant>
       <slots>

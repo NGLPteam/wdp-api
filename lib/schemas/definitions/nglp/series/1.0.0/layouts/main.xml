@@ -44,7 +44,6 @@
       <selection-source>self</selection-source>
       <entity-context>none</entity-context>
       <show-hero-image>false</show-hero-image>
-      <show-see-all-button>false</show-see-all-button>
       <see-all-button-label>See All Dissertations</see-all-button-label>
       <see-all-ordering-identifier>etd</see-all-ordering-identifier>
       <title/>

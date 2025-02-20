@@ -18,7 +18,6 @@
       </dynamic-ordering-definition>
       <selection-source>self</selection-source>
       <entity-context>none</entity-context>
-      <show-see-all-button>false</show-see-all-button>
       <title>Recent Journals</title>
       <variant>cards</variant>
     </descendant-list>
@@ -38,7 +37,6 @@
       <show-contributors>true</show-contributors>
       <selection-source>self</selection-source>
       <show-hero-image>false</show-hero-image>
-      <show-see-all-button>false</show-see-all-button>
       <title>Recently Updated Paper Series</title>
       <variant>promos</variant>
       <slots>
@@ -60,7 +58,6 @@
         <select direct="descendants"/>
       </dynamic-ordering-definition>
       <selection-source>self</selection-source>
-      <show-see-all-button>false</show-see-all-button>
       <show-hero-image>true</show-hero-image>
       <title>Research Units</title>
       <variant>compact</variant>
@@ -86,7 +83,6 @@
       <selection-source>self</selection-source>
       <entity-context>full</entity-context>
       <show-hero-image>false</show-hero-image>
-      <show-see-all-button>false</show-see-all-button>
       <title/>
       <variant>summary</variant>
       <slots>
@@ -114,7 +110,6 @@
       <selection-source>self</selection-source>
       <entity-context>full</entity-context>
       <show-hero-image>true</show-hero-image>
-      <show-see-all-button>false</show-see-all-button>
       <see-all-ordering-identifier>issues</see-all-ordering-identifier>
       <title>Most Recent Issue</title>
       <use-selection-fallback>false</use-selection-fallback>

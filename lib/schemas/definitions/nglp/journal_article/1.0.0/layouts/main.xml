@@ -77,7 +77,6 @@
       <entity-context>full</entity-context>
       <show-contributors>true</show-contributors>
       <show-hero-image>false</show-hero-image>
-      <show-see-all-button>false</show-see-all-button>
       <title>Related Articles</title>
       <variant>grid</variant>
       <slots>

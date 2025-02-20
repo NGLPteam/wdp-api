@@ -9,6 +9,7 @@
   layout_kind: list_item
   has_background: false
   has_entity_list: true
+  has_see_all_ordering: true
   description: |
     A template for describing how an entity should appear when rendered in a list.
 

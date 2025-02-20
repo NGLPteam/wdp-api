@@ -6231,7 +6231,8 @@ CREATE TABLE public.templates_list_item_definitions (
     selection_source text DEFAULT 'self'::text NOT NULL,
     manual_list_name text DEFAULT 'manual'::text NOT NULL,
     selection_source_ancestor_name text,
-    selection_property_path text
+    selection_property_path text,
+    see_all_ordering_identifier text
 );
 
 
@@ -6254,7 +6255,8 @@ CREATE TABLE public.templates_list_item_instances (
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     config jsonb DEFAULT '{}'::jsonb NOT NULL,
-    slots jsonb DEFAULT '{}'::jsonb NOT NULL
+    slots jsonb DEFAULT '{}'::jsonb NOT NULL,
+    see_all_ordering_id uuid
 );
 
 
@@ -10206,6 +10208,13 @@ CREATE INDEX index_layouts_supplementary_instances_on_last_rendered_at ON public
 
 
 --
+-- Name: index_list_item_templates_see_all_ordering; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_list_item_templates_see_all_ordering ON public.templates_list_item_instances USING btree (see_all_ordering_id);
+
+
+--
 -- Name: index_manual_template_references_ordering; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -12612,6 +12621,14 @@ ALTER TABLE ONLY public.granted_permissions
 
 
 --
+-- Name: templates_list_item_instances fk_rails_d1a7c8116b; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.templates_list_item_instances
+    ADD CONSTRAINT fk_rails_d1a7c8116b FOREIGN KEY (see_all_ordering_id) REFERENCES public.orderings(id) ON DELETE SET NULL;
+
+
+--
 -- Name: harvest_mappings fk_rails_d21568b378; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -13133,6 +13150,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20250217215855'),
 ('20250218011515'),
 ('20250219225500'),
-('20250219234712');
+('20250219234712'),
+('20250220221139');
 
 
