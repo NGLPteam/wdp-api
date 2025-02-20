@@ -89,11 +89,11 @@ en:
       created_at:
         label: Created
         description: >
-          The time that the entity was first created in the WDP.
+          The time that the entity was first created in Meru.
       updated_at:
         label: Updated
         description: >
-          The time that the entity was last updated in the WDP.
+          The time that the entity was last updated in Meru.
       published:
         label: Published
         description: >
@@ -106,6 +106,27 @@ en:
         label: ISSN
         description: >
           The ISSN of the entity
+    static_ancestor_orderable_property:
+      title:
+        label: Title
+        description: >
+          The title of the entity.
+      created_at:
+        label: Created
+        description: >
+          The time that the ancestor was first created in Meru.
+      updated_at:
+        label: Updated
+        description: >
+          The time that the ancestor was last updated in Meru.
+      depth:
+        label: Hierarchical Depth
+        description: >
+          The hierarchical depth of the ancestor. It is useful when creating orderings of varying depths, in order to ensure that higher-level entities appear before or after their counterparts.
+      published:
+        label: Published
+        description: >
+          The variable precision date when the ancestor was published.
     static_orderable_property:
       entity_title:
         label: Title
@@ -114,11 +135,11 @@ en:
       entity_created_at:
         label: Created
         description: >
-          The time that the entity was first created in the WDP.
+          The time that the entity was first created in Meru.
       entity_updated_at:
         label: Updated
         description: >
-          The time that the entity was last updated in the WDP.
+          The time that the entity was last updated in Meru.
       entity_depth:
         label: Hierarchical Depth
         description: >

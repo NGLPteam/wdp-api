@@ -40,7 +40,8 @@
         "direct": "descendants"
       },
       "order": [
-        { "path": "entity.published", "direction": "desc" }
+        { "path": "entity.published", "direction": "desc", "nulls": "last" },
+        { "path": "entity.created_at", "direction": "desc", "nulls": "last" }
       ],
       "position": 2
     },
@@ -59,7 +60,8 @@
         "direct": "children"
       },
       "order": [
-        { "path": "props.sortable_number#integer", "direction": "desc" }
+        { "path": "props.sortable_number#integer", "direction": "desc", "nulls": "last" },
+        { "path": "entity.title", "direction": "desc", "nulls": "last" }
       ],
       "position": 1
     }

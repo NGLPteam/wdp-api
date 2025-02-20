@@ -10,11 +10,11 @@ RSpec.describe Schemas::Instances::ReadProperty, type: :operation do
   end
 
   it "can fetch a group property" do
-    expect_calling_with(article, "volume").to succeed.with(Schemas::Properties::GroupReader)
+    expect_calling_with(article, "meta").to succeed.with(Schemas::Properties::GroupReader)
   end
 
   it "can fetch a nested property" do
-    expect_calling_with(article, "issue.id").to succeed.with(Schemas::Properties::Reader)
+    expect_calling_with(article, "meta.collected").to succeed.with(Schemas::Properties::Reader)
   end
 
   it "handles unknown properties" do

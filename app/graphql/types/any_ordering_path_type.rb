@@ -4,7 +4,8 @@ module Types
   # @see Types::SchemaPropertyOrderingPathType
   # @see Types::StaticOrderingPathType
   class AnyOrderingPathType < Types::BaseUnion
-    possible_types Types::SchemaOrderingPathType, Types::StaticOrderingPathType
+    possible_types Types::SchemaOrderingPathType, Types::StaticOrderingPathType,
+      Types::AncestorSchemaOrderingPathType, Types::AncestorStaticOrderingPathType
 
     description <<~TEXT
     All types in this union implement OrderingPath.
@@ -17,6 +18,10 @@ module Types
           Types::StaticOrderingPathType
         when ::Schemas::Orderings::PathOptions::SchemaReader
           Types::SchemaOrderingPathType
+        when ::Schemas::Orderings::PathOptions::AncestorSchemaReader
+          Types::AncestorSchemaOrderingPathType
+        when ::Schemas::Orderings::PathOptions::AncestorStaticReader
+          Types::AncestorStaticOrderingPathType
         else
           # :nocov:
           raise GraphQL::ExecutionError, "Unknown ordering path: #{object.inspect}"

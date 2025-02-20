@@ -63,7 +63,7 @@ module Schemas
 
           expression[:joins] = joins.each_pair.to_h
 
-          Schemas::Orderings::OrderExpression.new expression
+          Schemas::Orderings::OrderExpression.new(**expression)
         end
       end
     end

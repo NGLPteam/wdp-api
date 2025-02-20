@@ -10,12 +10,10 @@ module Schemas
         option :columns, Schemas::Orderings::Types::ColumnList
 
         def attributes_for(...)
-          cached_attributes
-        end
+          source_table = ancestor? ? ancestor_alias : arel_table
 
-        memoize def cached_attributes
           columns.map do |column|
-            arel_table[column]
+            source_table[column]
           end
         end
       end

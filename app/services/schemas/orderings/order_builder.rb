@@ -5,35 +5,59 @@ module Schemas
     module OrderBuilder
       extend Dry::Container::Mixin
 
-      COMPONENT_FORMAT = /[a-z][a-z0-9_]*?[a-z0-9]/
+      # @api private
+      COMPONENT_FORMAT = Schemas::Orderings::Types::COMPONENT_FORMAT
 
-      StaticOrderableProperty.each do |property|
-        register property.path do
-          property.order_builder
-        end
-      end
+      SUPPORTED_SCHEMA_PROPERTY_TYPES = %w[
+        boolean
+        date
+        email
+        float
+        integer
+        string
+        timestamp
+        variable_date
+      ].freeze
 
-      STATIC_KEYS = Regexp.union(keys)
+      STATIC_KEYS = Regexp.union(StaticOrderableProperty.pluck(:path))
 
       STATIC_PATTERN = /\A#{STATIC_KEYS}\z/
+
+      ANCESTOR_STATIC_KEYS = Regexp.union(StaticAncestorOrderableProperty.pluck(:base_path))
+
+      ANCESTOR_STATIC_PATTERN = /\A
+      ancestors
+      \.
+      (?<ancestor_name>#{COMPONENT_FORMAT})
+      \.
+      (?<path>#{ANCESTOR_STATIC_KEYS})
+      \z/x
 
       PROPS_PATTERN = /\A
       props
       \.
-      (?:
+      (?<path>
         (?:#{COMPONENT_FORMAT}+)
         (?:\.#{COMPONENT_FORMAT}+?)?
       )
-      (?:\##{Regexp.union(::EntityOrderableProperty::SUPPORTED_PROPERTY_TYPES.map(&:to_s))})?
+      (?<type>\##{Regexp.union(SUPPORTED_SCHEMA_PROPERTY_TYPES)})?
       \z/x
 
-      PATTERN = Regexp.union(STATIC_PATTERN, PROPS_PATTERN)
+      ANCESTOR_PROPS_PATTERN = /\A
+      ancestors
+      \.
+      (?<ancestor_name>#{COMPONENT_FORMAT})
+      \.
+      props
+      \.
+      (?<path>
+        (?:#{COMPONENT_FORMAT}+)
+        (?:\.#{COMPONENT_FORMAT}+?)?
+      )
+      (?<type>\##{Regexp.union(SUPPORTED_SCHEMA_PROPERTY_TYPES)})?
+      \z/x
 
-      namespace :props do
-        register ?* do
-          BySchemaProperty.new
-        end
-      end
+      PATTERN = Regexp.union(STATIC_PATTERN, ANCESTOR_STATIC_PATTERN, PROPS_PATTERN, ANCESTOR_PROPS_PATTERN)
     end
   end
 end

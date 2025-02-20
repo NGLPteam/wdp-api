@@ -38,10 +38,6 @@ module Schemas
         nulls == "last"
       end
 
-      def schema_property?
-        path.present? && path.starts_with?("props.")
-      end
-
       # @!group Compilation
 
       # @api private
@@ -54,22 +50,12 @@ module Schemas
       end
 
       # @!attribute [r] query_builder
-      # This is the builder for a given order definition based on its
-      # {#query_builder_key query builder key}.
+      # This is the builder for a given order definition.
       #
-      # @see Schemas::Orderings::OrderBuilder
-      # @return [#call]
+      # @see Schemas::Orderings::OrderBuilder::Build
+      # @return [Schemas::Orderings::OrderBuilder::Base]
       def query_builder
-        Schemas::Orderings::OrderBuilder[query_builder_key]
-      end
-
-      # @!attribute [r] query_builder_key
-      # The key used to look up the {#query_builder}.
-      #
-      # @api private
-      # @return [String]
-      def query_builder_key
-        schema_property? ? "props.*" : path
+        MeruAPI::Container["schemas.orderings.order_builder.build"].(path)
       end
 
       # @!endgroup

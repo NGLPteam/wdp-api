@@ -10,6 +10,20 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 --
+-- Name: custom_numeric; Type: COLLATION; Schema: public; Owner: -
+--
+
+CREATE COLLATION public.custom_numeric (provider = icu, locale = 'en-u-kn-true');
+
+
+--
+-- Name: COLLATION custom_numeric; Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON COLLATION public.custom_numeric IS 'A custom collation that supports lexically ordering by integral values found within the string, so that 1, 2, 10 orders correctly.';
+
+
+--
 -- Name: btree_gist; Type: EXTENSION; Schema: -; Owner: -
 --
 
@@ -1165,10 +1179,10 @@ $_$;
 -- Name: generate_string_value(public.schema_property_type, jsonb); Type: FUNCTION; Schema: public; Owner: -
 --
 
-CREATE FUNCTION public.generate_string_value(public.schema_property_type, jsonb) RETURNS text
+CREATE FUNCTION public.generate_string_value(public.schema_property_type, jsonb) RETURNS public.citext
     LANGUAGE sql IMMUTABLE STRICT PARALLEL SAFE
     AS $_$
-SELECT CASE WHEN $1 = 'string' THEN public.jsonb_to_text($2) ELSE NULL END;
+SELECT CASE WHEN $1 = 'string' THEN public.jsonb_to_citext($2) ELSE NULL END;
 $_$;
 
 
@@ -3713,7 +3727,7 @@ CREATE TABLE public.collections (
     parent_id uuid,
     identifier public.citext NOT NULL,
     system_slug public.citext NOT NULL,
-    title public.citext NOT NULL,
+    title public.citext NOT NULL COLLATE public.custom_numeric,
     raw_doi public.citext,
     summary text DEFAULT ''::text,
     thumbnail_data jsonb,
@@ -3755,7 +3769,7 @@ CREATE TABLE public.communities (
     id uuid DEFAULT gen_random_uuid() NOT NULL,
     system_slug public.citext NOT NULL,
     "position" integer,
-    title public.citext NOT NULL,
+    title public.citext NOT NULL COLLATE public.custom_numeric,
     thumbnail_data jsonb,
     metadata jsonb,
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
@@ -3793,7 +3807,7 @@ CREATE TABLE public.entities (
     depth integer GENERATED ALWAYS AS (public.nlevel(auth_path)) STORED,
     schema_version_id uuid NOT NULL,
     link_operator public.link_operator,
-    title public.citext DEFAULT ''::public.citext NOT NULL,
+    title public.citext DEFAULT ''::public.citext NOT NULL COLLATE public.custom_numeric,
     properties jsonb DEFAULT '{}'::jsonb NOT NULL,
     stale_at timestamp without time zone,
     refreshed_at timestamp without time zone,
@@ -3813,7 +3827,7 @@ CREATE TABLE public.items (
     parent_id uuid,
     identifier public.citext NOT NULL,
     system_slug public.citext NOT NULL,
-    title public.citext NOT NULL,
+    title public.citext NOT NULL COLLATE public.custom_numeric,
     raw_doi public.citext,
     summary text DEFAULT ''::text,
     thumbnail_data jsonb,
@@ -4386,7 +4400,7 @@ CREATE TABLE public.entity_hierarchies (
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     depth bigint GENERATED ALWAYS AS (public.nlevel(auth_path)) STORED NOT NULL,
     generations bigint GENERATED ALWAYS AS (public.ltree_generations(auth_path, ancestor_slug, descendant_slug)) STORED NOT NULL,
-    title text NOT NULL
+    title public.citext NOT NULL COLLATE public.custom_numeric
 );
 
 
@@ -4520,7 +4534,7 @@ CREATE TABLE public.entity_orderable_properties (
     email_value public.citext GENERATED ALWAYS AS (public.generate_email_value(type, raw_value)) STORED,
     float_value numeric GENERATED ALWAYS AS (public.generate_float_value(type, raw_value)) STORED,
     integer_value bigint GENERATED ALWAYS AS (public.generate_integer_value(type, raw_value)) STORED,
-    string_value text GENERATED ALWAYS AS (public.generate_string_value(type, raw_value)) STORED,
+    string_value public.citext GENERATED ALWAYS AS (public.generate_string_value(type, raw_value)) STORED COLLATE public.custom_numeric,
     timestamp_value timestamp with time zone GENERATED ALWAYS AS (public.generate_timestamp_value(type, raw_value)) STORED,
     variable_date_value public.variable_precision_date GENERATED ALWAYS AS (public.generate_variable_date_value(type, raw_value)) STORED
 );
@@ -13117,6 +13131,8 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20250206232440'),
 ('20250207184954'),
 ('20250217215855'),
-('20250218011515');
+('20250218011515'),
+('20250219225500'),
+('20250219234712');
 
 

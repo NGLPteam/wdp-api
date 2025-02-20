@@ -81,9 +81,10 @@ RSpec.describe "Query.collection", type: :request, disable_ordering_refresh: tru
     end
 
     it "finds the right relatives" do
-      expect_the_default_request.to execute_safely
-
-      expect_graphql_data expected_shape
+      expect_request! do |req|
+        req.effect! execute_safely
+        req.data! expected_shape
+      end
     end
   end
 
@@ -117,9 +118,10 @@ RSpec.describe "Query.collection", type: :request, disable_ordering_refresh: tru
     end
 
     it "calculates the right ranks" do
-      expect_the_default_request.to execute_safely
-
-      expect_graphql_data expected_shape
+      expect_request! do |req|
+        req.effect! execute_safely
+        req.data! expected_shape
+      end
     end
   end
 end

@@ -13,11 +13,6 @@ RSpec.describe "nglp:journal_article", type: :request do
     let(:body_kind) { "HTML" }
     let(:body_content) { "<p>Some Body Content</p>" }
     let(:body_lang) { "en" }
-    let(:volume_id) { ?1 }
-    let(:issue_id) { ?1 }
-    let(:issue_sortable_number) { 1 }
-    let(:issue_number) { issue_id }
-    let(:issue_title) { "Some Issue" }
     let(:collected) { { value: "2021/01/05", precision: "MONTH" } }
     let(:citation) do
       <<~MARKDOWN
@@ -35,11 +30,6 @@ RSpec.describe "nglp:journal_article", type: :request do
 
         pv.prop :citation, citation
 
-        pv.prop "volume.id", volume_id
-        pv.prop "issue.id", issue_id
-        pv.prop "issue.title", issue_title
-        pv.prop "issue.number", issue_number
-        pv.prop "issue.sortable_number", issue_sortable_number
         pv.prop "meta.collected", collected
       end
     end
@@ -68,20 +58,7 @@ RSpec.describe "nglp:journal_article", type: :request do
 
             sp.tags :keywords
 
-            sp.group :volume do |vp|
-              vp.string :id do |vid|
-                vid.prop :content, volume_id
-              end
-            end
-
-            sp.group :issue do |ip|
-              ip.string :title, issue_title
-              ip.string :number, issue_number
-              ip.integer :sortable_number, issue_sortable_number
-              ip.string :id, issue_id
-              ip.integer :fpage
-              ip.integer :lpage
-            end
+            sp.integer :issue_position
 
             sp.group :meta do |mp|
               mp.variable_date :collected, value: VariablePrecisionDate.parse(collected).value.to_s, precision: "MONTH"
@@ -93,9 +70,9 @@ RSpec.describe "nglp:journal_article", type: :request do
     end
 
     it "accepts valid values" do
-      make_default_request!
-
-      expect_graphql_data expected_shape
+      expect_request! do |req|
+        req.data! expected_shape
+      end
     end
 
     xcontext "when a required property is blank" do
