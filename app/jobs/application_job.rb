@@ -12,6 +12,9 @@ class ApplicationJob < ActiveJob::Base
   # Most jobs are safe to ignore if the underlying records are no longer available
   discard_on ActiveJob::DeserializationError
 
+  # This error is unlikely to resolve itself on subsequent executions.
+  discard_on NameError
+
   def call_operation!(name, ...)
     MeruAPI::Container[name].call(...).value!
   end
