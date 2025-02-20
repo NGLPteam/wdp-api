@@ -18503,6 +18503,19 @@
   default_function: 
   has_default: false
   virtual: false
+- id: Templates::ListItemDefinition#see_all_ordering_identifier
+  model_name: Templates::ListItemDefinition
+  table_name: templates_list_item_definitions
+  name: see_all_ordering_identifier
+  type: text
+  'null': true
+  sql_type_metadata:
+    sql_type: text
+    type: text
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
 - id: Templates::ListItemInstance#id
   model_name: Templates::ListItemInstance
   table_name: templates_list_item_instances
@@ -18700,6 +18713,19 @@
   default: "{}"
   default_function: 
   has_default: true
+  virtual: false
+- id: Templates::ListItemInstance#see_all_ordering_id
+  model_name: Templates::ListItemInstance
+  table_name: templates_list_item_instances
+  name: see_all_ordering_id
+  type: uuid
+  'null': true
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default: 
+  default_function: 
+  has_default: false
   virtual: false
 - id: Templates::ManualList#id
   model_name: Templates::ManualList

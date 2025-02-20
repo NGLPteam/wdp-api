@@ -95,6 +95,7 @@
   name: show_see_all_button
   property_kind_name: boolean
   default: false
+  deprecation_reason: "Use seeAllOrdering on the instance instead."
 - template_kind: descendant_list
   name: show_entity_context
   property_kind_name: boolean
@@ -251,6 +252,7 @@
   name: show_see_all_button
   property_kind_name: boolean
   default: false
+  deprecation_reason: "Use seeAllOrdering on the instance instead."
 - template_kind: link_list
   name: show_entity_context
   property_kind_name: boolean
@@ -264,6 +266,9 @@
   name: use_selection_fallback
   property_kind_name: boolean
   default: false
+- template_kind: list_item
+  name: see_all_ordering_identifier
+  property_kind_name: schema_component
 - template_kind: list_item
   name: selection_source
   property_kind_name: selection_source

@@ -150,7 +150,7 @@ module Types
         TEXT
       end
 
-      field :show_see_all_button, Boolean, null: true do
+      field :show_see_all_button, Boolean, null: true, deprecation_reason: "Use seeAllOrdering on the instance instead." do
         description <<~TEXT
         TEXT
       end

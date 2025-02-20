@@ -30,7 +30,6 @@
       <selection-source>self</selection-source>
       <entity-context>none</entity-context>
       <show-hero-image>false</show-hero-image>
-      <show-see-all-button>false</show-see-all-button>
       <use-selection-fallback>false</use-selection-fallback>
       <variant>cards</variant>
       <slots>
@@ -54,7 +53,6 @@
       <selection-source>self</selection-source>
       <entity-context>none</entity-context>
       <show-hero-image>false</show-hero-image>
-      <show-see-all-button>false</show-see-all-button>
       <use-selection-fallback>false</use-selection-fallback>
       <variant>cards</variant>
       <slots>

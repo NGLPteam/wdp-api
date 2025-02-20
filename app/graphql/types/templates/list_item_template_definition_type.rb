@@ -12,6 +12,13 @@ module Types
         TEXT
       end
 
+      field :see_all_ordering_identifier, Types::SchemaComponentType, null: true do
+        description <<~TEXT
+        If provided, this will expose an ordering on the template instance that can
+        be used to generate a link to the ordering in the frontend.
+        TEXT
+      end
+
       field :selection_source, ::Types::TemplateSelectionSourceType, null: true do
         description <<~TEXT
         When selecting entities based on `selectionMode`, this property determines

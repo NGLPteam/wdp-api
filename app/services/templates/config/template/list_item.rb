@@ -9,6 +9,8 @@ module Templates
       class ListItem < ::Templates::Config::Utility::AbstractTemplate
         configures_template! :list_item
 
+        attribute :see_all_ordering_identifier, ::Templates::Config::Properties::SchemaComponent
+
         attribute :selection_source, ::Templates::Config::Properties::SelectionSource
 
         attribute :selection_mode, ::Templates::Config::Properties::ListItemSelectionMode
@@ -38,6 +40,8 @@ module Templates
           map_element "manual-list-name", to: :manual_list_name
 
           map_element "ordering-identifier", to: :ordering_identifier
+
+          map_element "see-all-ordering-identifier", to: :see_all_ordering_identifier
 
           map_element "selection-fallback-mode", to: :selection_fallback_mode
 
