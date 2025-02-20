@@ -7,9 +7,6 @@ module Schemas
       #
       # @api private
       class BySchemaProperty < Base
-        # @api private
-        PATTERN = /\Aprops\.(?<path>[^#]+)(?:#(?<type>[^#]+))?\z/
-
         def attributes_for(definition)
           Array(property_attribute_for(definition.path))
         end
@@ -19,7 +16,9 @@ module Schemas
         # @param [String] order_path
         # @return [Arel::Nodes::InfixOperation]
         def property_attribute_for(order_path)
-          match = PATTERN.match order_path
+          pattern = ancestor? ? Schemas::Orderings::OrderBuilder::ANCESTOR_PROPS_PATTERN : Schemas::Orderings::OrderBuilder::PROPS_PATTERN
+
+          match = pattern.match order_path
 
           raise "Unparseable schema path: #{order_path}" unless match
 

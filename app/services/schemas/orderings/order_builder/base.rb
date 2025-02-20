@@ -11,14 +11,23 @@ module Schemas
         include Dry::Effects.State(:joins)
         include Dry::Effects.Resolve(:encode_join)
 
+        option :ancestor_name, Schemas::Orderings::Types::AncestorName, optional: true
+
         # @param [Schemas::Orderings::OrderDefinition] definition
         # @return [<Arel::Nodes::Ordering>]
         def call(definition, invert: false)
+          ancestor_join_alias
+          ancestor_alias
+
           attributes = Array(attributes_for(definition))
 
           attributes.map do |attr|
             apply definition, attr, invert:
           end
+        end
+
+        def ancestor?
+          ancestor_name.present?
         end
 
         # @!attribute [r] arel_table
@@ -28,12 +37,42 @@ module Schemas
           OrderingEntryCandidate.arel_table
         end
 
+        memoize def entity_ancestors
+          EntityAncestor.arel_table
+        end
+
         memoize def named_variable_dates
           NamedVariableDate.arel_table
         end
 
         memoize def orderable_properties
           EntityOrderableProperty.arel_table
+        end
+
+        # @return [Arel::Nodes::TableAlias]
+        def ancestor_join_alias
+          return unless ancestor?
+
+          expr = joins.compute_if_absent "$ancestor_join/#{ancestor_name}" do
+            join_name = encode_join.("ancestor_join/#{ancestor_name}")
+
+            build_ancestor_join_for(join_name:)
+          end
+
+          expr.left
+        end
+
+        # @return [Arel::Nodes::TableAlias]
+        def ancestor_alias
+          return unless ancestor?
+
+          expr = joins.compute_if_absent "$ancestor/#{ancestor_name}" do
+            join_name = encode_join.("ancestor/#{ancestor_name}")
+
+            build_ancestor_for(join_name:)
+          end
+
+          expr.left
         end
 
         def arel_quote(value)
@@ -123,9 +162,31 @@ module Schemas
           expr.left
         end
 
-        def build_arel_join_for_entity_adjacent_table(table_alias)
-          on_condition = arel_table[:entity_type].eq(table_alias[:entity_type]).and(
-            arel_table[:entity_id].eq(table_alias[:entity_id])
+        def build_ancestor_for(join_name:)
+          anc = arel_table.alias(join_name)
+
+          on_condition = ancestor_join_alias[:ancestor_type].eq(anc[:entity_type]).and(
+            ancestor_join_alias[:ancestor_id].eq(anc[:entity_id])
+          )
+
+          on = Arel::Nodes::On.new(on_condition)
+
+          Arel::Nodes::OuterJoin.new(anc, on)
+        end
+
+        def build_ancestor_join_for(join_name:)
+          ea = entity_ancestors.alias(join_name)
+
+          build_arel_join_for_entity_adjacent_table ea do |on|
+            on.and ea[:name].eq(ancestor_name)
+          end
+        end
+
+        def build_arel_join_for_entity_adjacent_table(table_alias, ancestor_aware: false)
+          source_alias = ancestor_aware && ancestor? ? ancestor_alias : arel_table
+
+          on_condition = source_alias[:entity_type].eq(table_alias[:entity_type]).and(
+            source_alias[:entity_id].eq(table_alias[:entity_id])
           )
 
           on_condition = yield on_condition if block_given?
@@ -136,7 +197,9 @@ module Schemas
         end
 
         def join_for_orderable_property(path)
-          join_for path do |join_name|
+          key = ancestor? ? "ancestor/#{ancestor_name}/prop/#{path}" : "prop/#{path}"
+
+          join_for key do |join_name|
             op = orderable_properties.alias(join_name)
 
             build_arel_join_for_entity_adjacent_table op do |on|
@@ -146,7 +209,9 @@ module Schemas
         end
 
         def join_for_variable_date(path)
-          join_for path do |join_name|
+          key = ancestor? ? "ancestor/#{ancestor_name}/date/#{path}" : "date/#{path}"
+
+          join_for key do |join_name|
             nvd = named_variable_dates.alias(join_name)
 
             build_arel_join_for_entity_adjacent_table nvd do |on|

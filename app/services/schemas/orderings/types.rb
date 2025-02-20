@@ -5,6 +5,14 @@ module Schemas
     module Types
       include Dry.Types
 
+      extend Support::EnhancedTypes
+
+      COMPONENT_FORMAT = /[a-z][a-z0-9_]*?[a-z0-9]/
+
+      ANCESTOR_NAME = /\A#{COMPONENT_FORMAT}\z/
+
+      AncestorName = Coercible::String.constrained(format: ANCESTOR_NAME)
+
       ArelJoin = Instance(::Arel::Nodes::Join)
 
       ArelJoinMap = Hash.map(String, ArelJoin)
@@ -18,6 +26,13 @@ module Schemas
       ColumnList = Coercible::Array.of(Coercible::Symbol).constrained(min_size: 1)
 
       Direction = ::Support::GlobalTypes::SimpleSortDirection
+
+      OrderBuilderName = Coercible::String.enum(
+        "by_columns",
+        "by_is_link",
+        "by_schema_property",
+        "by_variable_date",
+      )
 
       OrderingFilter = Instance(Schemas::Associations::OrderingFilter).constructor do |value|
         case value
@@ -37,15 +52,13 @@ module Schemas
 
       OrderingFilters = Array.of(OrderingFilter)
 
-      PathForStatic = String.enum(*StaticOrderableProperty.pluck(:path))
-
-      PathForProps = String.constrained(format: Schemas::Orderings::OrderBuilder::PROPS_PATTERN)
-
-      Path = String.constrained(format: Schemas::Orderings::OrderBuilder::PATTERN)
-
       RenderMode = Coercible::String.default("flat").enum("flat", "tree").fallback("flat")
 
       SelectDirect = Coercible::String.default("children").enum("none", "children", "descendants").fallback("none")
+
+      SUPPORTED_STATIC_PROP_TYPES = %w[string variable_date integer timestamp boolean select].freeze
+
+      StaticPropertyType = Coercible::String.default("string").enum(*SUPPORTED_STATIC_PROP_TYPES)
     end
   end
 end

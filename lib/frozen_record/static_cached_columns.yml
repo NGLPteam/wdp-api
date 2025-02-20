@@ -4577,11 +4577,11 @@
   model_name: EntityDescendant
   table_name: entity_descendants
   name: title
-  type: text
+  type: citext
   'null': true
   sql_type_metadata:
-    sql_type: text
-    type: text
+    sql_type: citext
+    type: citext
   default: 
   default_function: 
   has_default: false
@@ -4897,11 +4897,11 @@
   model_name: EntityHierarchy
   table_name: entity_hierarchies
   name: title
-  type: text
+  type: citext
   'null': false
   sql_type_metadata:
-    sql_type: text
-    type: text
+    sql_type: citext
+    type: citext
   default: 
   default_function: 
   has_default: false
@@ -5462,11 +5462,11 @@
   model_name: EntityOrderableProperty
   table_name: entity_orderable_properties
   name: string_value
-  type: text
+  type: citext
   'null': true
   sql_type_metadata:
-    sql_type: text
-    type: text
+    sql_type: citext
+    type: citext
   default: 
   default_function: generate_string_value(type, raw_value)
   has_default: false

@@ -1,0 +1,24 @@
+---
+- base_path: title
+  builder: by_columns
+  columns:
+    - :entity_title
+  type: string
+- base_path: created_at
+  builder: by_columns
+  columns:
+    - :entity_created_at
+  type: timestamp
+- base_path: updated_at
+  builder: by_columns
+  columns:
+    - :entity_updated_at
+  type: timestamp
+- base_path: depth
+  builder: by_columns
+  columns:
+    - :entity_depth
+  type: integer
+- base_path: published
+  builder: by_variable_date
+  type: variable_date

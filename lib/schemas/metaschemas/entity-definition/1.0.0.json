@@ -478,6 +478,8 @@
       "title": "Order Path",
       "description": "A path to an attribute that can be used to sort an ordering",
       "oneOf": [
+        { "$ref": "#/$defs/OrderPaths/AncestorPath" },
+        { "$ref": "#/$defs/OrderPaths/AncestorSchemaPropertyPath" },
         { "$ref": "#/$defs/OrderPaths/EntityPath" },
         { "$ref": "#/$defs/OrderPaths/LinkPath" },
         { "$ref": "#/$defs/OrderPaths/SchemaPath" },
@@ -485,8 +487,18 @@
       ]
     },
     "OrderPaths": {
+      "AncestorPath": {
+        "title": "Ancestor Core Property",
+        "description": "A core property on an ancestor.",
+        "pattern": "^ancestors\\.[a-z][a-z0-9_]*[a-z]\\.[a-z][a-z0-9_]*[a-z]$"
+      },
+      "AncestorSchemaPropertyPath": {
+        "title": "Ancestor Schema Property",
+        "description": "A schema property on an ancestor",
+        "pattern": "^ancestors\\.[a-z][a-z0-9_]*[a-z]\\.props\\.[a-z][a-z0-9_]*[a-z](?:\\.[a-z][a-z0-9_]*[a-z])?(?:#[a-z][a-z0-9_]*[a-z])?$"
+      },
       "EntityPath": {
-        "title": "Entity Attribute",
+        "title": "Entity Core Property",
         "description": "An attribute on a child entity (not schema-dependent)",
         "type": "string",
         "enum": [
@@ -498,7 +510,7 @@
         ]
       },
       "LinkPath": {
-        "title": "Link Attribute",
+        "title": "Link Core Property",
         "description": "Sort by link attributes",
         "type": "string",
         "enum": [
@@ -506,7 +518,7 @@
         ]
       },
       "SchemaPath": {
-        "title": "Schema Attribute",
+        "title": "Schema Core Property",
         "description": "An attribute on the child entity's schema",
         "type": "string",
         "enum": [

@@ -4,6 +4,20 @@ module Types
   class OrderingPathGroupingType < Types::BaseEnum
     description "A logical grouping for ordering paths."
 
+    value "ANCESTOR_PROPS", value: "ancestor_props" do
+      description <<~TEXT
+      Paths under this type come from _ancestors_ in a schema.
+      Not every entity is guaranteed to have one, and in orderings
+      with mixed entities, missing props will be treated as null.
+      TEXT
+    end
+
+    value "ANCESTOR_STATIC", value: "ancestor_static" do
+      description <<~TEXT
+      Static properties that are directly on an ancestor.
+      TEXT
+    end
+
     value "ENTITY", value: "entity" do
       description <<~TEXT
       Static properties that are directly on an entity.

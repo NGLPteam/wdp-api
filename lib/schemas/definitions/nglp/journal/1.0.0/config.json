@@ -30,7 +30,8 @@
         "direct": "descendants"
       },
       "order": [
-        { "path": "entity.published", "direction": "desc" }
+        { "path": "entity.published", "direction": "desc", "nulls": "last" },
+        { "path": "entity.created_at", "direction": "desc", "nulls": "last" }
       ],
       "position": 3
     },
@@ -49,8 +50,10 @@
         "direct": "descendants"
       },
       "order": [
-        { "path": "props.volume.sortable_number#integer", "direction": "desc" },
-        { "path": "props.sortable_number#integer", "direction": "desc" }
+        { "path": "ancestors.volume.props.sortable_number#integer", "direction": "desc", "nulls": "last" },
+        { "path": "ancestors.volume.title", "direction": "desc", "nulls": "last" },
+        { "path": "props.sortable_number#integer", "direction": "desc", "nulls": "last" },
+        { "path": "entity.title", "direction": "desc", "nulls": "last" }
       ],
       "position": 2
     },
@@ -83,8 +86,6 @@
       "function": "metadata",
       "description": "The International Standard Serial Number for this journal."
     },
-    { "path": "description", "label": "Description", "type": "full_text", "required": false, "function": "presentation" },
-    { "type": "boolean", "path": "peer_reviewed", "label": "Peer Reviewed", "function": "metadata" },
     {
       "type": "select",
       "path": "cc_license",
@@ -115,6 +116,8 @@
           "value": "CC BY-NC-ND"
         }
       ]
-    }
+    },
+    { "path": "description", "label": "Description", "type": "full_text", "required": false, "function": "presentation" },
+    { "path": "peer_reviewed", "label": "Peer Reviewed", "type": "boolean", "function": "metadata" }
   ]
 }

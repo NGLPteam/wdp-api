@@ -1,13 +1,48 @@
 # frozen_string_literal: true
 
 RSpec.describe Schemas::Orderings::PathOptions::Fetch, type: :operation do
-  let!(:total_schema_property_count) { SchemaVersionProperty.orderable.count }
-  let!(:expected_schema_property_count) { total_schema_property_count }
-  let!(:total_static_property_count) { StaticOrderableProperty.visible.count }
-  let!(:expected_static_property_count) { total_static_property_count }
-  let!(:expected_property_count) { expected_schema_property_count + expected_static_property_count }
-
   let!(:schemas) { [] }
+
+  let!(:expected_schemas) do
+    MeruAPI::Container["schemas.associations.find_all_matching_versions"].(Schemas::Orderings::Types::OrderingFilters[schemas]).value!
+  end
+
+  let!(:expected_ancestors) do
+    if schemas.present?
+      MeruAPI::Container["schemas.associations.find_unique_ancestors"].(expected_schemas).value!
+    else
+      []
+    end
+  end
+
+  let!(:total_schema_property_count) { SchemaVersionProperty.orderable.count }
+  let!(:total_static_property_count) { StaticOrderableProperty.visible.count }
+
+  let(:expected_schema_property_count) do
+    if schemas.present?
+      expected_schemas.sum do |version|
+        SchemaVersionProperty.orderable.filtered_by_schema_version(version).count
+      end
+    else
+      total_schema_property_count
+    end
+  end
+
+  let!(:expected_static_property_count) { total_static_property_count }
+
+  let!(:expected_ancestor_schema_property_count) do
+    expected_ancestors.sum do |anc|
+      SchemaVersionProperty.orderable.filtered_by_schema_version(anc.target_version).count
+    end
+  end
+
+  let!(:expected_ancestor_static_property_count) do
+    expected_ancestors.count * total_static_property_count
+  end
+
+  let!(:expected_property_count) do
+    expected_schema_property_count + expected_static_property_count + expected_ancestor_schema_property_count + expected_ancestor_static_property_count
+  end
 
   let!(:operation_args) do
     { schemas: }
@@ -44,10 +79,6 @@ RSpec.describe Schemas::Orderings::PathOptions::Fetch, type: :operation do
       ]
     end
 
-    let(:expected_schema_property_count) do
-      simple_collection.schema_version_properties.orderable.count
-    end
-
     include_examples "a valid set of args"
   end
 
@@ -57,8 +88,6 @@ RSpec.describe Schemas::Orderings::PathOptions::Fetch, type: :operation do
         { namespace: "unknown", identifier: "schema" }
       ]
     end
-
-    let(:expected_schema_property_count) { 0 }
 
     it "has no schema properties in the result" do
       expect_calling_with(**operation_args).to have_the_expected_property_count

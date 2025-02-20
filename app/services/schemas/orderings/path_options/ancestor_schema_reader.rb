@@ -3,14 +3,18 @@
 module Schemas
   module Orderings
     module PathOptions
-      class SchemaReader < Reader
+      class AncestorSchemaReader < Reader
+        param :ancestor_name, Schemas::Orderings::Types::String
+
         param :property, Schemas::Orderings::Types.Instance(SchemaVersionProperty)
+
+        priority 20
 
         delegate :label, :type, :schema_version, to: :property
 
         # @return ["props"]
         def grouping
-          "props"
+          "ancestor_props"
         end
 
         def description
@@ -18,11 +22,11 @@ module Schemas
         end
 
         def path
-          "props.#{property.path}##{type}"
+          "ancestors.#{ancestor_name}.props.#{property.path}##{type}"
         end
 
         def label_prefix
-          property.schema_version.name
+          "Ancestor (#{schema_version.name})"
         end
       end
     end

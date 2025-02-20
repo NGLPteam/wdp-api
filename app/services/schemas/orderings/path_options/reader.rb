@@ -6,6 +6,11 @@ module Schemas
       # @abstract
       class Reader
         extend Dry::Initializer
+        extend Dry::Core::ClassAttributes
+
+        defines :priority, type: Schemas::Orderings::Types::Integer
+
+        priority 1
 
         include Comparable
 
@@ -33,11 +38,15 @@ module Schemas
           nil
         end
 
+        def priority
+          self.class.priority
+        end
+
         protected
 
-        # @return [(String, String)]
+        # @return [(Integer, String, String)]
         def to_compare
-          [grouping, label]
+          [priority, grouping, label]
         end
       end
     end
