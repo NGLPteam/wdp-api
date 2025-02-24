@@ -73,8 +73,10 @@
         <filter>
           <schema namespace="nglp" identifier="journal_issue"/>
         </filter>
-        <order path="entity.published" dir="desc"/>
-        <order path="entity.created_at" dir="desc"/>
+        <order path="ancestors.volume.props.sortable_number#integer" dir="desc"/>
+        <order path="ancestors.volume.title" dir="desc"/>
+        <order path="props.sortable_number#integer" dir="desc"/>
+        <order path="entity.title" dir="desc"/>
         <render mode="flat"/>
         <select direct="descendants"/>
       </dynamic-ordering-definition>
@@ -102,8 +104,10 @@
         <filter>
           <schema namespace="nglp" identifier="journal_issue"/>
         </filter>
-        <order path="entity.published" dir="desc"/>
-        <order path="entity.created_at" dir="desc"/>
+        <order path="ancestors.volume.props.sortable_number#integer" dir="desc"/>
+        <order path="ancestors.volume.title" dir="desc"/>
+        <order path="props.sortable_number#integer" dir="desc"/>
+        <order path="entity.title" dir="desc"/>
         <render mode="flat"/>
         <select direct="descendants"/>
       </dynamic-ordering-definition>
