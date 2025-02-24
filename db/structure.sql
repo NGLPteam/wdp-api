@@ -5024,7 +5024,8 @@ CREATE TABLE public.ordering_entries (
     tree_parent_id uuid,
     stale_at timestamp(6) without time zone,
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    order_props jsonb DEFAULT '{}'::jsonb NOT NULL
 );
 
 
@@ -13151,6 +13152,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20250218011515'),
 ('20250219225500'),
 ('20250219234712'),
-('20250220221139');
+('20250220221139'),
+('20250224203941');
 
 

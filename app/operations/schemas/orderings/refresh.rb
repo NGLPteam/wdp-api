@@ -23,7 +23,7 @@ module Schemas
       SQL
 
       PREFIX = <<~SQL.squish
-      INSERT INTO ordering_entries (ordering_id, entity_id, entity_type, position, inverse_position, link_operator, auth_path, scope, relative_depth, tree_depth, tree_parent_id, tree_parent_type)
+      INSERT INTO ordering_entries (ordering_id, entity_id, entity_type, position, inverse_position, link_operator, auth_path, scope, relative_depth, order_props, tree_depth, tree_parent_id, tree_parent_type)
       SQL
 
       SUFFIX = <<~SQL.squish
@@ -35,6 +35,7 @@ module Schemas
         auth_path = EXCLUDED.auth_path,
         scope = EXCLUDED.scope,
         relative_depth = EXCLUDED.relative_depth,
+        order_props = EXCLUDED.order_props,
         tree_depth = EXCLUDED.tree_depth,
         tree_parent_id = EXCLUDED.tree_parent_id,
         tree_parent_type = EXCLUDED.tree_parent_type,
@@ -50,6 +51,8 @@ module Schemas
           ordering_entries.scope IS DISTINCT FROM EXCLUDED.scope
           OR
           ordering_entries.relative_depth IS DISTINCT FROM EXCLUDED.relative_depth
+          OR
+          ordering_entries.order_props IS DISTINCT FROM EXCLUDED.order_props
           OR
           ordering_entries.tree_depth IS DISTINCT FROM EXCLUDED.tree_depth
           OR

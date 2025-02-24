@@ -11673,6 +11673,19 @@
   default_function: CURRENT_TIMESTAMP
   has_default: true
   virtual: false
+- id: OrderingEntry#order_props
+  model_name: OrderingEntry
+  table_name: ordering_entries
+  name: order_props
+  type: jsonb
+  'null': false
+  sql_type_metadata:
+    sql_type: jsonb
+    type: jsonb
+  default: "{}"
+  default_function: 
+  has_default: true
+  virtual: false
 - id: OrderingEntryAncestorLink#id
   model_name: OrderingEntryAncestorLink
   table_name: ordering_entry_ancestor_links

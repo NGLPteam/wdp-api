@@ -9,6 +9,7 @@ module Schemas
 
         include Dry::Core::Memoizable
         include Dry::Effects.State(:joins)
+        include Dry::Effects.State(:props)
         include Dry::Effects.Resolve(:encode_join)
 
         option :ancestor_name, Schemas::Orderings::Types::AncestorName, optional: true
@@ -90,6 +91,8 @@ module Schemas
         # @param [Arel::Attribute, Arel::OrderPredications] attr
         # @return [Arel::Nodes::Ordering]
         def apply(definition, attr, invert: false)
+          props.put_if_absent definition.path, attr
+
           directioned = apply_direction definition, attr
 
           nulled = apply_nulls definition, directioned
@@ -177,7 +180,7 @@ module Schemas
         def build_ancestor_join_for(join_name:)
           ea = entity_ancestors.alias(join_name)
 
-          build_arel_join_for_entity_adjacent_table ea do |on|
+          build_arel_join_for_entity_adjacent_table ea, ancestor_aware: false do |on|
             on.and ea[:name].eq(ancestor_name)
           end
         end
@@ -202,7 +205,7 @@ module Schemas
           join_for key do |join_name|
             op = orderable_properties.alias(join_name)
 
-            build_arel_join_for_entity_adjacent_table op do |on|
+            build_arel_join_for_entity_adjacent_table op, ancestor_aware: true do |on|
               on.and op[:path].eq(path)
             end
           end
@@ -214,7 +217,7 @@ module Schemas
           join_for key do |join_name|
             nvd = named_variable_dates.alias(join_name)
 
-            build_arel_join_for_entity_adjacent_table nvd do |on|
+            build_arel_join_for_entity_adjacent_table nvd, ancestor_aware: true do |on|
               on.and nvd[:path].eq(path)
             end
           end

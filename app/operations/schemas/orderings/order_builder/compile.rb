@@ -9,6 +9,7 @@ module Schemas
       # the order that candidates should be sorted in.
       class Compile
         include Dry::Effects::Handler.State(:joins)
+        include Dry::Effects::Handler.State(:props)
         include Dry::Effects::Handler.Resolve
         include MeruAPI::Deps[
           encode_join: "schemas.orderings.order_builder.encode_join_name"
@@ -52,16 +53,20 @@ module Schemas
         # @return [Schemas::Orderings::OrderExpression]
         def wrap_compilation(definition)
           joins = Concurrent::Map.new
+          props = Concurrent::Map.new
 
           expression = {}
 
           joins, _ = with_joins(joins) do
-            provide(encode_join:, definition:) do
-              yield expression
+            props, _ = with_props(props) do
+              provide(encode_join:, definition:) do
+                yield expression
+              end
             end
           end
 
           expression[:joins] = joins.each_pair.to_h
+          expression[:props] = props.each_pair.to_h
 
           Schemas::Orderings::OrderExpression.new(**expression)
         end
