@@ -83,6 +83,7 @@ class OrderingEntryCandidate < ApplicationRecord
     fc.auth_path,
     fc.scope,
     fc.relative_depth,
+    fc.order_props,
     sc.tree_depth,
     td.tree_parent_id,
     td.tree_parent_type
@@ -129,7 +130,7 @@ class OrderingEntryCandidate < ApplicationRecord
         remapped_candidates: REMAPPED_CANDIDATES_QUERY
       ).select(
         "ordering_id", "entity_id", "entity_type", "position", "inverse_position", "link_operator", "auth_path", "scope", "relative_depth",
-        "tree_depth", "tree_parent_id", "tree_parent_type"
+        "order_props", "tree_depth", "tree_parent_id", "tree_parent_type"
       ).from("remapped_candidates").order(position: :asc)
     end
 
@@ -188,6 +189,8 @@ class OrderingEntryCandidate < ApplicationRecord
 
       ordering_id_expr = arel_cast(arel_quote(ordering.id), "uuid").as("ordering_id")
 
+      order_props_expr = arel_order_props_expr_for compiled.props
+
       default_position_expr = arel_windowed_position_for compiled.default_orderings
 
       inverse_position_expr = arel_windowed_position_for compiled.inverse_orderings
@@ -204,6 +207,7 @@ class OrderingEntryCandidate < ApplicationRecord
         arel_table[:auth_path],
         arel_table[:scope],
         relative_depth_expr.as("relative_depth"),
+        order_props_expr.as("order_props"),
         arel_quote(nil).as("tree_depth"),
         arel_quote(nil).as("tree_parent_id"),
         arel_quote(nil).as("tree_parent_type")
@@ -214,6 +218,15 @@ class OrderingEntryCandidate < ApplicationRecord
       query.order! arel_table[:hierarchical_type].asc, arel_table[:hierarchical_id].asc, arel_table[:link_operator].asc.nulls_last
 
       return query
+    end
+
+    # @param [{ String => Arel::Nodes::Node }]
+    def arel_order_props_expr_for(props)
+      args = props.each_pair.flat_map do |(path, expr)|
+        [arel_quote(path), expr]
+      end
+
+      arel_named_fn("jsonb_build_object", *args)
     end
 
     # @param [HasSchemaDefinition] entity

@@ -9,8 +9,14 @@ module Schemas
     class OrderExpression < Dry::Struct
       # @!attribute [r] joins
       # A mapping of join expressions that get attached to the {OrderingEntryCandidate.query_for candidate ordering process}.
-      # @return [Hash]
+      # @return [{ String => Arel::Nodes::Join }]
       attribute :joins, Types::ArelJoinMap
+
+      # @!attribute [r] props
+      # A mapping of the props used to calculate {#default_orderings} and {#inverse_orderings},
+      # for introspection.
+      # @return [{ String => Arel::Nodes::Node }]
+      attribute :props, Types::ArelPropsMap
 
       # @!attribute [r] default_orderings
       # @return [<Arel::Nodes::Ordering>]

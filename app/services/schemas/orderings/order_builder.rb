@@ -40,7 +40,7 @@ module Schemas
         (?:#{COMPONENT_FORMAT}+)
         (?:\.#{COMPONENT_FORMAT}+?)?
       )
-      (?<type>\##{Regexp.union(SUPPORTED_SCHEMA_PROPERTY_TYPES)})?
+      (?:\#(?<type>#{Regexp.union(SUPPORTED_SCHEMA_PROPERTY_TYPES)}))?
       \z/x
 
       ANCESTOR_PROPS_PATTERN = /\A
@@ -54,7 +54,7 @@ module Schemas
         (?:#{COMPONENT_FORMAT}+)
         (?:\.#{COMPONENT_FORMAT}+?)?
       )
-      (?<type>\##{Regexp.union(SUPPORTED_SCHEMA_PROPERTY_TYPES)})?
+      (?:\#(?<type>#{Regexp.union(SUPPORTED_SCHEMA_PROPERTY_TYPES)}))?
       \z/x
 
       PATTERN = Regexp.union(STATIC_PATTERN, ANCESTOR_STATIC_PATTERN, PROPS_PATTERN, ANCESTOR_PROPS_PATTERN)

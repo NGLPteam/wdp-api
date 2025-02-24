@@ -23,6 +23,8 @@ module Schemas
 
       ArelOrderings = Array.of(ArelOrdering)
 
+      ArelPropsMap = Hash.map(String, Instance(::Arel::Expressions))
+
       ColumnList = Coercible::Array.of(Coercible::Symbol).constrained(min_size: 1)
 
       Direction = ::Support::GlobalTypes::SimpleSortDirection
