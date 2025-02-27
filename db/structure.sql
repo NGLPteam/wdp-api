@@ -1116,7 +1116,7 @@ $_$;
 CREATE FUNCTION public.extract_doi_from_data(jsonb) RETURNS public.citext
     LANGUAGE sql IMMUTABLE STRICT PARALLEL SAFE
     AS $_$
-SELECT ($1 ->> 'doi')::citext WHERE $1 @> jsonb_build_object('ok', true);
+SELECT ($1 ->> 'doi')::public.citext WHERE $1 @> jsonb_build_object('ok', true);
 $_$;
 
 
@@ -2630,25 +2630,6 @@ COMMENT ON OPERATOR public.&& (public.variable_precision_date, public.variable_p
 
 CREATE OPERATOR public.&& (
     FUNCTION = public.vpdate_overlaps,
-    LEFTARG = daterange,
-    RIGHTARG = public.variable_precision_date,
-    COMMUTATOR = OPERATOR(public.&&)
-);
-
-
---
--- Name: OPERATOR && (daterange, public.variable_precision_date); Type: COMMENT; Schema: public; Owner: -
---
-
-COMMENT ON OPERATOR public.&& (daterange, public.variable_precision_date) IS 'overlaps';
-
-
---
--- Name: &&; Type: OPERATOR; Schema: public; Owner: -
---
-
-CREATE OPERATOR public.&& (
-    FUNCTION = public.vpdate_overlaps,
     LEFTARG = public.variable_precision_date,
     RIGHTARG = daterange,
     COMMUTATOR = OPERATOR(public.&&)
@@ -2663,22 +2644,22 @@ COMMENT ON OPERATOR public.&& (public.variable_precision_date, daterange) IS 'ov
 
 
 --
--- Name: +; Type: OPERATOR; Schema: public; Owner: -
+-- Name: &&; Type: OPERATOR; Schema: public; Owner: -
 --
 
-CREATE OPERATOR public.+ (
-    FUNCTION = public.variable_precision,
-    LEFTARG = public.date_precision,
-    RIGHTARG = date,
-    COMMUTATOR = OPERATOR(public.+)
+CREATE OPERATOR public.&& (
+    FUNCTION = public.vpdate_overlaps,
+    LEFTARG = daterange,
+    RIGHTARG = public.variable_precision_date,
+    COMMUTATOR = OPERATOR(public.&&)
 );
 
 
 --
--- Name: OPERATOR + (public.date_precision, date); Type: COMMENT; Schema: public; Owner: -
+-- Name: OPERATOR && (daterange, public.variable_precision_date); Type: COMMENT; Schema: public; Owner: -
 --
 
-COMMENT ON OPERATOR public.+ (public.date_precision, date) IS 'Construct a variable precision date';
+COMMENT ON OPERATOR public.&& (daterange, public.variable_precision_date) IS 'overlaps';
 
 
 --
@@ -2698,6 +2679,25 @@ CREATE OPERATOR public.+ (
 --
 
 COMMENT ON OPERATOR public.+ (date, public.date_precision) IS 'Construct a variable precision date';
+
+
+--
+-- Name: +; Type: OPERATOR; Schema: public; Owner: -
+--
+
+CREATE OPERATOR public.+ (
+    FUNCTION = public.variable_precision,
+    LEFTARG = public.date_precision,
+    RIGHTARG = date,
+    COMMUTATOR = OPERATOR(public.+)
+);
+
+
+--
+-- Name: OPERATOR + (public.date_precision, date); Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON OPERATOR public.+ (public.date_precision, date) IS 'Construct a variable precision date';
 
 
 --
@@ -13153,6 +13153,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20250219225500'),
 ('20250219234712'),
 ('20250220221139'),
-('20250224203941');
+('20250224203941'),
+('20250227200415');
 
 
