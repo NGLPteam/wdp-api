@@ -10,9 +10,7 @@
       <slots>
         <header/>
         <subheader/>
-        <summary hide-when-empty="true">
-          {{ entity.summary }}
-        </summary>
+        <summary/>
       </slots>
     </detail>
     <descendant-list>
