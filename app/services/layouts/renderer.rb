@@ -30,6 +30,8 @@ module Layouts
 
         yield render_each_template!
 
+        yield prune_removed_templates!
+
         yield upsert_digests!
       end
 
@@ -62,6 +64,14 @@ module Layouts
     end
 
     around_render_each_template :track_render!
+
+    wrapped_hook! def prune_removed_templates
+      layout_instance.each_template_instance_association do |association|
+        association.where.not(generation:).destroy_all
+      end
+
+      super
+    end
 
     wrapped_hook! def upsert_digests
       yield layout_instance.upsert_template_instance_digests

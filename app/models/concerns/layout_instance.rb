@@ -42,6 +42,11 @@ module LayoutInstance
 
   alias all_slots_empty? all_slots_empty
 
+  # @return [void]
+  def clear_template_instances!
+    @template_instances = false
+  end
+
   # @return [<Symbol>]
   def template_instance_names
     self.class.template_instance_names
@@ -57,17 +62,26 @@ module LayoutInstance
     call_operation("templates.digests.instances.upsert_for_layout", self)
   end
 
-  private
+  def each_template_instance_association
+    # :nocov:
+    return enum_for(__method__) unless block_given?
+    # :nocov:
 
-  # @return [void]
-  def clear_template_instances!
-    @template_instances = false
+    template_instance_names.each do |assoc_name|
+      assoc = __send__(assoc_name)
+
+      yield assoc
+    end
+  ensure
+    clear_template_instances!
   end
+
+  private
 
   # @return [<TemplateInstance>]
   def fetch_template_instances
     template_instance_names.map do |assoc|
-      __send__(assoc).to_a
+      __send__(assoc).reload.to_a
     end.reduce(&:+).sort_by(&:position)
   end
 
