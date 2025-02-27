@@ -57,7 +57,7 @@ show_help() {
 backup_dump_db() {
   warn "** Dumping the database..."
 
-  pg_dump -O -x --clean --if-exists -w -f $SQL_FILE
+  pg_dump -O -x --clean --if-exists -w --exclude-table-data=pghero_query_stats --exclude-table-data=pghero_space_stats -f $SQL_FILE
 
   sed -i 's/DROP TYPE IF EXISTS public.variable_precision_date;/DROP TYPE IF EXISTS public.variable_precision_date CASCADE;/' "${SQL_FILE}"
 }
