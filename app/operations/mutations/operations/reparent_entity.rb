@@ -8,6 +8,7 @@ module Mutations
     # @see Schemas::Instances::ReparentEntity
     class ReparentEntity
       include MutationOperations::Base
+      include Mutations::Shared::ForceRendersLayouts
       include Mutations::Shared::RefreshesOrderingsAsynchronously
 
       derives_edge!
@@ -19,6 +20,8 @@ module Mutations
 
         with_called_operation!("schemas.instances.reparent_entity", parent, child) do |m|
           m.success do |updated_child|
+            force_render_layouts_for! parent, updated_child
+
             attach! :parent, parent
             attach! :child, updated_child
           end
