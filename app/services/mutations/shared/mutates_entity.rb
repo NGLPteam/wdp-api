@@ -7,6 +7,7 @@ module Mutations
       extend ActiveSupport::Concern
 
       include Mutations::Shared::AttachesPolymorphicEntity
+      include Mutations::Shared::ForceRendersLayouts
       include Mutations::Shared::RefreshesOrderingsAsynchronously
       include Mutations::Shared::WithSchemaErrors
 
@@ -49,9 +50,7 @@ module Mutations
 
         maybe_apply_schema_properties! entity
 
-        entity.render_layouts!
-
-        entity.invalidate_related_layouts!
+        force_render_layouts_for! entity
       end
     end
   end
