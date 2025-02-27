@@ -11,9 +11,7 @@
         <header/>
         <subheader/>
         <body/>
-        <summary>
-          {% if entity.summary %} {{ entity.summary }} {% endif %}
-        </summary>
+        <summary/>
       </slots>
     </detail>
     <contributor-list>
@@ -26,20 +24,6 @@
         </header>
       </slots>
     </contributor-list>
-    <blurb>
-      <background>light</background>
-      <width>full</width>
-      <slots>
-        <header>How to Cite</header>
-        <body>
-          {% if props.citation.exists %}
-          {% copylink "Citation" %}
-            {{ props.citation }}
-          {% endcopylink %}
-          {% endif %}
-        </body>
-      </slots>
-    </blurb>
     <link-list>
       <background>light</background>
       <dynamic-ordering-definition>
