@@ -22,7 +22,7 @@ module Searching
     end
 
     memoize def value_column
-      EntitySearchableColumn.value_column_for_type value_type
+      EntitySearchableProperty.value_column_for_type value_type
     end
 
     memoize def value_type

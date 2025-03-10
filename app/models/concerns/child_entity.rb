@@ -6,6 +6,8 @@ module ChildEntity
   extend ActiveSupport::Concern
 
   include HasDOI
+  include HasHarvestAssets
+  include HasHarvestModificationStatus
   include HasSchemaDefinition
   include HierarchicalEntity
   include ReferencesNamedVariableDates
@@ -17,6 +19,7 @@ module ChildEntity
     has_many :harvest_entities, as: :entity, dependent: :nullify
     has_many :harvest_records, through: :harvest_entities
 
+    scope :harvested, -> { where(id: HarvestEntity.existing_entity_ids) }
     scope :unharvested, -> { where.not(id: HarvestEntity.existing_entity_ids) }
   end
 

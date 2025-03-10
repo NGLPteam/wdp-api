@@ -2,9 +2,8 @@
 
 FactoryBot.define do
   factory :harvest_contribution do
-    harvest_contributor { nil }
-    harvest_entity { nil }
-    kind { "" }
-    metadata { "" }
+    association :harvest_contributor
+    association :harvest_entity
+    role { nil }
   end
 end

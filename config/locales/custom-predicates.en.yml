@@ -5,6 +5,8 @@ en:
 
     global_id?: "must be a GlobalID"
 
+    has_model_name?: "must be a named ActiveModel object"
+
     http_uri?: "must be a valid HTTP or HTTPS url"
 
     https_uri?: "must be a valid HTTPS url"

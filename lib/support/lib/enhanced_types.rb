@@ -31,6 +31,11 @@ module Support
       is_klass | Implements(kls)
     end
 
+    # @param [String] specific_model
+    def FrozenInstance(specific_model)
+      Instance(FrozenRecord::Base).constrained(specific_model:)
+    end
+
     # Create a type that matches a class that includes a given module
     # @param [Class, Module] mod
     # @return [Dry::Types::Type]

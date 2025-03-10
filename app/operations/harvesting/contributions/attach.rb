@@ -2,7 +2,11 @@
 
 module Harvesting
   module Contributions
-    # TODO: Fix during harvesting refactor.
+    # Create a {Contribution} from a {HarvestContribution}.
+    #
+    # @see ::Contributions::Attach
+    # @see ::Contributions::Attacher
+    # @see ::Harvesting::Contributors::ConnectOrCreate
     class Attach
       include Dry::Monads[:do, :result]
       include MonadicPersistence
@@ -11,36 +15,15 @@ module Harvesting
         connect_or_create: "harvesting.contributors.connect_or_create",
       ]
 
-      prepend TransactionalCall
-
       # @param [HarvestContribution] harvest_contribution
       # @param [Contributable] contributable
-      # @return [Dry::Monads::Result]
+      # @return [Dry::Monads::Success(Contribution)]
       def call(harvest_contribution, contributable)
-        Success()
-      end
-
-      private
-
-      # @param [HarvestContribution] harvest_contribution
-      # @param [Contributable] contributable
-      # @return [Dry::Monads::Result]
-      def original_call(harvest_contribution, contributable)
-        # :nocov:
         contributor = yield connect_or_create.call(harvest_contribution.harvest_contributor)
 
-        contribution = yield attach.call contributor, contributable
+        options = harvest_contribution.to_attach_options
 
-        contribution.kind = harvest_contribution.kind
-
-        if harvest_contribution.metadata.present?
-          contribution.metadata ||= {}
-
-          contribution.metadata.corresp = harvest_contribution.metadata["corresp"].present?
-        end
-
-        monadic_save contribution
-        # :nocov:
+        attach.call(contributor, contributable, **options)
       end
     end
   end

@@ -32,9 +32,11 @@ ActiveModel::Type.register :integer_array, GlobalTypes::IntegerArray
 ActiveModel::Type.register :indifferent_hash, GlobalTypes::IndifferentHash
 ActiveModel::Type.register :property_hash, GlobalTypes::PropertyHash
 ActiveModel::Type.register :semantic_version, GlobalTypes::SemanticVersion
+ActiveModel::Type.register :variable_precision_date, GlobalTypes::VariablePrecisionDate
 ActiveModel::Type.register :version_requirement, GlobalTypes::VersionRequirement
 
 ActiveRecord::Type.register :indifferent_hash, GlobalTypes::IndifferentHash
 ActiveRecord::Type.register :property_hash, GlobalTypes::PropertyHash
 ActiveRecord::Type.register :semantic_version, GlobalTypes::SemanticVersion
+ActiveRecord::Type.register :variable_precision_date, GlobalTypes::VariablePrecisionDate
 ActiveRecord::Type.register :version_requirement, GlobalTypes::VersionRequirement

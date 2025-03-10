@@ -10,10 +10,17 @@ module Types
 
     implements Types::HasHarvestErrorsType
     implements Types::HasHarvestMetadataFormatType
+    implements Types::QueriesHarvestMessage
 
     field :identifier, String, null: false do
       description <<~TEXT
       A unique identifier for the record within the `HarvestSource`.
+      TEXT
+    end
+
+    field :status, Types::HarvestRecordStatusType, null: false do
+      description <<~TEXT
+      The status of the record.
       TEXT
     end
 
@@ -40,7 +47,7 @@ module Types
 
     field :raw_metadata_source, String, null: true do
       description <<~TEXT
-      The raw medata extracted from `rawSource`, with minimal processing applied.
+      The raw metadata extracted from `rawSource`, with minimal processing applied.
 
       When rendering in the frontend, this should be in some sort of fixed-width font / code view,
       as it will be JSON, XML, or similar types of data.

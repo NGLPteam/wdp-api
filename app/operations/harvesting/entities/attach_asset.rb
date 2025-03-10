@@ -7,14 +7,12 @@ module Harvesting
     # and produces an asset with the cached attachment.
     class AttachAsset
       include MonadicPersistence
-      include Dry::Effects.Resolve(:harvest_entity)
+      include Dry::Effects.Reader(:harvest_entity)
       include Dry::Monads[:result, :do]
       include MeruAPI::Deps[
         fetch_cached_asset: "harvesting.cached_assets.fetch",
         add_reference: "harvesting.cached_assets.reference",
       ]
-
-      DOWNLOAD_OVERRIDE = %r!(?<=/article/)view(?=/[^/]+/[^/]+)!
 
       # @param [Attachable] entity
       # @param [Harvesting::Assets::ExtractedSource] source
@@ -26,7 +24,7 @@ module Harvesting
 
         asset.name ||= source.name.presence || source.identifier
 
-        url = prepare_url source.url
+        url = source.url
 
         cached = yield fetch_cached_asset.(url)
 
@@ -42,10 +40,6 @@ module Harvesting
 
       private
 
-      def prepare_url(url)
-        url.sub(DOWNLOAD_OVERRIDE, "download")
-      end
-
       # @param [HarvestCachedAsset] cached
       # @param [Asset] asset
       # @param [Hash] metadata
@@ -58,7 +52,10 @@ module Harvesting
           cached.asset.download do |io|
             asset.attachment_attacher.assign(io, metadata:)
 
-            monadic_save asset
+            # This should not reasonably fail.
+            asset.save!
+
+            Success asset
           end
         else
           unless asset.has_attachment?

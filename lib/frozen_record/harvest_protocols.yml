@@ -1,0 +1,11 @@
+---
+- name: oai
+  has_sets: true
+  supports_extract_record: true
+  supports_extract_records: true
+  supports_extract_sets: true
+- name: unknown
+  has_sets: false
+  supports_extract_record: false
+  supports_extract_records: false
+  supports_extract_sets: false

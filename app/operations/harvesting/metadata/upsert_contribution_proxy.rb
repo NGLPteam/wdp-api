@@ -17,9 +17,13 @@ module Harvesting
       # @param [Harvesting::Contributions::Proxy] contribution_proxy
       # @return [Dry::Monads::Success(HarvestContribution)]
       def call(harvest_entity, contribution_proxy)
-        harvest_contributor = yield upsert_contributor.call(*contribution_proxy.contributor.to_upsert)
+        # :nocov:
+        return Success(nil) unless contribution_proxy.valid?
+        # :nocov:
 
-        upsert_contribution.(harvest_entity, harvest_contributor, **contribution_proxy.options)
+        harvest_contributor = yield upsert_contributor.call(contribution_proxy.contributor)
+
+        upsert_contribution.(harvest_entity, harvest_contributor, contribution_proxy)
       end
     end
   end

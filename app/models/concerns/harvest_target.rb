@@ -10,6 +10,7 @@ module HarvestTarget
 
   included do
     has_many :harvest_attempts, as: :target_entity, dependent: :destroy
+    has_many :harvest_configurations, as: :target_entity, dependent: :destroy
     has_many :harvest_mappings, as: :target_entity, dependent: :destroy
     has_many :harvest_metadata_mappings, as: :target_entity, dependent: :destroy
   end

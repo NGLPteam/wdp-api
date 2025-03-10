@@ -255,8 +255,8 @@
   identifier: uiowa
   title: University of Iowa
   url: "https://uiowa.alma.exlibrisgroup.com/view/oai/01IOWA_INST/request"
-  set_identifier: "iro:meru-dc"
-  metadata_format: oaidc
+  set_identifier: "iro:meru-esploro"
+  metadata_format: esploro
   skip_harvest: true
   use_metadata_mappings: true
   metadata_mappings:

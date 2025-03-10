@@ -25,7 +25,7 @@ module Searching
 
     attr_reader :expression
 
-    # @return [Arel::Expressions]
+    # @return [Arel::Expressions, nil]
     def call
       skipped, _ = catch_skip do
         run_callbacks :prepare do
@@ -37,7 +37,11 @@ module Searching
         end
       end
 
-      return @expression unless skipped
+      # :nocov:
+      return if skipped
+      # :nocov:
+
+      return @expression
     end
 
     # @!attribute [r] property
@@ -49,7 +53,9 @@ module Searching
       when Schemas::Properties::ParsePath::PATTERN
         MeruAPI::Container["schemas.properties.parse_path"].(left).value_or(nil)
       else
+        # :nocov:
         skip
+        # :nocov:
       end
     end
 
@@ -57,6 +63,10 @@ module Searching
       case property
       when Searching::CoreProperty, Schemas::Properties::Path
         property.search_strategy
+      else
+        # :nocov:
+        "none"
+        # :nocov:
       end
     end
 
@@ -72,7 +82,9 @@ module Searching
           join_for_searchable_property property.full_path
         end
       else
+        # :nocov:
         arel_quote(nil)
+        # :nocov:
       end
     end
 
@@ -85,7 +97,9 @@ module Searching
       when "property"
         arelized_path[property.value_column]
       else
+        # :nocov:
         arel_quote nil
+        # :nocov:
       end
     end
 
@@ -137,7 +151,9 @@ module Searching
         arel_table[:hierarchical_id].eq(table_alias[:entity_id])
       )
 
+      # :nocov:
       on_condition = yield on_condition if block_given?
+      # :nocov:
 
       on = Arel::Nodes::On.new on_condition
 

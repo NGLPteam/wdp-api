@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mapping>
+  <assigns/>
+  <entities>
+    <item schema="default:item">
+      <identifier>{{record.identifier}}</identifier>
+      <title>Extracted record for {{record.identifier}}</title>
+    </item>
+  </entities>
+</mapping>

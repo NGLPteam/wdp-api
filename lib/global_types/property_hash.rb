@@ -8,10 +8,10 @@ module GlobalTypes
     # Type cast a value from user input (e.g. from a setter).
     #
     # @param [Hash, #to_h] value
-    # @return [::PropertyHash]
+    # @return [::Support::PropertyHash]
     def cast(value)
       Dry::Types["coercible.hash"].try(value).to_monad.value_or({}).then do |v|
-        ::PropertyHash.new v
+        ::Support::PropertyHash.new v
       end
     end
 
@@ -19,7 +19,7 @@ module GlobalTypes
     #
     # @note Normal `ActiveRecord::Type` behavior is to pass nils through, but we *always* want a hash.
     # @param [Hash, #to_h] value
-    # @return [::PropertyHash]
+    # @return [::Support::PropertyHash]
     def deserialize(value)
       cast(super)
     end

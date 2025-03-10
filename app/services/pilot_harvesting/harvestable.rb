@@ -11,7 +11,7 @@ module PilotHarvesting
     ).with_key_transform(&:to_sym)
 
     included do
-      defines :metadata_format, type: Harvesting::Types::MetadataFormat
+      defines :metadata_format, type: Harvesting::Types::MetadataFormatName
 
       metadata_format "mods"
 
@@ -41,7 +41,7 @@ module PilotHarvesting
 
       attribute? :max_records, Harvesting::Types::MaxRecordCount
 
-      attribute? :metadata_format, Harvesting::Types::MetadataFormat.optional
+      attribute? :metadata_format, Harvesting::Types::MetadataFormatName.optional
 
       attribute? :protocol_name, Harvesting::Types::ProtocolName.optional
 
@@ -65,7 +65,7 @@ module PilotHarvesting
     end
 
     # @!attribute [r] harvesting_metadata_format
-    # @return [Harvesting::Types::MetadataFormat]
+    # @return [Harvesting::Types::MetadataFormatName]
     def harvesting_metadata_format
       metadata_format.presence || default_metadata_format
     end
@@ -76,48 +76,27 @@ module PilotHarvesting
       protocol_name || default_protocol_name
     end
 
-    # @param [HierarchicalEntity] entity
-    # @return [Dry::Monads::Result]
-    def upsert_source_for!(entity)
-      return Success(entity) if url.blank?
-
-      options = {
-        mapping_options: {
-          auto_create_volumes_and_issues:,
-          link_identifiers_globally:,
-          use_metadata_mappings:,
-        },
-        read_options: {
-          max_records:,
-        },
+    def mapping_options
+      {
+        auto_create_volumes_and_issues:,
+        link_identifiers_globally:,
+        use_metadata_mappings:,
       }
-
-      source_options = options.merge(
-        metadata_format: harvesting_metadata_format,
-        protocol_name: harvesting_protocol_name,
-      )
-
-      call_operation("harvesting.sources.upsert", harvesting_identifier, harvesting_title, url, **source_options) do |source|
-        assign_metadata_mappings_for!(source, entity).value!
-
-        if set_identifier.present?
-          call_operation("harvesting.actions.upsert_set_mapping", source, entity, set_identifier, add_set_if_missing: add_set, **options) do |mapping|
-            call_operation("harvesting.actions.manually_run_mapping", mapping, skip_harvest:) do
-              Success entity
-            end
-          end
-        else
-          call_operation("harvesting.actions.manually_run_source", source, entity, skip_harvest:) do
-            Success entity
-          end
-        end
-      end
     end
 
-    def assign_metadata_mappings_for!(source, base_entity)
-      return Success([]) if metadata_mappings.blank?
+    def read_options
+      {
+        max_records:,
+      }
+    end
 
-      source.assign_metadata_mappings(metadata_mappings, base_entity:)
+    # @param [HierarchicalEntity] entity
+    # @return [Dry::Monads::Success(HarvestAttempt)]
+    # @return [Dry::Monads::Success(nil)]
+    def upsert_source_for!(entity)
+      return Success(nil) if url.blank?
+
+      call_operation("pilot_harvesting.upsert_source", self, entity)
     end
   end
 end

@@ -12,6 +12,7 @@ module Types
     implements Types::HarvestAttemptableType
     implements Types::HasHarvestMetadataFormatType
     implements Types::HasHarvestOptionsType
+    implements Types::QueriesHarvestMessage
 
     field :name, String, null: false do
       description <<~TEXT
@@ -78,6 +79,12 @@ module Types
 
       A single source may have thousands of sets associated with it,
       so it must be paginated.
+      TEXT
+    end
+
+    field :status, Types::HarvestSourceStatusType, null: false do
+      description <<~TEXT
+      An enum that describes the functional state for harvest sources.
       TEXT
     end
 

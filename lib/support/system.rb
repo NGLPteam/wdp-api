@@ -39,6 +39,7 @@ module Support
 
       config.inflector = Dry::Inflector.new do |inflections|
         inflections.acronym("API")
+        inflections.acronym("ANZ")
         inflections.acronym("GQL")
         inflections.acronym("GraphQL")
         inflections.acronym("NGLP")

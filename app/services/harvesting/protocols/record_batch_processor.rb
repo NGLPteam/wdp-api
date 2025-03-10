@@ -2,18 +2,17 @@
 
 module Harvesting
   module Protocols
-    # @abstract
+    # Given a "batch" of records (a single page as part of pagination, etc),
+    # process each record and return the resulting {HarvestRecord}s.
+    #
     # @see Harvesting::Protocols::RecordProcessor#call
     class RecordBatchProcessor
       include Dry::Monads[:result]
-      include Dry::Effects.Resolve(:harvest_attempt)
-      include Dry::Effects.Resolve(:harvest_mapping)
-      include Dry::Effects.Resolve(:harvest_set)
-      include Dry::Effects.Resolve(:harvest_source)
-      include Dry::Effects.Resolve(:metadata_format)
-      include Dry::Effects.Resolve(:protocol)
       include Dry::Effects::Handler.Interrupt(:deleted_record, as: :catch_deleted)
-      include Harvesting::WithLogger
+
+      include Dry::Initializer[undefined: false].define -> do
+        param :protocol, Harvesting::Types.Instance(::Harvesting::Protocols::Context)
+      end
 
       # @param [Object] batch
       # @return [Dry::Monads::Success<HarvestRecord>]
@@ -43,11 +42,9 @@ module Harvesting
 
       # @abstract
       # @param [Object] raw_record
-      # @return [Dry::Monads::Success]
+      # @return [Dry::Monads::Success(HarvestRecord)]
       def process(raw_record)
-        # :nocov:
         protocol.process_record.(raw_record)
-        # :nocov:
       end
 
       # @!endgroup

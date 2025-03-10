@@ -14,10 +14,13 @@
 
 # These inflection rules are supported but not enabled by default:
 ActiveSupport::Inflector.inflections(:en) do |inflect|
+  inflect.acronym "ANZ"
   inflect.acronym "API"
   inflect.acronym "CRUD"
   inflect.acronym "DOI"
   inflect.acronym "DSL"
+  inflect.acronym "ETD"
+  inflect.acronym "EISBN"
   inflect.acronym "GraphQL"
   inflect.acronym "ISBN"
   inflect.acronym "ISSN"

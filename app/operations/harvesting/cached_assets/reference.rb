@@ -44,7 +44,6 @@ module Harvesting
         case cacheable
         when HarvestRecord
           rows << cacheable
-          rows << cacheable.harvest_attempt
           rows << cacheable.harvest_source
         when HarvestEntity
           rows << cacheable

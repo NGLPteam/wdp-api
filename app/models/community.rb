@@ -41,6 +41,11 @@ class Community < ApplicationRecord
     CollectionContribution.none
   end
 
+  # @return [:community]
+  def entity_kind
+    :community
+  end
+
   def hierarchical_parent
     nil
   end

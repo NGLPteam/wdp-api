@@ -8,7 +8,13 @@ FactoryBot.define do
 
     entity { nil }
 
-    metadata_kind { "anything" }
+    entity_kind { :collection }
+
+    extracted_attributes do
+      {
+        title: "Some Harvested Collection",
+      }
+    end
 
     extracted_properties { {} }
   end

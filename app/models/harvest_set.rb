@@ -8,7 +8,14 @@ class HarvestSet < ApplicationRecord
   belongs_to :harvest_source, inverse_of: :harvest_sets
 
   has_many :harvest_attempts, inverse_of: :harvest_set, dependent: :destroy
+
+  has_many :harvest_configurations, inverse_of: :harvest_set, dependent: :nullify
+
   has_many :harvest_mappings, inverse_of: :harvest_set, dependent: :destroy
+
+  has_many :harvest_set_record_links, inverse_of: :harvest_set, dependent: :delete_all
+
+  has_many :harvest_records, through: :harvest_set_record_links
 
   scope :in_default_order, -> { lazily_order(:name, :asc) }
   scope :in_inverse_order, -> { lazily_order(:name, :desc) }

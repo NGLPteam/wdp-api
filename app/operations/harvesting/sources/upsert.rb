@@ -6,7 +6,7 @@ module Harvesting
       include MonadicPersistence
 
       # @return [Dry::Monads::Success(HarvestSource)]
-      def call(identifier, name, base_url, protocol: "oai", metadata_format: "mods", **options)
+      def call(identifier, name, base_url, protocol:, metadata_format:, **options)
         source = HarvestSource.to_upsert_by_identifier(identifier)
 
         source.name = name

@@ -58,7 +58,7 @@ RSpec.describe "Query.search", type: :request do
   let_it_be(:community) { FactoryBot.create :community, title: "University of Testing" }
   let_it_be(:coll_1) { FactoryBot.create :collection, community:, title: "Testable Collection" }
   let_it_be(:coll_2) { FactoryBot.create :collection, community:, title: "Unknown Collection" }
-  let_it_be(:item_1_1) { FactoryBot.create :item, collection: coll_1, title: "Some Item" }
+  let_it_be(:item_1_1) { FactoryBot.create :item, collection: coll_1, title: "Some Item", published: VariablePrecisionDate.parse(Date.current) }
   let_it_be(:item_2_1) { FactoryBot.create :item, collection: coll_2, title: "Known Item" }
 
   let(:collection_slug) { random_slug }
@@ -193,6 +193,59 @@ RSpec.describe "Query.search", type: :request do
     let(:search_query) { "unknown" }
 
     let(:expected_global_entities) { [coll_2] }
+
+    include_examples "a valid search"
+  end
+
+  context "when searching with predicates" do
+    let(:expected_global_entities) { [item_1_1] }
+
+    let(:search_predicates) do
+      build_and = ->(left, right) { { and: { left:, right:, } } }
+      build_or = ->(left, right) { { or: { left:, right:, } } }
+
+      build_op = ->(op, path, value) do
+        { op => { path:, value:, } }
+      end
+
+      build_date_gte = ->(path, value) { build_op.(:dateGTE, path, value) }
+      build_date_lte = ->(path, value) { build_op.(:dateLTE, path, value) }
+      build_date_eq = ->(path, value) { build_op.(:dateEquals, path, value) }
+      build_matches = ->(path, value) { build_op.(:matches, path, value) }
+      build_equals = ->(path, value) { build_op.(:equals, path, value) }
+      build_numeric_lte = ->(path, value) { build_op.(:numericLTE, path, value) }
+      build_numeric_gte = ->(path, value) { build_op.(:numericGTE, path, value) }
+      build_in_any = ->(path, *values) { build_op.(:inAny, path, values.flatten) }
+
+      build_and.(
+        build_and.(
+          build_date_gte.("$core.published", "1990-01-01"),
+          build_date_lte.("$core.published", "2500-01-01")
+        ),
+        build_or.(
+          build_and.(
+            build_or.(
+              build_numeric_lte.("props.foo#float", 3),
+              build_matches.("$core.title", "item")
+            ),
+            build_or.(
+              build_numeric_gte.("props.foo#integer", 5),
+              build_matches.("$core.title", "some")
+            )
+          ),
+          build_or.(
+            build_or.(
+              build_equals.("$core.doi", "doi-12345"),
+              build_matches.("$core.title", "Some Item")
+            ),
+            build_or.(
+              build_in_any.("props.bar#string", "foo", "bar", "baz"),
+              build_date_eq.("$core.published", Date.current.iso8601)
+            )
+          )
+        )
+      )
+    end
 
     include_examples "a valid search"
   end

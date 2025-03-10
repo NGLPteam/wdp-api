@@ -2,36 +2,56 @@
 
 module Harvesting
   module Protocols
-    # @abstract
+    # This fetches multiple records in batches for a given {HarvestAttempt}
+    # and will create or update {HarvestRecord}s for its {HarvestSource}.
     #
-    # This will ideally be able to be refactored into something supported by JobIteration.
+    # @abstract
     class RecordBatchExtractor
-      include Dry::Monads[:result]
-      include Dry::Effects.Resolve(:harvest_attempt)
-      include Dry::Effects.Resolve(:harvest_mapping)
-      include Dry::Effects.Resolve(:harvest_set)
-      include Dry::Effects.Resolve(:harvest_source)
-      include Dry::Effects.Resolve(:metadata_format)
-      include Dry::Effects.Resolve(:protocol)
-      include Dry::Effects.Resolve(:record_extraction_progress)
-      include Dry::Effects::Handler.Interrupt(:halt_enumeration, as: :catch_halt_enumeration)
-      include Dry::Effects.Interrupt(:halt_enumeration)
+      include Harvesting::Protocols::CursorBasedBatchEnumerator
+
+      include Dry::Effects::Handler.Interrupt(:no_records, as: :catch_no_records)
       include Dry::Effects.Interrupt(:no_records)
-      include Harvesting::WithLogger
 
-      # rubocop:disable Style/Alias
-      alias_method :progress, :record_extraction_progress
-      # rubocop:enable Style/Alias
+      param :harvest_attempt, ::Harvesting::Types::Attempt
 
-      def call(_harvest_attempt, async: false, cursor: nil)
-        progress.reset! if !async || cursor.nil?
+      delegate :harvest_mapping, :harvest_set, :harvest_source, to: :harvest_attempt
 
-        wrap_batch_enumeration do
-          if async
-            async_enumerate!(cursor)
-          else
-            enumerate!
-          end
+      # @return [Harvesting::Extraction::Context]
+      attr_reader :context
+
+      # @return [HarvestConfiguration]
+      attr_reader :harvest_configuration
+
+      # @return [HarvestMetadataFormat]
+      attr_reader :metadata_format
+
+      # @return [Harvesting::Attempts::RecordExtractionProgress]
+      attr_reader :progress
+
+      # @return [Harvesting::Protocols::Context]
+      attr_reader :protocol
+
+      around_enumeration :provide_harvest_source!
+      around_enumeration :provide_harvest_mapping!
+      around_enumeration :provide_harvest_attempt!
+      around_enumeration :provide_harvest_configuration!
+      around_enumeration :provide_metadata_format!
+
+      around_enumeration :with_no_records!
+
+      def initialize(...)
+        super
+
+        set_up!
+
+        # :nocov:
+        progress.reset! if provided_cursor.blank?
+        # :nocov:
+      end
+
+      def call
+        each do |harvest_record, _|
+          logger.trace "Extracted #{harvest_record.identifier}"
         end
 
         Success()
@@ -39,107 +59,23 @@ module Harvesting
 
       private
 
-      # @param [String, nil] initial_cursor
       # @return [void]
-      def async_enumerate!(initial_cursor)
-        batch = build_batch(cursor: initial_cursor)
+      def set_up!
+        @harvest_configuration = harvest_attempt.harvest_configuration || harvest_attempt.create_configuration!
 
-        on_initial_batch(batch) if initial_cursor.nil?
+        @context = harvest_configuration.build_extraction_context
 
-        pre_process! batch
+        @metadata_format = context.metadata_format
 
-        processed = process_batch batch
+        @progress = context.progress
 
-        post_process! processed
-
-        next_cursor = next_cursor_from batch
-
-        check_cursor! initial_cursor, next_cursor
-
-        ::Harvesting::ExtractRecordsJob.perform_later(harvest_attempt, cursor: next_cursor)
+        @protocol = context.protocol
       end
 
-      # @return [void]
-      def enumerate!
-        batch = build_batch(cursor: nil)
-
-        on_initial_batch batch
-
-        halt_enumeration if batch.nil?
-
-        prev_cursor = nil
-
-        loop do
-          pre_process! batch
-
-          processed = process_batch batch
-
-          post_process! processed
-
-          next_cursor = next_cursor_from batch
-
-          check_cursor! prev_cursor, next_cursor
-
-          batch = build_batch cursor: next_cursor
-
-          prev_cursor = next_cursor
-        end
-      end
-
-      def check_cursor!(prev_cursor, next_cursor)
-        if next_cursor.blank?
-          halt_enumeration
-        elsif prev_cursor.present? && prev_cursor == next_cursor
-          logger.log("cursor repeating infinitely: #{prev_cursor}")
-
-          halt_enumeration
-        else
-          progress.current_cursor = next_cursor
-
-          logger.log("next cursor: #{next_cursor.inspect}")
-        end
-      end
-
-      # @abstract
       # @param [Object] batch
-      # @return [Integer]
-      def batch_count_for(batch)
-        batch.try(:count).to_i
-      end
-
-      # @abstract
-      # @param [Object] batch
-      # @return [Dry::Monads::Success(Object)]
-      # @return [Dry::Monads::Failure]
-      def next_cursor_from(batch)
-        # :nocov:
-        raise NoMethodError, "must implement"
-        # :nocov:
-      end
-
-      # @abstract
-      # @param [Object] cursor
-      # @return [Object, nil]
-      def build_batch(cursor: nil)
-        # :nocov:
-        raise NoMethodError, "must implement"
-        # :nocov:
-      end
-
-      # @abstract
-      # @param [Object] batch
-      # @return [void]
-      def on_initial_batch(batch); end
-
-      # @abstract
-      # @param [Object] batch
-      # @return [void]
-      def on_batch(batch); end
-
-      # @param [Object]
       # @return [<HarvestRecord>]
       def process_batch(batch)
-        protocol.process_record_batch.(batch).value!
+        protocol.process_record_batch.(batch).value_or([])
       end
 
       # @param [Object] batch
@@ -159,7 +95,7 @@ module Harvesting
       # @param [<HarvestRecord>] processed
       # @return [void]
       def post_process!(processed)
-        logger.log "Batch complete"
+        logger.debug "Batch complete"
 
         progress.processed! processed.size
 
@@ -177,19 +113,12 @@ module Harvesting
       end
 
       # @return [void]
-      def wrap_batch_enumeration
-        with_halted_enumeration do
+      def with_no_records!
+        interrupted, _ = catch_no_records do
           yield
         end
-      end
 
-      # @return [void]
-      def with_halted_enumeration
-        halted, _ = catch_halt_enumeration do
-          yield if block_given?
-        end
-
-        logger.log("Enumeration halted") if halted
+        logger.warn "No records to extract" if interrupted
       end
     end
   end

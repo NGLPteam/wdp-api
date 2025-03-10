@@ -15,7 +15,7 @@ module Schemas
 
       standard_execution!
 
-      # @return [PropertyHash]
+      # @return [::Support::PropertyHash]
       attr_reader :all_properties
 
       # @return [Schemas::Properties::Context]
@@ -35,7 +35,7 @@ module Schemas
       wrapped_hook! def prepare
         @context = instance.read_property_context
 
-        @all_properties = PropertyHash.new(context.current_values)
+        @all_properties = ::Support::PropertyHash.new(context.current_values)
 
         super
       end

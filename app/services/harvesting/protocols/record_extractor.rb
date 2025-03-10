@@ -7,23 +7,32 @@ module Harvesting
     # Extract a single record for a given protocol.
     class RecordExtractor
       include Dry::Monads[:do, :result]
-      include Dry::Effects.Resolve(:harvest_attempt)
-      include Dry::Effects.Resolve(:harvest_mapping)
-      include Dry::Effects.Resolve(:harvest_set)
-      include Dry::Effects.Resolve(:harvest_source)
-      include Dry::Effects.Resolve(:metadata_format)
-      include Dry::Effects.Resolve(:protocol)
       include Harvesting::WithLogger
+      include Dry::Effects::Handler.Reader(:metadata_format)
+      include Dry::Effects.Reader(:metadata_format)
+      include Dry::Initializer[undefined: false].define -> do
+        param :protocol, Harvesting::Types.Instance(::Harvesting::Protocols::Context)
+      end
+
+      delegate :default_metadata_format, to: :protocol
+      delegate :name, to: :default_metadata_format, prefix: true
 
       # @param [String] identifier
+      # @param [Harvesting::Types::MetadataFormatName] metadata_format_name
       # @return [Dry::Monads::Success(HarvestRecord)]
-      def call(identifier)
-        extracted = yield extract identifier
+      def call(identifier, metadata_format_name = default_metadata_format_name)
+        metadata_format = HarvestMetadataFormat.find(metadata_format_name)
 
-        return Success(nil) if extracted.blank?
+        with_metadata_format metadata_format do
+          extracted = yield extract identifier
 
-        protocol.process_record.(extracted)
+          return Success(nil) if extracted.blank?
+
+          protocol.process_record.(extracted)
+        end
       end
+
+      private
 
       # @abstract
       # @param [String] identifier

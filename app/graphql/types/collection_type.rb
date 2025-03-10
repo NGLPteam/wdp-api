@@ -6,10 +6,11 @@ module Types
     implements Types::AttributableType
     implements Types::EntityType
     implements Types::ChildEntityType
+    implements Types::ContributableType
     implements Types::HarvestTargetType
     implements Types::HasEntityAnalytics
     implements Types::HasDOIType
-    implements Types::ContributableType
+    implements Types::HasHarvestModificationStatusType
     implements Types::HasSchemaPropertiesType
     implements Types::AttachableType
     implements Types::SchemaInstanceType

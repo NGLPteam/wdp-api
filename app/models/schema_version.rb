@@ -51,6 +51,8 @@ class SchemaVersion < ApplicationRecord
 
   has_many :entity_links, dependent: :destroy
 
+  has_many :harvest_entities, inverse_of: :schema_version, dependent: :restrict_with_error
+
   # @!attribute [r] number
   # @return [Semantic::Version]
   attribute :number, :semantic_version

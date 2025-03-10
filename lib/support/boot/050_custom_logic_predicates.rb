@@ -64,6 +64,10 @@ Dry::Logic::Predicates.predicate :model_class_list? do |input|
   array?(input) && input.all? { |elm| model_class?(input) }
 end
 
+Dry::Logic::Predicates.predicate :has_model_name? do |input|
+  attr?(:model_name, input) && !none?(input.model_name) && type?(ActiveModel::Name, input.model_name)
+end
+
 Dry::Logic::Predicates.predicate :relation? do |input|
   type?(ActiveRecord::Relation, input)
 end
@@ -76,7 +80,7 @@ Dry::Logic::Predicates.predicate :relation_for? do |model_klass, input|
 end
 
 Dry::Logic::Predicates.predicate :specific_model? do |model_name, input|
-  model?(input) && input.model_name == model_name
+  has_model_name?(input) && input.model_name == model_name
 end
 
 Dry::Logic::Predicates.predicate :dry_type? do |input|

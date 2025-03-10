@@ -29,7 +29,7 @@ module Testing
     private
 
     def build_definition
-      PropertyHash.new.tap do |d|
+      ::Support::PropertyHash.new.tap do |d|
         d["id"] = id
         d["name"] = name
         d["render.mode"] = "tree"

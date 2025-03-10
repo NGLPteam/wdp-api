@@ -15,6 +15,7 @@ module Types
     implements Types::HarvestAttemptableType
     implements Types::HasHarvestMetadataFormatType
     implements Types::HasHarvestOptionsType
+    implements Types::QueriesHarvestMessage
 
     field :harvest_attempts, resolver: ::Resolvers::HarvestAttemptResolver do
       description <<~TEXT

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mapping>
+  <assigns/>
+  <entities>
+    <item schema="nglp:paper">
+      <identifier>{{record.identifier}}</identifier>
+      <title>{{esploro.title}}</title>
+      <subtitle>{{esploro.subtitle}}</subtitle>
+      <published>{{esploro.date_published}}</published>
+      <doi>{{esploro.doi}}</doi>
+      <contributions>
+        {% for creator in esploro.creators %}
+        {% contribution role: "aut" %}
+        {% outer_position creator.order %}
+        {% person %}
+        {% email creator.email %}
+        {% if creator.lcnaf %}
+        {% contributor_url creator.lcnaf %}
+        {% endif %}
+        {% given_name creator.given_name %}
+        {% family_name creator.family_name %}
+        {% endperson %}
+        {% endcontribution %}
+        {% endfor %}
+      </contributions>
+      <properties>
+        <variable-date path="available">{{esploro.date_available}}</variable-date>
+        <asset path="pdf_version">
+          <kind>pdf</kind>
+          <mime-type>application/pdf</mime-type>
+          <name>
+            {% assign pdf = esploro.files_list | where: "extension", "pdf" | first %}
+
+            {% if pdf and pdf.name %}
+            {{pdf.name}}
+            {% else %}
+            {{ esploro.title | append: ".pdf" }}
+            {% endif %}
+          </name>
+          <url>
+            {% assign pdf = esploro.files_list | where: "extension", "pdf" | first %}
+
+            {% if pdf %}
+            {{pdf.download_url}}
+            {% endif %}
+          </url>
+        </asset>
+        <string path="host.title">{{esploro.publisher}}</string>
+        <string path="host.volume">
+          {% for relationship in esploro.relationships %}
+          {% if relationship.volume %}
+          {{relationship.volume}}
+          {% break %}
+          {% endif %}
+          {% endfor %}
+        </string>
+      </properties>
+      <metadata-mapping>
+        {% title esploro.title %}
+
+        {% for relationship in esploro.relationships %}
+        {% if relationship.type == "ispartof" %}
+        {% assign relname = relationship.title | prepend: "ispartof: " %}
+        {% relation relname %}
+        {% endif %}
+        {% endfor %}
+
+        {% if esploro.other_identifier %}
+        {% identifier esploro.other_identifier %}
+        {% endif %}
+      </metadata-mapping>
+    </item>
+  </entities>
+</mapping>

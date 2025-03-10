@@ -3,7 +3,7 @@
 module Harvesting
   module Entities
     # Takes an {Attachable entity} and a {Harvesting::Assets::Mapping mapping of assets} to
-    # attach, as well as to generate a {PropertyHash} for schematically-associated assets that
+    # attach, as well as to generate a {::Support::PropertyHash} for schematically-associated assets that
     # can be used later
     class AttachAssets
       include Dry::Monads[:do, :result]
@@ -14,16 +14,16 @@ module Harvesting
 
       # @param [Attachable] entity
       # @param [Harvest::Assets::Mapping] mapping
-      # @return [Dry::Monads::Success(PropertyHash)]
+      # @return [Dry::Monads::Success(Hash)]
       # @return [Dry::Monads::Failure]
       def call(entity, mapping)
-        return Success(PropertyHash.new) if mapping.blank?
+        return Success({}) if mapping.blank?
 
         yield attach_entity_assets! entity, mapping
 
         yield attach_unassociated_assets! entity, mapping
 
-        @properties = PropertyHash.new
+        @properties = {}
 
         yield attach_scalar_assets! entity, mapping
 

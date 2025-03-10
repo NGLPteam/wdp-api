@@ -11,7 +11,11 @@ FactoryBot.define do
     harvest_set { nil }
     target_entity { FactoryBot.create :collection }
     mode { "manual" }
-    metadata_format { "mods" }
+    metadata_format { harvest_source.metadata_format }
+
+    extraction_mapping_template do
+      harvest_source.extraction_mapping_template
+    end
 
     mapping_options do
       {

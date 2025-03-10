@@ -29,6 +29,8 @@ module Support
 
       schema nil
 
+      scope :none, -> { where(_non_existing_: :match) }
+
       # @see #slice
       # @param [<Symbol>] keys
       # @return [{ Symbol => Object }]

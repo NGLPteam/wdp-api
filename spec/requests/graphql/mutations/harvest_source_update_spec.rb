@@ -7,6 +7,7 @@ RSpec.describe Mutations::HarvestSourceUpdate, type: :request, graphql: :mutatio
       harvestSource {
         id
         slug
+        status
       }
       ... ErrorFragment
     }
@@ -22,13 +23,14 @@ RSpec.describe Mutations::HarvestSourceUpdate, type: :request, graphql: :mutatio
   let_mutation_input!(:harvest_source_id) { existing_harvest_source.to_encoded_id }
 
   let_mutation_input!(:name) { "Test Harvest Source" }
-  let_mutation_input!(:base_url) { "https://example.com/oai" }
+  let_mutation_input!(:base_url) { ::Harvesting::Testing::OAI::Broken::Provider::ENDPOINT }
 
   let(:valid_mutation_shape) do
     gql.mutation(:harvest_source_update) do |m|
       m.prop(:harvest_source) do |hs|
         hs[:id] = be_an_encoded_id.of_an_existing_model
         hs[:slug] = be_an_encoded_slug
+        hs[:status] = "INACTIVE"
       end
     end
   end

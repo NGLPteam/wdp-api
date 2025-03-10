@@ -6,38 +6,17 @@ module Harvesting
     class ExtractRecords
       include Harvesting::WithLogger
       include Dry::Monads[:result]
-      include Dry::Effects.Resolve(:protocol)
-      include Dry::Effects::Handler.Interrupt(:no_records, as: :catch_no_records)
-
-      include Dry::Monads::Do.for(:call)
 
       # @param [HarvestAttempt] harvest_attempt
       # @return [Dry::Monads::Success(Integer)] the count of records harvested
-      def call(harvest_attempt, async: false, cursor: nil)
+      def call(harvest_attempt, cursor: nil)
         harvest_attempt.clear_harvest_errors!
 
-        with_stack do
-          yield protocol.extract_records.(harvest_attempt, async:, cursor:)
-        end
+        protocol = harvest_attempt.build_protocol_context
+
+        protocol.extract_records_for(harvest_attempt)
 
         Success harvest_attempt.harvest_records.count
-      end
-
-      private
-
-      def with_stack
-        with_no_records do
-          yield
-        end
-      end
-
-      # @return [void]
-      def with_no_records
-        interrupted, _ = catch_no_records do
-          yield
-        end
-
-        logger.log "No records to extract" if interrupted
       end
     end
   end

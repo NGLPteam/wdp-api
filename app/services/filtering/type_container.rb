@@ -9,5 +9,7 @@ module Filtering
     tc.add! :integer_match, Filtering::Inputs::IntegerMatch
 
     tc.add! :time_match, Filtering::Inputs::TimeMatch
+
+    tc.add_enum! ::Types::HarvestMessageLevelType
   end
 end

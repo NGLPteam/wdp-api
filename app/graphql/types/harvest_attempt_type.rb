@@ -9,6 +9,7 @@ module Types
 
     implements Types::HasHarvestErrorsType
     implements Types::HasHarvestMetadataFormatType
+    implements Types::QueriesHarvestMessage
 
     field :harvest_source, "::Types::HarvestSourceType", null: false do
       description <<~TEXT
