@@ -4,9 +4,7 @@ module Harvesting
   module Types
     include Dry.Types
 
-    extend Shared::EnhancedTypes
-
-    METADATA_FORMATS = %w[jats mets mods oaidc].freeze
+    extend Support::EnhancedTypes
 
     VALID_NAME = /\A([a-z_][a-zA-Z_0-9]*)\z/
 
@@ -15,15 +13,20 @@ module Harvesting
     VALID_PATH = /\A(?<part>[a-z_][a-zA-Z_0-9]*)\.\g<part>\z/
 
     # @see ::HarvestAttempt
-    Attempt = Instance(::HarvestAttempt)
+    Attempt = ModelInstance("HarvestAttempt")
 
     Callable = Interface(:call)
+
+    Configurable = Instance(::HarvestConfigurable)
+
+    # @see ::HarvestConfiguration
+    Configuration = ModelInstance("HarvestConfiguration")
 
     # Something that enforces an always-default hash
     EmptyDefaultHash = Coercible::Hash.default { {} }.fallback { {} }
 
     # @see ::HarvestEntity
-    Entity = Instance(::HarvestEntity)
+    Entity = ModelInstance("HarvestEntity")
 
     # A simple pass-through identity function
     Identity = proc { _1 }
@@ -32,47 +35,56 @@ module Harvesting
 
     Identifiers = Array.of(Identifier)
 
-    Mapping = Instance(::HarvestMapping)
+    # @see ::HarvestMapping
+    Mapping = ModelInstance("HarvestMapping")
 
     MaxRecordCount = Integer.constrained(gt: 0, lteq: Harvesting::ABSOLUTE_MAX_RECORD_COUNT).
       default(Harvesting::ABSOLUTE_MAX_RECORD_COUNT).
       fallback(Harvesting::ABSOLUTE_MAX_RECORD_COUNT)
 
-    MetadataFormat = Coercible::String.enum(*METADATA_FORMATS)
+    MessageLevel = ApplicationRecord.dry_pg_enum(:harvest_message_level)
 
-    # @see Harvesting::Metadata::Section
-    MetadataSection = Instance(Harvesting::Metadata::Section)
+    MessageLevelLimit = ApplicationRecord.dry_pg_enum(:harvest_message_level, default: "info").fallback("info")
 
-    # @see MetadataSection
-    MetadataSectionList = Array.of(MetadataSection)
+    # @see HarvestMetadataFormat
+    MetadataFormat = FrozenInstance("HarvestMetadataFormat")
 
-    # @see Harvesting::Metadata::SectionParent
-    MetadataSectionParent = Instance(Harvesting::Metadata::SectionParent)
+    # @see HarvestMetadataFormat
+    MetadataFormatName = ApplicationRecord.dry_pg_enum(:harvest_metadata_format)
 
     Path = Coercible::String.constrained(format: VALID_PATH) | Coercible::String.constrained(format: VALID_NAME)
 
     Paths = Coercible::Array.of(Path)
 
-    ProtocolName = Coercible::String.enum("oai").fallback("oai")
+    # @see HarvestProtocol
+    Protocol = FrozenInstance("HarvestProtocol")
+
+    # @see HarvestProtocol
+    ProtocolName = ApplicationRecord.dry_pg_enum(:harvest_protocol)
 
     # @see ::HarvestRecord
-    Record = Instance(::HarvestRecord)
-
-    SectionTag = Coercible::Symbol
-
-    SectionTags = Array.of(SectionTag)
+    Record = ModelInstance("HarvestRecord")
 
     # @see ::HarvestSet
-    Set = Instance(::HarvestSet)
+    Set = ModelInstance("HarvestSet")
 
     # @see ::HarvestSource
-    Source = Instance(::HarvestSource)
+    Source = ModelInstance("HarvestSource")
+
+    SourceStatus = ApplicationRecord.dry_pg_enum(:harvest_source_status, default: "inactive").fallback(:inactive)
 
     # @see ::HarvestTarget
     Target = Instance(::HarvestTarget)
 
+    Attemptable = Source | Mapping
+
     # Any dry type
     Type = Instance(Dry::Types::Type)
+
+    UnderlyingDataFormat = Coercible::String.enum("xml", "json")
+
+    # A valid URL string
+    URL = String.constrained(format: /\A#{Support::GlobalTypes::URL_PATTERN}\z/)
 
     # An XML document, ideally well-formed
     XMLDocument = Instance Nokogiri::XML::Document

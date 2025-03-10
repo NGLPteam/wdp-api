@@ -1,17 +1,35 @@
 # frozen_string_literal: true
 
 RSpec.describe Harvesting::ExtractRecordsJob, type: :job do
-  let(:harvest_attempt) { FactoryBot.create :harvest_attempt }
+  let_it_be(:target_entity, refind: true) { FactoryBot.create :collection, :journal }
 
-  pending "Refactor extraction test to support cursor handling" do
-    it_behaves_like "a pass-through operation job", "harvesting.actions.extract_records" do
-      let(:job_arg) { harvest_attempt }
+  let_it_be(:valid_harvest_source, refind: true) { FactoryBot.create :harvest_source, :oai, :jats }
 
-      let(:operation_args) { [harvest_attempt, { skip_prepare: true }] }
+  let_it_be(:broken_harvest_source, refind: true) { FactoryBot.create :harvest_source, :broken_oai }
 
-      it "reprocesses the attempt after extraction" do
-        expect_running_the_job.to have_enqueued_job(Harvesting::ReprocessAttemptJob).with(harvest_attempt).once
-      end
+  let(:expected_record_count) { 0 }
+
+  context "with a valid harvest source" do
+    let_it_be(:harvest_attempt) { valid_harvest_source.create_attempt!(target_entity:) }
+
+    let(:expected_record_count) { Harvesting::Testing::OAI::JATSRecord.count }
+
+    it "can extract records and enqueue them for further processing" do
+      expect do
+        described_class.perform_now(harvest_attempt)
+      end.to change(HarvestRecord, :count).by(expected_record_count)
+        .and have_enqueued_job(Harvesting::Records::ExtractEntitiesJob).exactly(expected_record_count).times
+    end
+  end
+
+  context "with a broken harvest source" do
+    let_it_be(:harvest_attempt) { broken_harvest_source.create_attempt!(target_entity:) }
+
+    it "extracts no records and enqueues no further jobs" do
+      expect do
+        described_class.perform_now(harvest_attempt)
+      end.to keep_the_same(HarvestRecord, :count)
+        .and have_enqueued_no_jobs(Harvesting::Records::ExtractEntitiesJob)
     end
   end
 end

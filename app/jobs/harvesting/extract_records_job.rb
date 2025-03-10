@@ -1,19 +1,29 @@
 # frozen_string_literal: true
 
 module Harvesting
-  # @see Harvesting::Actions::ExtractRecords
+  # @see Harvesting::Protocols::BatchRecordExtractor
   class ExtractRecordsJob < ApplicationJob
+    include JobIteration::Iteration
+
     queue_as :extraction
 
-    # unique_job! by: :all_args
-
     # @param [HarvestAttempt] harvest_attempt
-    # @param [String, nil] cursor
     # @return [void]
-    def perform(harvest_attempt, cursor: nil)
-      call_operation! "harvesting.actions.extract_records", harvest_attempt, async: true, cursor:, skip_prepare: true
+    def build_enumerator(harvest_attempt, cursor:)
+      protocol = harvest_attempt.build_protocol_context
 
-      Harvesting::ReprocessAttemptJob.perform_later harvest_attempt if harvest_attempt.record_extraction_progress.done?
+      enum = protocol.record_enumerator_for(harvest_attempt, cursor:)
+
+      # @see https://github.com/Shopify/job-iteration/blob/2065db0bbd461a990e13aa9bb56f86da294c584c/lib/job-iteration/enumerator_builder.rb#L42
+      enumerator_builder.wrap(enumerator_builder, enum)
+    end
+
+    # @see Harvesting::Records::ExtractEntitiesJob
+    # @param [HarvestRecord] harvest_record
+    # @param [HarvestAttempt] _harvest_attempt
+    # @return [void]
+    def each_iteration(harvest_record, _harvest_attempt)
+      Harvesting::Records::ExtractEntitiesJob.perform_later harvest_record
     end
   end
 end

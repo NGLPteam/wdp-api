@@ -43,7 +43,7 @@ module Schemas
       end
 
       # @!attribute [r] filtered_values
-      # @return [PropertyHash]
+      # @return [::Support::PropertyHash]
       memoize def filtered_values
         filter_values
       end
@@ -85,7 +85,7 @@ module Schemas
         property_hash.to_h
       end
 
-      # @return [PropertyHash]
+      # @return [::Support::PropertyHash]
       def calculate_field_values
         property_hash = filter_values
 
@@ -105,7 +105,7 @@ module Schemas
       end
 
       def filter_values
-        PropertyHash.new(values).tap do |v|
+        ::Support::PropertyHash.new(values).tap do |v|
           v.paths.each do |path|
             v.delete! path unless path.in? type_mapping.paths
           end

@@ -1,0 +1,7 @@
+---
+- spec: jats
+  name: "JATS Records"
+  description: "All JATS records"
+- spec: jats:set_1
+  name: "JATS Set 1"
+  description: "All JATS records in Set 1"

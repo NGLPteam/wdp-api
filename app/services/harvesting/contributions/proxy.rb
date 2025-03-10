@@ -5,28 +5,38 @@ module Harvesting
     # A proxy object suitable for use with various harvesting subsystems
     # that represents both a {HarvestContribution} and a {HarvestContributor}.
     #
+    # @see Harvesting::Contributors::Proxy
     # @see Harvesting::Contributions::Upsert
+    # @see Harvesting::Contributions::Upserter
     # @see Harvesting::Contributors::Upsert
-    class Proxy < ::Shared::FlexibleStruct
-      include ::Shared::Typing
+    class Proxy < ::Support::WritableStruct
+      include ActiveModel::Validations
+      include Support::Typing
 
-      attribute :kind, Harvesting::Types::String
+      attribute? :contributor, Harvesting::Types.Instance(Harvesting::Contributors::Proxy).optional
+      attribute? :role_name, Harvesting::Types::String.optional
+      attribute? :role, Harvesting::Types.Instance(::ControlledVocabularyItem).optional.default(nil)
       attribute? :metadata, Harvesting::Types::EmptyDefaultHash
+      attribute? :inner_position, Harvesting::Types::Coercible::Integer.optional.default(nil)
+      attribute? :outer_position, Harvesting::Types::Coercible::Integer.optional.default(nil)
 
-      attribute :contributor do
-        attribute :kind, ::Contributors::Types::Kind
-        attribute :attributes, Harvesting::Types::EmptyDefaultHash
-        attribute :properties, Harvesting::Types::EmptyDefaultHash
+      validates :contributor, presence: true
 
-        # @return [(Symbol, Hash, Hash)]
-        def to_upsert
-          [kind, attributes, properties]
-        end
+      validate :check_contributor!
+
+      def has_contributor?
+        contributor.present?
       end
 
-      # @return [Hash]
-      def options
-        { kind:, metadata: }
+      private
+
+      # @return [void]
+      def check_contributor!
+        return if !has_contributor? || contributor.valid?
+
+        contributor.errors.full_messages.each do |message|
+          errors.add :contributor, message
+        end
       end
     end
   end

@@ -19,12 +19,33 @@ class HarvestContributor < ApplicationRecord
 
   scope :sans_contributions, -> { where.not(id: HarvestContribution.select(:harvest_contributor_id)) }
 
+  before_validation :normalize_tracked_attributes!
+  before_validation :normalize_tracked_properties!
+
   validates :properties, store_model: true
 
   validates :identifier, :kind, presence: true
   validates :identifier, uniqueness: { scope: :harvest_source_id }
 
   delegate :display_name, to: :properties
+
+  private
+
+  # @return [void]
+  def normalize_tracked_attributes!
+    self.tracked_attributes = normalize_tracked(tracked_attributes).without("identifier")
+  end
+
+  # @return [void]
+  def normalize_tracked_properties!
+    self.tracked_properties = normalize_tracked(tracked_properties)
+  end
+
+  # @param [<#to_s>] value
+  # @return [<String>]
+  def normalize_tracked(value)
+    Array(value).map(&:to_s).uniq.sort
+  end
 
   class << self
     # @return [ActiveRecord::Relation]

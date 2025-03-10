@@ -13,7 +13,9 @@ module Harvesting
       include Dry::Effects.Resolve(:link_identifiers_globally)
       include Dry::Effects.Resolve(:target_entity)
 
-      include MeruAPI::Deps[find_global_collections: "entities.find_global_collections"]
+      include MeruAPI::Deps[
+        find_global_collections: "entities.find_global_collections"
+      ]
 
       # @param [String, nil] identifier
       # @raise [ActiveRecord::RecordNotFound]

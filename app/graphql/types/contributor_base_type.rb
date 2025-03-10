@@ -13,6 +13,7 @@ module Types
     in order to prevent inordinately long nesting in GQL fetches in certain situations.
     TEXT
 
+    implements Types::HasHarvestModificationStatusType
     implements Types::Sluggable
 
     field :kind, Types::ContributorKindType, null: false

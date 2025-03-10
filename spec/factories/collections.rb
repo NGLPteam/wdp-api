@@ -42,5 +42,25 @@ FactoryBot.define do
         Rails.root.join("spec", "data", "lorempixel.jpg").open
       end
     end
+
+    trait :journal do
+      schema_version { SchemaVersion["nglp:journal"] }
+    end
+
+    trait :journal_volume do
+      schema_version { SchemaVersion["nglp:journal_volume"] }
+    end
+
+    trait :journal_issue do
+      schema_version { SchemaVersion["nglp:journal_issue"] }
+    end
+
+    trait :series do
+      schema_version { SchemaVersion["nglp:series"] }
+    end
+
+    trait :unit do
+      schema_version { SchemaVersion["nglp:unit"] }
+    end
   end
 end

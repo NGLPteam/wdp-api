@@ -15,7 +15,7 @@ module Assets
         Success("video")
       elsif io.audio?
         Success("audio")
-      elsif io.pdf?
+      elsif io.pdf? || io.mime_type == "application/pdf"
         Success("pdf")
       else
         Success("document")

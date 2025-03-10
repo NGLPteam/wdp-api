@@ -26,6 +26,10 @@ class ControlledVocabulary < ApplicationRecord
   validates :version, presence: true, uniqueness: { scope: %i[namespace identifier] }
   validates :name, presence: true
 
+  def first_tagged_with(...)
+    tagged_with(...).first
+  end
+
   def has_default_namespace?
     namespace == DEFAULT_NAMESPACE
   end
@@ -42,6 +46,10 @@ class ControlledVocabulary < ApplicationRecord
   # @return [Dry::Monads::Success(Integer)]
   monadic_operation! def rerank_items
     call_operation("controlled_vocabularies.rerank_items", controlled_vocabulary: self)
+  end
+
+  def tagged_with(...)
+    controlled_vocabulary_items.in_default_order.tagged_with(...)
   end
 
   # @api private

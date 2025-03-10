@@ -9,6 +9,8 @@ module Types
     harvesting process.
     TEXT
 
+    implements Types::QueriesHarvestMessage
+
     field :parent, self, null: true do
       description <<~TEXT
       The parent staged entity (if applicable).
@@ -30,15 +32,6 @@ module Types
     field :identifier, String, null: false do
       description <<~TEXT
       A unique identifier for the staged entity within the context of its `HarvestRecord`.
-      TEXT
-    end
-
-    field :metadata_kind, String, null: true do
-      description <<~TEXT
-      An internal identifier used to track what "kind" of entity this might produce,
-      based on the extracted metadata.
-
-      May roughly correspond to schemas, but not always.
       TEXT
     end
 

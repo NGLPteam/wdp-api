@@ -14,7 +14,7 @@ module Schemas
 
       deadlock_retry_count 5
 
-      start_new_transaction true
+      start_new_transaction!
 
       LOCK_QUERY = <<~SQL
       SELECT * FROM ordering_entries

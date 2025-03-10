@@ -12,7 +12,7 @@ module Roles
 
     # @return [Roles::AnonymousGrid]
     def call
-      @acl = PropertyHash.new
+      @acl = ::Support::PropertyHash.new
 
       yield self
 

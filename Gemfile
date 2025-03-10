@@ -28,10 +28,10 @@ gem "scenic", "~> 1.6.0"
 gem "store_model", "~> 4.1.0"
 
 # Redis / Jobs
-gem "good_job", "~> 3.21.5"
+gem "good_job", "~> 4.9.0"
 gem "redis", "~> 5.2.0"
 gem "redis-objects", ">= 2.0.0.beta"
-gem "job-iteration", "~> 1.4.1"
+gem "job-iteration", "~> 1.9.0"
 
 # GraphQL
 gem "graphql", "2.4.4"
@@ -62,6 +62,12 @@ gem "bcrypt", "~> 3.1.18"
 gem "keycloak-admin", "~> 0.7.9"
 gem "keycloak_rack", "1.1.1"
 
+# Metadata Parsing
+gem "lutaml-model", "~> 0.6.7"
+gem "lutaml-xsd", "~> 1.0.3"
+gem "mods", "~> 3.0.4"
+gem "niso-jats", "~> 0.1.1"
+
 # Misc
 gem "absolute_time", "~> 1.0.0"
 gem "acts_as_list", "~> 1.0.4"
@@ -84,7 +90,6 @@ gem "jwt", "~> 2.8.2"
 gem "kramdown", "~> 2.4.0"
 gem "liquid", "~> 5.6.0.rc1"
 gem "maxminddb", "~> 0.1.22"
-gem "mods", "~> 3.0.4"
 gem "namae", "~> 1.2.0"
 gem "naught", "~> 1.1.0"
 gem "nokogiri", "~> 1.16.3"
@@ -99,7 +104,7 @@ gem "rollups", "~> 0.3.2"
 gem "rufus-scheduler", "~> 3.9.2"
 gem "sanitize", "~> 6.1.0"
 gem "semantic", "~> 1.6.1"
-gem "shale", "~> 1.1.0"
+gem "shale", "~> 1.2.1"
 gem "statesman", "~> 12.1.0"
 gem "strip_attributes", "1.13.0"
 gem "sucker_punch", "~> 3.2.0"

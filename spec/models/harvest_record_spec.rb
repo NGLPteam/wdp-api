@@ -1,33 +1,41 @@
 # frozen_string_literal: true
 
 RSpec.describe HarvestRecord, type: :model do
-  context "with an existing record" do
-    let(:source_identifier) { "test_source" }
-    let(:record_identifier) { "test_record" }
-    let!(:harvest_source) { FactoryBot.create :harvest_source, identifier: source_identifier }
-    let!(:harvest_attempt) { FactoryBot.create :harvest_attempt, harvest_source: }
-    let!(:harvest_record) { FactoryBot.create :harvest_record, harvest_attempt:, identifier: record_identifier }
+  let_it_be(:source_identifier) { "test_source" }
+  let_it_be(:record_identifier) { "test_record" }
 
-    describe ".fetch_for_source" do
-      it "fetches an existing record" do
-        expect(described_class.fetch_for_source(source_identifier, record_identifier)).to eq harvest_record
-      end
+  let_it_be(:harvest_source) { FactoryBot.create :harvest_source, identifier: source_identifier }
+  let_it_be(:harvest_record) { FactoryBot.create :harvest_record, harvest_source:, identifier: record_identifier }
 
-      it "returns nil if nothing found" do
-        expect(described_class.fetch_for_source(source_identifier, "does_not_exist")).to be_nil
+  describe "#build_extraction_context" do
+    context "with no configuration" do
+      it "raises an error" do
+        expect do
+          harvest_record.build_extraction_context
+        end.to raise_error Harvesting::Records::NoConfiguration
       end
     end
+  end
 
-    describe ".fetch_for_source!" do
-      it "fetches an existing record" do
-        expect(described_class.fetch_for_source!(source_identifier, record_identifier)).to eq harvest_record
-      end
+  describe ".fetch_for_source" do
+    it "fetches an existing record" do
+      expect(described_class.fetch_for_source(source_identifier, record_identifier)).to eq harvest_record
+    end
 
-      it "raises an exception if nothing found" do
-        expect do
-          described_class.fetch_for_source!(source_identifier, "does_not_exist")
-        end.to raise_error Harvesting::Records::Unknown, /does_not_exist/
-      end
+    it "returns nil if nothing found" do
+      expect(described_class.fetch_for_source(source_identifier, "does_not_exist")).to be_nil
+    end
+  end
+
+  describe ".fetch_for_source!" do
+    it "fetches an existing record" do
+      expect(described_class.fetch_for_source!(source_identifier, record_identifier)).to eq harvest_record
+    end
+
+    it "raises an exception if nothing found" do
+      expect do
+        described_class.fetch_for_source!(source_identifier, "does_not_exist")
+      end.to raise_error Harvesting::Records::Unknown, /does_not_exist/
     end
   end
 end

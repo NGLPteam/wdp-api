@@ -6,6 +6,7 @@ class Item < ApplicationRecord
   include AutoIdentifier
   include Contributable
   include HasEntityVisibility
+  include HasHarvestModificationStatus
   include HasSchemaDefinition
   include HasSystemSlug
   include HierarchicalEntity
@@ -32,6 +33,11 @@ class Item < ApplicationRecord
 
   validates :identifier, :title, presence: true
   validates :identifier, uniqueness: { scope: %i[collection_id parent_id] }
+
+  # @return [:item]
+  def entity_kind
+    :item
+  end
 
   # @return [Collection]
   def hierarchical_parent

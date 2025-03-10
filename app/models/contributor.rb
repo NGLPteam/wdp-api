@@ -2,7 +2,7 @@
 
 class Contributor < ApplicationRecord
   include HasEphemeralSystemSlug
-  include HasUniqueORCID
+  include HasHarvestModificationStatus
   include ImageUploader::Attachment.new(:image)
   include SchematicReferent
   include ScopesForIdentifier
@@ -28,6 +28,7 @@ class Contributor < ApplicationRecord
   has_many :items, through: :item_contributions
 
   scope :by_kind, ->(kind) { where(kind:) }
+  scope :by_orcid, ->(orcid) { where(orcid:) }
   scope :unharvested, -> { where.not(id: HarvestContributor.harvested_ids) }
 
   scope :in_default_order, -> { order(sort_name: :asc) }
@@ -155,6 +156,16 @@ class Contributor < ApplicationRecord
 
     def by_organization_name(name)
       organization.where(arel_json_contains(:properties, organization: { legal_name: name }))
+    end
+
+    def has_existing_orcid?(orcid, except: nil)
+      return false if orcid.blank?
+
+      relation = by_orcid(orcid)
+
+      relation = relation.where.not(id: except.id) if except.present? && except.persisted?
+
+      relation.exists?
     end
   end
 end

@@ -16,7 +16,7 @@ module Schemas
 
       # @!attribute [rw] values
       # The authoritative source for non-reference property values.
-      # @return [PropertyHash]
+      # @return [::Support::PropertyHash]
       attribute :values, :property_hash, default: proc { {} }
 
       # @return [String]

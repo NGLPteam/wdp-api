@@ -40,6 +40,11 @@ module Support
     end
 
     module ClassMethods
+      # @return [<Symbol>]
+      def accessors
+        attribute_names.flat_map { [_1.to_sym, :"#{_1}="] }
+      end
+
       # A better method for generating enums that does not store numeric values.
       #
       # We want to store the actual strings.

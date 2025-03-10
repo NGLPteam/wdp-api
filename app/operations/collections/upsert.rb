@@ -17,7 +17,7 @@ module Collections
     # @param [String] identifier
     # @param [String] title
     # @param [Collection, Community] parent
-    def call(identifier, title:, parent:, properties: {}, subtitle: nil)
+    def call(identifier, title:, parent:, properties: {}, subtitle: nil, schema_version: nil)
       scope = yield scope_for parent
 
       collection = scope.by_identifier(identifier).first_or_initialize
@@ -26,7 +26,7 @@ module Collections
 
       collection.subtitle ||= subtitle
 
-      collection.schema_version = collection_schema
+      collection.schema_version = schema_version || collection_schema
 
       yield monadic_save collection
 

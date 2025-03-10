@@ -1782,6 +1782,19 @@
   default_function: extract_doi_from_data(doi_data)
   has_default: false
   virtual: true
+- id: Collection#harvest_modification_status
+  model_name: Collection
+  table_name: collections
+  name: harvest_modification_status
+  type: enum
+  'null': false
+  sql_type_metadata:
+    sql_type: harvest_modification_status
+    type: enum
+  default: unharvested
+  default_function: 
+  has_default: true
+  virtual: false
 - id: CollectionAttribution#id
   model_name: CollectionAttribution
   table_name: collection_attributions
@@ -3235,6 +3248,19 @@
   default_function: to_prefix_search(derive_contributor_name(kind, properties))
   has_default: false
   virtual: true
+- id: Contributor#harvest_modification_status
+  model_name: Contributor
+  table_name: contributors
+  name: harvest_modification_status
+  type: enum
+  'null': false
+  sql_type_metadata:
+    sql_type: harvest_modification_status
+    type: enum
+  default: unharvested
+  default_function: 
+  has_default: true
+  virtual: false
 - id: ContributorAttribution#attribution_id
   model_name: ContributorAttribution
   table_name: contributor_attributions
@@ -6474,6 +6500,86 @@
   default_function: 
   has_default: false
   virtual: false
+- id: HarvestAttempt#extraction_mapping_template
+  model_name: HarvestAttempt
+  table_name: harvest_attempts
+  name: extraction_mapping_template
+  type: text
+  'null': false
+  sql_type_metadata:
+    sql_type: text
+    type: text
+  default: ''
+  default_function: 
+  has_default: true
+  virtual: false
+- id: HarvestAttemptRecordLink#id
+  model_name: HarvestAttemptRecordLink
+  table_name: harvest_attempt_record_links
+  name: id
+  type: uuid
+  'null': false
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default: 
+  default_function: gen_random_uuid()
+  has_default: true
+  virtual: false
+- id: HarvestAttemptRecordLink#harvest_attempt_id
+  model_name: HarvestAttemptRecordLink
+  table_name: harvest_attempt_record_links
+  name: harvest_attempt_id
+  type: uuid
+  'null': false
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: HarvestAttemptRecordLink#harvest_record_id
+  model_name: HarvestAttemptRecordLink
+  table_name: harvest_attempt_record_links
+  name: harvest_record_id
+  type: uuid
+  'null': false
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: HarvestAttemptRecordLink#created_at
+  model_name: HarvestAttemptRecordLink
+  table_name: harvest_attempt_record_links
+  name: created_at
+  type: datetime
+  'null': false
+  sql_type_metadata:
+    sql_type: timestamp(6) without time zone
+    type: datetime
+    precision: 6
+  default: 
+  default_function: CURRENT_TIMESTAMP
+  has_default: true
+  virtual: false
+- id: HarvestAttemptRecordLink#updated_at
+  model_name: HarvestAttemptRecordLink
+  table_name: harvest_attempt_record_links
+  name: updated_at
+  type: datetime
+  'null': false
+  sql_type_metadata:
+    sql_type: timestamp(6) without time zone
+    type: datetime
+    precision: 6
+  default: 
+  default_function: CURRENT_TIMESTAMP
+  has_default: true
+  virtual: false
 - id: HarvestCachedAsset#id
   model_name: HarvestCachedAsset
   table_name: harvest_cached_assets
@@ -6713,6 +6819,203 @@
   default_function: CURRENT_TIMESTAMP
   has_default: true
   virtual: false
+- id: HarvestConfiguration#id
+  model_name: HarvestConfiguration
+  table_name: harvest_configurations
+  name: id
+  type: uuid
+  'null': false
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default: 
+  default_function: gen_random_uuid()
+  has_default: true
+  virtual: false
+- id: HarvestConfiguration#harvest_source_id
+  model_name: HarvestConfiguration
+  table_name: harvest_configurations
+  name: harvest_source_id
+  type: uuid
+  'null': false
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: HarvestConfiguration#harvest_mapping_id
+  model_name: HarvestConfiguration
+  table_name: harvest_configurations
+  name: harvest_mapping_id
+  type: uuid
+  'null': true
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: HarvestConfiguration#harvest_set_id
+  model_name: HarvestConfiguration
+  table_name: harvest_configurations
+  name: harvest_set_id
+  type: uuid
+  'null': true
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: HarvestConfiguration#harvest_attempt_id
+  model_name: HarvestConfiguration
+  table_name: harvest_configurations
+  name: harvest_attempt_id
+  type: uuid
+  'null': true
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: HarvestConfiguration#target_entity_type
+  model_name: HarvestConfiguration
+  table_name: harvest_configurations
+  name: target_entity_type
+  type: string
+  'null': false
+  sql_type_metadata:
+    sql_type: character varying
+    type: string
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: HarvestConfiguration#target_entity_id
+  model_name: HarvestConfiguration
+  table_name: harvest_configurations
+  name: target_entity_id
+  type: uuid
+  'null': false
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: HarvestConfiguration#metadata_format
+  model_name: HarvestConfiguration
+  table_name: harvest_configurations
+  name: metadata_format
+  type: enum
+  'null': false
+  sql_type_metadata:
+    sql_type: harvest_metadata_format
+    type: enum
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: HarvestConfiguration#list_options
+  model_name: HarvestConfiguration
+  table_name: harvest_configurations
+  name: list_options
+  type: jsonb
+  'null': false
+  sql_type_metadata:
+    sql_type: jsonb
+    type: jsonb
+  default: "{}"
+  default_function: 
+  has_default: true
+  virtual: false
+- id: HarvestConfiguration#read_options
+  model_name: HarvestConfiguration
+  table_name: harvest_configurations
+  name: read_options
+  type: jsonb
+  'null': false
+  sql_type_metadata:
+    sql_type: jsonb
+    type: jsonb
+  default: "{}"
+  default_function: 
+  has_default: true
+  virtual: false
+- id: HarvestConfiguration#format_options
+  model_name: HarvestConfiguration
+  table_name: harvest_configurations
+  name: format_options
+  type: jsonb
+  'null': false
+  sql_type_metadata:
+    sql_type: jsonb
+    type: jsonb
+  default: "{}"
+  default_function: 
+  has_default: true
+  virtual: false
+- id: HarvestConfiguration#mapping_options
+  model_name: HarvestConfiguration
+  table_name: harvest_configurations
+  name: mapping_options
+  type: jsonb
+  'null': false
+  sql_type_metadata:
+    sql_type: jsonb
+    type: jsonb
+  default: "{}"
+  default_function: 
+  has_default: true
+  virtual: false
+- id: HarvestConfiguration#extraction_mapping_template
+  model_name: HarvestConfiguration
+  table_name: harvest_configurations
+  name: extraction_mapping_template
+  type: text
+  'null': false
+  sql_type_metadata:
+    sql_type: text
+    type: text
+  default: ''
+  default_function: 
+  has_default: true
+  virtual: false
+- id: HarvestConfiguration#created_at
+  model_name: HarvestConfiguration
+  table_name: harvest_configurations
+  name: created_at
+  type: datetime
+  'null': false
+  sql_type_metadata:
+    sql_type: timestamp(6) without time zone
+    type: datetime
+    precision: 6
+  default: 
+  default_function: CURRENT_TIMESTAMP
+  has_default: true
+  virtual: false
+- id: HarvestConfiguration#updated_at
+  model_name: HarvestConfiguration
+  table_name: harvest_configurations
+  name: updated_at
+  type: datetime
+  'null': false
+  sql_type_metadata:
+    sql_type: timestamp(6) without time zone
+    type: datetime
+    precision: 6
+  default: 
+  default_function: CURRENT_TIMESTAMP
+  has_default: true
+  virtual: false
 - id: HarvestContribution#id
   model_name: HarvestContribution
   table_name: harvest_contributions
@@ -6752,10 +7055,10 @@
   default_function: 
   has_default: false
   virtual: false
-- id: HarvestContribution#kind
+- id: HarvestContribution#legacy_kind
   model_name: HarvestContribution
   table_name: harvest_contributions
-  name: kind
+  name: legacy_kind
   type: citext
   'null': true
   sql_type_metadata:
@@ -6805,6 +7108,47 @@
   default: 
   default_function: CURRENT_TIMESTAMP
   has_default: true
+  virtual: false
+- id: HarvestContribution#role_id
+  model_name: HarvestContribution
+  table_name: harvest_contributions
+  name: role_id
+  type: uuid
+  'null': true
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: HarvestContribution#inner_position
+  model_name: HarvestContribution
+  table_name: harvest_contributions
+  name: inner_position
+  type: integer
+  'null': true
+  sql_type_metadata:
+    sql_type: bigint
+    type: integer
+    limit: 8
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: HarvestContribution#outer_position
+  model_name: HarvestContribution
+  table_name: harvest_contributions
+  name: outer_position
+  type: integer
+  'null': true
+  sql_type_metadata:
+    sql_type: bigint
+    type: integer
+    limit: 8
+  default: 
+  default_function: 
+  has_default: false
   virtual: false
 - id: HarvestContributor#id
   model_name: HarvestContributor
@@ -6990,6 +7334,45 @@
   default_function: CURRENT_TIMESTAMP
   has_default: true
   virtual: false
+- id: HarvestContributor#tracked_attributes
+  model_name: HarvestContributor
+  table_name: harvest_contributors
+  name: tracked_attributes
+  type: text
+  'null': false
+  sql_type_metadata:
+    sql_type: text[]
+    type: text
+  default: "{}"
+  default_function: 
+  has_default: true
+  virtual: false
+- id: HarvestContributor#tracked_properties
+  model_name: HarvestContributor
+  table_name: harvest_contributors
+  name: tracked_properties
+  type: text
+  'null': false
+  sql_type_metadata:
+    sql_type: text[]
+    type: text
+  default: "{}"
+  default_function: 
+  has_default: true
+  virtual: false
+- id: HarvestContributor#orcid
+  model_name: HarvestContributor
+  table_name: harvest_contributors
+  name: orcid
+  type: text
+  'null': true
+  sql_type_metadata:
+    sql_type: text
+    type: text
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
 - id: HarvestEntity#id
   model_name: HarvestEntity
   table_name: harvest_entities
@@ -7034,7 +7417,7 @@
   table_name: harvest_entities
   name: schema_version_id
   type: uuid
-  'null': true
+  'null': false
   sql_type_metadata:
     sql_type: uuid
     type: uuid
@@ -7196,6 +7579,19 @@
   sql_type_metadata:
     sql_type: jsonb
     type: jsonb
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: HarvestEntity#entity_kind
+  model_name: HarvestEntity
+  table_name: harvest_entities
+  name: entity_kind
+  type: enum
+  'null': false
+  sql_type_metadata:
+    sql_type: child_entity_kind
+    type: enum
   default: 
   default_function: 
   has_default: false
@@ -7556,6 +7952,257 @@
   default_function: 
   has_default: false
   virtual: false
+- id: HarvestMapping#extraction_mapping_template
+  model_name: HarvestMapping
+  table_name: harvest_mappings
+  name: extraction_mapping_template
+  type: text
+  'null': false
+  sql_type_metadata:
+    sql_type: text
+    type: text
+  default: ''
+  default_function: 
+  has_default: true
+  virtual: false
+- id: HarvestMappingRecordLink#id
+  model_name: HarvestMappingRecordLink
+  table_name: harvest_mapping_record_links
+  name: id
+  type: uuid
+  'null': false
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default: 
+  default_function: gen_random_uuid()
+  has_default: true
+  virtual: false
+- id: HarvestMappingRecordLink#harvest_mapping_id
+  model_name: HarvestMappingRecordLink
+  table_name: harvest_mapping_record_links
+  name: harvest_mapping_id
+  type: uuid
+  'null': false
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: HarvestMappingRecordLink#harvest_record_id
+  model_name: HarvestMappingRecordLink
+  table_name: harvest_mapping_record_links
+  name: harvest_record_id
+  type: uuid
+  'null': false
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: HarvestMappingRecordLink#created_at
+  model_name: HarvestMappingRecordLink
+  table_name: harvest_mapping_record_links
+  name: created_at
+  type: datetime
+  'null': false
+  sql_type_metadata:
+    sql_type: timestamp(6) without time zone
+    type: datetime
+    precision: 6
+  default: 
+  default_function: CURRENT_TIMESTAMP
+  has_default: true
+  virtual: false
+- id: HarvestMappingRecordLink#updated_at
+  model_name: HarvestMappingRecordLink
+  table_name: harvest_mapping_record_links
+  name: updated_at
+  type: datetime
+  'null': false
+  sql_type_metadata:
+    sql_type: timestamp(6) without time zone
+    type: datetime
+    precision: 6
+  default: 
+  default_function: CURRENT_TIMESTAMP
+  has_default: true
+  virtual: false
+- id: HarvestMessage#id
+  model_name: HarvestMessage
+  table_name: harvest_messages
+  name: id
+  type: uuid
+  'null': false
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default: 
+  default_function: gen_random_uuid()
+  has_default: true
+  virtual: false
+- id: HarvestMessage#harvest_source_id
+  model_name: HarvestMessage
+  table_name: harvest_messages
+  name: harvest_source_id
+  type: uuid
+  'null': true
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: HarvestMessage#harvest_attempt_id
+  model_name: HarvestMessage
+  table_name: harvest_messages
+  name: harvest_attempt_id
+  type: uuid
+  'null': true
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: HarvestMessage#harvest_mapping_id
+  model_name: HarvestMessage
+  table_name: harvest_messages
+  name: harvest_mapping_id
+  type: uuid
+  'null': true
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: HarvestMessage#harvest_record_id
+  model_name: HarvestMessage
+  table_name: harvest_messages
+  name: harvest_record_id
+  type: uuid
+  'null': true
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: HarvestMessage#harvest_entity_id
+  model_name: HarvestMessage
+  table_name: harvest_messages
+  name: harvest_entity_id
+  type: uuid
+  'null': true
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: HarvestMessage#at
+  model_name: HarvestMessage
+  table_name: harvest_messages
+  name: at
+  type: datetime
+  'null': false
+  sql_type_metadata:
+    sql_type: timestamp without time zone
+    type: datetime
+  default: 
+  default_function: CURRENT_TIMESTAMP
+  has_default: true
+  virtual: false
+- id: HarvestMessage#level
+  model_name: HarvestMessage
+  table_name: harvest_messages
+  name: level
+  type: enum
+  'null': false
+  sql_type_metadata:
+    sql_type: harvest_message_level
+    type: enum
+  default: debug
+  default_function: 
+  has_default: true
+  virtual: false
+- id: HarvestMessage#message
+  model_name: HarvestMessage
+  table_name: harvest_messages
+  name: message
+  type: text
+  'null': false
+  sql_type_metadata:
+    sql_type: text
+    type: text
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: HarvestMessage#tags
+  model_name: HarvestMessage
+  table_name: harvest_messages
+  name: tags
+  type: text
+  'null': false
+  sql_type_metadata:
+    sql_type: text[]
+    type: text
+  default: "{}"
+  default_function: 
+  has_default: true
+  virtual: false
+- id: HarvestMessage#metadata
+  model_name: HarvestMessage
+  table_name: harvest_messages
+  name: metadata
+  type: jsonb
+  'null': false
+  sql_type_metadata:
+    sql_type: jsonb
+    type: jsonb
+  default: "{}"
+  default_function: 
+  has_default: true
+  virtual: false
+- id: HarvestMessage#created_at
+  model_name: HarvestMessage
+  table_name: harvest_messages
+  name: created_at
+  type: datetime
+  'null': false
+  sql_type_metadata:
+    sql_type: timestamp(6) without time zone
+    type: datetime
+    precision: 6
+  default: 
+  default_function: CURRENT_TIMESTAMP
+  has_default: true
+  virtual: false
+- id: HarvestMessage#updated_at
+  model_name: HarvestMessage
+  table_name: harvest_messages
+  name: updated_at
+  type: datetime
+  'null': false
+  sql_type_metadata:
+    sql_type: timestamp(6) without time zone
+    type: datetime
+    precision: 6
+  default: 
+  default_function: CURRENT_TIMESTAMP
+  has_default: true
+  virtual: false
 - id: HarvestMetadataMapping#id
   model_name: HarvestMetadataMapping
   table_name: harvest_metadata_mappings
@@ -7675,10 +8322,10 @@
   default_function: gen_random_uuid()
   has_default: true
   virtual: false
-- id: HarvestRecord#harvest_attempt_id
+- id: HarvestRecord#harvest_source_id
   model_name: HarvestRecord
   table_name: harvest_records
-  name: harvest_attempt_id
+  name: harvest_source_id
   type: uuid
   'null': false
   sql_type_metadata:
@@ -7687,6 +8334,19 @@
   default: 
   default_function: 
   has_default: false
+  virtual: false
+- id: HarvestRecord#status
+  model_name: HarvestRecord
+  table_name: harvest_records
+  name: status
+  type: enum
+  'null': false
+  sql_type_metadata:
+    sql_type: harvest_record_status
+    type: enum
+  default: pending
+  default_function: 
+  has_default: true
   virtual: false
 - id: HarvestRecord#identifier
   model_name: HarvestRecord
@@ -7740,19 +8400,6 @@
   default_function: 
   has_default: false
   virtual: false
-- id: HarvestRecord#local_metadata
-  model_name: HarvestRecord
-  table_name: harvest_records
-  name: local_metadata
-  type: jsonb
-  'null': false
-  sql_type_metadata:
-    sql_type: jsonb
-    type: jsonb
-  default: "{}"
-  default_function: 
-  has_default: true
-  virtual: false
 - id: HarvestRecord#entity_count
   model_name: HarvestRecord
   table_name: harvest_records
@@ -7767,62 +8414,10 @@
   default_function: 
   has_default: false
   virtual: false
-- id: HarvestRecord#datestamp
+- id: HarvestRecord#source_changed_at
   model_name: HarvestRecord
   table_name: harvest_records
-  name: datestamp
-  type: date
-  'null': true
-  sql_type_metadata:
-    sql_type: date
-    type: date
-  default: 
-  default_function: 
-  has_default: false
-  virtual: false
-- id: HarvestRecord#issued_on
-  model_name: HarvestRecord
-  table_name: harvest_records
-  name: issued_on
-  type: date
-  'null': true
-  sql_type_metadata:
-    sql_type: date
-    type: date
-  default: 
-  default_function: 
-  has_default: false
-  virtual: false
-- id: HarvestRecord#available_on
-  model_name: HarvestRecord
-  table_name: harvest_records
-  name: available_on
-  type: date
-  'null': true
-  sql_type_metadata:
-    sql_type: date
-    type: date
-  default: 
-  default_function: 
-  has_default: false
-  virtual: false
-- id: HarvestRecord#issued_at
-  model_name: HarvestRecord
-  table_name: harvest_records
-  name: issued_at
-  type: datetime
-  'null': true
-  sql_type_metadata:
-    sql_type: timestamp without time zone
-    type: datetime
-  default: 
-  default_function: 
-  has_default: false
-  virtual: false
-- id: HarvestRecord#available_at
-  model_name: HarvestRecord
-  table_name: harvest_records
-  name: available_at
+  name: source_changed_at
   type: datetime
   'null': true
   sql_type_metadata:
@@ -7860,6 +8455,19 @@
   default_function: CURRENT_TIMESTAMP
   has_default: true
   virtual: false
+- id: HarvestRecord#local_metadata
+  model_name: HarvestRecord
+  table_name: harvest_records
+  name: local_metadata
+  type: jsonb
+  'null': false
+  sql_type_metadata:
+    sql_type: jsonb
+    type: jsonb
+  default: "{}"
+  default_function: 
+  has_default: true
+  virtual: false
 - id: HarvestRecord#skipped
   model_name: HarvestRecord
   table_name: harvest_records
@@ -7873,19 +8481,19 @@
   default_function: 
   has_default: true
   virtual: false
-- id: HarvestRecord#has_been_skipped
+- id: HarvestRecord#harvest_configuration_id
   model_name: HarvestRecord
   table_name: harvest_records
-  name: has_been_skipped
-  type: boolean
-  'null': false
+  name: harvest_configuration_id
+  type: uuid
+  'null': true
   sql_type_metadata:
-    sql_type: boolean
-    type: boolean
+    sql_type: uuid
+    type: uuid
   default: 
-  default_function: record_is_skipped(skipped)
+  default_function: 
   has_default: false
-  virtual: true
+  virtual: false
 - id: HarvestSet#id
   model_name: HarvestSet
   table_name: harvest_sets
@@ -8032,6 +8640,73 @@
   default_function: CURRENT_TIMESTAMP
   has_default: true
   virtual: false
+- id: HarvestSetRecordLink#id
+  model_name: HarvestSetRecordLink
+  table_name: harvest_set_record_links
+  name: id
+  type: uuid
+  'null': false
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default: 
+  default_function: gen_random_uuid()
+  has_default: true
+  virtual: false
+- id: HarvestSetRecordLink#harvest_set_id
+  model_name: HarvestSetRecordLink
+  table_name: harvest_set_record_links
+  name: harvest_set_id
+  type: uuid
+  'null': false
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: HarvestSetRecordLink#harvest_record_id
+  model_name: HarvestSetRecordLink
+  table_name: harvest_set_record_links
+  name: harvest_record_id
+  type: uuid
+  'null': false
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: HarvestSetRecordLink#created_at
+  model_name: HarvestSetRecordLink
+  table_name: harvest_set_record_links
+  name: created_at
+  type: datetime
+  'null': false
+  sql_type_metadata:
+    sql_type: timestamp(6) without time zone
+    type: datetime
+    precision: 6
+  default: 
+  default_function: CURRENT_TIMESTAMP
+  has_default: true
+  virtual: false
+- id: HarvestSetRecordLink#updated_at
+  model_name: HarvestSetRecordLink
+  table_name: harvest_set_record_links
+  name: updated_at
+  type: datetime
+  'null': false
+  sql_type_metadata:
+    sql_type: timestamp(6) without time zone
+    type: datetime
+    precision: 6
+  default: 
+  default_function: CURRENT_TIMESTAMP
+  has_default: true
+  virtual: false
 - id: HarvestSource#id
   model_name: HarvestSource
   table_name: harvest_sources
@@ -8062,14 +8737,14 @@
   model_name: HarvestSource
   table_name: harvest_sources
   name: protocol
-  type: text
+  type: enum
   'null': false
   sql_type_metadata:
-    sql_type: text
-    type: text
-  default: 
+    sql_type: harvest_protocol
+    type: enum
+  default: unknown
   default_function: 
-  has_default: false
+  has_default: true
   virtual: false
 - id: HarvestSource#metadata_format
   model_name: HarvestSource
@@ -8228,6 +8903,45 @@
   default: 
   default_function: 
   has_default: false
+  virtual: false
+- id: HarvestSource#extraction_mapping_template
+  model_name: HarvestSource
+  table_name: harvest_sources
+  name: extraction_mapping_template
+  type: text
+  'null': false
+  sql_type_metadata:
+    sql_type: text
+    type: text
+  default: ''
+  default_function: 
+  has_default: true
+  virtual: false
+- id: HarvestSource#checked_at
+  model_name: HarvestSource
+  table_name: harvest_sources
+  name: checked_at
+  type: datetime
+  'null': true
+  sql_type_metadata:
+    sql_type: timestamp without time zone
+    type: datetime
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: HarvestSource#status
+  model_name: HarvestSource
+  table_name: harvest_sources
+  name: status
+  type: enum
+  'null': false
+  sql_type_metadata:
+    sql_type: harvest_source_status
+    type: enum
+  default: inactive
+  default_function: 
+  has_default: true
   virtual: false
 - id: HierarchicalSchemaRank#entity_type
   model_name: HierarchicalSchemaRank
@@ -8679,6 +9393,19 @@
   default_function: extract_doi_from_data(doi_data)
   has_default: false
   virtual: true
+- id: Item#harvest_modification_status
+  model_name: Item
+  table_name: items
+  name: harvest_modification_status
+  type: enum
+  'null': false
+  sql_type_metadata:
+    sql_type: harvest_modification_status
+    type: enum
+  default: unharvested
+  default_function: 
+  has_default: true
+  virtual: false
 - id: ItemAttribution#id
   model_name: ItemAttribution
   table_name: item_attributions

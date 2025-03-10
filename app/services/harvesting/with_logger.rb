@@ -4,8 +4,10 @@ module Harvesting
   module WithLogger
     extend ActiveSupport::Concern
 
+    COMMON_LOGGER = Harvesting::Logs::Logger.new
+
     included do
-      include Dry::Effects.Resolve(:logger)
+      include Dry::Effects.Reader(:logger, default: COMMON_LOGGER)
     end
 
     # @return [void]

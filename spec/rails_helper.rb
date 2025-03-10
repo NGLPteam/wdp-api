@@ -24,7 +24,15 @@ SimpleCov.start "rails" do
   add_group "Services", "app/services"
   add_group "Uploaders", "app/uploaders"
 
+  # Analytics simulations
+  add_filter "app/jobs/analytics/simulate_all_visits_job.rb"
+  add_filter "app/operations/analytics/simulate_fake_entity_history.rb"
+  add_filter "app/services/analytics/fake_entity_visit_history_simulator.rb"
+  add_filter "app/services/analytics/simulator_observer.rb"
+
   add_filter "app/operations/testing"
+  add_filter "app/services/harvesting/testing"
+  add_filter "app/services/templates/refinements"
   add_filter "app/services/testing"
   add_filter "app/services/tus_client"
   add_filter "lib/cops"
@@ -45,7 +53,12 @@ require "test_prof/recipes/rspec/any_fixture"
 require "test_prof/recipes/rspec/let_it_be"
 require "dry/container/stub"
 require "pundit/rspec"
-require "webmock/rspec"
+# NOTE: We specifically do not use webmock/rspec because we want
+# control over how stubbed stuff gets reset.
+require "webmock"
+require "webmock/rspec/matchers"
+
+WebMock::AssertionFailure.error_class = RSpec::Expectations::ExpectationNotMetError
 
 # Add additional requires below this line. Rails is not loaded until this point!
 
@@ -89,6 +102,26 @@ Dir[Rails.root.join("spec", "support", "**", "*.rb")].each { |f| require f }
 
 FactoryBot::Evaluator.include TestHelpers::Factories::SchemaHelpers
 
+STUB_HARVEST_PROVIDERS = proc do
+  Harvesting::Testing::ProviderDefinition.each do |provider|
+    provider.webmock_patterns.each do |(verb, pattern)|
+      WebMock.stub_request(verb, pattern).to_rack(provider.rack_app)
+    end
+  end
+
+  broken_provider = Harvesting::Testing::OAI::Broken::Provider.new
+
+  WebMock.stub_request(:get, /\A#{broken_provider.url}/).to_rack(broken_provider.rack_app)
+
+  WebMock.stub_request(:get, "http://api.sandbox.meru.host/samples/sample.pdf")
+    .to_return(
+      body: proc { Rails.root.join("spec", "data", "sample.pdf").open("r+") },
+      headers: {
+        "Content-Type": "application/pdf",
+      }
+    )
+end
+
 RSpec.configure do |config|
   # We use database cleaner to do this
   config.use_transactional_fixtures = false
@@ -105,8 +138,29 @@ RSpec.configure do |config|
     end
   end
 
+  config.include WebMock::API
+  config.include WebMock::Matchers
+
   config.before(:suite) do
+    WebMock.enable!
     WebMock.disable_net_connect!
+  end
+
+  config.after(:suite) do
+    WebMock.disable!
+  end
+
+  config.before(:all, &STUB_HARVEST_PROVIDERS)
+  config.after(:all, &STUB_HARVEST_PROVIDERS)
+
+  config.around do |example|
+    STUB_HARVEST_PROVIDERS.()
+
+    example.run
+
+    WebMock.reset!
+
+    STUB_HARVEST_PROVIDERS.()
   end
 
   config.before(:suite) do

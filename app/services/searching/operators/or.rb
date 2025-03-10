@@ -4,6 +4,7 @@ module Searching
   module Operators
     class Or < Searching::Operator
       def compile
+        # :nocov:
         left_expr = left.map(&:call).reduce(&:and)
         right_expr = right.map(&:call).reduce(&:and)
 
@@ -16,6 +17,7 @@ module Searching
         else
           skip
         end
+        # :nocov:
       end
     end
   end

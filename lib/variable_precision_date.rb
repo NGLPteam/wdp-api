@@ -57,7 +57,7 @@ class VariablePrecisionDate
 
   YEAR_ONLY = /\A(?<year>\d{4})\z/
 
-  YEAR_MONTH = /\A(?<year>\d{4})\D(?<month>\d{2})\z/
+  YEAR_MONTH = /\A(?<year>\d{4})\D?(?<month>\d{2})\z/
 
   XMLSCHEMA_TIME_FORMAT = /\A\s*
   (-?\d+)-(\d\d)-(\d\d)

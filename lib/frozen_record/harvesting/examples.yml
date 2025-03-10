@@ -1,0 +1,19 @@
+---
+- id: default_jats
+  name: Default JATS Mapping
+  default: true
+  protocol_name: "oai"
+  metadata_format_name: "jats"
+- id: default_esploro
+  name: Default Esploro Mapping
+  default: true
+  protocol_name: "oai"
+  metadata_format_name: "esploro"
+- id: empty
+  name: "Barebones Template"
+  default: false
+  description: >
+    This template can be applied to any protocol/metadata format,
+    as it does not use any metadata-specific accessors.
+    It can be used as a starting point to write your own templates
+    or to simply ensure that a given harvest source works at all.

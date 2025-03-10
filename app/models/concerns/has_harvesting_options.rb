@@ -13,6 +13,8 @@ module HasHarvestingOptions
     attribute :format_options, Harvesting::Options::Format.to_type, default: proc { {} }
     attribute :mapping_options, Harvesting::Options::Mapping.to_type, default: proc { {} }
 
+    delegate :max_record_count, to: :read_options
+
     delegate :use_metadata_mappings?, to: :mapping_options
   end
 

@@ -2,24 +2,26 @@
 
 FactoryBot.define do
   factory :harvest_record do
-    association :harvest_attempt
+    association :harvest_source, :jats
+
+    sample_record { harvest_source.available_sample_record }
+
+    metadata_format { sample_record.try(:metadata_format_name) || harvest_source.metadata_format || "jats" }
+
     sequence(:identifier) do |n|
-      "record-#{n}"
+      sample_record.try(:full_identifier) || "record-#{n}"
     end
 
-    metadata_format { "mods" }
-    entity_count { 0 }
-
-    trait :jats do
-      metadata_format { "jats" }
+    status do
+      if sample_record.try(:deleted)
+        "deleted"
+      else
+        "active"
+      end
     end
 
-    trait :mets do
-      metadata_format { "mets" }
-    end
-
-    trait :mods do
-      metadata_format { "mods" }
+    raw_metadata_source do
+      sample_record.try(:metadata_source) || "<record />"
     end
   end
 end

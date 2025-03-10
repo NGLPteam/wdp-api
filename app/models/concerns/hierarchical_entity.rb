@@ -7,6 +7,7 @@ module HierarchicalEntity
   include AssociationHelpers
   include ConfiguresContributionRole
   include EntityTemplating
+  include HasHarvestLookupHelpers
   include HasSystemSlug
   include Liquifies
   include ManualListSource

@@ -11,32 +11,38 @@ class HarvestEntity < ApplicationRecord
 
   has_closure_tree
 
+  pg_enum! :entity_kind, as: :child_entity_kind, allow_blank: false
+
   belongs_to :harvest_record, inverse_of: :harvest_entities
 
   belongs_to :entity, polymorphic: true, optional: true
 
   belongs_to :existing_parent, polymorphic: true, optional: true
 
-  belongs_to :schema_version, optional: true
+  belongs_to :schema_version, inverse_of: :harvest_entities
 
-  has_one :harvest_attempt, through: :harvest_record
+  has_one :harvest_configuration, through: :harvest_record
 
   has_many :harvest_contributions, inverse_of: :harvest_entity, dependent: :destroy
 
+  has_many :harvest_messages, inverse_of: :harvest_entity, dependent: :destroy
+
+  attribute :extracted_attributes, Harvesting::Entities::ExtractedAttributes.to_type
+  attribute :extracted_properties, :indifferent_hash
   attribute :extracted_assets, Harvesting::Assets::Mapping.to_type, default: proc { {} }
   attribute :extracted_links, Harvesting::Links::Mapping.to_type, default: proc { {} }
-
-  scope :latest_attempt, -> { where(harvest_record_id: HarvestRecord.latest_attempt.select(:id)) }
 
   scope :in_default_order, -> { build_default_order_scope }
 
   scope :filtered_by_schema_version, ->(schemas) { where(schema_version: SchemaVersion.filtered_by(schemas)) }
-  scope :by_metadata_kind, ->(kind) { where(metadata_kind: kind) }
   scope :for_metadata_format, ->(metadata_format) { joins(:harvest_record).merge(HarvestRecord.for_metadata_format(metadata_format)) }
   scope :with_entity, -> { where.not(entity_id: nil) }
+
   scope :with_jats_format, -> { for_metadata_format "jats" }
   scope :with_mets_format, -> { for_metadata_format "mets" }
   scope :with_mods_format, -> { for_metadata_format "mods" }
+  scope :with_oaidc_format, -> { for_metadata_format "oaidc" }
+
   scope :with_extracted_properties, ->(props) { where(arel_json_contains(:extracted_properties, props)) }
   scope :with_existing_parent, ->(parent) { where(existing_parent: parent) }
   scope :with_extracted_scalar_asset, ->(full_path) { where(arel_has_extracted_scalar_asset(full_path)) }
@@ -44,14 +50,14 @@ class HarvestEntity < ApplicationRecord
   validates :identifier, presence: true, uniqueness: { scope: :harvest_record_id }
   validate :exclusive_parentage!
 
-  # @see Harvesting::UpsertEntityAssetsJob
-  # @return [void]
-  def asynchronously_upsert_assets!
-    Harvesting::UpsertEntityAssetsJob.perform_later self
+  # @see Harvesting::Entities::ExtractedAttributes#to_assign
+  # @return [Hash]
+  def attributes_to_assign
+    extracted_attributes.to_assign
   end
 
   def inspect
-    "HarvestEntity(#{identifier.inspect}, metadata_kind=#{metadata_kind.inspect}, root: #{root?})"
+    "HarvestEntity(#{identifier.inspect}, root: #{root?})"
   end
 
   def has_assets?
@@ -66,15 +72,15 @@ class HarvestEntity < ApplicationRecord
     existing_parent_id.present?
   end
 
-  # @see Harvesting::Actions::UpsertEntity
+  # @see Harvesting::Entities::Upsert
   # @return [void]
   monadic_operation! def upsert
-    call_operation("harvesting.actions.upsert_entity", self)
+    call_operation("harvesting.entities.upsert", self)
   end
 
-  # @see Harvesting::Actions::UpsertEntityAssets
+  # @see Harvesting::Entities::UpsertAssets
   monadic_operation! def upsert_assets
-    call_operation("harvesting.actions.upsert_entity_assets", self)
+    call_operation("harvesting.entities.upsert_assets", self)
   end
 
   # @param [#as_json] reason
@@ -108,7 +114,9 @@ class HarvestEntity < ApplicationRecord
 
   # @return [void]
   def exclusive_parentage!
+    # :nocov:
     errors.add :base, "Child harvest entities cannot have an existing parent set" if !root? && has_existing_parent?
+    # :nocov:
   end
 
   class << self

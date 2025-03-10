@@ -9,6 +9,7 @@ RSpec.describe Mutations::HarvestSourceCreate, type: :request, graphql: :mutatio
         slug
         protocol
         metadataFormat
+        status
       }
       ... ErrorFragment
     }
@@ -20,13 +21,14 @@ RSpec.describe Mutations::HarvestSourceCreate, type: :request, graphql: :mutatio
   let_mutation_input!(:identifier) { "test-harvest-source" }
 
   let_mutation_input!(:name) { "Test Harvest Source" }
-  let_mutation_input!(:base_url) { "https://example.com/oai" }
+  let_mutation_input!(:base_url) { Harvesting::Testing::ProviderDefinition.oai.first.base_url }
 
   let(:valid_mutation_shape) do
     gql.mutation(:harvest_source_create) do |m|
       m.prop(:harvest_source) do |hs|
         hs[:id] = be_an_encoded_id.of_an_existing_model
         hs[:slug] = be_an_encoded_slug
+        hs[:status] = "ACTIVE"
       end
     end
   end
@@ -41,6 +43,7 @@ RSpec.describe Mutations::HarvestSourceCreate, type: :request, graphql: :mutatio
     it "creates the harvest source" do
       expect_request! do |req|
         req.effect! change(HarvestSource, :count).by(1)
+        req.effect! have_enqueued_job(Harvesting::Sources::ExtractSetsJob).once
 
         req.data! expected_shape
       end
@@ -54,6 +57,7 @@ RSpec.describe Mutations::HarvestSourceCreate, type: :request, graphql: :mutatio
       expect_request! do |req|
         req.effect! execute_safely
         req.effect! keep_the_same(HarvestSource, :count)
+        req.effect! have_enqueued_no_jobs(Harvesting::Sources::ExtractSetsJob)
 
         req.unauthorized!
 

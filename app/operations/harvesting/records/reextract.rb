@@ -2,22 +2,9 @@
 
 module Harvesting
   module Records
-    class Reextract
-      include Dry::Monads[:do, :result]
-      include Dry::Effects.Resolve(:protocol)
-
-      # @param [HarvestRecord] harvest_record
-      # @return [Dry::Monads::Result]
-      def call(harvest_record)
-        yield protocol.extract_record.call harvest_record.identifier
-
-        harvest_record.reload
-
-        Success harvest_record
-      rescue ActiveRecord::RecordNotFound
-        # If re-extracting deleted the record, that's okay
-        Success nil
-      end
+    # @see Harvesting::Records::Reextractor
+    class Reextract < Support::SimpleServiceOperation
+      service_klass Harvesting::Records::Reextractor
     end
   end
 end

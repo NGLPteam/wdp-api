@@ -15,6 +15,8 @@ module Types
     implements Types::QueriesControlledVocabularySource
     implements Types::QueriesEntities
     implements Types::QueriesHarvestAttempt
+    implements Types::QueriesHarvestExample
+    implements Types::QueriesHarvestMessage
     implements Types::QueriesHarvestSet
     implements Types::QueriesHarvestSource
     implements Types::QueriesSchemas

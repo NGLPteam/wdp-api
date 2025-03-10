@@ -20,7 +20,7 @@ module Harvesting
           yield upsert_proxy.(harvest_entity, proxy)
         end
 
-        Success contributions
+        Success contributions.compact
       end
     end
   end

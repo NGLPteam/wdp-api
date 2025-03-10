@@ -10,6 +10,7 @@ module Types
     implements Types::ExposesPermissionsType
     implements Types::HasEntityBreadcrumbs
     implements Types::HasDefaultTimestamps
+    implements Types::HasHarvestModificationStatusType
     implements Types::HasSchemaPropertiesType
     implements Types::HasDOIType
     implements Types::ReferencesEntityVisibilityType

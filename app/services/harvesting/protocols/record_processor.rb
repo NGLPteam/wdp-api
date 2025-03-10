@@ -4,13 +4,20 @@ module Harvesting
   module Protocols
     # @abstract
     class RecordProcessor
+      include ::Utility::DefinesAbstractMethods
       include Dry::Monads[:result, :do]
-      include Dry::Effects.Resolve(:harvest_attempt)
-      include Dry::Effects.Resolve(:metadata_format)
-      include Dry::Effects.Resolve(:protocol)
       include Dry::Effects.Interrupt(:deleted_record)
+      include Dry::Effects.Reader(:harvest_attempt, default: nil)
+      include Dry::Effects.Reader(:harvest_configuration)
+      include Dry::Effects.Reader(:harvest_mapping, default: nil)
+      include Dry::Effects.Reader(:metadata_format)
       include Harvesting::WithLogger
-      include MonadicPersistence
+
+      include Dry::Initializer[undefined: false].define -> do
+        param :protocol, Harvesting::Types.Instance(::Harvesting::Protocols::Context)
+      end
+
+      delegate :deleted?, :harvest_source, :record_identifier_for, :skip?, to: :protocol
 
       prepend Harvesting::HushActiveRecord
 
@@ -42,58 +49,20 @@ module Harvesting
         # :nocov:
       end
 
-      # @abstract
-      # @param [Object] raw_record
-      def deleted?(raw_record)
-        # :nocov:
-        raise NotImplementedError, "must implement"
-        # :nocov:
-      end
-
-      # @abstract
-      # @param [Object] raw_record
-      def skip?(raw_record)
-        # :nocov:
-        false
-        # :nocov:
-      end
-
-      # @abstract
-      # @param [Object] raw_record
-      # @return [Dry::Monads::Success(String)]
-      def record_identifier_for(raw_record)
-        protocol.record_identifier.(raw_record)
-      end
-
-      # @abstract
-      # @param [Object] raw_record
-      # @return [String]
-      def extract_raw_source(raw_record)
-        # :nocov:
-        raise NotImplementedError, "must implement"
-        # :nocov:
-      end
-
       # @!endgroup
 
       # @!group Scoping
 
       # @param [Object] raw_record
-      # @return [ActiveRecord::Relation<HarvestRecord>]
+      # @return [Dry::Monads::Success(ActiveRecord::Relation<HarvestRecord>)]
       def scope_for(raw_record)
         identifier = yield record_identifier_for raw_record
 
-        harvest_records_by_identifier identifier
-      end
-
-      # @param [String] identifier
-      # @return [ActiveRecord::Relation<HarvestRecord>]
-      def harvest_records_by_identifier(identifier)
-        Success harvest_attempt.harvest_records.by_identifier(identifier)
+        Success harvest_source.harvest_records.by_identifier(identifier)
       end
 
       # @param [Object] raw_record
-      # @return [HarvestRecord]
+      # @return [Dry::Monads::Success(HarvestRecord)]
       def record_for(raw_record)
         scope_for(raw_record).fmap(&:first_or_initialize)
       end
@@ -111,13 +80,20 @@ module Harvesting
 
         logger.log "Processing record #{identifier.inspect}"
 
-        record.metadata_format = metadata_format.format
+        record.metadata_format = metadata_format.name
 
         yield extract_source! record, raw_record
         yield extract_metadata! record, raw_record
         yield adjust_record! record, raw_record
 
-        monadic_save record
+        assign_configuration! record
+
+        # This should not reasonably fail.
+        record.save!
+
+        maybe_link! record
+
+        Success record
       end
 
       # @param [Object] raw_record
@@ -125,7 +101,9 @@ module Harvesting
       def handle_deleted!(raw_record)
         identifier = yield record_identifier_for raw_record
 
-        yield scope_for(raw_record).fmap(&:destroy_all)
+        scope = yield scope_for(raw_record)
+
+        scope.update_all(status: :deleted)
 
         logger.log "Received deleted record identifier: #{identifier.inspect}"
 
@@ -140,7 +118,7 @@ module Harvesting
       # @param [Object] raw_record
       # @return [Dry::Monads::Result]
       def extract_source!(record, raw_record)
-        record.raw_source = yield protocol.extract_raw_source.(raw_record)
+        record.raw_source = yield protocol.extract_raw_source(raw_record)
 
         Success()
       end
@@ -149,16 +127,55 @@ module Harvesting
       # @param [Object] raw_record
       # @return [Dry::Monads::Result]
       def extract_metadata!(record, raw_record)
-        raw_metadata = yield protocol.extract_raw_metadata.(raw_record)
+        raw_metadata_source = yield protocol.extract_raw_metadata(raw_record)
 
-        validated_raw_metadata = yield metadata_format.validate_raw_metadata.(raw_metadata)
-
-        record.raw_metadata_source = validated_raw_metadata
+        record.raw_metadata_source = raw_metadata_source
 
         Success()
       end
 
       # @!endgroup
+
+      # @param [HarvestRecord] record
+      # @return [void]
+      def assign_configuration!(record)
+        if harvest_attempt.present?
+          record.harvest_configuration = harvest_configuration
+        else
+          record.harvest_configuration ||= harvest_configuration
+        end
+      end
+
+      # @param [HarvestRecord] record
+      # @return [void]
+      def maybe_link!(record)
+        link_with_attempt!(record)
+        link_with_mapping!(record)
+      end
+
+      # @param [HarvestRecord] record
+      # @return [void]
+      def link_with_attempt!(record)
+        # :nocov:
+        return if harvest_attempt.blank?
+
+        tuple = { harvest_attempt_id: harvest_attempt.id, harvest_record_id: record.id }
+
+        HarvestAttemptRecordLink.upsert(tuple, unique_by: %i[harvest_attempt_id harvest_record_id])
+        # :nocov:
+      end
+
+      # @param [HarvestRecord] record
+      # @return [void]
+      def link_with_mapping!(record)
+        # :nocov:
+        return if harvest_mapping.blank?
+
+        tuple = { harvest_mapping_id: harvest_mapping.id, harvest_record_id: record.id }
+
+        HarvestMappingRecordLink.upsert(tuple, unique_by: %i[harvest_mapping_id harvest_record_id])
+        # :nocov:
+      end
     end
   end
 end

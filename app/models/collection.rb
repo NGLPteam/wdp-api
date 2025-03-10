@@ -7,6 +7,7 @@ class Collection < ApplicationRecord
   include Contributable
   include HarvestTarget
   include HasEntityVisibility
+  include HasHarvestModificationStatus
   include HasSchemaDefinition
   include HasSystemSlug
   include HierarchicalEntity
@@ -32,6 +33,11 @@ class Collection < ApplicationRecord
 
   validates :identifier, :title, presence: true
   validates :identifier, uniqueness: { scope: %i[community_id parent_id] }
+
+  # @return [:collection]
+  def entity_kind
+    :collection
+  end
 
   # @return [Community]
   def hierarchical_parent

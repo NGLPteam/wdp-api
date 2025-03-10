@@ -13,6 +13,7 @@ class ControlledVocabularyItem < ApplicationRecord
   belongs_to :controlled_vocabulary, inverse_of: :controlled_vocabulary_items
 
   has_many :collection_contributions, inverse_of: :role, foreign_key: :role_id, dependent: :restrict_with_error
+  has_many :harvest_contributions, inverse_of: :role, foreign_key: :role_id, dependent: :restrict_with_error
   has_many :item_contributions, inverse_of: :role, foreign_key: :role_id, dependent: :restrict_with_error
 
   has_many :default_item_configurations, class_name: "ContributionRoleConfiguration", inverse_of: :default_item, dependent: :restrict_with_error

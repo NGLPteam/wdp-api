@@ -29,6 +29,8 @@ module Entities
 
     AuthPath = String.constrained(format: AUTH_PATH_FORMAT)
 
+    ChildEntityKind = ApplicationRecord.dry_pg_enum(:child_entity_kind)
+
     DOI = String.constrained(format: DOI_PATTERN)
 
     DOI_URL = String.constrained(format: DOI_URL_PATTERN)

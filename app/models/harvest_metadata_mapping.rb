@@ -13,6 +13,10 @@ class HarvestMetadataMapping < ApplicationRecord
   validates :pattern, presence: true, uniqueness: { scope: %i[harvest_source_id field] }
 
   class << self
+    # @param [<String>] identifier
+    # @param [<String>] relation
+    # @param [<String>] title
+    # @return [ActiveRecord::Relation<HarvestMetadataMapping>]
     def matching(relation: [], title: [], identifier: [])
       conditions = [
         matching_specific(relation, field: :relation),

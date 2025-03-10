@@ -37,17 +37,11 @@ docker-compose exec web bin/rake db:migrate
 ### Running tests
 
 ```bash
-docker-compose exec web bin/rspec
+docker-compose exec spec bin/rspec
 
 # Running a specific test
 
-docker-compose exec web bin/rspec spec/requests/graphql/mutations/create_item_spec.rb
-```
-
-If you have changed the database (new migrations, etc), run the following first:
-
-```bash
-docker-compose exec web bin/rake db:test:prepare
+docker-compose exec spec bin/rspec spec/requests/graphql/mutations/create_item_spec.rb
 ```
 
 ### Linting
@@ -60,25 +54,4 @@ bin/rubocop
 # But you can run it in docker if you don't have ruby installed locally
 
 docker-compose exec web bin/rubocop
-```
-
-## Seeding with sample data
-
-In a Rails console (`bin/console` locally, or `heroku run rails console` on staging):
-
-This will eventually be better-automated, but for now
-
-```ruby
-# One-time, as-needed tasks. These are idempotent and can be run repeatedly safely.
-Roles::Sync.new.call
-Schemas::Static::LoadDefinitions.new.call
-
-# Additive tasks:
-
-# One time, or to add even more contributors:
-Testing::ScaffoldContributors.new.call
-
-# Scaffolds roles, communities (10 by default), each with randomized collections & items
-# and test users (500 by default).
-Testing::ScaffoldSystem.new.call
 ```

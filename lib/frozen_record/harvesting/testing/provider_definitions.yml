@@ -1,0 +1,7 @@
+---
+- name: "Meru Sample JATS Provider"
+  protocol_name: "oai"
+  metadata_format_name: "jats"
+- name: "Meru Sample OAIDC Provider"
+  protocol_name: "oai"
+  metadata_format_name: "oaidc"
