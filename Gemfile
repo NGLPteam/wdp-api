@@ -13,7 +13,7 @@ gem "activesupport", "~> 7.0"
 gem "activerecord", "~> 7.0"
 
 # Rails / database
-gem "rails", "~> 7.0.8.1"
+gem "rails", "~> 7.0.8.7"
 gem "pg", "~> 1.5.4"
 gem "activerecord-cte", "~> 0.3.0"
 gem "active_record_distinct_on", "~> 1.3.0"
@@ -34,7 +34,7 @@ gem "redis-objects", ">= 2.0.0.beta"
 gem "job-iteration", "~> 1.9.0"
 
 # GraphQL
-gem "graphql", "2.4.4"
+gem "graphql", "2.4.13"
 gem "graphql-anycable", "1.1.5"
 gem "graphql-batch", "~> 0.6.0"
 gem "graphql-client", "~> 0.21.0"
@@ -92,7 +92,7 @@ gem "liquid", "~> 5.6.0.rc1"
 gem "maxminddb", "~> 0.1.22"
 gem "namae", "~> 1.2.0"
 gem "naught", "~> 1.1.0"
-gem "nokogiri", "~> 1.16.3"
+gem "nokogiri", "~> 1.18.3"
 gem "oai", "~> 1.2.1"
 gem "oj", "3.16.3"
 gem "openid_connect", "~> 2.3.0"
@@ -127,7 +127,6 @@ gem "tus-server", "~> 2.3.0"
 gem "zaru", "~> 1.0.0"
 
 # Servers / Rack
-gem "falcon", "~> 0.39.0", require: false
 gem "puma", "~> 6.4.2"
 gem "puma-rufus-scheduler", "~> 0.1.0"
 gem "rack-cors", "~> 2.0.2"
