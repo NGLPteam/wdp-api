@@ -127,7 +127,7 @@ gem "tus-server", "~> 2.3.0"
 gem "zaru", "~> 1.0.0"
 
 # Servers / Rack
-gem "puma", "~> 6.4.2"
+gem "puma", "~> 6.6.0"
 gem "puma-rufus-scheduler", "~> 0.1.0"
 gem "rack-cors", "~> 2.0.2"
 
