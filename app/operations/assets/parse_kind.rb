@@ -4,11 +4,47 @@ module Assets
   class ParseKind
     include Dry::Monads[:result]
 
-    # @param [Shrine::UploadedFile] io
-    # @return [String]
+    # @param [File, IO, Shrine::UploadedFile] io
+    # @return [Dry::Monads::Success(Assets::Types::Kind)]
     def call(io)
-      return Success("unknown") unless io.kind_of?(Shrine::UploadedFile)
+      case io
+      when ::File, ::IO
+        for_file(io)
+      when Shrine::UploadedFile
+        for_uploaded_file(io)
+      else
+        # :nocov:
+        Success("unknown")
+        # :nocov:
+      end
+    end
 
+    private
+
+    # @param [File, IO] file
+    # @return [Dry::Monads::Success(Assets::Types::Kind)]
+    def for_file(io)
+      mime_type = Shrine.determine_mime_type(io)
+
+      case mime_type
+      when "application/pdf"
+        Success("pdf")
+      when %r{\Aimage/}
+        Success("image")
+      when %r{\Aaudio/}
+        Success("audio")
+      when %r{\Avideo/}
+        Success("video")
+      else
+        # :nocov:
+        Success("document")
+        # :nocov:
+      end
+    end
+
+    # @param [Shrine::UploadedFile] io
+    # @return [Dry::Monads::Success(Assets::Types::Kind)]
+    def for_uploaded_file(io)
       if io.image?
         Success("image")
       elsif io.video?
@@ -18,7 +54,9 @@ module Assets
       elsif io.pdf? || io.mime_type == "application/pdf"
         Success("pdf")
       else
+        # :nocov:
         Success("document")
+        # :nocov:
       end
     end
   end

@@ -25,4 +25,7 @@ class GenericUploader < Shrine
   Attacher.validate do
     validate_max_size 5.gigabytes
   end
+
+  Attacher.promote_block { promote }
+  Attacher.destroy_block { destroy }
 end
