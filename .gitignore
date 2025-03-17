@@ -45,3 +45,6 @@ spec/examples.txt
 !/docker/minio/client/initialize.sh
 /docker/maxmind_account_id
 /docker/maxmind_license_key
+
+lib/support/tmp
+spec/system/tmp

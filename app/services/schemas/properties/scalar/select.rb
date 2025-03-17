@@ -17,7 +17,7 @@ module Schemas
         attribute :default, :string
 
         def base_schema_predicates
-          super().merge(included_in?: option_values)
+          super.merge(included_in?: option_values)
         end
 
         def add_to_rules!(context)

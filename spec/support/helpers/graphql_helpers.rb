@@ -1,9 +1,7 @@
 # frozen_string_literal: true
 
-require "test_prof/any_fixture/dsl"
 require "test_prof/ext/active_record_refind"
 
-using TestProf::AnyFixture::DSL
 using TestProf::Ext::ActiveRecordRefind
 
 module TestHelpers
@@ -157,21 +155,15 @@ module TestHelpers
 end
 
 RSpec.shared_context "with default graphql context" do
-  prepend_before(:all) do
-    @admin_user = TestProf::AnyFixture.register(:admin_user) do
-      FactoryBot.create :user, :admin, given_name: "Admin", family_name: "User"
-    end
-
-    @regular_user = TestProf::AnyFixture.register(:regular_user) do
-      FactoryBot.create :user, given_name: "Regular", family_name: "User"
-    end
-  end
-
   let_it_be(:anonymous_user) { AnonymousUser.new }
 
-  let_it_be(:admin_user) { fixture(:admin_user) }
+  let_it_be(:admin_user, refind: true) do
+    FactoryBot.create :user, :admin, given_name: "Admin", family_name: "User"
+  end
 
-  let_it_be(:regular_user) { fixture(:regular_user) }
+  let_it_be(:regular_user, refind: true) do
+    FactoryBot.create :user, given_name: "Regular", family_name: "User"
+  end
 
   let(:current_user) { anonymous_user }
 

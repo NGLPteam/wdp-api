@@ -25,7 +25,7 @@ module EsploroSchema
         def cast(raw_value)
           return nil if raw_value.nil?
 
-          value = super(raw_value)
+          value = super
 
           enum_type[value]
         rescue Dry::Types::ConstraintError

@@ -21,7 +21,7 @@ module Ahoy
 
       set_subject! data, subject
 
-      super(data)
+      super
     end
 
     private

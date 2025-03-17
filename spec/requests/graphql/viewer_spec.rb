@@ -2,7 +2,7 @@
 
 RSpec.describe "GraphQL Viewer", type: :request do
   context "when authenticated" do
-    let(:email) { Faker::Internet.safe_email }
+    let(:email) { Faker::Internet.email }
     let(:token) { token_helper.build_token data: { email: } }
 
     let(:expected_shape) do
