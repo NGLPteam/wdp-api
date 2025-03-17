@@ -14,5 +14,11 @@ module Types
       [OAI-PMH](https://www.openarchives.org/OAI/2.0/guidelines.htm)
       TEXT
     end
+
+    value "UNKNOWN", value: "unknown" do
+      description <<~TEXT
+      A fallback value for protocols that should not appear under normal circumstances.
+      TEXT
+    end
   end
 end

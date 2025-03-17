@@ -9,6 +9,12 @@ module Types
     while `HarvestMetadataFormat` describes the structure of the data.
     TEXT
 
+    value "ESPLORO", value: "esploro" do
+      description <<~TEXT
+      [Esploro Records](https://developers.exlibrisgroup.com/esploro/apis/xsd/esploro_record.xsd/)
+      TEXT
+    end
+
     value "JATS", value: "jats" do
       description <<~TEXT
       [Journal Article Tag Suite](https://jats.nlm.nih.gov/)
