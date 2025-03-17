@@ -28,7 +28,7 @@ FactoryBot.define do
     preferred_username do
       user&.username.presence || Faker::Internet.username(specifier: "#{given_name}.#{family_name}")
     end
-    email { user&.email.presence || Faker::Internet.safe_email(name:) }
+    email { user&.email.presence || Faker::Internet.email(name:) }
 
     custom_attribute { "custom_value" }
 

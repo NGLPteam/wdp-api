@@ -10,7 +10,7 @@ module HasHeroImageLayout
   HERO_IMAGE_MAPPING = HERO_IMAGE_VALUES.index_with(&:to_s).freeze
 
   included do
-    enum hero_image_layout: HERO_IMAGE_MAPPING, _prefix: :with, _suffix: :hero_image_layout
+    enum :hero_image_layout, HERO_IMAGE_MAPPING, prefix: :with, suffix: :hero_image_layout
   end
 
   # @!attribute [rw] hero_image_layout

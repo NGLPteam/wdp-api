@@ -74,7 +74,7 @@ module Templates
       @last = in_ordering? && next_sibling.blank?
       @only = first? && last?
 
-      @has_either_sibling = (@prev_sibling.present? || @next_sibling.present?)
+      @has_either_sibling = @prev_sibling.present? || @next_sibling.present?
 
       @exists = in_ordering? && has_either_sibling?
     end

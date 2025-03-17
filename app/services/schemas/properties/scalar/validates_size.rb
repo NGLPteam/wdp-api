@@ -17,7 +17,7 @@ module Schemas
         end
 
         def base_schema_predicates
-          super().merge(size_schema_predicates)
+          super.merge(size_schema_predicates)
         end
 
         def size_schema_predicates

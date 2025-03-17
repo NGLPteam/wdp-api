@@ -4,7 +4,7 @@ FactoryBot.define do
   factory :contributor do
     identifier { SecureRandom.uuid }
 
-    email { Faker::Internet.safe_email }
+    email { Faker::Internet.email }
     url { Faker::Internet.url }
     bio { Faker::Lorem.paragraphs(number: 4).join("\n") }
     orcid { nil }

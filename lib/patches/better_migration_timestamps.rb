@@ -11,7 +11,7 @@ module Patches
       options[:null] = false
       options[:default] = CURRENT_TIMESTAMP
 
-      super(**options)
+      super
     end
   end
 end

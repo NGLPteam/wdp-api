@@ -1,9 +1,7 @@
 # frozen_string_literal: true
 
-require "test_prof/any_fixture/dsl"
 require "test_prof/ext/active_record_refind"
 
-using TestProf::AnyFixture::DSL
 using TestProf::Ext::ActiveRecordRefind
 
 module TestHelpers

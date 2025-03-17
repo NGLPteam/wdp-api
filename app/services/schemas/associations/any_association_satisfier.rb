@@ -45,7 +45,7 @@ module Schemas
       end
 
       def for_result(requirements = [])
-        Array(requirements).to_a.flatten.then do |reqs|
+        Array(requirements).flatten.then do |reqs|
           { requirements: reqs, provided_declaration: }
         end
       end

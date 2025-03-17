@@ -49,7 +49,6 @@ abort("The Rails environment is running in production mode!") if Rails.env.produ
 
 require "rspec/rails"
 require "rspec/json_expectations"
-require "test_prof/recipes/rspec/any_fixture"
 require "test_prof/recipes/rspec/let_it_be"
 require "dry/container/stub"
 require "pundit/rspec"
@@ -68,7 +67,7 @@ ActiveJob::Base.queue_adapter = :test
 
 # ActiveJob::Uniqueness.test_mode!
 
-Shrine.logger = Logger.new("/dev/null")
+Shrine.logger = Logger.new(File::NULL)
 
 Dry::Effects.load_extensions :rspec
 
@@ -98,7 +97,7 @@ end
 # directory. Alternatively, in the individual `*_spec.rb` files, manually
 # require only the support files necessary.
 #
-Dir[Rails.root.join("spec", "support", "**", "*.rb")].each { |f| require f }
+Rails.root.glob('spec/support/**/*.rb').each { |f| require f }
 
 FactoryBot::Evaluator.include TestHelpers::Factories::SchemaHelpers
 

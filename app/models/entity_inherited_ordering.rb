@@ -14,5 +14,5 @@ class EntityInheritedOrdering < ApplicationRecord
 
   belongs_to :entity, polymorphic: true
 
-  enum status: %i[pristine missing mismatched modified].index_with(&:to_s)
+  enum :status, %i[pristine missing mismatched modified].index_with(&:to_s)
 end

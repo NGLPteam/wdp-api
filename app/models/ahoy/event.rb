@@ -5,7 +5,6 @@ module Ahoy
   class Event < ApplicationRecord
     include Ahoy::QueryMethods
 
-    self.rollup_column = :time
     self.table_name = "ahoy_events"
 
     belongs_to :visit, inverse_of: :events

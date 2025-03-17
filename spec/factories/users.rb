@@ -11,7 +11,7 @@ FactoryBot.define do
 
     keycloak_id { SecureRandom.uuid }
 
-    email { Faker::Internet.safe_email }
+    email { Faker::Internet.email }
     email_verified { false }
 
     username { email }

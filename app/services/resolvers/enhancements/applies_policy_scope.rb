@@ -16,7 +16,7 @@ module Resolvers
 
         options[:scope] = Pundit.policy_scope! options.dig(:context, :current_user), base_scope
 
-        super(**options)
+        super
       end
     end
   end

@@ -320,7 +320,7 @@ module Schemas
         end
 
         def build_array_element_macros
-          [*Array(config.array_element_macros), build_array_element_predicates].select(&:present?)
+          [*Array(config.array_element_macros), build_array_element_predicates].compact_blank
         end
 
         def build_array_element_predicates

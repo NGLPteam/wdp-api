@@ -31,7 +31,7 @@ RSpec.describe "Query.contributorLookup", type: :request do
     GRAPHQL
   end
 
-  let(:known_email) { Faker::Internet.safe_email }
+  let(:known_email) { Faker::Internet.email }
   let(:known_name) { Faker::Company.name }
   let(:known_orcid) { Testing::ORCID.random }
 
