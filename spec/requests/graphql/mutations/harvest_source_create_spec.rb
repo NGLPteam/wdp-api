@@ -22,6 +22,7 @@ RSpec.describe Mutations::HarvestSourceCreate, type: :request, graphql: :mutatio
 
   let_mutation_input!(:name) { "Test Harvest Source" }
   let_mutation_input!(:base_url) { Harvesting::Testing::ProviderDefinition.oai.first.base_url }
+  let_mutation_input!(:extraction_mapping_template) { Harvesting::Example.default_template_for("oai", "jats") }
 
   let(:valid_mutation_shape) do
     gql.mutation(:harvest_source_create) do |m|
@@ -46,6 +47,28 @@ RSpec.describe Mutations::HarvestSourceCreate, type: :request, graphql: :mutatio
         req.effect! have_enqueued_job(Harvesting::Sources::ExtractSetsJob).once
 
         req.data! expected_shape
+      end
+    end
+
+    context "when creating with an invalid mapping template" do
+      let_mutation_input!(:extraction_mapping_template) { "<mapping" }
+
+      let(:expected_shape) do
+        gql.mutation(:harvest_source_create, no_errors: false) do |m|
+          m[:harvest_source] = be_blank
+
+          m.attribute_errors do |ae|
+            ae.error :extraction_mapping_template, :"extraction_mapping_template.not_well_formed"
+          end
+        end
+      end
+
+      it "does not create the source" do
+        expect_request! do |req|
+          req.effect! keep_the_same(HarvestSource, :count)
+
+          req.data! expected_shape
+        end
       end
     end
   end

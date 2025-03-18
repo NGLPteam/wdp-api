@@ -68,6 +68,16 @@ Rails.application.configure do
       class: "Entities::PopulateVisibilitiesJob",
       description: "Populate entity visibilities",
     },
+    "harvesting.attempts.enqueue_scheduled": {
+      cron: "50 * * * *",
+      class: "Harvesting::Attempts::EnqueueScheduledJob",
+      description: "Enqueue scheduled attempts",
+    },
+    "harvesting.mappings.schedule_all_attempts": {
+      cron: "30 6 * * *",
+      class: "Harvesting::Mappings::ScheduleAllAttempts",
+      description: "Schedule all attempts once a day.",
+    },
     "ordering_invalidations.process_all": {
       cron: "*/5 * * * *",
       class: "OrderingInvalidations::ProcessAllJob",

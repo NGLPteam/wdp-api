@@ -28,7 +28,7 @@ class HarvestSource < ApplicationRecord
   has_many :harvest_messages, inverse_of: :harvest_source, dependent: :destroy
   has_many :harvest_metadata_mappings, inverse_of: :harvest_source, dependent: :destroy
   has_many :harvest_records, inverse_of: :harvest_source, dependent: :destroy
-  has_many :harvest_sets, -> { in_default_order }, inverse_of: :harvest_source, dependent: :destroy
+  has_many :harvest_sets, inverse_of: :harvest_source, dependent: :destroy
 
   has_many_readonly :latest_harvest_attempt_links, inverse_of: :harvest_source
 

@@ -5,6 +5,7 @@ module Mutations
   # @see Mutations::CreateHarvestSource
   # @see Mutations::UpdateHarvestSource
   class MutateHarvestSource < Mutations::BaseMutation
+    include Mutations::Shared::AcceptsHarvestExtractionMappingTemplate
     include Mutations::Shared::AcceptsHarvestOptions
 
     description <<~TEXT

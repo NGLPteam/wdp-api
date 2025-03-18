@@ -11,12 +11,10 @@ module Mutations
       use_contract! :harvest_attempt_from_mapping
 
       # @param [HarvestMapping] harvest_mapping
-      # @param [{ Symbol => Object }] attrs
+      # @param [{ Symbol => Object }] options
       # @return [void]
-      def call(harvest_mapping:, **attrs)
-        # assign_attributes!(harvest_mapping, **attrs)
-
-        # persist_model! harvest_mapping, attach_to: :harvest_mapping
+      def call(harvest_mapping:, **options)
+        with_attached_result! :harvest_attempt, harvest_mapping.create_attempt(**options, enqueue_extraction: true)
       end
     end
   end

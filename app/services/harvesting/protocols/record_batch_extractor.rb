@@ -38,6 +38,7 @@ module Harvesting
       around_enumeration :provide_metadata_format!
 
       around_enumeration :with_no_records!
+      around_enumeration :track_attempt_state!
 
       def initialize(...)
         super
@@ -100,6 +101,15 @@ module Harvesting
         progress.processed! processed.size
 
         halt_enumeration if progress.should_stop?
+      end
+
+      # @return [void]
+      def track_attempt_state!
+        harvest_attempt.transition_to(:executing)
+
+        yield
+      ensure
+        harvest_attempt.transition_to(:extracted)
       end
 
       # @param [Integer] total

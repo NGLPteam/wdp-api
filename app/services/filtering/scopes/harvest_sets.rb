@@ -5,6 +5,7 @@ module Filtering
     class HarvestSets < Filtering::FilterScope[HarvestSet]
       simple_filter! :identifier, :string
       simple_scope_filter! :name, :string
+      simple_scope_filter! :prefix, :string
     end
   end
 end

@@ -7,10 +7,8 @@ module Mutations
     class HarvestAttemptFromMapping < MutationOperations::Contract
       json do
         required(:harvest_mapping).value(:harvest_mapping)
-      end
-
-      rule do
-        base.failure(:not_yet_implemented)
+        required(:extraction_mapping_template).filled(:string)
+        optional(:description).maybe(:string)
       end
     end
   end

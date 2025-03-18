@@ -10,6 +10,7 @@ module Types
     TEXT
 
     implements Types::HarvestAttemptableType
+    implements Types::HasHarvestExtractionMappingTemplateType
     implements Types::HasHarvestMetadataFormatType
     implements Types::HasHarvestOptionsType
     implements Types::QueriesHarvestMessage
@@ -61,7 +62,7 @@ module Types
       TEXT
     end
 
-    field :harvest_mappings, [::Types::HarvestMappingType, { null: false }], null: false do
+    field :harvest_mappings, resolver: ::Resolvers::HarvestMappingResolver do
       description <<~TEXT
       Mappings associated with the harvest source.
       TEXT
@@ -87,8 +88,5 @@ module Types
       An enum that describes the functional state for harvest sources.
       TEXT
     end
-
-    load_association! :harvest_mappings
-    load_association! :harvest_sets
   end
 end

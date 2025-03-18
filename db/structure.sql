@@ -378,6 +378,16 @@ CREATE TYPE public.harvest_record_status AS ENUM (
 
 
 --
+-- Name: harvest_schedule_mode; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.harvest_schedule_mode AS ENUM (
+    'manual',
+    'scheduled'
+);
+
+
+--
 -- Name: harvest_source_status; Type: TYPE; Schema: public; Owner: -
 --
 
@@ -4807,6 +4817,22 @@ CREATE TABLE public.harvest_attempt_record_links (
 
 
 --
+-- Name: harvest_attempt_transitions; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.harvest_attempt_transitions (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    harvest_attempt_id uuid NOT NULL,
+    most_recent boolean NOT NULL,
+    sort_key integer NOT NULL,
+    to_state character varying NOT NULL,
+    metadata jsonb,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+--
 -- Name: harvest_attempts; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -4815,8 +4841,7 @@ CREATE TABLE public.harvest_attempts (
     harvest_source_id uuid NOT NULL,
     harvest_set_id uuid,
     harvest_mapping_id uuid,
-    collection_id uuid,
-    kind text NOT NULL,
+    mode text DEFAULT 'manual'::public.harvest_schedule_mode NOT NULL,
     description text,
     metadata jsonb DEFAULT '{}'::jsonb NOT NULL,
     record_count bigint,
@@ -4827,7 +4852,9 @@ CREATE TABLE public.harvest_attempts (
     metadata_format text NOT NULL,
     target_entity_type text NOT NULL,
     target_entity_id uuid NOT NULL,
-    extraction_mapping_template text DEFAULT ''::text NOT NULL
+    extraction_mapping_template text DEFAULT ''::text NOT NULL,
+    scheduled_at timestamp without time zone,
+    scheduling_key text
 );
 
 
@@ -5010,9 +5037,8 @@ CREATE TABLE public.harvest_mappings (
     id uuid DEFAULT gen_random_uuid() NOT NULL,
     harvest_source_id uuid NOT NULL,
     harvest_set_id uuid,
-    collection_id uuid,
-    mode text DEFAULT 'manual'::text NOT NULL,
-    frequency text,
+    mode text DEFAULT 'manual'::public.harvest_schedule_mode NOT NULL,
+    frequency interval,
     frequency_expression text,
     list_options jsonb DEFAULT '{}'::jsonb NOT NULL,
     read_options jsonb DEFAULT '{}'::jsonb NOT NULL,
@@ -5023,7 +5049,10 @@ CREATE TABLE public.harvest_mappings (
     metadata_format text NOT NULL,
     target_entity_type text NOT NULL,
     target_entity_id uuid NOT NULL,
-    extraction_mapping_template text DEFAULT ''::text NOT NULL
+    extraction_mapping_template text DEFAULT ''::text NOT NULL,
+    schedule_changed_at timestamp without time zone,
+    last_scheduled_at timestamp without time zone,
+    schedule_data jsonb DEFAULT '{}'::jsonb NOT NULL
 );
 
 
@@ -7396,6 +7425,14 @@ ALTER TABLE ONLY public.harvest_attempt_record_links
 
 
 --
+-- Name: harvest_attempt_transitions harvest_attempt_transitions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.harvest_attempt_transitions
+    ADD CONSTRAINT harvest_attempt_transitions_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: harvest_attempts harvest_attempts_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -8169,6 +8206,13 @@ CREATE UNIQUE INDEX controlled_vocabulary_item_anc_desc_idx ON public.controlled
 --
 
 CREATE INDEX controlled_vocabulary_item_desc_idx ON public.controlled_vocabulary_item_hierarchies USING btree (descendant_id);
+
+
+--
+-- Name: harvest_attempts_scheduling_uniqueness; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX harvest_attempts_scheduling_uniqueness ON public.harvest_attempts USING btree (harvest_mapping_id, scheduling_key) WHERE ((mode = 'scheduled'::text) AND (harvest_mapping_id IS NOT NULL) AND (scheduling_key IS NOT NULL));
 
 
 --
@@ -9978,10 +10022,17 @@ CREATE UNIQUE INDEX index_harvest_attempt_record_uniqueness ON public.harvest_at
 
 
 --
--- Name: index_harvest_attempts_on_collection_id; Type: INDEX; Schema: public; Owner: -
+-- Name: index_harvest_attempt_transitions_parent_most_recent; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_harvest_attempts_on_collection_id ON public.harvest_attempts USING btree (collection_id);
+CREATE UNIQUE INDEX index_harvest_attempt_transitions_parent_most_recent ON public.harvest_attempt_transitions USING btree (harvest_attempt_id, most_recent) WHERE most_recent;
+
+
+--
+-- Name: index_harvest_attempt_transitions_parent_sort; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_harvest_attempt_transitions_parent_sort ON public.harvest_attempt_transitions USING btree (harvest_attempt_id, sort_key);
 
 
 --
@@ -10146,13 +10197,6 @@ CREATE UNIQUE INDEX index_harvest_mapping_record_uniqueness ON public.harvest_ma
 
 
 --
--- Name: index_harvest_mappings_on_collection_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_harvest_mappings_on_collection_id ON public.harvest_mappings USING btree (collection_id);
-
-
---
 -- Name: index_harvest_mappings_on_harvest_set_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -10164,13 +10208,6 @@ CREATE INDEX index_harvest_mappings_on_harvest_set_id ON public.harvest_mappings
 --
 
 CREATE INDEX index_harvest_mappings_on_target_entity ON public.harvest_mappings USING btree (target_entity_type, target_entity_id);
-
-
---
--- Name: index_harvest_mappings_uniqueness; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE UNIQUE INDEX index_harvest_mappings_uniqueness ON public.harvest_mappings USING btree (harvest_source_id, harvest_set_id, collection_id);
 
 
 --
@@ -12840,14 +12877,6 @@ ALTER TABLE ONLY public.community_memberships
 
 
 --
--- Name: harvest_attempts fk_rails_8e749243ac; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.harvest_attempts
-    ADD CONSTRAINT fk_rails_8e749243ac FOREIGN KEY (collection_id) REFERENCES public.collections(id) ON DELETE CASCADE;
-
-
---
 -- Name: templates_ordering_instances fk_rails_930e8b2e8f; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -12965,6 +12994,14 @@ ALTER TABLE ONLY public.harvest_records
 
 ALTER TABLE ONLY public.assets
     ADD CONSTRAINT fk_rails_a8a9ebb434 FOREIGN KEY (collection_id) REFERENCES public.collections(id) ON DELETE RESTRICT;
+
+
+--
+-- Name: harvest_attempt_transitions fk_rails_abb01db8f3; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.harvest_attempt_transitions
+    ADD CONSTRAINT fk_rails_abb01db8f3 FOREIGN KEY (harvest_attempt_id) REFERENCES public.harvest_attempts(id) ON DELETE CASCADE;
 
 
 --
@@ -13173,14 +13210,6 @@ ALTER TABLE ONLY public.granted_permissions
 
 ALTER TABLE ONLY public.templates_list_item_instances
     ADD CONSTRAINT fk_rails_d1a7c8116b FOREIGN KEY (see_all_ordering_id) REFERENCES public.orderings(id) ON DELETE SET NULL;
-
-
---
--- Name: harvest_mappings fk_rails_d21568b378; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.harvest_mappings
-    ADD CONSTRAINT fk_rails_d21568b378 FOREIGN KEY (collection_id) REFERENCES public.collections(id) ON DELETE RESTRICT;
 
 
 --
@@ -13749,6 +13778,8 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20250306220745'),
 ('20250306232956'),
 ('20250307191006'),
-('20250311200045');
+('20250311200045'),
+('20250317193746'),
+('20250317201446');
 
 

@@ -19,6 +19,7 @@ RSpec.describe Harvesting::ExtractRecordsJob, type: :job do
         described_class.perform_now(harvest_attempt)
       end.to change(HarvestRecord, :count).by(expected_record_count)
         .and have_enqueued_job(Harvesting::Records::ExtractEntitiesJob).exactly(expected_record_count).times
+        .and change { harvest_attempt.current_state(force_reload: true) }.from("pending").to("extracted")
     end
   end
 

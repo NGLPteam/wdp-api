@@ -750,6 +750,7 @@ DEPENDENCIES
   fastimage (~> 2.4.0)
   ffi (~> 1.16.3)
   frozen_record (~> 0.27.1)
+  fugit (~> 1.11.1)
   geocoder (~> 1.8.0)
   good_job (~> 4.9.0)
   graphql (= 2.4.14)

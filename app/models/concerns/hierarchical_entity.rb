@@ -12,6 +12,7 @@ module HierarchicalEntity
   include Liquifies
   include ManualListSource
   include ManualListTarget
+  include ModifiedByAdmin
   include SyncsEntities
   include TimestampScopes
   include ScopesForEntityComposedText

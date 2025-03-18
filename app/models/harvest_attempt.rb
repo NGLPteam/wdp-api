@@ -7,6 +7,11 @@ class HarvestAttempt < ApplicationRecord
   include HasHarvestMetadataFormat
   include HasHarvestSource
   include TimestampScopes
+  include UsesStatesman
+
+  pg_enum! :mode, as: :harvest_schedule_mode, null: false, default: :manual
+
+  has_state_machine! machine_class: Harvesting::Attempts::StateMachine
 
   belongs_to :target_entity, inverse_of: :harvest_attempts, polymorphic: true
   belongs_to :harvest_source, inverse_of: :harvest_attempts
@@ -27,6 +32,10 @@ class HarvestAttempt < ApplicationRecord
 
   scope :current, -> { where(id: LatestHarvestAttemptLink.select(:harvest_attempt_id)) }
   scope :previous, -> { where.not(id: LatestHarvestAttemptLink.select(:harvest_attempt_id)) }
+
+  scope :fully_scheduled, -> { in_state(:scheduled).scheduled }
+  scope :scheduled_after, ->(now = Time.current) { fully_scheduled.where(scheduled_at: now..) }
+  scope :scheduled_in_the_future, -> { scheduled_after(Time.current) }
 
   scope :in_default_order, -> { in_recent_order }
   scope :in_inverse_order, -> { in_oldest_order }
@@ -72,6 +81,18 @@ class HarvestAttempt < ApplicationRecord
     # @return [ActiveRecord::Relation<HarvestAttempt>]
     def current_for_source(sourcelike)
       for_source(sourcelike).current
+    end
+
+    # @return [ActiveRecord::Relation<HarvestAttempt>]
+    def to_enqueue_for_next_hour(now: Time.current)
+      base = now.at_beginning_of_hour
+
+      start = base + 50.minutes
+      close = base + 2.hours
+
+      scheduled_at = start...close
+
+      fully_scheduled.where(scheduled_at:)
     end
   end
 end

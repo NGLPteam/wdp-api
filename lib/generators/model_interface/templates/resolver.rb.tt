@@ -19,6 +19,14 @@ module Resolvers
 
     type <%= graphql_model_klass %>.connection_type, null: false
 
-    scope { ::<%= model_name %>.all }
+    scope do
+      if object.present?
+        object.try(<%= model_key_plural.inspect %>) || ::<%= model_name %>.none
+      else
+        ::<%= model_name %>.all
+      end
+    end
+
+    # filters_with! Filtering::Scopes::<%= model_name.pluralize %>
   end
 end

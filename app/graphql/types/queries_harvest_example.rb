@@ -14,7 +14,7 @@ module Types
       Retrieve harvest examples for the system.
       TEXT
 
-      argument :generic, Boolean, default_value: false, replace_null_with_default: true do
+      argument :generic, Boolean, default_value: false, replace_null_with_default: true, required: false do
         description <<~TEXT
         Whether to look for "generic" harvesting examples which are not associated
         with any protocol or metadata.

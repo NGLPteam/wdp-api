@@ -17,8 +17,8 @@ class HarvestSet < ApplicationRecord
 
   has_many :harvest_records, through: :harvest_set_record_links
 
-  scope :in_default_order, -> { lazily_order(:name, :asc) }
-  scope :in_inverse_order, -> { lazily_order(:name, :desc) }
+  scope :in_default_order, -> { lazily_order(:identifier, :asc).lazily_order(:name, :asc) }
+  scope :in_inverse_order, -> { lazily_order(:identifier, :desc).lazily_order(:name, :desc) }
 
   scope :lookup_by_name, ->(name) { where_contains(name:) if name.present? }
 
@@ -27,4 +27,16 @@ class HarvestSet < ApplicationRecord
   scope :by_identifier, ->(identifier) { where(identifier:) }
 
   validates :identifier, uniqueness: { scope: %i[harvest_source_id] }
+
+  class << self
+    # @param [String] raw_value
+    # @return [ActiveRecord::Relation<HarvestSet>]
+    def lookup_by_prefix(raw_value)
+      value = raw_value.to_s.strip
+
+      return all if value.blank?
+
+      where_begins_like(identifier: value, name: value, _or: true).reorder(nil).in_default_order
+    end
+  end
 end

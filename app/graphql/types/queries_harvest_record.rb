@@ -21,7 +21,11 @@ module Types
       end
     end
 
-    field :harvest_records, resolver: ::Resolvers::HarvestRecordResolver
+    field :harvest_records, resolver: ::Resolvers::HarvestRecordResolver do
+      description <<~TEXT
+      Query all harvest records in the system.
+      TEXT
+    end
 
     # @param [String] slug
     # @return [HarvestRecord, nil]

@@ -24,6 +24,7 @@ RSpec.describe Mutations::HarvestSourceUpdate, type: :request, graphql: :mutatio
 
   let_mutation_input!(:name) { "Test Harvest Source" }
   let_mutation_input!(:base_url) { ::Harvesting::Testing::OAI::Broken::Provider::ENDPOINT }
+  let_mutation_input!(:extraction_mapping_template) { Harvesting::Example.default_template_for("oai", "jats") }
 
   let(:valid_mutation_shape) do
     gql.mutation(:harvest_source_update) do |m|

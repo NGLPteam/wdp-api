@@ -3,6 +3,8 @@
 module Mutations
   # @see Mutations::Operations::HarvestAttemptFromMapping
   class HarvestAttemptFromMapping < Mutations::AbstractHarvestAttemptMutation
+    include Mutations::Shared::AcceptsHarvestExtractionMappingTemplate
+
     description <<~TEXT
     Kick off a manual `HarvestAttempt` from a `HarvestMapping`
     TEXT
@@ -16,6 +18,12 @@ module Mutations
     argument :harvest_mapping_id, ID, loads: Types::HarvestMappingType, required: true do
       description <<~TEXT
       The harvest mapping to update.
+      TEXT
+    end
+
+    argument :note, String, required: false do
+      description <<~TEXT
+      An optional note for this harvesting attempt.
       TEXT
     end
 
