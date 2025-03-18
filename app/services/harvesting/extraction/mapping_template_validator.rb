@@ -13,7 +13,7 @@ module Harvesting
 
       standard_execution!
 
-      # @return [<String>]
+      # @return [<Symbol>]
       attr_reader :errors
 
       # @return [Harvesting::Extraction::Mapping]
@@ -43,14 +43,18 @@ module Harvesting
       end
 
       wrapped_hook! def parse
-        halt!("Template is blank") if mapping_template.blank?
+        if mapping_template.blank?
+          @errors << :"extraction_mapping_template.blank"
+
+          return
+        end
 
         @mapping = Harvesting::Extraction::Mapping.from_xml(mapping_template)
       rescue StandardError
         # Shale doesn't have great error boundaries, all sorts of errors can raise
-        halt!("Template is not well-formed XML")
+        halt!(:"extraction_mapping_template.not_well_formed")
       else
-        halt!("Template has no mapped entities to extract") unless mapping.has_entities?
+        halt!(:"extraction_mapping_template.no_entities") unless mapping.has_entities?
 
         super
       end
@@ -66,7 +70,7 @@ module Harvesting
         end
       end
 
-      # @param [String]
+      # @param [Symbol] message
       # @return [void]
       def halt!(message)
         @errors << message

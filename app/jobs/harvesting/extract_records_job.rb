@@ -7,6 +7,11 @@ module Harvesting
 
     queue_as :extraction
 
+    good_job_control_concurrency_with(
+      total_limit: 1,
+      key: -> { "#{self.class.name}-#{queue_name}-#{arguments.first.id}" }
+    )
+
     # @param [HarvestAttempt] harvest_attempt
     # @return [void]
     def build_enumerator(harvest_attempt, cursor:)

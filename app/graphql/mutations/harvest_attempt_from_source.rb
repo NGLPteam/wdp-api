@@ -3,6 +3,8 @@
 module Mutations
   # @see Mutations::Operations::HarvestAttemptFromSource
   class HarvestAttemptFromSource < Mutations::AbstractHarvestAttemptMutation
+    include Mutations::Shared::AcceptsHarvestExtractionMappingTemplate
+
     description <<~TEXT
     Kick off a manual `HarvestAttempt` from a `HarvestSource`
     TEXT
@@ -28,6 +30,12 @@ module Mutations
     argument :harvest_set_id, ID, loads: Types::HarvestSetType, required: false do
       description <<~TEXT
       An optional set to restrict the attempt to.
+      TEXT
+    end
+
+    argument :note, String, required: false do
+      description <<~TEXT
+      An optional note for this harvesting attempt.
       TEXT
     end
 

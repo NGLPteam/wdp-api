@@ -17,6 +17,8 @@ module Mutations
       # @param [{ Symbol => Object }] attributes core attributes to apply
       # @return [void]
       def update_entity!(entity, **attributes)
+        entity.modified_by_admin = true
+
         persist_entity! entity, **attributes
       end
     end

@@ -44,5 +44,9 @@ FactoryBot.define do
     trait :global_identifiers do
       link_identifiers_globally { true }
     end
+
+    trait :scheduled do
+      frequency_expression { "every day at 2 am" }
+    end
   end
 end

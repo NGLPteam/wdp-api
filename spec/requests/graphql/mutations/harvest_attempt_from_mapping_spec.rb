@@ -7,6 +7,8 @@ RSpec.describe Mutations::HarvestAttemptFromMapping, type: :request, graphql: :m
       harvestAttempt {
         id
         slug
+        mode
+        note
       }
       ... ErrorFragment
     }
@@ -21,11 +23,17 @@ RSpec.describe Mutations::HarvestAttemptFromMapping, type: :request, graphql: :m
 
   let_mutation_input!(:harvest_mapping_id) { existing_harvest_mapping.to_encoded_id }
 
+  let_mutation_input!(:note) { "Test attempt" }
+
+  let_mutation_input!(:extraction_mapping_template) { Harvesting::Example.default_template_for("oai", "jats") }
+
   let(:valid_mutation_shape) do
     gql.mutation(:harvest_attempt_from_mapping) do |m|
-      m.prop(:harvest_attempt) do |hm|
-        hm[:id] = be_an_encoded_id.of_an_existing_model
-        hm[:slug] = be_an_encoded_slug
+      m.prop(:harvest_attempt) do |ha|
+        ha[:id] = be_an_encoded_id.of_an_existing_model
+        ha[:slug] = be_an_encoded_slug
+        ha[:mode] = "MANUAL"
+        ha[:note] = note
       end
     end
   end
@@ -45,11 +53,12 @@ RSpec.describe Mutations::HarvestAttemptFromMapping, type: :request, graphql: :m
   end
 
   shared_examples_for "a successful mutation" do
-    let(:expected_shape) { not_yet_implemented_shape }
+    let(:expected_shape) { valid_mutation_shape }
 
-    it "is not yet implemented" do
+    it "creates an attempt and enqueues it for extraction" do
       expect_request! do |req|
-        req.effect! keep_the_same(HarvestAttempt, :count)
+        req.effect! change(HarvestAttempt, :count).by(1)
+        req.effect! have_enqueued_job(Harvesting::ExtractRecordsJob).once
 
         req.data! expected_shape
       end

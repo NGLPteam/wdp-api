@@ -8,8 +8,15 @@ module Types
     TEXT
 
     implements Types::HasHarvestErrorsType
+    implements Types::HasHarvestExtractionMappingTemplateType
     implements Types::HasHarvestMetadataFormatType
     implements Types::QueriesHarvestMessage
+
+    field :current_state, ::Types::HarvestAttemptStateType, null: false do
+      description <<~TEXT
+      The current state of the attempt.
+      TEXT
+    end
 
     field :harvest_source, "::Types::HarvestSourceType", null: false do
       description <<~TEXT
@@ -65,9 +72,28 @@ module Types
       TEXT
     end
 
+    field :mode, ::Types::HarvestScheduleModeType, null: false do
+      description <<~TEXT
+      Whether this attempt is `MANUAL` or `SCHEDULED`. This field is not set
+      through the admin section, but derived from how the attempt was created.
+
+      `SCHEDULED` attempts are created by Meru internally
+      based on their `harvestMapping`'s configuration.
+      TEXT
+    end
+
+    field :scheduled_at, GraphQL::Types::ISO8601DateTime, null: true do
+      description <<~TEXT
+      This specifies the time the attempt is scheduled to run at, if the `mode` is `SCHEDULED`.
+      TEXT
+    end
+
+    load_association! :harvest_attempt_transitions, as: :transitions
     load_association! :harvest_mapping
     load_association! :harvest_set
     load_association! :harvest_source
     load_association! :target_entity
+
+    load_current_state!
   end
 end

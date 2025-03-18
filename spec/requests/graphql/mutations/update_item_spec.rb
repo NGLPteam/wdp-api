@@ -9,6 +9,7 @@ RSpec.describe Mutations::UpdateItem, type: :request, graphql: :mutation do
         visibility
         visibleAfterAt
         visibleUntilAt
+        harvestModificationStatus
         thumbnail {
           alt
         }
@@ -26,9 +27,9 @@ RSpec.describe Mutations::UpdateItem, type: :request, graphql: :mutation do
   context "as an admin" do
     let(:token) { token_helper.build_token has_global_admin: true }
 
-    let!(:item) { FactoryBot.create :item, :with_thumbnail, title: old_title }
+    let_it_be(:old_title) { Faker::Lorem.unique.sentence }
 
-    let!(:old_title) { Faker::Lorem.unique.sentence }
+    let_it_be(:item, refind: true) { FactoryBot.create :item, :with_thumbnail, title: old_title }
 
     let!(:new_title) { Faker::Lorem.unique.sentence }
 
@@ -44,6 +45,7 @@ RSpec.describe Mutations::UpdateItem, type: :request, graphql: :mutation do
     let_mutation_input!(:visible_until_at) { nil }
     let_mutation_input!(:thumbnail) { new_thumbnail }
     let_mutation_input!(:clear_thumbnail) { false }
+    let_mutation_input!(:maintain_pristine_status) { false }
 
     let!(:expected_shape) do
       gql.mutation :update_item do |m|
@@ -82,6 +84,34 @@ RSpec.describe Mutations::UpdateItem, type: :request, graphql: :mutation do
           req.effect! keep_the_same { item.reload.title }
 
           req.data! expected_shape
+        end
+      end
+    end
+
+    context "when maintain_pristine_status = true" do
+      let_mutation_input!(:maintain_pristine_status) { true }
+
+      context "when the item is pristine" do
+        before do
+          item.pristine_for_harvest!
+        end
+
+        it "does nothing" do
+          expect_request! do |req|
+            req.effect! keep_the_same { item.reload.harvest_modification_status }
+          end
+        end
+      end
+
+      context "when the item has been modified" do
+        before do
+          item.modified_for_harvest!
+        end
+
+        it "restores the pristine status" do
+          expect_request! do |req|
+            req.effect! change { item.reload.harvest_modification_status }.from("modified").to("pristine")
+          end
         end
       end
     end

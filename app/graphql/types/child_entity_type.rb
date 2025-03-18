@@ -57,6 +57,14 @@ module Types
       argument :schema, String, required: true, description: "A fully-qualified name of a schema to look for."
     end
 
+    field :harvest_records, [::Types::HarvestRecordType, { null: false }], null: false do
+      description <<~TEXT
+      The harvest record(s) associated with the entity, with most recent harvest records sorted to the top.
+
+      It is technically possible for multiple harvest records to have affected an entity.
+      TEXT
+    end
+
     field :named_ancestors, [Types::NamedAncestorType, { null: false }], null: false do
       description <<~TEXT
       Fetch a list of named ancestors for this entity. This list is deterministically sorted
@@ -67,11 +75,9 @@ module Types
       TEXT
     end
 
-    field :in_community_ordering, "Types::OrderingEntryType", null: true do
-      argument :identifier, String, required: true do
-        description "The identifier of the community ordering to look for this entity within."
-      end
-    end
+    load_association! :community
+    load_association! :harvest_records
+    load_association! :named_ancestors
 
     # @todo Perhaps error on receiving an unknown association?
     # @param [String] name
@@ -84,25 +90,6 @@ module Types
     # @return [HierarchicalEntity, nil]
     def ancestor_of_type(schema:)
       Loaders::AncestorOfTypeLoader.for(schema).load(object)
-    end
-
-    # @return [Promise(Community)]
-    def community
-      Support::Loaders::AssociationLoader.for(object.class, :community).load(object)
-    end
-
-    # @return [Promise(ActiveRecord::Relation<EntityAncestor>)]
-    def named_ancestors
-      Support::Loaders::AssociationLoader.for(object.class, :named_ancestors).load(object)
-    end
-
-    # @todo Ensure by_entry is properly wrapped in a loader
-    def in_community_ordering(identifier:)
-      community.then do |comm|
-        Loaders::OrderingByIdentifierLoader.for(identifier).load(comm).then do |ordering|
-          Loaders::OrderingEntryLoader.for(ordering).load(object)
-        end
-      end
     end
   end
 end

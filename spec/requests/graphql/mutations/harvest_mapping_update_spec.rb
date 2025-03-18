@@ -23,6 +23,7 @@ RSpec.describe Mutations::HarvestMappingUpdate, type: :request, graphql: :mutati
 
   let_mutation_input!(:harvest_mapping_id) { existing_harvest_mapping.to_encoded_id }
   let_mutation_input!(:target_entity_id) { target_entity.to_encoded_id }
+  let_mutation_input!(:extraction_mapping_template) { Harvesting::Example.default_template_for("oai", "jats") }
 
   let(:valid_mutation_shape) do
     gql.mutation(:harvest_mapping_update) do |m|

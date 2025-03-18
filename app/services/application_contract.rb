@@ -14,6 +14,50 @@ class ApplicationContract < Dry::Validation::Contract
     key.failure(:invalid_harvest_identifier) unless value.present? && Harvesting::Types::VALID_IDENTIFIER.match?(value)
   end
 
+  register_macro :harvest_extraction_mapping_template do
+    MeruAPI::Container["harvesting.extraction.validate_mapping_template"].(value) do |m|
+      m.success do
+        # Intentionally left blank. Field is valid.
+      end
+
+      m.failure :invalid_mapping_template do |_, error_keys|
+        error_keys.each do |error_key|
+          key.failure(error_key)
+        end
+
+        key.failure(:"extraction_mapping_template.invalid")
+      end
+
+      m.failure do
+        # Fallback
+        # :nocov:
+        key.failure(:"extraction_mapping_template.invalid")
+        # :nocov:
+      end
+    end
+  end
+
+  register_macro :harvest_frequency_expression do
+    MeruAPI::Container["harvesting.schedules.parse"].(value) do |m|
+      m.success do
+        # Intentionally left blank. Field is valid.
+      end
+
+      m.failure :invalid_frequency_expression do |_, error_keys|
+        Array(error_keys).each do |error_key|
+          key.failure(error_key)
+        end
+      end
+
+      m.failure do
+        # Fallback
+        # :nocov:
+        key.failure(:"frequency_expression.invalid")
+        # :nocov:
+      end
+    end
+  end
+
   register_macro :slug_format do
     key.failure(:must_be_slug) unless AppTypes::SLUG_PATTERN.match? value
   end

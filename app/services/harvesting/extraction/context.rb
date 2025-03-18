@@ -14,7 +14,7 @@ module Harvesting
       # @return [Harvesting::Extraction::Mapping]
       attr_reader :mapping
 
-      # @return [<String>]
+      # @return [<Symbol>]
       attr_reader :mapping_errors
 
       # @return [HarvestMetadataFormat]

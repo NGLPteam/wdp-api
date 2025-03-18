@@ -16,7 +16,9 @@ module Types
     implements Types::QueriesEntities
     implements Types::QueriesHarvestAttempt
     implements Types::QueriesHarvestExample
+    implements Types::QueriesHarvestMapping
     implements Types::QueriesHarvestMessage
+    implements Types::QueriesHarvestRecord
     implements Types::QueriesHarvestSet
     implements Types::QueriesHarvestSource
     implements Types::QueriesSchemas

@@ -55,4 +55,6 @@ end
 
 Support::System.start(:security)
 
+Support::System.start(:active_model_types)
+
 Support::System.finalize!

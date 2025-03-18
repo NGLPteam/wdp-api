@@ -4,6 +4,7 @@ module Harvesting
   module Attempts
     # @see Harvesting::Attempts::Create
     class Creator < Support::HookBased::Actor
+      include AfterCommitEverywhere
       include Dry::Initializer[undefined: false].define -> do
         param :attemptable, Types::Attemptable
 
@@ -11,14 +12,20 @@ module Harvesting
 
         option :target_entity, Harvesting::Types::Target.optional, as: :provided_target_entity, optional: true
 
-        option :kind, Types::String, default: -> { "manual" }
+        option :occurrence, Harvesting::Types.Instance(::Harvesting::Schedules::Occurrence).optional, optional: true
 
-        option :description, Types::String, default: -> { "A test attempt for a #{attemptable.model_name.human}" }
+        option :mode, Types::String, default: -> { occurrence.present? ? "scheduled" : "manual" }
+
+        option :note, Types::String, default: -> { "A #{mode} attempt for a #{attemptable.model_name.human}" }
 
         option :extraction_mapping_template, Types::String.optional, optional: true, as: :provided_extraction_mapping_template
+
+        option :enqueue_extraction, Types::Bool, default: proc { false }
       end
 
       standard_execution!
+
+      delegate :scheduling_key, :scheduled_at, to: :occurrence, allow_nil: true
 
       # @return [String]
       attr_reader :extraction_mapping_template
@@ -58,7 +65,7 @@ module Harvesting
 
       wrapped_hook! def prepare
         @extraction_mapping_template = nil
-        @harvest_attempt = HarvestAttempt.new(kind:, description:)
+        @harvest_attempt = build_or_find_harvest_attempt
         @harvest_source = nil
         @harvest_mapping = nil
         @metadata_format = nil
@@ -112,9 +119,29 @@ module Harvesting
         # This should never reasonably fail.
         harvest_attempt.save!
 
-        yield harvest_attempt.create_configuration
+        yield harvest_attempt.create_configuration(force: scheduled_for_mapping?)
+
+        harvest_attempt.transition_to(:scheduled) if scheduled_for_mapping?
+
+        after_commit do
+          Harvesting::ExtractRecordsJob.perform_later(harvest_attempt) if enqueue_extraction
+        end
 
         super
+      end
+
+      private
+
+      def build_or_find_harvest_attempt
+        return HarvestAttempt.new(mode:, note:) unless scheduled_for_mapping?
+
+        attemptable.harvest_attempts.where(scheduling_key:).first_or_initialize do |ha|
+          ha.assign_attributes(mode:, note:, scheduled_at:)
+        end
+      end
+
+      def scheduled_for_mapping?
+        occurrence.present? && attemptable.kind_of?(HarvestMapping)
       end
     end
   end

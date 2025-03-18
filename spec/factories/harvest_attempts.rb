@@ -11,7 +11,7 @@ FactoryBot.define do
     harvest_set { nil }
     harvest_mapping { nil }
 
-    kind { "manual" }
+    mode { "manual" }
     metadata_format { "mods" }
 
     description { "A test harvesting attempt" }
