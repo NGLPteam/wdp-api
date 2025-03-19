@@ -7,6 +7,11 @@ RSpec.describe "Query.harvestMapping", type: :request do
       harvestMapping(slug: $slug) {
         id
         slug
+
+        harvestSource {
+          id
+          slug
+        }
       }
     }
     GRAPHQL

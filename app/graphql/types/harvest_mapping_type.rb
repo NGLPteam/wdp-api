@@ -18,6 +18,12 @@ module Types
     implements Types::HasHarvestOptionsType
     implements Types::QueriesHarvestMessage
 
+    field :harvest_source, "Types::HarvestSourceType", null: false do
+      description <<~TEXT
+      The harvest source this belongs to.
+      TEXT
+    end
+
     field :harvest_attempts, resolver: ::Resolvers::HarvestAttemptResolver do
       description <<~TEXT
       Attempts produced by this mapping.
@@ -83,6 +89,7 @@ module Types
       TEXT
     end
 
+    load_association! :harvest_source
     load_association! :target_entity
   end
 end

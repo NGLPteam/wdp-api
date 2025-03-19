@@ -12,6 +12,12 @@ module Types
     implements Types::HasHarvestMetadataFormatType
     implements Types::QueriesHarvestMessage
 
+    field :harvest_source, "Types::HarvestSourceType", null: false do
+      description <<~TEXT
+      The harvest source this belongs to.
+      TEXT
+    end
+
     field :identifier, String, null: false do
       description <<~TEXT
       A unique identifier for the record within the `HarvestSource`.
@@ -55,5 +61,6 @@ module Types
     end
 
     load_association! :harvest_entities
+    load_association! :harvest_source
   end
 end
