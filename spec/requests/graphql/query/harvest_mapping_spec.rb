@@ -12,6 +12,12 @@ RSpec.describe "Query.harvestMapping", type: :request do
           id
           slug
         }
+
+        harvestRecords {
+          nodes {
+            id
+          }
+        }
       }
     }
     GRAPHQL

@@ -24,7 +24,7 @@ class HarvestMapping < ApplicationRecord
 
   has_many :harvest_mapping_record_links, inverse_of: :harvest_mapping, dependent: :delete_all
 
-  has_many :harvest_records, through: :harvest_record_mapping_links
+  has_many :harvest_records, through: :harvest_mapping_record_links
 
   scope :by_target, ->(entity) { where(target_entity: entity) }
   scope :by_set, ->(set) { where(harvest_set: set) }
