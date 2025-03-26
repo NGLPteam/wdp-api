@@ -6,7 +6,9 @@
       <see-all-button-label>See All Journals</see-all-button-label>
       <see-all-ordering-identifier>journals</see-all-ordering-identifier>
       <selection-limit>3</selection-limit>
-      <selection-mode>dynamic</selection-mode>
+      <selection-mode>property</selection-mode>
+      <selection-fallback-mode>dynamic</selection-fallback-mode>
+      <selection-property-path>featured.journals</selection-property-path>
       <dynamic-ordering-definition>
         <filter>
           <schema namespace="nglp" identifier="journal"/>
@@ -19,12 +21,19 @@
       <selection-source>self</selection-source>
       <entity-context>none</entity-context>
       <title>Recent Journals</title>
+      <use-selection-fallback>true</use-selection-fallback>
       <variant>cards</variant>
+      <slots>
+        <block-header>Featured Journals</block-header>
+        <block-header-fallback>Recent Journals</block-header-fallback>
+      </slots>
     </descendant-list>
     <descendant-list>
       <background>light</background>
       <selection-limit>3</selection-limit>
-      <selection-mode>dynamic</selection-mode>
+      <selection-mode>property</selection-mode>
+      <selection-fallback-mode>dynamic</selection-fallback-mode>
+      <selection-property-path>featured.series</selection-property-path>
       <dynamic-ordering-definition>
         <filter>
           <schema namespace="nglp" identifier="series"/>
@@ -38,16 +47,20 @@
       <selection-source>self</selection-source>
       <show-hero-image>false</show-hero-image>
       <title>Recently Updated Paper Series</title>
+      <use-selection-fallback>true</use-selection-fallback>
       <variant>promos</variant>
       <slots>
-        <block-header>Recently Updated Paper Series</block-header>
+        <block-header>Featured Paper Series</block-header>
+        <block-header-fallback>Recently Updated Paper Series</block-header-fallback>
       </slots>
     </descendant-list>
     <descendant-list>
       <background>dark</background>
       <see-all-ordering-identifier>units</see-all-ordering-identifier>
       <selection-limit>12</selection-limit>
-      <selection-mode>dynamic</selection-mode>
+      <selection-mode>property</selection-mode>
+      <selection-fallback-mode>dynamic</selection-fallback-mode>
+      <selection-property-path>featured.units</selection-property-path>
       <dynamic-ordering-definition>
         <filter>
           <schema namespace="nglp" identifier="unit"/>
@@ -60,9 +73,11 @@
       <selection-source>self</selection-source>
       <show-hero-image>true</show-hero-image>
       <title>Research Units</title>
+      <use-selection-fallback>true</use-selection-fallback>
       <variant>compact</variant>
       <slots>
-        <block-header>Research Units</block-header>
+        <block-header>Featured Research Units</block-header>
+        <block-header-fallback>Research Units</block-header-fallback>
       </slots>
     </descendant-list>
     <descendant-list>
@@ -86,6 +101,7 @@
       <entity-context>full</entity-context>
       <show-hero-image>false</show-hero-image>
       <title/>
+      <use-selection-fallback>false</use-selection-fallback>
       <variant>summary</variant>
       <slots>
         <block-header>Recent Issues</block-header>
@@ -99,7 +115,9 @@
       <background>none</background>
       <see-all-button-label>See All Articles</see-all-button-label>
       <selection-limit>1</selection-limit>
-      <selection-mode>dynamic</selection-mode>
+      <selection-mode>property</selection-mode>
+      <selection-fallback-mode>dynamic</selection-fallback-mode>
+      <selection-property-path>featured.issue</selection-property-path>
       <dynamic-ordering-definition>
         <filter>
           <schema namespace="nglp" identifier="journal_issue"/>
@@ -115,12 +133,13 @@
       <entity-context>full</entity-context>
       <show-hero-image>true</show-hero-image>
       <see-all-ordering-identifier>issues</see-all-ordering-identifier>
-      <title>Most Recent Issue</title>
-      <use-selection-fallback>false</use-selection-fallback>
+      <title>Featured or Most Recent Issue</title>
+      <use-selection-fallback>true</use-selection-fallback>
       <show-nested-entities>true</show-nested-entities>
       <variant>summary</variant>
       <slots>
-        <block-header>Most Recent Issue</block-header>
+        <block-header>Featured Issue</block-header>
+        <block-header-fallback>Most Recent Issue</block-header-fallback>
       </slots>
     </descendant-list>
   </templates>
