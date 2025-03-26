@@ -15,6 +15,8 @@ module Harvesting
         include Dry::Effects::Handler.State(:render_data)
         include Dry::Effects.State(:render_data)
 
+        include Harvesting::WithLogger
+
         defines :render_configs, type: Harvesting::Extraction::RenderConfig::Map
 
         defines :renderable_attributes, type: Harvesting::Extraction::Types::SymbolList
@@ -45,10 +47,11 @@ module Harvesting
         end
 
         # @param [Harvesting::Extraction::RenderContext] render_context
+        # @param [Boolean] skip_process
         # @return [Dry::Monads::Success{ Symbol => Dry::Monads::Result }]
-        def rendered_attributes_for(render_context)
+        def rendered_attributes_for(render_context, skip_process: false)
           self.class.renderable_attributes.index_with do |attribute_name|
-            _liquid_render_for attribute_name, render_context
+            _liquid_render_for(attribute_name, render_context, skip_process:)
           end
         end
 
@@ -72,7 +75,7 @@ module Harvesting
           build_liquid_template_for source
         end
 
-        def _liquid_render_for(attribute_name, render_context)
+        def _liquid_render_for(attribute_name, render_context, skip_process: false)
           config = self.class.render_configs.fetch(attribute_name.to_sym)
 
           output = nil
@@ -81,12 +84,16 @@ module Harvesting
 
           template = _liquid_template_for(attribute_name)
 
+          instance_assigns = {}
+
           if template.nil?
             return RenderResult.new(config:, output: nil, errors:, data: EMPTY_HASH, no_template: true).to_monad
           end
 
           data = _wrap_liquid_render_for(attribute_name, render_context) do
             output = template.render(render_context.assigns, strict_filters: true, strict_variables: true)
+
+            instance_assigns.merge!(template.instance_assigns)
 
             template.errors.each do |error|
               errors << Harvesting::Extraction::Error.from(error)
@@ -97,7 +104,7 @@ module Harvesting
 
           RenderResult.new(config:, output: nil, errors:, data: EMPTY_HASH).to_monad
         else
-          RenderResult.new(config:, output:, errors:, data:).to_monad
+          RenderResult.new(config:, output:, errors:, data:, instance_assigns:, skip_process:).to_monad
         end
 
         # @return [Hash] captures and returns the render data

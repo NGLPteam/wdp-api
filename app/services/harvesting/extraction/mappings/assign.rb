@@ -10,6 +10,8 @@ module Harvesting
 
         attribute :name, ::Mappers::StrippedString
 
+        attribute :capture, :boolean, default: proc { false }
+
         attribute :template, ::Mappers::StrippedString
 
         render_attr! :template
@@ -17,6 +19,7 @@ module Harvesting
         xml do
           root "assign"
 
+          map_attribute "capture", to: :capture
           map_attribute "name", to: :name
 
           map_content to: :template
@@ -27,11 +30,15 @@ module Harvesting
         end
 
         # @param [Harvesting::Extraction::RenderContext] render_context
-        # @return [String, nil]
+        # @return [Object, String, nil]
         def value_for(render_context)
-          rendered_attributes_for(render_context) => { template:, }
+          rendered_attributes_for(render_context, skip_process: capture) => { template:, }
 
-          template.value_or(nil).presence
+          result = template.value_or(nil).presence
+
+          return result unless capture && result.kind_of?(Harvesting::Extraction::RenderResult)
+
+          result.instance_assigns[name]
         end
       end
     end

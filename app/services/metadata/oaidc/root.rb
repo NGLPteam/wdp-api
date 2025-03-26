@@ -21,7 +21,7 @@ module Metadata
       dc_element! :rights
 
       xml do
-        root "dc"
+        root "dc", mixed: true, ordered: true
 
         namespace OAI_DC_NS, "oai_dc"
 

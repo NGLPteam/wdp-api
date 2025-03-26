@@ -52,6 +52,9 @@ ActiveSupport::Inflector.inflections(:en) do |inflect|
   inflect.uncountable "MODS"
   inflect.uncountable "PREMIS"
   inflect.uncountable "XML"
+
+  inflect.irregular "table_of_contents", "tables_of_contents"
+  inflect.irregular "type_of_resource", "types_of_resource"
 end
 
 URLValidator = ActiveModel::Validations::UrlValidator

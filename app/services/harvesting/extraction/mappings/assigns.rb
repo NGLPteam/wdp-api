@@ -19,8 +19,11 @@ module Harvesting
 
           assignments.each do |assignment|
             # :nocov:
-            # Silently ignore reserved assignments
-            next if assignment.reserved?
+            if assignment.reserved?
+              logger.error "Tried to assign reserved name: `#{assignment.name}`; skipping"
+
+              next
+            end
             # :nocov:
 
             yield assignment
