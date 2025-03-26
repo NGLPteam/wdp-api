@@ -6,6 +6,8 @@ module Harvesting
     class Context
       extend ActiveModel::Callbacks
 
+      include Dry::Effects::Handler.Reader(:parent_metadata_context)
+
       include Dry::Initializer[undefined: false].define -> do
         param :metadata_format, Harvesting::Metadata::Types.Instance(::HarvestMetadataFormat)
 
@@ -13,7 +15,10 @@ module Harvesting
       end
 
       define_model_callbacks :initialize, only: %i[after]
-      define_model_callbacks :assigns
+      define_model_callbacks :setup
+      define_model_callbacks :assigns, :configuration
+
+      around_configuration :provide_metadata_context!
 
       # @return [{ String => Object }]
       attr_reader :assigns
@@ -29,7 +34,9 @@ module Harvesting
           set_up!
         end
 
-        build_assigns!
+        run_callbacks :configuration do
+          build_assigns!
+        end
       end
 
       private
@@ -61,6 +68,13 @@ module Harvesting
       ## @return [void]
       def build_common_assigns!
         @assigns[:record] = Harvesting::Drops::Record.new(harvest_record)
+      end
+
+      # @return [void]
+      def provide_metadata_context!
+        with_parent_metadata_context self do
+          yield
+        end
       end
 
       # A part of initialization that runs within the `initialize` callback stack,

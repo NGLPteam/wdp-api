@@ -8,11 +8,13 @@ module Harvesting
 
       attribute :config, RenderConfig
       attribute :data, Types::Hash.map(Types::Coercible::String, Types::Any).default(EMPTY_HASH)
+      attribute :instance_assigns, Types::Hash.map(Types::Coercible::String, Types::Any).default(EMPTY_HASH)
       attribute :errors, Types::Array.of(Harvesting::Extraction::Error).default(EMPTY_ARRAY)
 
       attribute :output, Types::Coercible::String
 
       attribute? :no_template, Types::Bool.default(false)
+      attribute? :skip_process, Types::Bool.default(false)
 
       alias no_template? no_template
 
@@ -24,7 +26,7 @@ module Harvesting
         if no_template?
           Success(nil)
         elsif valid?
-          config.process(self)
+          skip_process ? Success(self) : config.process(self)
         else
           Failure[:cannot_render, self]
         end

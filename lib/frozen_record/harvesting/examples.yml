@@ -9,6 +9,11 @@
   default: true
   protocol_name: "oai"
   metadata_format_name: "esploro"
+- id: default_mets
+  name: Default METS Mapping
+  default: true
+  protocol_name: "oai"
+  metadata_format_name: "mets"
 - id: empty
   name: "Barebones Template"
   default: false

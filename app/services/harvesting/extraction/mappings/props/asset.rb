@@ -11,7 +11,7 @@ module Harvesting
           attribute :url, :string
 
           render_attr! :kind, :asset_kind
-          render_attr! :mime_type, :mime_type
+          render_attr! :mime_type, :string
           render_attr! :name, :string
           render_attr! :url, :url
 

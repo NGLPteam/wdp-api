@@ -3,7 +3,7 @@
 module Metadata
   module OAIDC
     # @abstract
-    class AbstractRoot < ::Metadata::AbstractMapper
+    class AbstractRoot < ::Metadata::Shared::AbstractMapper
       OAI_DC_NS = "http://www.openarchives.org/OAI/2.0/oai_dc/"
 
       DC_NS = "http://purl.org/dc/elements/1.1/"
