@@ -25,6 +25,8 @@ class Community < ApplicationRecord
 
   has_many :users, through: :community_memberships
 
+  scope :currently_visible, -> { all }
+
   validates :title, presence: true
 
   alias_attribute :name, :title
@@ -39,6 +41,10 @@ class Community < ApplicationRecord
   # @return [ActiveRecord::Relation<Contribution>] a null relation
   def contributions
     CollectionContribution.none
+  end
+
+  def currently_visible?
+    true
   end
 
   # @return [:community]

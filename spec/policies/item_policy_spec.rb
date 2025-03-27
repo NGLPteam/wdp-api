@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
 RSpec.describe ItemPolicy, type: :policy do
-  let!(:user) { FactoryBot.create :user }
+  let_it_be(:user, refind: true) { FactoryBot.create :user }
 
-  let_it_be(:item) { FactoryBot.create :item }
+  let_it_be(:item, refind: true) { FactoryBot.create :item, title: "Item" }
 
-  let_it_be(:subitem) { FactoryBot.create :item, parent: item }
+  let_it_be(:subitem, refind: true) { FactoryBot.create :item, parent: item, title: "Subitem" }
 
-  let_it_be(:other_item) { FactoryBot.create :item }
+  let_it_be(:other_item, refind: true) { FactoryBot.create :item, title: "Other Item" }
 
   let_it_be(:contextual_role) { FactoryBot.create :role, :all_contextual }
 
@@ -16,7 +16,7 @@ RSpec.describe ItemPolicy, type: :policy do
   subject { described_class }
 
   context "as an admin" do
-    let!(:user) { FactoryBot.create :user, :admin }
+    let_it_be(:user) { FactoryBot.create :user, :admin }
 
     permissions ".scope" do
       subject { scope.resolve }
@@ -53,14 +53,14 @@ RSpec.describe ItemPolicy, type: :policy do
     end
 
     permissions ".scope" do
-      subject { scope.resolve }
-
-      it "includes what the user has read access to" do
-        is_expected.to include item, subitem
+      before do
+        other_item.update!(visibility: :hidden)
       end
 
-      it "excludes what a user can't see" do
-        is_expected.not_to include other_item
+      subject { scope.resolve }
+
+      it "excludes hidden records" do
+        is_expected.to exclude(other_item).and include(item, subitem)
       end
     end
 
@@ -92,11 +92,17 @@ RSpec.describe ItemPolicy, type: :policy do
   end
 
   context "as a random user with no permissions" do
+    let_it_be(:user) { FactoryBot.create :user }
+
     permissions ".scope" do
+      before do
+        other_item.update!(visibility: :hidden)
+      end
+
       subject { scope.resolve }
 
-      it "is empty" do
-        is_expected.to be_blank
+      it "excludes hidden records" do
+        is_expected.to exclude(other_item).and include(item, subitem)
       end
     end
 
@@ -124,13 +130,17 @@ RSpec.describe ItemPolicy, type: :policy do
   end
 
   context "as an anonymous user" do
-    let(:user) { AnonymousUser.new }
+    let_it_be(:user) { AnonymousUser.new }
 
     permissions ".scope" do
+      before do
+        other_item.update!(visibility: :hidden)
+      end
+
       subject { scope.resolve }
 
-      it "is empty" do
-        is_expected.to be_blank
+      it "excludes hidden records" do
+        is_expected.to exclude(other_item).and include(item, subitem)
       end
     end
 

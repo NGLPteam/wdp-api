@@ -43,7 +43,9 @@ module Templates
       wrapped_hook! def resolve
         return super if source_entity.blank?
 
-        @entities = Array(resolve_entities.value_or(EMPTY_ARRAY)).compact.take(selection_limit)
+        resolved = Array(resolve_entities.value_or(EMPTY_ARRAY))
+
+        @entities = only_visible(resolved).take(selection_limit)
 
         super
       end
@@ -54,6 +56,14 @@ module Templates
         # :nocov:
         Success EMPTY_ARRAY
         # :nocov:
+      end
+
+      private
+
+      # @param [<HierarchicalEntity, nil>] entities
+      # @return [<HierarchicalEntity>]
+      def only_visible(entities)
+        entities.compact.select { _1.currently_visible? }
       end
 
       class << self

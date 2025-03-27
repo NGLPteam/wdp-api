@@ -23,6 +23,8 @@ module LayoutInstance
 
     scope :with_template_instances, -> { includes(*template_instance_names) }
 
+    delegate :policy_class, to: :class
+
     validates :generation, presence: true
 
     after_save :clear_template_instances!
@@ -100,6 +102,10 @@ module LayoutInstance
     # @return [ActiveRecord::Relation<LayoutInstance>]
     def limited_to_layout_definitions(*definitions)
       joins(:layout_definition).merge(layout_record.definition_klass.limited_to(*definitions))
+    end
+
+    def policy_class
+      LayoutInstancePolicy
     end
 
     def template_kinds!(...)

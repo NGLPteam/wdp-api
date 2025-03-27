@@ -1,20 +1,20 @@
 # frozen_string_literal: true
 
 RSpec.describe CommunityPolicy, type: :policy do
-  let!(:user) { FactoryBot.create :user }
+  let_it_be(:user, refind: true) { FactoryBot.create :user }
 
-  let!(:community) { FactoryBot.create :community }
+  let_it_be(:community, refind: true) { FactoryBot.create :community, title: "Community" }
 
-  let!(:other_community) { FactoryBot.create :community }
+  let_it_be(:other_community, refind: true) { FactoryBot.create :community, title: "Other Community" }
 
-  let!(:manager_role) { Role.fetch :manager }
+  let_it_be(:manager_role, refind: true) { Role.fetch :manager }
 
   let!(:scope) { described_class::Scope.new(user, Community.all) }
 
   subject { described_class }
 
   context "as a user with admin access" do
-    let!(:user) { FactoryBot.create :user, :admin }
+    let_it_be(:user) { FactoryBot.create :user, :admin }
 
     permissions ".scope" do
       subject { scope.resolve }
@@ -43,12 +43,8 @@ RSpec.describe CommunityPolicy, type: :policy do
     permissions ".scope" do
       subject { scope.resolve }
 
-      it "include what a user has access to" do
-        is_expected.to include community
-      end
-
-      it "excludes what a user can't see" do
-        is_expected.not_to include other_community
+      it "includes everything" do
+        is_expected.to include community, other_community
       end
     end
 
@@ -86,13 +82,13 @@ RSpec.describe CommunityPolicy, type: :policy do
   end
 
   context "as a user with no special access" do
-    let!(:user) { FactoryBot.create :user }
+    let_it_be(:user) { FactoryBot.create :user }
 
     permissions ".scope" do
       subject { scope.resolve }
 
-      it "includes nothing" do
-        is_expected.to be_blank
+      it "includes all communities" do
+        is_expected.to include(community, other_community)
       end
     end
 
@@ -110,13 +106,13 @@ RSpec.describe CommunityPolicy, type: :policy do
   end
 
   context "as an anonymous user" do
-    let!(:user) { AnonymousUser.new }
+    let_it_be(:user) { AnonymousUser.new }
 
     permissions ".scope" do
       subject { scope.resolve }
 
-      it "includes nothing" do
-        is_expected.to be_blank
+      it "includes all communities" do
+        is_expected.to include(community, other_community)
       end
     end
 

@@ -5,6 +5,7 @@ module HierarchicalEntity
   extend DefinesMonadicOperation
 
   include AssociationHelpers
+  include ChecksContextualPermissions
   include ConfiguresContributionRole
   include EntityTemplating
   include HasHarvestLookupHelpers
@@ -21,7 +22,11 @@ module HierarchicalEntity
     include ImageUploader::Attachment.new(:hero_image)
     include ImageUploader::Attachment.new(:thumbnail)
 
+    contextual_permission_primary_key :id
+
     has_many :announcements, as: :entity, dependent: :destroy
+
+    has_many :authorizing_entities, as: :hierarchical, inverse_of: :hierarchical, dependent: :delete_all
 
     has_many :hierarchical_entity_entries, as: :hierarchical, dependent: :destroy,
       class_name: "Entity"
@@ -412,21 +417,4 @@ module HierarchicalEntity
   end
 
   # @!endgroup
-
-  module ClassMethods
-    # @param [User] user
-    # @return [ActiveRecord::Relation<HierarchicalEntity>]
-    def readable_by(user)
-      with_permitted_actions_for(user, "self.read")
-    end
-
-    # @param [User] user
-    # @param [<String>] actions
-    # @return [ActiveRecord::Relation<HierarchicalEntity>]
-    def with_permitted_actions_for(user, *actions)
-      constraint = ContextualSinglePermission.for_hierarchical_type(model_name.to_s).with_permitted_actions_for(user, *actions).select(:hierarchical_id)
-
-      where(id: constraint)
-    end
-  end
 end

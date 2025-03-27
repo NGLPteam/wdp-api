@@ -6,6 +6,7 @@
 #
 # In future, it will also be used to insert linked entries into the hierarchy.
 class Entity < ApplicationRecord
+  include ChecksContextualPermissions
   include FiltersByEntityScope
   include FiltersBySchemaVersion
   include ScopesForHierarchical
@@ -18,13 +19,17 @@ class Entity < ApplicationRecord
 
   belongs_to :entity, polymorphic: true
   belongs_to :hierarchical, polymorphic: true
-  belongs_to :schema_version
+  belongs_to :schema_version, inverse_of: :entities
 
   has_one :schema_definition, through: :schema_version
+
+  contextual_permission_primary_key :entity_id
 
   CONTEXTUAL_TUPLE = %i[hierarchical_type hierarchical_id].freeze
 
   ENTITY_TUPLE = %i[entity_type entity_id].freeze
+
+  has_many :authorizing_entities, inverse_of: :entity, dependent: :delete_all
 
   has_many_readonly :contextual_permissions, primary_key: CONTEXTUAL_TUPLE, foreign_key: CONTEXTUAL_TUPLE
 

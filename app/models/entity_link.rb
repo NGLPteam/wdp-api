@@ -9,6 +9,7 @@ class EntityLink < ApplicationRecord
   include HasSystemSlug
   include ManualListTarget
   include MatchesScopes
+  include ReferencesEntityVisibility
   include SyncsEntities
   include TimestampScopes
 
@@ -17,6 +18,8 @@ class EntityLink < ApplicationRecord
   belongs_to :source, polymorphic: true
   belongs_to :target, polymorphic: true
   belongs_to :schema_version, inverse_of: :entity_links
+
+  has_one_readonly :entity_visibility, primary_key: %i[target_type target_id], foreign_key: %i[entity_type entity_id]
 
   has_one :schema_definition, through: :schema_version
 

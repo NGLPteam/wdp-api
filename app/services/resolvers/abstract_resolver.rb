@@ -29,6 +29,13 @@ module Resolvers
     # @return [User, AnonymousUser]
     attr_reader :current_user
 
+    # If the resolver's {#object} is a {User}, then this will be that.
+    # Otherwise, it will be {#current_user}.
+    #
+    # @see #from_user?
+    # @return [User, AnonymousUser]
+    attr_reader :relative_user
+
     delegate :has_admin_access?, to: :current_user, allow_nil: true
 
     def initialize(...)
@@ -37,6 +44,8 @@ module Resolvers
       reorder_search_params!
 
       @current_user = context&.[](:current_user) || AnonymousUser.new
+
+      @relative_user = from_user? ? object : current_user
     end
 
     def params=(params)
@@ -50,6 +59,13 @@ module Resolvers
     # @return [Integer]
     def count
       @count ||= fetch_count
+    end
+
+    # Whether this resolver is resolving from a user record.
+    #
+    # @see #relative_user
+    def from_user?
+      object.present? && object.kind_of?(User) || object.kind_of?(AnonymousUser)
     end
 
     # @return [ActiveRecord::Relation]

@@ -64,7 +64,7 @@ RSpec.describe "Query.harvestMapping", type: :request do
 
   as_a_regular_user do
     context "when looking for an existing model" do
-      include_examples "a found record"
+      include_examples "a not found record"
     end
 
     context "when looking for an unknown model" do
@@ -76,7 +76,7 @@ RSpec.describe "Query.harvestMapping", type: :request do
 
   as_an_anonymous_user do
     context "when looking for an existing model" do
-      include_examples "a found record"
+      include_examples "a not found record"
     end
 
     context "when looking for an unknown model" do

@@ -3,6 +3,7 @@
 module Resolvers
   # A resolver for getting the first-matching {Collection} below a {Collection}.
   class SingleSubcollectionResolver < AbstractResolver
+    include Resolvers::Enhancements::AppliesPolicyScope
     include Resolvers::Enhancements::FirstMatching
     include Resolvers::OrderedAsEntity
     include Resolvers::Subtreelike

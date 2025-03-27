@@ -97,12 +97,20 @@ module AnonymousInterface
     "Anonymous User"
   end
 
+  def policy_class
+    ::UserPolicy
+  end
+
   # {AnonymousUser Anonymous users} are non-blank for purposes of object presence.
   #
   # @note Because of Naught's treatment of predicates, this would return `false`
   #   unless subsequently overridden.
   def present?
     true
+  end
+
+  def respond_to_missing?(method_name, include_private = false)
+    AnonymousUser.empty_user.respond_to?(method_name, include_private) || super
   end
 
   # @see RelayNode::IdFromObject
@@ -135,6 +143,14 @@ module AnonymousInterface
     # @return [AnonymousUser]
     def find(*)
       new
+    end
+
+    def empty_user
+      @empty_user ||= User.new
+    end
+
+    def policy_class
+      ::UserPolicy
     end
   end
 end

@@ -16,6 +16,8 @@ module TemplateInstance
 
     has_one :instance_digest, as: :template_instance, class_name: "Templates::InstanceDigest", dependent: :destroy
 
+    delegate :policy_class, to: :class
+
     has_many_readonly :prev_siblings, -> { for_prev }, as: :template_instance, class_name: "Templates::InstanceSibling"
     has_many_readonly :next_siblings, -> { for_next }, as: :template_instance, class_name: "Templates::InstanceSibling"
 
@@ -106,5 +108,9 @@ module TemplateInstance
     self.config = build_config!
   end
 
-  module ClassMethods; end
+  module ClassMethods
+    def policy_class
+      TemplateInstancePolicy
+    end
+  end
 end

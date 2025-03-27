@@ -51,7 +51,7 @@ module Schemas
       end
 
       wrapped_hook! def resolve
-        entries = OrderingEntryCandidate.query_for(dynamic)
+        entries = OrderingEntryCandidate.currently_visible.query_for(dynamic)
 
         query = OrderingEntryCandidate
           .with(entries:)

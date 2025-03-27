@@ -124,11 +124,9 @@ class HierarchicalEntityPolicy < ApplicationPolicy
 
   class Scope < Scope
     def resolve
-      return scope.all if user.has_global_admin_access?
+      return scope.all if admin_or_has_allowed_action?("admin.access")
 
-      return scope.none if user.anonymous?
-
-      scope.with_permitted_actions_for(user, "self.read")
+      scope.currently_visible
     end
   end
 end

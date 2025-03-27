@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Mutations::GrantAccess, type: :request, graphql: :mutation do
+RSpec.describe Mutations::GrantAccess, type: :request, graphql: :mutation, grants_access: true do
   let!(:current_user) { FactoryBot.create :user }
 
   let!(:token) { token_helper.build_token(from_user: current_user) }
@@ -15,14 +15,14 @@ RSpec.describe Mutations::GrantAccess, type: :request, graphql: :mutation do
   }
   GRAPHQL
 
-  let(:admin) { Role.fetch(:admin) }
-  let(:manager) { Role.fetch(:manager) }
-  let(:editor) { Role.fetch(:editor) }
-  let(:reader) { Role.fetch(:reader) }
+  let_it_be(:admin) { Role.fetch(:admin) }
+  let_it_be(:manager) { Role.fetch(:manager) }
+  let_it_be(:editor) { Role.fetch(:editor) }
+  let_it_be(:reader) { Role.fetch(:reader) }
 
-  let!(:community) { FactoryBot.create :community }
+  let_it_be(:community, refind: true) { FactoryBot.create :community }
 
-  let!(:entity) { FactoryBot.create :collection, community: }
+  let_it_be(:entity, refind: true) { FactoryBot.create :collection, community: }
   let!(:role) { reader }
   let!(:user) { FactoryBot.create :user }
 
@@ -126,7 +126,7 @@ RSpec.describe Mutations::GrantAccess, type: :request, graphql: :mutation do
 
   context "as a community manager" do
     before do
-      MeruAPI::Container["access.grant"].call(manager, on: community, to: current_user)
+      grant_access! manager, on: community, to: current_user
     end
 
     context "when granting reader access on an entity" do

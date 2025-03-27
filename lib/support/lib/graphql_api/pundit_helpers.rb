@@ -5,6 +5,8 @@ module Support
     module PunditHelpers
       extend ActiveSupport::Concern
 
+      ANONYMOUS = ::AnonymousUser.new
+
       # @param [ApplicationRecord] record
       # @param [Symbol] query
       # @param [Class<ApplicationPolicy>] policy_class
@@ -46,7 +48,7 @@ module Support
 
       # @return [Identities::Current]
       def pundit_user
-        @pundit_user ||= context[:current_identity].presence || Identities::Current.new
+        @pundit_user ||= context[:current_user].presence || ANONYMOUS
       end
 
       class_methods do
@@ -57,15 +59,16 @@ module Support
         # @raise [Pundit::NotAuthorizedError]
         # @return [ApplicationRecord]
         def pundit_authorize!(record, query, context, policy_class: nil)
-          current_identity = context[:current_identity] || Identities::Current.new
+          current_user = context[:current_user] || ANONYMOUS
 
-          policy = policy_class ? policy_class.new(current_identity, record) : Pundit.policy!(current_identity, record)
+          policy = policy_class ? policy_class.new(current_user, record) : Pundit.policy!(current_user, record)
 
           raise(Pundit::NotAuthorizedError, query:, record:, policy:) unless policy.public_send(query)
 
           return record
         end
 
+        # @see .pundit_authorize!
         def pundit_authorized?(...)
           pundit_authorize!(...)
         rescue Pundit::NotAuthorizedError

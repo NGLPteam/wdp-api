@@ -9,6 +9,8 @@
 class OrderingEntryCandidate < ApplicationRecord
   include View
 
+  include EntityAdjacent
+
   belongs_to :entity, polymorphic: true
   belongs_to :schema_version
 

@@ -21,6 +21,8 @@ module LayoutDefinition
 
     template_definition_names [].freeze
 
+    delegate :policy_class, to: :class
+
     scope :root, -> { where(entity_type: nil, entity_id: nil) }
     scope :leaf, -> { where(arel_table[:entity_type].not_eq(nil).and(arel_table[:entity_id].not_eq(nil))) }
 
@@ -58,6 +60,10 @@ module LayoutDefinition
   end
 
   module ClassMethods
+    def policy_class
+      LayoutDefinitionPolicy
+    end
+
     def template_kinds!(...)
       super
 

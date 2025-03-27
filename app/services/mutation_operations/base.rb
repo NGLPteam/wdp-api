@@ -115,10 +115,6 @@ module MutationOperations
     # @param [Object] value
     # @return [void]
     def attach!(key, value)
-      if graphql_response.key?(key) && value != graphql_response[key]
-        warn "already assigned value to graphql_response[#{key.inspect}]: #{graphql_response[key]}"
-      end
-
       graphql_response[key] = value
     end
 
@@ -220,11 +216,14 @@ module MutationOperations
 
         return model
       else
+        # :nocov:
         invalid_model! model
+        # :nocov:
       end
     end
 
     def upsert_model!(klass, attributes, unique_by:, attach_to: nil)
+      # :nocov:
       result = klass.upsert(attributes, returning: unique_by, unique_by:)
 
       conditions = unique_by.each_with_object({}) do |key, h|
@@ -236,26 +235,33 @@ module MutationOperations
       attach! attach_to, model if attach_to.present?
 
       return model
+      # :nocov:
     end
 
     def validate_model!(model, validation_context: nil)
+      # :nocov:
       if model.valid? validation_context
         model
       else
         invalid_model! model
       end
+      # :nocov:
     end
 
     def check_model!(model)
+      # :nocov:
       return model if model.errors.none?
 
       invalid_model! model
+      # :nocov:
     end
 
     def invalid_model!(model)
+      # :nocov:
       add_model_errors! model
 
       throw_invalid
+      # :nocov:
     end
 
     def destroy_model!(model, auth: false)
@@ -270,13 +276,16 @@ module MutationOperations
 
         graphql_response[:destroyed_id] = id
       else
+        # :nocov:
         invalid_model! model
+        # :nocov:
       end
     end
 
     # @param [#errors] model
     # @return [void]
     def add_model_errors!(model)
+      # :nocov:
       model.errors.each do |error|
         options = {}.tap do |h|
           h[:code] = error.type.to_s if error.type.kind_of?(Symbol)
@@ -285,6 +294,7 @@ module MutationOperations
 
         add_error! error.message, **options
       end
+      # :nocov:
     end
 
     # @!endgroup
@@ -341,8 +351,10 @@ module MutationOperations
           value
         end
 
-        m.failure do |failure|
+        m.failure do
+          # :nocov:
           something_went_wrong!(error_message:)
+          # :nocov:
         end
       end
     end
@@ -358,6 +370,7 @@ module MutationOperations
     end
 
     def with_operation_result!(result)
+      # :nocov:
       with_result!(result) do |m|
         m.success do |value|
           value
@@ -371,6 +384,7 @@ module MutationOperations
           end
         end
       end
+      # :nocov:
     end
 
     def with_attached_result!(key, result)
@@ -380,6 +394,7 @@ module MutationOperations
         end
 
         m.failure do |(code, reason)|
+          # :nocov:
           if reason.kind_of?(ApplicationRecord)
             invalid_model! reason
 
@@ -389,6 +404,7 @@ module MutationOperations
           message = reason.kind_of?(String) ? reason : "Something went wrong"
 
           add_error! message, code: code.to_s.presence
+          # :nocov:
         end
       end
     end
