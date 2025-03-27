@@ -9,6 +9,12 @@ RSpec.describe Mutations::UpdateCollection, type: :request, graphql: :mutation d
         visibility
         visibleAfterAt
         visibleUntilAt
+
+        requiredField: schemaProperty(fullPath: "required_field") {
+          ... on StringProperty {
+            content
+          }
+        }
       }
 
       schemaErrors {
@@ -24,42 +30,69 @@ RSpec.describe Mutations::UpdateCollection, type: :request, graphql: :mutation d
   }
   GRAPHQL
 
-  context "as an admin" do
-    let(:token) { token_helper.build_token has_global_admin: true }
+  let_it_be(:schema_version) { FactoryBot.create :schema_version, :required_collection, :v1 }
 
-    let(:schema_version) { SchemaVersion["default:collection"] }
+  let_it_be(:old_title) { Faker::Lorem.unique.sentence }
 
-    let!(:collection) { FactoryBot.create :collection, :with_thumbnail, schema: schema_version, title: old_title }
+  let_it_be(:existing_collection_attrs) do
+    {
+      schema: schema_version,
+      title: old_title,
+    }
+  end
 
-    let!(:old_title) { Faker::Lorem.unique.sentence }
+  let_it_be(:existing_collection, refind: true) { FactoryBot.create :collection, :with_thumbnail, **existing_collection_attrs }
 
-    let!(:new_title) { Faker::Lorem.unique.sentence }
+  let(:collection) { existing_collection }
 
-    let(:old_visibility) { collection.visibility.upcase }
-    let(:new_visibility) { old_visibility }
+  let!(:new_title) { Faker::Lorem.unique.sentence }
 
-    let(:new_thumbnail) { nil }
+  let(:old_visibility) { existing_collection.visibility.upcase }
+  let(:new_visibility) { old_visibility }
 
-    let_mutation_input!(:collection_id) { collection.to_encoded_id }
-    let_mutation_input!(:title) { new_title }
-    let_mutation_input!(:visibility) { new_visibility }
-    let_mutation_input!(:visible_after_at) { nil }
-    let_mutation_input!(:visible_until_at) { nil }
-    let_mutation_input!(:thumbnail) { new_thumbnail }
-    let_mutation_input!(:clear_thumbnail) { false }
+  let(:new_thumbnail) { nil }
 
-    let!(:expected_shape) do
-      gql.mutation(:update_collection, schema: true) do |m|
-        m.prop :collection do |c|
-          c[:title] = new_title
-          c[:visibility] = new_visibility
-        end
+  let_mutation_input!(:collection_id) { existing_collection.to_encoded_id }
+  let_mutation_input!(:title) { new_title }
+  let_mutation_input!(:visibility) { new_visibility }
+  let_mutation_input!(:visible_after_at) { nil }
+  let_mutation_input!(:visible_until_at) { nil }
+  let_mutation_input!(:thumbnail) { new_thumbnail }
+  let_mutation_input!(:clear_thumbnail) { false }
+
+  let!(:valid_mutation_shape) do
+    gql.mutation(:update_collection, schema: true) do |m|
+      m.prop :collection do |c|
+        c[:title] = new_title
+        c[:visibility] = new_visibility
       end
     end
+  end
+
+  let(:empty_mutation_shape) do
+    gql.empty_mutation :update_collection
+  end
+
+  shared_examples_for "an unauthorized mutation" do
+    let(:expected_shape) { empty_mutation_shape }
+
+    it "is not authorized" do
+      expect_request! do |req|
+        req.effect! execute_safely
+
+        req.unauthorized!
+
+        req.data! expected_shape
+      end
+    end
+  end
+
+  shared_examples_for "an authorized mutation" do
+    let(:expected_shape) { valid_mutation_shape }
 
     it "updates a collection" do
       expect_request! do |req|
-        req.effect! change { collection.reload.title }.from(old_title).to(new_title)
+        req.effect! change { existing_collection.reload.title }.from(old_title).to(new_title)
         req.effect! change(Layouts::MainInstance, :count).by(1)
         req.effect! have_enqueued_job(Entities::InvalidateAncestorLayoutsJob).once
         req.effect! have_enqueued_job(Entities::InvalidateDescendantLayoutsJob).once
@@ -89,36 +122,7 @@ RSpec.describe Mutations::UpdateCollection, type: :request, graphql: :mutation d
     end
 
     context "when applying schema properties" do
-      mutation_query! <<~GRAPHQL
-      mutation updateCollection($input: UpdateCollectionInput!) {
-        updateCollection(input: $input) {
-          collection {
-            title
-            visibility
-            visibleAfterAt
-            visibleUntilAt
-
-            requiredField: schemaProperty(fullPath: "required_field") {
-              ... on StringProperty {
-                content
-              }
-            }
-          }
-
-          schemaErrors {
-            base
-            hint
-            path
-            message
-            metadata
-          }
-
-          ... ErrorFragment
-        }
-      }
-      GRAPHQL
-
-      let(:schema_version) { FactoryBot.create :schema_version, :required_collection, :v1 }
+      let_it_be(:existing_collection) { FactoryBot.create :collection, schema: schema_version }
 
       let(:required_field) { nil }
       let(:optional_field) { nil }
@@ -146,9 +150,11 @@ RSpec.describe Mutations::UpdateCollection, type: :request, graphql: :mutation d
         let(:required_field) { "Some Required Text" }
 
         it "updates the collection" do
-          expect_the_default_request.to change { collection.reload.read_property_value!("required_field") }.to(required_field)
+          expect_request! do |req|
+            req.effect! change { collection.reload.read_property_value!("required_field") }.to(required_field)
 
-          expect_graphql_data expected_shape
+            req.data! expected_shape
+          end
         end
       end
 
@@ -164,9 +170,11 @@ RSpec.describe Mutations::UpdateCollection, type: :request, graphql: :mutation d
         end
 
         it "does not update the collection" do
-          expect_the_default_request.to keep_the_same { collection.reload.title }
+          expect_request! do |req|
+            req.effect! keep_the_same { collection.reload.title }
 
-          expect_graphql_data expected_shape
+            req.data! expected_shape
+          end
         end
       end
     end
@@ -175,7 +183,9 @@ RSpec.describe Mutations::UpdateCollection, type: :request, graphql: :mutation d
       let!(:clear_thumbnail) { true }
 
       it "removes the thumbnail" do
-        expect_the_default_request.to change { collection.reload.thumbnail.present? }.from(true).to(false)
+        expect_request! do |req|
+          req.effect! change { collection.reload.thumbnail.present? }.from(true).to(false)
+        end
       end
 
       context "with a new upload" do
@@ -194,9 +204,11 @@ RSpec.describe Mutations::UpdateCollection, type: :request, graphql: :mutation d
         end
 
         it "fails to change anything" do
-          expect_the_default_request.to keep_the_same { collection.reload.thumbnail.id }
+          expect_request! do |req|
+            req.effect! keep_the_same { collection.reload.thumbnail.id }
 
-          expect_graphql_data expected_shape
+            req.data! expected_shape
+          end
         end
       end
     end
@@ -205,9 +217,10 @@ RSpec.describe Mutations::UpdateCollection, type: :request, graphql: :mutation d
       let(:new_visibility) { "HIDDEN" }
 
       it "hides the collection and updates the timestamp" do
-        expect_the_default_request.to change { collection.reload.visibility }.from("visible").to("hidden").and(
-          change { collection.reload.hidden_at.present? }.from(false).to(true)
-        )
+        expect_request! do |req|
+          req.effect! change { collection.reload.visibility }.from("visible").to("hidden")
+          req.effect! change { collection.reload.hidden_at.present? }.from(false).to(true)
+        end
       end
     end
 
@@ -230,9 +243,11 @@ RSpec.describe Mutations::UpdateCollection, type: :request, graphql: :mutation d
         end
 
         it "updates the visibility" do
-          expect_the_default_request.to change { collection.reload.visibility }.from("visible").to("limited")
+          expect_request! do |req|
+            req.effect! change { collection.reload.visibility }.from("visible").to("limited")
 
-          expect_graphql_data expected_shape
+            req.data! expected_shape
+          end
         end
       end
 
@@ -251,9 +266,11 @@ RSpec.describe Mutations::UpdateCollection, type: :request, graphql: :mutation d
         end
 
         it "fails to update the visibility" do
-          expect_the_default_request.to keep_the_same { collection.reload.visibility }
+          expect_request! do |req|
+            req.effect! keep_the_same { collection.reload.visibility }
 
-          expect_graphql_data expected_shape
+            req.data! expected_shape
+          end
         end
       end
 
@@ -271,11 +288,41 @@ RSpec.describe Mutations::UpdateCollection, type: :request, graphql: :mutation d
         end
 
         it "fails to update the visibility" do
-          expect_the_default_request.to keep_the_same { collection.reload.visibility }
+          expect_request! do |req|
+            req.effect! keep_the_same { collection.reload.visibility }
 
-          expect_graphql_data expected_shape
+            req.data! expected_shape
+          end
         end
       end
     end
+  end
+
+  as_an_admin_user do
+    it_behaves_like "an authorized mutation"
+  end
+
+  context "as a user with manager access on an unrelated community", grants_access: true do
+    let_it_be(:other_community) { FactoryBot.create :community }
+
+    let_it_be(:manager_role) { FactoryBot.create :role, :manager }
+
+    let_it_be(:other_user, refind: true) { FactoryBot.create :user }
+
+    let(:current_user) { other_user }
+
+    before do
+      grant_access! manager_role, on: other_community, to: other_user
+    end
+
+    it_behaves_like "an unauthorized mutation"
+  end
+
+  as_a_regular_user do
+    it_behaves_like "an unauthorized mutation"
+  end
+
+  as_an_anonymous_user do
+    it_behaves_like "an unauthorized mutation"
   end
 end

@@ -4,6 +4,7 @@ module Templates
   # An individual entry in a {Templates::ManualList} for a given {Entity}.
   class ManualListEntry < ApplicationRecord
     include HasEphemeralSystemSlug
+    include ReferencesEntityVisibility
     include TimestampScopes
 
     pg_enum! :template_kind, as: :template_kind, allow_blank: false, suffix: :template
@@ -13,6 +14,8 @@ module Templates
 
     belongs_to :target, polymorphic: true,
       inverse_of: :incoming_manual_list_entries
+
+    has_one_readonly :entity_visibility, primary_key: %i[target_type target_id], foreign_key: %i[entity_type entity_id]
 
     scope :by_source, ->(source) { where(source:) }
     scope :by_target, ->(target) { where(target:) }

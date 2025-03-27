@@ -40,9 +40,10 @@ module Entities
     SQL
 
     # @param [String, nil] auth_path
+    # @param [HierarchicalEntity] source
     # @param [Boolean] stale
     # @return [Dry::Monads::Success(Integer)]
-    def call(auth_path: nil, source: nil, stale: true)
+    def call(auth_path: nil, source: nil, stale: false)
       query = [PREFIX, generate_infix_for(auth_path:, source:, stale:), SUFFIX]
 
       inserted = sql_insert!(*query)
@@ -55,9 +56,10 @@ module Entities
     # Generate an infix to possibly fit between {PREFIX} and {SUFFIX}.
     #
     # @param [String] auth_path
+    # @param [HierarchicalEntity] source
     # @param [Boolean] stale
     # @return [String]
-    def generate_infix_for(auth_path: nil, source: nil, stale: true)
+    def generate_infix_for(auth_path: nil, source: nil, stale: false)
       if auth_path.present?
         with_sql_template(<<~SQL.squish, path: connection.quote(auth_path))
         WHERE ent.auth_path @> %<path>s OR ent.auth_path <@ %<path>s

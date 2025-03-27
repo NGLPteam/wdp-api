@@ -24,7 +24,7 @@ module ReferencesEntityVisibility
       :currently_visible?,
       to: :actual_entity_visibility
 
-    scope :visible_at, ->(time) { joins(:entity_visibility).merge(EntityVisibility.visible_at(time)) }
+    scope :visible_at, ->(time) { left_outer_joins(:entity_visibility).merge(EntityVisibility.visible_at(time)) }
     scope :hidden_at, ->(time) { joins(:entity_visibility).merge(EntityVisibility.hidden_at(time)) }
 
     scope :currently_visible, -> { visible_at Time.current }

@@ -6,6 +6,12 @@
 class ApplicationPolicy
   extend Dry::Core::ClassAttributes
 
+  defines :always_readable, :readable_in_dev, type: Roles::Types::Bool
+
+  always_readable false
+
+  readable_in_dev false
+
   # @!scope class
   # @!attribute [rw] effective_permission_map
   # @return [Roles::Types::EffectivePermissionMap]
@@ -26,6 +32,14 @@ class ApplicationPolicy
     @record = record
   end
 
+  def always_readable?
+    self.class.always_readable
+  end
+
+  def readable_in_dev?
+    self.class.readable_in_dev && Rails.env.development?
+  end
+
   # This permission determines whether a given {#user}
   # has been granted read-access to the {#record}.
   #
@@ -37,11 +51,23 @@ class ApplicationPolicy
   # @abstract
   # @see #show?
   def read?
+    return true if always_readable? || readable_in_dev?
+
     admin_or_owns_resource?
   end
 
+  # Sometimes we need to allow read access specifically for use with mutation arguments
+  # in a way that differs from normal read access. This happens in other projects, but
+  # not here yet. This is here for support with {Types::AbstractModel.authorized?}.
+  #
+  # For the sake of mutations, assume arguments provided can always be read and worry
+  # about authorizing within the context of the mutation.
+  def read_for_mutation?
+    true
+  end
+
   def index?
-    show?
+    always_readable? || show?
   end
 
   # This determines whether an individual record can
@@ -50,7 +76,7 @@ class ApplicationPolicy
   # @abstract
   # @see #read?
   def show?
-    read?
+    always_readable? || read?
   end
 
   def create?
@@ -169,6 +195,11 @@ class ApplicationPolicy
   end
 
   class << self
+    # @return [void]
+    def always_readable!
+      always_readable true
+    end
+
     # @return [<String>]
     def effective_available_actions
       effective_permission_map.keys

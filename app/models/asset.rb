@@ -42,6 +42,11 @@ class Asset < ApplicationRecord
 
   delegate :original_filename, to: :attachment, allow_nil: true
 
+  # Compatibility for {EntityChildRecordPolicy}
+  def entity
+    attachable
+  end
+
   # We mask this with {#download_url} in order to track analytics of a download.
   #
   # @return [String]

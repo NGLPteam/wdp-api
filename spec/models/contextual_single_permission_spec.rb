@@ -1,17 +1,17 @@
 # frozen_string_literal: true
 
 RSpec.describe ContextualSinglePermission, type: :model do
-  let!(:role) { FactoryBot.create :role, :editor }
+  let_it_be(:role) { FactoryBot.create :role, :editor }
 
-  let!(:user) { FactoryBot.create :user }
+  let_it_be(:user) { FactoryBot.create :user }
 
-  let!(:community) { FactoryBot.create :community }
+  let_it_be(:community) { FactoryBot.create :community }
 
-  let!(:collection) { FactoryBot.create :collection, community: }
+  let_it_be(:collection, refind: true) { FactoryBot.create :collection, community: }
 
-  let!(:item) { FactoryBot.create :item, collection: }
+  let_it_be(:item, refind: true) { FactoryBot.create :item, collection: }
 
-  let!(:subitem) { FactoryBot.create :item, parent: item, collection: }
+  let_it_be(:subitem, refind: true) { FactoryBot.create :item, parent: item, collection: }
 
   let!(:accessible) { community }
 

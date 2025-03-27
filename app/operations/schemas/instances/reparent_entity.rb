@@ -10,14 +10,14 @@ module Schemas
     # beyond whether or not it is a valid edge, should happen at a
     # higher level than this service.
     #
+    # @see Entities::Reparent
+    # @see Entities::Reparenter
     # @see Schemas::Edges::Calculate
     # @see Schemas::Edges::ChildAttributesBuilder
     # @see Schemas::Edges::Edge
     class ReparentEntity
-      include Dry::Monads[:do, :result]
-      include MonadicPersistence
       include MeruAPI::Deps[
-        build_child_attributes: "schemas.edges.build_child_attributes",
+        implementation: "entities.reparent",
       ]
 
       # @param [HasSchemaDefinition] parent
@@ -25,31 +25,7 @@ module Schemas
       # @return [Dry::Monads::Success(ApplicationRecord)] the successfully-saved child record
       # @return [Dry::Monads::Failure(:unacceptable_edge, Schemas::Edges::Invalid)]
       def call(parent, child)
-        yield valid_instances! parent, child
-
-        attributes = yield build_child_attributes.(parent, child)
-
-        child.assign_attributes attributes
-
-        monadic_save child
-      end
-
-      private
-
-      # @param [HasSchemaDefinition] parent
-      # @param [HasSchemaDefinition] child
-      # @return [void]
-      def valid_instances!(parent, child)
-        yield valid_instance! parent
-        yield valid_instance! child
-
-        Success true
-      end
-
-      # @param [HasSchemaDefinition] model
-      # @return [void]
-      def valid_instance!(model)
-        Schemas::Types::SchemaInstance.try(model).to_monad
+        implementation.(parent, child)
       end
     end
   end

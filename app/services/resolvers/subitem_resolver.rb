@@ -3,7 +3,9 @@
 module Resolvers
   # A resolver for getting {Item}s below an {Item}.
   class SubitemResolver < AbstractResolver
+    include Resolvers::Enhancements::AppliesPolicyScope
     include Resolvers::Enhancements::PageBasedPagination
+    include Resolvers::FiltersByEntityPermission
     include Resolvers::OrderedAsEntity
     include Resolvers::Subtreelike
 

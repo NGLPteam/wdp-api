@@ -11,17 +11,44 @@ module Entities
     include Dry::Monads[:result]
     include QueryOperation
 
-    # Select all distinct `auth_path` values in {AuthorizingEntity}, that
-    # do not have a corresponding row in {Entity}, then delete them.
-    CLEANUP = <<~SQL.squish.strip_heredoc.squish.freeze
+    # Look for any authorizing entities that cannot be found in a calculated
+    # set of _all_ authorizing entities. This performs acceptably well with
+    # 250k rows extrapolated, but may need to be further refined with larger
+    # entity sets.
+    #
+    # @note When we upgrade to PG 17, the `MERGE` function `WHEN NOT MATCHED BY SOURCE`
+    #   should allow for a much more performant query.
+    CLEANUP = <<~SQL.strip_heredoc.squish.freeze
     DELETE FROM authorizing_entities ae
-    USING
-    (
-      SELECT DISTINCT ae.auth_path
-      FROM authorizing_entities ae
-      LEFT OUTER JOIN entities ent USING (auth_path)
-      WHERE ent.auth_path IS NULL
-    ) missing WHERE missing.auth_path = ae.auth_path
+    USING (
+      WITH calculated AS (
+        SELECT
+        ent.auth_path AS auth_path,
+        subent.id AS entity_id,
+        subent.scope,
+        subent.hierarchical_type,
+        subent.hierarchical_id
+        FROM entities ent
+        INNER JOIN entities subent ON ent.auth_path @> subent.auth_path
+        GROUP BY 1, 2, 3, 4, 5
+      )
+      SELECT
+        auth_path, entity_id, scope, hierarchical_type, hierarchical_id
+      FROM authorizing_entities
+      LEFT OUTER JOIN calculated USING (auth_path, entity_id, scope, hierarchical_type, hierarchical_id)
+      WHERE calculated.auth_path IS NULL
+    ) oddities
+    WHERE
+      oddities.auth_path = ae.auth_path
+      AND
+      oddities.entity_id = ae.entity_id
+      AND
+      oddities.scope = ae.scope
+      AND
+      oddities.hierarchical_type = ae.hierarchical_type
+      AND
+      oddities.hierarchical_id = ae.hierarchical_id
+    ;
     SQL
 
     # @return [Dry::Monads::Success(Integer)]

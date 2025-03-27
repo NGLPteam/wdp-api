@@ -3,6 +3,7 @@
 module Resolvers
   # A resolver for getting the first-matching {Item} below a {Item}.
   class SingleSubitemResolver < AbstractResolver
+    include Resolvers::Enhancements::AppliesPolicyScope
     include Resolvers::Enhancements::FirstMatching
     include Resolvers::OrderedAsEntity
     include Resolvers::Subtreelike

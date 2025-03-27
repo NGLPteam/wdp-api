@@ -683,6 +683,10 @@ RSpec/RepeatedExample:
 RSpec/ScatteredLet:
   Enabled: false
 
+# False positives that don't understand other context building helpers.
+RSpec/ScatteredSetup:
+  Enabled: false
+
 RSpec/SkipBlockInsideExample:
   Enabled: true
 

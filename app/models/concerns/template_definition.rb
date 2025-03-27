@@ -20,6 +20,8 @@ module TemplateDefinition
       where.not(position: positions)
     end
 
+    delegate :policy_class, to: :class
+
     before_validation :infer_config!
   end
 
@@ -61,5 +63,11 @@ module TemplateDefinition
   # @return [void]
   def infer_config!
     self.config = build_config!
+  end
+
+  module ClassMethods
+    def policy_class
+      TemplateDefinitionPolicy
+    end
   end
 end

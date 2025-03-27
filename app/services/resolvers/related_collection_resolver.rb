@@ -3,7 +3,9 @@
 module Resolvers
   # @see RelatedCollectionLink
   class RelatedCollectionResolver < AbstractResolver
+    include Resolvers::Enhancements::AppliesPolicyScope
     include Resolvers::Enhancements::PageBasedPagination
+    include Resolvers::FiltersByEntityPermission
     include Resolvers::OrderedAsEntity
 
     description "Retrieve linked collections of the same schema type"

@@ -2,7 +2,9 @@
 
 module Resolvers
   class CollectionResolver < AbstractResolver
+    include Resolvers::Enhancements::AppliesPolicyScope
     include Resolvers::Enhancements::PageBasedPagination
+    include Resolvers::FiltersByEntityPermission
     include Resolvers::OrderedAsEntity
     include Resolvers::Treelike
 

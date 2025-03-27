@@ -3,6 +3,12 @@
 RSpec.describe Community, type: :model do
   it_behaves_like "an entity with a reference"
 
+  let_it_be(:community, refind: true) { FactoryBot.create :community }
+
+  subject { community }
+
+  it { is_expected.to be_currently_visible }
+
   describe "#grant_system_roles!" do
     let!(:administrator) { FactoryBot.create :user, :admin }
 

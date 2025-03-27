@@ -120,20 +120,33 @@ class EntityVisibility < ApplicationRecord
     def build_visibility_scope_for(visibility, at: Time.current)
       visibility = ScopableVisibility[visibility]
 
-      quoted_timestamp = arel_cast(arel_quote(at), "timestamptz")
-
-      range_matches = arel_infix("@>", arel_table[:visibility_range], quoted_timestamp).then do |contains|
-        visibility == :hidden ? arel_not(contains) : contains
-      end
-
-      case_expr = Arel::Nodes::Case.new(arel_table[:visibility]).tap do |expr|
+      case_expr = arel_case arel_table[:visibility] do |expr|
         expr.when(arel_quote("visible")).then(visibility == :visible)
         expr.when(arel_quote("hidden")).then(visibility == :hidden)
-        expr.when(arel_quote("limited")).then(range_matches)
-        expr.else(visibility == :hidden)
+        expr.when(arel_quote("limited")).then(arel_visibility_range_matches(visibility, at:))
+        # We allow for the id to be `NULL` when this is `LEFT OUTER JOIN`ed,
+        # because we want to allow things like OrderingEntryCandidate to be
+        # able to contain communities when searching for visible entities.
+        #
+        # If we're looking for hidden things and there is no {EntityVisibility},
+        # assume it is hidden.
+        expr.else(visibility == :hidden || arel_table[:id].eq(nil))
       end
 
       where(case_expr)
+    end
+
+    private
+
+    # @param [:hidden, :visible] visibility
+    # @param [ActiveSupport::TimeWithZone] at
+    # @return [Arel::Nodes::InfixOperator("@>"), Arel::Nodes::Not(Arel::Nodes::InfixOperator("@>"))]
+    def arel_visibility_range_matches(visibility, at:)
+      quoted_timestamp = arel_cast(arel_quote(at), "timestamptz")
+
+      arel_infix("@>", arel_table[:visibility_range], quoted_timestamp).then do |contains|
+        visibility == :hidden ? arel_not(contains) : contains
+      end
     end
   end
 end

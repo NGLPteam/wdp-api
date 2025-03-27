@@ -2,7 +2,9 @@
 
 module Resolvers
   class SearchResultResolver < AbstractResolver
+    include Resolvers::Enhancements::AppliesPolicyScope
     include Resolvers::FiltersByEntityDescendantScope
+    include Resolvers::FiltersByEntityPermission
     include Resolvers::FiltersBySchemaName
     include Resolvers::FinalizesResults
     include Resolvers::OrderedAsEntity
