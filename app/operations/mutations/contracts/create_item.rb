@@ -4,7 +4,7 @@ module Mutations
   module Contracts
     class CreateItem < MutationOperations::Contract
       json do
-        required(:parent).filled(AppTypes.Instance(::Collection) | AppTypes.Instance(::Item))
+        required(:parent).filled(Support::GlobalTypes.Instance(::Collection) | Support::GlobalTypes.Instance(::Item))
         required(:schema_version_slug).filled(:string)
         optional(:doi).maybe(:string)
       end

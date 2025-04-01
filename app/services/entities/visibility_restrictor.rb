@@ -9,7 +9,7 @@ module Entities
   class VisibilityRestrictor
     include Dry::Initializer[undefined: false].define -> do
       option :user, Users::Types::Current, default: Users::Types::DEFAULT
-      option :visibility, Entities::Types::Visibility, default: proc { :visible }
+      option :visibility, Entities::Types::VisibilityFilter, default: proc { :visible }
       option :relation, Entities::Types::VisibilityRelation, default: proc { ::Entity.all }
     end
 

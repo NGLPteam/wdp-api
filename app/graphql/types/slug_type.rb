@@ -14,7 +14,7 @@ module Types
         when SCHEMA_SLUG_PATTERN then input_value
         when AnonymousUser::ID then AnonymousUser::ID
         else
-          MeruAPI::Container["slugs.decode_id"].call(input_value).value_or(nil)
+          Support::System["slugs.decode_id"].call(input_value).value_or(nil)
         end
       end
 
@@ -23,7 +23,7 @@ module Types
         when SCHEMA_SLUG_PATTERN then ruby_value
         when AnonymousUser::ID then AnonymousUser::ID
         else
-          MeruAPI::Container["slugs.encode_id"].call(ruby_value).value_or(nil)
+          Support::System["slugs.encode_id"].call(ruby_value).value_or(nil)
         end
       end
     end

@@ -33,13 +33,13 @@ module Resolvers
     # @api private
     class OrderPairBuilder
       include Dry::Initializer[undefined: false].define -> do
-        param :klass, AppTypes.Interface(:class_eval)
+        param :klass, Support::GlobalTypes.Interface(:class_eval)
 
-        param :base, AppTypes::Coercible::Symbol
+        param :base, ::Support::GlobalTypes::Coercible::Symbol
 
-        option :ascending_suffix, AppTypes::Coercible::Symbol, default: proc { :"#{base}_ascending" }
-        option :descending_suffix, AppTypes::Coercible::Symbol, default: proc { :"#{base}_descending" }
-        option :column, AppTypes::Coercible::Symbol, default: proc { base }
+        option :ascending_suffix, ::Support::GlobalTypes::Coercible::Symbol, default: proc { :"#{base}_ascending" }
+        option :descending_suffix, ::Support::GlobalTypes::Coercible::Symbol, default: proc { :"#{base}_descending" }
+        option :column, ::Support::GlobalTypes::Coercible::Symbol, default: proc { base }
       end
 
       def call

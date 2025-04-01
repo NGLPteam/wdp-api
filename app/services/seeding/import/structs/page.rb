@@ -9,7 +9,7 @@ module Seeding
 
         DefaultList = List.default { [] }
 
-        attribute :slug, AppTypes::Slug
+        attribute :slug, Support::GlobalTypes::Slug
         attribute :title, Seeding::Types::String
         attribute :body, Seeding::Types::String
         attribute? :hero_image, Seeding::Import::Structs::Assets::Any.optional

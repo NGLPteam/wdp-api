@@ -43,12 +43,6 @@ class ApplicationRecord < ActiveRecord::Base
       needle.gsub("%", "\\%").gsub("_", "\\_")
     end
 
-    def find_graphql_slug(slug)
-      id = MeruAPI::Container["slugs.decode_id"].call(slug).value!
-
-      find id
-    end
-
     # @param [<ApplicationRecord>] records
     # @return [ActiveRecord::Relation<ApplicationRecord>]
     def limited_to(*records)
@@ -57,7 +51,7 @@ class ApplicationRecord < ActiveRecord::Base
       id = records.flatten.map do |record|
         case record
         when self then record.id
-        when ::AppTypes::UUID then record
+        when ::Support::GlobalTypes::UUID then record
         end
       end.compact.uniq
 

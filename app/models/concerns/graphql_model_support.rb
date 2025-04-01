@@ -28,7 +28,7 @@ module GraphQLModelSupport
     # @raise [ActiveRecord::RecordNotFound]
     # @return [ApplicationRecord]
     def find_graphql_slug(slug)
-      id = Common::Container["slugs.decode_id"].call(slug).value!
+      id = Support::System["slugs.decode_id"].call(slug).value!
 
       find id
     end

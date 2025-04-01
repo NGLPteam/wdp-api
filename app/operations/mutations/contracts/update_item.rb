@@ -4,7 +4,7 @@ module Mutations
   module Contracts
     class UpdateItem < ApplicationContract
       json do
-        required(:item).value(AppTypes.Instance(::Item))
+        required(:item).value(Support::GlobalTypes.Instance(::Item))
         optional(:doi).maybe(:string)
       end
 

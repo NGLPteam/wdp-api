@@ -25,7 +25,7 @@ class AddIdentifierToRoles < ActiveRecord::Migration[6.1]
         add_index :roles, :system_slug, unique: true
 
         system_slugger = Role.ids.each_with_object(Arel::Nodes::Case.new(Role.arel_table[:id])) do |id, stmt|
-          slug = MeruAPI::Container["slugs.encode_id"].(id).value!
+          slug = Support::System["slugs.encode_id"].(id).value!
 
           stmt.when(Arel::Nodes.build_quoted(id)).then(Arel::Nodes.build_quoted(slug))
         end.to_sql

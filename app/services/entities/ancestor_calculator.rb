@@ -3,7 +3,7 @@
 module Entities
   class AncestorCalculator
     include Dry::Initializer[undefined: false].define -> do
-      param :descendant, AppTypes.Instance(::SyncsEntities)
+      param :descendant, Entities::Types::Syncable
     end
 
     include Dry::Monads[:do, :result]

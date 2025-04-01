@@ -165,7 +165,7 @@ module Contribution
     # @param ["asc", "desc"] direction
     # @return [ActiveRecord::Relation<Contribution>]
     def with_ordered_target_title(direction: "asc")
-      case AppTypes::SimpleSortDirection[direction]
+      case Support::GlobalTypes::SimpleSortDirection[direction]
       when "desc"
         joins(target_association_name).merge(target_klass.order(title: :desc))
       else

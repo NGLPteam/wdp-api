@@ -3,10 +3,10 @@
 module MutationOperations
   class ErrorCompiler
     include Dry::Initializer.define -> do
-      option :attribute_names, AppTypes::Array.of(AppTypes::String)
+      option :attribute_names, Support::GlobalTypes::Array.of(Support::GlobalTypes::String)
     end
 
-    include MeruAPI::Deps[normalize_path: "mutations.utility.normalize_path"]
+    include Support::Deps[normalize_path: "dry_mutations.normalize_attribute_path"]
 
     GLOBAL_PATH = %w[$global].freeze
 

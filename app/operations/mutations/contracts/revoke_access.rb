@@ -8,9 +8,9 @@ module Mutations
     # @see Mutations::Operations::RevokeAccess
     class RevokeAccess < MutationOperations::Contract
       json do
-        required(:entity).filled(AppTypes.Instance(HierarchicalEntity))
-        required(:role).filled(AppTypes.Instance(Role))
-        required(:user).filled(AppTypes.Instance(User))
+        required(:entity).filled(Support::GlobalTypes.Instance(HierarchicalEntity))
+        required(:role).filled(Support::GlobalTypes.Instance(Role))
+        required(:user).filled(Support::GlobalTypes.Instance(User))
       end
 
       rule(:entity, :role) do

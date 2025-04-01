@@ -4,7 +4,7 @@ module Mutations
   module Contracts
     class EntityVisibility < ApplicationContract
       json do
-        required(:visibility).filled(AppTypes::EntityVisibility)
+        required(:visibility).filled(::Entities::Types::Visibility)
         optional(:visible_after_at).maybe(:time)
         optional(:visible_until_at).maybe(:time)
       end

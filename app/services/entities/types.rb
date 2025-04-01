@@ -55,8 +55,10 @@ module Entities
 
     URL = String.constrained(http_uri: true)
 
+    Visibility = ApplicationRecord.dry_pg_enum(:entity_visibility)
+
     # @see ::Types::EntityVisibilityFilterType
-    Visibility = Symbol.enum(:all, :visible, :hidden).fallback(:visible)
+    VisibilityFilter = Symbol.enum(:all, :visible, :hidden).fallback(:visible)
 
     # A type matching an ActiveRecord::Relation scope that {ReferencesEntityVisibility}.
     #

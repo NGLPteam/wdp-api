@@ -25,7 +25,7 @@ module LazyOrdering
     end
 
     def lazy_order_expr_for(column, raw_direction: "asc")
-      direction = AppTypes::SimpleSortDirection[raw_direction]
+      direction = Support::GlobalTypes::SimpleSortDirection[raw_direction]
 
       method_name = :"#{column}_order_expression"
 

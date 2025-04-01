@@ -15,7 +15,7 @@ module ContextuallyDerivedConnection
 
   CONTEXT_KEY = %i[user_id hierarchical_type hierarchical_id].freeze
 
-  CONTEXT_PKEYS = AppTypes::Array.of(AppTypes::Coercible::Symbol).constrained(min_size: 1)
+  CONTEXT_PKEYS = Support::GlobalTypes::Array.of(Support::GlobalTypes::Coercible::Symbol).constrained(min_size: 1)
 
   class_methods do
     # @!macro [attach] belongs_to_contextual_permission

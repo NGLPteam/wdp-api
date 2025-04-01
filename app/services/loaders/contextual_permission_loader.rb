@@ -2,7 +2,7 @@
 
 module Loaders
   class ContextualPermissionLoader < GraphQL::Batch::Loader
-    HAS_CACHE_KEY = AppTypes.Interface(:loader_cache_key)
+    HAS_CACHE_KEY = ::Support::GlobalTypes.Interface(:loader_cache_key)
 
     # @!attribute [r] user
     # @return [User, AnonymousUser]

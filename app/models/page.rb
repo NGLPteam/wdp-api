@@ -10,7 +10,7 @@ class Page < ApplicationRecord
 
   validates :title, :slug, :body, presence: true
 
-  validates :slug, uniqueness: { scope: %i[entity_type entity_id] }, format: { with: AppTypes::SLUG_PATTERN }
+  validates :slug, uniqueness: { scope: %i[entity_type entity_id] }, format: { with: Support::GlobalTypes::SLUG_PATTERN }
 
   acts_as_list scope: :entity, add_new_at: :bottom
 
@@ -23,7 +23,7 @@ class Page < ApplicationRecord
   # @api private
   # @return [void]
   def normalize_slug!
-    return if AppTypes::SLUG_PATTERN.match? slug
+    return if Support::GlobalTypes::SLUG_PATTERN.match? slug
 
     self.slug = slug.to_s.underscore.dasherize
   end

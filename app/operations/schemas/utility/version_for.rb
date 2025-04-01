@@ -13,7 +13,7 @@ module Schemas
           thing
         when Entity, HasSchemaDefinition
           thing.schema_version
-        when AppTypes.Interface(:schema_version)
+        when ::Support::GlobalTypes.Interface(:schema_version)
           call(thing.schema_version)
         else
           raise TypeError, "Cannot get a SchemaVersion from #{thing.inspect}"

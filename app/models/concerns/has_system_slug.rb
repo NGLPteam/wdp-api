@@ -28,7 +28,7 @@ module HasSystemSlug
   # @param [String] slug_value
   # @return [void]
   def set_system_slug_with!(slug_value)
-    slugged = MeruAPI::Container["slugs.encode_id"].call(slug_value).value!
+    slugged = Support::System["slugs.encode_id"].call(slug_value).value!
 
     self.system_slug = slugged
   end

@@ -74,7 +74,7 @@ module Roles
 
       def build_permission_params_from(initial_value)
         case initial_value
-        when AppTypes::Bool
+        when Support::GlobalTypes::Bool
           permission_names.index_with { initial_value }
         when Hash
           initial_value.symbolize_keys.slice(*permission_names)

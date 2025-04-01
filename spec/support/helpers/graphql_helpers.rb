@@ -92,7 +92,7 @@ module TestHelpers
       end
 
       def generate_slug_for(uuid)
-        Common::Container["slugs.encode_id"].call(uuid).value_or(nil)
+        Support::System["slugs.encode_id"].call(uuid).value_or(nil)
       end
 
       def random_slug

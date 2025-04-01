@@ -6,9 +6,9 @@ module MutationOperations
       include Dry::Core::Equalizer.new(:name)
 
       include Dry::Initializer[undefined: false].define -> do
-        param :name, AppTypes::Symbol
+        param :name, ::Support::GlobalTypes::Symbol
 
-        option :image, AppTypes::Bool, default: false, optional: true
+        option :image, ::Support::GlobalTypes::Bool, default: false, optional: true
       end
 
       # Assign attachment values to a given model and mutably

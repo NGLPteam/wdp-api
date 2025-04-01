@@ -10,9 +10,9 @@ module MutationOperations
   class ContractMiddleware
     include Dry::Effects::Handler.Resolve
     include Dry::Initializer[undefined: false].define -> do
-      option :current_user, AppTypes::AnyUser, default: proc { AnonymousUser.new }
-      option :local_context, AppTypes::Hash, default: proc { {} }
-      option :edges, AppTypes::Hash, default: proc { {} }
+      option :current_user, ::Users::Types::Current, default: ::Users::Types::DEFAULT
+      option :local_context, Support::GlobalTypes::Hash, default: proc { {} }
+      option :edges, Support::GlobalTypes::Hash, default: proc { {} }
     end
 
     # @return [void]

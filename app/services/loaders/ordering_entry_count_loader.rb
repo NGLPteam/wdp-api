@@ -4,7 +4,7 @@ module Loaders
   # An ability to calculate the _currently_ visible entries for multiple
   # {Ordering} instances at query time.
   class OrderingEntryCountLoader < GraphQL::Batch::Loader
-    UUID_V4 = AppTypes::String.constrained(uuid_v4: true)
+    UUID_V4 = Support::GlobalTypes::String.constrained(uuid_v4: true)
 
     # @param [<Ordering>] orderings
     def perform(orderings)

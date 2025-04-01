@@ -11,11 +11,11 @@ module Schemas
       include Dry::Core::Equalizer.new(:name, :version, immutable: true, inspect: false)
       include Dry::Monads[:result]
 
-      param :name, AppTypes::String
+      param :name, Support::GlobalTypes::String
       param :version, AppTypes::SemanticVersion
-      param :path, AppTypes.Instance(Pathname)
+      param :path, Support::GlobalTypes.Instance(Pathname)
 
-      option :namespace, AppTypes::String.optional, default: proc {}
+      option :namespace, Support::GlobalTypes::String.optional, default: proc {}
 
       delegate :[], :dig, :slice, to: :raw_data
 

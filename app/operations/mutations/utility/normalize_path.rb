@@ -14,7 +14,7 @@ module Mutations
         return BASE if path.nil?
 
         fetch_or_store path do
-          AppTypes::AttributePath[path].map do |part|
+          ::Support::DryMutations::Types::AttributePath[path].map do |part|
             part.kind_of?(Integer) ? part : part.camelize(:lower)
           end.presence || BASE
         end

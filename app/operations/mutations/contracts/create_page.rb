@@ -4,7 +4,7 @@ module Mutations
   module Contracts
     class CreatePage < ApplicationContract
       json do
-        required(:entity).value(AppTypes.Instance(HierarchicalEntity))
+        required(:entity).value(Support::GlobalTypes.Instance(HierarchicalEntity))
         required(:slug).filled("coercible.string")
       end
 

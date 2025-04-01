@@ -21,7 +21,7 @@ module Schemas
           parsed = Regexp.last_match.named_captures.symbolize_keys
 
           look_up_by_slug needle, **parsed
-        when AppTypes::UUID
+        when ::Support::GlobalTypes::UUID
           look_up_by_id needle
         when ::SchemaVersion
           Success needle

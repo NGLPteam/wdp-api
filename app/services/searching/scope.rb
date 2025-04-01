@@ -7,7 +7,7 @@ module Searching
     include Dry::Initializer[undefined: false].define -> do
       option :user, Users::Types::Current, default: Users::Types::DEFAULT
       option :origin, Searching::Types::Origin, default: proc { :global }
-      option :visibility, Entities::Types::Visibility, default: proc { :visible }
+      option :visibility, Entities::Types::VisibilityFilter, default: proc { :visible }
       option :max_depth, Searching::Types::MaxDepth.optional, optional: true
 
       option :auth_state, Users::Types::State, default: proc { user }

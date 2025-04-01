@@ -85,7 +85,7 @@ module MutationOperations
       def check_contract!(contract)
         case contract
         when Dry::Validation::Contract then contract
-        when AppTypes.Inherits(Dry::Validation::Contract) then contract.new
+        when ::Support::GlobalTypes.Inherits(Dry::Validation::Contract) then contract.new
         when String, Symbol
           lookup_mutation_contract contract
         else

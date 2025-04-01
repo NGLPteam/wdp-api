@@ -4,8 +4,8 @@ module APIWrapper
   class Wrapper
     include Dry::Core::Memoizable
     include Dry::Initializer[undefined: false].define -> do
-      param :client, AppTypes.Instance(::GraphQL::Client)
-      param :token, AppTypes::String.optional
+      param :client, ::Support::Types.Instance(::GraphQL::Client)
+      param :token, ::Support::Types::String.optional
     end
 
     def viewer

@@ -87,9 +87,9 @@ module QueryOperation
   # @return [String]
   def with_quoted_id_or_ids_on(prefix, id_or_ids, column: :id)
     case id_or_ids
-    when AppTypes::UUIDList
+    when ::Support::GlobalTypes::UUIDList
       arel_table_for(prefix)[column].in(id_or_ids).to_sql
-    when AppTypes::UUID
+    when ::Support::GlobalTypes::UUID
       arel_table_for(prefix)[column].eq(id_or_ids).to_sql
     else
       ""

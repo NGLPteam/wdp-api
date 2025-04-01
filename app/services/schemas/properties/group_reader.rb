@@ -8,9 +8,9 @@ module Schemas
     #
     # @see Types::Schematic::GroupPropertyType
     class GroupReader < BaseReader
-      option :group, AppTypes.Instance(Schemas::Properties::GroupDefinition)
-      option :context, AppTypes.Instance(Schemas::Properties::Context), default: proc { Schemas::Properties::Context.new }
-      option :properties, AppTypes::Array.of(AppTypes.Instance(Schemas::Properties::Reader)), default: proc { [] }
+      option :group, Support::GlobalTypes.Instance(Schemas::Properties::GroupDefinition)
+      option :context, Support::GlobalTypes.Instance(Schemas::Properties::Context), default: proc { Schemas::Properties::Context.new }
+      option :properties, Support::GlobalTypes::Array.of(Support::GlobalTypes.Instance(Schemas::Properties::Reader)), default: proc { [] }
 
       delegate :legend, :full_path, :path, to: :group
       delegate_missing_to :group

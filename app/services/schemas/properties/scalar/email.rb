@@ -13,7 +13,7 @@ module Schemas
         schema_type! :string
 
         config.schema_predicates = {
-          format?: AppTypes::EMAIL_PATTERN
+          format?: Support::GlobalTypes::EMAIL_PATTERN
         }
 
         config.graphql_value_key = :address

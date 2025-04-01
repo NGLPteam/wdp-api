@@ -82,14 +82,6 @@ class User < ApplicationRecord
     /@example\./.match?(email) || metadata["testing"]
   end
 
-  def normalize_testing!
-    call_operation("users.normalize_testing", self)
-  end
-
-  def sync_testing!
-    call_operation("users.sync_testing", self)
-  end
-
   def to_whoami
     {
       anonymous: false,

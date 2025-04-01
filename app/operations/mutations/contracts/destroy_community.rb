@@ -4,7 +4,7 @@ module Mutations
   module Contracts
     class DestroyCommunity < ApplicationContract
       json do
-        required(:community).filled(AppTypes.Instance(Community))
+        required(:community).filled(Support::GlobalTypes.Instance(Community))
       end
 
       rule(:community) do

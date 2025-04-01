@@ -13,7 +13,7 @@ module Schemas
       include Dry::Core::Memoizable
       include Enumerable
 
-      param :name, AppTypes::String
+      param :name, ::Support::GlobalTypes::String
 
       version_klass Schemas::Static::Version
 

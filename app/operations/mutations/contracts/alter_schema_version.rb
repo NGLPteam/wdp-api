@@ -7,7 +7,7 @@ module Mutations
     # @see Mutations::Operations::AlterSchemaVersion
     class AlterSchemaVersion < MutationOperations::Contract
       json do
-        required(:entity).filled(AppTypes.Instance(HasSchemaDefinition))
+        required(:entity).filled(Support::GlobalTypes.Instance(HasSchemaDefinition))
         required(:schema_version_slug).filled(:string)
       end
 

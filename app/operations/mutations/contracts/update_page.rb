@@ -4,7 +4,7 @@ module Mutations
   module Contracts
     class UpdatePage < ApplicationContract
       json do
-        required(:page).value(AppTypes.Instance(::Page))
+        required(:page).value(Support::GlobalTypes.Instance(::Page))
         required(:slug).filled("coercible.string")
       end
 

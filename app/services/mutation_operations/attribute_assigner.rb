@@ -4,7 +4,7 @@ module MutationOperations
   # @api private
   class AttributeAssigner
     include Dry::Initializer[undefined: false].define -> do
-      option :attachments, AppTypes::Array.of(AppTypes.Instance(MutationOperations::Attachments::Attribute))
+      option :attachments, ::Support::GlobalTypes::Array.of(::Support::GlobalTypes.Instance(MutationOperations::Attachments::Attribute))
     end
 
     # @param [ApplicationRecord] model

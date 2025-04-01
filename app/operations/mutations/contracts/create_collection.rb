@@ -6,7 +6,7 @@ module Mutations
     # @see Mutations::Operations::CreateCollection
     class CreateCollection < MutationOperations::Contract
       json do
-        required(:parent).filled(AppTypes.Instance(::Community) | AppTypes.Instance(::Collection))
+        required(:parent).filled(Support::GlobalTypes.Instance(::Community) | Support::GlobalTypes.Instance(::Collection))
         required(:schema_version_slug).filled(:string)
 
         optional(:doi).maybe(:string)

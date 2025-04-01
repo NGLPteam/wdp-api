@@ -4,9 +4,9 @@ module MutationOperations
   module Attachments
     class ContractBuilder
       include Dry::Initializer[undefined: false].define -> do
-        param :name, AppTypes::Symbol
+        param :name, ::Support::GlobalTypes::Symbol
 
-        option :image, AppTypes::Bool, default: false, optional: true
+        option :image, ::Support::GlobalTypes::Bool, default: false, optional: true
       end
 
       def call

@@ -2,7 +2,7 @@
 
 module Utility
   class Schemafy
-    IS_STRUCT = AppTypes.Inherits(Dry::Struct)
+    IS_STRUCT = ::Support::GlobalTypes.Inherits(Dry::Struct)
 
     def call(schemalike)
       case schemalike
@@ -29,7 +29,7 @@ module Utility
             if converter.array_of_structs?(k)
               inner_schema = converter.struct_to_schema k.type.type.member
 
-              inner_type = AppTypes::Array.of(inner_schema.type_schema).default { [] }
+              inner_type = ::Support::GlobalTypes::Array.of(inner_schema.type_schema).default { [] }
 
               public_send(macro, k.name).value(inner_type)
             else

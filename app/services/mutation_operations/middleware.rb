@@ -13,13 +13,13 @@ module MutationOperations
 
     TO_RESULT = MonadHelpers::ToResult.new
 
-    option :context, AppTypes.Interface(:[])
-    option :now, AppTypes.Interface(:call), default: proc { proc { Time.current } }
-    option :mutation, AppTypes.Instance(Mutations::BaseMutation).optional, optional: true
-    option :operation_name, AppTypes::String.optional
-    option :attribute_names, AppTypes::Array.of(AppTypes::String)
-    option :transient_arguments, AppTypes::Array.of(AppTypes::Symbol)
-    option :error_compiler, AppTypes.Instance(MutationOperations::ErrorCompiler),
+    option :context, ::Support::GlobalTypes.Interface(:[])
+    option :now, ::Support::GlobalTypes.Interface(:call), default: proc { proc { Time.current } }
+    option :mutation, Support::GlobalTypes.Instance(Mutations::BaseMutation).optional, optional: true
+    option :operation_name, Support::GlobalTypes::String.optional
+    option :attribute_names, Support::GlobalTypes::Array.of(Support::GlobalTypes::String)
+    option :transient_arguments, Support::GlobalTypes::Array.of(Support::GlobalTypes::Symbol)
+    option :error_compiler, Support::GlobalTypes.Instance(MutationOperations::ErrorCompiler),
       default: proc {
         MutationOperations::ErrorCompiler.new attribute_names:
       }

@@ -8,7 +8,7 @@ module Mutations
     # @see Mutations::Operations::UpdatePersonContributor
     class UpdateContributor < ApplicationContract
       json do
-        required(:contributor).value(AppTypes.Instance(::Contributor))
+        required(:contributor).value(Support::GlobalTypes.Instance(::Contributor))
         optional(:orcid).maybe(:string)
       end
 

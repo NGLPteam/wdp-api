@@ -3,11 +3,11 @@
 module MutationOperations
   # @api private
   class UserError < Shared::FlexibleStruct
-    attribute :message, AppTypes::String
-    attribute :code, AppTypes::Coercible::String.optional
-    attribute :path, AppTypes::AttributePath
-    attribute :attribute_path, AppTypes::String
-    attribute :global, AppTypes::Bool
+    attribute :message, ::Support::GlobalTypes::String
+    attribute :code, ::Support::GlobalTypes::Coercible::String.optional
+    attribute :path, ::Support::DryMutations::Types::AttributePath
+    attribute :attribute_path, ::Support::GlobalTypes::String
+    attribute :global, ::Support::GlobalTypes::Bool
 
     # The default type for errors if a code was not provided
     SERVER = "$server"

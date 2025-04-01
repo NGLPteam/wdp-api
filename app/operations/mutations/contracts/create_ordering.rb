@@ -4,7 +4,7 @@ module Mutations
   module Contracts
     class CreateOrdering < ApplicationContract
       json do
-        required(:entity).value(AppTypes.Instance(HierarchicalEntity))
+        required(:entity).value(Support::GlobalTypes.Instance(HierarchicalEntity))
         required(:identifier).filled("coercible.string")
       end
 

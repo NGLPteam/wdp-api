@@ -18,7 +18,7 @@ class EntityVisibility < ApplicationRecord
 
   # When scoping, it only makes sense to scope by `hidden`
   # or `visible` for the specified time.
-  ScopableVisibility = AppTypes::Coercible::Symbol.enum(:hidden, :visible)
+  ScopableVisibility = Support::GlobalTypes::Coercible::Symbol.enum(:hidden, :visible)
 
   pg_enum! :visibility, as: "entity_visibility", prefix: :visibility
 

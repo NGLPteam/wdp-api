@@ -13,7 +13,7 @@ module Resolvers
 
     argument_class ::Types::BaseArgument
 
-    defines :filter_scope_klass, type: AppTypes.Inherits(::Filtering::FilterScope).optional
+    defines :filter_scope_klass, type: Support::GlobalTypes.Inherits(::Filtering::FilterScope).optional
 
     defines :params_order, type: Support::Types::ParamsReorderer
 

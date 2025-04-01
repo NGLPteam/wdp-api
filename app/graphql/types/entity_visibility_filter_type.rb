@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Types
-  # @see Entities::Types::Visibility
+  # @see Entities::Types::VisibilityFilter
   class EntityVisibilityFilterType < Types::BaseEnum
     description <<~TEXT
     Filter entities by their visibility.

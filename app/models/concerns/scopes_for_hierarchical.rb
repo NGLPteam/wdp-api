@@ -12,7 +12,7 @@ module ScopesForHierarchical
     def recognized_hierarchical_entity?(value)
       case value
       when HierarchicalEntity then true
-      when AppTypes::Array.of(AppTypes.Instance(HierarchicalEntity)) then true
+      when Support::GlobalTypes::Array.of(Support::GlobalTypes.Instance(HierarchicalEntity)) then true
       else
         false
       end

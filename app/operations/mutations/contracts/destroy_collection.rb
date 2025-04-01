@@ -4,7 +4,7 @@ module Mutations
   module Contracts
     class DestroyCollection < ApplicationContract
       json do
-        required(:collection).filled(AppTypes.Instance(Collection))
+        required(:collection).filled(Support::GlobalTypes.Instance(Collection))
       end
 
       rule(:collection) do

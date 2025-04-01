@@ -8,8 +8,8 @@ module Schemas
     #
     # @see Types::Schematic::ScalarPropertyType
     class Reader < BaseReader
-      option :property, AppTypes.Instance(Schemas::Properties::Scalar::Base)
-      option :context, AppTypes.Instance(Schemas::Properties::Context), default: proc { Schemas::Properties::Context.new({}) }
+      option :property, Support::GlobalTypes.Instance(Schemas::Properties::Scalar::Base)
+      option :context, Support::GlobalTypes.Instance(Schemas::Properties::Context), default: proc { Schemas::Properties::Context.new({}) }
 
       delegate :function, :label, :full_path, :path, :required, :search_path, :type, to: :property
       delegate_missing_to :property

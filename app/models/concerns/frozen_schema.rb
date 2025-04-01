@@ -8,7 +8,7 @@ module FrozenSchema
 
     defines :schema, type: Dry::Types::Nominal.new(Dry::Schema::Processor)
     defines :has_merged_schemas, type: Dry::Types["bool"]
-    defines :merged_schemas, type: AppTypes::Array.of(AppTypes.Instance(Dry::Schema::Processor))
+    defines :merged_schemas, type: ::Support::GlobalTypes::Array.of(Support::GlobalTypes.Instance(Dry::Schema::Processor))
 
     has_merged_schemas false
 

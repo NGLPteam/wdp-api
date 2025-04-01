@@ -4,7 +4,7 @@
 module EntityAdjacentAssociations
   extend ActiveSupport::Concern
 
-  EntityAdjacentTupleSpec = AppTypes::Array.of(AppTypes::Coercible::Symbol).constrained(size: 2)
+  EntityAdjacentTupleSpec = ::Support::GlobalTypes::Array.of(::Support::GlobalTypes::Coercible::Symbol).constrained(size: 2)
 
   included do
     extend Dry::Core::ClassAttributes

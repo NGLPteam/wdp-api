@@ -15,11 +15,11 @@ module ScopesForIdentifier
   end
 
   class_methods do
-    # @param [String, ApplicationRecord, AppTypes::UUID] identifier_or_record
+    # @param [String, ApplicationRecord, ::Support::GlobalTypes::UUID] identifier_or_record
     # @return [ActiveRecord::Relation]
     def identified_by(identifier_or_record)
       case identifier_or_record
-      when self, AppTypes::UUID
+      when self, ::Support::GlobalTypes::UUID
         where(primary_key => identifier_or_record)
       when String, Symbol
         by_identifier(identifier_or_record)
