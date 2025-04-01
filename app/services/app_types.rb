@@ -5,6 +5,8 @@ module AppTypes
 
   extend Shared::EnhancedTypes
 
+  require_relative "anonymous_user"
+
   # @see https://www.crossref.org/blog/dois-and-matching-regular-expressions/
   DOI_PATTERN = %r|\A10\.\d{4,9}/[-._;()/:A-Z0-9]+\z|i
 
