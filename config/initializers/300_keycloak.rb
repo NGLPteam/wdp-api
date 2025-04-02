@@ -14,6 +14,16 @@ KeycloakAdmin.configure do |config|
   config.client_realm_name = KeycloakAdminConfig.client_realm_name
   config.client_id = KeycloakAdminConfig.client_id
   config.client_secret = KeycloakAdminConfig.client_secret
+
+  if Rails.env.test?
+    krc = KeycloakRack::Config.new
+
+    config.server_url = krc.server_url
+    config.server_domain = URI(krc.server_url).host
+    config.client_realm_name = krc.realm_id
+    config.client_id = "meru-admin"
+    config.client_secret = "testpassword"
+  end
 end
 
 module Patches

@@ -61,7 +61,7 @@ gem "dry-validation", "~> 1.10.0"
 
 # Keycloak / Auth
 gem "bcrypt", "~> 3.1.18"
-gem "keycloak-admin", "~> 0.7.9"
+gem "keycloak-admin", "~> 1.1.3"
 gem "keycloak_rack", "1.1.1"
 
 # Metadata Parsing
@@ -107,6 +107,8 @@ gem "rufus-scheduler", "~> 3.9.2"
 gem "sanitize", "~> 7.0.0"
 gem "semantic", "~> 1.6.1"
 gem "shale", "~> 1.2.1"
+gem "sinatra", "~> 3.2.0", require: "sinatra/base"
+gem "sinatra-contrib", "~> 3.2.0", require: false
 gem "statesman", "~> 12.1.0"
 gem "strip_attributes", "~> 2.0.0"
 gem "sucker_punch", "~> 3.2.0"

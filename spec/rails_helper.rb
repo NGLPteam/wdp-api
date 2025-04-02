@@ -73,8 +73,6 @@ Dry::Effects.load_extensions :rspec
 
 require_relative "system/test_container"
 
-TestingAPI::TestContainer.finalize!
-
 # Checks for pending migrations and applies them before tests are run.
 # If you are not using ActiveRecord, you can remove these lines.
 begin
@@ -111,6 +109,10 @@ STUB_HARVEST_PROVIDERS = proc do
   broken_provider = Harvesting::Testing::OAI::Broken::Provider.new
 
   WebMock.stub_request(:get, /\A#{broken_provider.url}/).to_rack(broken_provider.rack_app)
+
+  keycloak_url = KeycloakRack::Config.new.server_url
+
+  WebMock.stub_request(:any, /\A#{keycloak_url}/).to_rack(Testing::Keycloak::Application.instance)
 
   WebMock.stub_request(:get, "http://api.sandbox.meru.host/samples/sample.pdf")
     .to_return(

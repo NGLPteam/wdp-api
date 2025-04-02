@@ -37,3 +37,5 @@ module TestingAPI
 end
 
 require_relative "lib/types"
+
+TestingAPI::TestContainer.finalize!
