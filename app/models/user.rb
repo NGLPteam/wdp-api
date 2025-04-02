@@ -89,6 +89,13 @@ class User < ApplicationRecord
     }
   end
 
+  # @see Users::EmailActions::UpdatePassword
+  # @return [Dry::Monads::Success(void)]
+  # @return [Dry::Monads::Failure(:request_failed, String)]
+  monadic_matcher! def update_password_via_email(**options)
+    call_operation("users.email_actions.update_password", self, **options)
+  end
+
   # @!attribute [r] upload_token
   # @return [String]
   def upload_token

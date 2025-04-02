@@ -174,6 +174,12 @@ RSpec.shared_context "with default graphql context" do
   let(:graphql_variables) { {} }
 
   let(:operation_name) { nil }
+
+  before do
+    [admin_user, regular_user, current_user].each do |user|
+      Testing::Keycloak::GlobalRegistry.users.add_existing! user
+    end
+  end
 end
 
 RSpec.configure do |config|

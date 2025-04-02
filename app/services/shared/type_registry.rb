@@ -7,6 +7,10 @@ module Shared
     tc.add! :contributable, Contributions::Types::Contributable
     tc.add! :harvest_target, ::Harvesting::Types::Target
 
+    tc.add! :keycloak_client_id, ::Meru::Types::KeycloakClientID
+
+    tc.add! :redirect_path, ::KeycloakAPI::Types::RedirectPath
+
     tc.add_model! "Collection"
     tc.add_model! "Community"
     tc.add_model! "Contributor"
@@ -24,6 +28,7 @@ module Shared
     tc.add_model! "SchemaDefinition"
     tc.add_model! "SchemaVersion"
 
+    tc.add_enum! ::Types::ClientLocationType
     tc.add_enum! ::Types::HarvestMetadataFormatType
     tc.add_enum! ::Types::HarvestProtocolType
     tc.add_enum! ::Types::TemplateSlotKindType, single_key: "slot_kind", plural_key: "slot_kinds"

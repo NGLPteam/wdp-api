@@ -117,5 +117,7 @@ module Types
     field :render_layouts, mutation: Mutations::RenderLayouts
 
     field :preview_slot, mutation: Mutations::PreviewSlot
+
+    field :user_reset_password, mutation: Mutations::UserResetPassword
   end
 end

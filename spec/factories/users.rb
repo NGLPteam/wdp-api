@@ -7,6 +7,7 @@ FactoryBot.define do
       manager_on { nil }
       editor_on { nil }
       reader_on { nil }
+      register_in_keycloak { true }
     end
 
     keycloak_id { SecureRandom.uuid }
@@ -38,6 +39,10 @@ FactoryBot.define do
       end
     end
 
+    trait :unknown_in_keycloak do
+      register_in_keycloak { false }
+    end
+
     trait :with_avatar do
       avatar do
         Rails.root.join("spec", "data", "lorempixel.jpg").open
@@ -45,6 +50,10 @@ FactoryBot.define do
     end
 
     after(:create) do |user, evaluator|
+      if evaluator.register_in_keycloak
+        Testing::Keycloak::GlobalRegistry.instance.users.add_existing!(user)
+      end
+
       if evaluator.manager_on.present?
         MeruAPI::Container["access.grant"].call(Role.fetch(:manager), on: evaluator.manager_on, to: user)
       end
