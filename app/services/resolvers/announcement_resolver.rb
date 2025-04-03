@@ -15,11 +15,11 @@ module Resolvers
     option :order, type: Types::AnnouncementOrderType, default: "RECENT"
 
     def apply_order_with_recent(scope)
-      scope.recent
+      scope.recent_published
     end
 
     def apply_order_with_oldest(scope)
-      scope.oldest
+      scope.oldest_published
     end
   end
 end

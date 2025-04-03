@@ -5,50 +5,31 @@ module Resolvers
   module OrderedAsUser
     extend ActiveSupport::Concern
 
+    include ::Resolvers::AbstractOrdering
     include ScopeUtilities
 
     included do
       orders_with! Types::UserOrderType, default: "RECENT"
     end
 
-    def apply_order_with_recent(scope)
-      scope.recent
-    end
+    order_pair! :email
 
-    def apply_order_with_oldest(scope)
-      scope.oldest
-    end
+    order_pair! :name
 
     def apply_order_with_admins_first(scope)
-      scope.by_role_priority.with_name_ascending
+      scope.by_role_priority.lazily_order(:name, :asc)
     end
 
     def apply_order_with_admins_last(scope)
-      scope.by_inverse_role_priority.with_name_descending
+      scope.by_inverse_role_priority.lazily_order(:name, :desc)
     end
 
     def apply_order_with_admins_recent(scope)
-      scope.by_role_priority.recent
+      scope.by_role_priority.in_recent_order
     end
 
     def apply_order_with_admins_oldest(scope)
-      scope.by_inverse_role_priority.oldest
-    end
-
-    def apply_order_with_name_ascending(scope)
-      scope.with_name_ascending
-    end
-
-    def apply_order_with_name_descending(scope)
-      scope.with_name_descending
-    end
-
-    def apply_order_with_email_ascending(scope)
-      scope.with_name_ascending
-    end
-
-    def apply_order_with_email_descending(scope)
-      scope.with_name_descending
+      scope.by_inverse_role_priority.in_oldest_order
     end
   end
 end

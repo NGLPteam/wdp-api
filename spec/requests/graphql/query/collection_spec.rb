@@ -27,6 +27,11 @@ RSpec.describe "Query.collection", type: :request do
         links {
           ... EntityLinksListDataFragment
         }
+
+        harvestRecords {
+          id
+          slug
+        }
       }
     }
 
@@ -80,6 +85,9 @@ RSpec.describe "Query.collection", type: :request do
       let!(:contributors) { %i[person organization].map { |trait| FactoryBot.create :contributor, trait } }
 
       let!(:items) { FactoryBot.create_list :item, 2, collection: }
+
+      let_it_be(:harvest_record, refind: true) { FactoryBot.create :harvest_record }
+      let_it_be(:harvest_entity, refind: true) { FactoryBot.create :harvest_entity, harvest_record:, entity: collection }
 
       before do
         contributors.map do |contrib|

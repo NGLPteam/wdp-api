@@ -107,22 +107,6 @@ module Resolvers
       scope.least_recently_updated
     end
 
-    # Order `by_name_asc`.
-    #
-    # @param [ActiveRecord::Relation] scope
-    # @return [ActiveRecord::Relation]
-    def apply_order_with_name_ascending(scope)
-      scope.by_name_asc
-    end
-
-    # Order `by_name_desc`.
-    #
-    # @param [ActiveRecord::Relation] scope
-    # @return [ActiveRecord::Relation]
-    def apply_order_with_name_descending(scope)
-      scope.by_name_desc
-    end
-
     order_pair! :title
 
     # @!group Utility Methods
