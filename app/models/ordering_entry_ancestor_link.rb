@@ -16,4 +16,6 @@ class OrderingEntryAncestorLink < ApplicationRecord
     class_name: "OrderingEntry", inverse_of: :ordering_entry_descendant_links
 
   scope :in_order, -> { order(inverse_depth: :desc) }
+
+  scope :in_descendant_order, -> { reorder(inverse_depth: :asc, position: :asc) }
 end
