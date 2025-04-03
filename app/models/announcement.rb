@@ -8,8 +8,8 @@ class Announcement < ApplicationRecord
 
   belongs_to :entity, polymorphic: true, inverse_of: :announcements
 
-  scope :recent, -> { reorder(published_on: :desc) }
-  scope :oldest, -> { reorder(published_on: :asc) }
+  scope :recent_published, -> { reorder(published_on: :desc) }
+  scope :oldest_published, -> { reorder(published_on: :asc) }
 
   validates :published_on, :header, :teaser, :body, presence: true
 end

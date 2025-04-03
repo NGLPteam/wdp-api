@@ -29,13 +29,6 @@ class User < ApplicationRecord
   scope :by_role_priority, -> { order(role_priority: :desc) }
   scope :by_inverse_role_priority, -> { order(role_priority: :asc) }
 
-  scope :recent, -> { order(created_at: :desc) }
-  scope :oldest, -> { order(created_at: :asc) }
-  scope :with_name_ascending, -> { order(name: :asc) }
-  scope :with_name_descending, -> { order(name: :desc) }
-  scope :with_email_ascending, -> { order(email: :asc) }
-  scope :with_email_descending, -> { order(email: :desc) }
-
   delegate :permissions, to: :global_access_control_list
 
   def anonymous?
