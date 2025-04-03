@@ -22,7 +22,7 @@ module Types
         end
 
         pundit_authorized? object, :show?, context
-      rescue Pundit::NotDefinedError
+      rescue Pundit::NotDefinedError => e
         # :nocov:
         # In development or test, we want an error raised. In production
         # environments, fall back to the old behavior of just implicitly

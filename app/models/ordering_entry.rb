@@ -10,12 +10,18 @@ class OrderingEntry < ApplicationRecord
   belongs_to :ordering, inverse_of: :ordering_entries
 
   has_many :ordering_entry_ancestor_links, -> { in_order },
-    foreign_key: %i[ordering_id child_id], inverse_of: :child, dependent: :delete_all
+    foreign_key: :child_id,
+    inverse_of: :child, dependent: :delete_all
 
-  has_many_readonly :ordering_entry_descendant_links, class_name: "OrderingEntryAncestorLink",
-    foreign_key: %i[ordering_id ancestor_id], inverse_of: :ancestor, dependent: :delete_all
+  has_many :ordering_entry_descendant_links, -> { in_descendant_order },
+    class_name: "OrderingEntryAncestorLink",
+    foreign_key: :ancestor_id,
+    inverse_of: :ancestor,
+    dependent: :delete_all
 
   has_many :ancestors, through: :ordering_entry_ancestor_links
+
+  has_many :descendants, through: :ordering_entry_descendant_links, source: :child
 
   has_many :ordering_template_instances,
     class_name: "Templates::OrderingInstance",
