@@ -26,7 +26,7 @@ module KeycloakAPI
 
     Lifespan = Integer | Instance(::ActiveSupport::Duration) | Interface(:seconds)
 
-    REDIRECT_PATH_FORMAT = %r,\A/(?:[a-z0-9_-]+/?)*?(?:(?<!/)/)?\z,
+    REDIRECT_PATH_FORMAT = %r,\A/(?:[a-z0-9_-]+/?)*?(?:(?<!/)/)?\z,i
 
     RedirectPath = String.constrained(format: REDIRECT_PATH_FORMAT)
 
