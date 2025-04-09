@@ -17,10 +17,11 @@ module ScopesForUser
       none
     end
 
-    # @param [User, AnonymousUser, <User>, ActiveRecord::Relation<User>, nil] user
+    # @param [User, AnonymousUser, <User>, ActiveRecord::Relation<User>, String, nil] user
     def recognized_user?(user)
       return user.model == ::User if user.kind_of?(ActiveRecord::Relation)
       return user.all? { |u| u.kind_of?(::User) } if user.kind_of?(Array)
+      return User.exists?(user) if Support::GlobalTypes::UUID.valid?(user)
 
       user.present? && !user.anonymous?
     end

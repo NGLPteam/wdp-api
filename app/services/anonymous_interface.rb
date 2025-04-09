@@ -13,6 +13,10 @@ module AnonymousInterface
 
   ID = "ANONYMOUS"
 
+  def access_management
+    "forbidden"
+  end
+
   # @note For anonymous users, this is always an empty array.
   # @see User#allowed_actions
   # @return [<String>]
@@ -64,6 +68,10 @@ module AnonymousInterface
   end
 
   alias email_verified? email_verified
+
+  def forbidden_access_management?
+    true
+  end
 
   # @return [Class(Types::UserType)]
   def graphql_node_type

@@ -13,12 +13,6 @@ module Mutations
       rule(:entity, :role) do
         policy = Pundit.policy!(current_user, values[:entity])
 
-        unless policy.manage_access?
-          key(:$global).failure(:cannot_grant_role_on_entity)
-
-          next
-        end
-
         role = values[:role]
 
         key(:role_id).failure(:cannot_grant_unassignable_role, role_name: role.name) unless policy.can_assign_role?(role)

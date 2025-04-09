@@ -9,6 +9,10 @@ module Types
 
     description "A known or anonymous user in the system. Registration and management is primarily handled through the WDP Keycloak instance."
 
+    field :access_management, ::Types::AccessManagementType, null: false do
+      description "The level of access management this user has for entities in the system."
+    end
+
     field :anonymous, Boolean, null: false, method: :anonymous? do
       description "Is this an anonymous / unauthenticated user?"
     end

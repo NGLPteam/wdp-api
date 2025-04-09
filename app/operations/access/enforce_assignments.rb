@@ -12,6 +12,8 @@ module Access
     include MeruAPI::Deps[
       grant: "access.grant",
       revoke: "access.revoke",
+      synchronize_all_access_info: "users.synchronize_all_access_info",
+      synchronize_access_info: "users.synchronize_access_info",
     ]
 
     # @param [AccessGrantSubject, nil] subject
@@ -21,13 +23,15 @@ module Access
 
       invalid = yield revoke_invalid!(subject:)
 
-      Success(assigned:, invalid:)
+      access_info = yield check_access_info!(subject:)
+
+      Success(assigned:, access_info:, invalid:)
     end
 
     private
 
     # @param [AccessGrantSubject, nil] subject
-    # @return [Dry::Monads::Result]
+    # @return [Dry::Monads::Success(Integer)]
     def assign_pending!(subject: nil, **)
       count = 0
 
@@ -40,8 +44,25 @@ module Access
       Success count
     end
 
+    # @param [AccessGrantSubject, nil] subject
+    # @return [Dry::Monads::Success(Integer)]
+    def check_access_info!(subject: nil, **)
+      count = 0
+
+      case subject
+      in ::User
+        yield synchronize_access_info.(subject)
+
+        count += 1
+      else
+        count += yield synchronize_all_access_info.()
+      end
+
+      Success count
+    end
+
     # @param [{ Symbol => Object }] options
-    # @return [Dry::Monads::Result]
+    # @return [Dry::Monads::Success(Integer)]
     def revoke_invalid!(**options)
       count = 0
 

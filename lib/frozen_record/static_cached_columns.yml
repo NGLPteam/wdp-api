@@ -21939,6 +21939,97 @@
   default_function: to_prefix_search(family_name)
   has_default: false
   virtual: true
+- id: User#access_management
+  model_name: User
+  table_name: users
+  name: access_management
+  type: enum
+  'null': false
+  sql_type_metadata:
+    sql_type: access_management
+    type: enum
+  default: forbidden
+  default_function: 
+  has_default: true
+  virtual: false
+- id: User#can_manage_access_globally
+  model_name: User
+  table_name: users
+  name: can_manage_access_globally
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
+  default_function: 
+  has_default: true
+  virtual: false
+- id: User#can_manage_access_contextually
+  model_name: User
+  table_name: users
+  name: can_manage_access_contextually
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
+  default_function: 
+  has_default: true
+  virtual: false
+- id: UserAccessInfo#user_id
+  model_name: UserAccessInfo
+  table_name: user_access_infos
+  name: user_id
+  type: uuid
+  'null': true
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: UserAccessInfo#can_manage_access_globally
+  model_name: UserAccessInfo
+  table_name: user_access_infos
+  name: can_manage_access_globally
+  type: boolean
+  'null': true
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: UserAccessInfo#can_manage_access_contextually
+  model_name: UserAccessInfo
+  table_name: user_access_infos
+  name: can_manage_access_contextually
+  type: boolean
+  'null': true
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
+- id: UserAccessInfo#access_management
+  model_name: UserAccessInfo
+  table_name: user_access_infos
+  name: access_management
+  type: enum
+  'null': true
+  sql_type_metadata:
+    sql_type: access_management
+    type: enum
+  default: 
+  default_function: 
+  has_default: false
+  virtual: false
 - id: UserGroup#id
   model_name: UserGroup
   table_name: user_groups

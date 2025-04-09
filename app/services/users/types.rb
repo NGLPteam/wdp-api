@@ -8,6 +8,8 @@ module Users
   module Types
     include Dry.Types
 
+    AccessManagement = ApplicationRecord.dry_pg_enum("access_management", default: "forbidden").fallback("forbidden")
+
     # A type matching a {User}
     Authenticated = Instance(::User)
 
