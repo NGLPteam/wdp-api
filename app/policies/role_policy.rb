@@ -14,6 +14,11 @@ class RolePolicy < ApplicationPolicy
     has_allowed_action? "roles.read"
   end
 
+  # Roles can always be read in GQL.
+  def show?
+    true
+  end
+
   def create?
     return false if record.for_system?
 

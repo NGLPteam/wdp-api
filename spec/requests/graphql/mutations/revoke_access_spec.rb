@@ -1,10 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Mutations::RevokeAccess, type: :request, graphql: :mutation do
-  let!(:current_user) { FactoryBot.create :user }
-
-  let!(:token) { token_helper.build_token(from_user: current_user) }
-
+RSpec.describe Mutations::RevokeAccess, type: :request, graphql: :mutation, grants_access: true do
   mutation_query! <<~GRAPHQL
   mutation revokeAccess($input: RevokeAccessInput!) {
     revokeAccess(input: $input) {
@@ -15,16 +11,21 @@ RSpec.describe Mutations::RevokeAccess, type: :request, graphql: :mutation do
   }
   GRAPHQL
 
-  let(:admin) { Role.fetch(:admin) }
-  let(:manager) { Role.fetch(:manager) }
-  let(:editor) { Role.fetch(:editor) }
-  let(:reader) { Role.fetch(:reader) }
+  let_it_be(:admin) { Role.fetch(:admin) }
+  let_it_be(:manager) { Role.fetch(:manager) }
+  let_it_be(:editor) { Role.fetch(:editor) }
+  let_it_be(:reader) { Role.fetch(:reader) }
 
-  let!(:community) { FactoryBot.create :community }
+  let_it_be(:community, refind: true) { FactoryBot.create :community }
 
-  let!(:entity) { FactoryBot.create :collection, community: }
+  let_it_be(:community_manager, refind: true) { FactoryBot.create :user, manager_on: [community] }
+
+  let_it_be(:target_user, refind: true) { FactoryBot.create :user }
+
+  let_it_be(:entity, refind: true) { FactoryBot.create :collection, community: }
+
   let!(:role) { reader }
-  let!(:user) { FactoryBot.create :user }
+  let!(:user) { target_user }
 
   let_mutation_input!(:entity_id) { entity.to_encoded_id }
   let_mutation_input!(:role_id) { role.to_encoded_id }
@@ -32,7 +33,7 @@ RSpec.describe Mutations::RevokeAccess, type: :request, graphql: :mutation do
 
   shared_examples_for "a successful revocation" do
     before do
-      MeruAPI::Container["access.grant"].call(role, on: entity, to: user)
+      grant_access! role, on: entity, to: user
     end
 
     let!(:expected_shape) do
@@ -42,13 +43,17 @@ RSpec.describe Mutations::RevokeAccess, type: :request, graphql: :mutation do
     end
 
     it "revokes the role on the entity idempotently" do
-      expect_the_default_request.to change(AccessGrant, :count).by(-1)
+      expect_request! do |req|
+        req.effect! change(AccessGrant, :count).by(-1)
 
-      expect_graphql_data expected_shape
+        req.data! expected_shape
+      end
 
-      expect_the_default_request.to keep_the_same(AccessGrant, :count)
+      expect_request! do |req|
+        req.effect! keep_the_same(AccessGrant, :count)
 
-      expect_graphql_data expected_shape
+        req.data! expected_shape
+      end
     end
   end
 
@@ -60,9 +65,11 @@ RSpec.describe Mutations::RevokeAccess, type: :request, graphql: :mutation do
     end
 
     it "does not revoke the role" do
-      expect_the_default_request.to keep_the_same(AccessGrant, :count)
+      expect_request! do |req|
+        req.effect! keep_the_same(AccessGrant, :count)
 
-      expect_graphql_data expected_shape
+        req.data! expected_shape
+      end
     end
   end
 
@@ -74,20 +81,6 @@ RSpec.describe Mutations::RevokeAccess, type: :request, graphql: :mutation do
 
           m.global_errors do |ge|
             ge.error :cannot_revoke_role_from_self
-          end
-        end
-      end
-    end
-  end
-
-  shared_examples "an insufficient permissions revocation" do
-    include_examples "a failed revocation" do
-      let(:expected_shape) do
-        gql.mutation(:revoke_access, no_errors: false) do |m|
-          m[:revoked] = be_blank
-
-          m.global_errors do |ge|
-            ge.error :cannot_revoke_role_on_entity
           end
         end
       end
@@ -108,7 +101,25 @@ RSpec.describe Mutations::RevokeAccess, type: :request, graphql: :mutation do
     end
   end
 
-  context "as an admin" do
+  let(:empty_mutation_shape) do
+    gql.empty_mutation :revoke_access
+  end
+
+  shared_examples_for "an unauthorized mutation" do
+    let(:expected_shape) { empty_mutation_shape }
+
+    it "is not authorized" do
+      expect_request! do |req|
+        req.effect! keep_the_same(AccessGrant, :count)
+
+        req.unauthorized!
+
+        req.data! expected_shape
+      end
+    end
+  end
+
+  as_an_admin_user do
     let!(:current_user) { FactoryBot.create :user, :admin }
 
     context "when revoking admin access on an entity" do
@@ -129,9 +140,7 @@ RSpec.describe Mutations::RevokeAccess, type: :request, graphql: :mutation do
   end
 
   context "as a community manager" do
-    before do
-      MeruAPI::Container["access.grant"].call(manager, on: community, to: current_user)
-    end
+    let!(:current_user) { community_manager }
 
     context "when revoking reader access on an entity" do
       include_examples "a successful revocation"
@@ -144,9 +153,15 @@ RSpec.describe Mutations::RevokeAccess, type: :request, graphql: :mutation do
     end
   end
 
-  context "as a user with no access" do
+  as_a_regular_user do
     context "when revoking reader access on an entity" do
-      include_examples "an insufficient permissions revocation"
+      include_examples "an unauthorized mutation"
+    end
+  end
+
+  as_an_anonymous_user do
+    context "when revoking reader access on an entity" do
+      include_examples "an unauthorized mutation"
     end
   end
 end

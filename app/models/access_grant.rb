@@ -60,6 +60,19 @@ class AccessGrant < ApplicationRecord
 
   after_save :calculate_granted_permissions!
 
+  def has_manager?(user)
+    case user
+    in ::User
+      has_manager?(user.id)
+    in ::Support::GlobalTypes::UUID
+      calculate_manager?(user)
+    else
+      # :nocov:
+      false
+      # :nocov:
+    end
+  end
+
   # @api private
   # @return [void]
   def sync_auth_path!
@@ -75,6 +88,33 @@ class AccessGrant < ApplicationRecord
   # @return [Class]
   def graphql_node_type
     "Types::#{subject_type}#{accessible_type}AccessGrantType".constantize
+  end
+
+  # @return [Hash]
+  def unique_tuple
+    {
+      accessible_type:,
+      accessible_id:,
+      role_id:,
+      subject_type:,
+      subject_id:,
+    }
+  end
+
+  private
+
+  # @return [AccessGrant, nil]
+  def existing_record
+    return self if persisted?
+
+    self.class.find_by(unique_tuple)
+  end
+
+  # @param [String] user_id
+  def calculate_manager?(user_id)
+    return managers.exists?(user_id) if persisted?
+
+    existing_record.try(:has_manager?, user_id) || ContextualSinglePermission.manages_access_for?(user_id, accessible)
   end
 
   class << self

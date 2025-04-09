@@ -1,10 +1,6 @@
 # frozen_string_literal: true
 
 RSpec.describe Mutations::GrantAccess, type: :request, graphql: :mutation, grants_access: true do
-  let!(:current_user) { FactoryBot.create :user }
-
-  let!(:token) { token_helper.build_token(from_user: current_user) }
-
   mutation_query! <<~GRAPHQL
   mutation grantAccess($input: GrantAccessInput!) {
     grantAccess(input: $input) {
@@ -22,9 +18,14 @@ RSpec.describe Mutations::GrantAccess, type: :request, graphql: :mutation, grant
 
   let_it_be(:community, refind: true) { FactoryBot.create :community }
 
+  let_it_be(:community_manager, refind: true) { FactoryBot.create :user, manager_on: [community] }
+
+  let_it_be(:target_user, refind: true) { FactoryBot.create :user }
+
   let_it_be(:entity, refind: true) { FactoryBot.create :collection, community: }
+
   let!(:role) { reader }
-  let!(:user) { FactoryBot.create :user }
+  let!(:user) { target_user }
 
   let_mutation_input!(:entity_id) { entity.to_encoded_id }
   let_mutation_input!(:role_id) { role.to_encoded_id }
@@ -38,13 +39,17 @@ RSpec.describe Mutations::GrantAccess, type: :request, graphql: :mutation, grant
     end
 
     it "grants the role on the entity idempotently" do
-      expect_the_default_request.to change(AccessGrant, :count).by(1)
+      expect_request! do |req|
+        req.effect! change(AccessGrant, :count).by(1)
 
-      expect_graphql_data expected_shape
+        req.data! expected_shape
+      end
 
-      expect_the_default_request.to keep_the_same(AccessGrant, :count)
+      expect_request! do |req|
+        req.effect! keep_the_same(AccessGrant, :count)
 
-      expect_graphql_data expected_shape
+        req.data! expected_shape
+      end
     end
   end
 
@@ -56,9 +61,11 @@ RSpec.describe Mutations::GrantAccess, type: :request, graphql: :mutation, grant
     end
 
     it "does not grant the role" do
-      expect_the_default_request.to keep_the_same(AccessGrant, :count)
+      expect_request! do |req|
+        req.effect! keep_the_same(AccessGrant, :count)
 
-      expect_graphql_data expected_shape
+        req.data! expected_shape
+      end
     end
   end
 
@@ -76,16 +83,20 @@ RSpec.describe Mutations::GrantAccess, type: :request, graphql: :mutation, grant
     end
   end
 
-  shared_examples "an insufficient permissions grant" do
-    include_examples "a failed grant" do
-      let(:expected_shape) do
-        gql.mutation(:grant_access, no_errors: false) do |m|
-          m[:granted] = be_blank
+  let(:empty_mutation_shape) do
+    gql.empty_mutation :grant_access
+  end
 
-          m.global_errors do |ge|
-            ge.error :cannot_grant_role_on_entity
-          end
-        end
+  shared_examples_for "an unauthorized mutation" do
+    let(:expected_shape) { empty_mutation_shape }
+
+    it "is not authorized" do
+      expect_request! do |req|
+        req.effect! keep_the_same(AccessGrant, :count)
+
+        req.unauthorized!
+
+        req.data! expected_shape
       end
     end
   end
@@ -104,9 +115,7 @@ RSpec.describe Mutations::GrantAccess, type: :request, graphql: :mutation, grant
     end
   end
 
-  context "as an admin" do
-    let!(:current_user) { FactoryBot.create :user, :admin }
-
+  as_an_admin_user do
     context "when granting admin access on an entity" do
       let(:role) { admin }
 
@@ -125,9 +134,7 @@ RSpec.describe Mutations::GrantAccess, type: :request, graphql: :mutation, grant
   end
 
   context "as a community manager" do
-    before do
-      grant_access! manager, on: community, to: current_user
-    end
+    let!(:current_user) { community_manager }
 
     context "when granting reader access on an entity" do
       include_examples "a successful grant"
@@ -140,9 +147,15 @@ RSpec.describe Mutations::GrantAccess, type: :request, graphql: :mutation, grant
     end
   end
 
-  context "as a user with no access" do
+  as_a_regular_user do
     context "when granting reader access on an entity" do
-      include_examples "an insufficient permissions grant"
+      include_examples "an unauthorized mutation"
+    end
+  end
+
+  as_an_anonymous_user do
+    context "when revoking reader access on an entity" do
+      include_examples "an unauthorized mutation"
     end
   end
 end

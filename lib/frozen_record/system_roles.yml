@@ -57,13 +57,13 @@
       :create: true
       :update: true
       :delete: true
+    :settings:
+      :update: true
     :users:
       :read: true
       :create: true
       :update: true
       :delete: true
-    :settings:
-      :update: true
   identifier: admin
   name: Admin
 - access_control_list:
@@ -108,9 +108,9 @@
       :create: true
       :update: true
       :delete: true
-    :users:
-      :read: true
     :roles:
+      :read: true
+    :users:
       :read: true
   identifier: manager
   name: Manager

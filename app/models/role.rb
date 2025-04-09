@@ -22,7 +22,7 @@ class Role < ApplicationRecord
 
   has_many_readonly :primary_role_assignments, inverse_of: :role
 
-  has_many_readonly :primarily_assigned_users, through: :primary_role_assignments, source: :user
+  has_many_readonly :primarily_assigned_users, through: :primary_role_assignments, source: :subject, source_type: "User"
 
   has_many :role_permissions, dependent: :destroy, inverse_of: :role
 
@@ -37,7 +37,7 @@ class Role < ApplicationRecord
   scope :for_name, ->(name) { where(name:) }
 
   scope :with_allowed_action, ->(name) { where(arel_allowed_action(name)) }
-  scope :in_default_order, -> { order(primacy: :asc, priority: :desc, kind: :asc) }
+  scope :in_default_order, -> { order(primacy: :asc, priority: :desc, kind: :asc, name: :asc) }
 
   validates :name, presence: true, uniqueness: true
 
@@ -68,6 +68,92 @@ class Role < ApplicationRecord
     unique_by = attrs[:identifier].present? ? %i[identifier] : %i[name]
 
     [attrs, unique_by]
+  end
+
+  # @api private
+  # @note Used in testing
+  # @param [Role] other
+  # @param [:created, :name, :default] kind
+  # @param [Boolean] reverse
+  # @return [Integer]
+  def sort_value_against(other, kind: :default, reverse: false)
+    # :nocov:
+    tuple = Array(sort_tuple_with(other, kind:, reverse:))
+
+    found = tuple.detect(&:nonzero?)
+
+    return found if found
+
+    # Fallback discriminator.
+    reverse ? other.id <=> id : id <=> other.id
+    # :nocov:
+  end
+
+  protected
+
+  # @note Used in testing
+  # @param [Role] other
+  # @param [:created, :name, :default] kind
+  # @param [Boolean] reverse
+  # @return [<Integer>]
+  def sort_tuple_with(other, kind: :default, reverse: false)
+    # :nocov:
+    case kind.to_sym
+    in :created
+      [
+        created_sort_value_with(other, reverse:),
+        name_sort_value_with(other)
+      ]
+    in :name
+      [
+        name_sort_value_with(other, reverse:)
+      ]
+    else
+      [
+        role_primacy_sort_value <=> other.role_primacy_sort_value,
+        # Priority is descending order
+        other.priority <=> priority,
+        role_kind_sort_value <=> other.role_kind_sort_value,
+        name_sort_value_with(other),
+      ]
+    end
+    # :nocov:
+  end
+
+  def created_sort_value_with(other, reverse: false)
+    # :nocov:
+    reverse ? other.created_at <=> created_at : created_at <=> other.created_at
+    # :nocov:
+  end
+
+  def name_sort_value_with(other, reverse: false)
+    # :nocov:
+    reverse ? other.name.casecmp(name) : name.casecmp(other.name)
+    # :nocov:
+  end
+
+  # @api private
+  def role_primacy_sort_value
+    # :nocov:
+    case primacy
+    in "high" then 0
+    in "medium" then 1
+    else
+      2
+    end
+    # :nocov:
+  end
+
+  # @api private
+  def role_kind_sort_value
+    # :nocov:
+    case kind
+    in "system"
+      0
+    else
+      99
+    end
+    # :nocov:
   end
 
   class << self

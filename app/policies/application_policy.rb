@@ -51,9 +51,7 @@ class ApplicationPolicy
   # @abstract
   # @see #show?
   def read?
-    return true if always_readable? || readable_in_dev?
-
-    admin_or_owns_resource?
+    always_readable? || readable_in_dev? || admin_or_owns_resource?
   end
 
   # Sometimes we need to allow read access specifically for use with mutation arguments
@@ -67,7 +65,9 @@ class ApplicationPolicy
   end
 
   def index?
+    # :nocov:
     always_readable? || show?
+    # :nocov:
   end
 
   # This determines whether an individual record can
@@ -84,7 +84,9 @@ class ApplicationPolicy
   end
 
   def new?
+    # :nocov:
     create?
+    # :nocov:
   end
 
   def update?
@@ -92,7 +94,9 @@ class ApplicationPolicy
   end
 
   def edit?
+    # :nocov:
     update?
+    # :nocov:
   end
 
   def destroy?
@@ -100,7 +104,9 @@ class ApplicationPolicy
   end
 
   def manage_access?
+    # :nocov:
     user.has_global_admin_access?
+    # :nocov:
   end
 
   def admin_or_owns_resource?
@@ -108,6 +114,7 @@ class ApplicationPolicy
 
     return true if user.has_global_admin_access?
 
+    # :nocov:
     if record.kind_of?(User)
       user == record
     elsif record.respond_to?(:user_id)
@@ -117,6 +124,7 @@ class ApplicationPolicy
     else
       false
     end
+    # :nocov:
   end
 
   # @!group Effective Permission Grids
@@ -138,20 +146,30 @@ class ApplicationPolicy
 
   # @abstract
   def create_assets?
+    # :nocov:
     false
+    # :nocov:
   end
 
   # @abstract
   def create_collections?
+    # :nocov:
     false
+    # :nocov:
   end
 
   # @abstract
   def create_items?
+    # :nocov:
     false
+    # :nocov:
   end
 
   # @!endgroup
+
+  def has_any_access_management_permissions?
+    user.can_manage_access_globally? || user.can_manage_access_contextually?
+  end
 
   def has_admin?
     user.has_global_admin_access?
@@ -170,11 +188,13 @@ class ApplicationPolicy
   # @param [Boolean] admin_always_allowed
   # @param [User, AnonymousUser] pundit_user
   def authorized?(record, query, admin_always_allowed: true, pundit_user: @user)
+    # :nocov:
     return true if admin_always_allowed && pundit_user.has_global_admin_access?
 
     return false if record.blank?
 
     policy_for(record, pundit_user:).public_send query
+    # :nocov:
   end
 
   # Load a sub-policy.
@@ -234,41 +254,29 @@ class ApplicationPolicy
 
   # @abstract
   class Scope
-    attr_reader :user, :scope
+    # @return [ActiveRecord::Relation]
+    attr_reader :scope
+
+    # @return [AnonymousUser, User]
+    attr_reader :user
+
+    delegate :anonymous?, :has_global_admin_access?, :has_allowed_action?, to: :user
 
     # @param [User, AnonymousUser] user
     # @param [ActiveRecord::Relation] scope
     def initialize(user, scope)
-      @user = user
+      @user = user || AnonymousUser.new
       @scope = scope
     end
 
     # @abstract
     # @return [ActiveRecord::Relation]
     def resolve
-      return scope.none if user.anonymous?
+      # :nocov:
+      return scope.none if anonymous?
 
       scope.all
-    end
-
-    # @api private
-    def resolve_user_owned
-      return scope.none if user.anonymous?
-
-      return scope.all if user.has_global_admin_access?
-
-      scope.none
-    end
-
-    # @see User#has_allowed_action?
-    # @param [String] name
-    def has_allowed_action?(name)
-      user&.has_allowed_action?(name)
-    end
-
-    # @see User#has_global_admin_access?
-    def has_global_admin_access?
-      user&.has_global_admin_access?
+      # :nocov:
     end
 
     # @see #has_global_admin_access?

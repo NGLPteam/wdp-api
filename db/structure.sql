@@ -122,6 +122,17 @@ COMMENT ON EXTENSION pgcrypto IS 'cryptographic functions';
 
 
 --
+-- Name: access_management; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.access_management AS ENUM (
+    'global',
+    'contextual',
+    'forbidden'
+);
+
+
+--
 -- Name: analytics_context; Type: TYPE; Schema: public; Owner: -
 --
 
@@ -5807,7 +5818,10 @@ CREATE TABLE public.users (
     avatar_data jsonb,
     role_priority integer GENERATED ALWAYS AS (public.user_role_priority(roles, metadata, allowed_actions)) STORED,
     search_given_name text GENERATED ALWAYS AS (public.to_prefix_search(given_name)) STORED NOT NULL,
-    search_family_name text GENERATED ALWAYS AS (public.to_prefix_search(family_name)) STORED NOT NULL
+    search_family_name text GENERATED ALWAYS AS (public.to_prefix_search(family_name)) STORED NOT NULL,
+    access_management public.access_management DEFAULT 'forbidden'::public.access_management NOT NULL,
+    can_manage_access_globally boolean DEFAULT false NOT NULL,
+    can_manage_access_contextually boolean DEFAULT false NOT NULL
 );
 
 
@@ -7121,6 +7135,34 @@ CREATE TABLE public.templates_manual_lists (
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
+
+
+--
+-- Name: user_access_infos; Type: VIEW; Schema: public; Owner: -
+--
+
+CREATE VIEW public.user_access_infos AS
+ WITH contextual_access_management AS (
+         SELECT ag.subject_id AS user_id,
+            ag.role_id,
+            bool_or((r.allowed_actions OPERATOR(public.~) '*.manage_access'::public.lquery)) AS can_manage_access_contextually
+           FROM (public.access_grants ag
+             JOIN public.roles r ON ((r.id = ag.role_id)))
+          WHERE ((ag.subject_type)::text = 'User'::text)
+          GROUP BY ag.subject_id, ag.role_id
+        )
+ SELECT u.id AS user_id,
+    am.can_manage_access_globally,
+    am.can_manage_access_contextually,
+        CASE
+            WHEN am.can_manage_access_globally THEN 'global'::public.access_management
+            WHEN am.can_manage_access_contextually THEN 'contextual'::public.access_management
+            ELSE 'forbidden'::public.access_management
+        END AS access_management
+   FROM ((public.users u
+     LEFT JOIN contextual_access_management cam ON ((cam.user_id = u.id)))
+     LEFT JOIN LATERAL ( SELECT ('global_admin'::text = ANY (u.roles)) AS can_manage_access_globally,
+            COALESCE(cam.can_manage_access_contextually, false) AS can_manage_access_contextually) am ON (true));
 
 
 --
@@ -11814,6 +11856,13 @@ CREATE UNIQUE INDEX index_user_groups_on_system_slug ON public.user_groups USING
 
 
 --
+-- Name: index_users_on_access_management; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_users_on_access_management ON public.users USING btree (access_management);
+
+
+--
 -- Name: index_users_on_allowed_actions; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -13780,6 +13829,8 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20250307191006'),
 ('20250311200045'),
 ('20250317193746'),
-('20250317201446');
+('20250317201446'),
+('20250408162405'),
+('20250408163159');
 
 

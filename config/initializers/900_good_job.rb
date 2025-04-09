@@ -14,7 +14,7 @@ Rails.application.configure do
 
   config.good_job.cleanup_preserved_jobs_before_seconds_ago = 43_200 # half-day
   config.good_job.preserve_job_records = true
-  config.good_job.retry_on_unhandled_error = true
+  config.good_job.retry_on_unhandled_error = false
   # config.good_job.on_thread_error = ->(exception) { Rollbar.error(exception) }
   config.good_job.execution_mode = :external
   config.good_job.queues = queues
@@ -23,6 +23,11 @@ Rails.application.configure do
   config.good_job.shutdown_timeout = 25 # seconds
   config.good_job.enable_cron = true
   config.good_job.cron = {
+    "access.enforce_assignments": {
+      cron: "*/5 * * * *",
+      class: "Access::EnforceAssignmentsJob",
+      description: "Audit assignments and make sure everything looks correct.",
+    },
     "attributions.collections.manage": {
       cron: "*/10 * * * *",
       class: "Attributions::Collections::ManageJob",

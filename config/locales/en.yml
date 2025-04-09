@@ -32,10 +32,8 @@
 en:
   dry_validation:
     errors:
-      cannot_grant_role_on_entity: "You do not have access to grant roles to this entity."
       cannot_grant_role_to_self: "You cannot grant a role to yourself."
       cannot_grant_unassignable_role: "You do not have access to grant %{role_name} on this entity."
-      cannot_revoke_role_on_entity: "You do not have access to revoke roles to this entity."
       cannot_revoke_role_from_self: "You cannot revoke a role from yourself."
       cannot_revoke_unassignable_role: "You do not have access to revoke %{role_name} on this entity."
       cannot_parent_itself: "cannot parent itself"

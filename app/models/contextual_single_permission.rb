@@ -22,6 +22,12 @@ class ContextualSinglePermission < ApplicationRecord
   scope :for_path, ->(path_or_paths) { where(permission_id: Permission.for_path(path_or_paths).select(:id)) }
 
   class << self
+    # @param [User] user
+    # @param [HierarchicalEntity] hierarchical
+    def manages_access_for?(user, hierarchical)
+      with_permitted_actions_for(user, "self.manage_access").exists?(hierarchical:)
+    end
+
     # @param [<String>] actions
     # @return [ActiveRecord::Relation<ContextualPermission>]
     def with_actions(*actions)

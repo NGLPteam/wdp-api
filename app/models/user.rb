@@ -6,6 +6,10 @@ class User < ApplicationRecord
   include ImageUploader::Attachment.new(:avatar)
   include TimestampScopes
 
+  pg_enum! :access_management, as: :access_management, suffix: :access_management
+
+  has_one_readonly :access_info, class_name: "UserAccessInfo", inverse_of: :user
+
   has_many :community_memberships, dependent: :destroy, inverse_of: :user
 
   has_many :communities, through: :community_memberships
@@ -23,6 +27,8 @@ class User < ApplicationRecord
   before_validation :set_allowed_actions!
 
   after_create :assign_global_permissions!
+
+  after_save :synchronize_access_info!
 
   scope :global_admins, -> { where(arel_has_realm_role(:global_admin)) }
   scope :testing, -> { where_contains(email: "@example.") }
@@ -71,6 +77,10 @@ class User < ApplicationRecord
     self.allowed_actions = global_access_control_list.allowed_actions
   end
 
+  monadic_operation! def synchronize_access_info
+    call_operation("users.synchronize_access_info", self)
+  end
+
   def testing?
     /@example\./.match?(email) || metadata["testing"]
   end
@@ -93,6 +103,12 @@ class User < ApplicationRecord
   # @return [String]
   def upload_token
     call_operation("uploads.encode_token", self).value_or(nil)
+  end
+
+  # @see UserAccessInfo
+  # @return [Users::AccessInfo]
+  def wrapped_access_info
+    Users::AccessInfo.wrap(self)
   end
 
   class << self

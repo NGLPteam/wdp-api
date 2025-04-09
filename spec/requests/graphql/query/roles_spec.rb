@@ -1,132 +1,142 @@
 # frozen_string_literal: true
 
 RSpec.describe "Query.roles", type: :request do
-  let!(:token) { nil }
+  let_it_be(:query) do
+    <<~GRAPHQL
+    query getOrderedRoles($order: RoleOrder!) {
+      roles(order: $order) {
+        pageInfo {
+          totalCount
+        }
 
-  let!(:graphql_variables) { {} }
+        edges {
+          node {
+            id
+            name
 
-  def make_default_request!
-    make_graphql_request! query, token:, variables: graphql_variables
+            effectiveAccess {
+              allowedActions
+              availableActions
+              permissions {
+                allowed
+                name
+                path
+                scope
+              }
+            }
+          }
+        }
+      }
+    }
+    GRAPHQL
   end
 
   context "when ordering" do
-    let(:token) { token_helper.build_token has_global_admin: true }
+    let_it_be(:role_admin, refind: true) { Role.fetch(:admin) }
+    let_it_be(:role_manager, refind: true) { Role.fetch(:manager) }
+    let_it_be(:role_editor, refind: true) { Role.fetch(:editor) }
+    let_it_be(:role_reader, refind: true) { Role.fetch(:reader) }
 
-    let!(:role_admin) { Role.fetch(:admin) }
-    let!(:role_manager) { Role.fetch(:manager) }
-    let!(:role_editor) { Role.fetch(:editor) }
-    let!(:role_reader) { Role.fetch(:reader) }
-
-    let!(:role_a3) do
+    let_it_be(:role_a3, refind: true) do
       Timecop.freeze(3.days.ago) do
         FactoryBot.create :role, name: "AA", custom_priority: 100
       end
     end
 
-    let!(:role_m1) do
+    let_it_be(:role_m1, refind: true) do
       Timecop.freeze(1.day.ago) do
         FactoryBot.create :role, name: "MM", custom_priority: 300
       end
     end
 
-    let!(:role_z2) do
+    let_it_be(:role_z2, refind: true) do
       Timecop.freeze(2.days.ago) do
         FactoryBot.create :role, name: "ZZ", custom_priority: 200
       end
     end
 
-    let!(:keyed_models) do
+    let_it_be(:keyed_models) do
       {
-        admin: to_rep(role_admin),
-        manager: to_rep(role_manager),
-        editor: to_rep(role_editor),
-        reader: to_rep(role_reader),
-        a3: to_rep(role_a3),
-        m1: to_rep(role_m1),
-        z2: to_rep(role_z2),
+        admin: role_admin,
+        manager: role_manager,
+        editor: role_editor,
+        reader: role_reader,
+        a3: role_a3,
+        m1: role_m1,
+        z2: role_z2,
       }
-    end
-
-    def to_rep(role)
-      role.slice(:name).merge(id: role.to_encoded_id)
     end
 
     let!(:order) { "RECENT" }
 
     let!(:graphql_variables) { { order: } }
 
-    let!(:query) do
-      <<~GRAPHQL
-      query getOrderedRoles($order: RoleOrder!) {
-        roles(order: $order) {
-          edges {
-            node {
-              id
-              name
-            }
-          }
-          pageInfo { totalCount }
-        }
-      }
-      GRAPHQL
-    end
-
     shared_examples_for "an ordered list of roles" do |order_value, kind, reverse = false|
       let!(:order) { order_value }
-      let!(:example_kind) { kind }
-      let!(:example_reverse) { reverse }
 
       let(:keys) do
         keyed_models.keys.sort do |akey, bkey|
           a = public_send(:"role_#{akey}")
           b = public_send(:"role_#{bkey}")
 
-          case kind
-          when :created
-            comp = reverse ? b.created_at <=> a.created_at : a.created_at <=> b.created_at
+          a.sort_value_against(b, kind:, reverse:)
+        end
+      end
 
-            if comp == 0
-              a.name <=> b.name
-            else
-              comp
+      let!(:roles_in_order) { keys.map { |k| keyed_models.fetch(k) } }
+
+      let!(:expected_shape) do
+        gql.query do |q|
+          q.prop :roles do |roles|
+            roles.prop :page_info do |pi|
+              pi[:total_count] = keyed_models.size
             end
-          when :name
-            reverse ? b.name <=> a.name : a.name <=> b.name
-          else
-            a.priority <=> b.priority
+
+            roles.array :edges do |edges|
+              roles_in_order.each do |role|
+                edges.item do |edge|
+                  edge.prop :node do |node|
+                    node[:id] = role.to_encoded_id
+                    node[:name] = role.name
+                  end
+                end
+              end
+            end
           end
         end
       end
 
-      let!(:reps) { keys.map { |k| keyed_models.fetch(k) } }
-      let!(:edges) { reps.map { |node| { node: } } }
-
-      let!(:expected_shape) do
-        {
-          roles: {
-            edges:,
-            page_info: { total_count: keyed_models.size },
-          },
-        }
-      end
-
       it "returns roles in the expected order" do
-        make_default_request!
-
-        expect_graphql_data expected_shape
+        expect_request! do |req|
+          req.data! expected_shape
+        end
       end
     end
 
-    {
-      "DEFAULT" => [:priority, false],
-      "RECENT" => [:created, true],
-      "OLDEST" => [:created, false],
-      "NAME_ASCENDING" => [:name, false],
-      "NAME_DESCENDING" => [:name, true],
-    }.each do |order, (kind, reverse)|
-      xcontext "when ordered by #{order}" do
-        include_examples "an ordered list of roles", order, kind, reverse
+    shared_examples_for "can fetch roles in any order" do
+      {
+        "DEFAULT" => [:priority, false],
+        "RECENT" => [:created, true],
+        "OLDEST" => [:created, false],
+        "NAME_ASCENDING" => [:name, false],
+        "NAME_DESCENDING" => [:name, true],
+      }.each do |order, (kind, reverse)|
+        context "when ordered by #{order}" do
+          include_examples "an ordered list of roles", order, kind, reverse
+        end
       end
+    end
+
+    as_an_admin_user do
+      include_examples "can fetch roles in any order"
+    end
+
+    as_a_regular_user do
+      include_examples "can fetch roles in any order"
+    end
+
+    as_an_anonymous_user do
+      include_examples "can fetch roles in any order"
     end
   end
 end

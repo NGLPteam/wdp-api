@@ -5,6 +5,7 @@ RSpec.describe "Query.viewer", type: :request do
     <<~GRAPHQL
     query getViewer {
       viewer {
+        accessManagement
         anonymous
         allowedActions
         id
@@ -34,9 +35,12 @@ RSpec.describe "Query.viewer", type: :request do
 
   let(:current_user) { AnonymousUser.new }
 
+  let(:expected_access_management) { ::Types::AccessManagementType.name_for_value(current_user.access_management) }
+
   let(:expected_shape) do
     gql.object do |obj|
       obj.prop :viewer do |v|
+        v[:access_management] = expected_access_management
         v[:allowed_actions] = current_user.allowed_actions
         v[:anonymous] = current_user.anonymous?
         v[:email] = current_user.email
