@@ -7,6 +7,10 @@ module Metadata
         xml do
           root "identifier"
         end
+
+        def doi?
+          ::Entities::Types::DOI_PATTERN.match?(content)
+        end
       end
     end
   end

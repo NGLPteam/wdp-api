@@ -9,11 +9,32 @@
   default: true
   protocol_name: "oai"
   metadata_format_name: "esploro"
+- id: default_oaidc
+  name: Default OAIDC Mapping
+  default: true
+  protocol_name: "oai"
+  metadata_format_name: "oaidc"
+  description: >
+    By default, we try to harvest OAIDC content into the paper schema.
+
+    Sometimes we harvest as journal content, though, so refer to the
+    "OAIDC Journal Article" example where necessary.
 - id: default_mets
   name: Default METS Mapping
   default: true
   protocol_name: "oai"
   metadata_format_name: "mets"
+- id: oaidc_journal_article
+  name: OAIDC Journal Article
+  default: false
+  protocol_name: "oai"
+  metadata_format_name: "oaidc"
+  description: >
+    When fetching an OAIDC source that represents a journal article,
+    the data needs to be parsed using special helpers we provide in
+    the liquid environment. These are available on the following
+    assigns in any OAIDC environment: `journal`, `creators`, `contributors`,
+    and `pdf`.
 - id: empty
   name: "Barebones Template"
   default: false

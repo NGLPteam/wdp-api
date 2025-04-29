@@ -8,6 +8,10 @@ module Metadata
 
     EnumeratedStringList = Coercible::Array.of(Coercible::String.constrained(filled: true))
 
+    NamaeValue = Instance(::Namae::Name)
+
+    NamaeValues = Array.of(NamaeValue)
+
     NamespacePrefix = String.constrained(filled: true) | Nil
 
     NamespaceValue = String.constrained(filled: true)

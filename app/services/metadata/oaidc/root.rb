@@ -41,6 +41,36 @@ module Metadata
         map_element "coverage", to: :coverage, namespace: DC_NS, prefix: "dc"
         map_element "rights", to: :rights, namespace: DC_NS, prefix: "dc"
       end
+
+      def find_doi
+        identifier.detect(&:doi?)&.content
+      end
+
+      def find_journal_source
+        source.detect(&:has_journal_source?)&.journal_source
+      end
+
+      def find_pdf_url
+        idx = format.index(&:pdf?)
+
+        return if idx.blank?
+
+        relation[idx]&.content
+      end
+
+      def valid_contributor_names
+        valid_names_from contributor
+      end
+
+      def valid_creator_names
+        valid_names_from creator
+      end
+
+      private
+
+      def valid_names_from(elements)
+        elements.map(&:name).select(&:valid?)
+      end
     end
   end
 end

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mapping>
+  <entities>
+    <item schema="nglp:paper">
+      <identifier>{{record.identifier}}</identifier>
+      <title>{{oaidc.title | first}}</title>
+      <doi>{{doi}}</doi>
+      <published>{{oaidc.date | first}}</published>
+      <properties>
+        <asset path="pdf_version">
+          <kind>pdf</kind>
+          <mime-type>application/pdf</mime-type>
+          <name>
+            paper.pdf
+          </name>
+          <url>
+            {{pdf.url}}
+          </url>
+        </asset>
+        <string path="host.title">{{oaidc.publisher | first}}</string>
+      </properties>
+      <contributions>
+        {% for creator in creators %}
+        {% contribution role: "aut" %}
+        {% person %}
+        {% given_name creator.given %}
+        {% family_name creator.family %}
+        {% endperson %}
+        {% endcontribution %}
+        {% endfor %}
+        {% for contributor in contributors %}
+        {% contribution role: "ctb" %}
+        {% person %}
+        {% given_name contributor.given %}
+        {% family_name contributor.family %}
+        {% endperson %}
+        {% endcontribution %}
+        {% endfor %}
+      </contributions>
+    </item>
+  </entities>
+</mapping>

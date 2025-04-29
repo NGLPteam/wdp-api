@@ -9,6 +9,8 @@ module Protocols
     class ClientBuilder < Support::HookBased::Actor
       include Dry::Initializer[undefined: false].define -> do
         param :base_url, Protocols::Types::URL
+
+        option :allow_insecure, Protocols::Types::Bool, default: proc { false }
       end
 
       standard_execution!
@@ -59,6 +61,10 @@ module Protocols
           builder.request :retry, retry_options
           builder.response :follow_redirects, limit: 5
           builder.adapter :net_http
+
+          if allow_insecure
+            builder.ssl.verify = false
+          end
         end
       end
     end

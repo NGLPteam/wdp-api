@@ -7,6 +7,14 @@ module Metadata
         xml do
           root "source"
         end
+
+        def has_journal_source?
+          journal_source.known?
+        end
+
+        def journal_source
+          @journal_source ||= MeruAPI::Container["harvesting.utility.parse_journal_source"].(content)
+        end
       end
     end
   end

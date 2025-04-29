@@ -10,12 +10,14 @@ module Harvesting
       # @param [HarvestSet, nil] set
       # @param [Hash] options
       # @return [Dry::Monads::Success(HarvestMapping)]
-      def call(harvest_source, target_entity, set: nil, **options)
+      def call(harvest_source, target_entity, extraction_mapping_template: nil, set: nil, **options)
         mapping = harvest_source.harvest_mappings.by_target(target_entity).by_set(set).first_or_initialize do |to_create|
           to_create.inherit_harvesting_options_from! harvest_source
         end
 
         mapping.merge_harvesting_options!(**options)
+
+        mapping.extraction_mapping_template = extraction_mapping_template if extraction_mapping_template.present?
 
         monadic_save mapping
       end
