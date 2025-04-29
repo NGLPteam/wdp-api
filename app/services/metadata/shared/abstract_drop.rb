@@ -23,10 +23,26 @@ module Metadata
       def initialize(data, metadata_context: nil)
         super()
 
-        @data = data
+        @data = @object = data
 
         run_callbacks :initialize do
           @metadata_context = metadata_context || parent_metadata_context
+        end
+      end
+
+      def to_liquid
+        if has_string_content?
+          content
+        else
+          super
+        end
+      end
+
+      def to_s
+        if has_string_content?
+          content
+        else
+          super
         end
       end
 
@@ -44,6 +60,10 @@ module Metadata
             value.to_liquid
           end
         end
+      end
+
+      def has_string_content?
+        respond_to?(:content) && content.kind_of?(String) && content.present?
       end
 
       # @return [::Harvesting::Metadata::Context, nil]

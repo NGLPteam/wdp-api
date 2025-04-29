@@ -7,6 +7,10 @@ module Metadata
         xml do
           root "format"
         end
+
+        def pdf?
+          content == "application/pdf"
+        end
       end
     end
   end

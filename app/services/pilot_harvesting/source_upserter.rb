@@ -7,6 +7,8 @@ module PilotHarvesting
       param :harvestable, PilotHarvesting::Types.Instance(::PilotHarvesting::Harvestable)
 
       param :target_entity, Harvesting::Types::Target
+
+      option :extraction_mapping_template, Harvesting::Types::String.optional, optional: true
     end
 
     standard_execution!
@@ -78,6 +80,7 @@ module PilotHarvesting
 
     wrapped_hook! def upsert_source
       options = {
+        extraction_mapping_template:,
         mapping_options:,
         read_options:,
         metadata_format:,
@@ -113,6 +116,7 @@ module PilotHarvesting
 
     wrapped_hook! def upsert_mapping
       options = {
+        extraction_mapping_template:,
         mapping_options:,
         read_options:,
         set: harvest_set,
@@ -130,6 +134,7 @@ module PilotHarvesting
 
     wrapped_hook! def create_attempt
       @harvest_attempt = harvest_mapping.create_attempt(
+        extraction_mapping_template:,
         harvest_set:,
         target_entity:,
       )

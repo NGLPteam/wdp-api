@@ -16,6 +16,8 @@ module Harvesting
         !unknown?
       end
 
+      alias valid? known?
+
       def unknown?
         volume == "UNKNOWN" && issue == "UNKNOWN"
       end

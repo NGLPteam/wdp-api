@@ -49,7 +49,31 @@ module PilotHarvesting
 
       attribute? :metadata_mappings, Harvesting::Types::Array.of(MetadataMapping).default([].freeze)
 
+      attribute? :mapping_template, Harvesting::Types::String.optional
+
+      attribute? :example_mapping_template_id, Harvesting::Types::String.optional
+
       delegate :metadata_format, :protocol_name, to: :class, prefix: :default
+    end
+
+    def default_example_mapping_template_id
+      case harvesting_metadata_format
+      when "esploro"
+        "default_esploro"
+      when "jats"
+        "default_jats"
+      when "mets"
+        "default_mets"
+      when "oaidc"
+        case schema_name
+        in "nglp:journal" then "oaidc_journal_article"
+        in "nglp:series" then "default_oaidc"
+        end
+      end
+    end
+
+    def extraction_mapping_template
+      @extraction_mapping_template ||= load_extraction_mapping_template
     end
 
     # @!attribute [r] harvesting_identifier
@@ -96,7 +120,17 @@ module PilotHarvesting
     def upsert_source_for!(entity)
       return Success(nil) if url.blank?
 
-      call_operation("pilot_harvesting.upsert_source", self, entity)
+      call_operation("pilot_harvesting.upsert_source", self, entity, extraction_mapping_template:)
+    end
+
+    private
+
+    def load_extraction_mapping_template
+      return mapping_template if mapping_template.present?
+
+      id = example_mapping_template_id.presence || default_example_mapping_template_id
+
+      Harvesting::Example.find(id)&.extraction_mapping_template
     end
   end
 end

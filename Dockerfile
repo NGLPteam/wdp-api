@@ -10,7 +10,7 @@ RUN --mount=type=secret,id=maxmind_account_id \
   GEOIPUPDATE_LICENSE_KEY_FILE=/run/secrets/maxmind_license_key \
   /usr/bin/geoipupdate
 
-FROM ruby:3.2.3-bullseye
+FROM ruby:3.2.3-bookworm
 
 RUN apt-get update -qq && apt-get install -y -qq --no-install-recommends \
     build-essential \

@@ -5180,7 +5180,8 @@ CREATE TABLE public.harvest_sources (
     identifier public.citext NOT NULL,
     extraction_mapping_template text DEFAULT ''::text NOT NULL,
     checked_at timestamp without time zone,
-    status public.harvest_source_status DEFAULT 'inactive'::public.harvest_source_status NOT NULL
+    status public.harvest_source_status DEFAULT 'inactive'::public.harvest_source_status NOT NULL,
+    allow_insecure boolean DEFAULT false NOT NULL
 );
 
 
@@ -13831,6 +13832,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20250317193746'),
 ('20250317201446'),
 ('20250408162405'),
-('20250408163159');
+('20250408163159'),
+('20250429192158');
 
 
