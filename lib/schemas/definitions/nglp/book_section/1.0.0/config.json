@@ -1,0 +1,100 @@
+{
+  "namespace": "nglp",
+  "identifier": "book_section",
+  "name": "Book Section",
+  "version": "1.0.0",
+  "kind": "item",
+  "parents": [
+    {
+      "namespace": "nglp",
+      "identifier": "book"
+    }
+  ],
+  "children": [
+    {
+      "namespace": "nglp",
+      "identifier": "book_section"
+    }
+  ],
+  "orderings": [
+    {
+      "id": "sections",
+      "name": "sections",
+      "filter": {
+        "schemas": [
+          {
+            "namespace": "nglp",
+            "identifier": "book_section"
+          }
+        ]
+      },
+      "select": {
+        "direct": "children"
+      },
+      "order": [
+        {
+          "path": "props.section_position#integer",
+          "direction": "asc",
+          "nulls": "last"
+        },
+        { "path": "entity.title", "direction": "asc" }
+      ],
+      "position": 1
+    }
+  ],
+  "properties": [
+    {
+      "path": "body",
+      "label": "Full Text",
+      "type": "full_text",
+      "wide": true,
+      "function": "content"
+    },
+    {
+      "path": "citation",
+      "label": "How to Cite",
+      "type": "full_text",
+      "kind": "markdown",
+      "function": "content"
+    },
+    {
+      "path": "online_version",
+      "label": "Online Version",
+      "type": "url",
+      "function": "content"
+    },
+    {
+      "path": "pdf_version",
+      "label": "PDF Version",
+      "type": "asset",
+      "function": "content"
+    },
+    {
+      "path": "book_position",
+      "label": "Book Position",
+      "type": "integer",
+      "orderable": true,
+      "function": "sorting"
+    },
+    {
+      "path": "section_position",
+      "label": "Section Position",
+      "type": "integer",
+      "orderable": true,
+      "function": "sorting"
+    },
+    {
+      "path": "keywords",
+      "label": "Keywords",
+      "type": "tags",
+      "function": "metadata",
+      "default": []
+    },
+    {
+      "path": "language",
+      "label": "Language",
+      "type": "controlled_vocabulary",
+      "function": "metadata"
+    }
+  ]
+}
