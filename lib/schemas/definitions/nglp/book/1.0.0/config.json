@@ -1,0 +1,169 @@
+{
+  "namespace": "nglp",
+  "identifier": "book",
+  "name": "Book",
+  "version": "1.0.0",
+  "kind": "collection",
+  "parents": [
+    {
+      "namespace": "nglp",
+      "identifier": "community"
+    },
+    {
+      "namespace": "nglp",
+      "identifier": "series"
+    }
+  ],
+  "children": [
+    {
+      "namespace": "nglp",
+      "identifier": "book_section"
+    }
+  ],
+  "orderings": [
+    {
+      "id": "sections",
+      "name": "sections",
+      "filter": {
+        "schemas": [
+          {
+            "namespace": "nglp",
+            "identifier": "book_section"
+          }
+        ]
+      },
+      "select": {
+        "direct": "children"
+      },
+      "order": [
+        {
+          "path": "props.book_position#integer",
+          "direction": "asc",
+          "nulls": "last"
+        },
+        { "path": "entity.title", "direction": "asc" }
+      ],
+      "position": 1
+    }
+  ],
+  "properties": [
+    {
+      "path": "publisher",
+      "label": "Publisher",
+      "type": "string",
+      "function": "metadata"
+    },
+    {
+      "path": "publisher_location",
+      "label": "Publisher Location",
+      "type": "string",
+      "function": "metadata"
+    },
+    {
+      "path": "keywords",
+      "label": "Keywords",
+      "type": "tags",
+      "function": "metadata",
+      "default": []
+    },
+    {
+      "path": "subjects",
+      "label": "Subjects",
+      "type": "tags",
+      "function": "metadata",
+      "default": []
+    },
+    {
+      "path": "description",
+      "label": "Description",
+      "type": "full_text",
+      "kind": "markdown",
+      "function": "presentation"
+    },
+    {
+      "type": "select",
+      "path": "cc_license",
+      "label": "CC License",
+      "options": [
+        {
+          "label": "CC BY",
+          "value": "CC BY"
+        },
+        {
+          "label": "CC BY-SA",
+          "value": "CC BY-SA"
+        },
+        {
+          "label": "CC BY-NC",
+          "value": "CC BY-NC"
+        },
+        {
+          "label": "CC BY-NC-SA",
+          "value": "CC BY-NC-SA"
+        },
+        {
+          "label": "CC BY-ND",
+          "value": "CC BY-ND"
+        },
+        {
+          "label": "CC BY-NC-ND",
+          "value": "CC BY-NC-ND"
+        }
+      ]
+    },
+    {
+      "path": "ebook_isbn",
+      "label": "eBook ISBN",
+      "type": "string",
+      "function": "metadata"
+    },
+    {
+      "path": "print_isbn",
+      "label": "Print ISBN",
+      "type": "string",
+      "function": "metadata"
+    },
+    {
+      "path": "version",
+      "label": "Version",
+      "type": "float",
+      "function": "metadata"
+    },
+    {
+      "path": "edition",
+      "label": "Edition",
+      "type": "string",
+      "function": "metadata"
+    },
+    {
+      "path": "series_position",
+      "label": "Series Position",
+      "type": "integer",
+      "orderable": true,
+      "function": "sorting"
+    },
+    {
+      "path": "purchase_url",
+      "label": "Purchase URL",
+      "type": "url"
+    },
+    {
+      "path": "online_version",
+      "label": "Online Version",
+      "type": "url",
+      "function": "content"
+    },
+    {
+      "path": "pdf_version",
+      "label": "PDF Version",
+      "type": "asset",
+      "function": "content"
+    },
+    {
+      "path": "language",
+      "label": "Language",
+      "type": "controlled_vocabulary",
+      "function": "metadata"
+    }
+  ]
+}

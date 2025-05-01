@@ -87,6 +87,34 @@
         { "path": "entity.title", "direction": "asc" }
       ],
       "position": 3
+    },
+    {
+      "id": "books",
+      "name": "Books",
+      "filter": {
+        "schemas": [
+          {
+            "namespace": "nglp",
+            "identifier": "book"
+          }
+        ]
+      },
+      "select": {
+        "direct": "children",
+        "links": {
+          "contains": true
+        }
+      },
+      "order": [
+        {
+          "path": "props.series_position",
+          "direction": "asc",
+          "nulls": "last"
+        },
+        { "path": "entity.published", "direction": "asc", "nulls": "last" },
+        { "path": "entity.title", "direction": "asc" }
+      ],
+      "position": 4
     }
   ],
   "properties": [{ "type": "markdown", "path": "about", "label": "About" }]
