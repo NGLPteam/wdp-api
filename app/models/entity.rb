@@ -13,6 +13,7 @@ class Entity < ApplicationRecord
   include ReferencesEntityVisibility
   include ReferencesNamedVariableDates
   include EntityReferent
+  include PgSearch::Model
   include ScopesForAuthPath
   include ScopesForEntityComposedText
   include TimestampScopes
@@ -28,6 +29,11 @@ class Entity < ApplicationRecord
   CONTEXTUAL_TUPLE = %i[hierarchical_type hierarchical_id].freeze
 
   ENTITY_TUPLE = %i[entity_type entity_id].freeze
+
+  belongs_to :entity_search_document,
+    primary_key: ENTITY_TUPLE,
+    foreign_key: CONTEXTUAL_TUPLE,
+    inverse_of: :synchronized_entities
 
   has_many :authorizing_entities, inverse_of: :entity, dependent: :delete_all
 
@@ -76,6 +82,8 @@ class Entity < ApplicationRecord
   end
 
   class << self
+    # @!group Searching
+
     # @see Resolvers::SearchResultsResolver
     # @param [String] text
     # @return [ActiveRecord::Relation<Entity>]
@@ -111,9 +119,11 @@ class Entity < ApplicationRecord
     # @api private
     # @return [ActiveRecord::Relation]
     def apply_order_to_exclude_duplicate_links
-      order(:hierarchical_id).
+      exclusions = reorder(:hierarchical_id).
         distinct_on_order_values.
-        order(arel_table[:link_operator].asc.nulls_first)
+        order(arel_table[:link_operator].asc.nulls_first).reselect(:hierarchical_id)
+
+      where(hierarchical_id: exclusions)
     end
 
     # @param [Integer] max_depth
@@ -126,6 +136,16 @@ class Entity < ApplicationRecord
 
       where matches
     end
+
+    def search_by_prefix(...)
+      joins(:entity_search_document).merge(EntitySearchDocument.search_by_prefix(...))
+    end
+
+    def search_by_query(...)
+      joins(:entity_search_document).merge(EntitySearchDocument.search_by_query(...))
+    end
+
+    # @!endgroup
 
     # @param [#auth_path] child
     # @return [ActiveRecord::Relation<Entity>]

@@ -11,17 +11,18 @@ module Searching
 
       option :scope, Searching::Types::Interface(:all), default: proc { Entity.all }
     end
+
     include MeruAPI::Deps[
       prefix_sanitize: "searching.prefix_sanitize",
     ]
 
     # @return [ActiveRecord::Relation<::Entity>]
     def call
-      needle = prefix_sanitize.(input)
+      # needle = prefix_sanitize.(input)
 
-      return scope if needle.blank?
+      return scope if input.blank?
 
-      scope.where_begins_like(search_title: needle, _case_sensitive: true)
+      scope.where(id: ::Entity.search_by_prefix(input).select(::Entity.arel_table[:id]))
     end
   end
 end

@@ -4297,6 +4297,180 @@
   default_function:
   has_default: false
   virtual: false
+- id: EntityAuthorContribution#contribution_id
+  model_name: EntityAuthorContribution
+  table_name: entity_author_contributions
+  name: contribution_id
+  type: uuid
+  'null': true
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: EntityAuthorContribution#contribution_type
+  model_name: EntityAuthorContribution
+  table_name: entity_author_contributions
+  name: contribution_type
+  type: text
+  'null': true
+  sql_type_metadata:
+    sql_type: text
+    type: text
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: EntityAuthorContribution#entity_id
+  model_name: EntityAuthorContribution
+  table_name: entity_author_contributions
+  name: entity_id
+  type: uuid
+  'null': true
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: EntityAuthorContribution#entity_type
+  model_name: EntityAuthorContribution
+  table_name: entity_author_contributions
+  name: entity_type
+  type: text
+  'null': true
+  sql_type_metadata:
+    sql_type: text
+    type: text
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: EntityAuthorContribution#contributor_id
+  model_name: EntityAuthorContribution
+  table_name: entity_author_contributions
+  name: contributor_id
+  type: uuid
+  'null': true
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: EntityAuthorContribution#inner_position
+  model_name: EntityAuthorContribution
+  table_name: entity_author_contributions
+  name: inner_position
+  type: integer
+  'null': true
+  sql_type_metadata:
+    sql_type: bigint
+    type: integer
+    limit: 8
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: EntityAuthorContribution#outer_position
+  model_name: EntityAuthorContribution
+  table_name: entity_author_contributions
+  name: outer_position
+  type: integer
+  'null': true
+  sql_type_metadata:
+    sql_type: bigint
+    type: integer
+    limit: 8
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: EntityAuthorContribution#ranking
+  model_name: EntityAuthorContribution
+  table_name: entity_author_contributions
+  name: ranking
+  type: integer
+  'null': true
+  sql_type_metadata:
+    sql_type: bigint
+    type: integer
+    limit: 8
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: EntityAuthorContribution#contributor_name
+  model_name: EntityAuthorContribution
+  table_name: entity_author_contributions
+  name: contributor_name
+  type: text
+  'null': true
+  sql_type_metadata:
+    sql_type: text
+    type: text
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: EntityAuthorContribution#contributor_sort_name
+  model_name: EntityAuthorContribution
+  table_name: entity_author_contributions
+  name: contributor_sort_name
+  type: citext
+  'null': true
+  sql_type_metadata:
+    sql_type: citext
+    type: citext
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: EntityAuthorContribution#document
+  model_name: EntityAuthorContribution
+  table_name: entity_author_contributions
+  name: document
+  type: tsvector
+  'null': true
+  sql_type_metadata:
+    sql_type: tsvector
+    type: tsvector
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: EntityAuthorContribution#created_at
+  model_name: EntityAuthorContribution
+  table_name: entity_author_contributions
+  name: created_at
+  type: datetime
+  'null': true
+  sql_type_metadata:
+    sql_type: timestamp(6) without time zone
+    type: datetime
+    precision: 6
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: EntityAuthorContribution#updated_at
+  model_name: EntityAuthorContribution
+  table_name: entity_author_contributions
+  name: updated_at
+  type: datetime
+  'null': true
+  sql_type_metadata:
+    sql_type: timestamp(6) without time zone
+    type: datetime
+    precision: 6
+  default:
+  default_function:
+  has_default: false
+  virtual: false
 - id: EntityBreadcrumb#entity_type
   model_name: EntityBreadcrumb
   table_name: entity_breadcrumbs
@@ -5523,6 +5697,164 @@
   default_function: generate_variable_date_value(type, raw_value)
   has_default: false
   virtual: true
+- id: EntitySearchDocument#id
+  model_name: EntitySearchDocument
+  table_name: entity_search_documents
+  name: id
+  type: uuid
+  'null': false
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default:
+  default_function: gen_random_uuid()
+  has_default: true
+  virtual: false
+- id: EntitySearchDocument#entity_type
+  model_name: EntitySearchDocument
+  table_name: entity_search_documents
+  name: entity_type
+  type: string
+  'null': false
+  sql_type_metadata:
+    sql_type: character varying
+    type: string
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: EntitySearchDocument#entity_id
+  model_name: EntitySearchDocument
+  table_name: entity_search_documents
+  name: entity_id
+  type: uuid
+  'null': false
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: EntitySearchDocument#community_id
+  model_name: EntitySearchDocument
+  table_name: entity_search_documents
+  name: community_id
+  type: uuid
+  'null': true
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: EntitySearchDocument#collection_id
+  model_name: EntitySearchDocument
+  table_name: entity_search_documents
+  name: collection_id
+  type: uuid
+  'null': true
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: EntitySearchDocument#item_id
+  model_name: EntitySearchDocument
+  table_name: entity_search_documents
+  name: item_id
+  type: uuid
+  'null': true
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: EntitySearchDocument#title
+  model_name: EntitySearchDocument
+  table_name: entity_search_documents
+  name: title
+  type: citext
+  'null': false
+  sql_type_metadata:
+    sql_type: citext
+    type: citext
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: EntitySearchDocument#author_names
+  model_name: EntitySearchDocument
+  table_name: entity_search_documents
+  name: author_names
+  type: jsonb
+  'null': false
+  sql_type_metadata:
+    sql_type: jsonb
+    type: jsonb
+  default: "[]"
+  default_function:
+  has_default: true
+  virtual: false
+- id: EntitySearchDocument#schematic_texts
+  model_name: EntitySearchDocument
+  table_name: entity_search_documents
+  name: schematic_texts
+  type: jsonb
+  'null': false
+  sql_type_metadata:
+    sql_type: jsonb
+    type: jsonb
+  default: "{}"
+  default_function:
+  has_default: true
+  virtual: false
+- id: EntitySearchDocument#document
+  model_name: EntitySearchDocument
+  table_name: entity_search_documents
+  name: document
+  type: tsvector
+  'null': false
+  sql_type_metadata:
+    sql_type: tsvector
+    type: tsvector
+  default: ''
+  default_function:
+  has_default: true
+  virtual: false
+- id: EntitySearchDocument#created_at
+  model_name: EntitySearchDocument
+  table_name: entity_search_documents
+  name: created_at
+  type: datetime
+  'null': false
+  sql_type_metadata:
+    sql_type: timestamp(6) without time zone
+    type: datetime
+    precision: 6
+  default:
+  default_function: CURRENT_TIMESTAMP
+  has_default: true
+  virtual: false
+- id: EntitySearchDocument#updated_at
+  model_name: EntitySearchDocument
+  table_name: entity_search_documents
+  name: updated_at
+  type: datetime
+  'null': false
+  sql_type_metadata:
+    sql_type: timestamp(6) without time zone
+    type: datetime
+    precision: 6
+  default:
+  default_function: CURRENT_TIMESTAMP
+  has_default: true
+  virtual: false
 - id: EntitySearchableProperty#id
   model_name: EntitySearchableProperty
   table_name: entity_searchable_properties

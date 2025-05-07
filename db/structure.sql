@@ -122,6 +122,20 @@ COMMENT ON EXTENSION pgcrypto IS 'cryptographic functions';
 
 
 --
+-- Name: unaccent; Type: EXTENSION; Schema: -; Owner: -
+--
+
+CREATE EXTENSION IF NOT EXISTS unaccent WITH SCHEMA public;
+
+
+--
+-- Name: EXTENSION unaccent; Type: COMMENT; Schema: -; Owner: -
+--
+
+COMMENT ON EXTENSION unaccent IS 'text search dictionary that removes accents';
+
+
+--
 -- Name: access_management; Type: TYPE; Schema: public; Owner: -
 --
 
@@ -1300,6 +1314,24 @@ $_$;
 
 
 --
+-- Name: immutable_unaccent(text); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.immutable_unaccent(text) RETURNS text
+    LANGUAGE sql IMMUTABLE STRICT PARALLEL SAFE
+    AS $_$
+SELECT public.unaccent('public.unaccent'::regdictionary, $1);
+$_$;
+
+
+--
+-- Name: FUNCTION immutable_unaccent(text); Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON FUNCTION public.immutable_unaccent(text) IS 'An expression-indexable version of unaccent that uses the default dictionary.';
+
+
+--
 -- Name: is_hero_template_kind(text); Type: FUNCTION; Schema: public; Owner: -
 --
 
@@ -1499,6 +1531,41 @@ CREATE FUNCTION public.jsonb_extract_boolean(jsonb, text[]) RETURNS boolean
     LANGUAGE sql IMMUTABLE PARALLEL SAFE
     AS $_$
 SELECT CASE jsonb_typeof($1 #> $2) WHEN 'boolean' THEN ($1 #> $2)::boolean ELSE FALSE END;
+$_$;
+
+
+--
+-- Name: jsonb_extract_strings(jsonb); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.jsonb_extract_strings(jsonb) RETURNS SETOF text
+    LANGUAGE sql IMMUTABLE STRICT PARALLEL SAFE
+    AS $_$
+WITH RECURSIVE extracted_objects(path, value) AS (
+  SELECT
+    key AS path,
+    value
+  FROM pg_catalog.jsonb_each(jsonb_build_object('input', $1)) AS t(key, value)
+  UNION ALL
+  SELECT
+  path || '.' || COALESCE(obj_key, (arr_key- 1)::text),
+  COALESCE(obj_value, arr_value)
+  FROM extracted_objects
+  LEFT JOIN LATERAL
+  jsonb_each(case jsonb_typeof(value) when 'object' then value end)
+  AS o(obj_key, obj_value)
+  ON jsonb_typeof(value) = 'object'
+  LEFT JOIN LATERAL
+  jsonb_array_elements(CASE jsonb_typeof(value) WHEN 'array' THEN value END)
+  WITH ORDINALITY AS a(arr_value, arr_key)
+  ON jsonb_typeof(value) = 'array'
+  WHERE obj_key IS NOT NULL or arr_key IS NOT NULL
+)
+SELECT
+  value #>> '{}'
+FROM extracted_objects
+  WHERE jsonb_typeof(value) = 'string'
+;
 $_$;
 
 
@@ -1801,6 +1868,51 @@ CREATE FUNCTION public.to_prefix_search(public.citext) RETURNS text
     LANGUAGE sql IMMUTABLE STRICT PARALLEL SAFE
     AS $_$
 SELECT to_prefix_search($1::text);
+$_$;
+
+
+--
+-- Name: to_unaccented_tsv(jsonb); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.to_unaccented_tsv(jsonb) RETURNS tsvector
+    LANGUAGE sql IMMUTABLE PARALLEL SAFE
+    AS $_$
+SELECT pg_catalog.to_tsvector('pg_catalog.simple'::regconfig, COALESCE(pg_catalog.STRING_AGG(public.immutable_unaccent(str), ' '), ''))
+FROM public.jsonb_extract_strings($1) AS t(str);
+$_$;
+
+
+--
+-- Name: to_unaccented_tsv(text); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.to_unaccented_tsv(text) RETURNS tsvector
+    LANGUAGE sql IMMUTABLE PARALLEL SAFE
+    AS $_$
+SELECT pg_catalog.to_tsvector('pg_catalog.simple'::regconfig, COALESCE(public.immutable_unaccent($1), ''));
+$_$;
+
+
+--
+-- Name: to_unaccented_weighted_tsv(jsonb, "char"); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.to_unaccented_weighted_tsv(jsonb, "char") RETURNS tsvector
+    LANGUAGE sql IMMUTABLE PARALLEL SAFE
+    AS $_$
+SELECT pg_catalog.setweight(public.to_unaccented_tsv($1), $2);
+$_$;
+
+
+--
+-- Name: to_unaccented_weighted_tsv(text, "char"); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.to_unaccented_weighted_tsv(text, "char") RETURNS tsvector
+    LANGUAGE sql IMMUTABLE PARALLEL SAFE
+    AS $_$
+SELECT pg_catalog.setweight(public.to_unaccented_tsv($1), $2);
 $_$;
 
 
@@ -4439,6 +4551,77 @@ CREATE VIEW public.entity_ancestors AS
 
 
 --
+-- Name: item_contributions; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.item_contributions (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    contributor_id uuid NOT NULL,
+    item_id uuid NOT NULL,
+    kind public.citext,
+    metadata jsonb,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    role_id uuid NOT NULL,
+    inner_position bigint,
+    outer_position bigint
+);
+
+
+--
+-- Name: entity_author_contributions; Type: MATERIALIZED VIEW; Schema: public; Owner: -
+--
+
+CREATE MATERIALIZED VIEW public.entity_author_contributions AS
+ WITH raw_contributions AS (
+         SELECT collection_contributions.id AS contribution_id,
+            'CollectionContribution'::text AS contribution_type,
+            collection_contributions.collection_id AS entity_id,
+            'Collection'::text AS entity_type,
+            collection_contributions.contributor_id,
+            collection_contributions.inner_position,
+            collection_contributions.outer_position,
+            collection_contributions.created_at,
+            collection_contributions.updated_at
+           FROM public.collection_contributions
+          WHERE (collection_contributions.role_id IN ( SELECT controlled_vocabulary_items.id
+                   FROM public.controlled_vocabulary_items
+                  WHERE ('author'::public.citext OPERATOR(public.=) ANY (controlled_vocabulary_items.tags))))
+        UNION ALL
+         SELECT item_contributions.id AS contribution_id,
+            'ItemContribution'::text AS contribution_type,
+            item_contributions.item_id AS entity_id,
+            'Item'::text AS entity_type,
+            item_contributions.contributor_id,
+            item_contributions.inner_position,
+            item_contributions.outer_position,
+            item_contributions.created_at,
+            item_contributions.updated_at
+           FROM public.item_contributions
+          WHERE (item_contributions.role_id IN ( SELECT controlled_vocabulary_items.id
+                   FROM public.controlled_vocabulary_items
+                  WHERE ('author'::public.citext OPERATOR(public.=) ANY (controlled_vocabulary_items.tags))))
+        )
+ SELECT DISTINCT ON (rc.entity_id, rc.contributor_id) rc.contribution_id,
+    rc.contribution_type,
+    rc.entity_id,
+    rc.entity_type,
+    rc.contributor_id,
+    rc.inner_position,
+    rc.outer_position,
+    dense_rank() OVER w AS ranking,
+    c.name AS contributor_name,
+    c.sort_name AS contributor_sort_name,
+    public.to_unaccented_weighted_tsv(c.name, 'B'::"char") AS document,
+    rc.created_at,
+    rc.updated_at
+   FROM (raw_contributions rc
+     JOIN public.contributors c ON ((c.id = rc.contributor_id)))
+  WINDOW w AS (PARTITION BY rc.entity_id ORDER BY rc.outer_position, rc.inner_position, c.sort_name)
+  WITH NO DATA;
+
+
+--
 -- Name: entity_breadcrumbs; Type: VIEW; Schema: public; Owner: -
 --
 
@@ -4631,6 +4814,26 @@ CREATE TABLE public.entity_orderable_properties (
     string_value public.citext GENERATED ALWAYS AS (public.generate_string_value(type, raw_value)) STORED COLLATE public.custom_numeric,
     timestamp_value timestamp with time zone GENERATED ALWAYS AS (public.generate_timestamp_value(type, raw_value)) STORED,
     variable_date_value public.variable_precision_date GENERATED ALWAYS AS (public.generate_variable_date_value(type, raw_value)) STORED
+);
+
+
+--
+-- Name: entity_search_documents; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.entity_search_documents (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    entity_type character varying NOT NULL,
+    entity_id uuid NOT NULL,
+    community_id uuid,
+    collection_id uuid,
+    item_id uuid,
+    title public.citext NOT NULL,
+    author_names jsonb DEFAULT '[]'::jsonb NOT NULL,
+    schematic_texts jsonb DEFAULT '{}'::jsonb NOT NULL,
+    document tsvector DEFAULT ''::tsvector NOT NULL,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
 
@@ -5348,24 +5551,6 @@ CREATE MATERIALIZED VIEW public.item_authorizations AS
     item_paths.auth_path
    FROM item_paths
   WITH NO DATA;
-
-
---
--- Name: item_contributions; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.item_contributions (
-    id uuid DEFAULT gen_random_uuid() NOT NULL,
-    contributor_id uuid NOT NULL,
-    item_id uuid NOT NULL,
-    kind public.citext,
-    metadata jsonb,
-    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    role_id uuid NOT NULL,
-    inner_position bigint,
-    outer_position bigint
-);
 
 
 --
@@ -7377,6 +7562,14 @@ ALTER TABLE ONLY public.entity_links
 
 ALTER TABLE ONLY public.entity_orderable_properties
     ADD CONSTRAINT entity_orderable_properties_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: entity_search_documents entity_search_documents_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.entity_search_documents
+    ADD CONSTRAINT entity_search_documents_pkey PRIMARY KEY (id);
 
 
 --
@@ -9491,6 +9684,20 @@ CREATE INDEX index_entities_staleness ON public.entities USING btree (stale);
 
 
 --
+-- Name: index_entity_author_contributions_ranking; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_entity_author_contributions_ranking ON public.entity_author_contributions USING btree (entity_id, ranking);
+
+
+--
+-- Name: index_entity_author_contributions_uniqueness; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_entity_author_contributions_uniqueness ON public.entity_author_contributions USING btree (entity_id, contributor_id);
+
+
+--
 -- Name: index_entity_composed_texts_on_document; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -9670,6 +9877,41 @@ CREATE UNIQUE INDEX index_entity_links_uniqueness ON public.entity_links USING b
 --
 
 CREATE INDEX index_entity_orderable_properties_on_schema_version_property_id ON public.entity_orderable_properties USING btree (schema_version_property_id);
+
+
+--
+-- Name: index_entity_search_documents_on_collection_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_entity_search_documents_on_collection_id ON public.entity_search_documents USING btree (collection_id);
+
+
+--
+-- Name: index_entity_search_documents_on_community_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_entity_search_documents_on_community_id ON public.entity_search_documents USING btree (community_id);
+
+
+--
+-- Name: index_entity_search_documents_on_document; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_entity_search_documents_on_document ON public.entity_search_documents USING gin (document);
+
+
+--
+-- Name: index_entity_search_documents_on_entity; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_entity_search_documents_on_entity ON public.entity_search_documents USING btree (entity_type, entity_id);
+
+
+--
+-- Name: index_entity_search_documents_on_item_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_entity_search_documents_on_item_id ON public.entity_search_documents USING btree (item_id);
 
 
 --
@@ -12111,6 +12353,14 @@ ALTER TABLE ONLY public.harvest_mapping_record_links
 
 
 --
+-- Name: entity_search_documents fk_rails_0421c10e03; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.entity_search_documents
+    ADD CONSTRAINT fk_rails_0421c10e03 FOREIGN KEY (community_id) REFERENCES public.communities(id) ON DELETE CASCADE;
+
+
+--
 -- Name: templates_navigation_instances fk_rails_05ddde0077; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -12684,6 +12934,14 @@ ALTER TABLE ONLY public.item_links
 
 ALTER TABLE ONLY public.templates_descendant_list_instances
     ADD CONSTRAINT fk_rails_681a91e75a FOREIGN KEY (layout_instance_id) REFERENCES public.layouts_main_instances(id) ON DELETE CASCADE;
+
+
+--
+-- Name: entity_search_documents fk_rails_697e54eb95; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.entity_search_documents
+    ADD CONSTRAINT fk_rails_697e54eb95 FOREIGN KEY (item_id) REFERENCES public.items(id) ON DELETE CASCADE;
 
 
 --
@@ -13439,6 +13697,14 @@ ALTER TABLE ONLY public.items
 
 
 --
+-- Name: entity_search_documents fk_rails_ef6c9b8d10; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.entity_search_documents
+    ADD CONSTRAINT fk_rails_ef6c9b8d10 FOREIGN KEY (collection_id) REFERENCES public.collections(id) ON DELETE CASCADE;
+
+
+--
 -- Name: templates_ordering_instances fk_rails_f141ddb5b6; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -13833,6 +14099,9 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20250317201446'),
 ('20250408162405'),
 ('20250408163159'),
-('20250429192158');
+('20250429192158'),
+('20250505180140'),
+('20250505182825'),
+('20250505195133');
 
 

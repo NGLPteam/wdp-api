@@ -61,6 +61,10 @@ RSpec.describe "Query.search", type: :request do
   let_it_be(:item_1_1) { FactoryBot.create :item, collection: coll_1, title: "Some Item", published: VariablePrecisionDate.parse(Date.current) }
   let_it_be(:item_2_1) { FactoryBot.create :item, collection: coll_2, title: "Known Item" }
 
+  before do
+    MeruAPI::Container["entities.index_search_documents"].()
+  end
+
   let(:collection_slug) { random_slug }
   let(:max_depth) { nil }
   let(:search_predicates) { [] }
