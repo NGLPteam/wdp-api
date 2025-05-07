@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<hero>
+  <templates>
+    <hero>
+      <background>light</background>
+      <enable-descendant-browsing>true</enable-descendant-browsing>
+      <enable-descendant-search>true</enable-descendant-search>
+      <list-contributors>true</list-contributors>
+      <show-basic-view-metrics>true</show-basic-view-metrics>
+      <show-big-search-prompt>false</show-big-search-prompt>
+      <show-breadcrumbs>true</show-breadcrumbs>
+      <show-doi>false</show-doi>
+      <show-hero-image>false</show-hero-image>
+      <show-sharing-link>true</show-sharing-link>
+      <show-split-display>false</show-split-display>
+      <show-thumbnail-image>true</show-thumbnail-image>
+      <slots>
+        <call-to-action>
+          {% if props.pdf_version.exists %}
+            {% asset props.pdf_version %}
+              Download PDF
+            {% endasset %}
+          {% endif %}
+        </call-to-action>
+        <descendant-search-prompt>Search {{ entity.title }}</descendant-search-prompt>
+        <header>
+          {{ entity.title }}
+        </header>
+        <header-parent>
+          {% if ancestors.series %} {{ancestors.series.title}} {% endif %}
+        </header-parent>
+        <header-subtitle/>
+        <summary/>
+        <header-summary>{{ entity.summary }}</header-summary>
+        <header-aside/>
+        <header-sidebar>
+          {% if props.print_isbn.exists %}
+            {% sbitem icon: "isbn" %} Print ISBN: {{ props.print_isbn }} {% endsbitem %}
+          {% endif %}
+          {% if props.ebook_isbn.exists %}
+            {% sbitem icon: "isbn" %} EBook ISBN: {{ props.ebook_isbn }} {% endsbitem %}
+          {% endif %}
+          {% if props.cc_license.exists %}
+            {% sbitem icon: "cc" %} {{ props.cc_license }} License {% endsbitem %}
+          {% endif %}
+        </header-sidebar>
+        <metadata/>
+        <sidebar/>
+        <subheader/>
+        <subheader-aside/>
+        <subheader-summary/>
+      </slots>
+    </hero>
+  </templates>
+</hero>
