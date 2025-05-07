@@ -45,12 +45,12 @@
       },
       "order": [
         {
-          "path": "ancestors.section.book_position#integer",
+          "path": "ancestors.section.sort_position#integer",
           "direction": "asc",
           "nulls": "last"
         },
         {
-          "path": "props.book_position#integer",
+          "path": "props.sort_position#integer",
           "direction": "asc",
           "nulls": "last"
         },
