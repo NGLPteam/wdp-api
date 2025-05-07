@@ -4,6 +4,14 @@
   "name": "Book",
   "version": "1.0.0",
   "kind": "collection",
+  "ancestors": [
+    {
+      "name": "series",
+      "namespace": "nglp",
+      "identifier": "series",
+      "required": false
+    }
+  ],
   "parents": [
     {
       "namespace": "nglp",
@@ -33,9 +41,14 @@
         ]
       },
       "select": {
-        "direct": "children"
+        "direct": "descendants"
       },
       "order": [
+        {
+          "path": "ancestors.section.book_position#integer",
+          "direction": "asc",
+          "nulls": "last"
+        },
         {
           "path": "props.book_position#integer",
           "direction": "asc",
