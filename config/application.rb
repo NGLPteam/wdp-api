@@ -37,6 +37,7 @@ require_relative "../lib/patches/support_lquery"
 require_relative "../lib/patches/support_regconfig"
 require_relative "../lib/patches/support_semantic_version"
 require_relative "../lib/patches/support_variable_precision_date"
+require_relative "../lib/patches/support_websearch"
 
 require_relative "../lib/support/system"
 

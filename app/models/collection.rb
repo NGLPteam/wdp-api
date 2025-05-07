@@ -27,6 +27,8 @@ class Collection < ApplicationRecord
 
   has_many :items, dependent: :destroy, inverse_of: :collection
 
+  has_one :entity_search_document, inverse_of: :collection, dependent: :delete
+
   has_many_readonly :related_collection_links, foreign_key: :source_id, inverse_of: :source
   has_many_readonly :incoming_collection_links, foreign_key: :target_id, class_name: "RelatedCollectionLink", inverse_of: :target
   has_many_readonly :related_collections, through: :related_collection_links, source: :target

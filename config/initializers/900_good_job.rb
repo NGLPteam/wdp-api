@@ -73,6 +73,16 @@ Rails.application.configure do
       class: "Entities::PopulateVisibilitiesJob",
       description: "Populate entity visibilities",
     },
+    "entities.refresh_author_contributions": {
+      cron: "7,17,27,37,47,57 * * * * *",
+      class: "Entities::RefreshAuthorContributionsJob",
+      description: "Refresh author contributions",
+    },
+    "entities.reindex_all_search_documents": {
+      cron: "9,19,29,39,49,59 * * * * *",
+      class: "Entities::ReindexAllSearchDocumentsJob",
+      description: "Refresh author contributions",
+    },
     "harvesting.attempts.enqueue_scheduled": {
       cron: "50 * * * *",
       class: "Harvesting::Attempts::EnqueueScheduledJob",

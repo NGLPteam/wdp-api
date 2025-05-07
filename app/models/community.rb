@@ -25,6 +25,8 @@ class Community < ApplicationRecord
 
   has_many :users, through: :community_memberships
 
+  has_one :entity_search_document, inverse_of: :community, dependent: :delete
+
   scope :currently_visible, -> { all }
 
   validates :title, presence: true

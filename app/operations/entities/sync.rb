@@ -8,6 +8,7 @@ module Entities
     include MonadicPersistence
     include MeruAPI::Deps[
       calculate_authorizing: "entities.calculate_authorizing",
+      index_search_documents: "entities.index_search_documents",
       prefix_sanitize: "searching.prefix_sanitize",
       validate_sync: "entities.validate_sync",
     ]
@@ -23,6 +24,8 @@ module Entities
       yield upsert! attributes
 
       yield maybe_upsert_visibility! source
+
+      yield index_search! source
 
       unless entity_sync_captured?(source)
         Entities::SyncHierarchiesJob.perform_later source
@@ -57,6 +60,11 @@ module Entities
     # @return [Dry::Monads::Result]
     def upsert!(attributes)
       monadic_upsert Entity, attributes, unique_by: UNIQUE_INDEX, skip_find: true
+    end
+
+    # @param [HierarchicalEntity] entity
+    def index_search!(entity)
+      index_search_documents.(entity:)
     end
 
     # @param [SyncsEntities] source
