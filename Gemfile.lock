@@ -780,7 +780,7 @@ DEPENDENCIES
   hashids (~> 1.0.6)
   htmlbeautifier (~> 1.4.3)
   image_processing (~> 1.14.0)
-  iso-639 (~> 0.3.6)
+  iso-639 (~> 0.3.8)
   jbuilder (~> 2.13.0)
   job-iteration (~> 1.9.0)
   json-schema (~> 2.8.1)

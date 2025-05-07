@@ -74,6 +74,8 @@ module Harvesting
 
           yield prune!
 
+          yield mark_active!
+
           yield update_entity_count!
         end
 
@@ -121,6 +123,12 @@ module Harvesting
         HarvestContributor.sans_contributions.where(id: orphaned_contributor_ids).destroy_all
 
         harvest_record.harvest_entities.where.not(id: extracted_entity_ids).destroy_all
+
+        super
+      end
+
+      wrapped_hook! def mark_active
+        harvest_record.update_column :status, :active
 
         super
       end

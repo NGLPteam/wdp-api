@@ -13,7 +13,7 @@ module Schemas
       def call
         ApplicationRecord.transaction do
           capture_layout_definitions_to_invalidate! do
-            StaticSchemaDefinition.find_each do |static_definition|
+            StaticSchemaDefinition.installable.find_each do |static_definition|
               yield load_definition.call(static_definition)
             end
           end

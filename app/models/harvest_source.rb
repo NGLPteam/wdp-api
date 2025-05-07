@@ -76,6 +76,20 @@ class HarvestSource < ApplicationRecord
     call_operation("harvesting.sources.extract_sets", self)
   end
 
+  # Replace the source and all existing attempts/mappings with an updated extraction mapping template.
+  #
+  # @param [String] extraction_mapping_template
+  # @return [void]
+  def replace_extraction_mapping_template!(extraction_mapping_template)
+    update_columns(extraction_mapping_template:)
+
+    harvest_mappings.update_all(extraction_mapping_template:)
+    harvest_attempts.update_all(extraction_mapping_template:)
+    harvest_configurations.update_all(extraction_mapping_template:)
+
+    return self
+  end
+
   # @param [String] identifier
   # @return [HarvestSet, nil]
   def set_by_identifier(identifier)
@@ -86,6 +100,16 @@ class HarvestSource < ApplicationRecord
   # @return [Dry::Monads::Success(HarvestSet)]
   monadic_operation! def upsert_set(identifier)
     call_operation("harvesting.sources.upsert_set", self, identifier)
+  end
+
+  # Call {#replace_extraction_mapping_template!} with the template from a {Harvesting::Example}.
+  #
+  # @param [String] identifier the id of a {Harvesting::Example}
+  # @return [void]
+  def use_example_mapping_template!(identifier)
+    example = Harvesting::Example.find identifier
+
+    replace_extraction_mapping_template! example.extraction_mapping_template
   end
 
   private

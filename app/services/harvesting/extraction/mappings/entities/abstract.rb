@@ -43,7 +43,10 @@ module Harvesting
           render_attr! :subtitle, :string
           render_attr! :summary, :string
 
-          render_attr! :doi, :doi
+          render_attr! :doi, :doi do |result|
+            result.output.to_s.presence
+          end
+
           render_attr! :published, :variable_date
 
           render_attr! :hero_image_remote_url, :url

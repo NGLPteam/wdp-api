@@ -7,10 +7,24 @@
   "orderings": [],
   "properties": [
     { "path": "abstract", "label": "Abstract", "type": "full_text", "required": false, "wide": true, "function": "content" },
+    { "path": "funding_note", "type": "string", "label": "Funding Note", "required": false },
+    { "path": "rights_statement", "type": "string", "label": "Rights Statement" },
     { "path": "pdf_version", "label": "PDF Version", "type": "asset", "required": false, "function": "content" },
     { "path": "text_version", "label": "Text Version", "type": "asset", "required": false, "function": "content" },
     { "path": "accessioned", "type": "variable_date", "label": "Accessioned", "description": "When the paper was added to a collection", "function": "metadata" },
     { "path": "available", "type": "variable_date", "label": "Available", "description": "When the paper was made available", "function": "metadata" },
+    { "path": "language_code", "type": "string", "label": "Language Code" },
+    {
+      "type": "group",
+      "path": "publisher",
+      "legend": "Publisher",
+      "description": "Details about the publisher of the paper",
+      "function": "presentation",
+      "properties": [
+        { "path": "name", "type": "string", "required": false, "function": "presentation" },
+        { "path": "location", "type": "string", "required": false, "function": "presentation" }
+      ]
+    },
     {
       "type": "group",
       "path": "host",

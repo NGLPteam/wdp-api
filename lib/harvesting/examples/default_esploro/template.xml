@@ -24,6 +24,9 @@
         {% endfor %}
       </contributions>
       <properties>
+        <string path="funding_note">{{esploro.grants_note}}</string>
+        <string path="language_code">{{esploro.language}}</string>
+        <string path="rights_statement">{{esploro.copyright}}</string>
         <variable-date path="available">{{esploro.date_available}}</variable-date>
         <asset path="pdf_version">
           <kind>pdf</kind>
@@ -45,7 +48,10 @@
             {% endif %}
           </url>
         </asset>
-        <string path="host.title">{{esploro.publisher}}</string>
+        <string path="publisher.name">{{esploro.publisher}}</string>
+        <string path="publisher.location">
+          {{esploro.publication_places | join: "; " }}
+        </string>
         <string path="host.volume">
           {% for relationship in esploro.relationships %}
           {% if relationship.volume %}
