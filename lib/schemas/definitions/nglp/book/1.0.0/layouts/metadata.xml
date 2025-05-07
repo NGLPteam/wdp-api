@@ -21,6 +21,11 @@
             {% endmditem %}
           {% endif %}
           {% mditem %}
+            {% mdvalue label: "Language" %}
+              {{props.language}}
+            {% endmdvalue %}
+          {% endmditem %}
+          {% mditem %}
             {% mdvalue label: "Subjects" %}
               {{props.subjects}}
             {% endmdvalue %}

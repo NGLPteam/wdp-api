@@ -21,8 +21,8 @@
         <filter>
           <schema namespace="nglp" identifier="book_section"/>
         </filter>
-        <order path="ancestors.section.props.book_position#integer" dir="asc"/>
-        <order path="props.book_position#integer" dir="asc"/>
+        <order path="ancestors.section.props.sort_position#integer" dir="asc"/>
+        <order path="props.sort_position#integer" dir="asc"/>
         <order path="entity.title" dir="asc"/>
         <render mode="tree"/>
         <select direct="descendants"/>

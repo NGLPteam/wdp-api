@@ -47,7 +47,7 @@
       },
       "order": [
         {
-          "path": "props.section_position#integer",
+          "path": "props.sort_position#integer",
           "direction": "asc",
           "nulls": "last"
         },
@@ -84,15 +84,9 @@
       "function": "content"
     },
     {
-      "path": "book_position",
-      "label": "Book Position",
-      "type": "integer",
-      "orderable": true,
-      "function": "sorting"
-    },
-    {
-      "path": "section_position",
-      "label": "Section Position",
+      "path": "sort_position",
+      "label": "Sort Position",
+      "description": "Position within parent book or chapter",
       "type": "integer",
       "orderable": true,
       "function": "sorting"
@@ -112,7 +106,8 @@
     },
     {
       "path": "label",
-      "label": "Label, e.g. 'chapter', 'unit'",
+      "label": "Label",
+      "description": "E.g. 'chaper', 'section', 'unit'. Used for presentation.",
       "type": "string",
       "function": "presentation"
     }
