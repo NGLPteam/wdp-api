@@ -4,6 +4,20 @@
   "name": "Book Section",
   "version": "1.0.0",
   "kind": "item",
+  "ancestors": [
+    {
+      "name": "book",
+      "namespace": "nglp",
+      "identifier": "book",
+      "required": true
+    },
+    {
+      "name": "series",
+      "namespace": "nglp",
+      "identifier": "series",
+      "required": false
+    }
+  ],
   "parents": [
     {
       "namespace": "nglp",
@@ -95,6 +109,12 @@
       "label": "Language",
       "type": "controlled_vocabulary",
       "function": "metadata"
+    },
+    {
+      "path": "label",
+      "label": "Label, e.g. 'chapter', 'unit'",
+      "type": "string",
+      "function": "presentation"
     }
   ]
 }
