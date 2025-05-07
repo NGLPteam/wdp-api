@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<main>
+  <templates>
+    <detail>
+      <background>none</background>
+      <show-announcements>false</show-announcements>
+      <show-body>true</show-body>
+      <show-hero-image>true</show-hero-image>
+      <variant>full</variant>
+      <slots>
+        <header/>
+        <subheader/>
+        <summary/>
+        <body>
+          {% if props.pdf_version.exists %}
+            {% pdfviewer props.pdf_version %}
+          {% else %}
+            {{props.body}}
+          {% endif %}
+        </body>
+      </slots>
+    </detail>
+    <contributor-list>
+      <background>light</background>
+      <filter>authors</filter>
+      <limit>4</limit>
+      <slots>
+        <header>
+          Contributors
+        </header>
+      </slots>
+    </contributor-list>
+    <blurb>
+      <background>light</background>
+      <width>full</width>
+      <slots>
+        <header>How to Cite</header>
+        <body>
+          {% if props.citation.exists %}
+          {% copylink "Citation" %}
+            {{ props.citation }}
+          {% endcopylink %}
+          {% endif %}
+        </body>
+      </slots>
+    </blurb>
+    <ordering>
+      <background>light</background>
+      <ordering-identifier>series</ordering-identifier>
+      <ordering-source>ancestors.book</ordering-source>
+      <selection-source>self</selection-source>
+      <slots>
+        <previous-label>
+          Previous {{ props.label | capitalize }}
+        </previous-label>
+        <next-label>
+          Next {{ props.label | capitalize }}
+        </next-label>
+      </slots>
+    </ordering>
+  </templates>
+</main>
