@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <templates>
+    <metadata>
+      <background>none</background>
+      <slots>
+        <header>Metadata</header>
+        <items-a>
+          {% if authors.exists %}
+            {% mditem %}
+              {% mdvalue label: "Author" %}
+                {{authors}}
+              {% endmdvalue %}
+            {% endmditem %}
+          {% endif %}
+          {% if editors.exists %}
+            {% mditem %}
+              {% mdvalue label: "Editor" %}
+                {{editors}}
+              {% endmdvalue %}
+            {% endmditem %}
+          {% endif %}
+          {% mditem %}
+            {% mdvalue label: "Subjects" %}
+              {{props.subjects}}
+            {% endmdvalue %}
+          {% endmditem %}
+          {% mditem %}
+            {% mdvalue label: "Keywords" %}
+              {{props.keywords}}
+            {% endmdvalue %}
+          {% endmditem %}
+        </items-a>
+        <items-b>
+          {% if ancestors.series %}
+            {% mditem %}
+              {% mdvalue label: "Series" %}
+                {{ancestors.series}}
+              {% endmdvalue %}
+            {% endmditem %}
+          {% endif %}
+          {% mditem %}
+            {% mdvalue label: "Edition" %}
+              {{props.edition}}
+            {% endmdvalue %}
+          {% endmditem %}
+          {% mditem %}
+            {% mdvalue label: "Version" %}
+              {{props.version}}
+            {% endmdvalue %}
+          {% endmditem %}
+          {% mditem %}
+            {% mdvalue label: "License" %}
+              {{props.cc_license}}
+            {% endmdvalue %}
+          {% endmditem %}
+        </items-b>
+        <items-c>
+          {% mditem %}
+            {% mdvalue label: "Published" %}
+              {{entity.published}}
+            {% endmdvalue %}
+          {% endmditem %}
+          {% mditem %}
+            {% mdvalue label: "Publisher" %}
+              {{props.publisher}}
+            {% endmdvalue %}
+          {% endmditem %}
+          {% mditem %}
+            {% mdvalue label: "Publisher Location" %}
+              {{props.publisher_location}}
+            {% endmdvalue %}
+          {% endmditem %}
+          {% mditem %}
+            {% mdvalue label: "Ebook ISBN" %}
+              {{props.ebook_isbn}}
+            {% endmdvalue %}
+          {% endmditem %}
+          {% mditem %}
+            {% mdvalue label: "Online ISBN" %}
+              {{props.online_isbn}}
+            {% endmdvalue %}
+          {% endmditem %}
+        </items-c>
+        <items-d>
+          {% if props.pdf_version.exists %}
+            {% mditem %}
+              {% mdvalue label: "PDF Version" %}
+                {% asset props.pdf_version %}
+                  Download
+                {% endasset %}
+              {% endmdvalue %}
+            {% endmditem %}
+          {% endif %}
+          {% if props.online_version.exists %}
+            {% mditem %}
+              {% mdvalue label: "Online Version" %}
+                {{props.online_version}}
+              {% endmdvalue %}
+            {% endmditem %}
+          {% endif %}
+          {% mditem %}
+            {% mdvalue label: "Purchase URL" %}
+              {{props.purchase_url}}
+            {% endmdvalue %}
+          {% endmditem %}
+        </items-d>
+      </slots>
+    </metadata>
+  </templates>
+</metadata>
