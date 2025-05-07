@@ -1,20 +1,30 @@
 default: &default
+  include_development_schemas: false
+  include_testing_schemas: false
   tenant_id: "meru"
   tenant_name: "Meru"
   serialize_rendering: false
 
 development:
   <<: *default
+  include_development_schemas: true
+  include_testing_schemas: false
   tenant_id: "meru-dev"
 
 test:
   <<: *default
+  include_development_schemas: true
+  include_testing_schemas: true
   tenant_id: "meru-tst"
 
 staging:
   <<: *default
+  include_development_schemas: false
+  include_testing_schemas: false
   tenant_id: "meru-stg"
 
 production:
   <<: *default
+  include_development_schemas: false
+  include_testing_schemas: false
   tenant_id: "meru-prd"

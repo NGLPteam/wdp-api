@@ -7,17 +7,24 @@
       <doi>{{doi}}</doi>
       <published>{{oaidc.date | first}}</published>
       <properties>
+        <string path="language_code">{{oaidc.language | first}}</string>
+        <string path="rights_statement">
+          {% for right in oaidc.rights %}
+            {% if right == "Open" %}
+              {% continue %}
+            {% else %}
+              {{right}}
+            {% endif %}
+          {% endfor %}
+        </string>
         <asset path="pdf_version">
           <kind>pdf</kind>
           <mime-type>application/pdf</mime-type>
-          <name>
-            paper.pdf
-          </name>
-          <url>
-            {{pdf.url}}
-          </url>
+          <name>paper.pdf</name>
+          <url>{{pdf.url}}</url>
         </asset>
-        <string path="host.title">{{oaidc.publisher | first}}</string>
+        <string path="publisher.name">{{oaidc.publisher | first}}</string>
+        <string path="publisher.location">{{oaidc.publisher[1]}}</string>
       </properties>
       <contributions>
         {% for creator in creators %}

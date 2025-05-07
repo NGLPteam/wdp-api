@@ -12,6 +12,7 @@ RSpec.describe Harvesting::Records::ExtractEntitiesJob, type: :job do
   let_it_be(:harvest_record, refind: true) do
     FactoryBot.create(
       :harvest_record,
+      :pending,
       harvest_source:,
       harvest_configuration:,
       sample_record:
@@ -23,6 +24,7 @@ RSpec.describe Harvesting::Records::ExtractEntitiesJob, type: :job do
       expect do
         described_class.perform_now harvest_record
       end.to have_enqueued_job(Harvesting::Records::UpsertEntitiesJob).once
+        .and change { harvest_record.reload.status }.from("pending").to("active")
         .and change(HarvestEntity, :count).by(3)
         .and change(HarvestContribution, :count).by(1)
         .and change(HarvestContributor, :count).by(1)

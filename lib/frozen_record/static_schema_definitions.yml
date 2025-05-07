@@ -35,6 +35,8 @@
 - namespace: cvocab
   identifier: test_collection
   kind: collection
+  testing: true
 - namespace: cvocab
   identifier: test_item
   kind: item
+  testing: true

@@ -5,7 +5,7 @@ module Harvesting
     TypeRegistry = Support::Schemas::TypeContainer.new.configure do |tc|
       tc.add! :asset_kind, ::Assets::Types::Kind
       tc.add! :contribution_proxies, Harvesting::Metadata::Types::ContributionProxies
-      tc.add! :doi, ::Entities::Types::DOI.optional
+      tc.add! :doi, ::Entities::Types::DOI.constructor(&:presence).optional
       tc.add! :full_text_kind, ::FullText::Types::Kind
       tc.add! :metadata_mappings_match, Harvesting::Metadata::Types::MetadataMappingsMatch
       tc.add! :mime_type, ::AppTypes::MIME

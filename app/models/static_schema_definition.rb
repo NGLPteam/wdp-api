@@ -13,14 +13,17 @@ class StaticSchemaDefinition < Support::FrozenRecordHelpers::AbstractRecord
     required(:namespace).filled(:namespace)
     required(:identifier).filled(:identifier)
     required(:root).filled(:pathname)
+    required(:development).value(:bool)
     required(:testing).value(:bool)
     required(:name).filled(:string)
     required(:versions).value(:array)
     required(:kind).value(:schema_kind)
+    required(:installable).value(:bool)
     optional(:latest).value(:any)
   end
 
   default_attributes!(
+    development: false,
     testing: false,
   )
 
@@ -48,9 +51,18 @@ class StaticSchemaDefinition < Support::FrozenRecordHelpers::AbstractRecord
     record.fetch("latest")&.name || record.fetch("identifier").titleize
   end
 
+  calculates! :installable do |record|
+    next false if record["testing"] && !MeruConfig.include_testing_schemas?
+    next false if record["development"] && !MeruConfig.include_development_schemas?
+
+    true
+  end
+
   self.primary_key = :declaration
 
   add_index :declaration, unique: true
+
+  scope :installable, -> { where(installable: true) }
 
   class << self
     # @param [Schemas::Static::Types::DefinitionDeclaration] decl

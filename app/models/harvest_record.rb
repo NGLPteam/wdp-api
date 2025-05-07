@@ -39,6 +39,7 @@ class HarvestRecord < ApplicationRecord
   scope :previous, -> { where(harvest_attempt: HarvestAttempt.previous) }
 
   scope :filtered_by_schema_version, ->(version) { where(id: HarvestEntity.filtered_by_schema_version(version).select(:harvest_record_id)) }
+  scope :pending, -> { with_pending_status }
   scope :active, -> { with_active_status }
   scope :skipped, -> { with_skipped_status }
   scope :upsertable, -> { active.sans_harvest_errors }
