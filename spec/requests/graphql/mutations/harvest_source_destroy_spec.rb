@@ -11,18 +11,30 @@ RSpec.describe Mutations::HarvestSourceDestroy, type: :request, graphql: :mutati
   }
   GRAPHQL
 
-  let_it_be(:existing_harvest_source_attrs) do
+  let_it_be(:target_entity, refind: true) { FactoryBot.create :collection, :journal }
+
+  let_it_be(:harvest_source_attrs) do
     {}
   end
 
-  let_it_be(:existing_harvest_source) { FactoryBot.create(:harvest_source, **existing_harvest_source_attrs) }
+  let_it_be(:harvest_source, refind: true) { FactoryBot.create(:harvest_source, :oai, :jats, **harvest_source_attrs) }
 
-  let_mutation_input!(:harvest_source_id) { existing_harvest_source.to_encoded_id }
+  let_it_be(:extraction_mapping_template) { harvest_source.extraction_mapping_template }
+
+  let_it_be(:harvest_mapping, refind: true) { FactoryBot.create(:harvest_mapping, harvest_source:, target_entity:, extraction_mapping_template:) }
+
+  let_it_be(:harvest_attempt, refind: true) do
+    harvest_mapping.create_attempt!(extraction_mapping_template:, target_entity:).tap do |attempt|
+      attempt.extract_records!
+    end
+  end
+
+  let_mutation_input!(:harvest_source_id) { harvest_source.to_encoded_id }
 
   let(:valid_mutation_shape) do
     gql.mutation(:harvest_source_destroy) do |m|
       m[:destroyed] = true
-      m[:destroyed_id] = be_an_encoded_id.of_a_deleted_model
+      m[:destroyed_id] = harvest_source_id
     end
   end
 
@@ -36,6 +48,10 @@ RSpec.describe Mutations::HarvestSourceDestroy, type: :request, graphql: :mutati
     it "destroys the harvest source" do
       expect_request! do |req|
         req.effect! change(HarvestSource, :count).by(-1)
+        req.effect! change(HarvestMapping, :count)
+        req.effect! change(HarvestAttempt, :count).by(-1)
+        req.effect! change(HarvestConfiguration, :count).by(-1)
+        req.effect! change(HarvestRecord, :count).by(-108)
 
         req.data! expected_shape
       end
@@ -47,7 +63,6 @@ RSpec.describe Mutations::HarvestSourceDestroy, type: :request, graphql: :mutati
 
     it "is not authorized" do
       expect_request! do |req|
-        req.effect! execute_safely
         req.effect! keep_the_same(HarvestSource, :count)
 
         req.unauthorized!
