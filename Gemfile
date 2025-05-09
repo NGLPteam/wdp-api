@@ -96,7 +96,7 @@ gem "liquid", "~> 5.8.1"
 gem "maxminddb", "~> 0.1.22"
 gem "namae", "~> 1.2.0"
 gem "naught", "~> 1.1.0"
-gem "nokogiri", "~> 1.18.3"
+gem "nokogiri", "~> 1.18.8"
 gem "oai", "~> 1.2.1"
 gem "oj", "3.16.10"
 gem "openid_connect", "~> 2.3.0"
@@ -134,6 +134,7 @@ gem "zaru", "~> 1.0.0"
 # Servers / Rack
 gem "puma", "~> 6.6.0"
 gem "puma-rufus-scheduler", "~> 0.1.0"
+gem "rack", "~> 2.2.14"
 gem "rack-cors", "~> 2.0.2"
 
 # Debugging / system-level things
