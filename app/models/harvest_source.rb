@@ -22,7 +22,7 @@ class HarvestSource < ApplicationRecord
     constructor: ->(name) { HarvestProtocol.find(name) }
 
   has_many :harvest_attempts, inverse_of: :harvest_source, dependent: :destroy
-  has_many :harvest_configurations, inverse_of: :harvest_source, dependent: :destroy
+  has_many :harvest_configurations, inverse_of: :harvest_source, dependent: :delete_all
   has_many :harvest_contributors, inverse_of: :harvest_source, dependent: :destroy
   has_many :harvest_mappings, inverse_of: :harvest_source, dependent: :destroy
   has_many :harvest_messages, inverse_of: :harvest_source, dependent: :destroy
