@@ -10,6 +10,8 @@ module Entities
   class ReindexAllSearchDocumentsJob < ApplicationJob
     queue_as :maintenance
 
+    unique_job! by: :job
+
     # @return [void]
     def perform
       call_operation! "entities.index_search_documents"
