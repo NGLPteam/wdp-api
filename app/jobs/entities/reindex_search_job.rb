@@ -4,9 +4,9 @@ module Entities
   # @see Schemas::Instances::ExtractCoreTextsJob
   # @see Schemas::Instances::ExtractSearchablePropertiesJob
   class ReindexSearchJob < ApplicationJob
-    queue_as :maintenance
-
     include JobIteration::Iteration
+
+    queue_as :maintenance
 
     unique_job! by: :job
 
