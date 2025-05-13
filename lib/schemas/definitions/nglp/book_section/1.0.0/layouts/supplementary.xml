@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<supplementary>
+  <templates>
+    <supplementary>
+      <background>none</background>
+      <slots>
+        <contributors-label>
+          Contributors
+        </contributors-label>
+        <metrics-label>
+          Metrics
+        </metrics-label>
+      </slots>
+    </supplementary>
+  </templates>
+</supplementary>
