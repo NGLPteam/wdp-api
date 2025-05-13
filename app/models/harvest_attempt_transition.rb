@@ -12,10 +12,12 @@ class HarvestAttemptTransition < ApplicationRecord
 
   # @return [void]
   def update_most_recent!
+    # :nocov:
     last_transition = harvest_attempt.harvest_attempt_transitions.order(:sort_key).last
 
     return if last_transition.blank?
 
     last_transition.update_column(:most_recent, true)
+    # :nocov:
   end
 end

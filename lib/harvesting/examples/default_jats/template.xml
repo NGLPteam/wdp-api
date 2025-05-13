@@ -30,11 +30,8 @@
         <item schema="nglp:journal_article">
           <identifier>{{record.identifier}}</identifier>
           <title>{{jats.article_title}}</title>
-          <doi>
-            {% assign doi = jats.front.article_meta.article_id | where: "pub_id_type", "doi" | first %}
-
-            {{doi}}
-          </doi>
+          <doi>{{jats.doi}}</doi>
+          <published>{{jats.published}}</published>
           <contributions>
             {% for contrib_group in jats.front.article_meta.contrib_group %}
             {% for contrib in contrib_group.contrib %}
@@ -49,10 +46,10 @@
             {% endfor %}
           </contributions>
           <properties>
-            <full-text path="body" lang="{{lang}}">
+            <full-text path="body" kind="html" lang="{{lang}}">
               {{jats.body}}
             </full-text>
-            <full-text path="abstract" lang="{{lang}}">
+            <full-text path="abstract" kind="html" lang="{{lang}}">
               {{jats.abstract}}
             </full-text>
             <tags path="keywords">

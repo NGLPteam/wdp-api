@@ -10,6 +10,8 @@ class HarvestMetadataMapping < ApplicationRecord
 
   pg_enum! :field, as: :harvest_metadata_mapping_field, allow_blank: false, prefix: :matching
 
+  scope :in_default_order, -> { order(field: :asc, pattern: :asc) }
+
   validates :pattern, presence: true, uniqueness: { scope: %i[harvest_source_id field] }
 
   class << self

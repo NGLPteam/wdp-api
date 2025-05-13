@@ -50,12 +50,12 @@ class HarvestSource < ApplicationRecord
   validates :identifier, :name, :base_url, presence: true
   validates :base_url, url: true
 
-  monadic_operation! def assign_metadata_mapping(field, pattern, target_entity)
-    call_operation("harvesting.metadata_mappings.assign", self, field, pattern, target_entity)
+  monadic_operation! def assign_metadata_mapping(...)
+    call_operation("harvesting.sources.assign_metadata_mapping", self, ...)
   end
 
   monadic_operation! def assign_metadata_mappings(raw_mappings, base_entity:)
-    call_operation("harvesting.metadata_mappings.assign_many_by_identifier", self, raw_mappings, base_entity:)
+    call_operation("harvesting.sources.assign_metadata_mappings", self, raw_mappings, base_entity:)
   end
 
   # @see HarvestProtocol.context_for

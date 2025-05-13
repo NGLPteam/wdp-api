@@ -36,6 +36,8 @@ module Harvesting
       # @return [Liquid::Environment]
       def build_liquid_environment
         Liquid::Environment.build(error_mode: :strict) do |env|
+          env.register_filter Harvesting::Extraction::CommonFilters
+
           if captures_contributions
             configure_contribution_capture!(env)
           elsif captures_metadata_mappings

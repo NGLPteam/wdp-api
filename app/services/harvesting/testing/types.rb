@@ -8,6 +8,8 @@ module Harvesting
 
       extend Support::EnhancedTypes
 
+      EsploroRecord = Instance(::EsploroSchema::Record)
+
       Identifier = Coercible::String.constrained(filled: true)
 
       JATSArticle = Instance(::Niso::Jats::Article)

@@ -1,0 +1,2397 @@
+---
+- :identifier: "11811152460002771"
+  :set_ids:
+  - esploro:set_1
+  :changed_at: '2024-08-20T16:29:52Z'
+  :metadata_source: |-
+    <record xsi:schemaLocation='http://www.loc.gov/MARC21/slim http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd' status='new/updated' xmlns='http://www.loc.gov/MARC21/slim' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><data><identifier.doi>10.25820/006326</identifier.doi>
+    <identifier.other>igs_ofm-1129</identifier.other>
+    <creators><creator><familyname>Liu</familyname>
+    <givenname>Huaibao</givenname>
+    <order>0</order>
+    <user.primaryId>00087627</user.primaryId>
+    <creatorname>Liu, Huaibao</creatorname>
+    </creator>
+    <creator><familyname>Clark</familyname>
+    <givenname>Ryan</givenname>
+    <order>1</order>
+    <user.primaryId>00051317</user.primaryId>
+    <creatorname>Clark, Ryan</creatorname>
+    </creator>
+    <creator><familyname>Kerr</familyname>
+    <givenname>Phil</givenname>
+    <order>2</order>
+    <user.primaryId>00688405</user.primaryId>
+    <creatorname>Kerr, Phil</creatorname>
+    </creator>
+    <creator><familyname>Tassier-Surine</familyname>
+    <givenname>Stephanie</givenname>
+    <order>3</order>
+    <user.primaryId>00043520</user.primaryId>
+    <creatorname>Tassier-Surine, Stephanie</creatorname>
+    </creator>
+    </creators>
+    <title>Bedrock Geologic Map of the Colwell 7.5' Quadrangle, Chickasaw, Floyd, Howard, and Mitchell Counties, IA</title>
+    <publisher>Iowa Geological Survey, IIHR-Hydroscience &amp; Engineering, University of Iowa</publisher>
+    <publication.place>Iowa City, Iowa, USA</publication.place>
+    <date.published>201706</date.published>
+    <date.available>20200413</date.available>
+    <open_access_indicator>Yes</open_access_indicator>
+    <resourcetype.esploro>other.map</resourcetype.esploro>
+    <keywords>Devonian</keywords>
+    <keywords>Chickasaw County</keywords>
+    <keywords>Floyd County</keywords>
+    <keywords>Howard County</keywords>
+    <keywords>Mitchell County</keywords>
+    <relationships><relationship><relationtype>ispartof</relationtype>
+    <relationtitle>Open file map series (Iowa Geological Survey (2014))</relationtitle>
+    <volume>OFM-17-3</volume>
+    <relation.category>INTERNAL</relation.category>
+    </relationship>
+    </relationships>
+    <format>pdf</format>
+    <rightsList><rights><rights>Open</rights>
+    </rights>
+    </rightsList>
+    <copyright>Publication of the State of Iowa. This publication is a public record.</copyright>
+    <language>eng</language>
+    <pages>1 sheet</pages>
+    <originalRepository><assetId>igs_ofm-1129</assetId>
+    <date.submission>2020-04-13T11:01:53-07:00</date.submission>
+    <repositoryName>Iowa Research Online, the University of Iowa</repositoryName>
+    <format.date>MM-YYYY</format.date>
+    <coverpage.url>https://ir.uiowa.edu/igs_ofm/130</coverpage.url>
+    </originalRepository>
+    <filesList><file><file.name>2017-07-19_11-07-46_colwellbedrock2017_report.pdf</file.name>
+    <file.creationDate>2021-08-04 06:50:22</file.creationDate>
+    <file.mimeType>application/pdf</file.mimeType>
+    <file.description>Summary report</file.description>
+    <file.size>1501344</file.size>
+    <file.extension>pdf</file.extension>
+    <file.persistent.url>https://iro.uiowa.edu/esploro/outputs/map/Bedrock-Geologic-Map-of-the-Colwell/9984110014602771#file-1</file.persistent.url>
+    <file.download.url>https://iro.uiowa.edu/view/delivery/01IOWA_INST/12811152450002771/13811398300002771</file.download.url>
+    <file.order>1</file.order>
+    <file.supplemental>yes</file.supplemental>
+    </file>
+    <file><file.name>Bedrock Geologic Map of the Colwell 7.5 Quadrangle Chickasaw F.pdf</file.name>
+    <file.creationDate>2021-08-04 06:50:22</file.creationDate>
+    <file.mimeType>application/pdf</file.mimeType>
+    <file.size>549798</file.size>
+    <file.extension>pdf</file.extension>
+    <file.persistent.url>https://iro.uiowa.edu/esploro/outputs/map/Bedrock-Geologic-Map-of-the-Colwell/9984110014602771#file-0</file.persistent.url>
+    <file.download.url>https://iro.uiowa.edu/view/delivery/01IOWA_INST/12811152450002771/13811398290002771</file.download.url>
+    <file.order>0</file.order>
+    <file.supplemental>no</file.supplemental>
+    </file>
+    </filesList>
+    <local.fields><local.note2>scale 1:24,000</local.note2>
+    <local.note15>oai:ir.uiowa.edu:igs_ofm-1129</local.note15>
+    </local.fields>
+    <asset.affiliation>01IOWA_INST___2840z2</asset.affiliation>
+    <asset.affiliation>01IOWA_INST___2840z2d</asset.affiliation>
+    <asset.affiliation>01IOWA_INST___2840</asset.affiliation>
+    </data>
+    <identifier>9984110014602771</identifier>
+    <identifier.uri>https://iro.uiowa.edu/esploro/outputs/map/Bedrock-Geologic-Map-of-the-Colwell/9984110014602771</identifier.uri>
+    </record>
+- :identifier: "11811140520002771"
+  :set_ids:
+  - esploro:set_1
+  :changed_at: '2024-08-20T16:29:52Z'
+  :metadata_source: |-
+    <record xsi:schemaLocation='http://www.loc.gov/MARC21/slim http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd' status='new/updated' xmlns='http://www.loc.gov/MARC21/slim' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><data><identifier.doi>10.25820/006265</identifier.doi>
+    <identifier.other>igs_ofm-1145</identifier.other>
+    <creators><creator><familyname>Clark</familyname>
+    <givenname>Ryan</givenname>
+    <order>0</order>
+    <user.primaryId>00051317</user.primaryId>
+    <creatorname>Clark, Ryan</creatorname>
+    </creator>
+    <creator><familyname>Tassier-Surine</familyname>
+    <givenname>Stephanie</givenname>
+    <order>1</order>
+    <user.primaryId>00043520</user.primaryId>
+    <creatorname>Tassier-Surine, Stephanie</creatorname>
+    </creator>
+    <creator><familyname>Kerr</familyname>
+    <givenname>Phil</givenname>
+    <order>2</order>
+    <user.primaryId>00688405</user.primaryId>
+    <creatorname>Kerr, Phil</creatorname>
+    </creator>
+    </creators>
+    <title>Bedrock Geologic Map of the Mount Pleasant 7.5' Quadrangle, Henry County, Iowa</title>
+    <publisher>Iowa Geological Survey, IIHR-Hydroscience &amp; Engineering, University of Iowa</publisher>
+    <publication.place>Iowa City, Iowa, USA</publication.place>
+    <date.published>201906</date.published>
+    <date.available>20200428</date.available>
+    <open_access_indicator>Yes</open_access_indicator>
+    <resourcetype.esploro>other.map</resourcetype.esploro>
+    <keywords>Mississippian</keywords>
+    <keywords>Henry County</keywords>
+    <relationships><relationship><relationtype>ispartof</relationtype>
+    <relationtitle>Open file map series (Iowa Geological Survey (2014))</relationtitle>
+    <volume>OFM-19-1</volume>
+    <relation.category>INTERNAL</relation.category>
+    </relationship>
+    </relationships>
+    <format>pdf</format>
+    <rightsList><rights><rights>Open</rights>
+    </rights>
+    </rightsList>
+    <copyright>Publication of the State of Iowa. This publication is a public record.</copyright>
+    <language>eng</language>
+    <pages>1 sheet</pages>
+    <originalRepository><assetId>igs_ofm-1145</assetId>
+    <date.submission>2020-04-28T08:39:02-07:00</date.submission>
+    <repositoryName>Iowa Research Online, the University of Iowa</repositoryName>
+    <format.date>MM-YYYY</format.date>
+    <coverpage.url>https://ir.uiowa.edu/igs_ofm/142</coverpage.url>
+    </originalRepository>
+    <filesList><file><file.name>2019-06-28_15-06-16_mount_pleasant_quadrangle_bedrock_summary_report.pdf</file.name>
+    <file.creationDate>2021-08-04 06:46:59</file.creationDate>
+    <file.mimeType>application/pdf</file.mimeType>
+    <file.description>Summary report</file.description>
+    <file.size>2450946</file.size>
+    <file.extension>pdf</file.extension>
+    <file.persistent.url>https://iro.uiowa.edu/esploro/outputs/map/Bedrock-Geologic-Map-of-the-Mount/9984109958002771#file-1</file.persistent.url>
+    <file.download.url>https://iro.uiowa.edu/view/delivery/01IOWA_INST/12811140510002771/13811390730002771</file.download.url>
+    <file.order>1</file.order>
+    <file.supplemental>yes</file.supplemental>
+    </file>
+    <file><file.name>Bedrock Geologic Map of the Mount Pleasant 7.5 Quadrangle Henry.pdf</file.name>
+    <file.creationDate>2021-08-04 06:46:59</file.creationDate>
+    <file.mimeType>application/pdf</file.mimeType>
+    <file.size>13214613</file.size>
+    <file.extension>pdf</file.extension>
+    <file.persistent.url>https://iro.uiowa.edu/esploro/outputs/map/Bedrock-Geologic-Map-of-the-Mount/9984109958002771#file-0</file.persistent.url>
+    <file.download.url>https://iro.uiowa.edu/view/delivery/01IOWA_INST/12811140510002771/13811390720002771</file.download.url>
+    <file.order>0</file.order>
+    <file.supplemental>no</file.supplemental>
+    </file>
+    </filesList>
+    <local.fields><local.note2>scale 1:24,000</local.note2>
+    <local.note15>oai:ir.uiowa.edu:igs_ofm-1145</local.note15>
+    </local.fields>
+    <grants.note>Research supported by the U. S. Geological Survey, National Cooperative Geologic Mapping Program, under USGS award number G18AC00194. The views and conclusions contained in this document are those of the authors and should not be interpreted as necessarily representing the official policies, either expressed or implied, of the U. S. Government.</grants.note>
+    <asset.affiliation>01IOWA_INST___2840z2</asset.affiliation>
+    <asset.affiliation>01IOWA_INST___2840z2d</asset.affiliation>
+    <asset.affiliation>01IOWA_INST___2840</asset.affiliation>
+    </data>
+    <identifier>9984109958002771</identifier>
+    <identifier.uri>https://iro.uiowa.edu/esploro/outputs/map/Bedrock-Geologic-Map-of-the-Mount/9984109958002771</identifier.uri>
+    </record>
+- :identifier: "11811369130002771"
+  :set_ids:
+  - esploro:set_1
+  :changed_at: '2024-08-20T16:31:04Z'
+  :metadata_source: |-
+    <record xsi:schemaLocation='http://www.loc.gov/MARC21/slim http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd' status='new/updated' xmlns='http://www.loc.gov/MARC21/slim' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><data><identifier.doi>10.17077/rep.006541</identifier.doi>
+    <identifier.other>igs_tis-1022</identifier.other>
+    <creators><creator><familyname>Hallberg</familyname>
+    <givenname>George R</givenname>
+    <order>0</order>
+    <creatorname>Hallberg, George R</creatorname>
+    </creator>
+    </creators>
+    <title>The Iowa state-wide rural well-water survey</title>
+    <title.subtitle>site and well characteristics and water quality</title.subtitle>
+    <publisher>Iowa Department of Natural Resources, Energy and Geological Resources Division, Geological Survey Bureau</publisher>
+    <publication.place>Iowa City, Iowa, USA</publication.place>
+    <date.published>199212</date.published>
+    <date.available>20171115</date.available>
+    <open_access_indicator>Yes</open_access_indicator>
+    <resourcetype.esploro>publication.report</resourcetype.esploro>
+    <subject.esploro>Agriculture</subject.esploro>
+    <subject.esploro>Hydrology</subject.esploro>
+    <keywords>Water Resource Management</keywords>
+    <keywords>Groundwater quality</keywords>
+    <keywords>Drinking water contamination</keywords>
+    <keywords>Water pollution measurement</keywords>
+    <keywords>Iowa</keywords>
+    <relationships><relationship><relationtype>ispartof</relationtype>
+    <relationtitle>Technical Information Series (Iowa. Department of Natural Resources. Geological Survey Bureau)</relationtitle>
+    <volume>23</volume>
+    <relation.category>INTERNAL</relation.category>
+    </relationship>
+    </relationships>
+    <format>pdf</format>
+    <rightsList><rights><rights>Open</rights>
+    </rights>
+    </rightsList>
+    <copyright>Publication of the State of Iowa. This publication is a public record.</copyright>
+    <language>eng</language>
+    <pages>43 pages, 1 figure, 26 tables</pages>
+    <originalRepository><assetId>igs_tis-1022</assetId>
+    <date.submission>2017-11-15T09:00:12-08:00</date.submission>
+    <repositoryName>Iowa Research Online, the University of Iowa</repositoryName>
+    <format.date>MM-YYYY</format.date>
+    <coverpage.url>https://ir.uiowa.edu/igs_tis/23</coverpage.url>
+    </originalRepository>
+    <filesList><file><file.name>The Iowa state-wide rural well-water survey : site and well chara.pdf</file.name>
+    <file.creationDate>2021-08-10 04:09:19</file.creationDate>
+    <file.mimeType>application/pdf</file.mimeType>
+    <file.size>5433183</file.size>
+    <file.extension>pdf</file.extension>
+    <file.persistent.url>https://iro.uiowa.edu/esploro/outputs/report/The-Iowa-state-wide-rural-well-water-survey/9984111959902771#file-0</file.persistent.url>
+    <file.download.url>https://iro.uiowa.edu/view/delivery/01IOWA_INST/12811369120002771/13811797740002771</file.download.url>
+    <file.order>0</file.order>
+    </file>
+    </filesList>
+    <local.fields><local.note1>Digitized by IGS. OCR needed.</local.note1>
+    <local.note15>oai:ir.uiowa.edu:igs_tis-1022</local.note15>
+    </local.fields>
+    <grants.note>Supported in part by: the Iowa Groundwater Protection Act of 1987; The Iowa Department of Agriculture and Land Stewardship, Laboratory Division, Pesticide Bureau, through grants from the U.S. Environmental Protection Agency, Region VII, Toxics and Pesticide Branch and the Division of Soil Conservation through the Integrated Farm Management Demonstration Project; and through grants from the U.S. Environmental Protection Agency, Region VII, Nonpoint Source Program.</grants.note>
+    <season.published>Winter 1992</season.published>
+    <asset.affiliation>01IOWA_INST___2840z2</asset.affiliation>
+    <asset.affiliation>01IOWA_INST___2840z2f</asset.affiliation>
+    </data>
+    <identifier>9984111959902771</identifier>
+    <identifier.uri>https://iro.uiowa.edu/esploro/outputs/report/The-Iowa-state-wide-rural-well-water-survey/9984111959902771</identifier.uri>
+    </record>
+- :identifier: "11811146850002771"
+  :set_ids:
+  - esploro:set_1
+  :changed_at: '2024-08-20T16:29:52Z'
+  :metadata_source: |-
+    <record xsi:schemaLocation='http://www.loc.gov/MARC21/slim http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd' status='new/updated' xmlns='http://www.loc.gov/MARC21/slim' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><data><identifier.doi>10.17077/rep.006532</identifier.doi>
+    <identifier.other>igs_wsb-1006</identifier.other>
+    <creators><creator><familyname>Steinhilber</familyname>
+    <givenname>W L</givenname>
+    <order>0</order>
+    <creatorname>Steinhilber, W L</creatorname>
+    </creator>
+    <creator><familyname>Van Eck</familyname>
+    <givenname>O J</givenname>
+    <order>1</order>
+    <creatorname>Van Eck, O J</creatorname>
+    </creator>
+    <creator><familyname>Feulner</familyname>
+    <givenname>A J</givenname>
+    <order>2</order>
+    <creatorname>Feulner, A J</creatorname>
+    </creator>
+    </creators>
+    <title>Geology and ground-water resources of Clayton County, Iowa</title>
+    <publisher>The State of Iowa</publisher>
+    <publication.place>Des Moines, Iowa, USA</publication.place>
+    <date.published>19610101</date.published>
+    <date.available>20171115</date.available>
+    <open_access_indicator>Yes</open_access_indicator>
+    <resourcetype.esploro>publication.report</resourcetype.esploro>
+    <subject.esploro>Hydrology</subject.esploro>
+    <subject.esploro>Geology</subject.esploro>
+    <subject.esploro>Groundwater</subject.esploro>
+    <keywords>Water Resource Management</keywords>
+    <keywords>Water-supply</keywords>
+    <keywords>Clayton County</keywords>
+    <keywords>Clayton County</keywords>
+    <relationships><relationship><relationtype>ispartof</relationtype>
+    <relationtitle>Water-supply bulletin (Iowa Geological Survey)</relationtitle>
+    <volume>7</volume>
+    <identifier.issn>0096-2996</identifier.issn>
+    <relation.category>INTERNAL</relation.category>
+    </relationship>
+    </relationships>
+    <format>pdf</format>
+    <rightsList><rights><rights>Open</rights>
+    </rights>
+    </rightsList>
+    <copyright>No known copyright restrictions</copyright>
+    <comment>&lt;p&gt;Prepared cooperatively by the United States Geological Survey and the Iowa Geological Survey.&lt;/p&gt;</comment>
+    <language>eng</language>
+    <pages>142 pages, 25 figures, 8 tables, 9 plates</pages>
+    <originalRepository><assetId>igs_wsb-1006</assetId>
+    <date.submission>2017-11-15T08:12:07-08:00</date.submission>
+    <repositoryName>Iowa Research Online, the University of Iowa</repositoryName>
+    <format.date>YYYY-MM-DD</format.date>
+    <coverpage.url>https://ir.uiowa.edu/igs_wsb/7</coverpage.url>
+    </originalRepository>
+    <filesList><file><file.name>Geology and ground-water resources of Clayton County Iowa.pdf</file.name>
+    <file.creationDate>2021-08-04 06:57:49</file.creationDate>
+    <file.mimeType>application/pdf</file.mimeType>
+    <file.type>published</file.type>
+    <file.size>10205656</file.size>
+    <file.extension>pdf</file.extension>
+    <file.persistent.url>https://iro.uiowa.edu/esploro/outputs/report/Geology-and-ground-water-resources-of-Clayton/9984109990802771#file-0</file.persistent.url>
+    <file.download.url>https://iro.uiowa.edu/view/delivery/01IOWA_INST/12811146840002771/13811423060002771</file.download.url>
+    <file.order>0</file.order>
+    <file.supplemental>no</file.supplemental>
+    </file>
+    </filesList>
+    <local.fields><local.note1>Digitized by IGS.</local.note1>
+    <local.note15>oai:ir.uiowa.edu:igs_wsb-1006</local.note15>
+    </local.fields>
+    <asset.affiliation>01IOWA_INST___2840z2i</asset.affiliation>
+    <asset.affiliation>01IOWA_INST___2840z2</asset.affiliation>
+    </data>
+    <identifier>9984109990802771</identifier>
+    <identifier.uri>https://iro.uiowa.edu/esploro/outputs/report/Geology-and-ground-water-resources-of-Clayton/9984109990802771</identifier.uri>
+    </record>
+- :identifier: "11811336220002771"
+  :set_ids:
+  - esploro:set_1
+  :changed_at: '2024-08-20T16:31:04Z'
+  :metadata_source: |-
+    <record xsi:schemaLocation='http://www.loc.gov/MARC21/slim http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd' status='new/updated' xmlns='http://www.loc.gov/MARC21/slim' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><data><identifier.doi>10.17077/rep.006570</identifier.doi>
+    <identifier.other>igs_tis-1024</identifier.other>
+    <creators><creator><familyname>Rex</familyname>
+    <givenname>K D</givenname>
+    <order>0</order>
+    <creatorname>Rex, K D</creatorname>
+    </creator>
+    </creators>
+    <title>The Iowa state-wide rural well-water survey</title>
+    <title.subtitle>October 1990, repeat sampling of the 10% subset</title.subtitle>
+    <publisher>Iowa Department of Natural Resources, Energy and Geological Resources Division, Geological Survey Bureau</publisher>
+    <publication.place>Iowa City, Iowa, USA</publication.place>
+    <date.published>199301</date.published>
+    <date.available>20171115</date.available>
+    <open_access_indicator>Yes</open_access_indicator>
+    <resourcetype.esploro>publication.report</resourcetype.esploro>
+    <subject.esploro>Agriculture</subject.esploro>
+    <subject.esploro>Hydrology</subject.esploro>
+    <subject.esploro>Water Quality</subject.esploro>
+    <keywords>Water Resource Management</keywords>
+    <keywords>Rural water supply</keywords>
+    <keywords>Groundwater quality</keywords>
+    <keywords>Wells</keywords>
+    <keywords>Water pollution measurement</keywords>
+    <keywords>Iowa</keywords>
+    <relationships><relationship><relationtype>ispartof</relationtype>
+    <relationtitle>Technical Information Series (Iowa. Department of Natural Resources. Geological Survey Bureau)</relationtitle>
+    <volume>25</volume>
+    <relation.category>INTERNAL</relation.category>
+    </relationship>
+    </relationships>
+    <format>pdf</format>
+    <rightsList><rights><rights>Open</rights>
+    </rights>
+    </rightsList>
+    <copyright>Publication of the State of Iowa. This publication is a public record.</copyright>
+    <language>eng</language>
+    <pages>26 pages, 5 figures, 10 tables</pages>
+    <originalRepository><assetId>igs_tis-1024</assetId>
+    <date.submission>2017-11-15T09:00:12-08:00</date.submission>
+    <repositoryName>Iowa Research Online, the University of Iowa</repositoryName>
+    <format.date>MM-YYYY</format.date>
+    <coverpage.url>https://ir.uiowa.edu/igs_tis/25</coverpage.url>
+    </originalRepository>
+    <filesList><file><file.name>The Iowa state-wide rural well-water survey : October 1990 repea.pdf</file.name>
+    <file.creationDate>2021-08-10 04:11:24</file.creationDate>
+    <file.mimeType>application/pdf</file.mimeType>
+    <file.size>3206678</file.size>
+    <file.extension>pdf</file.extension>
+    <file.persistent.url>https://iro.uiowa.edu/esploro/outputs/report/The-Iowa-state-wide-rural-well-water-survey/9984111960102771#file-0</file.persistent.url>
+    <file.download.url>https://iro.uiowa.edu/view/delivery/01IOWA_INST/12811336210002771/13811797380002771</file.download.url>
+    <file.order>0</file.order>
+    </file>
+    </filesList>
+    <local.fields><local.note1>Digitized by IGS. OCR needed.</local.note1>
+    <local.note15>oai:ir.uiowa.edu:igs_tis-1024</local.note15>
+    </local.fields>
+    <grants.note>Supported in part by the Iowa Groundwater Protection Act of 1987; The Iowa Department of Agriculture and Land Stewardship, Laboratory Division, Pesticide Bureau, through grants from the U.S. Environmental Protection Agency, and the Division of Soil Conservation through the Integrated Farm Management Demonstration Project, and through grants from the U.S. Environmental Protection Agency, Region VII, Nonpoint Source Program.</grants.note>
+    <season.published>Winter 1993</season.published>
+    <asset.affiliation>01IOWA_INST___2840z2f</asset.affiliation>
+    <asset.affiliation>01IOWA_INST___2840z2</asset.affiliation>
+    </data>
+    <identifier>9984111960102771</identifier>
+    <identifier.uri>https://iro.uiowa.edu/esploro/outputs/report/The-Iowa-state-wide-rural-well-water-survey/9984111960102771</identifier.uri>
+    </record>
+- :identifier: "11811163110002771"
+  :set_ids:
+  - esploro:set_1
+  :changed_at: '2024-08-20T16:31:04Z'
+  :metadata_source: |-
+    <record xsi:schemaLocation='http://www.loc.gov/MARC21/slim http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd' status='new/updated' xmlns='http://www.loc.gov/MARC21/slim' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><data><identifier.doi>10.17077/rep.006549</identifier.doi>
+    <identifier.other>igs_wrir-1013</identifier.other>
+    <creators><creator><familyname>Gannon</familyname>
+    <givenname>J Michael</givenname>
+    <order>0</order>
+    <creatorname>Gannon, J Michael</creatorname>
+    </creator>
+    <creator><familyname>Vogelgesang</familyname>
+    <givenname>Jason A</givenname>
+    <order>1</order>
+    <user.primaryId>00123504</user.primaryId>
+    <creatorname>Vogelgesang, Jason A</creatorname>
+    </creator>
+    </creators>
+    <title>Drought Assessment and Local Scale Modeling of Osceola County Rural Water District</title>
+    <publisher>Iowa Geological Survey, The University of Iowa</publisher>
+    <publication.place>Iowa City, Iowa, USA</publication.place>
+    <date.published>2015</date.published>
+    <date.available>20151119</date.available>
+    <open_access_indicator>Yes</open_access_indicator>
+    <resourcetype.esploro>publication.report</resourcetype.esploro>
+    <subject.esploro>Geology</subject.esploro>
+    <subject.esploro>Hydrology</subject.esploro>
+    <subject.esploro>Water Quality</subject.esploro>
+    <subject.esploro>Groundwater</subject.esploro>
+    <keywords>Water-supply</keywords>
+    <keywords>Groundwater recharge</keywords>
+    <keywords>Osceola County (Iowa)</keywords>
+    <keywords>Drought Assessment</keywords>
+    <keywords>Local Scale Modeling</keywords>
+    <keywords>Osceola County</keywords>
+    <keywords>Osceola County Rural Water District</keywords>
+    <relationships><relationship><relationtype>ispartof</relationtype>
+    <relationtitle>Water Resources Investigation Report (Iowa Geological Survey)</relationtitle>
+    <volume>11</volume>
+    <relation.category>INTERNAL</relation.category>
+    </relationship>
+    </relationships>
+    <format>pdf</format>
+    <peerreview>unknown</peerreview>
+    <rightsList><rights><rights>Open</rights>
+    </rights>
+    </rightsList>
+    <copyright>Publication of the State of Iowa. This publication is a public record.</copyright>
+    <description.abstract>&lt;p&gt;This investigation conducted by the Iowa Geological Survey completed a drought assessment to evaluate current and future groundwater availability for the Osceola County Rural Water District (OCRWD) wellfield near May City, Iowa. In addition, a calibrated groundwater flow model was constructed to provide OCRWD with various strategies to enhance and increase both acquifer storage and induced recharge.&lt;/p&gt;</description.abstract>
+    <language>eng</language>
+    <pages>76 pages, 20 figures, 11 tables</pages>
+    <originalRepository><assetId>igs_wrir-1013</assetId>
+    <date.submission>2015-11-19T15:30:05-08:00</date.submission>
+    <repositoryName>Iowa Research Online, the University of Iowa</repositoryName>
+    <format.date>MM-YYYY</format.date>
+    <coverpage.url>https://ir.uiowa.edu/igs_wrir/14</coverpage.url>
+    </originalRepository>
+    <filesList><file><file.name>Drought Assessment and Local Scale Modeling of Osceola County Rur.pdf</file.name>
+    <file.creationDate>2021-08-04 06:59:01</file.creationDate>
+    <file.mimeType>application/pdf</file.mimeType>
+    <file.type>published</file.type>
+    <file.size>8723556</file.size>
+    <file.extension>pdf</file.extension>
+    <file.persistent.url>https://iro.uiowa.edu/esploro/outputs/report/Drought-Assessment-and-Local-Scale-Modeling/9984109923202771#file-0</file.persistent.url>
+    <file.download.url>https://iro.uiowa.edu/view/delivery/01IOWA_INST/12811163100002771/13811410910002771</file.download.url>
+    <file.order>0</file.order>
+    <file.supplemental>no</file.supplemental>
+    </file>
+    </filesList>
+    <local.fields><local.note15>oai:ir.uiowa.edu:igs_wrir-1013</local.note15>
+    </local.fields>
+    <grants.note>The funding for this project was provided by the Iowa Department of Natural Resources.</grants.note>
+    <asset.affiliation>01IOWA_INST___2840z2h</asset.affiliation>
+    <asset.affiliation>01IOWA_INST___2840z2</asset.affiliation>
+    </data>
+    <identifier>9984109923202771</identifier>
+    <identifier.uri>https://iro.uiowa.edu/esploro/outputs/report/Drought-Assessment-and-Local-Scale-Modeling/9984109923202771</identifier.uri>
+    </record>
+- :identifier: "11811186740002771"
+  :set_ids:
+  - esploro:set_1
+  :changed_at: '2024-08-20T16:31:04Z'
+  :metadata_source: |-
+    <record xsi:schemaLocation='http://www.loc.gov/MARC21/slim http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd' status='new/updated' xmlns='http://www.loc.gov/MARC21/slim' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><data><identifier.doi>10.17077/006590</identifier.doi>
+    <identifier.other>iihr_monograph_series-1027</identifier.other>
+    <creators><creator><familyname>Macagno</familyname>
+    <givenname>Enzo O</givenname>
+    <order>0</order>
+    <creatorname>Macagno, Enzo O</creatorname>
+    </creator>
+    </creators>
+    <title>&quot;Libro dell’acqua&quot; VII</title>
+    <publisher>IIHR-Hydroscience &amp; Engineering, the University of Iowa</publisher>
+    <publication.place>Iowa City, Iowa, USA</publication.place>
+    <series>IIHR Monograph</series>
+    <series.number>125</series.number>
+    <date.published>200611</date.published>
+    <date.available>20140402</date.available>
+    <open_access_indicator>Yes</open_access_indicator>
+    <resourcetype.esploro>publication.book</resourcetype.esploro>
+    <subject.esploro>Hydraulic Engineering</subject.esploro>
+    <keywords>Leonardo da Vinci</keywords>
+    <keywords>Codex Madrid</keywords>
+    <format>pdf</format>
+    <rightsList><rights><rights>Open</rights>
+    </rights>
+    </rightsList>
+    <license>Free to read and download</license>
+    <copyright>Copyright © 2006 The University of Iowa</copyright>
+    <language>eng</language>
+    <pages>397 pages</pages>
+    <originalRepository><assetId>iihr_monograph_series-1027</assetId>
+    <date.submission>2014-04-02T13:18:39-07:00</date.submission>
+    <repositoryName>Iowa Research Online, the University of Iowa</repositoryName>
+    <format.date>MM-YYYY</format.date>
+    <coverpage.url>https://ir.uiowa.edu/iihr_monograph_series/125</coverpage.url>
+    </originalRepository>
+    <filesList><file><file.name>Libro dell?acqua VII.pdf</file.name>
+    <file.creationDate>2021-08-10 04:01:47</file.creationDate>
+    <file.mimeType>application/pdf</file.mimeType>
+    <file.size>19968452</file.size>
+    <file.extension>pdf</file.extension>
+    <file.persistent.url>https://iro.uiowa.edu/esploro/outputs/book/Libro-dellacqua-VII/9984111229702771#file-0</file.persistent.url>
+    <file.download.url>https://iro.uiowa.edu/view/delivery/01IOWA_INST/12811186730002771/13811798620002771</file.download.url>
+    <file.order>0</file.order>
+    </file>
+    </filesList>
+    <local.fields><local.note1>Digitized.</local.note1>
+    <local.note6>990020217770202771</local.note6>
+    <local.note15>oai:ir.uiowa.edu:iihr_monograph_series-1027</local.note15>
+    </local.fields>
+    <grants.note>&lt;p&gt;Sponsored by National Science Foundation and National Endowment for the Humanities.&lt;/p&gt;</grants.note>
+    <asset.affiliation>01IOWA_INST___2840z4</asset.affiliation>
+    <asset.affiliation>01IOWA_INST___2840</asset.affiliation>
+    </data>
+    <identifier>9984111229702771</identifier>
+    <identifier.uri>https://iro.uiowa.edu/esploro/outputs/book/Libro-dellacqua-VII/9984111229702771</identifier.uri>
+    </record>
+- :identifier: "11811133980002771"
+  :set_ids:
+  - esploro:set_1
+  :changed_at: '2024-08-20T16:30:00Z'
+  :metadata_source: |-
+    <record xsi:schemaLocation='http://www.loc.gov/MARC21/slim http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd' status='new/updated' xmlns='http://www.loc.gov/MARC21/slim' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><data><identifier.other>iwp_ar-1018</identifier.other>
+    <creators><creator><order>0</order>
+    <organization>University of Iowa International Writing Program</organization>
+    </creator>
+    </creators>
+    <title>International Writing Program annual report 2015</title>
+    <publisher>University of Iowa</publisher>
+    <publication.place>Iowa City, Iowa, USA</publication.place>
+    <date.published>2015</date.published>
+    <date.available>20171206</date.available>
+    <open_access_indicator>Yes</open_access_indicator>
+    <resourcetype.esploro>publication.report</resourcetype.esploro>
+    <format>pdf</format>
+    <rightsList><rights><rights>Open</rights>
+    </rights>
+    </rightsList>
+    <license>Free to read and download</license>
+    <copyright>Copyright © 2015 University of Iowa</copyright>
+    <language>eng</language>
+    <pages>41 pages</pages>
+    <originalRepository><assetId>iwp_ar-1018</assetId>
+    <date.submission>2017-12-06T06:46:58-08:00</date.submission>
+    <repositoryName>Iowa Research Online, the University of Iowa</repositoryName>
+    <format.date>YYYY</format.date>
+    <coverpage.url>https://ir.uiowa.edu/iwp_ar/20</coverpage.url>
+    </originalRepository>
+    <filesList><file><file.name>International Writing Program annual report 2015.pdf</file.name>
+    <file.creationDate>2021-08-04 06:49:58</file.creationDate>
+    <file.mimeType>application/pdf</file.mimeType>
+    <file.size>4743058</file.size>
+    <file.extension>pdf</file.extension>
+    <file.persistent.url>https://iro.uiowa.edu/esploro/outputs/report/International-Writing-Program-annual-report-2015/9984109926402771#file-0</file.persistent.url>
+    <file.download.url>https://iro.uiowa.edu/view/delivery/01IOWA_INST/12811133970002771/13811388000002771</file.download.url>
+    <file.order>0</file.order>
+    <file.supplemental>no</file.supplemental>
+    </file>
+    </filesList>
+    <local.fields><local.note15>oai:ir.uiowa.edu:iwp_ar-1018</local.note15>
+    </local.fields>
+    <asset.affiliation>01IOWA_INST___0199z1</asset.affiliation>
+    </data>
+    <identifier>9984109926402771</identifier>
+    <identifier.uri>https://iro.uiowa.edu/esploro/outputs/report/International-Writing-Program-annual-report-2015/9984109926402771</identifier.uri>
+    </record>
+- :identifier: "11811138750002771"
+  :set_ids:
+  - esploro:set_1
+  :changed_at: '2024-08-20T16:30:00Z'
+  :metadata_source: |-
+    <record xsi:schemaLocation='http://www.loc.gov/MARC21/slim http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd' status='new/updated' xmlns='http://www.loc.gov/MARC21/slim' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><data><identifier.doi>10.25820/006279</identifier.doi>
+    <identifier.other>igs_ofm-1138</identifier.other>
+    <creators><creator><familyname>Tassier-Surine</familyname>
+    <givenname>Stephanie</givenname>
+    <order>0</order>
+    <user.primaryId>00043520</user.primaryId>
+    <creatorname>Tassier-Surine, Stephanie</creatorname>
+    </creator>
+    <creator><familyname>Kerr</familyname>
+    <givenname>Phil</givenname>
+    <order>1</order>
+    <user.primaryId>00688405</user.primaryId>
+    <creatorname>Kerr, Phil</creatorname>
+    </creator>
+    <creator><familyname>Clark</familyname>
+    <givenname>Ryan</givenname>
+    <order>2</order>
+    <user.primaryId>00051317</user.primaryId>
+    <creatorname>Clark, Ryan</creatorname>
+    </creator>
+    <creator><familyname>Liu</familyname>
+    <givenname>Huaibao</givenname>
+    <order>3</order>
+    <user.primaryId>00087627</user.primaryId>
+    <creatorname>Liu, Huaibao</creatorname>
+    </creator>
+    </creators>
+    <title>Surficial Geologic Map of the Danville (Iowa) 7.5' Quadrangle, Des Moines, Henry, and Lee Counties, Iowa</title>
+    <publisher>Iowa Geological Survey, IIHR-Hydroscience &amp; Engineering, University of Iowa</publisher>
+    <publication.place>Iowa City, Iowa, USA</publication.place>
+    <date.published>201706</date.published>
+    <date.available>20200420</date.available>
+    <open_access_indicator>Yes</open_access_indicator>
+    <resourcetype.esploro>other.map</resourcetype.esploro>
+    <keywords>Quaternary</keywords>
+    <keywords>Des Moines County</keywords>
+    <keywords>Henry County</keywords>
+    <keywords>Lee County</keywords>
+    <relationships><relationship><relationtype>ispartof</relationtype>
+    <relationtitle>Open file map series (Iowa Geological Survey (2014))</relationtitle>
+    <volume>OFM-17-8</volume>
+    <relation.category>INTERNAL</relation.category>
+    </relationship>
+    </relationships>
+    <format>pdf</format>
+    <rightsList><rights><rights>Open</rights>
+    </rights>
+    </rightsList>
+    <copyright>Publication of the State of Iowa. This publication is a public record.</copyright>
+    <language>eng</language>
+    <pages>1 sheet</pages>
+    <originalRepository><assetId>igs_ofm-1138</assetId>
+    <date.submission>2020-04-20T09:23:13-07:00</date.submission>
+    <repositoryName>Iowa Research Online, the University of Iowa</repositoryName>
+    <format.date>MM-YYYY</format.date>
+    <coverpage.url>https://ir.uiowa.edu/igs_ofm/140</coverpage.url>
+    </originalRepository>
+    <filesList><file><file.name>Surficial Geologic Map of the Danville (Iowa) 7.5 Quadrangle.pdf</file.name>
+    <file.creationDate>2021-08-10 03:49:46</file.creationDate>
+    <file.mimeType>application/pdf</file.mimeType>
+    <file.size>1563289</file.size>
+    <file.extension>pdf</file.extension>
+    <file.persistent.url>https://iro.uiowa.edu/esploro/outputs/map/Surficial-Geologic-Map-of-the-Danville/9984109948902771#file-0</file.persistent.url>
+    <file.download.url>https://iro.uiowa.edu/view/delivery/01IOWA_INST/12811138740002771/13811801010002771</file.download.url>
+    <file.order>0</file.order>
+    </file>
+    <file><file.name>2017-07-19_11-07-14_danvillesurficial2017_report.pdf</file.name>
+    <file.creationDate>2021-08-10 03:49:46</file.creationDate>
+    <file.mimeType>application/pdf</file.mimeType>
+    <file.size>239050</file.size>
+    <file.extension>pdf</file.extension>
+    <file.persistent.url>https://iro.uiowa.edu/esploro/outputs/map/Surficial-Geologic-Map-of-the-Danville/9984109948902771#file-0</file.persistent.url>
+    <file.download.url>https://iro.uiowa.edu/view/delivery/01IOWA_INST/12811138740002771/13811801020002771</file.download.url>
+    <file.order>0</file.order>
+    </file>
+    </filesList>
+    <local.fields><local.note2>scale 1:24,000</local.note2>
+    <local.note15>oai:ir.uiowa.edu:igs_ofm-1138</local.note15>
+    </local.fields>
+    <grants.note>Supported in part by the U.S. Geological Survey  Cooperative Agreement Number G16AC00193 National Cooperative Geologic Mapping Program (STATEMAP) Completed under contract with the Iowa Department of Natural Resources</grants.note>
+    <asset.affiliation>01IOWA_INST___2840z2d</asset.affiliation>
+    <asset.affiliation>01IOWA_INST___2840z2</asset.affiliation>
+    <asset.affiliation>01IOWA_INST___2840</asset.affiliation>
+    </data>
+    <identifier>9984109948902771</identifier>
+    <identifier.uri>https://iro.uiowa.edu/esploro/outputs/map/Surficial-Geologic-Map-of-the-Danville/9984109948902771</identifier.uri>
+    </record>
+- :identifier: "11811369310002771"
+  :set_ids:
+  - esploro:set_1
+  :changed_at: '2024-08-20T16:31:04Z'
+  :metadata_source: |-
+    <record xsi:schemaLocation='http://www.loc.gov/MARC21/slim http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd' status='new/updated' xmlns='http://www.loc.gov/MARC21/slim' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><data><identifier.doi>10.17077/rep.006517</identifier.doi>
+    <identifier.other>igs_tis-1052</identifier.other>
+    <creators><creator><familyname>Wolter</familyname>
+    <givenname>C F</givenname>
+    <order>0</order>
+    <user.primaryId>01229629</user.primaryId>
+    <creatorname>Wolter, C F</creatorname>
+    </creator>
+    <creator><familyname>McKay</familyname>
+    <givenname>R M</givenname>
+    <order>1</order>
+    <user.primaryId>00163181</user.primaryId>
+    <creatorname>McKay, R M</creatorname>
+    </creator>
+    <creator><familyname>Liu</familyname>
+    <givenname>Huaibao</givenname>
+    <order>2</order>
+    <user.primaryId>00087627</user.primaryId>
+    <creatorname>Liu, Huaibao</creatorname>
+    </creator>
+    <creator><familyname>Bounk</familyname>
+    <givenname>M J</givenname>
+    <order>3</order>
+    <creatorname>Bounk, M J</creatorname>
+    </creator>
+    <creator><familyname>Libra</familyname>
+    <givenname>Robert D</givenname>
+    <order>4</order>
+    <creatorname>Libra, Robert D</creatorname>
+    </creator>
+    </creators>
+    <title>Geologic mapping for water quality projects in the upper Iowa River watershed</title>
+    <publisher>Iowa Department of Natural Resources, Iowa Geological and Water Survey</publisher>
+    <publication.place>Iowa City, Iowa, USA</publication.place>
+    <date.published>201109</date.published>
+    <date.available>20171115</date.available>
+    <open_access_indicator>Yes</open_access_indicator>
+    <resourcetype.esploro>publication.report</resourcetype.esploro>
+    <subject.esploro>Hydrology</subject.esploro>
+    <subject.esploro>Hydrogeology</subject.esploro>
+    <subject.esploro>Water Quality</subject.esploro>
+    <keywords>Water Resource Management</keywords>
+    <keywords>Hydrogeological assessment</keywords>
+    <keywords>Iowa River Watershed</keywords>
+    <keywords>Allamakee County</keywords>
+    <keywords>Winneshiek County</keywords>
+    <keywords>Howard County</keywords>
+    <relationships><relationship><relationtype>ispartof</relationtype>
+    <relationtitle>Technical Information Series (Iowa Geological and Water Survey)</relationtitle>
+    <volume>54</volume>
+    <relation.category>INTERNAL</relation.category>
+    </relationship>
+    </relationships>
+    <format>pdf</format>
+    <rightsList><rights><rights>Open</rights>
+    </rights>
+    </rightsList>
+    <copyright>Publication of the State of Iowa. This publication is a public record.</copyright>
+    <language>eng</language>
+    <pages>34 pages, 15 figures, 1 table</pages>
+    <originalRepository><assetId>igs_tis-1052</assetId>
+    <date.submission>2017-11-15T09:00:12-08:00</date.submission>
+    <repositoryName>Iowa Research Online, the University of Iowa</repositoryName>
+    <format.date>MM-YYYY</format.date>
+    <coverpage.url>https://ir.uiowa.edu/igs_tis/53</coverpage.url>
+    </originalRepository>
+    <filesList><file><file.name>Geologic mapping for water quality projects in the upper Iowa Riv.pdf</file.name>
+    <file.creationDate>2021-08-10 04:08:57</file.creationDate>
+    <file.mimeType>application/pdf</file.mimeType>
+    <file.size>3909706</file.size>
+    <file.extension>pdf</file.extension>
+    <file.persistent.url>https://iro.uiowa.edu/esploro/outputs/report/Geologic-mapping-for-water-quality-projects/9984111960602771#file-0</file.persistent.url>
+    <file.download.url>https://iro.uiowa.edu/view/delivery/01IOWA_INST/12811369300002771/13811797800002771</file.download.url>
+    <file.order>0</file.order>
+    </file>
+    </filesList>
+    <local.fields><local.note15>oai:ir.uiowa.edu:igs_tis-1052</local.note15>
+    </local.fields>
+    <grants.note>Supported in part by the U.S. Geological Survey - National Cooperative Geologic Mapping Program and the Iowa Department of Natural Resources -- Watershed Improvement Program through the US EPA Nonpoint Source Pollution Program.</grants.note>
+    <season.published>Autumn 2011</season.published>
+    <asset.affiliation>01IOWA_INST___2840z2f</asset.affiliation>
+    <asset.affiliation>01IOWA_INST___2840z2</asset.affiliation>
+    </data>
+    <identifier>9984111960602771</identifier>
+    <identifier.uri>https://iro.uiowa.edu/esploro/outputs/report/Geologic-mapping-for-water-quality-projects/9984111960602771</identifier.uri>
+    </record>
+- :identifier: "11811114140002771"
+  :set_ids:
+  - esploro:set_1
+  :changed_at: '2024-08-20T16:30:00Z'
+  :metadata_source: |-
+    <record xsi:schemaLocation='http://www.loc.gov/MARC21/slim http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd' status='new/updated' xmlns='http://www.loc.gov/MARC21/slim' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><data><identifier.doi>10.25820/006347</identifier.doi>
+    <identifier.other>igs_ofm-1166</identifier.other>
+    <mobileCompatibility>unknown</mobileCompatibility>
+    <sourceCodeAvailability>unknown</sourceCodeAvailability>
+    <creators><creator><familyname>Tassier-Surine</familyname>
+    <givenname>Stephanie</givenname>
+    <order>1</order>
+    <user.primaryId>00043520</user.primaryId>
+    <creatorname>Tassier-Surine, Stephanie</creatorname>
+    </creator>
+    <creator><familyname>Clark</familyname>
+    <givenname>Ryan</givenname>
+    <order>2</order>
+    <user.primaryId>00051317</user.primaryId>
+    <creatorname>Clark, Ryan</creatorname>
+    </creator>
+    <creator><familyname>Kerr</familyname>
+    <givenname>Phil</givenname>
+    <order>3</order>
+    <user.primaryId>00688405</user.primaryId>
+    <creatorname>Kerr, Phil</creatorname>
+    </creator>
+    </creators>
+    <title>Summary report of the surficial geologic map of the west point 7.5’ quadrangle, Lee County, Iowa</title>
+    <publisher>Iowa Geological Survey, IIHR-Hydroscience &amp; Engineering, University of Iowa</publisher>
+    <publication.place>Iowa City, Iowa, USA</publication.place>
+    <date.published>202010</date.published>
+    <date.available>20210107</date.available>
+    <open_access_indicator>Yes</open_access_indicator>
+    <resourcetype.esploro>publication.report</resourcetype.esploro>
+    <keywords>Illinoian</keywords>
+    <keywords>Lee County</keywords>
+    <relationships><relationship><relationtype>ispartof</relationtype>
+    <relationtitle>Open file map series (Iowa Geological Survey (2014))</relationtitle>
+    <volume>OFM-20-5</volume>
+    <relation.category>INTERNAL</relation.category>
+    </relationship>
+    </relationships>
+    <format>pdf</format>
+    <openaccess>unknown</openaccess>
+    <peerreview>unknown</peerreview>
+    <rightsList><rights><rights>Open</rights>
+    </rights>
+    </rightsList>
+    <copyright>Publication of the State of Iowa. This publication is a public record. </copyright>
+    <language>eng</language>
+    <pages>11 pages</pages>
+    <originalRepository><assetId>igs_ofm-1166</assetId>
+    <date.submission>2021-01-07T09:24:39-08:00</date.submission>
+    <repositoryName>Iowa Research Online, the University of Iowa</repositoryName>
+    <format.date>MM-YYYY</format.date>
+    <coverpage.url>https://ir.uiowa.edu/igs_ofm/168</coverpage.url>
+    </originalRepository>
+    <filesList><file><file.name>Summary report of the surficial geologic map of the west point 7..pdf</file.name>
+    <file.creationDate>2021-08-10 03:37:37</file.creationDate>
+    <file.mimeType>application/pdf</file.mimeType>
+    <file.size>299099</file.size>
+    <file.extension>pdf</file.extension>
+    <file.persistent.url>https://iro.uiowa.edu/esploro/outputs/report/Summary-report-of-the-surficial-geologic/9984110029302771#file-0</file.persistent.url>
+    <file.download.url>https://iro.uiowa.edu/view/delivery/01IOWA_INST/12811114130002771/13811803230002771</file.download.url>
+    <file.order>0</file.order>
+    <file.supplemental>no</file.supplemental>
+    </file>
+    </filesList>
+    <local.fields>
+    <local.note15>oai:ir.uiowa.edu:igs_ofm-1166</local.note15>
+    </local.fields>
+    <grants.note>Supported in part by the U.S. Geological Survey Cooperative Agreement Number G19AC00243 National Cooperative Geologic Mapping Program (STATEMAP) This work was partially supported by a National Science Foundation Award: Improving Undergraduate STEM Education Grant GP-IMPACT-1600429</grants.note>
+    <asset.affiliation>01IOWA_INST___2840</asset.affiliation>
+    <asset.affiliation>01IOWA_INST___2840z2</asset.affiliation>
+    <asset.affiliation>01IOWA_INST___2840z2d</asset.affiliation>
+    </data>
+    <identifier>9984110029302771</identifier>
+    <identifier.uri>https://iro.uiowa.edu/esploro/outputs/report/Summary-report-of-the-surficial-geologic/9984110029302771</identifier.uri>
+    </record>
+- :identifier: "11811369610002771"
+  :set_ids:
+  - esploro:set_1
+  :changed_at: '2024-08-20T16:31:04Z'
+  :metadata_source: |-
+    <record xsi:schemaLocation='http://www.loc.gov/MARC21/slim http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd' status='new/updated' xmlns='http://www.loc.gov/MARC21/slim' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><data><identifier.doi>10.17077/rep.006573</identifier.doi>
+    <identifier.other>igs_tis-1051</identifier.other>
+    <creators><creator><familyname>Foreman</familyname>
+    <givenname>K L</givenname>
+    <order>0</order>
+    <creatorname>Foreman, K L</creatorname>
+    </creator>
+    </creators>
+    <title>Water quality monitoring in the Hoover Creek watershed, 2004-2006</title>
+    <publisher>Iowa Department of Natural Resources, Geological Survey</publisher>
+    <publication.place>Iowa City, Iowa, USA</publication.place>
+    <date.published>200709</date.published>
+    <date.available>20171115</date.available>
+    <open_access_indicator>Yes</open_access_indicator>
+    <resourcetype.esploro>publication.report</resourcetype.esploro>
+    <subject.esploro>Water Quality</subject.esploro>
+    <keywords>Water Resource Management</keywords>
+    <keywords>Water analysis</keywords>
+    <keywords>Hoover Creek Watershed</keywords>
+    <keywords>hoover creek watershed</keywords>
+    <keywords>water quality monitoring</keywords>
+    <keywords>Cedar County</keywords>
+    <keywords>Johnson County</keywords>
+    <relationships><relationship><relationtype>ispartof</relationtype>
+    <relationtitle>Technical Information Series (Iowa. Department of Natural Resources. Geological Survey Bureau)</relationtitle>
+    <volume>53</volume>
+    <relation.category>INTERNAL</relation.category>
+    </relationship>
+    </relationships>
+    <format>pdf</format>
+    <rightsList><rights><rights>Open</rights>
+    </rights>
+    </rightsList>
+    <copyright>Publication of the State of Iowa. This publication is a public record.</copyright>
+    <language>eng</language>
+    <pages>50 pages, 12 figures, 7 tables, 5 appendices</pages>
+    <originalRepository><assetId>igs_tis-1051</assetId>
+    <date.submission>2017-11-15T09:00:12-08:00</date.submission>
+    <repositoryName>Iowa Research Online, the University of Iowa</repositoryName>
+    <format.date>MM-YYYY</format.date>
+    <coverpage.url>https://ir.uiowa.edu/igs_tis/52</coverpage.url>
+    </originalRepository>
+    <filesList><file><file.name>Water quality monitoring in the Hoover Creek watershed 2004-2006.pdf</file.name>
+    <file.creationDate>2021-08-10 04:15:06</file.creationDate>
+    <file.mimeType>application/pdf</file.mimeType>
+    <file.size>813600</file.size>
+    <file.extension>pdf</file.extension>
+    <file.persistent.url>https://iro.uiowa.edu/esploro/outputs/report/Water-quality-monitoring-in-the-Hoover/9984111961802771#file-0</file.persistent.url>
+    <file.download.url>https://iro.uiowa.edu/view/delivery/01IOWA_INST/12811369600002771/13811796750002771</file.download.url>
+    <file.order>0</file.order>
+    </file>
+    </filesList>
+    <local.fields><local.note15>oai:ir.uiowa.edu:igs_tis-1051</local.note15>
+    </local.fields>
+    <grants.note>The work on which this report is based was performed in accordance with a cooperative agreement between the Iowa Department of Natural Resources and United States National Park Service.</grants.note>
+    <season.published>Autumn 2007</season.published>
+    <asset.affiliation>01IOWA_INST___2840z2f</asset.affiliation>
+    <asset.affiliation>01IOWA_INST___2840z2</asset.affiliation>
+    </data>
+    <identifier>9984111961802771</identifier>
+    <identifier.uri>https://iro.uiowa.edu/esploro/outputs/report/Water-quality-monitoring-in-the-Hoover/9984111961802771</identifier.uri>
+    </record>
+- :identifier: "11811125970002771"
+  :set_ids:
+  - esploro:set_1
+  :changed_at: '2024-08-20T16:30:00Z'
+  :metadata_source: |-
+    <record xsi:schemaLocation='http://www.loc.gov/MARC21/slim http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd' status='new/updated' xmlns='http://www.loc.gov/MARC21/slim' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><data><identifier.doi>10.25820/006401</identifier.doi>
+    <identifier.other>igs_ofm-1070</identifier.other>
+    <creators><creator><familyname>Witzke</familyname>
+    <givenname>Brian J</givenname>
+    <order>0</order>
+    <identifierLcnaf>http://id.loc.gov/authorities/names/n87147498</identifierLcnaf>
+    <user.primaryId>00054448</user.primaryId>
+    <creatorname>Witzke, Brian J</creatorname>
+    </creator>
+    <creator><familyname>Anderson</familyname>
+    <givenname>Raymond R</givenname>
+    <order>1</order>
+    <identifierLcnaf>http://id.loc.gov/authorities/names/n82128924</identifierLcnaf>
+    <user.primaryId>00040517</user.primaryId>
+    <creatorname>Anderson, Raymond R</creatorname>
+    </creator>
+    <creator><familyname>Pope</familyname>
+    <givenname>John P</givenname>
+    <order>2</order>
+    <creatorname>Pope, John P</creatorname>
+    </creator>
+    </creators>
+    <title>Bedrock Geologic Map of Iowa</title>
+    <publisher>Iowa Geological and Water Survey</publisher>
+    <publication.place>Iowa, USA</publication.place>
+    <date.published>201003</date.published>
+    <date.available>20171003</date.available>
+    <open_access_indicator>Yes</open_access_indicator>
+    <resourcetype.esploro>other.map</resourcetype.esploro>
+    <relationships><relationship><relationtype>ispartof</relationtype>
+    <relationtitle>Open file map series (Iowa Geological and Water Survey)</relationtitle>
+    <volume>OFM-10-1</volume>
+    <relation.category>INTERNAL</relation.category>
+    </relationship>
+    </relationships>
+    <format>pdf</format>
+    <rightsList><rights><rights>Open</rights>
+    </rights>
+    </rightsList>
+    <copyright>Publication of the State of Iowa. This publication is a public record.</copyright>
+    <language>eng</language>
+    <pages>1 sheet</pages>
+    <originalRepository><assetId>igs_ofm-1070</assetId>
+    <date.submission>2017-10-03T11:48:07-07:00</date.submission>
+    <repositoryName>Iowa Research Online, the University of Iowa</repositoryName>
+    <format.date>MM-YYYY</format.date>
+    <coverpage.url>https://ir.uiowa.edu/igs_ofm/71</coverpage.url>
+    </originalRepository>
+    <filesList><file><file.name>Bedrock Geologic Map of Iowa.pdf</file.name>
+    <file.creationDate>2021-08-04 07:11:52</file.creationDate>
+    <file.mimeType>application/pdf</file.mimeType>
+    <file.size>12532085</file.size>
+    <file.extension>pdf</file.extension>
+    <file.persistent.url>https://iro.uiowa.edu/esploro/outputs/map/Bedrock-Geologic-Map-of-Iowa/9984110026702771#file-0</file.persistent.url>
+    <file.download.url>https://iro.uiowa.edu/view/delivery/01IOWA_INST/12811125960002771/13811404880002771</file.download.url>
+    <file.order>0</file.order>
+    <file.supplemental>no</file.supplemental>
+    </file>
+    <file><file.name>ofm-2010-01_txt.pdf</file.name>
+    <file.creationDate>2021-08-04 07:11:52</file.creationDate>
+    <file.mimeType>application/pdf</file.mimeType>
+    <file.size>153274</file.size>
+    <file.extension>pdf</file.extension>
+    <file.persistent.url>https://iro.uiowa.edu/esploro/outputs/map/Bedrock-Geologic-Map-of-Iowa/9984110026702771#file-1</file.persistent.url>
+    <file.download.url>https://iro.uiowa.edu/view/delivery/01IOWA_INST/12811125960002771/13811404870002771</file.download.url>
+    <file.order>1</file.order>
+    <file.supplemental>yes</file.supplemental>
+    </file>
+    </filesList>
+    <local.fields><local.note2>scale: 1:500,000</local.note2>
+    <local.note15>oai:ir.uiowa.edu:igs_ofm-1070</local.note15>
+    </local.fields>
+    <grants.note>Supported in part with funding from the U.S. Geological Survey -, National Cooperative Geologic Mapping Program.</grants.note>
+    <asset.affiliation>01IOWA_INST___1170</asset.affiliation>
+    <asset.affiliation>01IOWA_INST___2840z2d</asset.affiliation>
+    <asset.affiliation>01IOWA_INST___2840z2</asset.affiliation>
+    </data>
+    <identifier>9984110026702771</identifier>
+    <identifier.uri>https://iro.uiowa.edu/esploro/outputs/map/Bedrock-Geologic-Map-of-Iowa/9984110026702771</identifier.uri>
+    </record>
+- :identifier: "11811163080002771"
+  :set_ids:
+  - esploro:set_1
+  :changed_at: '2024-08-20T16:31:04Z'
+  :metadata_source: |-
+    <record xsi:schemaLocation='http://www.loc.gov/MARC21/slim http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd' status='new/updated' xmlns='http://www.loc.gov/MARC21/slim' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><data><identifier.doi>10.17077/rep.006558</identifier.doi>
+    <identifier.other>igs_wsb-1014</identifier.other>
+    <creators><creator><familyname>Wahl</familyname>
+    <givenname>Kenneth D</givenname>
+    <order>0</order>
+    <creatorname>Wahl, Kenneth D</creatorname>
+    </creator>
+    <creator><familyname>Bunker</familyname>
+    <givenname>B J</givenname>
+    <order>1</order>
+    <creatorname>Bunker, B J</creatorname>
+    </creator>
+    </creators>
+    <title>Hydrology of carbonate aquifers in southwestern Linn County and adjacent parts of Benton, Iowa, and Johnson counties, Iowa</title>
+    <publisher>Iowa Geological Survey</publisher>
+    <publication.place>Iowa City, Iowa, USA</publication.place>
+    <date.published>19860101</date.published>
+    <date.available>20171115</date.available>
+    <open_access_indicator>Yes</open_access_indicator>
+    <resourcetype.esploro>publication.report</resourcetype.esploro>
+    <subject.esploro>Hydrology</subject.esploro>
+    <subject.esploro>Groundwater</subject.esploro>
+    <keywords>Water Resource Management</keywords>
+    <keywords>Water-supply</keywords>
+    <keywords>Iowa</keywords>
+    <keywords>Benton County</keywords>
+    <keywords>Iowa County</keywords>
+    <keywords>Johnson County</keywords>
+    <keywords>Linn County</keywords>
+    <relationships><relationship><relationtype>ispartof</relationtype>
+    <relationtitle>Water-supply bulletin (Iowa Geological Survey)</relationtitle>
+    <volume>15</volume>
+    <identifier.issn>0096-2996</identifier.issn>
+    <relation.category>INTERNAL</relation.category>
+    </relationship>
+    </relationships>
+    <format>pdf</format>
+    <rightsList><rights><rights>Open</rights>
+    </rights>
+    </rightsList>
+    <copyright>No known copyright restrictions</copyright>
+    <comment>&lt;p&gt;Prepared cooperatively by the U.S. Geological Survey and the Iowa Geological Survey.&lt;/p&gt;</comment>
+    <language>eng</language>
+    <pages>56 pages, 8 figures, 5 tables, 11 plates</pages>
+    <originalRepository><assetId>igs_wsb-1014</assetId>
+    <date.submission>2017-11-15T08:12:07-08:00</date.submission>
+    <repositoryName>Iowa Research Online, the University of Iowa</repositoryName>
+    <format.date>YYYY-MM-DD</format.date>
+    <coverpage.url>https://ir.uiowa.edu/igs_wsb/15</coverpage.url>
+    </originalRepository>
+    <filesList><file><file.name>Hydrology of carbonate aquifers in southwestern Linn County and a.pdf</file.name>
+    <file.creationDate>2021-08-04 07:00:25</file.creationDate>
+    <file.mimeType>application/pdf</file.mimeType>
+    <file.type>published</file.type>
+    <file.size>3898577</file.size>
+    <file.extension>pdf</file.extension>
+    <file.persistent.url>https://iro.uiowa.edu/esploro/outputs/report/Hydrology-of-carbonate-aquifers-in-southwestern/9984109990902771#file-0</file.persistent.url>
+    <file.download.url>https://iro.uiowa.edu/view/delivery/01IOWA_INST/12811163070002771/13811409920002771</file.download.url>
+    <file.order>0</file.order>
+    <file.supplemental>no</file.supplemental>
+    </file>
+    </filesList>
+    <local.fields><local.note1>Digitized by IGS.</local.note1>
+    <local.note15>oai:ir.uiowa.edu:igs_wsb-1014</local.note15>
+    </local.fields>
+    <asset.affiliation>01IOWA_INST___2840z2i</asset.affiliation>
+    <asset.affiliation>01IOWA_INST___2840z2</asset.affiliation>
+    </data>
+    <identifier>9984109990902771</identifier>
+    <identifier.uri>https://iro.uiowa.edu/esploro/outputs/report/Hydrology-of-carbonate-aquifers-in-southwestern/9984109990902771</identifier.uri>
+    </record>
+- :identifier: "11811140370002771"
+  :set_ids:
+  - esploro:set_1
+  :changed_at: '2024-08-20T16:29:52Z'
+  :metadata_source: |-
+    <record xsi:schemaLocation='http://www.loc.gov/MARC21/slim http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd' status='new/updated' xmlns='http://www.loc.gov/MARC21/slim' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><data><identifier.doi>10.25820/006334</identifier.doi>
+    <identifier.other>igs_ofm-1026</identifier.other>
+    <creators><creator><familyname>Quade</familyname>
+    <givenname>Deborah J</givenname>
+    <order>0</order>
+    <creatorname>Quade, Deborah J</creatorname>
+    </creator>
+    <creator><familyname>Giglierano</familyname>
+    <givenname>James D</givenname>
+    <order>1</order>
+    <creatorname>Giglierano, James D</creatorname>
+    </creator>
+    <creator><familyname>Bettis</familyname>
+    <givenname>E Arthur</givenname>
+    <suffix>III</suffix>
+    <order>2</order>
+    <identifierLcnaf>http://id.loc.gov/authorities/names/n87142839</identifierLcnaf>
+    <user.primaryId>00052289</user.primaryId>
+    <creatorname>Bettis, E Arthur III</creatorname>
+    </creator>
+    <creator><familyname>Wisner</familyname>
+    <givenname>Robin J</givenname>
+    <order>3</order>
+    <creatorname>Wisner, Robin J</creatorname>
+    </creator>
+    </creators>
+    <title>Surficial geologic map of the Des Moines Lobe of Iowa, Phase 4</title>
+    <title.subtitle>Humboldt County</title.subtitle>
+    <publisher>Iowa Department of Natural Resources, Energy and Geological Resources Division, Geological Survey Bureau</publisher>
+    <publication.place>Iowa, USA</publication.place>
+    <date.published>200209</date.published>
+    <date.available>20171003</date.available>
+    <open_access_indicator>Yes</open_access_indicator>
+    <resourcetype.esploro>other.map</resourcetype.esploro>
+    <keywords>Humboldt County</keywords>
+    <relationships><relationship><relationtype>ispartof</relationtype>
+    <relationtitle>Open file map series (Iowa. Department of Natural Resources. Geological Survey Bureau)</relationtitle>
+    <volume>OFM-02-3</volume>
+    <relation.category>INTERNAL</relation.category>
+    </relationship>
+    </relationships>
+    <format>pdf</format>
+    <rightsList><rights><rights>Open</rights>
+    </rights>
+    </rightsList>
+    <copyright>Publication of the State of Iowa. This publication is a public record.</copyright>
+    <language>eng</language>
+    <pages>1 sheet</pages>
+    <originalRepository><assetId>igs_ofm-1026</assetId>
+    <date.submission>2017-10-03T11:48:07-07:00</date.submission>
+    <repositoryName>Iowa Research Online, the University of Iowa</repositoryName>
+    <format.date>MM-YYYY</format.date>
+    <coverpage.url>https://ir.uiowa.edu/igs_ofm/27</coverpage.url>
+    </originalRepository>
+    <filesList><file><file.name>ofm-2002-3_txt.pdf</file.name>
+    <file.creationDate>2021-08-04 06:58:15</file.creationDate>
+    <file.mimeType>application/pdf</file.mimeType>
+    <file.size>252269</file.size>
+    <file.extension>pdf</file.extension>
+    <file.persistent.url>https://iro.uiowa.edu/esploro/outputs/map/Surficial-geologic-map-of-the-Des/9984109957002771#file-1</file.persistent.url>
+    <file.download.url>https://iro.uiowa.edu/view/delivery/01IOWA_INST/12811140360002771/13811411500002771</file.download.url>
+    <file.order>1</file.order>
+    <file.supplemental>yes</file.supplemental>
+    </file>
+    <file><file.name>Surficial geologic map of the Des Moines Lobe of Iowa Phase 4: H.pdf</file.name>
+    <file.creationDate>2021-08-04 06:58:15</file.creationDate>
+    <file.mimeType>application/pdf</file.mimeType>
+    <file.size>1151551</file.size>
+    <file.extension>pdf</file.extension>
+    <file.persistent.url>https://iro.uiowa.edu/esploro/outputs/map/Surficial-geologic-map-of-the-Des/9984109957002771#file-0</file.persistent.url>
+    <file.download.url>https://iro.uiowa.edu/view/delivery/01IOWA_INST/12811140360002771/13811411510002771</file.download.url>
+    <file.order>0</file.order>
+    <file.supplemental>no</file.supplemental>
+    </file>
+    </filesList>
+    <local.fields><local.note2>scale 1:100,000</local.note2>
+    <local.note15>oai:ir.uiowa.edu:igs_ofm-1026</local.note15>
+    </local.fields>
+    <grants.note>Supported by Cooperative Agreement 010-HQAG-0091, September 2002.</grants.note>
+    <asset.affiliation>01IOWA_INST___2840z2d</asset.affiliation>
+    <asset.affiliation>01IOWA_INST___1170</asset.affiliation>
+    <asset.affiliation>01IOWA_INST___2840z2</asset.affiliation>
+    </data>
+    <identifier>9984109957002771</identifier>
+    <identifier.uri>https://iro.uiowa.edu/esploro/outputs/map/Surficial-geologic-map-of-the-Des/9984109957002771</identifier.uri>
+    </record>
+- :identifier: "11811369760002771"
+  :set_ids:
+  - esploro:set_1
+  :changed_at: '2024-08-20T16:31:04Z'
+  :metadata_source: |-
+    <record xsi:schemaLocation='http://www.loc.gov/MARC21/slim http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd' status='new/updated' xmlns='http://www.loc.gov/MARC21/slim' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><data><identifier.doi>10.17077/rep.006555</identifier.doi>
+    <identifier.other>igs_tis-1010</identifier.other>
+    <mobileCompatibility>unknown</mobileCompatibility>
+    <sourceCodeAvailability>unknown</sourceCodeAvailability>
+    <creators><creator><familyname>Hallberg</familyname>
+    <givenname>George R</givenname>
+    <order>1</order>
+    <role>Editor</role>
+    <creatorname>Hallberg, George R</creatorname>
+    </creator>
+    </creators>
+    <title>Illinoian and pre-Illinoian stratigraphy of southeast Iowa and adjacent Illinois</title>
+    <publisher>Iowa Geological Survey</publisher>
+    <publication.place>Iowa City, Iowa, USA</publication.place>
+    <date.published>198005</date.published>
+    <date.available>20171115</date.available>
+    <open_access_indicator>Yes</open_access_indicator>
+    <resourcetype.esploro>publication.report</resourcetype.esploro>
+    <subject.esploro>Geology</subject.esploro>
+    <subject.esploro>Stratigraphy</subject.esploro>
+    <keywords>Pleistocene Geologic Epoch</keywords>
+    <keywords>Iowa</keywords>
+    <keywords>Illinois</keywords>
+    <keywords>Quaternary</keywords>
+    <keywords>Des Moines County</keywords>
+    <keywords>Henry County</keywords>
+    <keywords>Lee County</keywords>
+    <keywords>Louisa County</keywords>
+    <relationships><relationship><relationtype>ispartof</relationtype>
+    <relationtitle>Technical Information Series (Iowa Geological Survey)</relationtitle>
+    <volume>11</volume>
+    <identifier.issn>0270-9066</identifier.issn>
+    <relation.category>INTERNAL</relation.category>
+    </relationship>
+    </relationships>
+    <format>pdf</format>
+    <openaccess>no</openaccess>
+    <peerreview>no</peerreview>
+    <rightsList><rights><rights>Open</rights>
+    </rights>
+    </rightsList>
+    <copyright>No known copyright restrictions</copyright>
+    <language>eng</language>
+    <pages>iii, 206 pages, 58 figures, 34 tables</pages>
+    <originalRepository><assetId>igs_tis-1010</assetId>
+    <date.submission>2017-11-15T09:00:12-08:00</date.submission>
+    <repositoryName>Iowa Research Online, the University of Iowa</repositoryName>
+    <format.date>MM-YYYY</format.date>
+    <coverpage.url>https://ir.uiowa.edu/igs_tis/11</coverpage.url>
+    </originalRepository>
+    <filesList><file><file.name>Illinoian and pre-Illinoian stratigraphy of southeast Iowa and ad.pdf</file.name>
+    <file.creationDate>2021-08-10 04:08:38</file.creationDate>
+    <file.mimeType>application/pdf</file.mimeType>
+    <file.size>20207602</file.size>
+    <file.extension>pdf</file.extension>
+    <file.persistent.url>https://iro.uiowa.edu/esploro/outputs/report/Illinoian-and-pre-Illinoian-stratigraphy-of-southeast/9984111962402771#file-0</file.persistent.url>
+    <file.download.url>https://iro.uiowa.edu/view/delivery/01IOWA_INST/12811369750002771/13811797850002771</file.download.url>
+    <file.order>0</file.order>
+    <file.supplemental>no</file.supplemental>
+    </file>
+    </filesList>
+    <local.fields><local.note1>Digitized by IGS.  OCR needed.</local.note1>
+    <local.note15>oai:ir.uiowa.edu:igs_tis-1010</local.note15>
+    </local.fields>
+    <season.published>Spring 1980</season.published>
+    <asset.affiliation>01IOWA_INST___2840z2</asset.affiliation>
+    <asset.affiliation>01IOWA_INST___2840z2f</asset.affiliation>
+    </data>
+    <identifier>9984111962402771</identifier>
+    <identifier.uri>https://iro.uiowa.edu/esploro/outputs/report/Illinoian-and-pre-Illinoian-stratigraphy-of-southeast/9984111962402771</identifier.uri>
+    </record>
+- :identifier: "11811123810002771"
+  :set_ids:
+  - esploro:set_1
+  :changed_at: '2024-08-20T16:30:00Z'
+  :metadata_source: |-
+    <record xsi:schemaLocation='http://www.loc.gov/MARC21/slim http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd' status='new/updated' xmlns='http://www.loc.gov/MARC21/slim' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><data><identifier.doi>10.25820/006262</identifier.doi>
+    <identifier.other>igs_ofm-1162</identifier.other>
+    <creators><creator><familyname>Clark</familyname>
+    <givenname>Ryan</givenname>
+    <order>0</order>
+    <user.primaryId>00051317</user.primaryId>
+    <creatorname>Clark, Ryan</creatorname>
+    </creator>
+    <creator><familyname>Tassier-Surine</familyname>
+    <givenname>Stephanie</givenname>
+    <order>1</order>
+    <user.primaryId>00043520</user.primaryId>
+    <creatorname>Tassier-Surine, Stephanie</creatorname>
+    </creator>
+    <creator><familyname>Kerr</familyname>
+    <givenname>Phil</givenname>
+    <order>2</order>
+    <user.primaryId>00688405</user.primaryId>
+    <creatorname>Kerr, Phil</creatorname>
+    </creator>
+    </creators>
+    <title>Bedrock Geologic Map of the Donnellson 7.5' Quadrangle, Lee County, Iowa</title>
+    <publisher>Iowa Geological Survey, IIHR-Hydroscience &amp; Engineering, University of Iowa</publisher>
+    <publication.place>Iowa City, Iowa, USA</publication.place>
+    <date.published>202010</date.published>
+    <date.available>20210107</date.available>
+    <open_access_indicator>Yes</open_access_indicator>
+    <resourcetype.esploro>other.map</resourcetype.esploro>
+    <keywords>bedrock</keywords>
+    <keywords>Mississippian</keywords>
+    <keywords>Lee County</keywords>
+    <relationships><relationship><relationtype>ispartof</relationtype>
+    <relationtitle>Open file map series (Iowa Geological Survey (2014))</relationtitle>
+    <volume>OFM-20-1</volume>
+    <relation.category>INTERNAL</relation.category>
+    </relationship>
+    </relationships>
+    <format>pdf</format>
+    <rightsList><rights><rights>Open</rights>
+    </rights>
+    </rightsList>
+    <copyright>Publication of the State of Iowa. This publication is a public record.</copyright>
+    <language>eng</language>
+    <pages>1 sheet</pages>
+    <originalRepository><assetId>igs_ofm-1162</assetId>
+    <date.submission>2021-01-07T09:03:58-08:00</date.submission>
+    <repositoryName>Iowa Research Online, the University of Iowa</repositoryName>
+    <format.date>MM-YYYY</format.date>
+    <coverpage.url>https://ir.uiowa.edu/igs_ofm/172</coverpage.url>
+    </originalRepository>
+    <filesList><file><file.name>Bedrock Geologic Map of the Donnellson 7.5 Quadrangle Lee Count.pdf</file.name>
+    <file.creationDate>2021-08-10 03:38:54</file.creationDate>
+    <file.mimeType>application/pdf</file.mimeType>
+    <file.size>6030880</file.size>
+    <file.extension>pdf</file.extension>
+    <file.persistent.url>https://iro.uiowa.edu/esploro/outputs/map/Bedrock-Geologic-Map-of-the-Donnellson/9984110019202771#file-0</file.persistent.url>
+    <file.download.url>https://iro.uiowa.edu/view/delivery/01IOWA_INST/12811123800002771/13811802920002771</file.download.url>
+    <file.order>0</file.order>
+    </file>
+    <file><file.name>2020-11-30_11-11-27_don quad br summary report final.pdf</file.name>
+    <file.creationDate>2021-08-10 03:38:54</file.creationDate>
+    <file.mimeType>application/pdf</file.mimeType>
+    <file.size>3794391</file.size>
+    <file.extension>pdf</file.extension>
+    <file.persistent.url>https://iro.uiowa.edu/esploro/outputs/map/Bedrock-Geologic-Map-of-the-Donnellson/9984110019202771#file-0</file.persistent.url>
+    <file.download.url>https://iro.uiowa.edu/view/delivery/01IOWA_INST/12811123800002771/13811802930002771</file.download.url>
+    <file.order>0</file.order>
+    </file>
+    </filesList>
+    <local.fields><local.note2>scale 1:24,000</local.note2>
+    <local.note15>oai:ir.uiowa.edu:igs_ofm-1162</local.note15>
+    </local.fields>
+    <grants.note>Supported in part by the U.S. Geological Survey Cooperative Agreement Number G19AC00243 National Cooperative Geologic Mapping Program (STATEMAP). This work was partially supported by a National Science Foundation Award: Improving Undergraduate STEM Education Grant GP-IMPACT-1600429.</grants.note>
+    <asset.affiliation>01IOWA_INST___2840z2</asset.affiliation>
+    <asset.affiliation>01IOWA_INST___2840z2d</asset.affiliation>
+    <asset.affiliation>01IOWA_INST___2840</asset.affiliation>
+    </data>
+    <identifier>9984110019202771</identifier>
+    <identifier.uri>https://iro.uiowa.edu/esploro/outputs/map/Bedrock-Geologic-Map-of-the-Donnellson/9984110019202771</identifier.uri>
+    </record>
+- :identifier: "11811114200002771"
+  :set_ids:
+  - esploro:set_1
+  :changed_at: '2024-08-20T16:30:00Z'
+  :metadata_source: |-
+    <record xsi:schemaLocation='http://www.loc.gov/MARC21/slim http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd' status='new/updated' xmlns='http://www.loc.gov/MARC21/slim' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><data><identifier.doi>10.25820/006372</identifier.doi>
+    <identifier.other>igs_ofm-1119</identifier.other>
+    <creators><creator><familyname>Clark</familyname>
+    <givenname>Ryan</givenname>
+    <order>0</order>
+    <user.primaryId>00051317</user.primaryId>
+    <creatorname>Clark, Ryan</creatorname>
+    </creator>
+    <creator><familyname>Liu</familyname>
+    <givenname>Huaibao</givenname>
+    <order>1</order>
+    <user.primaryId>00087627</user.primaryId>
+    <creatorname>Liu, Huaibao</creatorname>
+    </creator>
+    <creator><familyname>Kerr</familyname>
+    <givenname>Phillip</givenname>
+    <order>2</order>
+    <user.primaryId>00688405</user.primaryId>
+    <creatorname>Kerr, Phillip</creatorname>
+    </creator>
+    <creator><familyname>Tassier-Surine</familyname>
+    <givenname>Stephanie</givenname>
+    <order>3</order>
+    <user.primaryId>00043520</user.primaryId>
+    <creatorname>Tassier-Surine, Stephanie</creatorname>
+    </creator>
+    <creator><familyname>Rowden</familyname>
+    <givenname>Robert</givenname>
+    <order>4</order>
+    <creatorname>Rowden, Robert</creatorname>
+    </creator>
+    <creator><familyname>Streeter</familyname>
+    <givenname>Matthew T</givenname>
+    <order>5</order>
+    <user.primaryId>00582055</user.primaryId>
+    <creatorname>Streeter, Matthew T</creatorname>
+    </creator>
+    </creators>
+    <title>Bedrock Geology of the New Haven 7.5' Quadrangle, Mitchell County, Iowa</title>
+    <publisher>Iowa Geological Survey</publisher>
+    <publication.place>Iowa, USA</publication.place>
+    <date.published>201506</date.published>
+    <date.available>20171003</date.available>
+    <open_access_indicator>Yes</open_access_indicator>
+    <resourcetype.esploro>other.map</resourcetype.esploro>
+    <keywords>Devonian</keywords>
+    <keywords>Mitchell County</keywords>
+    <relationships><relationship><relationtype>ispartof</relationtype>
+    <relationtitle>Open file map series (Iowa Geological Survey (2014))</relationtitle>
+    <volume>OFM-15-3</volume>
+    <relation.category>INTERNAL</relation.category>
+    </relationship>
+    </relationships>
+    <format>pdf</format>
+    <rightsList><rights><rights>Open</rights>
+    </rights>
+    </rightsList>
+    <copyright>Publication of the State of Iowa. This publication is a public record.</copyright>
+    <language>eng</language>
+    <pages>1 sheet</pages>
+    <originalRepository><assetId>igs_ofm-1119</assetId>
+    <date.submission>2017-10-03T11:48:07-07:00</date.submission>
+    <repositoryName>Iowa Research Online, the University of Iowa</repositoryName>
+    <format.date>MM-YYYY</format.date>
+    <coverpage.url>https://ir.uiowa.edu/igs_ofm/120</coverpage.url>
+    </originalRepository>
+    <filesList><file><file.name>2015-09-01_16-09-40_iowa_technical_report_2015_final.pdf</file.name>
+    <file.creationDate>2021-08-10 03:40:48</file.creationDate>
+    <file.mimeType>application/pdf</file.mimeType>
+    <file.size>174722</file.size>
+    <file.extension>pdf</file.extension>
+    <file.persistent.url>https://iro.uiowa.edu/esploro/outputs/map/Bedrock-Geology-of-the-New-Haven/9984109987902771#file-0</file.persistent.url>
+    <file.download.url>https://iro.uiowa.edu/view/delivery/01IOWA_INST/12811114190002771/13811802520002771</file.download.url>
+    <file.order>0</file.order>
+    </file>
+    <file><file.name>Bedrock Geology of the New Haven 7.5 Quadrangle Mitchell County.pdf</file.name>
+    <file.creationDate>2021-08-10 03:40:48</file.creationDate>
+    <file.mimeType>application/pdf</file.mimeType>
+    <file.size>1043884</file.size>
+    <file.extension>pdf</file.extension>
+    <file.persistent.url>https://iro.uiowa.edu/esploro/outputs/map/Bedrock-Geology-of-the-New-Haven/9984109987902771#file-0</file.persistent.url>
+    <file.download.url>https://iro.uiowa.edu/view/delivery/01IOWA_INST/12811114190002771/13811802510002771</file.download.url>
+    <file.order>0</file.order>
+    </file>
+    </filesList>
+    <local.fields><local.note2>scale 1:24,000</local.note2>
+    <local.note15>oai:ir.uiowa.edu:igs_ofm-1119</local.note15>
+    </local.fields>
+    <grants.note>Supported in part by the U.S. Geological Survey, Cooperative Agreement Number G14AC00229</grants.note>
+    <asset.affiliation>01IOWA_INST___1170</asset.affiliation>
+    <asset.affiliation>01IOWA_INST___2840z2d</asset.affiliation>
+    <asset.affiliation>01IOWA_INST___2840z2</asset.affiliation>
+    </data>
+    <identifier>9984109987902771</identifier>
+    <identifier.uri>https://iro.uiowa.edu/esploro/outputs/map/Bedrock-Geology-of-the-New-Haven/9984109987902771</identifier.uri>
+    </record>
+- :identifier: "11811140220002771"
+  :set_ids:
+  - esploro:set_1
+  :changed_at: '2024-08-20T16:29:52Z'
+  :metadata_source: |-
+    <record xsi:schemaLocation='http://www.loc.gov/MARC21/slim http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd' status='new/updated' xmlns='http://www.loc.gov/MARC21/slim' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><data><identifier.doi>10.25820/006370</identifier.doi>
+    <identifier.other>igs_ofm-1144</identifier.other>
+    <creators><creator><familyname>Tassier-Surine</familyname>
+    <givenname>Stephanie</givenname>
+    <order>0</order>
+    <user.primaryId>00043520</user.primaryId>
+    <creatorname>Tassier-Surine, Stephanie</creatorname>
+    </creator>
+    <creator><familyname>Kerr</familyname>
+    <givenname>Phil</givenname>
+    <order>1</order>
+    <user.primaryId>00688405</user.primaryId>
+    <creatorname>Kerr, Phil</creatorname>
+    </creator>
+    <creator><familyname>Clark</familyname>
+    <givenname>Ryan</givenname>
+    <order>2</order>
+    <user.primaryId>00051317</user.primaryId>
+    <creatorname>Clark, Ryan</creatorname>
+    </creator>
+    <creator><familyname>Liu</familyname>
+    <givenname>Huaibao</givenname>
+    <order>3</order>
+    <user.primaryId>00087627</user.primaryId>
+    <creatorname>Liu, Huaibao</creatorname>
+    </creator>
+    </creators>
+    <title>Surficial Geologic Map of the West Burlington 7.5' Quadrangle, Des Moines County, IA</title>
+    <publisher>Iowa Geological Survey, IIHR-Hydroscience &amp; Engineering, University of Iowa</publisher>
+    <publication.place>Iowa City, Iowa, USA</publication.place>
+    <date.published>201806</date.published>
+    <date.available>20200428</date.available>
+    <open_access_indicator>Yes</open_access_indicator>
+    <resourcetype.esploro>other.map</resourcetype.esploro>
+    <keywords>Quaternary</keywords>
+    <keywords>Des Moines County</keywords>
+    <relationships><relationship><relationtype>ispartof</relationtype>
+    <relationtitle>Open file map series (Iowa Geological Survey (2014))</relationtitle>
+    <volume>OFM-18-6</volume>
+    <relation.category>INTERNAL</relation.category>
+    </relationship>
+    </relationships>
+    <format>pdf</format>
+    <rightsList><rights><rights>Open</rights>
+    </rights>
+    </rightsList>
+    <copyright>Publication of the State of Iowa. This publication is a public record.</copyright>
+    <language>eng</language>
+    <pages>1 sheet</pages>
+    <originalRepository><assetId>igs_ofm-1144</assetId>
+    <date.submission>2020-04-28T08:35:33-07:00</date.submission>
+    <repositoryName>Iowa Research Online, the University of Iowa</repositoryName>
+    <format.date>MM-YYYY</format.date>
+    <coverpage.url>https://ir.uiowa.edu/igs_ofm/143</coverpage.url>
+    </originalRepository>
+    <filesList><file><file.name>Surficial Geologic Map of the West Burlington 7.5 Quadrangle De.pdf</file.name>
+    <file.creationDate>2021-08-04 06:52:58</file.creationDate>
+    <file.mimeType>application/pdf</file.mimeType>
+    <file.size>44461798</file.size>
+    <file.extension>pdf</file.extension>
+    <file.persistent.url>https://iro.uiowa.edu/esploro/outputs/map/Surficial-Geologic-Map-of-the-West/9984110019602771#file-0</file.persistent.url>
+    <file.download.url>https://iro.uiowa.edu/view/delivery/01IOWA_INST/12811140210002771/13811385450002771</file.download.url>
+    <file.order>0</file.order>
+    <file.supplemental>no</file.supplemental>
+    </file>
+    <file><file.name>2019-06-28_16-06-48_west burlington br summary report.pdf</file.name>
+    <file.creationDate>2021-08-04 06:52:58</file.creationDate>
+    <file.mimeType>application/pdf</file.mimeType>
+    <file.description>Summary report</file.description>
+    <file.size>4482532</file.size>
+    <file.extension>pdf</file.extension>
+    <file.persistent.url>https://iro.uiowa.edu/esploro/outputs/map/Surficial-Geologic-Map-of-the-West/9984110019602771#file-1</file.persistent.url>
+    <file.download.url>https://iro.uiowa.edu/view/delivery/01IOWA_INST/12811140210002771/13811385460002771</file.download.url>
+    <file.order>1</file.order>
+    <file.supplemental>yes</file.supplemental>
+    </file>
+    </filesList>
+    <local.fields><local.note2>scale 1:24,000</local.note2>
+    <local.note15>oai:ir.uiowa.edu:igs_ofm-1144</local.note15>
+    </local.fields>
+    <grants.note>Research supported by the U. S. Geological Survey, National Cooperative Geologic Mapping Program, under USGS award number G17AC00258. The views and conclusions contained in this document are those of the authors and should not be interpreted as necessarily representing the official policies, either expressed or implied, of the U. S. Government.</grants.note>
+    <asset.affiliation>01IOWA_INST___2840z2d</asset.affiliation>
+    <asset.affiliation>01IOWA_INST___2840z2</asset.affiliation>
+    <asset.affiliation>01IOWA_INST___2840</asset.affiliation>
+    </data>
+    <identifier>9984110019602771</identifier>
+    <identifier.uri>https://iro.uiowa.edu/esploro/outputs/map/Surficial-Geologic-Map-of-the-West/9984110019602771</identifier.uri>
+    </record>
+- :identifier: "11811125820002771"
+  :set_ids:
+  - esploro:set_1
+  :changed_at: '2024-08-20T16:30:00Z'
+  :metadata_source: |-
+    <record xsi:schemaLocation='http://www.loc.gov/MARC21/slim http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd' status='new/updated' xmlns='http://www.loc.gov/MARC21/slim' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><data><identifier.doi>10.25820/006392</identifier.doi>
+    <identifier.other>igs_ofm-1034</identifier.other>
+    <creators><creator><familyname>Tassier-Surine</familyname>
+    <givenname>Stephanie A</givenname>
+    <order>0</order>
+    <user.primaryId>00043520</user.primaryId>
+    <creatorname>Tassier-Surine, Stephanie A</creatorname>
+    </creator>
+    <creator><familyname>Krieg</familyname>
+    <givenname>Judith J</givenname>
+    <order>1</order>
+    <creatorname>Krieg, Judith J</creatorname>
+    </creator>
+    <creator><familyname>Quade</familyname>
+    <givenname>Deborah J</givenname>
+    <order>2</order>
+    <creatorname>Quade, Deborah J</creatorname>
+    </creator>
+    <creator><familyname>Bettis</familyname>
+    <givenname>E Arthur</givenname>
+    <suffix>III</suffix>
+    <order>3</order>
+    <identifierLcnaf>http://id.loc.gov/authorities/names/n87142839</identifierLcnaf>
+    <user.primaryId>00052289</user.primaryId>
+    <creatorname>Bettis, E Arthur III</creatorname>
+    </creator>
+    <creator><familyname>Artz</familyname>
+    <givenname>Joe A</givenname>
+    <order>4</order>
+    <creatorname>Artz, Joe A</creatorname>
+    </creator>
+    <creator><familyname>Giglierano</familyname>
+    <givenname>James D</givenname>
+    <order>5</order>
+    <creatorname>Giglierano, James D</creatorname>
+    </creator>
+    </creators>
+    <title>Surficial geologic materials of Johnson County, Iowa</title>
+    <publisher>Iowa Geological Survey</publisher>
+    <publication.place>Iowa, USA</publication.place>
+    <date.published>200409</date.published>
+    <date.available>20171003</date.available>
+    <open_access_indicator>Yes</open_access_indicator>
+    <resourcetype.esploro>other.map</resourcetype.esploro>
+    <keywords>Johnson County</keywords>
+    <relationships><relationship><relationtype>ispartof</relationtype>
+    <relationtitle>Open file map series (Iowa Geological Survey)</relationtitle>
+    <volume>OFM-04-3</volume>
+    <relation.category>INTERNAL</relation.category>
+    </relationship>
+    </relationships>
+    <format>pdf</format>
+    <rightsList><rights><rights>Open</rights>
+    </rights>
+    </rightsList>
+    <copyright>Publication of the State of Iowa. This publication is a public record.</copyright>
+    <language>eng</language>
+    <pages>1 sheet</pages>
+    <originalRepository><assetId>igs_ofm-1034</assetId>
+    <date.submission>2017-10-03T11:48:07-07:00</date.submission>
+    <repositoryName>Iowa Research Online, the University of Iowa</repositoryName>
+    <format.date>MM-YYYY</format.date>
+    <coverpage.url>https://ir.uiowa.edu/igs_ofm/35</coverpage.url>
+    </originalRepository>
+    <filesList><file><file.name>Surficial geologic materials of Johnson County Iowa.pdf</file.name>
+    <file.creationDate>2021-08-04 07:01:45</file.creationDate>
+    <file.mimeType>application/pdf</file.mimeType>
+    <file.size>11577427</file.size>
+    <file.extension>pdf</file.extension>
+    <file.persistent.url>https://iro.uiowa.edu/esploro/outputs/map/Surficial-geologic-materials-of-Johnson-County/9984110026202771#file-0</file.persistent.url>
+    <file.download.url>https://iro.uiowa.edu/view/delivery/01IOWA_INST/12811125810002771/13811408420002771</file.download.url>
+    <file.order>0</file.order>
+    <file.supplemental>no</file.supplemental>
+    </file>
+    <file><file.name>ofm-2004-3_txt.pdf</file.name>
+    <file.creationDate>2021-08-04 07:01:45</file.creationDate>
+    <file.mimeType>application/pdf</file.mimeType>
+    <file.size>725127</file.size>
+    <file.extension>pdf</file.extension>
+    <file.persistent.url>https://iro.uiowa.edu/esploro/outputs/map/Surficial-geologic-materials-of-Johnson-County/9984110026202771#file-1</file.persistent.url>
+    <file.download.url>https://iro.uiowa.edu/view/delivery/01IOWA_INST/12811125810002771/13811408410002771</file.download.url>
+    <file.order>1</file.order>
+    <file.supplemental>yes</file.supplemental>
+    </file>
+    </filesList>
+    <local.fields><local.note2>scale 1:100,000</local.note2>
+    <local.note15>oai:ir.uiowa.edu:igs_ofm-1034</local.note15>
+    </local.fields>
+    <grants.note>Supported by Cooperative Agreement 03-HQAG-0087, September 2004</grants.note>
+    <asset.affiliation>01IOWA_INST___1170</asset.affiliation>
+    <asset.affiliation>01IOWA_INST___2840z2d</asset.affiliation>
+    <asset.affiliation>01IOWA_INST___2840z2</asset.affiliation>
+    </data>
+    <identifier>9984110026202771</identifier>
+    <identifier.uri>https://iro.uiowa.edu/esploro/outputs/map/Surficial-geologic-materials-of-Johnson-County/9984110026202771</identifier.uri>
+    </record>
+- :identifier: "11892755140002771"
+  :set_ids:
+  - esploro:set_1
+  :changed_at: '2024-08-20T16:27:44Z'
+  :metadata_source: |-
+    <record xsi:schemaLocation='http://www.loc.gov/MARC21/slim http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd' status='new/updated' xmlns='http://www.loc.gov/MARC21/slim' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><data><identifier.doi>10.25820/map.006687</identifier.doi>
+    <creators><creator><familyname>Bancroft</familyname>
+    <givenname>Alyssa</givenname>
+    <order>0</order>
+    <user.primaryId>01135772</user.primaryId>
+    <creatorname>Bancroft, Alyssa</creatorname>
+    </creator>
+    <creator><familyname>Kerr</familyname>
+    <givenname>Phil</givenname>
+    <order>1</order>
+    <user.primaryId>00688405</user.primaryId>
+    <creatorname>Kerr, Phil</creatorname>
+    </creator>
+    </creators>
+    <title>Bedrock Elevation and Quaternary Thickness Maps of the Atalissa 7.5' Quadrangle, Muscatine and Cedar Counties, Iowa</title>
+    <publisher>Iowa Geological Survey, IIHR-Hydroscience &amp; Engineering, University of Iowa</publisher>
+    <publication.place>Iowa City, Iowa, USA</publication.place>
+    <date.published>202306</date.published>
+    <open_access_indicator>Yes</open_access_indicator>
+    <resourcetype.esploro>other.map</resourcetype.esploro>
+    <keywords>Muscatine County</keywords>
+    <keywords>Cedar County</keywords>
+    <relationships><relationship><relationtype>ispartof</relationtype>
+    <relationtitle>Open file map series (Iowa Geological Survey (2014))</relationtitle>
+    <volume>OFM-23-6</volume>
+    <relation.category>INTERNAL</relation.category>
+    </relationship>
+    </relationships>
+    <format>pdf</format>
+    <rightsList><rights><rights>Open</rights>
+    </rights>
+    </rightsList>
+    <copyright>Publication of the State of Iowa. This publication is a public record.</copyright>
+    <language>eng</language>
+    <pages>1 sheet</pages>
+    <filesList><file><file.name>2023-07-05_11-07-17_ofm-23-6.pdf</file.name>
+    <file.creationDate>2023-08-17 11:32:13</file.creationDate>
+    <file.mimeType>application/pdf</file.mimeType>
+    <file.size>39793696</file.size>
+    <file.extension>pdf</file.extension>
+    <file.persistent.url>https://iro.uiowa.edu/esploro/outputs/map/Bedrock-Elevation-and-Quaternary-Thickness-Maps/9984454877202771#file-999</file.persistent.url>
+    <file.download.url>https://iro.uiowa.edu/view/delivery/01IOWA_INST/12892755130002771/13892755120002771</file.download.url>
+    <file.order>999</file.order>
+    <file.supplemental>no</file.supplemental>
+    </file>
+    </filesList>
+    <local.fields><local.note2>scale 1:24,000</local.note2>
+    </local.fields>
+    <grants.note>Additional funding for students was provided by the National Science Foundation(NSF) Award #2119888 (NSF IUSE:GEOPAths, GP-GO: Iowa Environmental Internship Pathways Program).</grants.note>
+    <asset.affiliation>01IOWA_INST___2840z2</asset.affiliation>
+    <asset.affiliation>01IOWA_INST___1170</asset.affiliation>
+    <asset.affiliation>01IOWA_INST___2840</asset.affiliation>
+    <asset.affiliation>01IOWA_INST___2840z2d</asset.affiliation>
+    </data>
+    <identifier>9984454877202771</identifier>
+    <identifier.uri>https://iro.uiowa.edu/esploro/outputs/map/Bedrock-Elevation-and-Quaternary-Thickness-Maps/9984454877202771</identifier.uri>
+    </record>
+- :identifier: "11811369220002771"
+  :set_ids:
+  - esploro:set_1
+  :changed_at: '2024-08-20T16:31:04Z'
+  :metadata_source: |-
+    <record xsi:schemaLocation='http://www.loc.gov/MARC21/slim http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd' status='new/updated' xmlns='http://www.loc.gov/MARC21/slim' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><data><identifier.doi>10.17077/rep.006466</identifier.doi>
+    <identifier.other>igs_tis-1035</identifier.other>
+    <mobileCompatibility>unknown</mobileCompatibility>
+    <sourceCodeAvailability>unknown</sourceCodeAvailability>
+    <creators><creator><familyname>Seigley</familyname>
+    <givenname>L S</givenname>
+    <order>1</order>
+    <creatorname>Seigley, L S</creatorname>
+    </creator>
+    </creators>
+    <title>Sny Magill Nonpoint Source Pollution Monitoring Project, Clayton County, Iowa</title>
+    <title.subtitle>water year 1994</title.subtitle>
+    <publisher>Iowa Department of Natural Resources</publisher>
+    <publication.place>Iowa City, Iowa, USA</publication.place>
+    <date.published>199605</date.published>
+    <date.available>20171115</date.available>
+    <open_access_indicator>Yes</open_access_indicator>
+    <resourcetype.esploro>publication.report</resourcetype.esploro>
+    <subject.esploro>Agriculture</subject.esploro>
+    <subject.esploro>Hydrology</subject.esploro>
+    <subject.esploro>Nonpoint Source Pollution</subject.esploro>
+    <subject.esploro>Water Quality</subject.esploro>
+    <keywords>Water Resource Management</keywords>
+    <keywords>Sny Magill Creek Watershed</keywords>
+    <keywords>Clayton County</keywords>
+    <relationships><relationship><relationtype>ispartof</relationtype>
+    <relationtitle>Technical Information Series (Iowa. Department of Natural Resources. Geological Survey Bureau)</relationtitle>
+    <volume>36</volume>
+    <relation.category>INTERNAL</relation.category>
+    </relationship>
+    </relationships>
+    <format>pdf</format>
+    <openaccess>unknown</openaccess>
+    <peerreview>unknown</peerreview>
+    <rightsList><rights><rights>Open</rights>
+    </rights>
+    </rightsList>
+    <copyright>Publication of the State of Iowa. This publication is a public record.</copyright>
+    <language>eng</language>
+    <pages>ix, 85 pages, 23 figures, 23 tables, 2 appendices</pages>
+    <originalRepository><assetId>igs_tis-1035</assetId>
+    <date.submission>2017-11-15T09:00:12-08:00</date.submission>
+    <repositoryName>Iowa Research Online, the University of Iowa</repositoryName>
+    <format.date>MM-YYYY</format.date>
+    <coverpage.url>https://ir.uiowa.edu/igs_tis/36</coverpage.url>
+    </originalRepository>
+    <filesList><file><file.name>Sny Magill Nonpoint Source Pollution Monitoring Project Clayton_1994.pdf</file.name>
+    <file.creationDate>2022-09-13 14:22:19</file.creationDate>
+    <file.mimeType>application/pdf</file.mimeType>
+    <file.size>1890923</file.size>
+    <file.extension>pdf</file.extension>
+    <file.persistent.url>https://iro.uiowa.edu/esploro/outputs/report/Sny-Magill-Nonpoint-Source-Pollution-Monitoring/9984111960302771#file-0</file.persistent.url>
+    <file.download.url>https://iro.uiowa.edu/view/delivery/01IOWA_INST/12811369210002771/13856514610002771</file.download.url>
+    <file.order>0</file.order>
+    <file.supplemental>no</file.supplemental>
+    </file>
+    </filesList>
+    <local.fields>
+    <local.note15>oai:ir.uiowa.edu:igs_tis-1035</local.note15>
+    </local.fields>
+    <grants.note>Supported, in part, through grants from the U.S. Environmental Protection Agency, Region VII, Nonpoint Source Program.</grants.note>
+    <season.published>Spring 1996</season.published>
+    <asset.affiliation>01IOWA_INST___2840z2</asset.affiliation>
+    <asset.affiliation>01IOWA_INST___2840z2f</asset.affiliation>
+    </data>
+    <identifier>9984111960302771</identifier>
+    <identifier.uri>https://iro.uiowa.edu/esploro/outputs/report/Sny-Magill-Nonpoint-Source-Pollution-Monitoring/9984111960302771</identifier.uri>
+    </record>
+- :identifier: "11811138900002771"
+  :set_ids:
+  - esploro:set_1
+  :changed_at: '2024-08-20T16:30:00Z'
+  :metadata_source: |-
+    <record xsi:schemaLocation='http://www.loc.gov/MARC21/slim http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd' status='new/updated' xmlns='http://www.loc.gov/MARC21/slim' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><data><identifier.doi>10.25820/006367</identifier.doi>
+    <identifier.other>igs_ofm-1001</identifier.other>
+    <creators><creator><familyname>Bettis</familyname>
+    <givenname>E Arthur</givenname>
+    <suffix>III</suffix>
+    <order>0</order>
+    <identifierLcnaf>http://id.loc.gov/authorities/names/n87142839</identifierLcnaf>
+    <user.primaryId>00052289</user.primaryId>
+    <creatorname>Bettis, E Arthur III</creatorname>
+    </creator>
+    <creator><familyname>Ludvigson</familyname>
+    <givenname>Greg A</givenname>
+    <order>1</order>
+    <creatorname>Ludvigson, Greg A</creatorname>
+    </creator>
+    <creator><familyname>Giglierano</familyname>
+    <givenname>James D</givenname>
+    <order>2</order>
+    <creatorname>Giglierano, James D</creatorname>
+    </creator>
+    <creator><familyname>Howes</familyname>
+    <givenname>Mary R</givenname>
+    <order>3</order>
+    <creatorname>Howes, Mary R</creatorname>
+    </creator>
+    <creator><familyname>Bunker</familyname>
+    <givenname>Bill J</givenname>
+    <order>4</order>
+    <creatorname>Bunker, Bill J</creatorname>
+    </creator>
+    </creators>
+    <title>Surficial geologic materials of the Cedar Rapids North Quadrangle, Iowa</title>
+    <publisher>Iowa Department of Natural Resources</publisher>
+    <publication.place>Iowa, USA</publication.place>
+    <date.published>199510</date.published>
+    <date.available>20170417</date.available>
+    <open_access_indicator>Yes</open_access_indicator>
+    <resourcetype.esploro>other.map</resourcetype.esploro>
+    <keywords>Linn County</keywords>
+    <relationships><relationship><relationtype>ispartof</relationtype>
+    <relationtitle>Open file map series (Iowa. Department of Natural Resources)</relationtitle>
+    <volume>OFM-95-1</volume>
+    <relation.category>INTERNAL</relation.category>
+    </relationship>
+    </relationships>
+    <format>pdf</format>
+    <rightsList><rights><rights>Open</rights>
+    </rights>
+    </rightsList>
+    <copyright>Publication of the State of Iowa. This publication is a public record.</copyright>
+    <language>eng</language>
+    <pages>1 sheet</pages>
+    <originalRepository><assetId>igs_ofm-1001</assetId>
+    <date.submission>2017-04-17T11:30:14-07:00</date.submission>
+    <repositoryName>Iowa Research Online, the University of Iowa</repositoryName>
+    <format.date>MM-YYYY</format.date>
+    <coverpage.url>https://ir.uiowa.edu/igs_ofm/2</coverpage.url>
+    </originalRepository>
+    <filesList><file><file.name>Surficial geologic materials of the Cedar Rapids North Quadrangle.pdf</file.name>
+    <file.creationDate>2021-08-04 06:52:40</file.creationDate>
+    <file.mimeType>application/pdf</file.mimeType>
+    <file.size>1021095</file.size>
+    <file.extension>pdf</file.extension>
+    <file.persistent.url>https://iro.uiowa.edu/esploro/outputs/map/Surficial-geologic-materials-of-the-Cedar/9984109950602771#file-0</file.persistent.url>
+    <file.download.url>https://iro.uiowa.edu/view/delivery/01IOWA_INST/12811138890002771/13811385670002771</file.download.url>
+    <file.order>0</file.order>
+    <file.supplemental>no</file.supplemental>
+    </file>
+    </filesList>
+    <local.fields><local.note2>scale 1:24,000</local.note2>
+    <local.note15>oai:ir.uiowa.edu:igs_ofm-1001</local.note15>
+    </local.fields>
+    <grants.note>Supported by the U.S. Geological Survey, Department of Interior, under assistance Award No. 1434-94-A-1232, and Bluestem Solid Waste Agency, City of Cedar Rapids City Engineer, Linn County Engineering, Linn County Planning and Zoning, Linn County Regional Planning, and the cities of Hiawatha and Marion.</grants.note>
+    <asset.affiliation>01IOWA_INST___1170</asset.affiliation>
+    <asset.affiliation>01IOWA_INST___2840z2d</asset.affiliation>
+    <asset.affiliation>01IOWA_INST___2840z2</asset.affiliation>
+    </data>
+    <identifier>9984109950602771</identifier>
+    <identifier.uri>https://iro.uiowa.edu/esploro/outputs/map/Surficial-geologic-materials-of-the-Cedar/9984109950602771</identifier.uri>
+    </record>
+- :identifier: "11890304280002771"
+  :set_ids:
+  - esploro:set_1
+  :changed_at: '2024-08-20T16:27:44Z'
+  :metadata_source: |-
+    <record xsi:schemaLocation='http://www.loc.gov/MARC21/slim http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd' status='new/updated' xmlns='http://www.loc.gov/MARC21/slim' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><data><identifier.doi>10.25820/map.006692</identifier.doi>
+    <mobileCompatibility>unknown</mobileCompatibility>
+    <sourceCodeAvailability>unknown</sourceCodeAvailability>
+    <creators><creator><familyname>Brennan</familyname>
+    <givenname>Greg</givenname>
+    <order>1</order>
+    <user.primaryId>00481981</user.primaryId>
+    <creatorname>Brennan, Greg</creatorname>
+    </creator>
+    <creator><familyname>Kerr</familyname>
+    <givenname>Phil</givenname>
+    <order>2</order>
+    <user.primaryId>00688405</user.primaryId>
+    <creatorname>Kerr, Phil</creatorname>
+    </creator>
+    <creator><familyname>Tassier-Surine</familyname>
+    <givenname>Stephanie</givenname>
+    <order>3</order>
+    <user.primaryId>00043520</user.primaryId>
+    <creatorname>Tassier-Surine, Stephanie</creatorname>
+    </creator>
+    </creators>
+    <title>Silurian-Devonian Aquifer Vulnerability Map, Benton County, Iowa</title>
+    <publisher>Iowa Geological Survey, IIHR-Hydroscience &amp; Engineering, University of Iowa</publisher>
+    <publication.place>Iowa City, Iowa, USA</publication.place>
+    <date.published>202208</date.published>
+    <open_access_indicator>Yes</open_access_indicator>
+    <resourcetype.esploro>other.map</resourcetype.esploro>
+    <keywords>Benton County</keywords>
+    <relationships><relationship><relationtype>ispartof</relationtype>
+    <relationtitle>Open file map series (Iowa Geological Survey (2014))</relationtitle>
+    <volume>OFM-22-10</volume>
+    <relation.category>INTERNAL</relation.category>
+    </relationship>
+    </relationships>
+    <format>pdf</format>
+    <openaccess>unknown</openaccess>
+    <rightsList><rights><rights>Open</rights>
+    </rights>
+    </rightsList>
+    <copyright>Publication of the State of Iowa. This publication is a public record.</copyright>
+    <language>eng</language>
+    <pages>1 sheet</pages>
+    <filesList><file><file.name>2022-09-09_14-09-59_ofm-22-10.pdf</file.name>
+    <file.creationDate>2023-07-14 11:24:58</file.creationDate>
+    <file.mimeType>application/pdf</file.mimeType>
+    <file.size>26632067</file.size>
+    <file.extension>pdf</file.extension>
+    <file.persistent.url>https://iro.uiowa.edu/esploro/outputs/map/Silurian-Devonian-Aquifer-Vulnerability-Map-Benton-County/9984442957302771#file-0</file.persistent.url>
+    <file.download.url>https://iro.uiowa.edu/view/delivery/01IOWA_INST/12890304270002771/13890303780002771</file.download.url>
+    <file.order>0</file.order>
+    <file.supplemental>no</file.supplemental>
+    </file>
+    </filesList>
+    <local.fields>
+    <local.note2>scale 1:100,000</local.note2>
+    </local.fields>
+    <grants.note>Supported in part by the USGS Cooperative Agreement Number G21AC10680 National Cooperative Geologic Mapping Program (STATEMAP).</grants.note>
+    <asset.affiliation>01IOWA_INST___2840</asset.affiliation>
+    <asset.affiliation>01IOWA_INST___2840z2d</asset.affiliation>
+    <asset.affiliation>01IOWA_INST___2840z2</asset.affiliation>
+    </data>
+    <identifier>9984442957302771</identifier>
+    <identifier.uri>https://iro.uiowa.edu/esploro/outputs/map/Silurian-Devonian-Aquifer-Vulnerability-Map-Benton-County/9984442957302771</identifier.uri>
+    </record>
+- :identifier: "11811142520002771"
+  :set_ids:
+  - esploro:set_1
+  :changed_at: '2024-08-20T16:29:52Z'
+  :metadata_source: |-
+    <record xsi:schemaLocation='http://www.loc.gov/MARC21/slim http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd' status='new/updated' xmlns='http://www.loc.gov/MARC21/slim' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><data><identifier.doi>10.25820/006305</identifier.doi>
+    <identifier.other>igs_ofm-1063</identifier.other>
+    <creators><creator><familyname>McKay</familyname>
+    <givenname>Robert</givenname>
+    <order>0</order>
+    <user.primaryId>00163181</user.primaryId>
+    <creatorname>McKay, Robert</creatorname>
+    </creator>
+    <creator><familyname>Liu</familyname>
+    <givenname>Huaibao</givenname>
+    <order>1</order>
+    <user.primaryId>00087627</user.primaryId>
+    <creatorname>Liu, Huaibao</creatorname>
+    </creator>
+    <creator><familyname>Giglierano</familyname>
+    <givenname>James</givenname>
+    <order>2</order>
+    <creatorname>Giglierano, James</creatorname>
+    </creator>
+    </creators>
+    <title>Bedrock Geology of the Waverly 7.5' Quadrangle, Bremer and Black Hawk counties, Iowa</title>
+    <publisher>Iowa Geological Survey</publisher>
+    <publication.place>Iowa, USA</publication.place>
+    <date.published>200906</date.published>
+    <date.available>20171003</date.available>
+    <open_access_indicator>Yes</open_access_indicator>
+    <resourcetype.esploro>other.map</resourcetype.esploro>
+    <keywords>Black Hawk County</keywords>
+    <keywords>Bremer County</keywords>
+    <relationships><relationship><relationtype>ispartof</relationtype>
+    <relationtitle>Open file map series (Iowa Geological Survey)</relationtitle>
+    <volume>OFM-09-2</volume>
+    <relation.category>INTERNAL</relation.category>
+    </relationship>
+    </relationships>
+    <format>pdf</format>
+    <rightsList><rights><rights>Open</rights>
+    </rights>
+    </rightsList>
+    <copyright>Publication of the State of Iowa. This publication is a public record.</copyright>
+    <language>eng</language>
+    <pages>1 sheet</pages>
+    <originalRepository><assetId>igs_ofm-1063</assetId>
+    <date.submission>2017-10-03T11:48:07-07:00</date.submission>
+    <repositoryName>Iowa Research Online, the University of Iowa</repositoryName>
+    <format.date>MM-YYYY</format.date>
+    <coverpage.url>https://ir.uiowa.edu/igs_ofm/64</coverpage.url>
+    </originalRepository>
+    <filesList><file><file.name>Bedrock Geology of the Waverly 7.5 Quadrangle Bremer and Black.pdf</file.name>
+    <file.creationDate>2021-08-04 07:01:29</file.creationDate>
+    <file.mimeType>application/pdf</file.mimeType>
+    <file.size>4029109</file.size>
+    <file.extension>pdf</file.extension>
+    <file.persistent.url>https://iro.uiowa.edu/esploro/outputs/map/Bedrock-Geology-of-the-Waverly-75/9984109969502771#file-0</file.persistent.url>
+    <file.download.url>https://iro.uiowa.edu/view/delivery/01IOWA_INST/12811142510002771/13811408920002771</file.download.url>
+    <file.order>0</file.order>
+    <file.supplemental>no</file.supplemental>
+    </file>
+    </filesList>
+    <local.fields><local.note2>scale 1:24,000</local.note2>
+    <local.note15>oai:ir.uiowa.edu:igs_ofm-1063</local.note15>
+    </local.fields>
+    <grants.note>Supported in part by the U.S. Geological Survey Cooperative Agreement Number 08HQAG0082, June 2009.</grants.note>
+    <asset.affiliation>01IOWA_INST___2840z2</asset.affiliation>
+    <asset.affiliation>01IOWA_INST___2840z2d</asset.affiliation>
+    </data>
+    <identifier>9984109969502771</identifier>
+    <identifier.uri>https://iro.uiowa.edu/esploro/outputs/map/Bedrock-Geology-of-the-Waverly-75/9984109969502771</identifier.uri>
+    </record>
+- :identifier: "11811369940002771"
+  :set_ids:
+  - esploro:set_1
+  :changed_at: '2024-08-20T16:31:04Z'
+  :metadata_source: |-
+    <record xsi:schemaLocation='http://www.loc.gov/MARC21/slim http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd' status='new/updated' xmlns='http://www.loc.gov/MARC21/slim' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><data><identifier.doi>10.17077/rep.006568</identifier.doi>
+    <identifier.other>igs_tis-1048</identifier.other>
+    <creators><creator><familyname>Schilling</familyname>
+    <givenname>Kyle E</givenname>
+    <order>0</order>
+    <creatorname>Schilling, Kyle E</creatorname>
+    </creator>
+    <creator><familyname>Hubbard</familyname>
+    <givenname>T</givenname>
+    <order>1</order>
+    <creatorname>Hubbard, T</creatorname>
+    </creator>
+    <creator><familyname>Luzier</familyname>
+    <givenname>J</givenname>
+    <order>2</order>
+    <creatorname>Luzier, J</creatorname>
+    </creator>
+    <creator><familyname>Spooner</familyname>
+    <givenname>J</givenname>
+    <order>3</order>
+    <creatorname>Spooner, J</creatorname>
+    </creator>
+    </creators>
+    <title>Walnut Creek watershed restoration and water quality monitoring project</title>
+    <title.subtitle>final report</title.subtitle>
+    <publisher>Iowa Department of Natural Resources</publisher>
+    <publication.place>Iowa City, Iowa, USA</publication.place>
+    <date.published>200604</date.published>
+    <date.available>20171115</date.available>
+    <open_access_indicator>Yes</open_access_indicator>
+    <resourcetype.esploro>publication.report</resourcetype.esploro>
+    <subject.esploro>Water Quality</subject.esploro>
+    <subject.esploro>Nonpoint Source Pollution</subject.esploro>
+    <keywords>Water Resource Management</keywords>
+    <keywords>Walnut Creek (Shelby County-Fremont County)</keywords>
+    <keywords>Jasper County</keywords>
+    <relationships><relationship><relationtype>ispartof</relationtype>
+    <relationtitle>Technical Information Series (Iowa. Department of Natural Resources. Geological Survey Bureau)</relationtitle>
+    <volume>49</volume>
+    <relation.category>INTERNAL</relation.category>
+    </relationship>
+    </relationships>
+    <format>pdf</format>
+    <rightsList><rights><rights>Open</rights>
+    </rights>
+    </rightsList>
+    <copyright>Publication of the State of Iowa. This publication is a public record.</copyright>
+    <language>eng</language>
+    <pages>xvii, 124 pages, 72 figures, 38 tables, printed in color</pages>
+    <originalRepository><assetId>igs_tis-1048</assetId>
+    <date.submission>2017-11-15T09:00:12-08:00</date.submission>
+    <repositoryName>Iowa Research Online, the University of Iowa</repositoryName>
+    <format.date>MM-YYYY</format.date>
+    <coverpage.url>https://ir.uiowa.edu/igs_tis/49</coverpage.url>
+    </originalRepository>
+    <filesList><file><file.name>Walnut Creek watershed restoration and water quality monitoring p.pdf</file.name>
+    <file.creationDate>2021-08-04 06:57:22</file.creationDate>
+    <file.mimeType>application/pdf</file.mimeType>
+    <file.type>published</file.type>
+    <file.size>3656644</file.size>
+    <file.extension>pdf</file.extension>
+    <file.persistent.url>https://iro.uiowa.edu/esploro/outputs/report/Walnut-Creek-watershed-restoration-and-water/9984111963002771#file-0</file.persistent.url>
+    <file.download.url>https://iro.uiowa.edu/view/delivery/01IOWA_INST/12811369930002771/13811423400002771</file.download.url>
+    <file.order>0</file.order>
+    <file.supplemental>no</file.supplemental>
+    </file>
+    </filesList>
+    <local.fields><local.note15>oai:ir.uiowa.edu:igs_tis-1048</local.note15>
+    </local.fields>
+    <grants.note>Supported, in part, through grants from the U.S. Environmental Protection Agency, Region VII, Nonpoint Source Program.</grants.note>
+    <asset.affiliation>01IOWA_INST___2840z2f</asset.affiliation>
+    <asset.affiliation>01IOWA_INST___2840z2</asset.affiliation>
+    </data>
+    <identifier>9984111963002771</identifier>
+    <identifier.uri>https://iro.uiowa.edu/esploro/outputs/report/Walnut-Creek-watershed-restoration-and-water/9984111963002771</identifier.uri>
+    </record>
+- :identifier: "11811142730002771"
+  :set_ids:
+  - esploro:set_1
+  :changed_at: '2024-08-20T16:29:52Z'
+  :metadata_source: |-
+    <record xsi:schemaLocation='http://www.loc.gov/MARC21/slim http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd' status='new/updated' xmlns='http://www.loc.gov/MARC21/slim' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><data><identifier.doi>10.25820/006402</identifier.doi>
+    <identifier.other>igs_ofm-1058</identifier.other>
+    <creators><creator><familyname>McKay</familyname>
+    <givenname>Robert</givenname>
+    <order>0</order>
+    <user.primaryId>00163181</user.primaryId>
+    <creatorname>McKay, Robert</creatorname>
+    </creator>
+    <creator><familyname>Liu</familyname>
+    <givenname>Huaibao</givenname>
+    <order>1</order>
+    <user.primaryId>00087627</user.primaryId>
+    <creatorname>Liu, Huaibao</creatorname>
+    </creator>
+    <creator><familyname>Young</familyname>
+    <givenname>Jean</givenname>
+    <order>2</order>
+    <creatorname>Young, Jean</creatorname>
+    </creator>
+    <creator><familyname>Giglierano</familyname>
+    <givenname>James D</givenname>
+    <order>3</order>
+    <creatorname>Giglierano, James D</creatorname>
+    </creator>
+    </creators>
+    <title>Bedrock Geology of the Upper Iowa River Watershed Phase 4</title>
+    <title.subtitle>Dorchester (Iowa) 7.5' Quadrangle</title.subtitle>
+    <publisher>Iowa Geological Survey</publisher>
+    <publication.place>Iowa, USA</publication.place>
+    <date.published>200808</date.published>
+    <date.available>20171003</date.available>
+    <open_access_indicator>Yes</open_access_indicator>
+    <resourcetype.esploro>other.map</resourcetype.esploro>
+    <keywords>Allamakee County</keywords>
+    <keywords>Winneshiek County</keywords>
+    <relationships><relationship><relationtype>ispartof</relationtype>
+    <relationtitle>Open file map series (Iowa Geological Survey)</relationtitle>
+    <volume>OFM-08-5</volume>
+    <relation.category>INTERNAL</relation.category>
+    </relationship>
+    </relationships>
+    <format>pdf</format>
+    <rightsList><rights><rights>Open</rights>
+    </rights>
+    </rightsList>
+    <copyright>Publication of the State of Iowa. This publication is a public record.</copyright>
+    <language>eng</language>
+    <pages>1 sheet</pages>
+    <originalRepository><assetId>igs_ofm-1058</assetId>
+    <date.submission>2017-10-03T11:48:07-07:00</date.submission>
+    <repositoryName>Iowa Research Online, the University of Iowa</repositoryName>
+    <format.date>MM-YYYY</format.date>
+    <coverpage.url>https://ir.uiowa.edu/igs_ofm/59</coverpage.url>
+    </originalRepository>
+    <filesList><file><file.name>Bedrock Geology of the Upper Iowa River Watershed Phase 4: Dorche.pdf</file.name>
+    <file.creationDate>2021-08-04 06:55:06</file.creationDate>
+    <file.mimeType>application/pdf</file.mimeType>
+    <file.size>6387806</file.size>
+    <file.extension>pdf</file.extension>
+    <file.persistent.url>https://iro.uiowa.edu/esploro/outputs/map/Bedrock-Geology-of-the-Upper-Iowa/9984110025802771#file-0</file.persistent.url>
+    <file.download.url>https://iro.uiowa.edu/view/delivery/01IOWA_INST/12811142720002771/13811413690002771</file.download.url>
+    <file.order>0</file.order>
+    <file.supplemental>no</file.supplemental>
+    </file>
+    </filesList>
+    <local.fields><local.note2>scale 1:24,000</local.note2>
+    <local.note15>oai:ir.uiowa.edu:igs_ofm-1058</local.note15>
+    </local.fields>
+    <grants.note>Supported in part by the U.S. Geological Survey Cooperative Agreement Number 07HQAG0087, August 2008.</grants.note>
+    <asset.affiliation>01IOWA_INST___2840z2d</asset.affiliation>
+    <asset.affiliation>01IOWA_INST___2840z2</asset.affiliation>
+    </data>
+    <identifier>9984110025802771</identifier>
+    <identifier.uri>https://iro.uiowa.edu/esploro/outputs/map/Bedrock-Geology-of-the-Upper-Iowa/9984110025802771</identifier.uri>
+    </record>
+- :identifier: "11811163170002771"
+  :set_ids:
+  - esploro:set_1
+  :changed_at: '2024-08-20T16:31:04Z'
+  :metadata_source: |-
+    <record xsi:schemaLocation='http://www.loc.gov/MARC21/slim http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd' status='new/updated' xmlns='http://www.loc.gov/MARC21/slim' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><data><identifier.doi>10.17077/rep.006557</identifier.doi>
+    <identifier.other>igs_wrir-1016</identifier.other>
+    <creators><creator><familyname>Kerr</familyname>
+    <givenname>Phillip</givenname>
+    <order>0</order>
+    <user.primaryId>00688405</user.primaryId>
+    <creatorname>Kerr, Phillip</creatorname>
+    </creator>
+    <creator><familyname>Tassier-Surine</familyname>
+    <givenname>Stephanie</givenname>
+    <order>1</order>
+    <user.primaryId>00043520</user.primaryId>
+    <creatorname>Tassier-Surine, Stephanie</creatorname>
+    </creator>
+    <creator><familyname>Streeter</familyname>
+    <givenname>Matthew</givenname>
+    <order>2</order>
+    <user.primaryId>00582055</user.primaryId>
+    <creatorname>Streeter, Matthew</creatorname>
+    </creator>
+    <creator><familyname>Gannon</familyname>
+    <givenname>J Michael</givenname>
+    <order>3</order>
+    <creatorname>Gannon, J Michael</creatorname>
+    </creator>
+    </creators>
+    <title>Geologic Evalutation of the Buried Sand and Gravel Aquifers in Western Iowa</title>
+    <publisher>Iowa Geological Survey, The University of Iowa</publisher>
+    <publication.place>Iowa City, Iowa, USA</publication.place>
+    <date.published>2015</date.published>
+    <date.available>20151119</date.available>
+    <open_access_indicator>Yes</open_access_indicator>
+    <resourcetype.esploro>publication.report</resourcetype.esploro>
+    <subject.esploro>Geology</subject.esploro>
+    <subject.esploro>Hydrology</subject.esploro>
+    <subject.esploro>Water Quality</subject.esploro>
+    <subject.esploro>Groundwater</subject.esploro>
+    <keywords>Water-supply</keywords>
+    <keywords>Aquifers</keywords>
+    <keywords>Iowa</keywords>
+    <keywords>Quaternary</keywords>
+    <keywords>Glacial</keywords>
+    <keywords>Alluvium</keywords>
+    <relationships><relationship><relationtype>ispartof</relationtype>
+    <relationtitle>Water Resources Investigation Report (Iowa Geological Survey)</relationtitle>
+    <volume>14</volume>
+    <relation.category>INTERNAL</relation.category>
+    </relationship>
+    </relationships>
+    <format>pdf</format>
+    <peerreview>unknown</peerreview>
+    <rightsList><rights><rights>Open</rights>
+    </rights>
+    </rightsList>
+    <copyright>Publication of the State of Iowa. This publication is a public record.</copyright>
+    <description.abstract>&lt;p&gt;Due to the recurrence of drought in western Iowa, water users have increasingly been looking for additional sources of water. Buried sand and gravel aquifers associated with three bedrock channels were investigated as potential sources. Due to low data density, two primary study areas were chosen for a more detailed analysis. Point coverage was not sufficient to generate isopach maps or perform statistical analysis, but the production of cross-sections aided in the understanding of the sand and gravel bodies.&lt;/p&gt;
+    &lt;p&gt;Valley fills, where present, are likely to be laterally continuous, but not all valleys will have a significant thickness of sand and gravel. Sand sheets also have the potential to be laterally continuous, but their margins will not be as predictable as a valley fill since they are not bounded by a valley wall. This study demonstrates the complexity of glacial till sequences and predicting the presence of sand and gravel bodies within or between till sheets.&lt;/p&gt;
+    &lt;p&gt;On a local (community or township) scale, it appears that general trends can be established if the data density is sufficient. However, there is less confidence in using this data as a predictive tool on a regional scale. Several areas, such as the Glenwood Chute, have thick and continuous sand and gravel bodies. In many other areas, the data is not sufficient to map the sand and gravel. In many cases, one or two highly productive wells are identified, but their lateral distribution cannot be established.&lt;/p&gt;</description.abstract>
+    <language>eng</language>
+    <pages>44 pages, 11 figures</pages>
+    <originalRepository><assetId>igs_wrir-1016</assetId>
+    <date.submission>2015-11-19T15:30:05-08:00</date.submission>
+    <repositoryName>Iowa Research Online, the University of Iowa</repositoryName>
+    <format.date>MM-YYYY</format.date>
+    <coverpage.url>https://ir.uiowa.edu/igs_wrir/17</coverpage.url>
+    </originalRepository>
+    <filesList><file><file.name>Geologic Evalutation of the Buried Sand and Gravel Aquifers in We.pdf</file.name>
+    <file.creationDate>2021-08-04 06:49:51</file.creationDate>
+    <file.mimeType>application/pdf</file.mimeType>
+    <file.type>published</file.type>
+    <file.size>21734186</file.size>
+    <file.extension>pdf</file.extension>
+    <file.persistent.url>https://iro.uiowa.edu/esploro/outputs/report/Geologic-Evalutation-of-the-Buried-Sand/9984109923502771#file-0</file.persistent.url>
+    <file.download.url>https://iro.uiowa.edu/view/delivery/01IOWA_INST/12811163160002771/13811388090002771</file.download.url>
+    <file.order>0</file.order>
+    <file.supplemental>no</file.supplemental>
+    </file>
+    </filesList>
+    <local.fields><local.note15>oai:ir.uiowa.edu:igs_wrir-1016</local.note15>
+    </local.fields>
+    <asset.affiliation>01IOWA_INST___2840z2h</asset.affiliation>
+    <asset.affiliation>01IOWA_INST___2840z2</asset.affiliation>
+    <asset.affiliation>01IOWA_INST___1170</asset.affiliation>
+    </data>
+    <identifier>9984109923502771</identifier>
+    <identifier.uri>https://iro.uiowa.edu/esploro/outputs/report/Geologic-Evalutation-of-the-Buried-Sand/9984109923502771</identifier.uri>
+    </record>
+- :identifier: "11811128640002771"
+  :set_ids:
+  - esploro:set_1
+  :changed_at: '2024-08-20T16:30:00Z'
+  :metadata_source: |-
+    <record xsi:schemaLocation='http://www.loc.gov/MARC21/slim http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd' status='new/updated' xmlns='http://www.loc.gov/MARC21/slim' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><data><identifier.doi>10.17077/rep.006554</identifier.doi>
+    <identifier.other>igs_tis-1025</identifier.other>
+    <mobileCompatibility>unknown</mobileCompatibility>
+    <sourceCodeAvailability>unknown</sourceCodeAvailability>
+    <creators><creator><familyname>Libra</familyname>
+    <givenname>Robert D</givenname>
+    <order>1</order>
+    <creatorname>Libra, Robert D</creatorname>
+    </creator>
+    </creators>
+    <title>The Iowa state-wide rural well-water survey</title>
+    <title.subtitle>June 1991, repeat sampling of the 10% subset</title.subtitle>
+    <publisher>Iowa Department of Natural Resources, Energy and Geological Resources Division, Geological Survey Bureau</publisher>
+    <publication.place>Iowa City, Iowa, USA</publication.place>
+    <date.published>199303</date.published>
+    <date.available>20171115</date.available>
+    <open_access_indicator>Yes</open_access_indicator>
+    <resourcetype.esploro>publication.report</resourcetype.esploro>
+    <subject.esploro>Agriculture</subject.esploro>
+    <subject.esploro>Hydrology</subject.esploro>
+    <keywords>Water Resource Management</keywords>
+    <keywords>Drinking water contamination</keywords>
+    <keywords>Groundwater quality</keywords>
+    <keywords>Water pollution measurement</keywords>
+    <keywords>Iowa</keywords>
+    <relationships><relationship><relationtype>ispartof</relationtype>
+    <relationtitle>Technical Information Series (Iowa. Department of Natural Resources. Geological Survey Bureau)</relationtitle>
+    <volume>26</volume>
+    <relation.category>INTERNAL</relation.category>
+    </relationship>
+    </relationships>
+    <format>pdf</format>
+    <openaccess>unknown</openaccess>
+    <peerreview>unknown</peerreview>
+    <rightsList><rights><rights>Open</rights>
+    </rights>
+    </rightsList>
+    <copyright>Publication of the State of Iowa. This publication is a public record.</copyright>
+    <language>eng</language>
+    <pages>30 pages, 5 figures, 13 tables</pages>
+    <originalRepository><assetId>igs_tis-1025</assetId>
+    <date.submission>2017-11-15T09:00:12-08:00</date.submission>
+    <repositoryName>Iowa Research Online, the University of Iowa</repositoryName>
+    <format.date>MM-YYYY</format.date>
+    <coverpage.url>https://ir.uiowa.edu/igs_tis/26</coverpage.url>
+    </originalRepository>
+    <filesList><file><file.name>TIS-26.pdf</file.name>
+    <file.creationDate>2023-12-14 13:06:27</file.creationDate>
+    <file.mimeType>application/pdf</file.mimeType>
+    <file.size>4866877</file.size>
+    <file.extension>pdf</file.extension>
+    <file.persistent.url>https://iro.uiowa.edu/esploro/outputs/report/The-Iowa-state-wide-rural-well-water-survey/9984109996902771#file-0</file.persistent.url>
+    <file.download.url>https://iro.uiowa.edu/view/delivery/01IOWA_INST/12811128630002771/13903686670002771</file.download.url>
+    <file.order>0</file.order>
+    <file.supplemental>no</file.supplemental>
+    </file>
+    </filesList>
+    <local.fields><local.note1>Digitized by IGS. OCR needed.</local.note1>
+    <local.note15>oai:ir.uiowa.edu:igs_tis-1025</local.note15>
+    </local.fields>
+    <grants.note>Supported in part by: the Iowa Groundwater Protection Act of 1987; The Iowa Department of Agriculture and Land Stewardship, Laboratory Division, Pesticide Bureau, through grants from the U.S. Environmental Protection Agency, Region VII, Toxics and Pesticide Branch and the Division of Soil Conservation through the Integrated Farm Management Demonstration Project; and through grants from the U.S. Environmental Protection Agency, Region VII, Nonpoint Source Program.</grants.note>
+    <asset.affiliation>01IOWA_INST___2840z2</asset.affiliation>
+    <asset.affiliation>01IOWA_INST___2840z2f</asset.affiliation>
+    </data>
+    <identifier>9984109996902771</identifier>
+    <identifier.uri>https://iro.uiowa.edu/esploro/outputs/report/The-Iowa-state-wide-rural-well-water-survey/9984109996902771</identifier.uri>
+    </record>
+- :identifier: "11811370090002771"
+  :set_ids:
+  - esploro:set_1
+  :changed_at: '2024-08-20T16:31:04Z'
+  :metadata_source: |-
+    <record xsi:schemaLocation='http://www.loc.gov/MARC21/slim http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd' status='new/updated' xmlns='http://www.loc.gov/MARC21/slim' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><data><identifier.doi>10.17077/rep.006538</identifier.doi>
+    <identifier.other>igs_tis-1027</identifier.other>
+    <creators><creator><familyname>Frable</familyname>
+    <givenname>G W</givenname>
+    <order>0</order>
+    <creatorname>Frable, G W</creatorname>
+    </creator>
+    <creator><familyname>Hallberg</familyname>
+    <givenname>George R</givenname>
+    <order>1</order>
+    <creatorname>Hallberg, George R</creatorname>
+    </creator>
+    <creator><familyname>Contant</familyname>
+    <givenname>C K</givenname>
+    <order>2</order>
+    <creatorname>Contant, C K</creatorname>
+    </creator>
+    <creator><familyname>Blackmer</familyname>
+    <givenname>A M</givenname>
+    <order>3</order>
+    <creatorname>Blackmer, A M</creatorname>
+    </creator>
+    </creators>
+    <title>An Assessment of on-farm applications of the late-spring soil nitrate test in Iowa</title>
+    <publisher>Iowa Department of Natural Resources, Energy and Geological Resources Division, Geological Survey Bureau</publisher>
+    <publication.place>Iowa City, Iowa, USA</publication.place>
+    <date.published>199401</date.published>
+    <date.available>20171115</date.available>
+    <open_access_indicator>Yes</open_access_indicator>
+    <resourcetype.esploro>publication.report</resourcetype.esploro>
+    <subject.esploro>Agriculture</subject.esploro>
+    <keywords>Soil Science</keywords>
+    <keywords>Nitrogen content in soils</keywords>
+    <keywords>Soil analysis</keywords>
+    <keywords>Iowa</keywords>
+    <relationships><relationship><relationtype>ispartof</relationtype>
+    <relationtitle>Technical Information Series (Iowa. Department of Natural Resources. Geological Survey Bureau)</relationtitle>
+    <volume>28</volume>
+    <relation.category>INTERNAL</relation.category>
+    </relationship>
+    </relationships>
+    <format>pdf</format>
+    <rightsList><rights><rights>Open</rights>
+    </rights>
+    </rightsList>
+    <copyright>Publication of the State of Iowa. This publication is a public record.</copyright>
+    <comment>A joint report from the Integrated Farm Management Demonstration Project, the Model Farms Demonstration Project, and the Big Spring Basin Demonstration Project.</comment>
+    <language>eng</language>
+    <pages>vii, 18 pages, 7 figures, 4 tables</pages>
+    <originalRepository><assetId>igs_tis-1027</assetId>
+    <date.submission>2017-11-15T09:00:12-08:00</date.submission>
+    <repositoryName>Iowa Research Online, the University of Iowa</repositoryName>
+    <format.date>MM-YYYY</format.date>
+    <coverpage.url>https://ir.uiowa.edu/igs_tis/28</coverpage.url>
+    </originalRepository>
+    <filesList><file><file.name>An Assessment of on-farm applications of the late-spring soil nit.pdf</file.name>
+    <file.creationDate>2021-08-04 06:49:17</file.creationDate>
+    <file.mimeType>application/pdf</file.mimeType>
+    <file.type>published</file.type>
+    <file.size>2690894</file.size>
+    <file.extension>pdf</file.extension>
+    <file.persistent.url>https://iro.uiowa.edu/esploro/outputs/report/An-Assessment-of-on-farm-applications-of/9984111963502771#file-0</file.persistent.url>
+    <file.download.url>https://iro.uiowa.edu/view/delivery/01IOWA_INST/12811370080002771/13811399240002771</file.download.url>
+    <file.order>0</file.order>
+    <file.supplemental>no</file.supplemental>
+    </file>
+    </filesList>
+    <local.fields><local.note1>Digitized by IGS. OCR needed.</local.note1>
+    <local.note15>oai:ir.uiowa.edu:igs_tis-1027</local.note15>
+    </local.fields>
+    <grants.note>Supported in part by: the Iowa Groundwater Protection Act of 1987; The Iowa Department of Agriculture and Land Stewardship, Division of Soil Conservation, through the Integrated Farm Management Demonstration Project; and through grants from the U.S. Environmental Protection Agency, Region VII, Nonpoint Source Program and Pollution Prevention Program.</grants.note>
+    <asset.affiliation>01IOWA_INST___2840z2f</asset.affiliation>
+    <asset.affiliation>01IOWA_INST___2840z2</asset.affiliation>
+    </data>
+    <identifier>9984111963502771</identifier>
+    <identifier.uri>https://iro.uiowa.edu/esploro/outputs/report/An-Assessment-of-on-farm-applications-of/9984111963502771</identifier.uri>
+    </record>

@@ -5,3 +5,6 @@
 - name: "Meru Sample OAIDC Provider"
   protocol_name: "oai"
   metadata_format_name: "oaidc"
+- name: "Meru Sample Esploro Provider"
+  protocol_name: "oai"
+  metadata_format_name: "esploro"

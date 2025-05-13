@@ -12,7 +12,9 @@ module Harvesting
         # @return [::OAI::ListSetsResponse]
         def build_batch(cursor: nil)
           if cursor.present?
+            # :nocov:
             protocol.client.list_sets resumption_token: cursor
+            # :nocov:
           else
             protocol.client.list_sets
           end
@@ -34,7 +36,7 @@ module Harvesting
           {
             identifier: set.spec,
             name: set.name.presence || set.spec,
-            description: set.description&.text.presence,
+            description: set.description.try(:text).presence,
           }.compact
         end
       end

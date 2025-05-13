@@ -11,6 +11,11 @@ module Harvesting
       delegate :harvest_attempt, :harvest_set, :harvest_mapping, :harvest_source, :extraction_mapping_template,
         to: :harvest_configuration
 
+      # @return [Boolean]
+      attr_reader :has_metadata_mappings
+
+      alias has_metadata_mappings? has_metadata_mappings
+
       # @return [Harvesting::Extraction::Mapping]
       attr_reader :mapping
 
@@ -47,7 +52,9 @@ module Harvesting
 
         @protocol = harvest_source.build_protocol_context
 
-        @use_metadata_mappings = harvest_configuration.use_metadata_mappings? && metadata_mappings.exists?
+        @use_metadata_mappings = harvest_configuration.use_metadata_mappings?
+
+        @has_metadata_mappings = use_metadata_mappings? && metadata_mappings.exists?
       end
 
       private

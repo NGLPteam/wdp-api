@@ -91,6 +91,8 @@ module Harvesting
         # This should not reasonably fail.
         record.save!
 
+        record.reset_status!
+
         maybe_link! record
 
         Success record

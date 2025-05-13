@@ -11,7 +11,7 @@ module Harvesting
       attribute :instance_assigns, Types::Hash.map(Types::Coercible::String, Types::Any).default(EMPTY_HASH)
       attribute :errors, Types::Array.of(Harvesting::Extraction::Error).default(EMPTY_ARRAY)
 
-      attribute :output, Types::Coercible::String
+      attribute :output, Types::StrippedString
 
       attribute? :no_template, Types::Bool.default(false)
       attribute? :skip_process, Types::Bool.default(false)

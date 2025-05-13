@@ -8,7 +8,7 @@ module Assets
     # @return [Dry::Monads::Success(Assets::Types::Kind)]
     def call(io)
       case io
-      when ::File, ::IO
+      when ::File, ::IO, ::Tempfile
         for_file(io)
       when Shrine::UploadedFile
         for_uploaded_file(io)
@@ -21,7 +21,7 @@ module Assets
 
     private
 
-    # @param [File, IO] file
+    # @param [File, IO, Tempfile] file
     # @return [Dry::Monads::Success(Assets::Types::Kind)]
     def for_file(io)
       mime_type = Shrine.determine_mime_type(io)

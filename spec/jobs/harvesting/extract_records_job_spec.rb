@@ -19,6 +19,7 @@ RSpec.describe Harvesting::ExtractRecordsJob, type: :job do
         described_class.perform_now(harvest_attempt)
       end.to change(HarvestRecord, :count).by(expected_record_count)
         .and change(HarvestRecord.pending, :count).by(expected_record_count)
+        .and keep_the_same(HarvestMessage.error, :count)
         .and keep_the_same(HarvestRecord.active, :count)
         .and have_enqueued_job(Harvesting::Records::ExtractEntitiesJob).exactly(expected_record_count).times
         .and change { harvest_attempt.current_state(force_reload: true) }.from("pending").to("extracted")
@@ -33,6 +34,7 @@ RSpec.describe Harvesting::ExtractRecordsJob, type: :job do
         described_class.perform_now(harvest_attempt)
       end.to keep_the_same(HarvestRecord, :count)
         .and have_enqueued_no_jobs(Harvesting::Records::ExtractEntitiesJob)
+        .and change(HarvestMessage.fatal, :count).by_at_least(1)
     end
   end
 end

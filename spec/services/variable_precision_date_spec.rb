@@ -18,9 +18,21 @@ RSpec.describe VariablePrecisionDate do
       expect(variable_precision_date.as_json).to eq %[("#{today}","day")]
     end
 
+    describe "#iso8601" do
+      it "returns the expected value" do
+        expect(variable_precision_date.iso8601).to eq today.iso8601
+      end
+    end
+
     describe "#to_date" do
       it "returns the expected value" do
         expect(variable_precision_date.to_date).to eq today
+      end
+    end
+
+    describe "#to_s" do
+      it "returns the expected value" do
+        expect(variable_precision_date.to_s).to eq today.strftime("%Y-%m-%d")
       end
     end
   end
@@ -36,9 +48,21 @@ RSpec.describe VariablePrecisionDate do
     it { is_expected.to be_inexact }
     it { is_expected.to be_a_month }
 
+    describe "#iso8601" do
+      it "returns the expected value" do
+        expect(variable_precision_date.iso8601).to eq expected_value.iso8601
+      end
+    end
+
     describe "#to_date" do
       it "returns the expected value" do
         expect(variable_precision_date.to_date).to eq expected_value
+      end
+    end
+
+    describe "#to_s" do
+      it "returns the expected value" do
+        expect(variable_precision_date.to_s).to eq today.strftime("%Y-%m")
       end
     end
   end
@@ -54,9 +78,21 @@ RSpec.describe VariablePrecisionDate do
     it { is_expected.to be_inexact }
     it { is_expected.to be_a_year }
 
+    describe "#iso8601" do
+      it "returns the expected value" do
+        expect(variable_precision_date.iso8601).to eq expected_value.iso8601
+      end
+    end
+
     describe "#to_date" do
       it "returns the expected value" do
         expect(variable_precision_date.to_date).to eq expected_value
+      end
+    end
+
+    describe "#to_s" do
+      it "returns the expected value" do
+        expect(variable_precision_date.to_s).to eq today.strftime("%Y")
       end
     end
   end
@@ -76,9 +112,21 @@ RSpec.describe VariablePrecisionDate do
       expect(variable_precision_date.as_json).to eq %[(,"none")]
     end
 
+    describe "#iso8601" do
+      it "returns the expected value" do
+        expect(variable_precision_date.iso8601).to be_nil
+      end
+    end
+
     describe "#to_date" do
       it "returns nothing" do
         expect(variable_precision_date.to_date).to be_nil
+      end
+    end
+
+    describe "#to_s" do
+      it "returns the expected value" do
+        expect(variable_precision_date.to_s).to eq ""
       end
     end
   end

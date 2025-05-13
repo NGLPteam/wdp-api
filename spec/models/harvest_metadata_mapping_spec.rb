@@ -6,7 +6,7 @@ RSpec.describe HarvestMetadataMapping, type: :model do
   let_it_be(:harvest_source, refind: true) { FactoryBot.create :harvest_source, use_metadata_mappings: true }
 
   before do
-    harvest_source.assign_metadata_mapping! :relation, "^ispartof:[[:space:]]+Water Resources Investigation Report.*", collection
+    harvest_source.assign_metadata_mapping! field: :relation, pattern: "^ispartof:[[:space:]]+Water Resources Investigation Report.*", target_entity: collection
   end
 
   describe ".matching" do

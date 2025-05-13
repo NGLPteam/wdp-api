@@ -55,8 +55,22 @@ FactoryBot.define do
       metadata_format { "jats" }
     end
 
+    trait :esploro do
+      oai
+
+      testing_provider do
+        Harvesting::Testing::ProviderDefinition.oai.esploro.first
+      end
+
+      metadata_format { "esploro" }
+    end
+
     trait :global_identifiers do
       link_identifiers_globally { true }
+    end
+
+    trait :using_metadata_mappings do
+      use_metadata_mappings { true }
     end
 
     trait :broken_oai do

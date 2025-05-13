@@ -134,7 +134,7 @@ module Harvesting
       end
 
       wrapped_hook! def update_entity_count
-        HarvestRecord.where(id: harvest_record.id).update_all(entity_count: HarvestEntity.where(harvest_record_id: harvest_record.id))
+        HarvestRecord.where(id: harvest_record.id).update_all(entity_count: HarvestEntity.where(harvest_record_id: harvest_record.id).count)
 
         super
       end
@@ -211,9 +211,8 @@ module Harvesting
 
         logger.error "Could not find metadata mapping with #{match.inspect}"
 
-        skip!("no metadata mappings found", code:, metadata:)
+        skip_and_halt!("no metadata mappings found", code:, metadata:)
       rescue LimitToOne::TooManyMatches
-        # :nocov:
         code = "metadata_mapping_too_many_found"
 
         metadata = {
@@ -222,8 +221,7 @@ module Harvesting
 
         logger.error "Too many metadata mapping results with #{match.inspect}"
 
-        skip!("too many metadata mappings match", code:, metadata:)
-        # :nocov:
+        skip_and_halt!("too many metadata mappings match", code:, metadata:)
       end
 
       # @param [String] identifier
@@ -298,7 +296,7 @@ module Harvesting
       # @param [Harvesting::Records::Skipped] skipped
       # @return [void]
       def track_skip!(skipped)
-        columns = { skipped:, entity_count: 0 }
+        columns = { status: :skipped, skipped:, entity_count: 0 }
 
         harvest_record.update_columns columns
 

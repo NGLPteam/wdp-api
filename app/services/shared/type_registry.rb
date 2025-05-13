@@ -21,6 +21,7 @@ module Shared
     tc.add_model! "HarvestEntity"
     tc.add_model! "HarvestError"
     tc.add_model! "HarvestMapping"
+    tc.add_model! "HarvestMetadataMapping"
     tc.add_model! "HarvestRecord"
     tc.add_model! "HarvestSet"
     tc.add_model! "HarvestSource"
@@ -30,6 +31,7 @@ module Shared
 
     tc.add_enum! ::Types::ClientLocationType
     tc.add_enum! ::Types::HarvestMetadataFormatType
+    tc.add_enum! ::Types::HarvestMetadataMappingFieldType
     tc.add_enum! ::Types::HarvestProtocolType
     tc.add_enum! ::Types::TemplateSlotKindType, single_key: "slot_kind", plural_key: "slot_kinds"
   end
