@@ -22,6 +22,7 @@ ActiveSupport::Inflector.inflections(:en) do |inflect|
   inflect.acronym "ETD"
   inflect.acronym "EISBN"
   inflect.acronym "GraphQL"
+  inflect.acronym "HTML"
   inflect.acronym "ISBN"
   inflect.acronym "ISSN"
   inflect.acronym "IP"

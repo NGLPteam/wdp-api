@@ -91,7 +91,7 @@ module Harvesting
           end
 
           data = _wrap_liquid_render_for(attribute_name, render_context) do
-            output = template.render(render_context.assigns, strict_filters: true, strict_variables: true)
+            output = template.render(render_context.assigns, strict_filters: true, strict_variables: true).to_s.strip
 
             instance_assigns.merge!(template.instance_assigns)
 

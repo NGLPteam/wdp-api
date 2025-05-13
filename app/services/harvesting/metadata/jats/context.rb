@@ -32,7 +32,7 @@ module Harvesting
         end
 
         def extract_full_text_data!
-          @abstract = inner_html_for("/article/front/article-meta/abstract")
+          @abstract = maybe_unescape_html(inner_html_for("/article/front/article-meta/abstract"))
 
           @body = inner_html_for("/article/body")
         end

@@ -159,6 +159,11 @@ class VariablePrecisionDate
     !exact?
   end
 
+  # @return [String, nil]
+  def iso8601
+    value&.iso8601
+  end
+
   def month?
     precision == :month
   end
@@ -174,6 +179,16 @@ class VariablePrecisionDate
   # @return [Date, nil]
   def to_date
     value unless none?
+  end
+
+  def to_s
+    case precision
+    in :day then iso8601
+    in :month then value.strftime("%Y-%m")
+    in :year then value.strftime("%Y")
+    else
+      ""
+    end
   end
 
   # Encode a variable precision date into its SQL representation.

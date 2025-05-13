@@ -3,6 +3,7 @@
 module Harvesting
   module Testing
     TypeRegistry = Support::Schemas::TypeContainer.new.configure do |tc|
+      tc.add! :esploro_record, Harvesting::Testing::Types::EsploroRecord
       tc.add! :identifier, Harvesting::Testing::Types::Identifier
       tc.add! :jats_article, Harvesting::Testing::Types::JATSArticle
       tc.add! :metadata_format, Harvesting::Types::MetadataFormat

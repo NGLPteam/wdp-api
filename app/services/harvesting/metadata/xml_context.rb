@@ -29,6 +29,18 @@ module Harvesting
       def parse_xml!
         @doc = Nokogiri::XML(metadata_source)
       end
+
+      def has_escaped_html?(content)
+        ESCAPED_HTML_PATTERNS.any? do |pattern|
+          pattern.match? content
+        end
+      end
+
+      # @param [#to_s] content
+      # @return [String]
+      def maybe_unescape_html(content)
+        MeruAPI::Container["utility.fix_possible_html"].(content.to_s).value_or(content.to_s)
+      end
     end
   end
 end

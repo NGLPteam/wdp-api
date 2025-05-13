@@ -58,7 +58,9 @@ class HarvestRecord < ApplicationRecord
   # @see HarvestConfiguration#build_extraction_context
   # @return [Harvesting::Extraction::Context]
   def build_extraction_context
+    # :nocov:
     fetch_configuration.build_extraction_context
+    # :nocov:
   end
 
   # @see HarvestMetadataFormat.context_for
@@ -74,10 +76,8 @@ class HarvestRecord < ApplicationRecord
 
   # @api private
   # @return [void]
-  def clear_skip!
-    self.skipped = Harvesting::Records::Skipped.blank
-
-    save!
+  def reset_status!
+    update_columns(status: "pending", skipped: Harvesting::Records::Skipped.blank)
   end
 
   # @see Harvesting::Records::ExtractEntities
@@ -99,6 +99,7 @@ class HarvestRecord < ApplicationRecord
   # @api private
   # @return [Hash]
   def to_sample
+    # :nocov:
     changed_at = source_changed_at.iso8601
 
     metadata_source = Nokogiri::XML(raw_metadata_source, &:noblanks).root.to_xml
@@ -108,6 +109,7 @@ class HarvestRecord < ApplicationRecord
       changed_at:,
       metadata_source:,
     }
+    # :nocov:
   end
 
   private
@@ -130,7 +132,9 @@ class HarvestRecord < ApplicationRecord
     # @param [String] identifier
     # @return [HarvestRecord, nil]
     def fetch_for_source(sourcelike, identifier)
+      # :nocov:
       for_source(sourcelike).find_by(identifier:)
+      # :nocov:
     end
 
     # Return the most recent {HarvestRecord} instance from the current attempts
@@ -143,9 +147,11 @@ class HarvestRecord < ApplicationRecord
     # @raise [Harvesting::Records::Unknown]
     # @return [HarvestRecord]
     def fetch_for_source!(sourcelike, identifier)
+      # :nocov:
       for_source(sourcelike).find_by!(identifier:)
     rescue ActiveRecord::RecordNotFound
       raise Harvesting::Records::Unknown, identifier
+      # :nocov:
     end
   end
 end

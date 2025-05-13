@@ -10,10 +10,15 @@ module Harvesting
 
         after_initialize :extract_titles!
 
+        after_initialize :extract_abstract!
+
         data_attrs! :article_type, :lang, type: :string
 
-        # @return [Harvesting::Metadata::JATS::AbstractDrop]
+        # @return [String]
         attr_reader :abstract
+
+        # @return [Harvesting::Metadata::JATS::ArticleMetaDrop, nil]
+        attr_reader :article_meta
 
         # @return [Harvesting::Metadata::JATS::ArticleTitleDrop]
         attr_reader :article_title
@@ -35,6 +40,8 @@ module Harvesting
 
         # @return [Harvesting::Metadata::JATS::VolumeDrop]
         attr_reader :volume
+
+        delegate :doi, :published, to: :article_meta, allow_nil: true
 
         private
 
@@ -63,6 +70,11 @@ module Harvesting
           @article_title = title_group.try(:article_title)
 
           @subtitle = title_group.try(:subtitle)
+        end
+
+        # @return [void]
+        def extract_abstract!
+          @abstract = metadata_context.abstract
         end
       end
     end

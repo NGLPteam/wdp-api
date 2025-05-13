@@ -7,6 +7,24 @@ RSpec.describe "Query.harvestSource", type: :request do
       harvestSource(slug: $slug) {
         id
         slug
+
+        harvestAttempts {
+          nodes {
+            id
+          }
+        }
+
+        harvestMappings {
+          nodes {
+            id
+          }
+        }
+
+        harvestMetadataMappings {
+          nodes {
+            id
+          }
+        }
       }
     }
     GRAPHQL
@@ -27,7 +45,13 @@ RSpec.describe "Query.harvestSource", type: :request do
     end
   end
 
-  let!(:existing_model) { FactoryBot.create :harvest_source }
+  let_it_be(:harvest_source) { FactoryBot.create :harvest_source }
+
+  let_it_be(:harvest_mapping) { FactoryBot.create :harvest_mapping, harvest_source: }
+  let_it_be(:harvest_attempt) { FactoryBot.create :harvest_attempt, harvest_source:, harvest_mapping: }
+  let_it_be(:harvest_metadata_mapping) { FactoryBot.create :harvest_metadata_mapping, harvest_source: }
+
+  let!(:existing_model) { harvest_source }
 
   let(:slug) { existing_model.system_slug }
 
@@ -48,6 +72,18 @@ RSpec.describe "Query.harvestSource", type: :request do
       expect_request! do |req|
         req.data! blank_shape
       end
+    end
+  end
+
+  as_an_admin_user do
+    context "when looking for an existing model" do
+      include_examples "a found record"
+    end
+
+    context "when looking for an unknown model" do
+      let(:slug) { random_slug }
+
+      include_examples "a not found record"
     end
   end
 

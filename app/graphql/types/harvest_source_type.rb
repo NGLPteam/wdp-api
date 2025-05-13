@@ -68,6 +68,12 @@ module Types
       TEXT
     end
 
+    field :harvest_metadata_mappings, resolver: ::Resolvers::HarvestMetadataMappingResolver do
+      description <<~TEXT
+      Metadata mappings used for advanced features that allow matching patterns to existing harvest targets.
+      TEXT
+    end
+
     field :harvest_records, resolver: ::Resolvers::HarvestRecordResolver do
       description <<~TEXT
       Records associated with this source.

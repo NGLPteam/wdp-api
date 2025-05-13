@@ -68,6 +68,10 @@ module Types
 
     field :harvest_mapping_update, mutation: Mutations::HarvestMappingUpdate
 
+    field :harvest_metadata_mapping_create, mutation: Mutations::HarvestMetadataMappingCreate
+
+    field :harvest_metadata_mapping_destroy, mutation: Mutations::HarvestMetadataMappingDestroy
+
     field :harvest_source_create, mutation: Mutations::HarvestSourceCreate
 
     field :harvest_source_destroy, mutation: Mutations::HarvestSourceDestroy
@@ -75,6 +79,10 @@ module Types
     field :harvest_source_update, mutation: Mutations::HarvestSourceUpdate
 
     field :link_entity, mutation: Mutations::LinkEntity
+
+    field :preview_slot, mutation: Mutations::PreviewSlot
+
+    field :render_layouts, mutation: Mutations::RenderLayouts
 
     field :reparent_entity, mutation: Mutations::ReparentEntity
 
@@ -113,10 +121,6 @@ module Types
     field :update_viewer_settings, mutation: Mutations::UpdateViewerSettings
 
     field :upsert_contribution, mutation: Mutations::UpsertContribution
-
-    field :render_layouts, mutation: Mutations::RenderLayouts
-
-    field :preview_slot, mutation: Mutations::PreviewSlot
 
     field :user_reset_password, mutation: Mutations::UserResetPassword
   end

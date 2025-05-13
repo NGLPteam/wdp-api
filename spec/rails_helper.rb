@@ -14,10 +14,13 @@ SimpleCov.start "rails" do
 
   add_group "GraphQL", "app/graphql"
   add_group "Harvesting", [
+    "app/jobs/harvesting",
     %r|app/models/harvest|,
     %r|app/models/concerns/[^/]*harvest|,
     "app/operations/harvesting",
+    "app/operations/pilot_harvesting",
     "app/services/harvesting",
+    "app/services/pilot_harvesting",
   ]
   add_group "Operations", "app/operations"
   add_group "Policies", "app/policies"
