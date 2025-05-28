@@ -11,7 +11,7 @@ class CachedAssetUploader < Shrine
   plugin :add_metadata
   plugin :refresh_metadata
   plugin :infer_extension, force: true
-  plugin :remote_url, max_size: 5.gigabytes
+  plugin :remote_url, max_size: 5.gigabytes, downloader: ::Support::Networking::SHRINE_REMOTE_URL_DOWNLOADER
   plugin :signature
   plugin :validation_helpers
   plugin :restore_cached_data

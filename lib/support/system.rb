@@ -42,7 +42,10 @@ module Support
         inflections.acronym("ANZ")
         inflections.acronym("GQL")
         inflections.acronym("GraphQL")
+        inflections.acronym("HTTP")
         inflections.acronym("NGLP")
+        inflections.acronym("SSL")
+        inflections.acronym("TLS")
         inflections.acronym("TOC")
         inflections.acronym("WDP")
         inflections.acronym("URL")
@@ -56,5 +59,7 @@ end
 Support::System.start(:security)
 
 Support::System.start(:active_model_types)
+
+Support::System.start(:request_middleware)
 
 Support::System.finalize!
