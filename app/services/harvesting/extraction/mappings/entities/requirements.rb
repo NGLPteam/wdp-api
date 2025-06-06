@@ -12,6 +12,18 @@ module Harvesting
 
             map_element "expr", to: :expressions
           end
+
+          def met?(render_context)
+            return true if expressions.blank?
+
+            met = true
+
+            expressions.each do |expr|
+              met = false unless expr.check!(render_context)
+            end
+
+            return met
+          end
         end
       end
     end

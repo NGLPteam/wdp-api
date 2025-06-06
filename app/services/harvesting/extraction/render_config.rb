@@ -30,7 +30,7 @@ module Harvesting
         finessed = finesse result
 
         coerced = type[finessed]
-      rescue Dry::Types::ConstraintError => e
+      rescue Dry::Types::CoercionError, Dry::Types::ConstraintError => e
         Failure[:cannot_coerce, e.message]
       else
         Success coerced
