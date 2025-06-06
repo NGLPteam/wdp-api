@@ -135,6 +135,7 @@ gem "zaru", "~> 1.0.0"
 # Servers / Rack
 gem "puma", "~> 6.6.0"
 gem "puma-rufus-scheduler", "~> 0.1.0"
+gem "puma_worker_killer", "~> 1.0.0", require: false
 gem "rack", "~> 2.2.14"
 gem "rack-cors", "~> 2.0.2"
 
