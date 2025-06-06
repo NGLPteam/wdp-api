@@ -133,6 +133,14 @@ module PilotHarvesting
     end
 
     wrapped_hook! def create_attempt
+      if skip_harvest && harvest_mapping.harvest_attempts.exists?
+        # :nocov:
+        @harvest_attempt = harvest_mapping.harvest_attempts.latest
+
+        return super
+        # :nocov:
+      end
+
       @harvest_attempt = harvest_mapping.create_attempt(
         extraction_mapping_template:,
         harvest_set:,
