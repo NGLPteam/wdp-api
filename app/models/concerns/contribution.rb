@@ -44,7 +44,7 @@ module Contribution
 
     after_destroy :recount_contributor_contributions!
 
-    after_commit :manage_attributions!
+    after_save_commit :manage_attributions!
   end
 
   # @!attribute [r] contributable
