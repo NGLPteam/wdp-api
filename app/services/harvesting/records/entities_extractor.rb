@@ -104,6 +104,10 @@ module Harvesting
       wrapped_hook! def extract
         @structs.concat render_context.render_entity_structs
 
+        # :nocov:
+        logger.warn("no entities extracted") if @structs.blank?
+        # :nocov:
+
         @structs.each do |root_struct|
           yield upsert_struct root_struct
         end

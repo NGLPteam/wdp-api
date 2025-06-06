@@ -10,6 +10,8 @@ module Harvesting
         # @example xml
         #   <expr reason="must have a volume">{{jats.volume}}</expr>
         class RequirementExpression < Harvesting::Extraction::Mappings::Abstract
+          include Harvesting::WithLogger
+
           attribute :reason, :string
           attribute :expression, ::Mappers::StrippedString
 
@@ -21,6 +23,16 @@ module Harvesting
             map_attribute "reason", to: :reason
 
             map_content to: :expression
+          end
+
+          # @param [Harvesting::Extraction::RenderContext] render_context
+          # @return [Boolean]
+          def check!(render_context)
+            value = value_for(render_context)
+
+            return true if value.present?
+
+            logger.error("requirement not met: #{reason}")
           end
 
           # @param [Harvesting::Extraction::RenderContext] render_context

@@ -24,7 +24,7 @@ module Harvesting
           [].tap do |structs|
             structs.concat(collections.map { _1.render_struct_for(render_context) })
             structs.concat(items.map { _1.render_struct_for(render_context) })
-          end
+          end.compact
         end
 
         # @return [<String>]

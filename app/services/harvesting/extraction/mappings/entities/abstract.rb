@@ -97,6 +97,8 @@ module Harvesting
           # @param [Harvesting::Entities::Struct, nil] parent
           # @return [Harvesting::Entities::Struct]
           def render_struct_for(render_context, parent: nil)
+            return unless requirements_met?(render_context)
+
             ::Harvesting::Entities::Struct.new(render_context, self, parent:)
           end
 
@@ -112,6 +114,10 @@ module Harvesting
                 structs.concat(items.map { _1.render_struct_for(render_context, parent:) })
               end
             end
+          end
+
+          def requirements_met?(render_context)
+            requirements.blank? || requirements.met?(render_context)
           end
 
           # @return [<String>]
