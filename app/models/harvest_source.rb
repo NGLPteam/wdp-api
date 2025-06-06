@@ -44,6 +44,8 @@ class HarvestSource < ApplicationRecord
     allow_nil: true,
     to: :harvest_protocol
 
+  before_validation :sanitize_base_url!
+
   after_create :check_and_maybe_extract_sets!
 
   after_update :check_and_maybe_extract_sets!, if: :saved_change_to_base_url?
@@ -127,6 +129,11 @@ class HarvestSource < ApplicationRecord
     return unless active? && supports_extract_sets?
 
     Harvesting::Sources::ExtractSetsJob.perform_later(self)
+  end
+
+  # @return [void]
+  def sanitize_base_url!
+    self.base_url = call_operation("harvesting.utility.sanitize_base_url", base_url).value_or(base_url)
   end
 
   class << self
