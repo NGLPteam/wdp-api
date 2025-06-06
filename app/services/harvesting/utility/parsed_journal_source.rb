@@ -8,9 +8,9 @@ module Harvesting
 
       attribute :volume, Harvesting::Types::Coercible::String
       attribute :issue, Harvesting::Types::Coercible::String
-      attribute? :year, Harvesting::Types::Coercible::Integer.optional
-      attribute? :fpage, Harvesting::Types::Coercible::Integer.optional
-      attribute? :lpage, Harvesting::Types::Coercible::Integer.optional
+      attribute? :year, Harvesting::Types::Coercible::Integer.optional.fallback(nil)
+      attribute? :fpage, Harvesting::Types::Coercible::Integer.optional.fallback(nil)
+      attribute? :lpage, Harvesting::Types::Coercible::Integer.optional.fallback(nil)
 
       def known?
         !unknown?

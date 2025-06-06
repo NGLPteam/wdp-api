@@ -12,6 +12,7 @@ module Harvesting
       include Dry::Effects.Resolve(:auto_create_volumes_and_issues)
 
       PATTERNS = [
+        /\A.+?; Volume (?<volume>\d+), Number (?<issue>\d+)(?:; (?<fpage>\d+)(?:.+?(?<lpage>\d+))?)?\z/,
         /\A.+?; Vol\.?? (?<volume>\d+),?? No\.?? (?<issue>\d+(?:-\d+)?) \((?<year>\d+)\)(?:; (?<fpage>\d+)(?:[^\d](?<lpage>\d+))?)?\z/,
         # "Special edition" issues", e.g. `Vol 50, No SE`
         /\A.+?; Vol\.?? (?<volume>\d+),?? No\.?? (?<issue>\S+) \((?<year>\d+)\)(?:; (?<fpage>\d+)(?:[^\d](?<lpage>\d+))?)?\z/,
@@ -33,7 +34,9 @@ module Harvesting
 
             next unless match
 
-            return parse! input, match
+            parsed = parse!(input, match)
+
+            return parsed if parsed.try(:known?)
           end
 
           anystyle = try_anystyle input
@@ -46,7 +49,9 @@ module Harvesting
 
           next unless match
 
-          return parse! input, match, issue: ?1
+          parsed = parse! input, match, issue: ?1
+
+          return parsed if parsed.try(:known?)
         end
 
         if auto_create_volumes_and_issues?
@@ -83,6 +88,10 @@ module Harvesting
         attrs = { input: }.merge(match.named_captures.symbolize_keys).merge(**extra)
 
         Harvesting::Utility::ParsedJournalSource.new(**attrs)
+      rescue Dry::Struct::Error
+        # :nocov:
+        return nil
+        # :nocov:
       end
 
       def normalize_anystyle(result)
