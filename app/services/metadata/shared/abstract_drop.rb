@@ -11,6 +11,8 @@ module Metadata
       include Dry::Effects::Handler.Reader(:parent_metadata_context)
       include Dry::Effects.Reader(:parent_metadata_context, default: nil)
 
+      include LiquidExt::Behavior::BlankAndPresent
+
       define_model_callbacks :initialize, only: %i[after]
       define_model_callbacks :child_drop
 
@@ -30,14 +32,6 @@ module Metadata
         end
       end
 
-      def to_liquid
-        if has_string_content?
-          content
-        else
-          super
-        end
-      end
-
       def to_s
         if has_string_content?
           content
@@ -47,6 +41,12 @@ module Metadata
       end
 
       private
+
+      def blank_for_liquid?
+        # :nocov:
+        @data.respond_to?(:blank_for_liquid?) ? @data.blank? || @data.blank_for_liquid? : @data.blank?
+        # :nocov:
+      end
 
       # @param [Symbol] accessor_name
       # @return [Liquid::Drop, Object, nil]

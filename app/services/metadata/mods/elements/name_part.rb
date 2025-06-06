@@ -21,6 +21,10 @@ module Metadata
           map_attribute "type", to: :type
         end
 
+        def blank_for_liquid?
+          !parsed
+        end
+
         def family_name
           parsed_name.try(:family)
         end

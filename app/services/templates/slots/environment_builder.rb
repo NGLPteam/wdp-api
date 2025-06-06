@@ -70,6 +70,7 @@ module Templates
       def configure_common!(env)
         env.register_tag "copylink", Templates::Tags::Blocks::CopyLink
         env.register_tag "entitylink", Templates::Tags::Blocks::EntityLink
+        env.register_tag "ifpresent", ::LiquidExt::Tags::IfPresent
 
         env.register_filter Templates::Filters::CommonFilters
 
