@@ -59,6 +59,10 @@ module Metadata
           map_element "alternativeName", to: :alternative_names
           map_element "etal", to: :etal
         end
+
+        def blank_for_liquid?
+          name_part.blank? || name_part.blank_for_liquid?
+        end
       end
     end
   end

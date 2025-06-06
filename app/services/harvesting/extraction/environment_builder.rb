@@ -38,6 +38,8 @@ module Harvesting
         Liquid::Environment.build(error_mode: :strict) do |env|
           env.register_filter Harvesting::Extraction::CommonFilters
 
+          configure_common_tags!(env)
+
           if captures_contributions
             configure_contribution_capture!(env)
           elsif captures_metadata_mappings
@@ -46,6 +48,12 @@ module Harvesting
             configure_for_property_type!(env)
           end
         end
+      end
+
+      # @param [Liquid::Environment] env
+      # @return [void]
+      def configure_common_tags!(env)
+        env.register_tag "ifpresent", ::LiquidExt::Tags::IfPresent
       end
 
       # @param [Liquid::Environment] env

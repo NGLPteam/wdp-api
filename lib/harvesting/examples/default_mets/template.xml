@@ -25,34 +25,34 @@
         <variable-date path="accessioned">
           {% assign accessioned_ext = mods_data.extensions | where: "has_accessioned" | first %}
 
-          {% if accessioned_ext %}
+          {% ifpresent accessioned_ext.date_accessioned %}
           {{accessioned_ext.date_accessioned}}
-          {% endif %}
+          {% endifpresent %}
         </variable-date>
         <variable-date path="available">
           {% assign available_ext = mods_data.extensions | where: "has_available" | first %}
 
-          {% if available_ext %}
+          {% ifpresent available_ext.date_available %}
           {{available_ext.date_available}}
-          {% endif %}
+          {% endifpresent %}
         </variable-date>
         <asset path="pdf_version">
           <kind>pdf</kind>
           <mime-type>application/pdf</mime-type>
           <name>
-            {% if pdf %}
+            {% ifpresent pdf %}
             {% assign premis = mets.amd_sec | where: "id", pdf.admid | map: "tech_sections" | first | map: "metadata" | where: "premis" | map: "premis" | first %}
-            {% if premis and premis.object and premis.object.original_name and premis.object.original_name.content %}
+            {% ifpresent premis.object.original_name.content %}
             {{premis.object.original_name.content}}
             {% else %}
             Paper.pdf
-            {% endif %}
-            {% endif %}
+            {% endifpresent %}
+            {% endifpresent %}
           </name>
           <url>
-            {% if pdf %}
+            {% ifpresent pdf.url %}
             {{pdf.url}}
-            {% endif %}
+            {% endifpresent %}
           </url>
         </asset>
         <asset path="text_version">
@@ -60,31 +60,31 @@
           <mime-type>text/plain</mime-type>
           <name>Paper.txt</name>
           <url>
-            {% if text %}
+            {% ifpresent text.url %}
             {{text.url}}
-            {% endif %}
+            {% endifpresent %}
           </url>
         </asset>
         <string path="host.title">{{mods_data.origin_info.publisher}}</string>
       </properties>
       <contributions>
         {% for name in mods_data.names %}
-        {% if name.name_part and name.name_part.parsed %}
+        {% ifpresent name %}
         {% for role in name.roles %}
         {% contribution role: role.role_term %}
         {% person %}
         {% given_name name.name_part.given_name %}
         {% family_name name.name_part.family_name %}
-        {% if name.identifier %}
+        {% ifpresent name.identifier %}
         {% identifier name.identifier %}
-        {% endif %}
-        {% if name.affiliation %}
+        {% endifpresent %}
+        {% ifpresent name.affiliation %}
         {% affiliation name.affiliation %}
-        {% endif %}
+        {% endifpresent %}
         {% endperson %}
         {% endcontribution %}
         {% endfor %}
-        {% endif %}
+        {% endifpresent %}
         {% endfor %}
       </contributions>
     </item>
