@@ -90,6 +90,10 @@ class HarvestRecord < ApplicationRecord
     "HarvestRecord[:#{metadata_format}](#{identifier.inspect})"
   end
 
+  monadic_operation! def prune_entities(...)
+    call_operation("harvesting.records.prune_entities", self, ...)
+  end
+
   # @see Harvesting::Records::UpsertEntities
   # @return [Dry::Monads::Result]
   monadic_operation! def upsert_entities

@@ -62,6 +62,9 @@ module Harvesting
     # @see HarvestProtocol
     ProtocolName = ApplicationRecord.dry_pg_enum(:harvest_protocol)
 
+    # @see ::Types::HarvestPruneModeType
+    PruneMode = ::Types::HarvestPruneModeType.dry_type.fallback("unmodified")
+
     # @see ::HarvestRecord
     Record = ModelInstance("HarvestRecord")
 

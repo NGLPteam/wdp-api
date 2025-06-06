@@ -62,6 +62,8 @@ module Types
 
     field :harvest_attempt_from_mapping, mutation: Mutations::HarvestAttemptFromMapping
 
+    field :harvest_attempt_prune_entities, mutation: Mutations::HarvestAttemptPruneEntities
+
     field :harvest_mapping_create, mutation: Mutations::HarvestMappingCreate
 
     field :harvest_mapping_destroy, mutation: Mutations::HarvestMappingDestroy
@@ -75,6 +77,8 @@ module Types
     field :harvest_source_create, mutation: Mutations::HarvestSourceCreate
 
     field :harvest_source_destroy, mutation: Mutations::HarvestSourceDestroy
+
+    field :harvest_source_prune_entities, mutation: Mutations::HarvestSourcePruneEntities
 
     field :harvest_source_update, mutation: Mutations::HarvestSourceUpdate
 

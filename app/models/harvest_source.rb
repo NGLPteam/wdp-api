@@ -30,6 +30,8 @@ class HarvestSource < ApplicationRecord
   has_many :harvest_records, inverse_of: :harvest_source, dependent: :destroy
   has_many :harvest_sets, inverse_of: :harvest_source, dependent: :destroy
 
+  has_many :harvest_entities, through: :harvest_records
+
   has_many_readonly :latest_harvest_attempt_links, inverse_of: :harvest_source
 
   has_many_readonly :latest_harvest_attempts, through: :latest_harvest_attempt_links,
@@ -74,6 +76,10 @@ class HarvestSource < ApplicationRecord
   # @return [void]
   monadic_operation! def extract_sets
     call_operation("harvesting.sources.extract_sets", self)
+  end
+
+  monadic_operation! def prune_entities(...)
+    call_operation("harvesting.sources.prune_entities", self, ...)
   end
 
   # Replace the source and all existing attempts/mappings with an updated extraction mapping template.
