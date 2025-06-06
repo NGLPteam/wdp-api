@@ -72,6 +72,10 @@ class HarvestEntity < ApplicationRecord
     existing_parent_id.present?
   end
 
+  monadic_operation! def prune_entities(...)
+    call_operation("harvesting.entities.prune_entities", self, ...)
+  end
+
   # @see Harvesting::Entities::Upsert
   # @return [void]
   monadic_operation! def upsert

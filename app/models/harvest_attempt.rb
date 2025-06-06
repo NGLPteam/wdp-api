@@ -63,6 +63,10 @@ class HarvestAttempt < ApplicationRecord
 
   delegate :list_options, :read_options, :format_options, :mapping_options, to: :harvest_parent
 
+  monadic_operation! def prune_entities(...)
+    call_operation("harvesting.attempts.prune_entities", self, ...)
+  end
+
   private
 
   # @return [void]
