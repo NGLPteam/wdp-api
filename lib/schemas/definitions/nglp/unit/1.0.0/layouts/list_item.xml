@@ -13,19 +13,30 @@
           {% if entity.summary %} {{entity.summary}} {% endif %}
         </description>
         <meta-a>
-          {% dotlist %}
-          {% dotitem %}
-          {{orderings.series.count}} Series
-          {% enddotitem %}
-          {% dotitem %}
-          {{orderings.papers.count}} {% if orderings.papers.count == 1 %}Paper{% else %}Papers{% endif %}
-          {% enddotitem %}
-          {% dotitem %}
-          {{orderings.units.count}} {% if orderings.units.count == 1 %}Sub-unit{% else %}Sub-units{% endif %}
-          {% enddotitem %}
-          {% enddotlist %}
+          {%- assign latest_published = orderings.papers.latest_published -%}
+          {%- if latest_published -%}
+          Last Paper Published {{latest_published | date: "%b %Y"}}
+          {%- endif -%}
         </meta-a>
-        <meta-b/>
+        <meta-b>
+          {% dotlist %}
+          {% if orderings.series.count > 0 %}
+            {% dotitem %}
+              {{orderings.series.count}} Series
+            {% enddotitem %}
+          {% endif %}
+          {% if orderings.papers.count > 0 %}
+            {% dotitem %}
+              {{orderings.papers.count}} {% if orderings.papers.count == 1 %}Paper{% else %}Papers{% endif %}
+            {% enddotitem %}
+          {% endif %}
+          {% if orderings.units.count > 0 %}
+            {% dotitem %}
+              {{orderings.units.count}} {% if orderings.units.count == 1 %}Sub-unit{% else %}Sub-units{% endif %}
+            {% enddotitem %}
+          {% endif %}
+          {% enddotlist %}
+        </meta-b>
         <context-a/>
         <context-b/>
         <context-c/>
