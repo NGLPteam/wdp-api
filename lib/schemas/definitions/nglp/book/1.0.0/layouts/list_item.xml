@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<list-item>
+  <templates>
+    <list-item>
+      <slots>
+        <header>
+          {{ entity.title }}
+        </header>
+        <subheader>
+          {{ entity.subtitle }}
+        </subheader>
+        <description>
+          {% if entity.summary %} {{ entity.summary }} {% endif %}
+        </description>
+        <meta-a>
+          {% if props.edition.exists %} {{ props.edition }} {% endif %}
+        </meta-a>
+        <meta-b>
+          {% if entity.published %} Published {{ entity.published }} {% endif %}
+        </meta-b>
+        <context-full>
+          {% if ancestors.series %} {{ancestors.series.title}}, {% endif %}
+        </context-full>
+        <context-abbr/>
+      </slots>
+    </list-item>
+  </templates>
+</list-item>
