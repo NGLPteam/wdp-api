@@ -66,4 +66,11 @@ class Community < ApplicationRecord
   def grant_system_roles!
     call_operation("communities.grant_system_roles", self).value!
   end
+
+  # @see Communities::Purge
+  # @see Communities::Purger
+  # @return [Dry::Monads::Success(void)]
+  monadic_operation! def purge(...)
+    call_operation("communities.purge", self, ...)
+  end
 end

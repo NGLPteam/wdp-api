@@ -58,6 +58,10 @@ class HierarchicalEntityPolicy < ApplicationPolicy
     has_admin_or_asset_permission?(:delete)
   end
 
+  def purge?
+    user.has_global_admin_access?
+  end
+
   def create_collections?
     return true if user.has_global_admin_access?
 

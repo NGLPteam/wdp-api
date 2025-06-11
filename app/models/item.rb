@@ -43,4 +43,11 @@ class Item < ApplicationRecord
   def hierarchical_parent
     collection
   end
+
+  # @see Items::Purge
+  # @see Items::Purger
+  # @return [Dry::Monads::Success(void)]
+  monadic_operation! def purge(...)
+    call_operation("items.purge", self, ...)
+  end
 end

@@ -45,6 +45,8 @@ module Entities
 
     HierarchicalType = String.enum(*HIERARCHICAL_TYPES)
 
+    PurgeMode = Coercible::Symbol.default(:purge).enum(:purge, :mark).fallback(:purge)
+
     Scope = EntityScope | ::Links::Types::Scope
 
     Slug = String.constrained(format: SLUG_FORMAT)
