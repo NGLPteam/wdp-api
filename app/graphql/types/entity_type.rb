@@ -55,6 +55,12 @@ module Types
     field :link_target_candidates, resolver: Resolvers::LinkTargetCandidateResolver,
       description: "Available link targets for this entity"
 
+    field :marked_for_purge, Boolean, null: false do
+      description <<~TEXT
+      Purely informational at this point, this signifies an entity that is currently marked for purge by itself or a parent.
+      TEXT
+    end
+
     field :ordering, Types::OrderingType, null: true do
       description "Look up an ordering for this entity by identifier"
 

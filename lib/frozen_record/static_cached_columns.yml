@@ -1795,6 +1795,19 @@
   default_function:
   has_default: true
   virtual: false
+- id: Collection#marked_for_purge
+  model_name: Collection
+  table_name: collections
+  name: marked_for_purge
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
+  default_function:
+  has_default: true
+  virtual: false
 - id: CollectionAttribution#id
   model_name: CollectionAttribution
   table_name: collection_attributions
@@ -2352,6 +2365,19 @@
   default:
   default_function:
   has_default: false
+  virtual: false
+- id: Community#marked_for_purge
+  model_name: Community
+  table_name: communities
+  name: marked_for_purge
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
+  default_function:
+  has_default: true
   virtual: false
 - id: CommunityMembership#id
   model_name: CommunityMembership
@@ -9894,6 +9920,19 @@
     sql_type: harvest_modification_status
     type: enum
   default: unharvested
+  default_function:
+  has_default: true
+  virtual: false
+- id: Item#marked_for_purge
+  model_name: Item
+  table_name: items
+  name: marked_for_purge
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
   default_function:
   has_default: true
   virtual: false

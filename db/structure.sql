@@ -3946,7 +3946,8 @@ CREATE TABLE public.collections (
     has_doi boolean DEFAULT false NOT NULL,
     doi_data jsonb DEFAULT '{}'::jsonb NOT NULL,
     doi public.citext GENERATED ALWAYS AS (public.extract_doi_from_data(doi_data)) STORED,
-    harvest_modification_status public.harvest_modification_status DEFAULT 'unharvested'::public.harvest_modification_status NOT NULL
+    harvest_modification_status public.harvest_modification_status DEFAULT 'unharvested'::public.harvest_modification_status NOT NULL,
+    marked_for_purge boolean DEFAULT false NOT NULL
 );
 
 
@@ -3989,7 +3990,8 @@ CREATE TABLE public.communities (
     logo_data jsonb,
     summary text,
     tagline text,
-    identifier public.citext NOT NULL
+    identifier public.citext NOT NULL,
+    marked_for_purge boolean DEFAULT false NOT NULL
 );
 
 
@@ -4047,7 +4049,8 @@ CREATE TABLE public.items (
     has_doi boolean DEFAULT false NOT NULL,
     doi_data jsonb DEFAULT '{}'::jsonb NOT NULL,
     doi public.citext GENERATED ALWAYS AS (public.extract_doi_from_data(doi_data)) STORED,
-    harvest_modification_status public.harvest_modification_status DEFAULT 'unharvested'::public.harvest_modification_status NOT NULL
+    harvest_modification_status public.harvest_modification_status DEFAULT 'unharvested'::public.harvest_modification_status NOT NULL,
+    marked_for_purge boolean DEFAULT false NOT NULL
 );
 
 
@@ -14102,6 +14105,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20250429192158'),
 ('20250505180140'),
 ('20250505182825'),
-('20250505195133');
+('20250505195133'),
+('20250611201949');
 
 
