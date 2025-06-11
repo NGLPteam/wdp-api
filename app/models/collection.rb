@@ -54,4 +54,11 @@ class Collection < ApplicationRecord
   def largest_child_collection
     children.preload(:entity_descendants).max_by { |c| c.entity_descendants.size }
   end
+
+  # @see Collections::Purge
+  # @see Collections::Purger
+  # @return [Dry::Monads::Success(void)]
+  monadic_operation! def purge(...)
+    call_operation("collections.purge", self, ...)
+  end
 end

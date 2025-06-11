@@ -127,5 +127,7 @@ module Types
     field :upsert_contribution, mutation: Mutations::UpsertContribution
 
     field :user_reset_password, mutation: Mutations::UserResetPassword
+
+    field :entity_purge, mutation: Mutations::EntityPurge
   end
 end
