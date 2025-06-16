@@ -6,7 +6,7 @@ module Harvesting
     class EntitiesPruner < Harvesting::Utility::AbstractEntitiesPruner
       param :harvest_attempt, Types::Attempt
 
-      delegate :harvest_source, to: :harvest_record
+      delegate :harvest_source, to: :harvest_attempt
 
       around_execute :provide_harvest_attempt!
       around_execute :provide_harvest_source!
