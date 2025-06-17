@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<main>
+  <templates>
+    <detail>
+      <background>none</background>
+      <show-announcements>false</show-announcements>
+      <show-body>true</show-body>
+      <show-hero-image>true</show-hero-image>
+      <variant>full</variant>
+      <slots>
+        <header/>
+        <subheader/>
+        <summary/>
+        <body>
+          {% if props.pdf_version.exists %}
+            {% pdfviewer props.pdf_version %}
+          {% else %}
+            {{props.body}}
+          {% endif %}
+        </body>
+      </slots>
+    </detail>
+    <contributor-list>
+      <background>light</background>
+      <filter>authors</filter>
+      <limit>4</limit>
+      <slots>
+        <header>
+          Contributors
+        </header>
+      </slots>
+    </contributor-list>
+    <blurb>
+      <background>light</background>
+      <width>full</width>
+      <slots>
+        <header>How to Cite</header>
+        <body>
+          {% if props.citation.exists %}
+          {% copylink "Citation" %}
+            {{ props.citation }}
+          {% endcopylink %}
+          {% endif %}
+        </body>
+      </slots>
+    </blurb>
+    <ordering>
+      <background>light</background>
+      <ordering-identifier>articles</ordering-identifier>
+      <ordering-source>parent</ordering-source>
+      <selection-source>self</selection-source>
+      <slots>
+        <previous-label>
+          Previous Article
+        </previous-label>
+        <next-label>
+          Next Article
+        </next-label>
+      </slots>
+    </ordering>
+    <link-list>
+      <background>light</background>
+      <dynamic-ordering-definition>
+        <filter>
+          <schema namespace="nglp" identifier="journal_article"/>
+          <schema namespace="nglp" identifier="collected_article"/>
+        </filter>
+        <order path="entity.published" dir="desc" nulls="last"/>
+        <render mode="flat"/>
+        <select direct="none">
+          <links contains="false" references="true"/>
+        </select>
+      </dynamic-ordering-definition>
+      <manual-list-name>manual</manual-list-name>
+      <selection-limit>8</selection-limit>
+      <selection-mode>dynamic</selection-mode>
+      <selection-source>self</selection-source>
+      <entity-context>full</entity-context>
+      <show-contributors>true</show-contributors>
+      <show-hero-image>false</show-hero-image>
+      <title>Related Articles</title>
+      <variant>grid</variant>
+      <slots>
+        <block-header>
+          Related Articles
+        </block-header>
+        <header-aside/>
+        <metadata/>
+        <subtitle/>
+      </slots>
+    </link-list>
+  </templates>
+</main>

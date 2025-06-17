@@ -1,0 +1,69 @@
+{
+  "namespace": "nglp",
+  "identifier": "collected_volume",
+  "name": "Collected Volume",
+  "version": "1.0.0",
+  "kind": "collection",
+  "ancestors": [
+    {
+      "name": "journal",
+      "namespace": "nglp",
+      "identifier": "journal",
+      "required": true
+    }
+  ],
+  "parents": [
+    {
+      "namespace": "nglp",
+      "identifier": "journal"
+    }
+  ],
+  "children": [
+    {
+      "namespace": "nglp",
+      "identifier": "collected_article"
+    }
+  ],
+  "orderings": [
+    {
+      "id": "articles",
+      "name": "Articles",
+      "filter": {
+        "schemas": [
+          {
+            "namespace": "nglp",
+            "identifier": "collected_article"
+          }
+        ]
+      },
+      "select": {
+        "direct": "descendants"
+      },
+      "order": [
+        { "path": "entity.published", "direction": "desc", "nulls": "last" },
+        { "path": "entity.created_at", "direction": "desc", "nulls": "last" }
+      ],
+      "position": 1
+    }
+  ],
+  "properties": [
+    {
+      "path": "id",
+      "label": "Harvesting Volume Identifier",
+      "type": "string",
+      "function": "metadata"
+    },
+    {
+      "path": "number",
+      "label": "Volume Number",
+      "type": "string",
+      "function": "metadata"
+    },
+    {
+      "path": "sortable_number",
+      "label": "Sortable Volume Number",
+      "type": "integer",
+      "function": "sorting"
+    }
+  ]
+}

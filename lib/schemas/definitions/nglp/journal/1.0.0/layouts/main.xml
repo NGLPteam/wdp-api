@@ -73,6 +73,60 @@
         <subtitle/>
       </slots>
     </descendant-list>
+    <descendant-list>
+      <background>none</background>
+      <dynamic-ordering-definition>
+        <filter>
+          <schema namespace="nglp" identifier="collected_volume"/>
+        </filter>
+        <order path="props.sortable_number#integer" dir="desc"/>
+        <order path="entity.title" dir="desc"/>
+        <render mode="flat"/>
+        <select direct="descendants"/>
+      </dynamic-ordering-definition>
+      <ordering-identifier>volumes</ordering-identifier>
+      <see-all-button-label>See All Articles</see-all-button-label>
+      <selection-fallback-mode>dynamic</selection-fallback-mode>
+      <selection-limit>1</selection-limit>
+      <selection-mode>named</selection-mode>
+      <selection-source>self</selection-source>
+      <entity-context>none</entity-context>
+      <show-hero-image>true</show-hero-image>
+      <show-nested-entities>true</show-nested-entities>
+      <title>Current Volume</title>
+      <use-selection-fallback>true</use-selection-fallback>
+      <variant>summary</variant>
+      <slots>
+        <block-header>Current Volume</block-header>
+      </slots>
+    </descendant-list>
+    <descendant-list>
+      <background>light</background>
+      <dynamic-ordering-definition>
+        <filter>
+          <schema namespace="nglp" identifier="collected_volume"/>
+        </filter>
+        <order path="props.sortable_number#integer" dir="desc"/>
+        <order path="entity.title" dir="desc"/>
+        <render mode="flat"/>
+        <select direct="descendants"/>
+      </dynamic-ordering-definition>
+      <selection-limit>4</selection-limit>
+      <selection-mode>dynamic</selection-mode>
+      <selection-source>self</selection-source>
+      <entity-context>none</entity-context>
+      <show-hero-image>false</show-hero-image>
+      <see-all-button-label>See All Volumes</see-all-button-label>
+      <see-all-ordering-identifier>volumes</see-all-ordering-identifier>
+      <title/>
+      <variant>summary</variant>
+      <slots>
+        <block-header>Recent Volumes</block-header>
+        <header-aside/>
+        <metadata/>
+        <subtitle/>
+      </slots>
+    </descendant-list>
     <link-list>
       <background>none</background>
       <dynamic-ordering-definition>
