@@ -9,10 +9,16 @@
   identifier: journal_article
   kind: item
 - namespace: nglp
+  identifier: collected_article
+  kind: item
+- namespace: nglp
   identifier: journal_issue
   kind: collection
 - namespace: nglp
   identifier: journal_volume
+  kind: collection
+- namespace: nglp
+  identifier: collected_volume
   kind: collection
 - namespace: nglp
   identifier: paper

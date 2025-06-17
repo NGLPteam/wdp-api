@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<main>
+  <templates>
+    <descendant-list>
+      <background>none</background>
+      <ordering-identifier>articles</ordering-identifier>
+      <see-all-button-label/>
+      <selection-limit>20</selection-limit>
+      <selection-mode>named</selection-mode>
+      <selection-source>self</selection-source>
+      <entity-context>none</entity-context>
+      <show-hero-image>false</show-hero-image>
+      <see-all-ordering-identifier>articles</see-all-ordering-identifier>
+      <browse-style>true</browse-style>
+      <title/>
+      <variant>summary</variant>
+      <slots>
+        <block-header>Articles</block-header>
+        <header-aside/>
+        <metadata/>
+        <subtitle/>
+      </slots>
+    </descendant-list>
+    <ordering>
+      <background>light</background>
+      <ordering-source>parent</ordering-source>
+      <selection-source>self</selection-source>
+      <slots>
+        <previous-label>
+          Previous Volume
+        </previous-label>
+        <next-label>
+          Next Volume
+        </next-label>
+      </slots>
+    </ordering>
+    <link-list>
+      <background>light</background>
+      <dynamic-ordering-definition>
+        <filter>
+          <schema namespace="nglp" identifier="journal_volume"/>
+          <schema namespace="nglp" identifier="collected_volume"/>
+        </filter>
+        <order path="entity.published" dir="desc"/>
+        <select direct="descendants">
+          <links references="true" />
+        </select>
+      </dynamic-ordering-definition>
+      <title/>
+      <selection-limit>8</selection-limit>
+      <selection-mode>dynamic</selection-mode>
+      <selection-source>self</selection-source>
+      <entity-context>full</entity-context>
+      <variant>grid</variant>
+      <slots>
+        <block-header>Related Volumes</block-header>
+        <header-aside/>
+        <metadata/>
+        <subtitle/>
+      </slots>
+    </link-list>
+  </templates>
+</main>
