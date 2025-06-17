@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<list-item>
+  <templates>
+    <list-item>
+      <slots>
+        <header>
+          {{entity.title}}
+        </header>
+        <subheader>
+          {{entity.subtitle}}
+        </subheader>
+        <description>
+          {% if entity.summary %} {{ entity.summary }} {% endif %}
+        </description>
+        <meta-a>
+          {% if entity.published %} Published {{entity.published}} {% endif %}
+        </meta-a>
+        <meta-b>
+          {% dotlist %}
+          {% dotitem %}
+          {{orderings.articles.count}} {% if orderings.articles.count == 1 %}Article{% else %}Articles{% endif %}
+          {% enddotitem %}
+          {% enddotlist %}
+        </meta-b>
+        <context-full>
+          {{ancestors.journal.title}}
+        </context-full>
+      </slots>
+    </list-item>
+  </templates>
+</list-item>

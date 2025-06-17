@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <templates>
+    <metadata>
+      <background>none</background>
+      <slots>
+        <header>
+          Article Metadata
+        </header>
+        <items-a>
+          {% if authors.exists %}
+            {% mditem %}
+              {% mdvalue label: "Author" %}
+                {{authors}}
+              {% endmdvalue %}
+            {% endmditem %}
+          {% endif %}
+          {% if entity.published %}
+            {% mditem %}
+              {% mdvalue label: "Published" %}
+                {{entity.published}}
+              {% endmdvalue %}
+            {% endmditem %}
+          {% endif %}
+          {% if props.meta.collected.exists %}
+            {% mditem %}
+              {% mdvalue label: "Collected" %}
+                {{ props.meta.collected }}
+              {% endmdvalue %}
+            {% endmditem %}
+          {% endif %}
+        </items-a>
+        <items-b>
+          {% mditem %}
+            {% mdvalue label: "Journal" %}
+              {{ ancestors.journal }}
+            {% endmdvalue %}
+          {% endmditem %}
+          {% if ancestors.volume %}
+            {% mditem %}
+              {% mdvalue label: "Volume" %}
+                {{ancestors.volume}}
+              {% endmdvalue %}
+            {% endmditem %}
+          {% endif %}
+        </items-b>
+        <items-c>
+          {% if props.meta.page_count.exists %}
+            {% mditem %}
+              {% mdvalue label: "Page Count" %}
+                {{props.meta.page_count}}
+              {% endmdvalue %}
+            {% endmditem %}
+          {% endif %}
+          {% if entity.has_doi %}
+            {% mditem %}
+              {% mdvalue label: "DOI" %}
+                {{entity | doi_link}}
+              {% endmdvalue %}
+            {% endmditem %}
+          {% endif %}
+          {% if ancestors.journal.props.cc_license.exists %}
+            {% mditem %}
+              {% mdvalue label: "License" %}
+                {{ancestors.journal.props.cc_license}}
+              {% endmdvalue %}
+            {% endmditem %}
+          {% endif %}
+        </items-c>
+        <items-d>
+          {% if props.pdf_version.exists %}
+            {% mditem %}
+              {% mdvalue label: "PDF Version" %}
+                {% asset props.pdf_version %}
+                  Download
+                {% endasset %}
+              {% endmdvalue %}
+            {% endmditem %}
+          {% endif %}
+          {% if props.preprint_version.exists %}
+            {% mditem %}
+              {% mdvalue label: "Pre-Print Version" %}
+                Yes
+              {% endmdvalue %}
+            {% endmditem %}
+          {% endif %}
+          {% if props.online_version.exists %}
+            {% mditem %}
+              {% mdvalue label: "Online Version" %}
+                {{props.online_version}}
+              {% endmdvalue %}
+            {% endmditem %}
+          {% endif %}
+        </items-d>
+      </slots>
+    </metadata>
+  </templates>
+</metadata>

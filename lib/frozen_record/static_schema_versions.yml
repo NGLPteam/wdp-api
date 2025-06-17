@@ -15,6 +15,9 @@
   identifier: journal_article
   number: 1.0.0
 - namespace: nglp
+  identifier: collected_article
+  number: 1.0.0
+- namespace: nglp
   identifier: paper
   number: 1.0.0
 - namespace: nglp
@@ -22,6 +25,9 @@
   number: 1.0.0
 - namespace: nglp
   identifier: journal_volume
+  number: 1.0.0
+- namespace: nglp
+  identifier: collected_volume
   number: 1.0.0
 - namespace: default
   identifier: collection
