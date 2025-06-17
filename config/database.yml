@@ -88,4 +88,5 @@ production:
   <<: *default
   database: wdp_api_production
   username: wdp_api
-  prepared_statements: false
+  # 10 minutes for very long-running job txn
+  statement_timeout: 600000

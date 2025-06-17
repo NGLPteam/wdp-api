@@ -6,6 +6,8 @@ class ApplicationJob < ActiveJob::Base
 
   include GoodJob::ActiveJobExtensions::Concurrency
 
+  retry_on ActiveRecord::QueryCanceled
+
   # Automatically retry jobs that encountered a deadlock
   retry_on ActiveRecord::Deadlocked
 
