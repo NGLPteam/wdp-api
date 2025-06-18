@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<hero>
+  <templates>
+    <hero>
+      <background>light</background>
+      <enable-descendant-browsing>false</enable-descendant-browsing>
+      <enable-descendant-search>false</enable-descendant-search>
+      <list-contributors>true</list-contributors>
+      <show-basic-view-metrics>true</show-basic-view-metrics>
+      <show-big-search-prompt>false</show-big-search-prompt>
+      <show-breadcrumbs>true</show-breadcrumbs>
+      <show-doi>true</show-doi>
+      <show-hero-image>false</show-hero-image>
+      <show-sharing-link>true</show-sharing-link>
+      <show-split-display>true</show-split-display>
+      <show-thumbnail-image>false</show-thumbnail-image>
+      <slots>
+        <big-search-prompt/>
+        <descendant-search-prompt/>
+        <header>
+          {{ ancestors.journal.title }}
+        </header>
+        <header-subtitle>
+          {% if ancestors.volume %} {{ancestors.volume.title}}, {% endif %}
+        </header-subtitle>
+        <header-aside/>
+        <header-sidebar>
+          {% if ancestors.journal.props.issn.exists %}
+            {% sbitem %} ISSN: {{ ancestors.journal.props.issn }} {% endsbitem %}
+          {% endif %}
+        </header-sidebar>
+        <header-summary/>
+        <metadata>
+          {% if entity.published %} Published {{ entity.published }} {% endif %}
+        </metadata>
+        <sidebar>
+          {% if ancestors.journal.props.cc_license.exists %}
+            {% sbitem icon: "cc" %} {{ ancestors.journal.props.cc_license }} License {% endsbitem %}
+          {% endif %}
+          {% if ancestors.journal.props.peer_reviewed.exists %}
+            {% sbitem icon: "user" %} Peer Reviewed {% endsbitem %}
+          {% endif %}
+        </sidebar>
+        <subheader>
+          {{ entity.title }}
+        </subheader>
+        <subheader-subtitle>
+          {{entity.subtitle}}
+        </subheader-subtitle>
+        <subheader-aside/>
+        <summary/>
+        <subheader-summary>
+          {% if props.abstract.exists %}
+            {{ props.abstract }}
+            {% elsif entity.summary %}
+              {{ entity.summary }}
+          {% endif %}
+        </subheader-summary>
+        <call-to-action>
+          {% if props.pdf_version.exists %}
+            {% asset props.pdf_version %}
+              Download PDF
+            {% endasset %}
+          {% endif %}
+        </call-to-action>
+      </slots>
+    </hero>
+  </templates>
+</hero>

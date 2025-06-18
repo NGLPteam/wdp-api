@@ -20,9 +20,15 @@
         </meta-a>
         <meta-b>
           {% dotlist %}
-          {% dotitem %}
-          {{orderings.issues.count}} {% if orderings.issues.count == 1 %}Issue{% else %}Issues{% endif %}
-          {% enddotitem %}
+          {% if orderings.issues.count > 0 %}
+            {% dotitem %}
+            {{orderings.issues.count}} {% if orderings.issues.count == 1 %}Issue{% else %}Issues{% endif %}
+            {% enddotitem %}
+          {% else %}
+            {% dotitem %}
+            {{orderings.volumes.count}} {% if orderings.volumes.count == 1 %}Volume{% else %}Volumes{% endif %}
+            {% enddotitem %}
+          {% endif %}
           {% dotitem %}
           {{orderings.articles.count}} {% if orderings.articles.count == 1 %}Article{% else %}Articles{% endif %}
           {% enddotitem %}

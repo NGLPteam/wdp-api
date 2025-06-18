@@ -1,0 +1,108 @@
+{
+  "namespace": "nglp",
+  "identifier": "collected_article",
+  "name": "Collected Article",
+  "version": "1.0.0",
+  "kind": "item",
+  "ancestors": [
+    {
+      "name": "volume",
+      "namespace": "nglp",
+      "identifier": "collected_volume",
+      "required": true
+    },
+    {
+      "name": "journal",
+      "namespace": "nglp",
+      "identifier": "journal",
+      "required": true
+    }
+  ],
+  "parents": [
+    {
+      "namespace": "nglp",
+      "identifier": "collected_volume"
+    }
+  ],
+  "orderings": [],
+  "properties": [
+    {
+      "path": "body",
+      "label": "Full Text",
+      "type": "full_text",
+      "required": false,
+      "wide": true,
+      "function": "content"
+    },
+    {
+      "path": "abstract",
+      "label": "Abstract",
+      "type": "full_text",
+      "required": false,
+      "wide": true,
+      "function": "content"
+    },
+    {
+      "path": "citation",
+      "label": "How to Cite",
+      "type": "markdown",
+      "required": false,
+      "function": "content"
+    },
+    {
+      "path": "preprint_version",
+      "type": "boolean",
+      "label": "Pre-Print Version",
+      "function": "metadata"
+    },
+    {
+      "path": "online_version",
+      "label": "Online Version",
+      "type": "url",
+      "required": false,
+      "function": "content"
+    },
+    {
+      "path": "pdf_version",
+      "label": "PDF Version",
+      "type": "asset",
+      "required": false,
+      "function": "content"
+    },
+    {
+      "path": "keywords",
+      "label": "Keywords",
+      "type": "tags",
+      "required": false,
+      "function": "metadata",
+      "default": []
+    },
+    {
+      "path": "volume_position",
+      "label": "Volume Position",
+      "type": "integer",
+      "function": "metadata",
+      "description": "The position of the article within the volume."
+    },
+    {
+      "path": "meta",
+      "legend": "Article Metadata",
+      "properties": [
+        {
+          "path": "collected",
+          "label": "Collected",
+          "type": "variable_date",
+          "function": "metadata"
+        },
+        {
+          "path": "page_count",
+          "label": "Page Count",
+          "type": "integer",
+          "function": "metadata",
+          "unorderable": true
+        }
+      ],
+      "type": "group"
+    }
+  ]
+}
