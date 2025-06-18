@@ -13,15 +13,26 @@
   </assigns>
   <contributions vocabulary="marc_codes">
     <map-external-role from="author" case-insensitive="true" to="aut" />
+    <map-external-role from="advisor" case-insensitive="true" to="ths" />
   </contributions>
   <entities>
     <item schema="nglp:paper">
       <identifier>{{record.identifier}}</identifier>
       <title>{{mods_data.title_info.title}}</title>
+      <published>
+        {% assign accessioned_ext = mods_data.extensions | where: "has_accessioned" | first %}
+
+        {% ifpresent accessioned_ext.date_accessioned %}
+        {{accessioned_ext.date_accessioned}}
+        {% endifpresent %}
+      </published>
       <properties>
         <full-text path="abstract" kind="html">
           {{mods_data.abstract}}
         </full-text>
+        <string path="language_code">
+          {{mods_data.language.language_term | first}}
+        </string>
         <variable-date path="accessioned">
           {% assign accessioned_ext = mods_data.extensions | where: "has_accessioned" | first %}
 
@@ -36,6 +47,17 @@
           {{available_ext.date_available}}
           {% endifpresent %}
         </variable-date>
+        <tags path="keywords">
+          {% for subject in mods_data.subjects %}
+          {% for topic in subject.topic %}
+          {% tag %}{{topic}}{% endtag %}
+          {% endfor %}
+          {% endfor %}
+        </tags>
+        <url path="handle">
+          <label>{{mods_data.title_info.title}} — Handle</label>
+          <href>{{mods_data.identifiers | where: "is_handle" | first }}</href>
+        </url>
         <asset path="pdf_version">
           <kind>pdf</kind>
           <mime-type>application/pdf</mime-type>
@@ -65,6 +87,7 @@
             {% endifpresent %}
           </url>
         </asset>
+        <string path="publisher.name">{{mods_data.origin_info.publisher}}</string>
         <string path="host.title">{{mods_data.origin_info.publisher}}</string>
       </properties>
       <contributions>

@@ -14,6 +14,8 @@
     { "path": "accessioned", "type": "variable_date", "label": "Accessioned", "description": "When the paper was added to a collection", "function": "metadata" },
     { "path": "available", "type": "variable_date", "label": "Available", "description": "When the paper was made available", "function": "metadata" },
     { "path": "language_code", "type": "string", "label": "Language Code" },
+    { "path": "keywords", "label": "Keywords", "type": "tags", "required": false, "function": "metadata", "default": [] },
+    { "path": "handle", "label": "Handle", "type": "url", "required": false, "function": "metadata" },
     {
       "type": "group",
       "path": "publisher",
