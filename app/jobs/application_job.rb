@@ -6,7 +6,15 @@ class ApplicationJob < ActiveJob::Base
 
   include GoodJob::ActiveJobExtensions::Concurrency
 
+  JobTimeoutError = Class.new(StandardError)
+
+  defines :max_runtime, type: Support::Types.Instance(ActiveSupport::Duration)
+
+  max_runtime 10.minutes
+
   retry_on ActiveRecord::QueryCanceled
+
+  retry_on JobTimeoutError, wait: :exponentially_longer, attempts: 10
 
   # Automatically retry jobs that encountered a deadlock
   retry_on ActiveRecord::Deadlocked
@@ -16,6 +24,13 @@ class ApplicationJob < ActiveJob::Base
 
   # This error is unlikely to resolve itself on subsequent executions.
   discard_on NameError
+
+  around_perform do |job, block|
+    # Timeout jobs after 10 minutes
+    Timeout.timeout(job.class.max_runtime, JobTimeoutError) do
+      block.call
+    end
+  end
 
   def call_operation!(name, ...)
     MeruAPI::Container[name].call(...).value!
