@@ -17,9 +17,9 @@ module Metadata
         attribute :key_date, :string
         attribute :calendar, :string
 
-        delegate :iso8601, to: :value, allow_nil: true
+        delegate :iso8601, to: :value, allow_nil: true, prefix: :date
 
-        attribute :iso8601, method: :iso8601
+        attribute :iso8601, method: :date_iso8601
 
         stringifies_drop_with! :iso8601
 
