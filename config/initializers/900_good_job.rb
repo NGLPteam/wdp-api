@@ -7,9 +7,9 @@ Rails.application.configure do
   queues = [
     "maintenance:1",
     "rendering:1",
-    "+purging,hierarchies,entities,orderings,invalidations,layouts:5",
-    "+harvest_pruning,extraction,harvesting,asset_fetching:5",
-    "permissions,processing,default,mailers,ahoy:5",
+    "+purging,hierarchies,entities,orderings,invalidations,layouts:2",
+    "+harvest_pruning,extraction,harvesting,asset_fetching:2",
+    "permissions,processing,default,mailers,ahoy:2",
   ].join(?;)
 
   config.good_job.cleanup_preserved_jobs_before_seconds_ago = 43_200 # half-day
@@ -18,11 +18,14 @@ Rails.application.configure do
   # config.good_job.on_thread_error = ->(exception) { Rollbar.error(exception) }
   config.good_job.execution_mode = :external
   config.good_job.queues = queues
-  config.good_job.max_threads = 5
-  config.good_job.poll_interval = 30 # seconds
+  config.good_job.max_threads = 10
+  config.good_job.poll_interval = 10 # seconds
   config.good_job.shutdown_timeout = 25 # seconds
+  config.good_job.advisory_lock_heartbeat = true
   config.good_job.enable_cron = true
+  config.good_job.enable_listen_notify = true
   config.good_job.enable_pauses = true
+  config.good_job.queue_select_limit = 1000
   config.good_job.cron = {
     "access.enforce_assignments": {
       cron: "*/5 * * * *",
