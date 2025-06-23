@@ -272,18 +272,53 @@ RSpec.shared_examples_for "a graphql entity with layouts" do
   end
 
   before do
+    # Get rid of layout invalidations from tests
+    LayoutInvalidation.delete_all
+
     manual_list_targets.first.render_layouts!
 
     entity.manual_list_assign!(list_name: "manual", template_kind: "descendant_list", targets: manual_list_targets)
-
-    entity.render_layouts!
   end
 
-  it "will fetch templates as desired" do
-    expect_request! do |req|
-      req.effect! execute_safely
+  context "when no templates have been rendered" do
+    it "will render the templates inline" do
+      expect_request! do |req|
+        req.effect! change(Layouts::MainInstance, :count).by(1)
+        req.effect! execute_safely
 
-      req.data! expected_shape
+        req.data! expected_shape
+      end
+    end
+  end
+
+  context "when an entity's layouts have been marked invalid" do
+    before do
+      entity.invalidate_layouts!
+    end
+
+    it "will process the invalid layouts inline" do
+      expect_request! do |req|
+        req.effect! change(LayoutInvalidation, :count).by(-1)
+        req.effect! execute_safely
+
+        req.data! expected_shape
+      end
+    end
+  end
+
+  context "when the templates have been rendered" do
+    before do
+      entity.render_layouts!
+    end
+
+    it "will fetch templates as desired" do
+      expect_request! do |req|
+        req.effect! keep_the_same(LayoutInvalidation, :count)
+        req.effect! keep_the_same(Layouts::MainInstance, :count)
+        req.effect! execute_safely
+
+        req.data! expected_shape
+      end
     end
   end
 end

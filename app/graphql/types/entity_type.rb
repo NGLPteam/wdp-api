@@ -143,10 +143,11 @@ module Types
       contextual_permission.then(&:roles)
     end
 
+    # @see InlineRendering#validated_layout_source
     # @see Types::EntityLayoutsType
     # @return [HierarchicalEntity]
     def layouts
-      object
+      object.validated_layout_source
     end
 
     # @return [Promise<Permissions::Grant>]
