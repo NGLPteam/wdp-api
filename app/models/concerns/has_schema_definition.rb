@@ -123,6 +123,13 @@ module HasSchemaDefinition
     call_operation("schemas.instances.extract_searchable_properties", self, context:)
   end
 
+  # @see Schemas::Instances::PatchProperties
+  # @param [Hash] values
+  # @return [Dry::Monads::Result]
+  monadic_operation! def patch_properties(values)
+    call_operation("schemas.instances.patch_properties", self, values)
+  end
+
   # @see Schemas::Instances::Reindex
   # @return [void]
   monadic_operation! def reindex

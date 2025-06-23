@@ -8,6 +8,7 @@ module Harvesting
         param :harvest_entity, Harvesting::Types::Entity
       end
 
+      include Dry::Matcher.for(:patch_properties, with: Dry::Matcher::ResultMatcher)
       include Harvesting::Middleware::ProvidesHarvestData
       include Harvesting::WithLogger
       include MeruAPI::Deps[
@@ -190,16 +191,46 @@ module Harvesting
         # Saving the entity should work at this point, and we need it to be persisted now.
         current_entity.save!
 
-        current_harvest_entity.extracted_properties.each do |path, value|
-          current_entity.write_property(path, value)
+        patch_properties do |m|
+          m.success do
+            # Re-save to reload after applying all properties.
+            current_entity.save!
+
+            with_assets << current_harvest_entity if current_harvest_entity.has_assets?
+          end
+
+          m.failure(:invalid_values) do |_, result|
+            log_validation_failures!(result)
+          end
+
+          m.failure do |*error|
+            # :nocov:
+            logger.fatal("could not write properties for unknown reason", tags: %w[unknown_property_write_failure], error:)
+            # :nocov:
+          end
         end
 
-        # Re-save to reload after applying all properties.
-        current_entity.save!
-
-        with_assets << current_harvest_entity if current_harvest_entity.has_assets?
-
         return
+      end
+
+      # @param [Dry::Validation::Result] result
+      # @return [void]
+      def log_validation_failures!(result)
+        result.errors.each do |error|
+          log_validation_failure! error
+        end
+      end
+
+      # @param [Dry::Validation::Message] error
+      # @return [void]
+      def log_validation_failure!(error)
+        human_path = error.path.map { "[#{_1.inspect}]" }.join
+
+        logger.error "failed to write `entity#{human_path}`: #{error.text}", tags: ["invalid_property", human_path], path: error.path
+      end
+
+      def patch_properties
+        current_entity.patch_properties(current_harvest_entity.extracted_properties)
       end
 
       # @param [String, nil] identifier
