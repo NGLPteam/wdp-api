@@ -107,9 +107,17 @@ module Schemas
       def filter_values
         ::Support::PropertyHash.new(values).tap do |v|
           v.paths.each do |path|
-            v.delete! path unless path.in? type_mapping.paths
+            v.delete! path unless known_path?(path)
           end
         end
+      end
+
+      def known_path?(path)
+        paths = [path].tap do |p|
+          p << path[/\A([^.]+)\./, 1] if /\./.match?(path)
+        end
+
+        paths.any? { _1.in?(type_mapping.paths) }
       end
     end
   end
