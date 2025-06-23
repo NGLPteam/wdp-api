@@ -8,7 +8,7 @@ module Entities
 
     good_job_control_concurrency_with(
       total_limit: 1,
-      key: -> { "#{self.class.name}-#{arguments.first.entity_id}" }
+      key: -> { "#{self.class.name}-#{arguments.first.id}" }
     )
 
     # @param [HierarchicalEntity] entity
