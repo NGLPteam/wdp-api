@@ -13,9 +13,13 @@ module Mutations
       # @param [HierarchicalEntity] entity
       # @return [void]
       def call(entity:)
+        entity_id = entity.to_encoded_id
+
         entity.purge!(mode: :mark)
 
         Entities::PurgeJob.perform_later entity
+
+        attach! :destroyed_id, entity_id
 
         attach! :entity, entity.reload
 
