@@ -4,6 +4,7 @@ RSpec.describe Mutations::EntityPurge, type: :request, graphql: :mutation, grant
   mutation_query! <<~GRAPHQL
   mutation EntityPurge($input: EntityPurgeInput!) {
     entityPurge(input: $input) {
+      destroyedId
       jobEnqueued
       entity {
         markedForPurge
@@ -30,6 +31,8 @@ RSpec.describe Mutations::EntityPurge, type: :request, graphql: :mutation, grant
 
   let(:valid_mutation_shape) do
     gql.mutation(:entity_purge) do |m|
+      m[:destroyed_id] = be_an_encoded_id
+
       m[:job_enqueued] = true
 
       m.prop :entity do |ent|
