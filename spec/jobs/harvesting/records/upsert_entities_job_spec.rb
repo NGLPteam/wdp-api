@@ -32,7 +32,8 @@ RSpec.describe Harvesting::Records::UpsertEntitiesJob, type: :job do
     it "can upsert entities from extracted harvest entities, and then upsert assets in a separate asynchronous job" do
       expect do
         described_class.perform_now harvest_record
-      end.to change(Collection, :count).by(2)
+      end.to execute_safely
+        .and change(Collection, :count).by(2)
         .and change(Item, :count).by(1)
         .and change(ItemContribution, :count).by(1)
         .and have_enqueued_job(Harvesting::Entities::UpsertAssetsJob).once
@@ -48,6 +49,7 @@ RSpec.describe Harvesting::Records::UpsertEntitiesJob, type: :job do
         expect(article).to have_schema_version("nglp:journal_article")
         expect(article.published).to eq VariablePrecisionDate.parse("2018-11-03")
         expect(article.doi).to eq "10.36021/jethe.v1i1.14.g5"
+        expect(article.read_property_value!("keywords")).to have(5).items
         expect(article.read_property_value!("abstract")).to include_json(
           lang: "en",
           kind: "html",
