@@ -14,7 +14,7 @@
   ],
   "parents": [
     {
-      "namespace": "nglp",
+      "namespace": "default",
       "identifier": "community"
     },
     {
@@ -45,7 +45,7 @@
       },
       "order": [
         {
-          "path": "ancestors.section.sort_position#integer",
+          "path": "ancestors.section.props.sort_position#integer",
           "direction": "asc",
           "nulls": "last"
         },
@@ -175,7 +175,7 @@
     {
       "path": "language",
       "label": "Language",
-      "type": "controlled_vocabulary",
+      "type": "string",
       "function": "metadata"
     }
   ]
