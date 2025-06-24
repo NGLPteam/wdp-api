@@ -14,7 +14,7 @@
   ],
   "parents": [
     {
-      "namespace": "nglp",
+      "namespace": "default",
       "identifier": "community"
     },
     {
@@ -175,7 +175,7 @@
     {
       "path": "language",
       "label": "Language",
-      "type": "controlled_vocabulary",
+      "type": "string",
       "function": "metadata"
     }
   ]
