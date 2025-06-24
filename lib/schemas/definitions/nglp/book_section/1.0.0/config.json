@@ -101,13 +101,12 @@
     {
       "path": "language",
       "label": "Language",
-      "type": "controlled_vocabulary",
-      "function": "metadata"
+      "type": "string"
     },
     {
       "path": "label",
       "label": "Label",
-      "description": "E.g. 'chaper', 'section', 'unit'. Used for presentation.",
+      "description": "E.g. 'chapter', 'section', 'unit'. Used for presentation.",
       "type": "string",
       "function": "presentation"
     }
