@@ -14,6 +14,7 @@
       <show-sharing-link>true</show-sharing-link>
       <show-split-display>false</show-split-display>
       <show-thumbnail-image>true</show-thumbnail-image>
+      <hide-summary>true</hide-summary>
       <slots>
         <call-to-action>
           {% if props.pdf_version.exists %}
