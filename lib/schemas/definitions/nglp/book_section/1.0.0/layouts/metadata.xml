@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <templates>
+    <metadata>
+      <background>none</background>
+      <slots>
+        <header>
+          {{ props.label | capitalize }} Metadata
+        </header>
+        <items-a>
+          {% if authors.exists %}
+            {% mditem %}
+              {% mdvalue label: "Author" %}
+                {{authors}}
+              {% endmdvalue %}
+            {% endmditem %}
+          {% endif %}
+          {% mditem %}
+            {% mdvalue label: "Keywords" %}
+              {{props.keywords}}
+            {% endmdvalue %}
+          {% endmditem %}
+        </items-a>
+        <items-b>
+          {% if props.pdf_version.exists %}
+            {% mditem %}
+              {% mdvalue label: "PDF Version" %}
+                {% asset props.pdf_version %}
+                  Download
+                {% endasset %}
+              {% endmdvalue %}
+            {% endmditem %}
+          {% endif %}
+          {% if props.online_version.exists %}
+            {% mditem %}
+              {% mdvalue label: "Online Version" %}
+                {{props.online_version}}
+              {% endmdvalue %}
+            {% endmditem %}
+          {% endif %}
+        </items-b>
+        <items-c/>
+        <items-d/>
+      </slots>
+    </metadata>
+  </templates>
+</metadata>

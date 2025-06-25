@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<navigation>
+  <templates>
+    <navigation>
+      <background>none</background>
+      <hide-metadata>true</hide-metadata>
+      <slots>
+        <entity-label>
+          Text
+        </entity-label>
+      </slots>
+    </navigation>
+  </templates>
+</navigation>
