@@ -20,11 +20,12 @@ default: &default
   host: db
   username: postgres
   password: password
-  # schema_search_path: '"$user",heroku_ext,public'
 
   # For details on connection pooling, see Rails configuration guide
   # https://guides.rubyonrails.org/configuring.html#database-pooling
   pool: 100
+  variables:
+    statement_timeout: 600000
 
 development:
   <<: *default
@@ -89,4 +90,5 @@ production:
   database: wdp_api_production
   username: wdp_api
   # 10 minutes for very long-running job txn
-  statement_timeout: 600000
+  variables:
+    statement_timeout: 600000
