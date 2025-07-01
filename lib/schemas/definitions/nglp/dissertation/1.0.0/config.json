@@ -16,6 +16,8 @@
     { "path": "graduation_date", "label": "Graduation Date", "type": "variable_date", "function": "metadata" },
     { "path": "streaming_media", "label": "Streaming Media", "type": "url", "function": "metadata" },
     { "path": "keywords", "label": "Keywords", "type": "tags", "required": false, "function": "metadata", "default": [] },
+    { "path": "language_code", "type": "string", "label": "Language Code" },
+    { "path": "handle", "label": "Handle", "type": "url", "required": false, "function": "metadata" },
     {
       "type": "select",
       "path": "cc_license",
