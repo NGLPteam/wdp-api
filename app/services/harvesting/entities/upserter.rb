@@ -135,14 +135,15 @@ module Harvesting
       do_for! def attach!(harvest_entity, parent:)
         @current_harvest_entity = harvest_entity
 
+        # @note Temporarily disabled while troubleshooting job lockup issues
         @advisory_key = [parent.identifier, harvest_entity.identifier].join(?:)
 
         with_harvest_entity current_harvest_entity do
-          ApplicationRecord.with_advisory_lock advisory_key do
-            @current_entity = parent.find_or_initialize_harvested_child_for(current_harvest_entity)
+          # ApplicationRecord.with_advisory_lock advisory_key do
+          @current_entity = parent.find_or_initialize_harvested_child_for(current_harvest_entity)
 
-            maybe_apply_data!
-          end
+          maybe_apply_data!
+          # end
 
           finalize_connection!
 
