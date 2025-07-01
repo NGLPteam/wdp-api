@@ -24,6 +24,14 @@
   default: true
   protocol_name: "oai"
   metadata_format_name: "mets"
+- id: mets_dissertation
+  name: METS Dissertation
+  default: false
+  protocol_name: "oai"
+  metadata_format_name: "mets"
+  description: >
+    Similar to the default METS mapping, but for creating dissertations
+    instead of paper entities.
 - id: oaidc_journal_article
   name: OAIDC Journal Article
   default: false
