@@ -14,7 +14,7 @@ module Layouts
 
     Entity = Instance(::HierarchicalEntity)
 
-    Generation = String.constrained(uuid_v4: true)
+    Generation = ::Rendering::Types::Generation
 
     Kind = LayoutKind = ApplicationRecord.dry_pg_enum(:layout_kind)
 

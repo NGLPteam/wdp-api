@@ -13,6 +13,8 @@ module LayoutInstance
 
     belongs_to :entity, polymorphic: true
 
+    has_one :instance_digest, as: :layout_instance, inverse_of: :layout_instance, class_name: "Layouts::InstanceDigest", dependent: :delete
+
     has_many :template_instance_digests, as: :layout_instance, inverse_of: :layout_instance, class_name: "Templates::InstanceDigest", dependent: :delete_all
 
     defines :template_instance_names, type: Layouts::Types::Associations
@@ -44,9 +46,40 @@ module LayoutInstance
 
   alias all_slots_empty? all_slots_empty
 
+  # @api private
+  # @see Layouts::Digests::Upserter
+  # @return [Hash]
+  def build_digest_attributes
+    {
+      layout_definition_type:,
+      layout_definition_id:,
+      layout_instance_type:,
+      layout_instance_id: id,
+      entity_type:,
+      entity_id:,
+      layout_kind:,
+      generation:,
+      config:,
+    }
+  end
+
   # @return [void]
   def clear_template_instances!
     @template_instances = false
+  end
+
+  # @!attribute [r] layout_definition_type
+  # Polymorphic association helper
+  # @return [String]
+  def layout_definition_type
+    layout_record.definition_klass_name
+  end
+
+  # @!attribute [r] layout_instance_type
+  # Polymorphic association helper
+  # @return [String]
+  def layout_instance_type
+    model_name.to_s
   end
 
   # @return [<Symbol>]
@@ -57,6 +90,10 @@ module LayoutInstance
   # @return [<TemplateInstance>]
   def template_instances
     @template_instances ||= fetch_template_instances
+  end
+
+  monadic_operation! def upsert_layout_instance_digest
+    call_operation("layouts.digests.instances.upsert", self)
   end
 
   # @see Templates::Digests::Instances::LayoutUpserter

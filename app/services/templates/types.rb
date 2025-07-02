@@ -53,7 +53,7 @@ module Templates
 
     Entities = Coercible::Array.of(Entity)
 
-    Generation = String.constrained(uuid_v4: true)
+    Generation = ::Rendering::Types::Generation
 
     Kind = TemplateKind = ApplicationRecord.dry_pg_enum(:template_kind)
 

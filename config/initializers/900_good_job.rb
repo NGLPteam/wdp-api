@@ -68,6 +68,11 @@ Rails.application.configure do
       class: "Entities::AuditMismatchedSchemasJob",
       description: "Audit mismatched schemas for entities",
     },
+    "entities.derive_layout_definitions": {
+      cron: "4,24,44 * * * *",
+      class: "Entities::DeriveLayoutDefinitionsJob",
+      description: "Derive layout definitions for each entity system-wide",
+    },
     "entities.populate_missing_orderings": {
       cron: "*/10 * * * *",
       class: "Entities::PopulateMissingOrderingsJob",
@@ -104,12 +109,12 @@ Rails.application.configure do
       description: "Process stale orderings",
       args: -> { [Time.current.iso8601] },
     },
-    # "rendering.process_layout_invalidations": {
-    #  cron: "*/5 * * * *",
-    #  class: "Rendering::ProcessLayoutInvalidationsJob",
-    #  description: "Process layout invalidations & re-rendering",
-    #  args: -> { [Time.current.iso8601] }
-    # },
+    "rendering.process_stale_entities": {
+      cron: "*/5 * * * *",
+      class: "Rendering::ProcessStaleEntitiesJob",
+      description: "Process stale entities to re-render",
+      args: -> { [Time.current.iso8601] }
+    },
     "schemas.orderings.refresh_counts": {
       cron: "*/10 * * * *",
       class: "Schemas::Orderings::RefreshEntryCountsJob",

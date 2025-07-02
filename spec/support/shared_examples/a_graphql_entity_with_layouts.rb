@@ -20,154 +20,165 @@ RSpec.shared_examples_for "a graphql entity with layouts" do
     <<~GRAPHQL
     query #{query_name}($slug: Slug!) {
       entity: #{field_name}(slug: $slug) {
-        layouts {
-          hero {
-            definition: layoutDefinition {
+        ... AllLayoutsFragment
+      }
+
+      other: #{field_name}(slug: $slug) {
+        ... AllLayoutsFragment
+      }
+    }
+
+    fragment AllLayoutsFragment on Entity {
+      layouts {
+        renderedInline
+
+        hero {
+          definition: layoutDefinition {
+            id
+          }
+          ... LayoutInstanceFragment
+
+          template {
+            definition {
               id
             }
-            ... LayoutInstanceFragment
 
-            template {
-              definition {
-                id
+            ... TemplateInstanceFragment
+
+            slots {
+              header {
+                content
               }
 
-              ... TemplateInstanceFragment
+              headerAside {
+                content
+              }
 
-              slots {
-                header {
-                  content
-                }
+              headerSidebar {
+                content
+              }
 
-                headerAside {
-                  content
-                }
-
-                headerSidebar {
-                  content
-                }
-
-                headerSummary {
-                  content
-                }
+              headerSummary {
+                content
               }
             }
           }
+        }
 
-          listItem {
-            definition: layoutDefinition {
+        listItem {
+          definition: layoutDefinition {
+            id
+          }
+          ... LayoutInstanceFragment
+
+          template {
+            definition {
               id
             }
-            ... LayoutInstanceFragment
+            ... TemplateInstanceFragment
+          }
+        }
 
-            template {
+        navigation {
+          definition: layoutDefinition {
+            id
+          }
+          ... LayoutInstanceFragment
+
+          template {
+            definition {
+              id
+            }
+
+            ... TemplateInstanceFragment
+          }
+        }
+
+        metadata {
+          definition: layoutDefinition {
+            id
+          }
+          ... LayoutInstanceFragment
+
+          template {
+            definition {
+              id
+            }
+
+            ... TemplateInstanceFragment
+          }
+        }
+
+        supplementary {
+          definition: layoutDefinition {
+            id
+          }
+          ... LayoutInstanceFragment
+
+          template {
+            definition {
+              id
+            }
+
+            ... TemplateInstanceFragment
+          }
+        }
+
+        main {
+          definition: layoutDefinition {
+            id
+          }
+          ... LayoutInstanceFragment
+
+          templates {
+            __typename
+
+            ... on TemplateInstance {
+              ... TemplateInstanceFragment
+            }
+
+            ... on DescendantListTemplateInstance {
               definition {
                 id
               }
-              ... TemplateInstanceFragment
+              ... HasEntityListFragment
             }
-          }
 
-          navigation {
-            definition: layoutDefinition {
-              id
-            }
-            ... LayoutInstanceFragment
-
-            template {
+            ... on LinkListTemplateInstance {
               definition {
                 id
               }
-
-              ... TemplateInstanceFragment
+              ... HasEntityListFragment
             }
-          }
 
-          metadata {
-            definition: layoutDefinition {
-              id
-            }
-            ... LayoutInstanceFragment
-
-            template {
+            ... on OrderingTemplateInstance {
               definition {
                 id
               }
-
-              ... TemplateInstanceFragment
-            }
-          }
-
-          supplementary {
-            definition: layoutDefinition {
-              id
-            }
-            ... LayoutInstanceFragment
-
-            template {
-              definition {
-                id
-              }
-
-              ... TemplateInstanceFragment
-            }
-          }
-
-          main {
-            definition: layoutDefinition {
-              id
-            }
-            ... LayoutInstanceFragment
-
-            templates {
-              __typename
-
-              ... on TemplateInstance {
-                ... TemplateInstanceFragment
-              }
-
-              ... on DescendantListTemplateInstance {
-                definition {
-                  id
-                }
-                ... HasEntityListFragment
-              }
-
-              ... on LinkListTemplateInstance {
-                definition {
-                  id
-                }
-                ... HasEntityListFragment
-              }
-
-              ... on OrderingTemplateInstance {
-                definition {
-                  id
-                }
-                orderingPair {
-                  first
-                  last
-                  exists
-                  count
+              orderingPair {
+                first
+                last
+                exists
+                count
+                position
+                prevSibling {
+                  entrySlug
+                  entryTitle
                   position
-                  prevSibling {
-                    entrySlug
-                    entryTitle
-                    position
 
-                  }
+                }
 
-                  nextSibling {
-                    entrySlug
-                    entryTitle
-                    position
-                  }
+                nextSibling {
+                  entrySlug
+                  entryTitle
+                  position
                 }
               }
             }
           }
         }
       }
+
     }
 
     fragment AnyEntityFragment on AnyEntity {
@@ -245,10 +256,14 @@ RSpec.shared_examples_for "a graphql entity with layouts" do
     GRAPHQL
   end
 
+  let(:should_have_rendered) { false }
+
   let(:expected_shape) do
     gql.query do |q|
       q.prop :entity do |ent|
         ent.prop :layouts do |lyts|
+          lyts[:rendered_inline] = should_have_rendered
+
           Layout.pluck(:layout_kind).without("main").each do |kind|
             lyts.prop kind do |lyt|
               lyt[:last_rendered_at] = be_present
@@ -280,7 +295,9 @@ RSpec.shared_examples_for "a graphql entity with layouts" do
     entity.manual_list_assign!(list_name: "manual", template_kind: "descendant_list", targets: manual_list_targets)
   end
 
-  xcontext "when no templates have been rendered" do
+  context "when no templates have been rendered" do
+    let(:should_have_rendered) { true }
+
     it "will render the templates inline" do
       expect_request! do |req|
         req.effect! change(Layouts::MainInstance, :count).by(1)
@@ -291,7 +308,9 @@ RSpec.shared_examples_for "a graphql entity with layouts" do
     end
   end
 
-  xcontext "when an entity's layouts have been marked invalid" do
+  context "when an entity's layouts have been marked invalid" do
+    let(:should_have_rendered) { true }
+
     before do
       entity.invalidate_layouts!
     end
@@ -299,6 +318,7 @@ RSpec.shared_examples_for "a graphql entity with layouts" do
     it "will process the invalid layouts inline" do
       expect_request! do |req|
         req.effect! change(LayoutInvalidation, :count).by(-1)
+        req.effect! change(StaleEntity, :count).by(-1)
         req.effect! execute_safely
 
         req.data! expected_shape
@@ -307,6 +327,8 @@ RSpec.shared_examples_for "a graphql entity with layouts" do
   end
 
   context "when the templates have been rendered" do
+    let(:should_have_rendered) { false }
+
     before do
       entity.render_layouts!
     end
@@ -315,6 +337,7 @@ RSpec.shared_examples_for "a graphql entity with layouts" do
       expect_request! do |req|
         req.effect! keep_the_same(LayoutInvalidation, :count)
         req.effect! keep_the_same(Layouts::MainInstance, :count)
+        req.effect! keep_the_same(StaleEntity, :count)
         req.effect! execute_safely
 
         req.data! expected_shape

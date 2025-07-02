@@ -63,5 +63,7 @@ module Layouts
       dependent: :destroy,
       inverse_of: :layout_instance,
       foreign_key: :layout_instance_id
+
+    has_one :schema_version, through: :layout_definition
   end
 end

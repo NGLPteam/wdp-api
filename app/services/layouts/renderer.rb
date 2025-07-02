@@ -7,14 +7,13 @@ module Layouts
       param :layout_definition, Layouts::Types::LayoutDefinition
 
       param :entity, Layouts::Types::Entity
+
+      option :generation, Rendering::Types::Generation, default: proc { SecureRandom.uuid }
     end
 
     standard_execution!
 
     delegate :layout_kind, to: :layout_definition
-
-    # @return [String]
-    attr_reader :generation
 
     # @return [Layout]
     attr_reader :layout
@@ -39,8 +38,6 @@ module Layouts
     end
 
     wrapped_hook! def prepare
-      @generation = SecureRandom.uuid
-
       @layout = Layout.find layout_kind
 
       @layout_instance = layout.instance_klass.fetch_for(entity, layout_definition:)
@@ -61,6 +58,10 @@ module Layouts
       layout_definition.template_definitions.each do |template_definition|
         yield template_definition.render(layout_instance, generation:)
       end
+
+      layout_instance.clear_template_instances!
+
+      super
     end
 
     around_render_each_template :track_render!
@@ -74,6 +75,8 @@ module Layouts
     end
 
     wrapped_hook! def upsert_digests
+      yield layout_instance.upsert_layout_instance_digest
+
       yield layout_instance.upsert_template_instance_digests
 
       super
@@ -83,7 +86,7 @@ module Layouts
 
     # @return [void]
     def track_render!
-      layout_instance.track_render! do
+      layout_instance.track_render!(generation:) do
         yield
       end
     end

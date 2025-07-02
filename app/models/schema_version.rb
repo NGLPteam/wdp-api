@@ -35,6 +35,10 @@ class SchemaVersion < ApplicationRecord
 
   has_many_readonly :entity_descendants, inverse_of: :schema_version
 
+  has_many :entity_derived_layout_definitions, inverse_of: :schema_version, dependent: :delete_all
+
+  has_many :layout_definition_hierarchies, inverse_of: :schema_version, dependent: :delete_all
+
   has_many :schema_version_ancestors, dependent: :delete_all, inverse_of: :schema_version
   has_many :schema_version_descendants, dependent: :delete_all, inverse_of: :target_version, class_name: "SchemaVersionAncestor"
   has_many :schema_version_properties, dependent: :delete_all, inverse_of: :schema_version

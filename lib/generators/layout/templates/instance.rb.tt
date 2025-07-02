@@ -37,5 +37,7 @@ module Layouts
       inverse_of: :layout_instance,
       foreign_key: :layout_instance_id
     <%- end -%>
+
+    has_one :schema_version, through: :layout_definition
   end
 end

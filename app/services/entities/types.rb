@@ -43,6 +43,8 @@ module Entities
 
     Entities = Array.of(Entity)
 
+    Generation = ::Rendering::Types::Generation
+
     HierarchicalType = String.enum(*HIERARCHICAL_TYPES)
 
     PurgeMode = Coercible::Symbol.default(:purge).enum(:purge, :mark).fallback(:purge)
