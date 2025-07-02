@@ -25,7 +25,7 @@ module System
         warn "Refreshing #{sv.declaration} instances" unless Rails.env.test?
         # :nocov:
 
-        # Schemas::Versions::ResetAllOrderingsJob.perform_later sv
+        Schemas::Versions::ResetAllOrderingsJob.perform_later sv
       end unless skip_refresh
 
       yield populate_sources.()

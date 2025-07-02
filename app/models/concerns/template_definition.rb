@@ -10,7 +10,13 @@ module TemplateDefinition
   included do
     attribute :config, Templates::Definitions::Config.to_type
 
+    has_one :definition_digest, as: :template_definition, inverse_of: :template_definition, class_name: "Templates::DefinitionDigest", dependent: :delete
+
+    has_many_readonly :entity_missing_template_definitions, as: :template_definition, inverse_of: :template_definition
+
     has_many :instance_digests, as: :template_definition, inverse_of: :template_definition, class_name: "Templates::InstanceDigest", dependent: :delete_all
+
+    has_many :rendering_template_logs, as: :template_definition, class_name: "Rendering::TemplateLog", dependent: :delete_all
 
     scope :sans_positions, ->(*positions) do
       positions.flatten!.uniq!
@@ -23,6 +29,8 @@ module TemplateDefinition
     delegate :policy_class, to: :class
 
     before_validation :infer_config!
+
+    after_save :upsert_digest!
   end
 
   # @see Templates::Definitions::BuildConfig
@@ -56,6 +64,10 @@ module TemplateDefinition
 
   monadic_operation! def render_slots(entity:)
     call_operation("templates.definitions.render_slots", self, entity)
+  end
+
+  monadic_operation! def upsert_digest
+    call_operation("templates.digests.definitions.upsert", self)
   end
 
   private

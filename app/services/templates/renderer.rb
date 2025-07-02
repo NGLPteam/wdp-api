@@ -65,7 +65,7 @@ module Templates
 
     # @return [void]
     def track_render!
-      template_instance.track_render! do
+      template_instance.track_render!(generation:) do
         yield
       end
     end

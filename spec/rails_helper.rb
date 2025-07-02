@@ -44,7 +44,7 @@ SimpleCov.start "rails" do
   add_filter "lib/patches"
   add_filter "lib/support"
   add_filter "spec/support"
-end
+end if defined?(Rails) && Rails.env.test?
 
 require File.expand_path("../config/environment", __dir__)
 
@@ -83,7 +83,7 @@ begin
 rescue ActiveRecord::PendingMigrationError => e
   puts e.to_s.strip
   exit 1
-end
+end if Rails.env.test?
 
 # Requires supporting ruby files with custom matchers and macros, etc, in
 # spec/support/ and its subdirectories. Files matching `spec/**/*_spec.rb` are

@@ -10,11 +10,11 @@ module HierarchicalEntity
   include EntityTemplating
   include HasHarvestLookupHelpers
   include HasSystemSlug
-  include InlineRendering
   include Liquifies
   include ManualListSource
   include ManualListTarget
   include ModifiedByAdmin
+  include Renderable
   include SyncsEntities
   include TimestampScopes
   include ScopesForEntityComposedText

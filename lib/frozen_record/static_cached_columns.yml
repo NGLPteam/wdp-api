@@ -1808,6 +1808,45 @@
   default_function:
   has_default: true
   virtual: false
+- id: Collection#generation
+  model_name: Collection
+  table_name: collections
+  name: generation
+  type: uuid
+  'null': true
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: Collection#render_duration
+  model_name: Collection
+  table_name: collections
+  name: render_duration
+  type: decimal
+  'null': true
+  sql_type_metadata:
+    sql_type: numeric
+    type: decimal
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: Collection#last_rendered_at
+  model_name: Collection
+  table_name: collections
+  name: last_rendered_at
+  type: datetime
+  'null': true
+  sql_type_metadata:
+    sql_type: timestamp without time zone
+    type: datetime
+  default:
+  default_function:
+  has_default: false
+  virtual: false
 - id: CollectionAttribution#id
   model_name: CollectionAttribution
   table_name: collection_attributions
@@ -2378,6 +2417,45 @@
   default: 'false'
   default_function:
   has_default: true
+  virtual: false
+- id: Community#generation
+  model_name: Community
+  table_name: communities
+  name: generation
+  type: uuid
+  'null': true
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: Community#render_duration
+  model_name: Community
+  table_name: communities
+  name: render_duration
+  type: decimal
+  'null': true
+  sql_type_metadata:
+    sql_type: numeric
+    type: decimal
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: Community#last_rendered_at
+  model_name: Community
+  table_name: communities
+  name: last_rendered_at
+  type: datetime
+  'null': true
+  sql_type_metadata:
+    sql_type: timestamp without time zone
+    type: datetime
+  default:
+  default_function:
+  has_default: false
   virtual: false
 - id: CommunityMembership#id
   model_name: CommunityMembership
@@ -4203,6 +4281,20 @@
   default_function:
   has_default: false
   virtual: false
+- id: Entity#real
+  model_name: Entity
+  table_name: entities
+  name: real
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default:
+  default_function: "(scope = ANY (ARRAY['communities'::ltree, 'collections'::ltree,
+    'items'::ltree]))"
+  has_default: false
+  virtual: true
 - id: EntityAncestor#entity_type
   model_name: EntityAncestor
   table_name: entity_ancestors
@@ -4684,6 +4776,125 @@
 - id: EntityComposedText#updated_at
   model_name: EntityComposedText
   table_name: entity_composed_texts
+  name: updated_at
+  type: datetime
+  'null': false
+  sql_type_metadata:
+    sql_type: timestamp(6) without time zone
+    type: datetime
+    precision: 6
+  default:
+  default_function: CURRENT_TIMESTAMP
+  has_default: true
+  virtual: false
+- id: EntityDerivedLayoutDefinition#id
+  model_name: EntityDerivedLayoutDefinition
+  table_name: entity_derived_layout_definitions
+  name: id
+  type: uuid
+  'null': false
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default:
+  default_function: gen_random_uuid()
+  has_default: true
+  virtual: false
+- id: EntityDerivedLayoutDefinition#schema_version_id
+  model_name: EntityDerivedLayoutDefinition
+  table_name: entity_derived_layout_definitions
+  name: schema_version_id
+  type: uuid
+  'null': false
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: EntityDerivedLayoutDefinition#entity_type
+  model_name: EntityDerivedLayoutDefinition
+  table_name: entity_derived_layout_definitions
+  name: entity_type
+  type: string
+  'null': false
+  sql_type_metadata:
+    sql_type: character varying
+    type: string
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: EntityDerivedLayoutDefinition#entity_id
+  model_name: EntityDerivedLayoutDefinition
+  table_name: entity_derived_layout_definitions
+  name: entity_id
+  type: uuid
+  'null': false
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: EntityDerivedLayoutDefinition#layout_definition_type
+  model_name: EntityDerivedLayoutDefinition
+  table_name: entity_derived_layout_definitions
+  name: layout_definition_type
+  type: string
+  'null': false
+  sql_type_metadata:
+    sql_type: character varying
+    type: string
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: EntityDerivedLayoutDefinition#layout_definition_id
+  model_name: EntityDerivedLayoutDefinition
+  table_name: entity_derived_layout_definitions
+  name: layout_definition_id
+  type: uuid
+  'null': false
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: EntityDerivedLayoutDefinition#layout_kind
+  model_name: EntityDerivedLayoutDefinition
+  table_name: entity_derived_layout_definitions
+  name: layout_kind
+  type: enum
+  'null': false
+  sql_type_metadata:
+    sql_type: layout_kind
+    type: enum
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: EntityDerivedLayoutDefinition#created_at
+  model_name: EntityDerivedLayoutDefinition
+  table_name: entity_derived_layout_definitions
+  name: created_at
+  type: datetime
+  'null': false
+  sql_type_metadata:
+    sql_type: timestamp(6) without time zone
+    type: datetime
+    precision: 6
+  default:
+  default_function: CURRENT_TIMESTAMP
+  has_default: true
+  virtual: false
+- id: EntityDerivedLayoutDefinition#updated_at
+  model_name: EntityDerivedLayoutDefinition
+  table_name: entity_derived_layout_definitions
   name: updated_at
   type: datetime
   'null': false
@@ -5484,6 +5695,189 @@
   default:
   default_function: CURRENT_TIMESTAMP
   has_default: true
+  virtual: false
+- id: EntityMissingLayoutInstance#entity_type
+  model_name: EntityMissingLayoutInstance
+  table_name: entity_missing_layout_instances
+  name: entity_type
+  type: string
+  'null': true
+  sql_type_metadata:
+    sql_type: character varying
+    type: string
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: EntityMissingLayoutInstance#entity_id
+  model_name: EntityMissingLayoutInstance
+  table_name: entity_missing_layout_instances
+  name: entity_id
+  type: uuid
+  'null': true
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: EntityMissingLayoutInstance#layout_definition_type
+  model_name: EntityMissingLayoutInstance
+  table_name: entity_missing_layout_instances
+  name: layout_definition_type
+  type: string
+  'null': true
+  sql_type_metadata:
+    sql_type: character varying
+    type: string
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: EntityMissingLayoutInstance#layout_definition_id
+  model_name: EntityMissingLayoutInstance
+  table_name: entity_missing_layout_instances
+  name: layout_definition_id
+  type: uuid
+  'null': true
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: EntityMissingLayoutInstance#layout_kind
+  model_name: EntityMissingLayoutInstance
+  table_name: entity_missing_layout_instances
+  name: layout_kind
+  type: enum
+  'null': true
+  sql_type_metadata:
+    sql_type: layout_kind
+    type: enum
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: EntityMissingTemplateInstance#entity_type
+  model_name: EntityMissingTemplateInstance
+  table_name: entity_missing_template_instances
+  name: entity_type
+  type: string
+  'null': true
+  sql_type_metadata:
+    sql_type: character varying
+    type: string
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: EntityMissingTemplateInstance#entity_id
+  model_name: EntityMissingTemplateInstance
+  table_name: entity_missing_template_instances
+  name: entity_id
+  type: uuid
+  'null': true
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: EntityMissingTemplateInstance#layout_definition_type
+  model_name: EntityMissingTemplateInstance
+  table_name: entity_missing_template_instances
+  name: layout_definition_type
+  type: string
+  'null': true
+  sql_type_metadata:
+    sql_type: character varying
+    type: string
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: EntityMissingTemplateInstance#layout_definition_id
+  model_name: EntityMissingTemplateInstance
+  table_name: entity_missing_template_instances
+  name: layout_definition_id
+  type: uuid
+  'null': true
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: EntityMissingTemplateInstance#template_definition_type
+  model_name: EntityMissingTemplateInstance
+  table_name: entity_missing_template_instances
+  name: template_definition_type
+  type: string
+  'null': true
+  sql_type_metadata:
+    sql_type: character varying
+    type: string
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: EntityMissingTemplateInstance#template_definition_id
+  model_name: EntityMissingTemplateInstance
+  table_name: entity_missing_template_instances
+  name: template_definition_id
+  type: uuid
+  'null': true
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: EntityMissingTemplateInstance#layout_kind
+  model_name: EntityMissingTemplateInstance
+  table_name: entity_missing_template_instances
+  name: layout_kind
+  type: enum
+  'null': true
+  sql_type_metadata:
+    sql_type: layout_kind
+    type: enum
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: EntityMissingTemplateInstance#template_kind
+  model_name: EntityMissingTemplateInstance
+  table_name: entity_missing_template_instances
+  name: template_kind
+  type: enum
+  'null': true
+  sql_type_metadata:
+    sql_type: template_kind
+    type: enum
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: EntityMissingTemplateInstance#position
+  model_name: EntityMissingTemplateInstance
+  table_name: entity_missing_template_instances
+  name: position
+  type: integer
+  'null': true
+  sql_type_metadata:
+    sql_type: bigint
+    type: integer
+    limit: 8
+  default:
+  default_function:
+  has_default: false
   virtual: false
 - id: EntityOrderableProperty#id
   model_name: EntityOrderableProperty
@@ -9936,6 +10330,45 @@
   default_function:
   has_default: true
   virtual: false
+- id: Item#generation
+  model_name: Item
+  table_name: items
+  name: generation
+  type: uuid
+  'null': true
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: Item#render_duration
+  model_name: Item
+  table_name: items
+  name: render_duration
+  type: decimal
+  'null': true
+  sql_type_metadata:
+    sql_type: numeric
+    type: decimal
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: Item#last_rendered_at
+  model_name: Item
+  table_name: items
+  name: last_rendered_at
+  type: datetime
+  'null': true
+  sql_type_metadata:
+    sql_type: timestamp without time zone
+    type: datetime
+  default:
+  default_function:
+  has_default: false
+  virtual: false
 - id: ItemAttribution#id
   model_name: ItemAttribution
   table_name: item_attributions
@@ -10295,6 +10728,165 @@
   default_function:
   has_default: false
   virtual: false
+- id: LayoutDefinitionHierarchy#id
+  model_name: LayoutDefinitionHierarchy
+  table_name: layout_definition_hierarchies
+  name: id
+  type: uuid
+  'null': false
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default:
+  default_function: gen_random_uuid()
+  has_default: true
+  virtual: false
+- id: LayoutDefinitionHierarchy#schema_version_id
+  model_name: LayoutDefinitionHierarchy
+  table_name: layout_definition_hierarchies
+  name: schema_version_id
+  type: uuid
+  'null': false
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: LayoutDefinitionHierarchy#entity_type
+  model_name: LayoutDefinitionHierarchy
+  table_name: layout_definition_hierarchies
+  name: entity_type
+  type: string
+  'null': true
+  sql_type_metadata:
+    sql_type: character varying
+    type: string
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: LayoutDefinitionHierarchy#entity_id
+  model_name: LayoutDefinitionHierarchy
+  table_name: layout_definition_hierarchies
+  name: entity_id
+  type: uuid
+  'null': true
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: LayoutDefinitionHierarchy#layout_definition_type
+  model_name: LayoutDefinitionHierarchy
+  table_name: layout_definition_hierarchies
+  name: layout_definition_type
+  type: string
+  'null': false
+  sql_type_metadata:
+    sql_type: character varying
+    type: string
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: LayoutDefinitionHierarchy#layout_definition_id
+  model_name: LayoutDefinitionHierarchy
+  table_name: layout_definition_hierarchies
+  name: layout_definition_id
+  type: uuid
+  'null': false
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: LayoutDefinitionHierarchy#auth_path
+  model_name: LayoutDefinitionHierarchy
+  table_name: layout_definition_hierarchies
+  name: auth_path
+  type: ltree
+  'null': false
+  sql_type_metadata:
+    sql_type: ltree
+    type: ltree
+  default: ''
+  default_function:
+  has_default: true
+  virtual: false
+- id: LayoutDefinitionHierarchy#kind
+  model_name: LayoutDefinitionHierarchy
+  table_name: layout_definition_hierarchies
+  name: kind
+  type: enum
+  'null': false
+  sql_type_metadata:
+    sql_type: layout_definition_kind
+    type: enum
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: LayoutDefinitionHierarchy#layout_kind
+  model_name: LayoutDefinitionHierarchy
+  table_name: layout_definition_hierarchies
+  name: layout_kind
+  type: enum
+  'null': false
+  sql_type_metadata:
+    sql_type: layout_kind
+    type: enum
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: LayoutDefinitionHierarchy#depth
+  model_name: LayoutDefinitionHierarchy
+  table_name: layout_definition_hierarchies
+  name: depth
+  type: integer
+  'null': false
+  sql_type_metadata:
+    sql_type: integer
+    type: integer
+    limit: 4
+  default:
+  default_function: nlevel(auth_path)
+  has_default: false
+  virtual: true
+- id: LayoutDefinitionHierarchy#created_at
+  model_name: LayoutDefinitionHierarchy
+  table_name: layout_definition_hierarchies
+  name: created_at
+  type: datetime
+  'null': false
+  sql_type_metadata:
+    sql_type: timestamp(6) without time zone
+    type: datetime
+    precision: 6
+  default:
+  default_function: CURRENT_TIMESTAMP
+  has_default: true
+  virtual: false
+- id: LayoutDefinitionHierarchy#updated_at
+  model_name: LayoutDefinitionHierarchy
+  table_name: layout_definition_hierarchies
+  name: updated_at
+  type: datetime
+  'null': false
+  sql_type_metadata:
+    sql_type: timestamp(6) without time zone
+    type: datetime
+    precision: 6
+  default:
+  default_function: CURRENT_TIMESTAMP
+  has_default: true
+  virtual: false
 - id: LayoutInvalidation#id
   model_name: LayoutInvalidation
   table_name: layout_invalidations
@@ -10373,6 +10965,20 @@
     precision: 6
   default:
   default_function: CURRENT_TIMESTAMP
+  has_default: true
+  virtual: false
+- id: LayoutInvalidation#sequence_id
+  model_name: LayoutInvalidation
+  table_name: layout_invalidations
+  name: sequence_id
+  type: integer
+  'null': false
+  sql_type_metadata:
+    sql_type: bigint
+    type: integer
+    limit: 8
+  default:
+  default_function: nextval('layout_invalidations_sequence'::regclass)
   has_default: true
   virtual: false
 - id: Layouts::HeroDefinition#id
@@ -10650,6 +11256,164 @@
     type: jsonb
   default: "{}"
   default_function:
+  has_default: true
+  virtual: false
+- id: Layouts::InstanceDigest#id
+  model_name: Layouts::InstanceDigest
+  table_name: layouts_instance_digests
+  name: id
+  type: uuid
+  'null': false
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default:
+  default_function: gen_random_uuid()
+  has_default: true
+  virtual: false
+- id: Layouts::InstanceDigest#layout_definition_type
+  model_name: Layouts::InstanceDigest
+  table_name: layouts_instance_digests
+  name: layout_definition_type
+  type: string
+  'null': false
+  sql_type_metadata:
+    sql_type: character varying
+    type: string
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: Layouts::InstanceDigest#layout_definition_id
+  model_name: Layouts::InstanceDigest
+  table_name: layouts_instance_digests
+  name: layout_definition_id
+  type: uuid
+  'null': false
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: Layouts::InstanceDigest#layout_instance_type
+  model_name: Layouts::InstanceDigest
+  table_name: layouts_instance_digests
+  name: layout_instance_type
+  type: string
+  'null': false
+  sql_type_metadata:
+    sql_type: character varying
+    type: string
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: Layouts::InstanceDigest#layout_instance_id
+  model_name: Layouts::InstanceDigest
+  table_name: layouts_instance_digests
+  name: layout_instance_id
+  type: uuid
+  'null': false
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: Layouts::InstanceDigest#entity_type
+  model_name: Layouts::InstanceDigest
+  table_name: layouts_instance_digests
+  name: entity_type
+  type: string
+  'null': false
+  sql_type_metadata:
+    sql_type: character varying
+    type: string
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: Layouts::InstanceDigest#entity_id
+  model_name: Layouts::InstanceDigest
+  table_name: layouts_instance_digests
+  name: entity_id
+  type: uuid
+  'null': false
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: Layouts::InstanceDigest#layout_kind
+  model_name: Layouts::InstanceDigest
+  table_name: layouts_instance_digests
+  name: layout_kind
+  type: enum
+  'null': false
+  sql_type_metadata:
+    sql_type: layout_kind
+    type: enum
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: Layouts::InstanceDigest#generation
+  model_name: Layouts::InstanceDigest
+  table_name: layouts_instance_digests
+  name: generation
+  type: uuid
+  'null': false
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: Layouts::InstanceDigest#config
+  model_name: Layouts::InstanceDigest
+  table_name: layouts_instance_digests
+  name: config
+  type: jsonb
+  'null': false
+  sql_type_metadata:
+    sql_type: jsonb
+    type: jsonb
+  default: "{}"
+  default_function:
+  has_default: true
+  virtual: false
+- id: Layouts::InstanceDigest#created_at
+  model_name: Layouts::InstanceDigest
+  table_name: layouts_instance_digests
+  name: created_at
+  type: datetime
+  'null': false
+  sql_type_metadata:
+    sql_type: timestamp(6) without time zone
+    type: datetime
+    precision: 6
+  default:
+  default_function: CURRENT_TIMESTAMP
+  has_default: true
+  virtual: false
+- id: Layouts::InstanceDigest#updated_at
+  model_name: Layouts::InstanceDigest
+  table_name: layouts_instance_digests
+  name: updated_at
+  type: datetime
+  'null': false
+  sql_type_metadata:
+    sql_type: timestamp(6) without time zone
+    type: datetime
+    precision: 6
+  default:
+  default_function: CURRENT_TIMESTAMP
   has_default: true
   virtual: false
 - id: Layouts::ListItemDefinition#id
@@ -13987,6 +14751,441 @@
   default_function:
   has_default: false
   virtual: false
+- id: Rendering::EntityLog#id
+  model_name: Rendering::EntityLog
+  table_name: rendering_entity_logs
+  name: id
+  type: uuid
+  'null': false
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default:
+  default_function: gen_random_uuid()
+  has_default: true
+  virtual: false
+- id: Rendering::EntityLog#schema_version_id
+  model_name: Rendering::EntityLog
+  table_name: rendering_entity_logs
+  name: schema_version_id
+  type: uuid
+  'null': false
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: Rendering::EntityLog#entity_type
+  model_name: Rendering::EntityLog
+  table_name: rendering_entity_logs
+  name: entity_type
+  type: string
+  'null': false
+  sql_type_metadata:
+    sql_type: character varying
+    type: string
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: Rendering::EntityLog#entity_id
+  model_name: Rendering::EntityLog
+  table_name: rendering_entity_logs
+  name: entity_id
+  type: uuid
+  'null': false
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: Rendering::EntityLog#render_duration
+  model_name: Rendering::EntityLog
+  table_name: rendering_entity_logs
+  name: render_duration
+  type: decimal
+  'null': false
+  sql_type_metadata:
+    sql_type: numeric
+    type: decimal
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: Rendering::EntityLog#generation
+  model_name: Rendering::EntityLog
+  table_name: rendering_entity_logs
+  name: generation
+  type: uuid
+  'null': false
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: Rendering::EntityLog#created_at
+  model_name: Rendering::EntityLog
+  table_name: rendering_entity_logs
+  name: created_at
+  type: datetime
+  'null': false
+  sql_type_metadata:
+    sql_type: timestamp(6) without time zone
+    type: datetime
+    precision: 6
+  default:
+  default_function: CURRENT_TIMESTAMP
+  has_default: true
+  virtual: false
+- id: Rendering::EntityLog#updated_at
+  model_name: Rendering::EntityLog
+  table_name: rendering_entity_logs
+  name: updated_at
+  type: datetime
+  'null': false
+  sql_type_metadata:
+    sql_type: timestamp(6) without time zone
+    type: datetime
+    precision: 6
+  default:
+  default_function: CURRENT_TIMESTAMP
+  has_default: true
+  virtual: false
+- id: Rendering::LayoutLog#id
+  model_name: Rendering::LayoutLog
+  table_name: rendering_layout_logs
+  name: id
+  type: uuid
+  'null': false
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default:
+  default_function: gen_random_uuid()
+  has_default: true
+  virtual: false
+- id: Rendering::LayoutLog#schema_version_id
+  model_name: Rendering::LayoutLog
+  table_name: rendering_layout_logs
+  name: schema_version_id
+  type: uuid
+  'null': false
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: Rendering::LayoutLog#entity_type
+  model_name: Rendering::LayoutLog
+  table_name: rendering_layout_logs
+  name: entity_type
+  type: string
+  'null': false
+  sql_type_metadata:
+    sql_type: character varying
+    type: string
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: Rendering::LayoutLog#entity_id
+  model_name: Rendering::LayoutLog
+  table_name: rendering_layout_logs
+  name: entity_id
+  type: uuid
+  'null': false
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: Rendering::LayoutLog#layout_definition_type
+  model_name: Rendering::LayoutLog
+  table_name: rendering_layout_logs
+  name: layout_definition_type
+  type: string
+  'null': false
+  sql_type_metadata:
+    sql_type: character varying
+    type: string
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: Rendering::LayoutLog#layout_definition_id
+  model_name: Rendering::LayoutLog
+  table_name: rendering_layout_logs
+  name: layout_definition_id
+  type: uuid
+  'null': false
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: Rendering::LayoutLog#layout_kind
+  model_name: Rendering::LayoutLog
+  table_name: rendering_layout_logs
+  name: layout_kind
+  type: enum
+  'null': false
+  sql_type_metadata:
+    sql_type: layout_kind
+    type: enum
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: Rendering::LayoutLog#render_duration
+  model_name: Rendering::LayoutLog
+  table_name: rendering_layout_logs
+  name: render_duration
+  type: decimal
+  'null': false
+  sql_type_metadata:
+    sql_type: numeric
+    type: decimal
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: Rendering::LayoutLog#generation
+  model_name: Rendering::LayoutLog
+  table_name: rendering_layout_logs
+  name: generation
+  type: uuid
+  'null': false
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: Rendering::LayoutLog#created_at
+  model_name: Rendering::LayoutLog
+  table_name: rendering_layout_logs
+  name: created_at
+  type: datetime
+  'null': false
+  sql_type_metadata:
+    sql_type: timestamp(6) without time zone
+    type: datetime
+    precision: 6
+  default:
+  default_function: CURRENT_TIMESTAMP
+  has_default: true
+  virtual: false
+- id: Rendering::LayoutLog#updated_at
+  model_name: Rendering::LayoutLog
+  table_name: rendering_layout_logs
+  name: updated_at
+  type: datetime
+  'null': false
+  sql_type_metadata:
+    sql_type: timestamp(6) without time zone
+    type: datetime
+    precision: 6
+  default:
+  default_function: CURRENT_TIMESTAMP
+  has_default: true
+  virtual: false
+- id: Rendering::TemplateLog#id
+  model_name: Rendering::TemplateLog
+  table_name: rendering_template_logs
+  name: id
+  type: uuid
+  'null': false
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default:
+  default_function: gen_random_uuid()
+  has_default: true
+  virtual: false
+- id: Rendering::TemplateLog#schema_version_id
+  model_name: Rendering::TemplateLog
+  table_name: rendering_template_logs
+  name: schema_version_id
+  type: uuid
+  'null': false
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: Rendering::TemplateLog#entity_type
+  model_name: Rendering::TemplateLog
+  table_name: rendering_template_logs
+  name: entity_type
+  type: string
+  'null': false
+  sql_type_metadata:
+    sql_type: character varying
+    type: string
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: Rendering::TemplateLog#entity_id
+  model_name: Rendering::TemplateLog
+  table_name: rendering_template_logs
+  name: entity_id
+  type: uuid
+  'null': false
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: Rendering::TemplateLog#layout_definition_type
+  model_name: Rendering::TemplateLog
+  table_name: rendering_template_logs
+  name: layout_definition_type
+  type: string
+  'null': false
+  sql_type_metadata:
+    sql_type: character varying
+    type: string
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: Rendering::TemplateLog#layout_definition_id
+  model_name: Rendering::TemplateLog
+  table_name: rendering_template_logs
+  name: layout_definition_id
+  type: uuid
+  'null': false
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: Rendering::TemplateLog#template_definition_type
+  model_name: Rendering::TemplateLog
+  table_name: rendering_template_logs
+  name: template_definition_type
+  type: string
+  'null': false
+  sql_type_metadata:
+    sql_type: character varying
+    type: string
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: Rendering::TemplateLog#template_definition_id
+  model_name: Rendering::TemplateLog
+  table_name: rendering_template_logs
+  name: template_definition_id
+  type: uuid
+  'null': false
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: Rendering::TemplateLog#layout_kind
+  model_name: Rendering::TemplateLog
+  table_name: rendering_template_logs
+  name: layout_kind
+  type: enum
+  'null': false
+  sql_type_metadata:
+    sql_type: layout_kind
+    type: enum
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: Rendering::TemplateLog#template_kind
+  model_name: Rendering::TemplateLog
+  table_name: rendering_template_logs
+  name: template_kind
+  type: enum
+  'null': false
+  sql_type_metadata:
+    sql_type: template_kind
+    type: enum
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: Rendering::TemplateLog#render_duration
+  model_name: Rendering::TemplateLog
+  table_name: rendering_template_logs
+  name: render_duration
+  type: decimal
+  'null': false
+  sql_type_metadata:
+    sql_type: numeric
+    type: decimal
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: Rendering::TemplateLog#generation
+  model_name: Rendering::TemplateLog
+  table_name: rendering_template_logs
+  name: generation
+  type: uuid
+  'null': false
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: Rendering::TemplateLog#created_at
+  model_name: Rendering::TemplateLog
+  table_name: rendering_template_logs
+  name: created_at
+  type: datetime
+  'null': false
+  sql_type_metadata:
+    sql_type: timestamp(6) without time zone
+    type: datetime
+    precision: 6
+  default:
+  default_function: CURRENT_TIMESTAMP
+  has_default: true
+  virtual: false
+- id: Rendering::TemplateLog#updated_at
+  model_name: Rendering::TemplateLog
+  table_name: rendering_template_logs
+  name: updated_at
+  type: datetime
+  'null': false
+  sql_type_metadata:
+    sql_type: timestamp(6) without time zone
+    type: datetime
+    precision: 6
+  default:
+  default_function: CURRENT_TIMESTAMP
+  has_default: true
+  virtual: false
 - id: Role#id
   model_name: Role
   table_name: roles
@@ -15927,6 +17126,87 @@
   default_function:
   has_default: false
   virtual: false
+- id: StaleEntity#id
+  model_name: StaleEntity
+  table_name: stale_entities
+  name: id
+  type: integer
+  'null': true
+  sql_type_metadata:
+    sql_type: bigint
+    type: integer
+    limit: 8
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: StaleEntity#entity_type
+  model_name: StaleEntity
+  table_name: stale_entities
+  name: entity_type
+  type: string
+  'null': true
+  sql_type_metadata:
+    sql_type: character varying
+    type: string
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: StaleEntity#entity_id
+  model_name: StaleEntity
+  table_name: stale_entities
+  name: entity_id
+  type: uuid
+  'null': true
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: StaleEntity#stale_at
+  model_name: StaleEntity
+  table_name: stale_entities
+  name: stale_at
+  type: datetime
+  'null': true
+  sql_type_metadata:
+    sql_type: timestamp without time zone
+    type: datetime
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: StaleEntity#created_at
+  model_name: StaleEntity
+  table_name: stale_entities
+  name: created_at
+  type: datetime
+  'null': true
+  sql_type_metadata:
+    sql_type: timestamp(6) without time zone
+    type: datetime
+    precision: 6
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: StaleEntity#updated_at
+  model_name: StaleEntity
+  table_name: stale_entities
+  name: updated_at
+  type: datetime
+  'null': true
+  sql_type_metadata:
+    sql_type: timestamp(6) without time zone
+    type: datetime
+    precision: 6
+  default:
+  default_function:
+  has_default: false
+  virtual: false
 - id: Templates::BlurbDefinition#id
   model_name: Templates::BlurbDefinition
   table_name: templates_blurb_definitions
@@ -16640,6 +17920,139 @@
     type: jsonb
   default: "{}"
   default_function:
+  has_default: true
+  virtual: false
+- id: Templates::DefinitionDigest#id
+  model_name: Templates::DefinitionDigest
+  table_name: templates_definition_digests
+  name: id
+  type: uuid
+  'null': false
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default:
+  default_function: gen_random_uuid()
+  has_default: true
+  virtual: false
+- id: Templates::DefinitionDigest#layout_definition_type
+  model_name: Templates::DefinitionDigest
+  table_name: templates_definition_digests
+  name: layout_definition_type
+  type: string
+  'null': false
+  sql_type_metadata:
+    sql_type: character varying
+    type: string
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: Templates::DefinitionDigest#layout_definition_id
+  model_name: Templates::DefinitionDigest
+  table_name: templates_definition_digests
+  name: layout_definition_id
+  type: uuid
+  'null': false
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: Templates::DefinitionDigest#template_definition_type
+  model_name: Templates::DefinitionDigest
+  table_name: templates_definition_digests
+  name: template_definition_type
+  type: string
+  'null': false
+  sql_type_metadata:
+    sql_type: character varying
+    type: string
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: Templates::DefinitionDigest#template_definition_id
+  model_name: Templates::DefinitionDigest
+  table_name: templates_definition_digests
+  name: template_definition_id
+  type: uuid
+  'null': false
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: Templates::DefinitionDigest#position
+  model_name: Templates::DefinitionDigest
+  table_name: templates_definition_digests
+  name: position
+  type: integer
+  'null': true
+  sql_type_metadata:
+    sql_type: bigint
+    type: integer
+    limit: 8
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: Templates::DefinitionDigest#layout_kind
+  model_name: Templates::DefinitionDigest
+  table_name: templates_definition_digests
+  name: layout_kind
+  type: enum
+  'null': false
+  sql_type_metadata:
+    sql_type: layout_kind
+    type: enum
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: Templates::DefinitionDigest#template_kind
+  model_name: Templates::DefinitionDigest
+  table_name: templates_definition_digests
+  name: template_kind
+  type: enum
+  'null': false
+  sql_type_metadata:
+    sql_type: template_kind
+    type: enum
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: Templates::DefinitionDigest#created_at
+  model_name: Templates::DefinitionDigest
+  table_name: templates_definition_digests
+  name: created_at
+  type: datetime
+  'null': false
+  sql_type_metadata:
+    sql_type: timestamp(6) without time zone
+    type: datetime
+    precision: 6
+  default:
+  default_function: CURRENT_TIMESTAMP
+  has_default: true
+  virtual: false
+- id: Templates::DefinitionDigest#updated_at
+  model_name: Templates::DefinitionDigest
+  table_name: templates_definition_digests
+  name: updated_at
+  type: datetime
+  'null': false
+  sql_type_metadata:
+    sql_type: timestamp(6) without time zone
+    type: datetime
+    precision: 6
+  default:
+  default_function: CURRENT_TIMESTAMP
   has_default: true
   virtual: false
 - id: Templates::DerivedInstanceDigest#template_instance_id

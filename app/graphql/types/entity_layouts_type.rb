@@ -43,6 +43,12 @@ module Types
       TEXT
     end
 
+    field :rendered_inline, Boolean, null: false, method: :rendered do
+      description <<~TEXT
+      Whether the render happened inline when requesting this entity.
+      TEXT
+    end
+
     load_association! :hero_layout_instance, as: :hero
 
     load_association! :list_item_layout_instance, as: :list_item

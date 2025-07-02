@@ -473,6 +473,16 @@ CREATE TYPE public.jsonb_auth_path_state AS (
 
 
 --
+-- Name: layout_definition_kind; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.layout_definition_kind AS ENUM (
+    'root',
+    'leaf'
+);
+
+
+--
 -- Name: layout_kind; Type: TYPE; Schema: public; Owner: -
 --
 
@@ -3813,8 +3823,8 @@ CREATE TABLE public.announcements (
 CREATE TABLE public.ar_internal_metadata (
     key character varying NOT NULL,
     value character varying,
-    created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
 
@@ -3947,7 +3957,10 @@ CREATE TABLE public.collections (
     doi_data jsonb DEFAULT '{}'::jsonb NOT NULL,
     doi public.citext GENERATED ALWAYS AS (public.extract_doi_from_data(doi_data)) STORED,
     harvest_modification_status public.harvest_modification_status DEFAULT 'unharvested'::public.harvest_modification_status NOT NULL,
-    marked_for_purge boolean DEFAULT false NOT NULL
+    marked_for_purge boolean DEFAULT false NOT NULL,
+    generation uuid,
+    render_duration numeric,
+    last_rendered_at timestamp without time zone
 );
 
 
@@ -3991,7 +4004,10 @@ CREATE TABLE public.communities (
     summary text,
     tagline text,
     identifier public.citext NOT NULL,
-    marked_for_purge boolean DEFAULT false NOT NULL
+    marked_for_purge boolean DEFAULT false NOT NULL,
+    generation uuid,
+    render_duration numeric,
+    last_rendered_at timestamp without time zone
 );
 
 
@@ -4018,7 +4034,8 @@ CREATE TABLE public.entities (
     stale_at timestamp without time zone,
     refreshed_at timestamp without time zone,
     stale boolean GENERATED ALWAYS AS (((stale_at IS NOT NULL) AND ((refreshed_at IS NULL) OR (refreshed_at < stale_at)))) STORED NOT NULL,
-    search_title text NOT NULL
+    search_title text NOT NULL,
+    "real" boolean GENERATED ALWAYS AS ((scope OPERATOR(public.=) ANY (ARRAY['communities'::public.ltree, 'collections'::public.ltree, 'items'::public.ltree]))) STORED NOT NULL
 );
 
 
@@ -4050,7 +4067,10 @@ CREATE TABLE public.items (
     doi_data jsonb DEFAULT '{}'::jsonb NOT NULL,
     doi public.citext GENERATED ALWAYS AS (public.extract_doi_from_data(doi_data)) STORED,
     harvest_modification_status public.harvest_modification_status DEFAULT 'unharvested'::public.harvest_modification_status NOT NULL,
-    marked_for_purge boolean DEFAULT false NOT NULL
+    marked_for_purge boolean DEFAULT false NOT NULL,
+    generation uuid,
+    render_duration numeric,
+    last_rendered_at timestamp without time zone
 );
 
 
@@ -4657,6 +4677,23 @@ CREATE TABLE public.entity_composed_texts (
 
 
 --
+-- Name: entity_derived_layout_definitions; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.entity_derived_layout_definitions (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    schema_version_id uuid NOT NULL,
+    entity_type character varying NOT NULL,
+    entity_id uuid NOT NULL,
+    layout_definition_type character varying NOT NULL,
+    layout_definition_id uuid NOT NULL,
+    layout_kind public.layout_kind NOT NULL,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+--
 -- Name: entity_hierarchies; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -4792,6 +4829,109 @@ CREATE TABLE public.entity_links (
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
+
+
+--
+-- Name: layouts_instance_digests; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.layouts_instance_digests (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    layout_definition_type character varying NOT NULL,
+    layout_definition_id uuid NOT NULL,
+    layout_instance_type character varying NOT NULL,
+    layout_instance_id uuid NOT NULL,
+    entity_type character varying NOT NULL,
+    entity_id uuid NOT NULL,
+    layout_kind public.layout_kind NOT NULL,
+    generation uuid NOT NULL,
+    config jsonb DEFAULT '{}'::jsonb NOT NULL,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+--
+-- Name: entity_missing_layout_instances; Type: VIEW; Schema: public; Owner: -
+--
+
+CREATE VIEW public.entity_missing_layout_instances AS
+ SELECT dld.entity_type,
+    dld.entity_id,
+    dld.layout_definition_type,
+    dld.layout_definition_id,
+    dld.layout_kind
+   FROM (public.entity_derived_layout_definitions dld
+     LEFT JOIN public.layouts_instance_digests lid USING (entity_type, entity_id, layout_definition_id))
+  WHERE (lid.layout_definition_id IS NULL);
+
+
+--
+-- Name: templates_definition_digests; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.templates_definition_digests (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    layout_definition_type character varying NOT NULL,
+    layout_definition_id uuid NOT NULL,
+    template_definition_type character varying NOT NULL,
+    template_definition_id uuid NOT NULL,
+    "position" bigint,
+    layout_kind public.layout_kind NOT NULL,
+    template_kind public.template_kind NOT NULL,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+--
+-- Name: templates_instance_digests; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.templates_instance_digests (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    template_instance_type character varying NOT NULL,
+    template_instance_id uuid NOT NULL,
+    template_definition_type character varying NOT NULL,
+    template_definition_id uuid NOT NULL,
+    layout_instance_type character varying NOT NULL,
+    layout_instance_id uuid NOT NULL,
+    layout_definition_type character varying NOT NULL,
+    layout_definition_id uuid NOT NULL,
+    entity_type character varying NOT NULL,
+    entity_id uuid NOT NULL,
+    "position" bigint NOT NULL,
+    layout_kind public.layout_kind NOT NULL,
+    template_kind public.template_kind NOT NULL,
+    width public.template_width,
+    generation uuid NOT NULL,
+    config jsonb DEFAULT '{}'::jsonb NOT NULL,
+    slots jsonb DEFAULT '{}'::jsonb NOT NULL,
+    render_duration numeric,
+    last_rendered_at timestamp without time zone,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+--
+-- Name: entity_missing_template_instances; Type: VIEW; Schema: public; Owner: -
+--
+
+CREATE VIEW public.entity_missing_template_instances AS
+ SELECT dld.entity_type,
+    dld.entity_id,
+    dld.layout_definition_type,
+    dld.layout_definition_id,
+    tdd.template_definition_type,
+    tdd.template_definition_id,
+    dld.layout_kind,
+    tdd.template_kind,
+    tdd."position"
+   FROM ((public.entity_derived_layout_definitions dld
+     JOIN public.templates_definition_digests tdd USING (layout_definition_type, layout_definition_id, layout_kind))
+     LEFT JOIN public.templates_instance_digests tid USING (entity_type, entity_id, layout_definition_id, template_definition_id))
+  WHERE (tid.layout_definition_id IS NULL);
 
 
 --
@@ -5584,6 +5724,32 @@ CREATE VIEW public.latest_harvest_attempt_links AS
 
 
 --
+-- Name: layout_definition_hierarchies; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.layout_definition_hierarchies (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    schema_version_id uuid NOT NULL,
+    entity_type character varying,
+    entity_id uuid,
+    layout_definition_type character varying NOT NULL,
+    layout_definition_id uuid NOT NULL,
+    auth_path public.ltree DEFAULT ''::public.ltree NOT NULL,
+    kind public.layout_definition_kind NOT NULL,
+    layout_kind public.layout_kind NOT NULL,
+    depth integer GENERATED ALWAYS AS (public.nlevel(auth_path)) STORED NOT NULL,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    CONSTRAINT layout_definition_hierarchies_auth_path_sanity_check CHECK (
+CASE kind
+    WHEN 'root'::public.layout_definition_kind THEN (public.nlevel(auth_path) = 0)
+    WHEN 'leaf'::public.layout_definition_kind THEN (public.nlevel(auth_path) > 0)
+    ELSE false
+END)
+);
+
+
+--
 -- Name: layout_invalidations; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -5593,8 +5759,29 @@ CREATE TABLE public.layout_invalidations (
     entity_id uuid NOT NULL,
     stale_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    sequence_id bigint NOT NULL
 );
+
+
+--
+-- Name: layout_invalidations_sequence; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.layout_invalidations_sequence
+    START WITH 9223372036854775807
+    INCREMENT BY -1
+    NO MINVALUE
+    MAXVALUE 9223372036854775807
+    CACHE 1
+    CYCLE;
+
+
+--
+-- Name: layout_invalidations_sequence; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.layout_invalidations_sequence OWNED BY public.layout_invalidations.sequence_id;
 
 
 --
@@ -6107,6 +6294,63 @@ CREATE VIEW public.related_item_links AS
 
 
 --
+-- Name: rendering_entity_logs; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.rendering_entity_logs (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    schema_version_id uuid NOT NULL,
+    entity_type character varying NOT NULL,
+    entity_id uuid NOT NULL,
+    render_duration numeric NOT NULL,
+    generation uuid NOT NULL,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+--
+-- Name: rendering_layout_logs; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.rendering_layout_logs (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    schema_version_id uuid NOT NULL,
+    entity_type character varying NOT NULL,
+    entity_id uuid NOT NULL,
+    layout_definition_type character varying NOT NULL,
+    layout_definition_id uuid NOT NULL,
+    layout_kind public.layout_kind NOT NULL,
+    render_duration numeric NOT NULL,
+    generation uuid NOT NULL,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+--
+-- Name: rendering_template_logs; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.rendering_template_logs (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    schema_version_id uuid NOT NULL,
+    entity_type character varying NOT NULL,
+    entity_id uuid NOT NULL,
+    layout_definition_type character varying NOT NULL,
+    layout_definition_id uuid NOT NULL,
+    template_definition_type character varying NOT NULL,
+    template_definition_id uuid NOT NULL,
+    layout_kind public.layout_kind NOT NULL,
+    template_kind public.template_kind NOT NULL,
+    render_duration numeric NOT NULL,
+    generation uuid NOT NULL,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+--
 -- Name: role_permissions; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -6321,6 +6565,21 @@ CREATE TABLE public.schematic_texts (
     document tsvector GENERATED ALWAYS AS (setweight(to_tsvector(dictionary, text_content), (weight)::"char")) STORED,
     schema_version_property_id uuid
 );
+
+
+--
+-- Name: stale_entities; Type: VIEW; Schema: public; Owner: -
+--
+
+CREATE VIEW public.stale_entities AS
+ SELECT DISTINCT ON (layout_invalidations.entity_id) layout_invalidations.sequence_id AS id,
+    layout_invalidations.entity_type,
+    layout_invalidations.entity_id,
+    layout_invalidations.stale_at,
+    layout_invalidations.created_at,
+    layout_invalidations.updated_at
+   FROM public.layout_invalidations
+  ORDER BY layout_invalidations.entity_id, layout_invalidations.stale_at DESC;
 
 
 --
@@ -7237,36 +7496,6 @@ CREATE VIEW public.templates_derived_instance_digests AS
 
 
 --
--- Name: templates_instance_digests; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.templates_instance_digests (
-    id uuid DEFAULT gen_random_uuid() NOT NULL,
-    template_instance_type character varying NOT NULL,
-    template_instance_id uuid NOT NULL,
-    template_definition_type character varying NOT NULL,
-    template_definition_id uuid NOT NULL,
-    layout_instance_type character varying NOT NULL,
-    layout_instance_id uuid NOT NULL,
-    layout_definition_type character varying NOT NULL,
-    layout_definition_id uuid NOT NULL,
-    entity_type character varying NOT NULL,
-    entity_id uuid NOT NULL,
-    "position" bigint NOT NULL,
-    layout_kind public.layout_kind NOT NULL,
-    template_kind public.template_kind NOT NULL,
-    width public.template_width,
-    generation uuid NOT NULL,
-    config jsonb DEFAULT '{}'::jsonb NOT NULL,
-    slots jsonb DEFAULT '{}'::jsonb NOT NULL,
-    render_duration numeric,
-    last_rendered_at timestamp without time zone,
-    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
-);
-
-
---
 -- Name: templates_instance_siblings; Type: VIEW; Schema: public; Owner: -
 --
 
@@ -7381,6 +7610,13 @@ CREATE TABLE public.user_groups (
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
+
+
+--
+-- Name: layout_invalidations sequence_id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.layout_invalidations ALTER COLUMN sequence_id SET DEFAULT nextval('public.layout_invalidations_sequence'::regclass);
 
 
 --
@@ -7541,6 +7777,14 @@ ALTER TABLE ONLY public.entities
 
 ALTER TABLE ONLY public.entity_composed_texts
     ADD CONSTRAINT entity_composed_texts_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: entity_derived_layout_definitions entity_derived_layout_definitions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.entity_derived_layout_definitions
+    ADD CONSTRAINT entity_derived_layout_definitions_pkey PRIMARY KEY (id);
 
 
 --
@@ -7856,6 +8100,14 @@ ALTER TABLE ONLY public.items
 
 
 --
+-- Name: layout_definition_hierarchies layout_definition_hierarchies_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.layout_definition_hierarchies
+    ADD CONSTRAINT layout_definition_hierarchies_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: layout_invalidations layout_invalidations_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -7877,6 +8129,14 @@ ALTER TABLE ONLY public.layouts_hero_definitions
 
 ALTER TABLE ONLY public.layouts_hero_instances
     ADD CONSTRAINT layouts_hero_instances_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: layouts_instance_digests layouts_instance_digests_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.layouts_instance_digests
+    ADD CONSTRAINT layouts_instance_digests_pkey PRIMARY KEY (id);
 
 
 --
@@ -8040,6 +8300,30 @@ ALTER TABLE ONLY public.pghero_space_stats
 
 
 --
+-- Name: rendering_entity_logs rendering_entity_logs_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.rendering_entity_logs
+    ADD CONSTRAINT rendering_entity_logs_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: rendering_layout_logs rendering_layout_logs_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.rendering_layout_logs
+    ADD CONSTRAINT rendering_layout_logs_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: rendering_template_logs rendering_template_logs_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.rendering_template_logs
+    ADD CONSTRAINT rendering_template_logs_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: role_permissions role_permissions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -8181,6 +8465,14 @@ ALTER TABLE ONLY public.templates_contributor_list_definitions
 
 ALTER TABLE ONLY public.templates_contributor_list_instances
     ADD CONSTRAINT templates_contributor_list_instances_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: templates_definition_digests templates_definition_digests_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.templates_definition_digests
+    ADD CONSTRAINT templates_definition_digests_pkey PRIMARY KEY (id);
 
 
 --
@@ -9575,6 +9867,20 @@ CREATE UNIQUE INDEX index_controlled_vocabulary_sources_on_provides ON public.co
 
 
 --
+-- Name: index_edld_check; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_edld_check ON public.entity_derived_layout_definitions USING btree (layout_definition_type, layout_definition_id, entity_type, entity_id, layout_kind);
+
+
+--
+-- Name: index_entities_check; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_entities_check ON public.entities USING gist (auth_path, schema_version_id, entity_type, entity_id) WHERE "real";
+
+
+--
 -- Name: index_entities_crumb_source; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -9712,6 +10018,27 @@ CREATE INDEX index_entity_composed_texts_on_document ON public.entity_composed_t
 --
 
 CREATE UNIQUE INDEX index_entity_composed_texts_uniqueness ON public.entity_composed_texts USING btree (entity_type, entity_id);
+
+
+--
+-- Name: index_entity_derived_layout_definitions_on_entity; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_entity_derived_layout_definitions_on_entity ON public.entity_derived_layout_definitions USING btree (entity_type, entity_id);
+
+
+--
+-- Name: index_entity_derived_layout_definitions_on_layout_definition; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_entity_derived_layout_definitions_on_layout_definition ON public.entity_derived_layout_definitions USING btree (layout_definition_type, layout_definition_id);
+
+
+--
+-- Name: index_entity_derived_layout_definitions_on_schema_version_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_entity_derived_layout_definitions_on_schema_version_id ON public.entity_derived_layout_definitions USING btree (schema_version_id);
 
 
 --
@@ -10821,10 +11148,52 @@ CREATE UNIQUE INDEX index_items_versioned_ids ON public.items USING btree (id, s
 
 
 --
+-- Name: index_layout_definition_hierarchies_check; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_layout_definition_hierarchies_check ON public.layout_definition_hierarchies USING gist (schema_version_id, auth_path, layout_kind, layout_definition_type, layout_definition_id);
+
+
+--
+-- Name: index_layout_definition_hierarchies_on_entity; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_layout_definition_hierarchies_on_entity ON public.layout_definition_hierarchies USING btree (entity_type, entity_id);
+
+
+--
+-- Name: index_layout_definition_hierarchies_on_layout_definition; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_layout_definition_hierarchies_on_layout_definition ON public.layout_definition_hierarchies USING btree (layout_definition_type, layout_definition_id);
+
+
+--
+-- Name: index_layout_definition_hierarchies_on_schema_version_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_layout_definition_hierarchies_on_schema_version_id ON public.layout_definition_hierarchies USING btree (schema_version_id);
+
+
+--
+-- Name: index_layout_instance_digest_check; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_layout_instance_digest_check ON public.layouts_instance_digests USING btree (layout_definition_id, entity_type, entity_id);
+
+
+--
 -- Name: index_layout_invalidations_distinct_staleness; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_layout_invalidations_distinct_staleness ON public.layout_invalidations USING btree (entity_id, stale_at DESC);
+
+
+--
+-- Name: index_layout_invalidations_on_sequence_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_layout_invalidations_on_sequence_id ON public.layout_invalidations USING btree (sequence_id);
 
 
 --
@@ -10846,6 +11215,27 @@ CREATE INDEX index_layouts_hero_instances_on_generation ON public.layouts_hero_i
 --
 
 CREATE INDEX index_layouts_hero_instances_on_last_rendered_at ON public.layouts_hero_instances USING btree (last_rendered_at);
+
+
+--
+-- Name: index_layouts_instance_digests_on_entity; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_layouts_instance_digests_on_entity ON public.layouts_instance_digests USING btree (entity_type, entity_id);
+
+
+--
+-- Name: index_layouts_instance_digests_on_layout_definition; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_layouts_instance_digests_on_layout_definition ON public.layouts_instance_digests USING btree (layout_definition_type, layout_definition_id);
+
+
+--
+-- Name: index_layouts_instance_digests_on_layout_instance; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_layouts_instance_digests_on_layout_instance ON public.layouts_instance_digests USING btree (layout_instance_type, layout_instance_id);
 
 
 --
@@ -11353,6 +11743,69 @@ CREATE INDEX index_pghero_space_stats_on_database_and_captured_at ON public.pghe
 
 
 --
+-- Name: index_rendering_entity_logs_on_entity; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_rendering_entity_logs_on_entity ON public.rendering_entity_logs USING btree (entity_type, entity_id);
+
+
+--
+-- Name: index_rendering_entity_logs_on_schema_version_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_rendering_entity_logs_on_schema_version_id ON public.rendering_entity_logs USING btree (schema_version_id);
+
+
+--
+-- Name: index_rendering_layout_logs_on_entity; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_rendering_layout_logs_on_entity ON public.rendering_layout_logs USING btree (entity_type, entity_id);
+
+
+--
+-- Name: index_rendering_layout_logs_on_layout_definition; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_rendering_layout_logs_on_layout_definition ON public.rendering_layout_logs USING btree (layout_definition_type, layout_definition_id);
+
+
+--
+-- Name: index_rendering_layout_logs_on_schema_version_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_rendering_layout_logs_on_schema_version_id ON public.rendering_layout_logs USING btree (schema_version_id);
+
+
+--
+-- Name: index_rendering_template_logs_on_entity; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_rendering_template_logs_on_entity ON public.rendering_template_logs USING btree (entity_type, entity_id);
+
+
+--
+-- Name: index_rendering_template_logs_on_layout_definition; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_rendering_template_logs_on_layout_definition ON public.rendering_template_logs USING btree (layout_definition_type, layout_definition_id);
+
+
+--
+-- Name: index_rendering_template_logs_on_schema_version_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_rendering_template_logs_on_schema_version_id ON public.rendering_template_logs USING btree (schema_version_id);
+
+
+--
+-- Name: index_rendering_template_logs_on_template_definition; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_rendering_template_logs_on_template_definition ON public.rendering_template_logs USING btree (template_definition_type, template_definition_id);
+
+
+--
 -- Name: index_role_permissions_on_permission_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -11598,6 +12051,13 @@ CREATE INDEX index_schematic_texts_on_schema_version_property_id ON public.schem
 
 
 --
+-- Name: index_template_instance_digests_check; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_template_instance_digests_check ON public.templates_instance_digests USING btree (entity_type, entity_id, layout_definition_id, template_definition_id);
+
+
+--
 -- Name: index_templates_blurb_definitions_on_position; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -11665,6 +12125,20 @@ CREATE INDEX index_templates_contributor_list_instances_on_last_rendered_at ON p
 --
 
 CREATE INDEX index_templates_contributor_list_instances_on_position ON public.templates_contributor_list_instances USING btree ("position");
+
+
+--
+-- Name: index_templates_definition_digests_on_layout_definition; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_templates_definition_digests_on_layout_definition ON public.templates_definition_digests USING btree (layout_definition_type, layout_definition_id);
+
+
+--
+-- Name: index_templates_definition_digests_on_template_definition; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_templates_definition_digests_on_template_definition ON public.templates_definition_digests USING btree (template_definition_type, template_definition_id);
 
 
 --
@@ -12207,6 +12681,13 @@ CREATE UNIQUE INDEX schema_definition_properties_pkey ON public.schema_definitio
 
 
 --
+-- Name: udx_entity_derived_layout_definitions_uniqueness; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX udx_entity_derived_layout_definitions_uniqueness ON public.entity_derived_layout_definitions USING btree (entity_id, layout_kind);
+
+
+--
 -- Name: udx_layouts_hero_definitions_leaf; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -12340,6 +12821,22 @@ CREATE TRIGGER lock_version_definition_id BEFORE UPDATE OF schema_definition_id 
 
 
 --
+-- Name: entity_derived_layout_definitions edld_fk_entities; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.entity_derived_layout_definitions
+    ADD CONSTRAINT edld_fk_entities FOREIGN KEY (entity_type, entity_id) REFERENCES public.entities(entity_type, entity_id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: entity_derived_layout_definitions edld_fk_ldh; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.entity_derived_layout_definitions
+    ADD CONSTRAINT edld_fk_ldh FOREIGN KEY (layout_definition_type, layout_definition_id) REFERENCES public.layout_definition_hierarchies(layout_definition_type, layout_definition_id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
+
+
+--
 -- Name: templates_navigation_instances fk_rails_0380b5f1ad; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -12449,6 +12946,14 @@ ALTER TABLE ONLY public.harvest_attempt_record_links
 
 ALTER TABLE ONLY public.collections
     ADD CONSTRAINT fk_rails_1036c77f58 FOREIGN KEY (schema_definition_id) REFERENCES public.schema_definitions(id) ON DELETE RESTRICT;
+
+
+--
+-- Name: layout_definition_hierarchies fk_rails_10918e2e3a; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.layout_definition_hierarchies
+    ADD CONSTRAINT fk_rails_10918e2e3a FOREIGN KEY (schema_version_id) REFERENCES public.schema_versions(id) ON DELETE CASCADE;
 
 
 --
@@ -13172,6 +13677,14 @@ ALTER TABLE ONLY public.entity_links
 
 
 --
+-- Name: entity_derived_layout_definitions fk_rails_83800f1eec; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.entity_derived_layout_definitions
+    ADD CONSTRAINT fk_rails_83800f1eec FOREIGN KEY (schema_version_id) REFERENCES public.schema_versions(id) ON DELETE CASCADE;
+
+
+--
 -- Name: communities fk_rails_840d8c73d5; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -13228,6 +13741,14 @@ ALTER TABLE ONLY public.collection_contributions
 
 
 --
+-- Name: rendering_template_logs fk_rails_999be8ce67; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.rendering_template_logs
+    ADD CONSTRAINT fk_rails_999be8ce67 FOREIGN KEY (schema_version_id) REFERENCES public.schema_versions(id) ON DELETE CASCADE;
+
+
+--
 -- Name: templates_contributor_list_instances fk_rails_99a28e74ee; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -13265,6 +13786,14 @@ ALTER TABLE ONLY public.ahoy_events
 
 ALTER TABLE ONLY public.harvest_entities
     ADD CONSTRAINT fk_rails_a1262d403c FOREIGN KEY (parent_id) REFERENCES public.harvest_entities(id) ON DELETE CASCADE;
+
+
+--
+-- Name: rendering_entity_logs fk_rails_a308826dd8; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.rendering_entity_logs
+    ADD CONSTRAINT fk_rails_a308826dd8 FOREIGN KEY (schema_version_id) REFERENCES public.schema_versions(id) ON DELETE CASCADE;
 
 
 --
@@ -13385,6 +13914,14 @@ ALTER TABLE ONLY public.entity_links
 
 ALTER TABLE ONLY public.access_grants
     ADD CONSTRAINT fk_rails_b889c8e828 FOREIGN KEY (user_group_id) REFERENCES public.user_groups(id) ON DELETE CASCADE;
+
+
+--
+-- Name: rendering_layout_logs fk_rails_bb56b45520; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.rendering_layout_logs
+    ADD CONSTRAINT fk_rails_bb56b45520 FOREIGN KEY (schema_version_id) REFERENCES public.schema_versions(id) ON DELETE CASCADE;
 
 
 --
@@ -14107,6 +14644,17 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20250505182825'),
 ('20250505195133'),
 ('20250611201949'),
-('20250701165933');
+('20250701165933'),
+('20250701212623'),
+('20250701212826'),
+('20250701223926'),
+('20250702173522'),
+('20250702173558'),
+('20250702214523'),
+('20250702222307'),
+('20250702223014'),
+('20250702223625'),
+('20250702225216'),
+('20250703003427');
 
 

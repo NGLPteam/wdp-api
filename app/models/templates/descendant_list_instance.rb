@@ -27,6 +27,10 @@ module Templates
       class_name: "Templates::DescendantListDefinition",
       inverse_of: :template_instances
 
+    has_one :layout_definition, through: :layout_instance
+
+    has_one :schema_version, through: :layout_definition
+
     belongs_to :entity, polymorphic: true
   end
 end
