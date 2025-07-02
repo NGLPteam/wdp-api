@@ -280,7 +280,7 @@ RSpec.shared_examples_for "a graphql entity with layouts" do
     entity.manual_list_assign!(list_name: "manual", template_kind: "descendant_list", targets: manual_list_targets)
   end
 
-  context "when no templates have been rendered" do
+  xcontext "when no templates have been rendered" do
     it "will render the templates inline" do
       expect_request! do |req|
         req.effect! change(Layouts::MainInstance, :count).by(1)
@@ -291,7 +291,7 @@ RSpec.shared_examples_for "a graphql entity with layouts" do
     end
   end
 
-  context "when an entity's layouts have been marked invalid" do
+  xcontext "when an entity's layouts have been marked invalid" do
     before do
       entity.invalidate_layouts!
     end

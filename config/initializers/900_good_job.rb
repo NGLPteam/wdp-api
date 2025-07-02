@@ -26,6 +26,7 @@ Rails.application.configure do
   config.good_job.enable_listen_notify = true
   config.good_job.enable_pauses = true
   config.good_job.queue_select_limit = 1000
+  config.good_job.dashboard_live_poll_enabled = false
   config.good_job.cron = {
     "access.enforce_assignments": {
       cron: "*/5 * * * *",
@@ -103,12 +104,12 @@ Rails.application.configure do
       description: "Process stale orderings",
       args: -> { [Time.current.iso8601] },
     },
-    "rendering.process_layout_invalidations": {
-      cron: "*/5 * * * *",
-      class: "Rendering::ProcessLayoutInvalidationsJob",
-      description: "Process layout invalidations & re-rendering",
-      args: -> { [Time.current.iso8601] }
-    },
+    # "rendering.process_layout_invalidations": {
+    #  cron: "*/5 * * * *",
+    #  class: "Rendering::ProcessLayoutInvalidationsJob",
+    #  description: "Process layout invalidations & re-rendering",
+    #  args: -> { [Time.current.iso8601] }
+    # },
     "schemas.orderings.refresh_counts": {
       cron: "*/10 * * * *",
       class: "Schemas::Orderings::RefreshEntryCountsJob",

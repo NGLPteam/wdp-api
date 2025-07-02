@@ -12,14 +12,14 @@ module Schemas
 
       # @return [void]
       def capture_layout_definitions_to_invalidate!
-        layout_definitions, result = with_layout_definitions([]) do
+        _layout_definitions, result = with_layout_definitions([]) do
           with_skip_layout_invalidation(true) do
             yield
           end
         end
 
         # Not an operation that should/can fail.
-        MeruAPI::Container["layouts.invalidate_batch"].(layout_definitions).value!
+        # MeruAPI::Container["layouts.invalidate_batch"].(layout_definitions).value!
 
         return result
       end
