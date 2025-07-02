@@ -147,7 +147,9 @@ module Types
     # @see Types::EntityLayoutsType
     # @return [HierarchicalEntity]
     def layouts
-      object.validated_layout_source
+      # object.validated_layout_source
+
+      object
     end
 
     # @return [Promise<Permissions::Grant>]
