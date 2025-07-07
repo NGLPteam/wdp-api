@@ -30,7 +30,7 @@ class Ordering < ApplicationRecord
 
   has_one_readonly :ordering_entry_count, inverse_of: :ordering
 
-  has_many :ordering_entries, -> { to_preload }, inverse_of: :ordering, dependent: :delete_all
+  has_many :ordering_entries, inverse_of: :ordering, dependent: :delete_all
 
   has_many :ordering_entry_ancestor_links, inverse_of: :ordering, dependent: :delete_all
   has_many :ordering_entry_sibling_links, inverse_of: :ordering, dependent: :delete_all

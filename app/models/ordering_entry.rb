@@ -41,8 +41,6 @@ class OrderingEntry < ApplicationRecord
 
   has_many_readonly :named_variable_dates, primary_key: ENTITY_TUPLE, foreign_key: ENTITY_TUPLE
 
-  scope :to_preload, -> { includes(:entity, ancestors: %i[entity]) }
-
   scope :in_default_order, -> { reorder(position: :asc) }
   scope :in_inverse_order, -> { reorder(inverse_position: :asc) }
 
