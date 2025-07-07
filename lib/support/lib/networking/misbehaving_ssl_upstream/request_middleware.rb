@@ -16,7 +16,7 @@ module Support
 
         def call(env)
           @app.call(env)
-        rescue ::Faraday::SSLError => e
+        rescue ::Faraday::ConnectionFailed, ::Faraday::SSLError => e
           ::Support::Networking::MisbehavingSSLUpstream::Error.maybe_wrap_and_reraise!(e)
         end
       end
