@@ -29,6 +29,7 @@ module Harvesting
         def clean_up_metadata_source(raw)
           # Remove the xmlns we manually added with the old harvesting system.
           super.sub(%r,xmlns="https://jats.nlm.nih.gov/publishing/1.2/" ?,, "")
+            .sub(%r,xmlns='https://jats.nlm.nih.gov/publishing/1.2/' ?,, "")
         end
 
         def extract_full_text_data!
