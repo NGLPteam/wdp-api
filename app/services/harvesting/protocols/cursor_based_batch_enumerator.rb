@@ -123,6 +123,8 @@ module Harvesting
         logger.fatal "Web Request Failed: #{e.message}"
 
         halt_enumeration
+      rescue LocalJumpError
+        logger.debug("Enumeration returned early, will resume")
       end
 
       # @!group Optional Hooks
