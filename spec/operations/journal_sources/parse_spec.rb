@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Harvesting::Utility::ParseJournalSource, type: :operation do
+RSpec.describe JournalSources::Parse, type: :operation do
   context "with a well-structured citation" do
     let(:multiple_pages) do
       "Some Journal; Vol. 18 No. 5 (2022); 106-112"
@@ -11,7 +11,7 @@ RSpec.describe Harvesting::Utility::ParseJournalSource, type: :operation do
     end
 
     it "handles a range of pages" do
-      expect_calling_with(multiple_pages).to have_attributes(volume: "18", issue: ?5, year: 2022, fpage: 106, lpage: 112)
+      expect_calling_with(multiple_pages).to be_full.and(be_known).and(have_attributes(volume: "18", issue: ?5, year: 2022, fpage: 106, lpage: 112))
     end
 
     it "handles a single page" do
@@ -25,7 +25,17 @@ RSpec.describe Harvesting::Utility::ParseJournalSource, type: :operation do
     end
 
     it "parses correctly" do
-      expect_calling_with(input).to have_attributes(volume: ?6, issue: ?2, year: 2011)
+      expect_calling_with(input).to be_full.and(be_known).and(have_attributes(volume: ?6, issue: ?2, year: 2011))
+    end
+  end
+
+  context "when dealing with just a volume" do
+    let(:input) do
+      "Some Journal; Vol. 13 (1999)"
+    end
+
+    it "can handle just a volume" do
+      expect_calling_with(input).to have_attributes(volume: "13", issue: "UNKNOWN", year: 1999).and(be_known).and(be_volume_only)
     end
   end
 
@@ -41,13 +51,9 @@ RSpec.describe Harvesting::Utility::ParseJournalSource, type: :operation do
     it "defaults to volume 1 and issue 1" do
       expect_calling_with("literally anything").to have_attributes(volume: ?1, issue: ?1).and be_known
     end
-
-    it "can handle just a volume" do
-      expect_calling_with("Some Journal; Vol. 13 (1999)").to have_attributes(volume: "13", issue: ?1, year: 1999).and be_known
-    end
   end
 
-  it "handles a truncated format (such as used by CDL)" do
+  it "handles a truncated format" do
     expect_calling_with(nil, "Some Journal, vol 12, iss 103").to have_attributes(volume: "12", issue: "103", fpage: nil)
   end
 
