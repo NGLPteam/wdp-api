@@ -11,6 +11,10 @@ module Harvesting
           xml do
             root "integer"
           end
+
+          validate_attr! :content do
+            validates :output, numericality: { only_integer: true }
+          end
         end
       end
     end

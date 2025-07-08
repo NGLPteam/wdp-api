@@ -24,6 +24,10 @@ module Harvesting
             map_element "url", to: :url
           end
 
+          validate_attr! :url do
+            validates :output, presence: true, url: true
+          end
+
           # @return [Object]
           def build_property_value_with(**subproperties)
             proxy = Harvesting::Extraction::Properties::AssetProxy.new(**subproperties, path:)

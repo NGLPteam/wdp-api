@@ -12,6 +12,10 @@ module Harvesting
 
           render_attr! :href, :url
 
+          validate_attr! :href do
+            validates :output, presence: true, url: true
+          end
+
           xml do
             root "url"
 
