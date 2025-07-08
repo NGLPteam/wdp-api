@@ -46,8 +46,9 @@ module Metadata
         identifier.detect(&:doi?)&.content
       end
 
+      # @return [JournalSources::Parsed::Abstract]
       def find_journal_source
-        source.detect(&:has_journal_source?)&.journal_source
+        MeruAPI::Container["journal_sources.parse"].(source.map(&:content))
       end
 
       def find_pdf_url
