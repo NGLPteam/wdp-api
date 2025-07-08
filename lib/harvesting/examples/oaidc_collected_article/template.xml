@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mapping>
+  <entities>
+    <collection schema="nglp:collected_volume">
+      <requires>
+        <expr reason="must have a volume">{{journal.volume}}</expr>
+      </requires>
+      <identifier>volume-{{journal.volume}}</identifier>
+      <title>
+        {% if journal.volume contains " " %}
+          {{journal.volume}}
+        {% else %}
+          Volume {{journal.volume}}
+        {% endif %}
+      </title>
+      <properties>
+        <string path="id">{{journal.volume}}</string>
+        <integer path="sortable_number">{{journal.volume}}</integer>
+      </properties>
+      <item schema="nglp:collected_article">
+        <identifier>{{record.identifier}}</identifier>
+        <title>{{oaidc.title | first}}</title>
+        <doi>{{doi}}</doi>
+        <published>{{oaidc.date | first}}</published>
+        <contributions>
+          {% for creator in creators %}
+          {% contribution role: "aut" %}
+          {% person %}
+          {% given_name creator.given %}
+          {% family_name creator.family %}
+          {% endperson %}
+          {% endcontribution %}
+          {% endfor %}
+          {% for contributor in contributors %}
+          {% contribution role: "ctb" %}
+          {% person %}
+          {% given_name contributor.given %}
+          {% family_name contributor.family %}
+          {% endperson %}
+          {% endcontribution %}
+          {% endfor %}
+        </contributions>
+        <properties>
+          <tags path="keywords">
+            {% for subject in oaidc.subject %}
+            {% tag %}{{subject}}{% endtag %}
+            {% endfor %}
+          </tags>
+          <asset path="pdf_version">
+            <kind>pdf</kind>
+            <mime-type>application/pdf</mime-type>
+            <name>PDF Version</name>
+            <url>
+              {{pdf.url}}
+            </url>
+          </asset>
+        </properties>
+      </item>
+    </collection>
+  </entities>
+</mapping>
