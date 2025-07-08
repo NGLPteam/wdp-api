@@ -44,7 +44,7 @@ SimpleCov.start "rails" do
   add_filter "lib/patches"
   add_filter "lib/support"
   add_filter "spec/support"
-end if defined?(Rails) && Rails.env.test?
+end unless defined?(Rails) && !Rails.env.test?
 
 require File.expand_path("../config/environment", __dir__)
 
