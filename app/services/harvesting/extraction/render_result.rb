@@ -32,6 +32,10 @@ module Harvesting
         end
       end
 
+      def to_validator_attributes
+        { data:, output:, }
+      end
+
       def valid?
         errors.blank?
       end

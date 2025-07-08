@@ -5,6 +5,7 @@ module Harvesting
     class RenderConfig < Support::FlexibleStruct
       include Dry::Core::Equalizer.new(:name)
       include Dry::Monads[:result]
+      include Dry::Monads::Do.for(:process)
 
       Map = Types::Hash.map(Types::Coercible::Symbol, self)
 
@@ -13,6 +14,8 @@ module Harvesting
       attribute? :data, Types::Bool.default(false)
       attribute? :finesser, Types.Interface(:call).optional
       attribute? :type, Types.Instance(Dry::Types::Type).default(Types::Any)
+
+      attribute :validator, Types.Inherits(RenderValidator)
 
       def callback_name
         :"render_#{name}"
@@ -27,6 +30,8 @@ module Harvesting
       # @param [Harvesting::Extraction::RenderResult] result
       # @return [Dry::Monads::Result]
       def process(result)
+        yield validate(result)
+
         finessed = finesse result
 
         coerced = type[finessed]
@@ -48,6 +53,10 @@ module Harvesting
         else
           result.output.strip
         end
+      end
+
+      def validate(result)
+        validator.new(**result.to_validator_attributes).to_monad
       end
     end
   end

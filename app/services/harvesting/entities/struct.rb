@@ -219,6 +219,12 @@ module Harvesting
             errors.each(&:write_log!)
           end
 
+          m.failure(:properties_invalid) do |_, warnings|
+            warnings.each(&:write_log!)
+
+            logger.debug "#{prefix}: skipped because of warnings", tags: %w[properties_invalid]
+          end
+
           m.failure do |*probs|
             # :nocov:
             logger.error "#{prefix}: Something went wrong", path:

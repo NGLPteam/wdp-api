@@ -126,10 +126,15 @@ module Harvesting
           def render_attr!(name, raw_type = Dry::Types::Any, data: false, &finesser)
             type = Harvesting::Metadata::Types.registered_type_for raw_type
 
+            validator = Class.new(Harvesting::Extraction::RenderValidator)
+
+            validator.attr_name name.to_sym
+
             options = {
               name:,
               type:,
               data:,
+              validator:,
             }
 
             options[:finesser] = finesser if block_given?
@@ -145,12 +150,10 @@ module Harvesting
             renderable_attributes render_configs.keys
           end
 
-          # @param [<Symbol>] names
-          # @return [void]
-          def renderable!(*names)
-            names.flatten.each do |name|
-              render_attr! name
-            end
+          def validate_attr!(name, &)
+            config = render_configs.fetch(name)
+
+            config.validator.class_eval(&)
           end
         end
       end
