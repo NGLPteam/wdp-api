@@ -6,6 +6,7 @@ module Schemas
     #
     # @see Schemas::Orderings::ResolveDynamic
     class DynamicResolver < Support::HookBased::Actor
+      include Dry::Effects::Handler.Reader(:for_dynamic_ordering)
       include Dry::Initializer[undefined: false].define -> do
         option :definition, ::Schemas::Types.Instance(::Schemas::Orderings::Definition)
 
@@ -17,6 +18,8 @@ module Schemas
       end
 
       standard_execution!
+
+      around_execute :set_for_dynamic_ordering!
 
       # @return [Schemas::Orderings::Dynamic]
       attr_reader :dynamic
@@ -60,6 +63,15 @@ module Schemas
         @entities = query.map(&:entity)
 
         super
+      end
+
+      private
+
+      # @return [void]
+      def set_for_dynamic_ordering!
+        with_for_dynamic_ordering(true) do
+          yield
+        end
       end
     end
   end

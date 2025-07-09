@@ -88,10 +88,15 @@ Rails.application.configure do
       class: "Entities::RefreshAuthorContributionsJob",
       description: "Refresh author contributions",
     },
+    "entities.refresh_cached_ancestors": {
+      cron: "*/2 * * * *",
+      class: "Entities::RefreshCachedAncestorsJob",
+      description: "Refresh entity cached ancestors",
+    },
     "entities.reindex_all_search_documents": {
       cron: "9,19,29,39,49,59 * * * *",
       class: "Entities::ReindexAllSearchDocumentsJob",
-      description: "Refresh author contributions",
+      description: "Re-index all entity search documents",
     },
     "harvesting.attempts.enqueue_scheduled": {
       cron: "50 * * * *",

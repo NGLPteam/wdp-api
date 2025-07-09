@@ -10,7 +10,11 @@ module MaterializedView
     config.refreshes_concurrently = true
   end
 
-  class_methods do
+  module ClassMethods
+    def populated?
+      Scenic.database.populated?(table_name)
+    end
+
     # @return [void]
     def refresh!(concurrently: config.refreshes_concurrently, cascade: false)
       Scenic.database.refresh_materialized_view(table_name, concurrently:, cascade:)
