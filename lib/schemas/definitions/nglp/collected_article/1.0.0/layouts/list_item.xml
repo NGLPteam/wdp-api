@@ -17,10 +17,10 @@
         </meta-a>
         <meta-b/>
         <context-full>
-          {% if ancestors.journal %} {{ancestors.journal.title}}, {% endif %} {% if ancestors.journal %} {{ancestors.volume.title}}, {% endif %}
+          {% if ancestors.journal %} {{ancestors.journal.title}}, {% endif %} {% if ancestors.volume %} {{ancestors.volume.title}} {% endif %}
         </context-full>
         <context-abbr>
-          {% if ancestors.volume %} {{ancestors.volume.title}}, {% endif %}
+          {% if ancestors.volume %} {{ancestors.volume.title}} {% endif %}
         </context-abbr>
         <nested-header>
           {{entity.title}}
