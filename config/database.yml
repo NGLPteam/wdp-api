@@ -25,6 +25,7 @@ default: &default
   # https://guides.rubyonrails.org/configuring.html#database-pooling
   pool: 100
   variables:
+    idle_in_transaction_session_timeout: '1min'
     statement_timeout: 600000
 
 development:
