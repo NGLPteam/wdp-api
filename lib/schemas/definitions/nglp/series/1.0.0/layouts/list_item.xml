@@ -20,6 +20,11 @@
         </meta-a>
         <meta-b>
           {% dotlist %}
+          {% if orderings.series.count > 0 %}
+            {% dotitem %}
+              {{orderings.series.count}} Series
+            {% enddotitem %}
+          {% endif %}
           {% dotitem %}
           {{orderings.papers.count}} {% if orderings.papers.count == 1 %}Paper{% else %}Papers{% endif %}
           {% enddotitem %}

@@ -64,9 +64,30 @@
         { "path": "entity.title", "direction": "asc" }
       ],
       "position": 2
+    },
+    {
+      "id": "series",
+      "name": "Series",
+      "filter": {
+        "schemas": [
+          {
+            "namespace": "nglp",
+            "identifier": "series"
+          }
+        ]
+      },
+      "select": {
+        "direct": "children",
+        "links": {
+          "contains": true
+        }
+      },
+      "order": [
+        { "path": "entity.published", "direction": "desc", "nulls": "last" },
+        { "path": "entity.title", "direction": "asc" }
+      ],
+      "position": 3
     }
   ],
-  "properties": [
-    { "type": "markdown", "path": "about", "label": "About" }
-  ]
+  "properties": [{ "type": "markdown", "path": "about", "label": "About" }]
 }
