@@ -29,7 +29,7 @@
           {{orderings.articles.count}} {% if orderings.articles.count == 1 %}Article{% else %}Articles{% endif %}
         </meta-b>
         <context-full>
-          {{ancestors.journal.title}}
+          {{ancestors.journal}}
         </context-full>
         <context-abbr/>
         <nested-header>
@@ -44,7 +44,7 @@
           {% endif %}
         </nested-metadata>
         <nested-context>
-          {{ancestors.journal.title}}
+          {{ancestors.journal}}
         </nested-context>
       </slots>
     </list-item>

@@ -26,7 +26,7 @@
           {% enddotlist %}
         </meta-b>
         <context-full>
-          {{ancestors.journal.title}}
+          {{ancestors.journal}}
         </context-full>
       </slots>
     </list-item>

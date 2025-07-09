@@ -18,7 +18,7 @@
         <meta-b/>
         <context-full>
           {% if parent.title %}
-            {{ parent.title }}
+            {{ parent }}
           {% endif %}
         </context-full>
       </slots>
