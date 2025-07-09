@@ -4707,6 +4707,126 @@
   default_function:
   has_default: false
   virtual: false
+- id: EntityCachedAncestor#entity_type
+  model_name: EntityCachedAncestor
+  table_name: entity_cached_ancestors
+  name: entity_type
+  type: text
+  'null': true
+  sql_type_metadata:
+    sql_type: text
+    type: text
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: EntityCachedAncestor#entity_id
+  model_name: EntityCachedAncestor
+  table_name: entity_cached_ancestors
+  name: entity_id
+  type: uuid
+  'null': true
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: EntityCachedAncestor#name
+  model_name: EntityCachedAncestor
+  table_name: entity_cached_ancestors
+  name: name
+  type: text
+  'null': true
+  sql_type_metadata:
+    sql_type: text
+    type: text
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: EntityCachedAncestor#ancestor_type
+  model_name: EntityCachedAncestor
+  table_name: entity_cached_ancestors
+  name: ancestor_type
+  type: text
+  'null': true
+  sql_type_metadata:
+    sql_type: text
+    type: text
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: EntityCachedAncestor#ancestor_id
+  model_name: EntityCachedAncestor
+  table_name: entity_cached_ancestors
+  name: ancestor_id
+  type: uuid
+  'null': true
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: EntityCachedAncestor#ancestor_schema_version_id
+  model_name: EntityCachedAncestor
+  table_name: entity_cached_ancestors
+  name: ancestor_schema_version_id
+  type: uuid
+  'null': true
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: EntityCachedAncestor#origin_depth
+  model_name: EntityCachedAncestor
+  table_name: entity_cached_ancestors
+  name: origin_depth
+  type: integer
+  'null': true
+  sql_type_metadata:
+    sql_type: integer
+    type: integer
+    limit: 4
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: EntityCachedAncestor#ancestor_depth
+  model_name: EntityCachedAncestor
+  table_name: entity_cached_ancestors
+  name: ancestor_depth
+  type: integer
+  'null': true
+  sql_type_metadata:
+    sql_type: integer
+    type: integer
+    limit: 4
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: EntityCachedAncestor#relative_depth
+  model_name: EntityCachedAncestor
+  table_name: entity_cached_ancestors
+  name: relative_depth
+  type: integer
+  'null': true
+  sql_type_metadata:
+    sql_type: integer
+    type: integer
+    limit: 4
+  default:
+  default_function:
+  has_default: false
+  virtual: false
 - id: EntityComposedText#id
   model_name: EntityComposedText
   table_name: entity_composed_texts

@@ -4663,6 +4663,27 @@ CREATE VIEW public.entity_breadcrumbs AS
 
 
 --
+-- Name: entity_cached_ancestors; Type: MATERIALIZED VIEW; Schema: public; Owner: -
+--
+
+CREATE MATERIALIZED VIEW public.entity_cached_ancestors AS
+ SELECT DISTINCT ON (sva.name, ent.entity_id) ent.entity_type,
+    ent.entity_id,
+    sva.name,
+    anc.entity_type AS ancestor_type,
+    anc.entity_id AS ancestor_id,
+    anc.schema_version_id AS ancestor_schema_version_id,
+    ent.depth AS origin_depth,
+    anc.depth AS ancestor_depth,
+    (ent.depth - anc.depth) AS relative_depth
+   FROM ((public.entities ent
+     JOIN public.schema_version_ancestors sva USING (schema_version_id))
+     JOIN public.entities anc ON (((ent.auth_path OPERATOR(public.<@) anc.auth_path) AND (anc.entity_id <> ent.entity_id) AND (anc.schema_version_id = sva.target_version_id))))
+  ORDER BY sva.name, ent.entity_id, anc.depth DESC
+  WITH NO DATA;
+
+
+--
 -- Name: entity_composed_texts; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -8740,6 +8761,13 @@ CREATE INDEX controlled_vocabulary_item_desc_idx ON public.controlled_vocabulary
 
 
 --
+-- Name: entity_cached_ancestors_pkey; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX entity_cached_ancestors_pkey ON public.entity_cached_ancestors USING btree (entity_type, entity_id, name) INCLUDE (ancestor_type, ancestor_id);
+
+
+--
 -- Name: harvest_attempts_scheduling_uniqueness; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -9983,6 +10011,13 @@ CREATE INDEX index_entities_permissions_calculation ON public.entities USING gis
 --
 
 CREATE UNIQUE INDEX index_entities_real ON public.entities USING btree (entity_id, entity_type, schema_version_id) WHERE (link_operator IS NULL);
+
+
+--
+-- Name: index_entities_schematic_descendant_querying; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_entities_schematic_descendant_querying ON public.entities USING gist (auth_path, schema_version_id, link_operator);
 
 
 --
@@ -14655,6 +14690,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20250702223014'),
 ('20250702223625'),
 ('20250702225216'),
-('20250703003427');
+('20250703003427'),
+('20250709172917');
 
 

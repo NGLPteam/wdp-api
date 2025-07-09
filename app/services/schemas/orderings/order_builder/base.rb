@@ -8,6 +8,7 @@ module Schemas
         extend Dry::Initializer
 
         include Dry::Core::Memoizable
+        include Dry::Effects.Reader(:for_dynamic_ordering, default: false)
         include Dry::Effects.State(:joins)
         include Dry::Effects.State(:props)
         include Dry::Effects.Resolve(:encode_join)
@@ -39,7 +40,11 @@ module Schemas
         end
 
         memoize def entity_ancestors
-          EntityAncestor.arel_table
+          if for_dynamic_ordering
+            EntityCachedAncestor.arel_table
+          else
+            EntityAncestor.arel_table
+          end
         end
 
         memoize def named_variable_dates
@@ -77,13 +82,17 @@ module Schemas
         end
 
         def arel_quote(value)
+          # :nocov:
           Arel::Nodes.build_quoted value
+          # :nocov:
         end
 
         # @abstract
         # @return [<Arel::Attribute, Arel::OrderPredications>]
         def attributes_for(definition)
+          # :nocov:
           []
+          # :nocov:
         end
 
         # @api private
@@ -192,7 +201,9 @@ module Schemas
             source_alias[:entity_id].eq(table_alias[:entity_id])
           )
 
+          # :nocov:
           on_condition = yield on_condition if block_given?
+          # :nocov:
 
           on = Arel::Nodes::On.new on_condition
 
