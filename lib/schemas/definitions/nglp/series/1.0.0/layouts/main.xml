@@ -17,6 +17,26 @@
     </detail>
     <descendant-list>
       <background>none</background>
+      <ordering-identifier>series</ordering-identifier>
+      <see-all-button-label/>
+      <selection-limit>8</selection-limit>
+      <selection-mode>named</selection-mode>
+      <selection-source>self</selection-source>
+      <entity-context>none</entity-context>
+      <show-hero-image>false</show-hero-image>
+      <see-all-button-label>See All Series</see-all-button-label>
+      <see-all-ordering-identifier>series</see-all-ordering-identifier>
+      <title/>
+      <variant>summary</variant>
+      <slots>
+        <block-header>Series</block-header>
+        <header-aside/>
+        <metadata/>
+        <subtitle/>
+      </slots>
+    </descendant-list>
+    <descendant-list>
+      <background>none</background>
       <ordering-identifier>papers</ordering-identifier>
       <see-all-button-label/>
       <selection-limit>8</selection-limit>
