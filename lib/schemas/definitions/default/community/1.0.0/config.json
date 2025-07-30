@@ -110,10 +110,32 @@
       "select": {
         "direct": "descendants"
       },
-      "order": [
-        { "path": "entity.title", "direction": "asc" }
-      ],
+      "order": [{ "path": "entity.title", "direction": "asc" }],
       "position": 5
+    },
+    {
+      "id": "volumes",
+      "name": "Journal Volumes",
+      "filter": {
+        "schemas": [
+          {
+            "namespace": "nglp",
+            "identifier": "journal_volume"
+          },
+          {
+            "namespace": "nglp",
+            "identifier": "collected_volume"
+          }
+        ]
+      },
+      "select": {
+        "direct": "descendants"
+      },
+      "order": [
+        { "path": "entity.published", "direction": "desc", "nulls": "last" },
+        { "path": "entity.created_at", "direction": "desc", "nulls": "last" }
+      ],
+      "position": 6
     },
     {
       "id": "issues",
@@ -133,7 +155,31 @@
         { "path": "entity.published", "direction": "desc", "nulls": "last" },
         { "path": "entity.created_at", "direction": "desc", "nulls": "last" }
       ],
-      "position": 6
+      "position": 7
+    },
+    {
+      "id": "articles",
+      "name": "Journal Articles",
+      "filter": {
+        "schemas": [
+          {
+            "namespace": "nglp",
+            "identifier": "journal_article"
+          },
+          {
+            "namespace": "nglp",
+            "identifier": "collected_article"
+          }
+        ]
+      },
+      "select": {
+        "direct": "descendants"
+      },
+      "order": [
+        { "path": "entity.published", "direction": "desc", "nulls": "last" },
+        { "path": "entity.created_at", "direction": "desc", "nulls": "last" }
+      ],
+      "position": 8
     }
   ],
   "properties": [
