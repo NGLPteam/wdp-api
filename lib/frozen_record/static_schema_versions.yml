@@ -1,5 +1,11 @@
 ---
 - namespace: nglp
+  identifier: book
+  number: 1.0.0
+- namespace: nglp
+  identifier: book_section
+  number: 1.0.0
+- namespace: nglp
   identifier: journal_issue
   number: 1.0.0
 - namespace: nglp

@@ -19,6 +19,13 @@
 
     Sometimes we harvest as journal content, though, so refer to the
     "OAIDC Journal Article" example where necessary.
+- id: default_pressbooks
+  name: Default Pressbooks Mapping
+  default: true
+  protocol_name: "pressbooks"
+  metadata_format_name: "pressbooks"
+  description: >
+    A barebones template for harvesting pressbooks monographs into Meru.
 - id: default_mets
   name: Default METS Mapping
   default: true

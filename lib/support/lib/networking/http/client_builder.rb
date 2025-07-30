@@ -21,6 +21,8 @@ module Support
 
           option :debug_retries, ::Support::Networking::Types::Bool, default: proc { Rails.env.development? }
 
+          option :json_response, ::Support::Networking::Types::Bool, default: proc { false }
+
           option :max_retries, ::Support::Networking::Types::RetryCount, default: proc { 10 }
 
           option :retry_backoff_factor, ::Support::Types::Coercible::Float, default: proc { 2 }
@@ -77,6 +79,10 @@ module Support
             builder.request :handle_misbehaving_ssl_upstream
             builder.response :follow_redirects, limit: 5
             builder.adapter :net_http
+
+            if json_response
+              builder.response :json, parser_options: { decoder: [Oj, :load] }
+            end
 
             if allow_insecure
               builder.ssl.verify = false

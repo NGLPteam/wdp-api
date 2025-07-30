@@ -45,7 +45,12 @@ module Harvesting
       # @param [String] raw
       # @return [String]
       def clean_up_metadata_source(raw)
-        raw.to_s
+        case metadata_format.underlying_data_format
+        in "json"
+          raw
+        else
+          raw.to_s
+        end
       end
 
       def build_drop(drop_klass, *args, **kwargs)

@@ -140,27 +140,51 @@ module Harvesting
 
         with_harvest_entity current_harvest_entity do
           # ApplicationRecord.with_advisory_lock advisory_key do
-          @current_entity = parent.find_or_initialize_harvested_child_for(current_harvest_entity)
+          entity = yield find_current_entity_for!(harvest_entity, parent:)
 
           maybe_apply_data!
           # end
 
           finalize_connection!
 
-          current_harvest_entity.harvest_contributions.find_each do |harvest_contribution|
-            yield attach_contribution.call(harvest_contribution, current_entity)
-          end
+          yield attach_contributions!(harvest_entity, entity:)
 
-          # Descend 1 level and attach the current `harvest_entity`'s children
-          # as children of the recently-created `entity`.
-          current_harvest_entity.children.find_each do |child|
-            yield attach!(child, parent: current_entity)
-          end
+          yield attach_children!(harvest_entity, parent: entity)
 
           yield upsert_links! harvest_entity, harvest_entity.entity
         end
 
         Success nil
+      end
+
+      # Descend 1 level and attach the current `harvest_entity`'s children
+      # as children of the recently-created `entity`.
+      #
+      # @param [HarvestEntity] harvest_entity
+      # @param [HierarchicalEntity] parent
+      # @return [Dry::Monads::Success(void)]
+      do_for! def attach_children!(harvest_entity, parent:)
+        harvest_entity.children.find_each do |child|
+          logger.trace "attaching child (#{child.identifier}) to #{parent.identifier}"
+
+          yield attach!(child, parent:)
+        ensure
+          # Re-assign the current entity back after each attached child
+          @current_entity = parent
+        end
+
+        Success()
+      end
+
+      # @param [HarvestEntity] harvest_entity
+      # @param [HierarchicalEntity] entity
+      # @return [Dry::Monads::Success(void)]
+      do_for! def attach_contributions!(harvest_entity, entity:)
+        harvest_entity.harvest_contributions.find_each do |harvest_contribution|
+          yield attach_contribution.call(harvest_contribution, entity)
+        end
+
+        Success()
       end
 
       # @return [void]
@@ -172,6 +196,17 @@ module Harvesting
         current_harvest_entity.entity = current_entity
 
         current_harvest_entity.save!(validate: false)
+      end
+
+      # @param [HarvestEntity] harvest_entity
+      # @param [HierarchicalEntity] parent
+      # @return [Dry::Monads::Success(HierarchicalEntity)]
+      def find_current_entity_for!(harvest_entity, parent:)
+        entity = parent.find_or_initialize_harvested_child_for(harvest_entity)
+
+        @current_entity = entity
+
+        Success entity
       end
 
       # @param [HasHarvestModificationStatus] entity

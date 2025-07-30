@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mapping>
+  <assigns>
+    <assign name="book_published">{{pressbooks.book.metadata.date_published | default: pressbooks.book.metadata.copyright_year}}</assign>
+    <assign name="book_hero_url">{{pressbooks.book.metadata.image_url}}</assign>
+    <assign name="book_thumb_url">{{pressbooks.book.metadata.thumbnail_url}}</assign>
+  </assigns>
+  <entities>
+    <collection schema="nglp:book">
+      <requires>
+        <expr reason="must be allowed to index">{{pressbooks.allowed_to_index}}</expr>
+      </requires>
+      <identifier>{{record.identifier}}</identifier>
+      <title>{{pressbooks.book.metadata.name}}</title>
+      <hero-image-url>{{pressbooks.book.metadata.image_url}}</hero-image-url>
+      <published>{{pressbooks.book.metadata.date_published | default: pressbooks.book.metadata.copyright_year}}</published>
+      <thumbnail-url>{{pressbooks.book.metadata.thumbnail_url}}</thumbnail-url>
+      <contributions>
+        {% for group in pressbooks.book.metadata.grouped_contributions %}
+        {% for c in group.contributors %}
+        {% if c.schema_org_type == "Person" %}
+        {% contribution role: group.role %}
+        {% person %}
+        {% identifier c.slug %}
+        {% given_name c.given_name %}
+        {% family_name c.family_name %}
+        {% endperson %}
+        {% endcontribution %}
+        {% elsif c.schema_org_type == "Organization" %}
+        {% contribution role: group.role %}
+        {% organization %}
+        {% identifier c.slug %}
+        {% legal_name c.legal_name %}
+        {% endorganization %}
+        {% endcontribution %}
+        {% endif %}
+        {% endfor %}
+        {% endfor %}
+      </contributions>
+      <properties>
+        <string path="ebook_isbn">{{pressbooks.book.metadata.isbn}}</string>
+        <string path="language">{{pressbooks.book.metadata.in_language}}</string>
+        <string path="publisher">{{pressbooks.book.metadata.network.name}}</string>
+        <url path="online_version">
+          <href>{{pressbooks.book.link}}</href>
+          <label>{{pressbooks.book.metadata.name}} — Online Version</label>
+        </url>
+      </properties>
+      <for each="fm" of="pressbooks.toc.front_matters">
+        <item schema="nglp:book_section">
+          <identifier>front-matter-{{fm.id}}</identifier>
+          <title>{{fm.title}}</title>
+          <hero-image-url>{{fm.metadata.image_url | default: book_hero_url}}</hero-image-url>
+          <published>{{fm.metadata.date_published | default: fm.metadata.copyright_year | default: book_published}}</published>
+          <thumbnail-url>{{fm.metadata.thumbnail_url | default: book_thumb_url}}</thumbnail-url>
+          <contributions>
+            {% for group in fm.metadata.grouped_contributions %}
+            {% for c in group.contributors %}
+            {% if c.schema_org_type == "Person" %}
+            {% contribution role: group.role %}
+            {% person %}
+            {% identifier c.slug %}
+            {% given_name c.given_name %}
+            {% family_name c.family_name %}
+            {% endperson %}
+            {% endcontribution %}
+            {% elsif c.schema_org_type == "Organization" %}
+            {% contribution role: group.role %}
+            {% organization %}
+            {% identifier c.slug %}
+            {% legal_name c.legal_name %}
+            {% endorganization %}
+            {% endcontribution %}
+            {% endif %}
+            {% endfor %}
+            {% endfor %}
+          </contributions>
+          <properties>
+            <integer path="sort_position">{{fm.menu_order}}</integer>
+            <string path="label">front-matter</string>
+            <string path="language">{{fm.metadata.in_language}}</string>
+            <url path="online_version">
+              <href>{{fm.link}}</href>
+              <label>{{fm.title}} — Online Version</label>
+            </url>
+          </properties>
+        </item>
+      </for>
+      <for each="part" of="pressbooks.toc.parts">
+        <item schema="nglp:book_section">
+          <identifier>part-{{part.id}}</identifier>
+          <title>{{part.title}}</title>
+          <hero-image-url>{{book_hero_url}}</hero-image-url>
+          <published>{{book_published}}</published>
+          <thumbnail-url>{{book_thumb_url}}</thumbnail-url>
+          <properties>
+            <integer path="sort_position">
+              {{part.menu_order | plus: pressbooks.toc.front_matters.size}}
+            </integer>
+            <string path="label">part</string>
+            <url path="online_version">
+              <href>{{part.link}}</href>
+              <label>{{part.title}} — Online Version</label>
+            </url>
+          </properties>
+          <for each="chapter" of="part.chapters">
+            <item schema="nglp:book_section">
+              <identifier>part-{{part.id}}-chapter-{{chapter.id}}</identifier>
+              <title>{{chapter.title}}</title>
+              <hero-image-url>{{chapter.metadata.image_url | default: book_hero_url}}</hero-image-url>
+              <published>{{chapter.metadata.date_published | default: chapter.metadata.copyright_year | default: book_published}}</published>
+              <thumbnail-url>{{chapter.metadata.thumbnail_url | default: book_thumb_url}}</thumbnail-url>
+              <contributions>
+                {% for group in chapter.metadata.grouped_contributions %}
+                {% for c in group.contributors %}
+                {% if c.schema_org_type == "Person" %}
+                {% contribution role: group.role %}
+                {% person %}
+                {% identifier c.slug %}
+                {% given_name c.given_name %}
+                {% family_name c.family_name %}
+                {% endperson %}
+                {% endcontribution %}
+                {% elsif c.schema_org_type == "Organization" %}
+                {% contribution role: group.role %}
+                {% organization %}
+                {% identifier c.slug %}
+                {% legal_name c.legal_name %}
+                {% endorganization %}
+                {% endcontribution %}
+                {% endif %}
+                {% endfor %}
+                {% endfor %}
+              </contributions>
+              <properties>
+                <integer path="sort_position">{{chapter.menu_order}}</integer>
+                <string path="label">chapter</string>
+                <string path="language">{{chapter.metadata.in_language}}</string>
+                <url path="online_version">
+                  <href>{{chapter.link}}</href>
+                  <label>{{chapter.title}} — Online Version</label>
+                </url>
+              </properties>
+            </item>
+          </for>
+        </item>
+      </for>
+    </collection>
+  </entities>
+</mapping>

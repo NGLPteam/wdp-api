@@ -42,6 +42,8 @@ module Types
       TEXT
     end
 
+    field :json_metadata_source, ::GraphQL::Types::JSON, null: true
+
     field :raw_source, String, null: true do
       description <<~TEXT
       The raw source extracted from the protocol.
@@ -57,6 +59,12 @@ module Types
 
       When rendering in the frontend, this should be in some sort of fixed-width font / code view,
       as it will be JSON, XML, or similar types of data.
+      TEXT
+    end
+
+    field :underlying_data_format, Types::UnderlyingDataFormatType, null: false do
+      description <<~TEXT
+      An enum describing how the `rawSource` / `rawMetadataSource` is encoded.
       TEXT
     end
 

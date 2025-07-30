@@ -86,7 +86,7 @@ module Harvesting
 
           # @return [{ String => Harvesting::Extraction::Mappings::Props::Base }]
           def properties
-            @properties ||= property_list.props
+            @properties ||= property_list.try(:props) || EMPTY_HASH
           end
 
           def root?
@@ -103,9 +103,14 @@ module Harvesting
           end
 
           # @param [Harvesting::Extraction::RenderContext] render_context
+          # @param [Harvesting::Entities::Struct] parent
           # @return [<Harvesting::Entities::Struct>]
           def render_child_structs_for(render_context, parent:)
             [].tap do |structs|
+              if respond_to?(:enumerations)
+                structs.concat(enumerations.flat_map { _1.render_structs_for(render_context, parent:) })
+              end
+
               if respond_to?(:collections)
                 structs.concat(collections.map { _1.render_struct_for(render_context, parent:) })
               end

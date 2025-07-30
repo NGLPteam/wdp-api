@@ -38,6 +38,7 @@ ActiveSupport::Inflector.inflections(:en) do |inflect|
   inflect.acronym "NGLP"
   inflect.acronym "PDF"
   inflect.acronym "PREMIS"
+  inflect.acronym "TOC"
   inflect.acronym "URL"
   inflect.acronym "APISchema"
   inflect.acronym "MeruAPI"

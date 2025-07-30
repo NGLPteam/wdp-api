@@ -38,5 +38,11 @@ module Types
       [OAI-PMH Dublin Core](https://www.openarchives.org/OAI/2.0/openarchivesprotocol.htm#dublincore)
       TEXT
     end
+
+    value "PRESSBOOKS", value: "pressbooks" do
+      description <<~TEXT
+      Pressbooks 'Book' response
+      TEXT
+    end
   end
 end
