@@ -22,7 +22,7 @@ RSpec.describe Schemas::Instances::RefreshOrderings, type: :operation do
   end
 
   let(:issue_orderings_count) { 4 }
-  let(:article_orderings_count) { 3 }
+  let(:article_orderings_count) { 4 }
 
   let!(:refresh_ordering) { TestHelpers::TestOperation.new }
 
