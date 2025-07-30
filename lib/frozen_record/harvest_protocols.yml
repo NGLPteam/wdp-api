@@ -4,6 +4,11 @@
   supports_extract_record: true
   supports_extract_records: true
   supports_extract_sets: true
+- name: pressbooks
+  has_sets: false
+  supports_extract_record: true
+  supports_extract_records: true
+  supports_extract_sets: false
 - name: unknown
   has_sets: false
   supports_extract_record: false

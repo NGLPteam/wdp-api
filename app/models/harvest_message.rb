@@ -15,4 +15,6 @@ class HarvestMessage < ApplicationRecord
   scope :in_default_order, -> { order(at: :desc) }
 
   scope :severity, ->(level) { where(arel_table[:level].lteq(Harvesting::Types::MessageLevelLimit[level])) }
+
+  scope :for_record_format, ->(format) { in_default_order.where(harvest_record_id: HarvestRecord.for_metadata_format(format).select(:id)) }
 end

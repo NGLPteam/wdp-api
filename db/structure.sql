@@ -287,7 +287,8 @@ CREATE TYPE public.descendant_list_variant AS ENUM (
     'compact',
     'grid',
     'promos',
-    'summary'
+    'summary',
+    'tree'
 );
 
 
@@ -354,7 +355,8 @@ CREATE TYPE public.harvest_metadata_format AS ENUM (
     'mets',
     'mods',
     'oaidc',
-    'esploro'
+    'esploro',
+    'pressbooks'
 );
 
 
@@ -386,7 +388,8 @@ CREATE TYPE public.harvest_modification_status AS ENUM (
 
 CREATE TYPE public.harvest_protocol AS ENUM (
     'unknown',
-    'oai'
+    'oai',
+    'pressbooks'
 );
 
 
@@ -526,7 +529,8 @@ CREATE TYPE public.link_list_variant AS ENUM (
     'compact',
     'grid',
     'promos',
-    'summary'
+    'summary',
+    'tree'
 );
 
 
@@ -859,6 +863,16 @@ CREATE TYPE public.template_slot_kind AS ENUM (
 CREATE TYPE public.template_width AS ENUM (
     'full',
     'half'
+);
+
+
+--
+-- Name: underlying_data_format; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.underlying_data_format AS ENUM (
+    'xml',
+    'json'
 );
 
 
@@ -5481,15 +5495,18 @@ CREATE TABLE public.harvest_records (
     status public.harvest_record_status DEFAULT 'pending'::public.harvest_record_status NOT NULL,
     identifier text NOT NULL,
     metadata_format text NOT NULL,
-    raw_source text,
-    raw_metadata_source text,
+    xml_source text,
+    xml_metadata_source text,
     entity_count bigint,
     source_changed_at timestamp without time zone,
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     local_metadata jsonb DEFAULT '{}'::jsonb NOT NULL,
     skipped jsonb DEFAULT '{"active": false}'::jsonb NOT NULL,
-    harvest_configuration_id uuid
+    harvest_configuration_id uuid,
+    underlying_data_format public.underlying_data_format NOT NULL,
+    json_source jsonb,
+    json_metadata_source jsonb
 );
 
 
@@ -14678,6 +14695,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20250505180140'),
 ('20250505182825'),
 ('20250505195133'),
+('20250609210232'),
 ('20250611201949'),
 ('20250701165933'),
 ('20250701212623'),
@@ -14691,6 +14709,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20250702223625'),
 ('20250702225216'),
 ('20250703003427'),
-('20250709172917');
+('20250709172917'),
+('20250730184809');
 
 

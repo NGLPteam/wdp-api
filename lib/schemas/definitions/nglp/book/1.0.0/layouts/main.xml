@@ -38,7 +38,7 @@
       <show-nested-entities>false</show-nested-entities>
       <title>Contents</title>
       <use-selection-fallback>false</use-selection-fallback>
-      <variant>grid</variant>
+      <variant>tree</variant>
       <slots>
         <block-header>Contents</block-header>
       </slots>

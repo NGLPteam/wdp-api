@@ -1,5 +1,11 @@
 ---
 - namespace: nglp
+  identifier: book
+  kind: collection
+- namespace: nglp
+  identifier: book_section
+  kind: item
+- namespace: nglp
   identifier: dissertation
   kind: item
 - namespace: nglp

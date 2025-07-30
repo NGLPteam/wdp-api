@@ -7,7 +7,7 @@ class HarvestMetadataFormat < Support::FrozenRecordHelpers::AbstractRecord
 
   schema!(types: ::Harvesting::TypeRegistry) do
     required(:name).filled(:string)
-    required(:data_format).filled(:underlying_data_format)
+    required(:underlying_data_format).filled(:underlying_data_format)
     required(:disabled).value(:bool)
     optional(:oai_metadata_prefix).value(:string)
   end
@@ -28,7 +28,7 @@ class HarvestMetadataFormat < Support::FrozenRecordHelpers::AbstractRecord
 
   scope :enabled, -> { where(disabled: false) }
   scope :disabled, -> { where(disabled: true) }
-  scope :xml, -> { where(data_format: "xml") }
+  scope :xml, -> { where(underlying_data_format: "xml") }
 
   klass_name_pair! :context do
     "harvesting/metadata/#{name}/context".camelize(:upper)

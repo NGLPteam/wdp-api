@@ -1,10 +1,12 @@
 # frozen_string_literal: true
 
 class HarvestRecord < ApplicationRecord
+  include HasEphemeralSystemSlug
   include HasHarvestErrors
   include HasHarvestSource
   include ScopesForIdentifier
   include HasHarvestMetadataFormat
+  include HasUnderlyingDataFormat
   include TimestampScopes
 
   # :nocov:
@@ -106,7 +108,7 @@ class HarvestRecord < ApplicationRecord
     # :nocov:
     changed_at = source_changed_at.iso8601
 
-    metadata_source = Nokogiri::XML(raw_metadata_source, &:noblanks).root.to_xml
+    metadata_source = Nokogiri::XML(xml_metadata_source, &:noblanks).root.to_xml
 
     {
       identifier:,
@@ -116,7 +118,61 @@ class HarvestRecord < ApplicationRecord
     # :nocov:
   end
 
+  # @!group Source Management
+
+  # @!attribute [rw] raw_source
+  # @return [String]
+  def raw_source
+    case harvest_metadata_format.underlying_data_format
+    in "json"
+      json_source&.to_json
+    in "xml"
+      xml_source.presence
+    end
+  end
+
+  def raw_source=(new_raw_source)
+    case harvest_metadata_format.underlying_data_format
+    in "json"
+      self.json_source = accept_json(new_raw_source)
+    in "xml"
+      self.xml_source = new_raw_source
+    end
+  end
+
+  # @!attribute [rw] raw_metadata_source
+  # @return [String]
+  def raw_metadata_source
+    case harvest_metadata_format.underlying_data_format
+    in "json"
+      json_metadata_source&.to_json
+    in "xml"
+      xml_metadata_source.presence
+    end
+  end
+
+  def raw_metadata_source=(new_raw_metadata_source)
+    case harvest_metadata_format.underlying_data_format
+    in "json"
+      self.json_metadata_source = accept_json(new_raw_metadata_source)
+    in "xml"
+      self.xml_metadata_source = new_raw_metadata_source
+    end
+  end
+
+  # @!endgroup
+
   private
+
+  # @param [Object, String] data
+  def accept_json(data)
+    case data
+    when String
+      Oj.load(data)
+    else
+      data.as_json
+    end
+  end
 
   # @raise [Harvesting::Records::NoConfiguration]
   # @return [HarvestConfiguration]

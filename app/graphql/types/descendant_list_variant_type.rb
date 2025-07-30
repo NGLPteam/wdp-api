@@ -35,5 +35,11 @@ module Types
       A vertical, summarized list of entities.
       TEXT
     end
+
+    value "TREE", value: "tree" do
+      description <<~TEXT
+      A tree structure.
+      TEXT
+    end
   end
 end

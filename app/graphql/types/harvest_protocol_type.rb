@@ -15,6 +15,12 @@ module Types
       TEXT
     end
 
+    value "PRESSBOOKS", value: "pressbooks" do
+      description <<~TEXT
+      [Pressbooks API](https://pressbooks.org/dev-guides/rest-api/)
+      TEXT
+    end
+
     value "UNKNOWN", value: "unknown" do
       description <<~TEXT
       A fallback value for protocols that should not appear under normal circumstances.

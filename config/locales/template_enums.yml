@@ -34,6 +34,8 @@ en:
         description: "A horizontal list of entities with promotional header."
       summary:
         description: "A vertical, summarized list of entities."
+      tree:
+        description: "A tree structure."
     link_list_selection_mode:
       dynamic:
         description: "Render links from a dynamic list, determined at query time."
@@ -50,6 +52,8 @@ en:
         description: "A horizontal list of entities with promotional header."
       summary:
         description: "A vertical, summarized list of entities."
+      tree:
+        description: "A tree structure."
     selection_source_mode:
       ancestor:
         description: "Selections should inherit from a named ancestor of this entity."

@@ -9,12 +9,14 @@ module Harvesting
 
           entity_kind! :collection
 
-          attribute :collections, Harvesting::Extraction::Mappings::Entities::Collection, collection: true, default: -> { [] }
-          attribute :items, Harvesting::Extraction::Mappings::Entities::Item, collection: true, default: -> { [] }
+          attribute :enumerations, ::Harvesting::Extraction::Mappings::Entities::Enumeration, collection: true, default: -> { [] }
+          attribute :collections, :harvesting_entity_collection, collection: true, default: -> { [] }
+          attribute :items, :harvesting_entity_item, collection: true, default: -> { [] }
 
           xml do
             root "collection"
 
+            map_element "for", to: :enumerations
             map_element "collection", to: :collections
             map_element "item", to: :items
             map_element "metadata-mapping", to: :metadata_mapping

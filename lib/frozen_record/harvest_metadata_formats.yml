@@ -1,14 +1,16 @@
 ---
 - name: jats
-  data_format: xml
+  underlying_data_format: xml
 - name: esploro
-  data_format: xml
+  underlying_data_format: xml
 - name: mets
-  data_format: xml
+  underlying_data_format: xml
   disabled: true
 - name: mods
-  data_format: xml
+  underlying_data_format: xml
   disabled: true
 - name: oaidc
-  data_format: xml
+  underlying_data_format: xml
   oai_metadata_prefix: oai_dc
+- name: pressbooks
+  underlying_data_format: json

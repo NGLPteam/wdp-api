@@ -17,6 +17,12 @@ module Types
       TEXT
     end
     <%- end -%>
+
+    field :rendered_inline, Boolean, null: false, method: :rendered do
+      description <<~TEXT
+      Whether the render happened inline when requesting this entity.
+      TEXT
+    end
     <%- layout_kinds.each do |layout_kind| -%>
 
     load_association! :<%= layout_kind %>_layout_instance, as: <%= layout_kind.to_sym.inspect %>

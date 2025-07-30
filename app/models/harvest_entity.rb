@@ -38,10 +38,12 @@ class HarvestEntity < ApplicationRecord
   scope :for_metadata_format, ->(metadata_format) { joins(:harvest_record).merge(HarvestRecord.for_metadata_format(metadata_format)) }
   scope :with_entity, -> { where.not(entity_id: nil) }
 
+  scope :with_esploro_format, -> { for_metadata_format "esploro" }
   scope :with_jats_format, -> { for_metadata_format "jats" }
   scope :with_mets_format, -> { for_metadata_format "mets" }
   scope :with_mods_format, -> { for_metadata_format "mods" }
   scope :with_oaidc_format, -> { for_metadata_format "oaidc" }
+  scope :with_pressbooks_format, -> { for_metadata_format "pressbooks" }
 
   scope :with_extracted_properties, ->(props) { where(arel_json_contains(:extracted_properties, props)) }
   scope :with_existing_parent, ->(parent) { where(existing_parent: parent) }

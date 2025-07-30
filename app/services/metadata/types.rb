@@ -8,6 +8,8 @@ module Metadata
 
     EnumeratedStringList = Coercible::Array.of(Coercible::String.constrained(filled: true))
 
+    GroupedContributionMapping = Hash.map(Coercible::String.constrained(filled: true), Coercible::Symbol.constrained(filled: true))
+
     NamaeValue = Instance(::Namae::Name)
 
     NamaeValues = Array.of(NamaeValue)

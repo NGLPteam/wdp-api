@@ -972,7 +972,7 @@ Style/RedundantConstantBase:
   Enabled: false
 
 Style/RedundantCurrentDirectoryInPath:
-  Enabled: true
+  Enabled: false
 
 Style/RedundantDoubleSplatHashBraces:
   Enabled: true
