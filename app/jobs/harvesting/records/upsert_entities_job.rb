@@ -6,6 +6,8 @@ module Harvesting
     class UpsertEntitiesJob < ApplicationJob
       queue_as :harvesting
 
+      max_runtime 30.minutes
+
       # @param [HarvestRecord] harvest_record
       # @return [void]
       def perform(harvest_record)
