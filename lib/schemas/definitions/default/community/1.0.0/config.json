@@ -180,6 +180,29 @@
         { "path": "entity.created_at", "direction": "desc", "nulls": "last" }
       ],
       "position": 8
+    },
+    {
+      "id": "books",
+      "name": "Books",
+      "filter": {
+        "schemas": [
+          {
+            "namespace": "nglp",
+            "identifier": "book"
+          }
+        ]
+      },
+      "select": {
+        "direct": "children",
+        "links": {
+          "contains": true
+        }
+      },
+      "order": [
+        { "path": "entity.published", "direction": "desc", "nulls": "last" },
+        { "path": "entity.title", "direction": "asc" }
+      ],
+      "position": 9
     }
   ],
   "properties": [
