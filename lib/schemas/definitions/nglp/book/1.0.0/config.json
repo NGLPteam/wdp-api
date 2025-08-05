@@ -40,6 +40,9 @@
           }
         ]
       },
+      "render": {
+        "mode": "tree"
+      },
       "select": {
         "direct": "descendants"
       },

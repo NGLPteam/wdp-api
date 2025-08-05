@@ -42,6 +42,9 @@
           }
         ]
       },
+      "render": {
+        "mode": "tree"
+      },
       "select": {
         "direct": "children"
       },
