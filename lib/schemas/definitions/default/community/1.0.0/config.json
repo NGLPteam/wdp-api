@@ -193,10 +193,7 @@
         ]
       },
       "select": {
-        "direct": "children",
-        "links": {
-          "contains": true
-        }
+        "direct": "descendants"
       },
       "order": [
         { "path": "entity.published", "direction": "desc", "nulls": "last" },
