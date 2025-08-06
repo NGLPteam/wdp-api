@@ -61,12 +61,12 @@
       <show-contributors>true</show-contributors>
       <selection-source>self</selection-source>
       <show-hero-image>false</show-hero-image>
-      <title>Recently Updated Paper Series</title>
+      <title>Recently Updated Series</title>
       <use-selection-fallback>true</use-selection-fallback>
       <variant>promos</variant>
       <slots>
-        <block-header>Featured Paper Series</block-header>
-        <block-header-fallback>Recently Updated Paper Series</block-header-fallback>
+        <block-header>Featured Series</block-header>
+        <block-header-fallback>Recently Updated Series</block-header-fallback>
       </slots>
     </descendant-list>
     <descendant-list>

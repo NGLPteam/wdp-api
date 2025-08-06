@@ -31,7 +31,7 @@
   "orderings": [
     {
       "id": "sections",
-      "name": "sections",
+      "name": "Sections",
       "filter": {
         "schemas": [
           {

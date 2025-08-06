@@ -9,7 +9,7 @@
       <show-basic-view-metrics>true</show-basic-view-metrics>
       <show-big-search-prompt>false</show-big-search-prompt>
       <show-breadcrumbs>true</show-breadcrumbs>
-      <show-doi>false</show-doi>
+      <show-doi>true</show-doi>
       <show-hero-image>false</show-hero-image>
       <show-sharing-link>true</show-sharing-link>
       <show-split-display>true</show-split-display>
@@ -26,23 +26,19 @@
         <header-subtitle/>
         <header-aside/>
         <header-sidebar>
-          {% if ancestors.journal.props.issn.exists %}
-            {% sbitem %} ISSN: {{ ancestors.journal.props.issn }} {% endsbitem %}
+          {% if ancestors.book.props.print_isbn.exists %}
+            {% sbitem icon: "isbn" %} Print ISBN: {{ ancestors.book.props.print_isbn }} {% endsbitem %}
+          {% endif %}
+          {% if ancestors.book.props.ebook_isbn.exists %}
+            {% sbitem icon: "isbn" %} EBook ISBN: {{ ancestors.book.props.ebook_isbn }} {% endsbitem %}
+          {% endif %}
+          {% if ancestors.book.props.cc_license.exists %}
+            {% sbitem icon: "cc" %} {{ ancestors.book.props.cc_license }} License {% endsbitem %}
           {% endif %}
         </header-sidebar>
         <header-summary/>
         <metadata />
-        <sidebar>
-          {% if props.print_isbn.exists %}
-            {% sbitem icon: "isbn" %} Print ISBN: {{ props.print_isbn }} {% endsbitem %}
-          {% endif %}
-          {% if props.ebook_isbn.exists %}
-            {% sbitem icon: "isbn" %} EBook ISBN: {{ props.ebook_isbn }} {% endsbitem %}
-          {% endif %}
-          {% if props.cc_license.exists %}
-            {% sbitem icon: "cc" %} {{ props.cc_license }} License {% endsbitem %}
-          {% endif %}
-        </sidebar>
+        <sidebar />
         <subheader>
           {{ entity.title }}
         </subheader>
@@ -58,9 +54,7 @@
         </subheader-summary>
         <call-to-action>
           {% if props.online_version.exists %}
-            {% asset props.online_version %}
-              Original Article
-            {% endasset %}
+            [Online Version]({{ props.online_version.href }})
           {% endif %}
         </call-to-action>
       </slots>

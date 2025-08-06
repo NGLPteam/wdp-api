@@ -3,13 +3,13 @@
   <templates>
     <hero>
       <background>light</background>
-      <enable-descendant-browsing>true</enable-descendant-browsing>
+      <enable-descendant-browsing>false</enable-descendant-browsing>
       <enable-descendant-search>true</enable-descendant-search>
       <list-contributors>true</list-contributors>
       <show-basic-view-metrics>true</show-basic-view-metrics>
       <show-big-search-prompt>false</show-big-search-prompt>
       <show-breadcrumbs>true</show-breadcrumbs>
-      <show-doi>false</show-doi>
+      <show-doi>true</show-doi>
       <show-hero-image>false</show-hero-image>
       <show-sharing-link>true</show-sharing-link>
       <show-split-display>false</show-split-display>
@@ -21,6 +21,8 @@
             {% asset props.pdf_version %}
               Download PDF
             {% endasset %}
+          {% elsif props.online_version.exists %}
+            [Online Version]({{ props.online_version.href }})
           {% endif %}
         </call-to-action>
         <descendant-search-prompt>Search {{ entity.title }}</descendant-search-prompt>
@@ -30,7 +32,7 @@
         <header-parent>
           {% if ancestors.series %} {{ancestors.series.title}} {% endif %}
         </header-parent>
-        <header-subtitle/>
+        <header-subtitle>{{ entity.subtitle }}</header-subtitle>
         <summary/>
         <header-summary>{{ entity.summary }}</header-summary>
         <header-aside/>
