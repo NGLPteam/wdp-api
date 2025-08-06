@@ -19,7 +19,7 @@
           {% if entity.published %} Published {{ entity.published }} {% endif %}
         </meta-b>
         <context-full>
-          {% if ancestors.series %} {{ancestors.series.title}}, {% endif %}
+          {% if ancestors.series %} {{ancestors.series.title}} {% endif %}
         </context-full>
         <context-abbr/>
       </slots>
