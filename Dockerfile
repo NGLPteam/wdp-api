@@ -10,7 +10,9 @@ RUN --mount=type=secret,id=maxmind_account_id \
   GEOIPUPDATE_LICENSE_KEY_FILE=/run/secrets/maxmind_license_key \
   /usr/bin/geoipupdate
 
-FROM ruby:3.2.3-bookworm
+FROM ruby:3.4.4-bookworm
+
+ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update -qq && apt-get install -y -qq --no-install-recommends \
     build-essential \
@@ -31,19 +33,7 @@ RUN /usr/share/postgresql-common/pgdg/apt.postgresql.org.sh -y
 
 RUN apt-get update -qq && apt-get install -y -qq --no-install-recommends postgresql-client-15
 
-RUN gem update --system && gem install bundler:2.5.7
-
-WORKDIR /srv/app
-COPY Gemfile /srv/app/Gemfile
-COPY Gemfile.lock /srv/app/Gemfile.lock
-COPY . /srv/app
-
-COPY docker/entrypoint.sh /usr/bin/
-RUN chmod +x /usr/bin/entrypoint.sh
-ENTRYPOINT ["entrypoint.sh"]
-
-COPY --from=maxmind /usr/bin/geoipupdate /usr/local/bin/geoipupdate
-COPY --from=maxmind /usr/share/GeoIP /usr/share/GeoIP
+RUN gem update --system && gem install bundler:2.7.1
 
 ENV BUNDLE_PATH=/bundle \
     BUNDLE_BIN=/bundle/bin \
@@ -60,6 +50,24 @@ ENV GEOIPUPDATE_DB_DIR="/usr/share/GeoIP"
 ENV GEOIPUPDATE_EDITION_IDS="GeoLite2-ASN GeoLite2-City GeoLite2-Country"
 ENV GEOIPUPDATE_PRESERVE_FILE_TIMES=1
 ENV GEOIPUPDATE_VERBOSE=1
+
+WORKDIR /srv/app
+COPY Gemfile /srv/app/Gemfile
+COPY Gemfile.lock /srv/app/Gemfile.lock
+
+RUN bundle install
+
+COPY . /srv/app
+
+RUN bundle exec bootsnap precompile --gemfile app/ lib/ config/
+
+COPY docker/entrypoint.sh /usr/bin/
+RUN chmod +x /usr/bin/entrypoint.sh
+
+ENTRYPOINT ["entrypoint.sh"]
+
+COPY --from=maxmind /usr/bin/geoipupdate /usr/local/bin/geoipupdate
+COPY --from=maxmind /usr/share/GeoIP /usr/share/GeoIP
 
 EXPOSE 8080
 

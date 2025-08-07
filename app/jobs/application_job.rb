@@ -14,7 +14,7 @@ class ApplicationJob < ActiveJob::Base
 
   retry_on ActiveRecord::QueryCanceled
 
-  retry_on JobTimeoutError, wait: :exponentially_longer, attempts: 10
+  retry_on JobTimeoutError, wait: :polynomially_longer, attempts: 10
 
   # Automatically retry jobs that encountered a deadlock
   retry_on ActiveRecord::Deadlocked

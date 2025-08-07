@@ -6,7 +6,6 @@ module Support
   # A container for holding pre-initialization support services, generator helpers, etc.
   class System < Dry::System::Container
     use :zeitwerk
-    use :bootsnap
 
     configure do |config|
       config.root = Pathname(__dir__)

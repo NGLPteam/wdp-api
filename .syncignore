@@ -1,2 +1,5 @@
 log
 tmp
+tmp/*.tar
+tmp/*.tar.gz
+tmp/cache/bootsnap

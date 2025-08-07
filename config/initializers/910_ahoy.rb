@@ -96,8 +96,8 @@ Ahoy.job_queue = :ahoy
 
 # Ahoy.cookie_options = { same_site: :lax }
 
-Ahoy.cookies = false
+Ahoy.cookies = :none
 
 Ahoy.mask_ips = true
 
-Ahoy.track_bots = Rails.env.development? || Rails.env.test?
+Ahoy.track_bots = Rails.env.local?

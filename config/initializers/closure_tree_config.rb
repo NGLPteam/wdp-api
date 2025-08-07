@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
 ClosureTree.configure do |config|
-  config.database_less = false
+  # No longer necessary.
+  # config.database_less = false
 end

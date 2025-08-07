@@ -36,7 +36,7 @@ RSpec.describe Introspection::LayoutsController, type: :request do
           post(validate_introspection_layout_path(:main), params:)
         end.to execute_safely
 
-        expect(response).to have_http_status :unprocessable_entity
+        expect(response).to have_http_status :unprocessable_content
       end
     end
 
@@ -48,7 +48,7 @@ RSpec.describe Introspection::LayoutsController, type: :request do
           post(validate_introspection_layout_path(:main), params:)
         end.to execute_safely
 
-        expect(response).to have_http_status :unprocessable_entity
+        expect(response).to have_http_status :unprocessable_content
       end
     end
   end

@@ -33,7 +33,7 @@ module Schemas
       # @return [nil] unless {#builtin?}
       def static_record
         # :nocov:
-        return unless builtin?
+        return unless builtin? && !testing?
 
         case self
         in ::SchemaDefinition
@@ -42,6 +42,10 @@ module Schemas
           ::StaticSchemaVersion.find(declaration)
         end
         # :nocov:
+      end
+
+      def testing?
+        namespace == "testing"
       end
     end
   end

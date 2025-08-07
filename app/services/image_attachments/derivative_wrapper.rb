@@ -16,7 +16,7 @@ module ImageAttachments
     delegate :height, :width, to: :size_wrapper, prefix: :max
     delegate :size, :image_wrapper, to: :size_wrapper
     delegate :name, to: :size, prefix: true
-    delegate :alt, :original_filename, :purpose, to: :image_wrapper
+    delegate :alt, :purpose, to: :image_wrapper
 
     # @return [String]
     def original_filename

@@ -33,10 +33,12 @@ class HarvestCachedAsset < ApplicationRecord
     # @yieldreturn [Object]
     # @return [Object]
     def for_url(url)
-      HarvestCachedAsset.with_advisory_lock(url, timeout_seconds: nil) do
-        cached = HarvestCachedAsset.by_url(url).first_or_initialize
+      transaction do
+        with_advisory_lock!(url, timeout_seconds: 60, transaction: true, disable_query_cache: true) do
+          cached = HarvestCachedAsset.by_url(url).first_or_initialize
 
-        yield cached if block_given?
+          yield cached if block_given?
+        end
       end
     end
   end

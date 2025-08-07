@@ -50,10 +50,6 @@ class EntityLink < ApplicationRecord
 
   after_save :refresh_source_orderings!
 
-  alias_attribute :hierarchical_type, :target_type
-  alias_attribute :hierarchical_id, :target_id
-  alias_attribute :entity_scope, :scope
-
   # @api private
   # @return [String, nil]
   def calculate_auth_path
@@ -80,12 +76,24 @@ class EntityLink < ApplicationRecord
     self.scope = calculate_scope
   end
 
+  def entity_scope
+    scope
+  end
+
   def has_valid_source?
     source.kind_of?(HierarchicalEntity)
   end
 
   def has_valid_target?
     target.kind_of?(HierarchicalEntity)
+  end
+
+  def hierarchical_id
+    target_id
+  end
+
+  def hierarchical_type
+    target_type
   end
 
   # @api private

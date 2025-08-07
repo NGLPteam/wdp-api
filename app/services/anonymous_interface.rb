@@ -49,6 +49,14 @@ module AnonymousInterface
 
   def avatar_data=(*); end
 
+  def can_manage_access_contextually?
+    false
+  end
+
+  def can_manage_access_globally?
+    false
+  end
+
   # @!attribute [r] created_at
   # @note An anonymous user's created time is always at the time of the request.
   # @return [ActiveSupport::TimeWithZone]

@@ -14,5 +14,8 @@ module Patches
   end
 end
 
-ActiveRecord::ConnectionAdapters::PostgreSQLAdapter::NATIVE_DATABASE_TYPES.merge!(variable_precision_date: { name: "variable_precision_date" })
-ActiveRecord::ConnectionAdapters::PostgreSQLAdapter.prepend Patches::SupportVariablePrecisionDate
+ActiveSupport.on_load(:active_record_postgresqladapter) do
+  ActiveRecord::ConnectionAdapters::PostgreSQLAdapter::NATIVE_DATABASE_TYPES.merge!(variable_precision_date: { name: "variable_precision_date" })
+
+  prepend Patches::SupportVariablePrecisionDate
+end

@@ -8,7 +8,7 @@ class DownloadsController < ApplicationController
       m.success do
         ahoy.track "asset.download", subject: asset, entity: asset.attachable
 
-        redirect_to asset.actual_download_url, status: :see_other
+        redirect_to asset.actual_download_url, status: :see_other, allow_other_host: Rails.env.test?
       end
 
       m.failure :missing_token do
@@ -19,7 +19,7 @@ class DownloadsController < ApplicationController
         render plain: "Bad Request", status: :bad_request
       end
     end
-  rescue ActiveRecord::RecordNotFound
+  rescue ActiveRecord::RecordNotFound, Dry::Monads::UnwrapError
     render plain: "Not Found", status: :not_found
   end
 end

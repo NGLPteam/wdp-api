@@ -12,4 +12,6 @@ module Patches
   end
 end
 
-ActiveRecord::ConnectionAdapters::PostgreSQLAdapter.prepend Patches::SupportLQuery
+ActiveSupport.on_load(:active_record_postgresqladapter) do
+  prepend Patches::SupportLQuery
+end

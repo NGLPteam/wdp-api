@@ -28,7 +28,7 @@ module Types
         # environments, fall back to the old behavior of just implicitly
         # allowing access in order to ensure we're not breaking anything
         # that doesn't have a policy yet.
-        raise e if Rails.env.development? || Rails.env.test?
+        raise e if Rails.env.local?
 
         return true
         # :nocov:

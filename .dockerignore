@@ -8,3 +8,6 @@ docker
 !/docker/entrypoint.sh
 log/*.log
 *.unison*
+tmp/*.tar
+tmp/*.tar.gz
+tmp/cache/bootsnap
