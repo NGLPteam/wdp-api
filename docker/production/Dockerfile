@@ -10,7 +10,7 @@ RUN --mount=type=secret,id=maxmind_account_id \
   GEOIPUPDATE_LICENSE_KEY_FILE=/run/secrets/maxmind_license_key \
   /usr/bin/geoipupdate
 
-FROM ruby:3.2.3-bullseye
+FROM ruby:3.4.4-bullseye
 
 RUN apt-get update -qq && apt-get install -y -qq --no-install-recommends \
     build-essential \
@@ -49,7 +49,7 @@ ENV BUNDLE_PATH=/bundle \
 ENV PATH="${BUNDLE_BIN}:${PATH}"
 ENV LD_PRELOAD=libjemalloc.so.2
 
-RUN gem update --system && gem install bundler:2.5.7
+RUN gem update --system && gem install bundler:2.7.1
 
 COPY Gemfile Gemfile.lock ./
 
@@ -61,6 +61,8 @@ RUN --mount=type=cache,id=-gem-cache,sharing=locked,target=.cache/bundle \
 RUN bundle config set path /bundle
 
 COPY . /srv/app
+
+RUN bundle exec bootsnap precompile --gemfile app/ lib/ config/
 
 RUN mkdir -pv /usr/share
 

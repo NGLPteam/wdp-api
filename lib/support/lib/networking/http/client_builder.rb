@@ -11,7 +11,7 @@ module Support
       # @see Support::Networking::HTTP::BuildClient
       class ClientBuilder < ::Support::HookBased::Actor
         DEFAULT_RETRY_BLOCK = ->(retry_count:, exception:, **) do
-          puts "(#{retry_count} retries): #{exception.message}"
+          warn "(#{retry_count} retries): #{exception.message}"
         end
 
         include Dry::Initializer[undefined: false].define -> do
@@ -94,9 +94,7 @@ module Support
           # :nocov:
           return unless debug_retries
 
-          ->(retry_count:, exception:, **) do
-            puts "(#{retry_count} retries): #{exception.message}"
-          end
+          DEFAULT_RETRY_BLOCK
           # :nocov:
         end
 

@@ -80,6 +80,15 @@ class Asset < ApplicationRecord
     # :nocov:
   end
 
+  # @api private
+  # @note Only used for testing request specs.
+  # @return [String, nil]
+  def download_token
+    url = download_url
+
+    Rack::Utils.parse_query(URI(url).query)["token"]
+  end
+
   # @return [String]
   def download_url
     generate_download_url!

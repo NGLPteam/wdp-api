@@ -14,6 +14,8 @@ AllCops:
     - "app/services/testing/**/*.rb"
     - "app/services/shared/broadcast_logger.rb"
     - "config/puma.rb"
+    - "db/data_schema.rb"
+    - "db/data/**/*.rb"
     - "db/migrate/**/*.rb"
     - "db/schema.rb"
     - "lib/generators/**/*.rb"
@@ -22,14 +24,16 @@ AllCops:
     - "tmp/**/*"
     - "vendor/**/*"
   SuggestExtensions: false
-  TargetRubyVersion: 3.2
+  TargetRailsVersion: 7.2
+  TargetRubyVersion: 3.4
 
 Bundler/OrderedGems:
   Enabled: false
 
 FactoryBot/AssociationStyle:
   # Explicit is better.
-  Enabled: false
+  EnforcedStyle: explicit
+  Enabled: true
 
 FactoryBot/ConsistentParenthesesStyle:
   Enabled: false
@@ -58,6 +62,9 @@ FactoryBot/SyntaxMethods:
 Gemspec/AddRuntimeDependency:
   Enabled: true
 
+Gemspec/AttributeAssignment:
+  Enabled: true
+
 Gemspec/DeprecatedAttributeAssignment:
   Enabled: true
 
@@ -75,6 +82,9 @@ Layout/DotPosition:
 
 Layout/EmptyLineAfterGuardClause:
   Enabled: false
+
+Layout/EmptyLinesAfterModuleInclusion:
+  Enabled: true
 
 Layout/ExtraSpacing:
   AllowForAlignment: true
@@ -115,7 +125,7 @@ Layout/MultilineMethodCallIndentation:
   Enabled: false
 
 Layout/SpaceAroundOperators:
-  AllowForAlignment: true
+  Enabled: false
 
 Layout/SpaceBeforeBrackets:
   Enabled: true
@@ -130,11 +140,11 @@ Lint/AmbiguousAssignment:
 Lint/AmbiguousBlockAssociation:
   Enabled: false
 
-# PEMDAS
-Lint/AmbiguousOperatorPrecedence:
+Lint/AmbiguousOperator:
   Enabled: false
 
-Lint/AmbiguousOperator:
+# PEMDAS
+Lint/AmbiguousOperatorPrecedence:
   Enabled: false
 
 Lint/AmbiguousRange:
@@ -218,9 +228,10 @@ Lint/OrAssignmentToConstant:
 Lint/RedundantDirGlobSort:
   Enabled: true
 
-Lint/RedundantTypeConversion:
-  Enabled: true
 Lint/RedundantRegexpQuantifiers:
+  Enabled: true
+
+Lint/RedundantTypeConversion:
   Enabled: true
 
 Lint/RefinementImportMethods:
@@ -242,7 +253,7 @@ Lint/SymbolConversion:
   Enabled: true
 
 Lint/ToEnumArguments:
-  Enabled: false
+  Enabled: true
 
 Lint/TripleQuotes:
   Enabled: true
@@ -266,12 +277,18 @@ Lint/UnusedMethodArgument:
   Enabled: false
 
 Lint/UselessConstantScoping:
+  Enabled: false
+
+Lint/UselessDefaultValueArgument:
   Enabled: true
 
 Lint/UselessDefined:
   Enabled: true
 
 Lint/UselessNumericOperation:
+  Enabled: true
+
+Lint/UselessOr:
   Enabled: true
 
 Lint/UselessRescue:
@@ -295,7 +312,7 @@ Metrics/ClassLength:
   Enabled: false
 
 Metrics/CollectionLiteralLength:
-  Enabled: true
+  Enabled: false
 
 Metrics/CyclomaticComplexity:
   AllowedPatterns:
@@ -306,6 +323,7 @@ Metrics/CyclomaticComplexity:
     - "app/services/**/*.rb"
     - "lib/**/*.rb"
     - "spec/**/*.rb"
+  Max: 12
 
 Metrics/MethodLength:
   Exclude:
@@ -347,7 +365,10 @@ Naming/MethodParameterName:
 Naming/MethodName:
   Enabled: false
 
-Naming/PredicateName:
+Naming/PredicateMethod:
+  Enabled: false
+
+Naming/PredicatePrefix:
   Exclude:
     - "app/services/liquid_ext/**/*.rb"
   ForbiddenPrefixes:
@@ -475,8 +496,9 @@ Rails/OutputSafety:
 Rails/Pluck:
   Enabled: true
 
+# False positives.
 Rails/PluckInWhere:
-  Enabled: true
+  Enabled: false
 
 Rails/RedundantActiveRecordAllMethod:
   Enabled: false
@@ -556,16 +578,13 @@ Rails/WhereExists:
 Rails/WhereMissing:
   Enabled: true
 
-Rails/WhereNotWithMultipleConditions:
-  Enabled: true
-
 Rails/WhereNot:
   Enabled: true
 
-Rails/WhereRange:
+Rails/WhereNotWithMultipleConditions:
   Enabled: true
 
-RSpec/BeEmpty:
+Rails/WhereRange:
   Enabled: true
 
 RSpec/BeEq:
@@ -627,6 +646,10 @@ RSpec/IdenticalEqualityAssertion:
 RSpec/ImplicitSubject:
   Enabled: false
 
+RSpec/IncludeExamples:
+  Enabled: false
+
+# Sometimes attributes/variables have numbers in them, rubocop.
 RSpec/IndexedLet:
   Enabled: false
 
@@ -688,7 +711,7 @@ RSpec/RepeatedExample:
 RSpec/ScatteredLet:
   Enabled: false
 
-# False positives that don't understand other context building helpers.
+# Before blocks are executed in order, they can't always be in one place
 RSpec/ScatteredSetup:
   Enabled: false
 
@@ -774,6 +797,9 @@ Style/ClassVars:
 Style/CollectionCompact:
   Enabled: true
 
+Style/CollectionQuerying:
+  Enabled: true
+
 Style/CombinableDefined:
   Enabled: true
 
@@ -813,6 +839,9 @@ Style/EmptyHeredoc:
 Style/EmptyLiteral:
   Enabled: false
 
+Style/EmptyStringInsideInterpolation:
+  Enabled: true
+
 Style/EndlessMethod:
   Enabled: true
 
@@ -831,10 +860,10 @@ Style/FetchEnvVar:
 Style/FileEmpty:
   Enabled: true
 
-Style/FileRead:
+Style/FileNull:
   Enabled: true
 
-Style/FileNull:
+Style/FileRead:
   Enabled: true
 
 Style/FileTouch:
@@ -865,6 +894,9 @@ Style/HashEachMethods:
 Style/HashExcept:
   Enabled: true
 
+Style/HashFetchChain:
+  Enabled: true
+
 Style/HashSlice:
   Enabled: true
 
@@ -879,6 +911,9 @@ Style/InPatternThen:
 
 Style/ItAssignment:
   Enabled: true
+
+Style/ItBlockParameter:
+  Enabled: false
 
 Style/KeywordArgumentsMerging:
   Enabled: true
@@ -968,6 +1003,12 @@ Style/RedundantArgument:
 Style/RedundantArrayConstructor:
   Enabled: true
 
+Style/RedundantArrayFlatten:
+  Enabled: false
+
+Style/RedundantCondition:
+  Enabled: false
+
 Style/RedundantConstantBase:
   Enabled: false
 
@@ -1002,7 +1043,7 @@ Style/RedundantLineContinuation:
   Enabled: true
 
 Style/RedundantParentheses:
-  Enabled: true
+  Enabled: false
 
 Style/RedundantRegexpArgument:
   Enabled: true

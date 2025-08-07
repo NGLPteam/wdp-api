@@ -51,6 +51,12 @@ class Entity < ApplicationRecord
 
   has_many_readonly :layout_invalidations, primary_key: CONTEXTUAL_TUPLE, foreign_key: ENTITY_TUPLE
 
+  has_many_readonly :schematic_collected_references, primary_key: ENTITY_TUPLE, foreign_key: %i[referrer_type referrer_id], inverse_of: :entity
+
+  has_many_readonly :schematic_scalar_references, primary_key: ENTITY_TUPLE, foreign_key: %i[referrer_type referrer_id], inverse_of: :entity
+
+  has_many_readonly :schematic_texts, primary_key: ENTITY_TUPLE, foreign_key: ENTITY_TUPLE, inverse_of: :composite_entity
+
   scope :with_schema_name_asc, -> { joins(:schema_definition).merge(SchemaDefinition.order(name: :asc)) }
   scope :with_schema_name_desc, -> { joins(:schema_definition).merge(SchemaDefinition.order(name: :desc)) }
 

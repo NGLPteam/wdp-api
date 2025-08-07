@@ -6,7 +6,8 @@ module Harvesting
     class UpsertEntitiesJob < ApplicationJob
       queue_as :harvesting
 
-      max_runtime 30.minutes
+      # Temporary workaround for very long pressbooks jobs.
+      max_runtime 90.minutes
 
       # @param [HarvestRecord] harvest_record
       # @return [void]

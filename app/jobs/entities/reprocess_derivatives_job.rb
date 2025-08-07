@@ -5,7 +5,7 @@ module Entities
   class ReprocessDerivativesJob < ApplicationJob
     queue_as :maintenance
 
-    retry_on Redis::TimeoutError, wait: :exponentially_longer
+    retry_on Redis::TimeoutError, wait: :polynomially_longer
 
     unique_job! by: :all_args
 

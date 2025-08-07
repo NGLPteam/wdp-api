@@ -13,11 +13,10 @@ class SchematicText < ApplicationRecord
 
   belongs_to :entity, polymorphic: true
 
-  # rubocop:disable Rails/InverseOf
   belongs_to :composite_entity, class_name: "Entity",
     foreign_key: %i[entity_type entity_id],
-    primary_key: %i[entity_type entity_id]
-  # rubocop:enable Rails/InverseOf
+    primary_key: %i[entity_type entity_id],
+    inverse_of: :schematic_texts
 
   has_one :schema_version, through: :composite_entity
 

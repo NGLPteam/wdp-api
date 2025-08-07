@@ -4,7 +4,6 @@ module TestingAPI
   # A container for holding test-related services and helpers.
   class TestContainer < Dry::System::Container
     use :zeitwerk
-    use :bootsnap
 
     configure do |config|
       config.root = Pathname(__dir__)

@@ -72,7 +72,7 @@ module SyncsEntities
   # @see Entities::Sync
   # @return [void]
   def sync_entity!
-    call_operation("entities.sync", self)
+    call_operation("entities.sync", self).value!
   end
 
   # This generates the tuple of attributes to send to {#sync_entity!} besides

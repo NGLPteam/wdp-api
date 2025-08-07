@@ -1,5 +1,9 @@
 # frozen_string_literal: true
 
+Kernel.silence_warnings do
+  require "niso-jats"
+end
+
 module Patches
   module CaptureXLinkHref
     class << self

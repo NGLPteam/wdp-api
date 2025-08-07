@@ -9,9 +9,8 @@ module SchematicReference
     belongs_to :referrer, polymorphic: true
     belongs_to :referent, polymorphic: true
 
-    # rubocop:disable Rails/InverseOf
-    belongs_to :entity, foreign_key: %i[referrer_type referrer_id], primary_key: %i[entity_type entity_id]
-    # rubocop:enable Rails/InverseOf
+    belongs_to :entity, foreign_key: %i[referrer_type referrer_id], primary_key: %i[entity_type entity_id],
+      inverse_of: model_name.collection.to_sym
 
     has_one :schema_version, through: :entity
 

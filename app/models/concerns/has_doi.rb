@@ -22,7 +22,7 @@ module HasDOI
     before_validation :extract_doi_data!
   end
 
-  delegate :link, :url, to: :doi_reference, prefix: :doi, allow_nil: true
+  delegate :link, to: :doi_reference, prefix: :doi, allow_nil: true
   delegate :ok?, :url, to: :doi_data, prefix: :doi, allow_nil: true
 
   # @!attribute [rw] doi

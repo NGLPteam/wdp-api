@@ -15,11 +15,11 @@ module Introspection
         end
 
         m.failure(:invalid_params) do |code, resp|
-          render json: invalid_result(resp, code:), status: :unprocessable_entity
+          render json: invalid_result(resp, code:), status: :unprocessable_content
         end
 
         m.failure :invalid_document do |code, reason|
-          render json: invalid_because(reason, code:), status: :unprocessable_entity
+          render json: invalid_because(reason, code:), status: :unprocessable_content
         end
 
         m.failure do |error|

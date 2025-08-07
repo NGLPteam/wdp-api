@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<foo>
+  <bar>
+    <![CDATA[
+      some stuff
+      other stuff
+    ]]>
+  </bar>
+  <baz>quux</baz>
+  <single>single line</single>
+</foo>

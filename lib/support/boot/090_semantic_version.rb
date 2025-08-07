@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 require "active_record/connection_adapters/postgresql_adapter"
-require_relative "../global_types/parsed_semantic_version"
-require_relative "../global_types/semantic_version"
+require_relative "../../global_types/parsed_semantic_version"
+require_relative "../../global_types/semantic_version"
 
 module Patches
   module SupportSemanticVersion
@@ -51,6 +51,8 @@ module Patches
   end
 end
 
-ActiveRecord::ConnectionAdapters::PostgreSQLAdapter.prepend Patches::SupportSemanticVersion
+ActiveSupport.on_load(:active_record_postgresqladapter) do
+  prepend Patches::SupportSemanticVersion
+end
 
 StoreModel::Model.prepend Patches::SerializeSpecialAttributesProperly

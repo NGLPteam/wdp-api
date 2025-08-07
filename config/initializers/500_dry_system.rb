@@ -7,8 +7,6 @@ module Common
 end
 
 Dry::Rails.container do
-  use :bootsnap
-
   config.features = %i[application_contract safe_params controller_helpers]
 
   config.component_dirs.add "app/operations"

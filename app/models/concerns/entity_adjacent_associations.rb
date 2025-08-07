@@ -23,7 +23,7 @@ module EntityAdjacentAssociations
   # @see .entity_adjacent_primary_key
   ENTITY_ADJACENT_TUPLE = %i[entity_type entity_id].freeze
 
-  class_methods do
+  module ClassMethods
     # @return [(Symbol, Symbol)] The name of the type column, followed by the name of the ID column.
     def select_entity_adjacent_foreign_key
       ENTITY_ADJACENT_TUPLE

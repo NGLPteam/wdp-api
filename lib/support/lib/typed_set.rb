@@ -20,8 +20,6 @@ module Support
 
     include Enumerable
 
-    delegate :each, to: :@elements
-
     DRY_TYPE = Dry::Types::Nominal.new(Dry::Types::Type).constrained(type: Dry::Types::Type)
 
     defines :array_type, type: DRY_TYPE

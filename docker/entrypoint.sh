@@ -7,7 +7,9 @@ rm -f /srv/app/tmp/pids/server.pid
 
 bundle check || bundle install
 
-bundle binstubs --all --path="$BUNDLE_BIN"
+bundle config set bin "$BUNDLE_BIN"
+
+bundle binstubs --all
 
 # Then exec the container's main process
 exec "$@"
