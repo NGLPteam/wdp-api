@@ -1,0 +1,69 @@
+---
+background:
+  property_kind_name: background
+  default: none
+  enum_name: link_list_background
+browse_style:
+  property_kind_name: boolean
+  default: false
+dynamic_ordering_definition:
+  property_kind_name: ordering_definition
+entity_context:
+  property_kind_name: list_entity_context
+  default: none
+manual_list_name:
+  property_kind_name: schema_component
+  default: manual
+see_all_button_label:
+  property_kind_name: string
+  default: See All
+see_all_ordering_identifier:
+  property_kind_name: schema_component
+selection_fallback_mode:
+  property_kind_name: selection_mode
+  enum_name: link_list_selection_mode
+selection_limit:
+  property_kind_name: limit
+  default: 3
+selection_mode:
+  property_kind_name: selection_mode
+  enum_name: link_list_selection_mode
+selection_source:
+  property_kind_name: selection_source
+selection_source_ancestor_name:
+  property_kind_name: schema_component
+  skip_configuration: true
+selection_source_mode:
+  property_kind_name: selection_source_mode
+  skip_configuration: true
+  skip_declaration: true
+selection_unbounded:
+  property_kind_name: boolean
+  default: false
+show_contributors:
+  property_kind_name: boolean
+show_entity_context:
+  property_kind_name: boolean
+  default: false
+  deprecation_reason: Use entity_context enum instead
+show_hero_image:
+  property_kind_name: boolean
+  default: false
+show_nested_entities:
+  property_kind_name: boolean
+show_see_all_button:
+  property_kind_name: boolean
+  default: false
+  deprecation_reason: Use seeAllOrdering on the instance instead.
+title:
+  property_kind_name: string
+use_selection_fallback:
+  property_kind_name: boolean
+  default: false
+variant:
+  property_kind_name: variant
+  enum_name: link_list_variant
+width:
+  property_kind_name: width
+  default: full
+  enum_name: template_width

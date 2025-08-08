@@ -1,256 +1,276 @@
 ---
 - template_kind: blurb
+  name: body
+  slot_kind: block
+- template_kind: blurb
   name: header
   slot_kind: inline
 - template_kind: blurb
   name: subheader
   slot_kind: inline
-- template_kind: blurb
+- template_kind: contributor_list
+  name: header
+  slot_kind: inline
+  default_template: Contributors
+- template_kind: descendant_list
+  name: block_header
+  slot_kind: inline
+  description: |-
+    Differs from the `header` where its value could be "Most Recent Issue", while header is that entity's title/number.
+    It's for when the block should have the content of it's title field visible, but we decided to never render
+    the title field itself.
+- template_kind: descendant_list
+  name: block_header_fallback
+  slot_kind: inline
+  description: The template to use for the block header when the fallback logic was
+    used (if applicable).
+- template_kind: descendant_list
+  name: header
+  slot_kind: inline
+  default_template: Descendants
+- template_kind: descendant_list
+  name: header_aside
+  slot_kind: inline
+- template_kind: descendant_list
+  name: header_fallback
+  slot_kind: inline
+  description: The template to use for the header when the fallback logic was used
+    (if applicable).
+- template_kind: descendant_list
+  name: list_context
+  slot_kind: inline
+- template_kind: descendant_list
+  name: metadata
+  slot_kind: inline
+- template_kind: descendant_list
+  name: subtitle
+  slot_kind: inline
+- template_kind: detail
   name: body
   slot_kind: block
-- name: header
+- template_kind: detail
+  name: header
   slot_kind: inline
-  template_kind: contributor_list
-  default_template: Contributors
-- name: block_header
-  slot_kind: inline
-  template_kind: descendant_list
-  description: |
-    Differs from the `header` where its value could be "Most Recent Issue", while header is that entity's title/number.
-    It's for when the block should have the content of it's title field visible, but we decided to never render
-    the title field itself.
-- name: block_header_fallback
-  slot_kind: inline
-  template_kind: descendant_list
-  description: |
-    The template to use for the block header when the fallback logic was used (if applicable).
-- name: header
-  slot_kind: inline
-  template_kind: descendant_list
-  default_template: Descendants
-- name: header_fallback
-  slot_kind: inline
-  template_kind: descendant_list
-  description: |
-    The template to use for the header when the fallback logic was used (if applicable).
-- name: header_aside
-  slot_kind: inline
-  template_kind: descendant_list
-- name: list_context
-  slot_kind: inline
-  template_kind: descendant_list
-- name: metadata
-  slot_kind: inline
-  template_kind: descendant_list
-- name: subtitle
-  slot_kind: inline
-  template_kind: descendant_list
-- name: header
-  slot_kind: inline
-  template_kind: detail
-  default_template: |
-    {{ entity.title }}
-- name: subheader
-  slot_kind: inline
-  template_kind: detail
-  default_template: |
-    {{ entity.subtitle }}
-- name: summary
+  default_template: "{{ entity.title }}"
+- template_kind: detail
+  name: items_a
   slot_kind: block
-  template_kind: detail
-  default_template: |
-    {{ entity.summary }}
-- name: body
-  slot_kind: block
-  template_kind: detail
-- name: big_search_prompt
-  slot_kind: inline
-  template_kind: hero
-  default_template: Search
-- name: call_to_action
-  slot_kind: block
-  template_kind: hero
-- name: descendant_search_prompt
-  slot_kind: inline
-  template_kind: hero
-  default_template: Search
-- name: header
-  slot_kind: inline
-  template_kind: hero
-  default_template: |
-    {{ entity.title }}
-- name: header_subtitle
-  slot_kind: inline
-  template_kind: hero
-- name: header_aside
-  slot_kind: inline
-  template_kind: hero
-- name: header_sidebar
-  slot_kind: block
-  template_kind: hero
-- name: header_summary
-  slot_kind: block
-  template_kind: hero
-- name: metadata
-  slot_kind: inline
-  template_kind: hero
-- name: sidebar
-  slot_kind: block
-  template_kind: hero
-- name: subheader
-  slot_kind: inline
-  template_kind: hero
-- name: subheader_subtitle
-  slot_kind: inline
-  template_kind: hero
-- name: subheader_aside
-  slot_kind: inline
-  template_kind: hero
-- name: subheader_summary
-  slot_kind: block
-  template_kind: hero
-- name: summary
-  slot_kind: block
-  template_kind: hero
-  default_template: |
-    {{ entity.summary }}
-- name: block_header
-  slot_kind: inline
-  template_kind: link_list
-  description: |
-    Differs from the `header` where its value could be "Most Recent Issue", while header is that entity's title/number.
-    It's for when the block should have the content of it's title field visible, but we decided to never render
-    the title field itself.
-- name: block_header_fallback
-  slot_kind: inline
-  template_kind: link_list
-  description: |
-    The template to use for the block header when the fallback logic was used (if applicable).
-- name: header
-  slot_kind: inline
-  template_kind: link_list
-  default_template: Links
-- name: header_fallback
-  slot_kind: inline
-  template_kind: link_list
-  default_template: Links
-  description: |
-    The template to use for the header when the fallback logic was used (if applicable).
-- name: header_aside
-  slot_kind: inline
-  template_kind: link_list
-- name: list_context
-  slot_kind: inline
-  template_kind: link_list
-- name: metadata
-  slot_kind: inline
-  template_kind: link_list
-  default_template: |
-    Published {{ entity.published }}
-- name: subtitle
-  slot_kind: inline
-  template_kind: link_list
-- name: header
-  slot_kind: inline
-  template_kind: list_item
-  default_template: |
-    {{ entity.title }}
-- name: subheader
-  slot_kind: inline
-  template_kind: list_item
-  default_template: |
-    {{ entity.subtitle }}
-- name: description
-  slot_kind: block
-  template_kind: list_item
-- name: meta_a
-  slot_kind: inline
-  template_kind: list_item
-- name: meta_b
-  slot_kind: inline
-  template_kind: list_item
-- name: context_abbr
-  slot_kind: inline
-  template_kind: list_item
-- name: context_full
-  slot_kind: inline
-  template_kind: list_item
-- name: context_a
-  slot_kind: inline
-  template_kind: list_item
-- name: context_b
-  slot_kind: inline
-  template_kind: list_item
-- name: context_c
-  slot_kind: inline
-  template_kind: list_item
-- name: nested_header
-  slot_kind: inline
-  template_kind: list_item
-- name: nested_subheader
-  slot_kind: inline
-  template_kind: list_item
-- name: nested_context
-  slot_kind: inline
-  template_kind: list_item
-- name: nested_metadata
-  slot_kind: inline
-  template_kind: list_item
-- name: header
-  slot_kind: inline
-  template_kind: metadata
-- name: items_a
-  slot_kind: block
-  template_kind: metadata
-  description: |
+  description: |-
     Items column (1/4).
     It is used to list arbitrary properties (metadata) associated
     with the schema that lend themselves well to enumeration.
-- name: items_b
+- template_kind: detail
+  name: items_b
   slot_kind: block
-  template_kind: metadata
-  description: |
+  description: |-
     Items column (2/4).
     It is used to list arbitrary properties (metadata) associated
     with the schema that lend themselves well to enumeration.
-- name: items_c
+- template_kind: detail
+  name: items_c
   slot_kind: block
-  template_kind: metadata
-  description: |
+  description: |-
     Items column (3/4).
     It is used to list arbitrary properties (metadata) associated
     with the schema that lend themselves well to enumeration.
-- name: items_d
+- template_kind: detail
+  name: items_d
   slot_kind: block
-  template_kind: metadata
-  description: |
+  description: |-
     Items column (4/4).
     It is used to list arbitrary properties (metadata) associated
     with the schema that lend themselves well to enumeration.
-- name: entity_label
+- template_kind: detail
+  name: subheader
   slot_kind: inline
-  template_kind: navigation
-  default_template: |
-    Entity
-- name: previous_label
+  default_template: "{{ entity.subtitle }}"
+- template_kind: detail
+  name: summary
+  slot_kind: block
+  default_template: "{{ entity.summary }}"
+- template_kind: hero
+  name: big_search_prompt
   slot_kind: inline
-  template_kind: ordering
-  default_template: |
-    Previous Entity
-- name: next_label
+  default_template: Search
+- template_kind: hero
+  name: call_to_action
+  slot_kind: block
+- template_kind: hero
+  name: descendant_search_prompt
   slot_kind: inline
-  template_kind: ordering
-  default_template: |
-    Next Entity
-- name: header
+  default_template: Search
+- template_kind: hero
+  name: header
   slot_kind: inline
-  template_kind: page_list
+  default_template: "{{ entity.title }}"
+- template_kind: hero
+  name: header_aside
+  slot_kind: inline
+- template_kind: hero
+  name: header_parent
+  slot_kind: inline
+- template_kind: hero
+  name: header_sidebar
+  slot_kind: block
+- template_kind: hero
+  name: header_subtitle
+  slot_kind: inline
+- template_kind: hero
+  name: header_summary
+  slot_kind: block
+- template_kind: hero
+  name: metadata
+  slot_kind: inline
+- template_kind: hero
+  name: sidebar
+  slot_kind: block
+- template_kind: hero
+  name: subheader
+  slot_kind: inline
+- template_kind: hero
+  name: subheader_aside
+  slot_kind: inline
+- template_kind: hero
+  name: subheader_subtitle
+  slot_kind: inline
+- template_kind: hero
+  name: subheader_summary
+  slot_kind: block
+- template_kind: hero
+  name: summary
+  slot_kind: block
+  default_template: "{{ entity.title }}"
+- template_kind: link_list
+  name: block_header
+  slot_kind: inline
+  description: |-
+    Differs from the `header` where its value could be "Most Recent Issue", while header is that entity's title/number.
+    It's for when the block should have the content of it's title field visible, but we decided to never render
+    the title field itself.
+- template_kind: link_list
+  name: block_header_fallback
+  slot_kind: inline
+  description: The template to use for the block header when the fallback logic was
+    used (if applicable).
+- template_kind: link_list
+  name: header
+  slot_kind: inline
+  default_template: Links
+- template_kind: link_list
+  name: header_aside
+  slot_kind: inline
+- template_kind: link_list
+  name: header_fallback
+  slot_kind: inline
+  default_template: Links
+  description: The template to use for the header when the fallback logic was used
+    (if applicable).
+- template_kind: link_list
+  name: list_context
+  slot_kind: inline
+- template_kind: link_list
+  name: metadata
+  slot_kind: inline
+  default_template: Published {{ entity.published }}
+- template_kind: link_list
+  name: subtitle
+  slot_kind: inline
+- template_kind: list_item
+  name: context_a
+  slot_kind: inline
+- template_kind: list_item
+  name: context_abbr
+  slot_kind: inline
+- template_kind: list_item
+  name: context_b
+  slot_kind: inline
+- template_kind: list_item
+  name: context_c
+  slot_kind: inline
+- template_kind: list_item
+  name: context_full
+  slot_kind: inline
+- template_kind: list_item
+  name: description
+  slot_kind: block
+- template_kind: list_item
+  name: header
+  slot_kind: inline
+  default_template: "{{ entity.title }}"
+- template_kind: list_item
+  name: meta_a
+  slot_kind: inline
+- template_kind: list_item
+  name: meta_b
+  slot_kind: inline
+- template_kind: list_item
+  name: nested_context
+  slot_kind: inline
+- template_kind: list_item
+  name: nested_header
+  slot_kind: inline
+- template_kind: list_item
+  name: nested_metadata
+  slot_kind: inline
+- template_kind: list_item
+  name: nested_subheader
+  slot_kind: inline
+- template_kind: list_item
+  name: subheader
+  slot_kind: inline
+  default_template: "{{ entity.subtitle }}"
+- template_kind: metadata
+  name: header
+  slot_kind: inline
+- template_kind: metadata
+  name: items_a
+  slot_kind: block
+  description: |-
+    Items column (1/4).
+    It is used to list arbitrary properties (metadata) associated
+    with the schema that lend themselves well to enumeration.
+- template_kind: metadata
+  name: items_b
+  slot_kind: block
+  description: |-
+    Items column (2/4).
+    It is used to list arbitrary properties (metadata) associated
+    with the schema that lend themselves well to enumeration.
+- template_kind: metadata
+  name: items_c
+  slot_kind: block
+  description: |-
+    Items column (3/4).
+    It is used to list arbitrary properties (metadata) associated
+    with the schema that lend themselves well to enumeration.
+- template_kind: metadata
+  name: items_d
+  slot_kind: block
+  description: |-
+    Items column (4/4).
+    It is used to list arbitrary properties (metadata) associated
+    with the schema that lend themselves well to enumeration.
+- template_kind: navigation
+  name: entity_label
+  slot_kind: inline
+  default_template: Entity
+- template_kind: ordering
+  name: next_label
+  slot_kind: inline
+  default_template: Next Entity
+- template_kind: ordering
+  name: previous_label
+  slot_kind: inline
+  default_template: Previous Entity
+- template_kind: page_list
+  name: header
+  slot_kind: inline
   default_template: Pages
-- name: contributors_label
+- template_kind: supplementary
+  name: contributors_label
   slot_kind: inline
-  template_kind: supplementary
   default_template: Contributors
-- name: metrics_label
+- template_kind: supplementary
+  name: metrics_label
   slot_kind: inline
-  template_kind: supplementary
   default_template: Metrics

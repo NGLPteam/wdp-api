@@ -15,9 +15,9 @@ module Templates
 
         attribute :header, ::Templates::Config::Utility::SlotValue, default: -> { ::TemplateSlot.default_slot_value_for("descendant_list#header") }
 
-        attribute :header_fallback, ::Templates::Config::Utility::SlotValue
-
         attribute :header_aside, ::Templates::Config::Utility::SlotValue
+
+        attribute :header_fallback, ::Templates::Config::Utility::SlotValue
 
         attribute :list_context, ::Templates::Config::Utility::SlotValue
 
@@ -34,9 +34,9 @@ module Templates
 
           map_element "header", to: :header, render_nil: true
 
-          map_element "header-fallback", to: :header_fallback, render_nil: true
-
           map_element "header-aside", to: :header_aside, render_nil: true
+
+          map_element "header-fallback", to: :header_fallback, render_nil: true
 
           map_element "list-context", to: :list_context, render_nil: true
 

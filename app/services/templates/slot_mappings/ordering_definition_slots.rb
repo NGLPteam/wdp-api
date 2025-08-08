@@ -8,8 +8,8 @@ module Templates
     class OrderingDefinitionSlots < AbstractDefinitionSlots
       instance_slots_klass Templates::SlotMappings::OrderingInstanceSlots
 
-      inline! :previous_label, default: proc { TemplateSlot.default_template_hash_for("ordering#previous_label") }
       inline! :next_label, default: proc { TemplateSlot.default_template_hash_for("ordering#next_label") }
+      inline! :previous_label, default: proc { TemplateSlot.default_template_hash_for("ordering#previous_label") }
     end
   end
 end

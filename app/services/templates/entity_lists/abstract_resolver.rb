@@ -12,6 +12,8 @@ module Templates
 
       option :selection_limit, ::Templates::Types::LimitWithFallback, default: proc { Templates::Types::LIMIT_DEFAULT }
 
+      option :selection_unbounded, ::Templates::Types::Bool, default: proc { false }
+
       option :template_kind, ::Templates::Types::TemplateKind
 
       option :template_definition_id, ::Schemas::Types::String, default: proc { SecureRandom.uuid }
@@ -20,6 +22,9 @@ module Templates
 
       # @return [<HierarchicalEntity>]
       attr_reader :entities
+
+      # @return [Integer, nil]
+      attr_reader :limit
 
       # @return [Dry::Monads::Success(Templates::EntityList)]
       def call
@@ -37,6 +42,8 @@ module Templates
       wrapped_hook! def prepare
         @entities = EMPTY_ARRAY
 
+        @limit = selection_unbounded ? nil : selection_limit
+
         super
       end
 
@@ -45,7 +52,7 @@ module Templates
 
         resolved = Array(resolve_entities.value_or(EMPTY_ARRAY))
 
-        @entities = only_visible(resolved).take(selection_limit)
+        @entities = only_visible(resolved).then { selection_unbounded ? _1 : _1.take(selection_limit) }
 
         super
       end

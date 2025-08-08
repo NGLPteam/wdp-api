@@ -47,6 +47,12 @@ module Types
       TEXT
     end
 
+    field :flat_depth, Boolean, null: false do
+      description <<~TEXT
+      Whether there is any variation in hierarchical depth within the list of entities.
+      TEXT
+    end
+
     field :list_item_layouts, ["::Types::Layouts::ListItemLayoutInstanceType", { null: false }], null: false do
       description <<~TEXT
       A shortcut to access the list item layouts for each entity in `entities`.
@@ -54,6 +60,18 @@ module Types
       The order is deterministic.
 
       See `ListItemLayoutInstance`.
+      TEXT
+    end
+
+    field :maximum_depth, Integer, null: true do
+      description <<~TEXT
+      The maximum hierarchical depth for the entities in the list (if known).
+      TEXT
+    end
+
+    field :minimum_depth, Integer, null: true do
+      description <<~TEXT
+      The minimum hierarchical depth for the entities in the list (if known).
       TEXT
     end
   end

@@ -1,0 +1,9 @@
+---
+next_label:
+  slot_kind: inline
+  default_template: |-
+    Next Entity
+previous_label:
+  slot_kind: inline
+  default_template: |-
+    Previous Entity

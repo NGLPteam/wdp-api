@@ -18,17 +18,17 @@ module Templates
 
     graphql_node_type_name "::Types::Templates::DescendantListTemplateDefinitionType"
 
+    pg_enum! :width, as: :template_width, allow_blank: false, suffix: :width, default: "full"
+
     pg_enum! :variant, as: :descendant_list_variant, allow_blank: false, suffix: :variant
-
-    pg_enum! :background, as: :descendant_list_background, allow_blank: false, suffix: :background, default: "none"
-
-    pg_enum! :entity_context, as: :list_entity_context, allow_blank: false, suffix: :entity_context, default: "none"
 
     pg_enum! :selection_mode, as: :descendant_list_selection_mode, allow_blank: false, suffix: :selection_mode, default: "manual"
 
     pg_enum! :selection_fallback_mode, as: :descendant_list_selection_mode, allow_blank: false, suffix: :selection_fallback_mode, default: "manual"
 
-    pg_enum! :width, as: :template_width, allow_blank: false, suffix: :width, default: "full"
+    pg_enum! :background, as: :descendant_list_background, allow_blank: false, suffix: :background, default: "none"
+
+    pg_enum! :entity_context, as: :list_entity_context, allow_blank: false, suffix: :entity_context, default: "none"
 
     attribute :dynamic_ordering_definition, ::Schemas::Orderings::Definition.to_type
 

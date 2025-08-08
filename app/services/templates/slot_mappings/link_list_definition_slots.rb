@@ -11,8 +11,8 @@ module Templates
       inline! :block_header
       inline! :block_header_fallback
       inline! :header, default: proc { TemplateSlot.default_template_hash_for("link_list#header") }
-      inline! :header_fallback, default: proc { TemplateSlot.default_template_hash_for("link_list#header_fallback") }
       inline! :header_aside
+      inline! :header_fallback, default: proc { TemplateSlot.default_template_hash_for("link_list#header_fallback") }
       inline! :list_context
       inline! :metadata, default: proc { TemplateSlot.default_template_hash_for("link_list#metadata") }
       inline! :subtitle

@@ -5,10 +5,14 @@ module Templates
     # @see Templates::DetailInstance
     # @see Templates::SlotMappings::DetailDefinitionSlots
     class DetailInstanceSlots < AbstractInstanceSlots
+      block! :body
       inline! :header
+      block! :items_a
+      block! :items_b
+      block! :items_c
+      block! :items_d
       inline! :subheader
       block! :summary
-      block! :body
     end
   end
 end

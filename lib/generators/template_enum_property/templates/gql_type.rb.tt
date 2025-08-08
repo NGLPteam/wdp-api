@@ -6,7 +6,7 @@
 module Types
   class <%= template_enum_property.gql_type_klass_name %> < Types::BaseEnum
     description <<~TEXT
-    An enumerated value associated with the templating subsystem.
+    <%= template_enum_property.gql_description(indent: 4) %>
     TEXT<% template_enum_property.enum_values.each do |value| %>
 
     value <%= value.upcase.inspect %>, value: <%= value.to_s.inspect %> do

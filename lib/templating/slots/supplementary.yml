@@ -1,0 +1,9 @@
+---
+contributors_label:
+  slot_kind: inline
+  default_template: |-
+    Contributors
+metrics_label:
+  slot_kind: inline
+  default_template: |-
+    Metrics

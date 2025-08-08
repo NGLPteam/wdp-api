@@ -1,0 +1,22 @@
+---
+background:
+  property_kind_name: background
+  default: none
+  enum_name: detail_background
+show_announcements:
+  property_kind_name: boolean
+  default: false
+show_body:
+  property_kind_name: boolean
+  default: false
+show_hero_image:
+  property_kind_name: boolean
+  default: false
+variant:
+  property_kind_name: variant
+  default: summary
+  enum_name: detail_variant
+width:
+  property_kind_name: width
+  default: full
+  enum_name: template_width

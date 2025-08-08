@@ -3,7 +3,7 @@
 module Types
   class ContributorListFilterType < Types::BaseEnum
     description <<~TEXT
-    An enumerated value associated with the templating subsystem.
+    A filter value used to control the display of contributors.
     TEXT
 
     value "ALL", value: "all" do

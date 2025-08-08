@@ -1,14 +1,13 @@
 # frozen_string_literal: true
 
 class TemplateSlot < Support::FrozenRecordHelpers::AbstractRecord
-  include Dry::Core::Equalizer.new(:template_kind, :name)
-  include Dry::Core::Memoizable
+  include Templates::Config::SourcedByTemplateKind
 
   schema!(types: ::Templates::TypeRegistry) do
     optional(:id).filled(:string)
+    required(:template_kind).filled(:template_kind)
     required(:name).filled(:string)
     required(:slot_kind).filled(:slot_kind)
-    required(:template_kind).filled(:template_kind)
     required(:default_template).maybe(:stripped_string)
     required(:description).maybe(:stripped_string)
   end
@@ -18,23 +17,10 @@ class TemplateSlot < Support::FrozenRecordHelpers::AbstractRecord
     description: nil
   )
 
-  calculates_id_from! :template_kind, :name
-
-  self.primary_key = :id
-
-  add_index :id, unique: true
-
-  add_index :template_kind
-
-  scope :for_template, ->(kind) { where(template_kind: kind.to_s) }
+  multiline! :default_template, :description
 
   def has_default?
     default_template.present?
-  end
-
-  # @return [Template]
-  memoize def template
-    Template.find template_kind
   end
 
   # @return [Templates::Compositions::Slot]

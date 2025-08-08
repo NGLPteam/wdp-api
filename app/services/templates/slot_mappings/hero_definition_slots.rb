@@ -12,15 +12,16 @@ module Templates
       block! :call_to_action
       inline! :descendant_search_prompt, default: proc { TemplateSlot.default_template_hash_for("hero#descendant_search_prompt") }
       inline! :header, default: proc { TemplateSlot.default_template_hash_for("hero#header") }
-      inline! :header_subtitle
       inline! :header_aside
+      inline! :header_parent
       block! :header_sidebar
+      inline! :header_subtitle
       block! :header_summary
       inline! :metadata
       block! :sidebar
       inline! :subheader
-      inline! :subheader_subtitle
       inline! :subheader_aside
+      inline! :subheader_subtitle
       block! :subheader_summary
       block! :summary, default: proc { TemplateSlot.default_template_hash_for("hero#summary") }
     end

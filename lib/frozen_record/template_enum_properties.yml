@@ -36,25 +36,40 @@
   default: none
 - name: detail_variant
   category: variant
-  default:
+  description: |-
+    An enum used to control how a detail template should be rendered.
 - name: descendant_list_variant
   category: variant
-  default:
+  description: |-
+    An enum used to control how a descendant list template should be rendered.
 - name: link_list_variant
   category: variant
-  default:
+  description: |-
+    An enum used to control how a link list template should be rendered.
 - name: descendant_list_selection_mode
   category: selection_mode
   default: manual
+  description: |-
+    An enum used to control the mode of selection for a descendant list template.
 - name: link_list_selection_mode
   category: selection_mode
   default: manual
+  description: |-
+    An enum used to control the mode of selection for a link list template.
 - name: list_item_selection_mode
   category: selection_mode
   default: manual
+  description: |-
+    An enum used to control the mode of selection for a list item template's associated records (if applicable).
 - name: contributor_list_filter
   default: all
+  description: |-
+    A filter value used to control the display of contributors.
 - name: template_width
   default: full
+  description: |-
+    An enum that helps organize things on the frontend to put certain templates side by side where it makes sense.
 - name: list_entity_context
   default: "none"
+  description: |-
+    An enum used to control how much context to show for listed entities in a template.

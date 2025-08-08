@@ -3,7 +3,7 @@
 module Types
   class DescendantListSelectionModeType < Types::BaseEnum
     description <<~TEXT
-    An enumerated value associated with the templating subsystem.
+    An enum used to control the mode of selection for a descendant list template.
     TEXT
 
     value "DYNAMIC", value: "dynamic" do

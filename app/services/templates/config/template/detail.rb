@@ -9,15 +9,15 @@ module Templates
       class Detail < ::Templates::Config::Utility::AbstractTemplate
         configures_template! :detail
 
-        attribute :variant, ::Templates::Config::Properties::DetailVariant, default: -> { "summary" }
-
         attribute :background, ::Templates::Config::Properties::DetailBackground, default: -> { "none" }
 
         attribute :show_announcements, ::Templates::Config::Properties::Boolean, default: -> { false }
 
+        attribute :show_body, ::Templates::Config::Properties::Boolean, default: -> { false }
+
         attribute :show_hero_image, ::Templates::Config::Properties::Boolean, default: -> { false }
 
-        attribute :show_body, ::Templates::Config::Properties::Boolean, default: -> { false }
+        attribute :variant, ::Templates::Config::Properties::DetailVariant, default: -> { "summary" }
 
         attribute :width, ::Templates::Config::Properties::TemplateWidth, default: -> { "full" }
 

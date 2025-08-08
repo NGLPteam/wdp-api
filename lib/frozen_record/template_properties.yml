@@ -6,13 +6,13 @@
 - template_kind: blurb
   name: width
   property_kind_name: width
-  enum_name: template_width
   default: full
+  enum_name: template_width
 - template_kind: contributor_list
   name: background
   property_kind_name: background
-  enum_name: contributor_list_background
   default: none
+  enum_name: contributor_list_background
 - template_kind: contributor_list
   name: filter
   property_kind_name: contributor_list_filter
@@ -21,26 +21,56 @@
   name: limit
   property_kind_name: limit
   default: 3
-- template_kind: descendant_list
-  name: title
-  property_kind_name: string
-- template_kind: descendant_list
-  name: variant
-  property_kind_name: variant
-  enum_name: descendant_list_variant
+- template_kind: contributor_list
+  name: width
+  property_kind_name: width
+  default: full
+  enum_name: template_width
 - template_kind: descendant_list
   name: background
   property_kind_name: background
-  enum_name: descendant_list_background
   default: none
+  enum_name: descendant_list_background
 - template_kind: descendant_list
   name: browse_style
   property_kind_name: boolean
   default: false
 - template_kind: descendant_list
+  name: dynamic_ordering_definition
+  property_kind_name: ordering_definition
+- template_kind: descendant_list
   name: entity_context
   property_kind_name: list_entity_context
-  default: "none"
+  default: none
+- template_kind: descendant_list
+  name: manual_list_name
+  property_kind_name: schema_component
+  default: manual
+- template_kind: descendant_list
+  name: ordering_identifier
+  property_kind_name: schema_component
+- template_kind: descendant_list
+  name: see_all_button_label
+  property_kind_name: string
+  default: See All
+- template_kind: descendant_list
+  name: see_all_ordering_identifier
+  property_kind_name: schema_component
+- template_kind: descendant_list
+  name: selection_fallback_mode
+  property_kind_name: selection_mode
+  enum_name: descendant_list_selection_mode
+- template_kind: descendant_list
+  name: selection_limit
+  property_kind_name: limit
+  default: 3
+- template_kind: descendant_list
+  name: selection_mode
+  property_kind_name: selection_mode
+  enum_name: descendant_list_selection_mode
+- template_kind: descendant_list
+  name: selection_property_path
+  property_kind_name: schema_property_path
 - template_kind: descendant_list
   name: selection_source
   property_kind_name: selection_source
@@ -54,40 +84,21 @@
   skip_configuration: true
   skip_declaration: true
 - template_kind: descendant_list
-  name: selection_mode
-  property_kind_name: selection_mode
-  enum_name: descendant_list_selection_mode
-- template_kind: descendant_list
-  name: selection_fallback_mode
-  property_kind_name: selection_mode
-  enum_name: descendant_list_selection_mode
-- template_kind: descendant_list
-  name: selection_limit
-  property_kind_name: limit
-  default: 3
-- template_kind: descendant_list
-  name: dynamic_ordering_definition
-  property_kind_name: ordering_definition
-- template_kind: descendant_list
-  name: ordering_identifier
-  property_kind_name: schema_component
-- template_kind: descendant_list
-  name: manual_list_name
-  property_kind_name: schema_component
-  default: manual
-- template_kind: descendant_list
-  name: selection_property_path
-  property_kind_name: schema_property_path
-- template_kind: descendant_list
-  name: see_all_button_label
-  property_kind_name: string
-  default: See All
-- template_kind: descendant_list
-  name: see_all_ordering_identifier
-  property_kind_name: schema_component
+  name: selection_unbounded
+  property_kind_name: boolean
+  default: false
 - template_kind: descendant_list
   name: show_contributors
   property_kind_name: boolean
+- template_kind: descendant_list
+  name: show_entity_context
+  property_kind_name: boolean
+  default: false
+  deprecation_reason: Use entity_context enum instead
+- template_kind: descendant_list
+  name: show_hero_image
+  property_kind_name: boolean
+  default: false
 - template_kind: descendant_list
   name: show_nested_entities
   property_kind_name: boolean
@@ -95,51 +106,59 @@
   name: show_see_all_button
   property_kind_name: boolean
   default: false
-  deprecation_reason: "Use seeAllOrdering on the instance instead."
+  deprecation_reason: Use seeAllOrdering on the instance instead.
 - template_kind: descendant_list
-  name: show_entity_context
-  property_kind_name: boolean
-  default: false
-  deprecation_reason: "Use entity_context enum instead"
-- template_kind: descendant_list
-  name: show_hero_image
-  property_kind_name: boolean
-  default: false
+  name: title
+  property_kind_name: string
 - template_kind: descendant_list
   name: use_selection_fallback
   property_kind_name: boolean
   default: false
-- template_kind: detail
+- template_kind: descendant_list
   name: variant
   property_kind_name: variant
-  enum_name: detail_variant
-  default: summary
+  enum_name: descendant_list_variant
+- template_kind: descendant_list
+  name: width
+  property_kind_name: width
+  default: full
+  enum_name: template_width
 - template_kind: detail
   name: background
   property_kind_name: background
-  enum_name: detail_background
   default: none
+  enum_name: detail_background
 - template_kind: detail
   name: show_announcements
-  property_kind_name: boolean
-  default: false
-- template_kind: detail
-  name: show_hero_image
   property_kind_name: boolean
   default: false
 - template_kind: detail
   name: show_body
   property_kind_name: boolean
   default: false
+- template_kind: detail
+  name: show_hero_image
+  property_kind_name: boolean
+  default: false
+- template_kind: detail
+  name: variant
+  property_kind_name: variant
+  default: summary
+  enum_name: detail_variant
+- template_kind: detail
+  name: width
+  property_kind_name: width
+  default: full
+  enum_name: template_width
 - template_kind: hero
   name: background
   property_kind_name: background
-  enum_name: hero_background
   default: none
+  enum_name: hero_background
 - template_kind: hero
   name: descendant_search_prompt
   property_kind_name: string
-  deprecation_reason: "This is a slot now."
+  deprecation_reason: This is a slot now.
 - template_kind: hero
   name: enable_descendant_browsing
   property_kind_name: boolean
@@ -185,52 +204,21 @@
   property_kind_name: boolean
   default: false
 - template_kind: link_list
-  name: title
-  property_kind_name: string
-- template_kind: link_list
-  name: variant
-  property_kind_name: variant
-  enum_name: link_list_variant
-- template_kind: link_list
   name: background
   property_kind_name: background
-  enum_name: link_list_background
   default: none
+  enum_name: link_list_background
 - template_kind: link_list
   name: browse_style
   property_kind_name: boolean
   default: false
 - template_kind: link_list
-  name: entity_context
-  property_kind_name: list_entity_context
-  default: "none"
-- template_kind: link_list
-  name: selection_source
-  property_kind_name: selection_source
-- template_kind: link_list
-  name: selection_source_mode
-  property_kind_name: selection_source_mode
-  skip_configuration: true
-  skip_declaration: true
-- template_kind: link_list
-  name: selection_source_ancestor_name
-  property_kind_name: schema_component
-  skip_configuration: true
-- template_kind: link_list
-  name: selection_mode
-  property_kind_name: selection_mode
-  enum_name: link_list_selection_mode
-- template_kind: link_list
-  name: selection_fallback_mode
-  property_kind_name: selection_mode
-  enum_name: link_list_selection_mode
-- template_kind: link_list
-  name: selection_limit
-  property_kind_name: limit
-  default: 3
-- template_kind: link_list
   name: dynamic_ordering_definition
   property_kind_name: ordering_definition
+- template_kind: link_list
+  name: entity_context
+  property_kind_name: list_entity_context
+  default: none
 - template_kind: link_list
   name: manual_list_name
   property_kind_name: schema_component
@@ -243,8 +231,45 @@
   name: see_all_ordering_identifier
   property_kind_name: schema_component
 - template_kind: link_list
+  name: selection_fallback_mode
+  property_kind_name: selection_mode
+  enum_name: link_list_selection_mode
+- template_kind: link_list
+  name: selection_limit
+  property_kind_name: limit
+  default: 3
+- template_kind: link_list
+  name: selection_mode
+  property_kind_name: selection_mode
+  enum_name: link_list_selection_mode
+- template_kind: link_list
+  name: selection_source
+  property_kind_name: selection_source
+- template_kind: link_list
+  name: selection_source_ancestor_name
+  property_kind_name: schema_component
+  skip_configuration: true
+- template_kind: link_list
+  name: selection_source_mode
+  property_kind_name: selection_source_mode
+  skip_configuration: true
+  skip_declaration: true
+- template_kind: link_list
+  name: selection_unbounded
+  property_kind_name: boolean
+  default: false
+- template_kind: link_list
   name: show_contributors
   property_kind_name: boolean
+- template_kind: link_list
+  name: show_entity_context
+  property_kind_name: boolean
+  default: false
+  deprecation_reason: Use entity_context enum instead
+- template_kind: link_list
+  name: show_hero_image
+  property_kind_name: boolean
+  default: false
 - template_kind: link_list
   name: show_nested_entities
   property_kind_name: boolean
@@ -252,23 +277,51 @@
   name: show_see_all_button
   property_kind_name: boolean
   default: false
-  deprecation_reason: "Use seeAllOrdering on the instance instead."
+  deprecation_reason: Use seeAllOrdering on the instance instead.
 - template_kind: link_list
-  name: show_entity_context
-  property_kind_name: boolean
-  default: false
-  deprecation_reason: "Use entity_context enum instead"
-- template_kind: link_list
-  name: show_hero_image
-  property_kind_name: boolean
-  default: false
+  name: title
+  property_kind_name: string
 - template_kind: link_list
   name: use_selection_fallback
   property_kind_name: boolean
   default: false
+- template_kind: link_list
+  name: variant
+  property_kind_name: variant
+  enum_name: link_list_variant
+- template_kind: link_list
+  name: width
+  property_kind_name: width
+  default: full
+  enum_name: template_width
+- template_kind: list_item
+  name: dynamic_ordering_definition
+  property_kind_name: ordering_definition
+- template_kind: list_item
+  name: manual_list_name
+  property_kind_name: schema_component
+  default: manual
+- template_kind: list_item
+  name: ordering_identifier
+  property_kind_name: schema_component
 - template_kind: list_item
   name: see_all_ordering_identifier
   property_kind_name: schema_component
+- template_kind: list_item
+  name: selection_fallback_mode
+  property_kind_name: selection_mode
+  enum_name: list_item_selection_mode
+- template_kind: list_item
+  name: selection_limit
+  property_kind_name: limit
+  default: 3
+- template_kind: list_item
+  name: selection_mode
+  property_kind_name: selection_mode
+  enum_name: list_item_selection_mode
+- template_kind: list_item
+  name: selection_property_path
+  property_kind_name: schema_property_path
 - template_kind: list_item
   name: selection_source
   property_kind_name: selection_source
@@ -282,30 +335,9 @@
   skip_configuration: true
   skip_declaration: true
 - template_kind: list_item
-  name: selection_mode
-  property_kind_name: selection_mode
-  enum_name: list_item_selection_mode
-- template_kind: list_item
-  name: selection_fallback_mode
-  property_kind_name: selection_mode
-  enum_name: list_item_selection_mode
-- template_kind: list_item
-  name: selection_limit
-  property_kind_name: limit
-  default: 3
-- template_kind: list_item
-  name: dynamic_ordering_definition
-  property_kind_name: ordering_definition
-- template_kind: list_item
-  name: ordering_identifier
-  property_kind_name: schema_component
-- template_kind: list_item
-  name: manual_list_name
-  property_kind_name: schema_component
-  default: manual
-- template_kind: list_item
-  name: selection_property_path
-  property_kind_name: schema_property_path
+  name: selection_unbounded
+  property_kind_name: boolean
+  default: false
 - template_kind: list_item
   name: use_selection_fallback
   property_kind_name: boolean
@@ -313,18 +345,22 @@
 - template_kind: metadata
   name: background
   property_kind_name: background
-  enum_name: metadata_background
   default: none
+  enum_name: metadata_background
 - template_kind: navigation
   name: background
   property_kind_name: background
-  enum_name: navigation_background
   default: none
+  enum_name: navigation_background
+- template_kind: navigation
+  name: hide_metadata
+  property_kind_name: boolean
+  default: false
 - template_kind: ordering
   name: background
   property_kind_name: background
-  enum_name: ordering_background
   default: none
+  enum_name: ordering_background
 - template_kind: ordering
   name: ordering_identifier
   property_kind_name: schema_component
@@ -333,15 +369,15 @@
   property_kind_name: selection_source
   default: parent
 - template_kind: ordering
+  name: ordering_source_ancestor_name
+  property_kind_name: schema_component
+  skip_configuration: true
+- template_kind: ordering
   name: ordering_source_mode
   property_kind_name: selection_source_mode
   default: parent
   skip_configuration: true
   skip_declaration: true
-- template_kind: ordering
-  name: ordering_source_ancestor_name
-  property_kind_name: schema_component
-  skip_configuration: true
 - template_kind: ordering
   name: selection_source
   property_kind_name: selection_source
@@ -355,43 +391,23 @@
   property_kind_name: selection_source_mode
   skip_configuration: true
   skip_declaration: true
-- template_kind: page_list
-  name: background
-  property_kind_name: background
-  enum_name: page_list_background
-  default: none
-- template_kind: supplementary
-  name: background
-  property_kind_name: background
-  enum_name: supplementary_background
-  default: none
-- template_kind: detail
-  name: width
-  property_kind_name: width
-  enum_name: template_width
-  default: full
-- template_kind: descendant_list
-  name: width
-  property_kind_name: width
-  enum_name: template_width
-  default: full
-- template_kind: link_list
-  name: width
-  property_kind_name: width
-  enum_name: template_width
-  default: full
-- template_kind: page_list
-  name: width
-  property_kind_name: width
-  enum_name: template_width
-  default: full
-- template_kind: contributor_list
-  name: width
-  property_kind_name: width
-  enum_name: template_width
-  default: full
 - template_kind: ordering
   name: width
   property_kind_name: width
-  enum_name: template_width
   default: full
+  enum_name: template_width
+- template_kind: page_list
+  name: background
+  property_kind_name: background
+  default: none
+  enum_name: page_list_background
+- template_kind: page_list
+  name: width
+  property_kind_name: width
+  default: full
+  enum_name: template_width
+- template_kind: supplementary
+  name: background
+  property_kind_name: background
+  default: none
+  enum_name: supplementary_background

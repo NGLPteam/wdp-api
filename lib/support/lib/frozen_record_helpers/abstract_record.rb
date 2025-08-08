@@ -10,6 +10,7 @@ module Support
       extend Dry::Core::ClassAttributes
       extend DefinesMonadicOperation
 
+      include Dry::Core::Constants
       include ::Support::DefinesKlassNamePair
 
       self.abstract_class = true
@@ -20,14 +21,17 @@ module Support
       defines :default_attributes, type: Types::DefaultAttributes
       defines :default_sql_values, type: Types::DefaultSQLValues
       defines :schema, type: Types::Schema.optional
+      defines :sort_mapping, type: Types::Array.of(Types::String)
 
-      calculated_attributes({})
+      calculated_attributes EMPTY_HASH
 
-      default_attributes({})
+      default_attributes EMPTY_HASH
 
-      default_sql_values []
+      default_sql_values EMPTY_ARRAY
 
       schema nil
+
+      sort_mapping EMPTY_ARRAY
 
       scope :none, -> { where(_non_existing_: :match) }
 
@@ -136,6 +140,13 @@ module Support
           default_attributes defaults.deep_stringify_keys
         end
 
+        # @api private
+        # @return [void]
+        def extract_sort_mapping!
+          sort_mapping schema.key_map.keys.map(&:name).freeze
+        end
+
+        # @return [void]
         def schema!(types: ::Shared::TypeRegistry, &block)
           defined = Dry::Schema.Params do
             config.types = types
@@ -144,6 +155,28 @@ module Support
           end
 
           schema defined
+        ensure
+          extract_sort_mapping!
+        end
+
+        # @param [<Hash>, Hash] input
+        # @return [<Hash>, Hash, Object]
+        def sort_attributes_in(input)
+          case input
+          when Array
+            input.map { sort_attributes_in _1 }
+          when Hash
+            input.sort_by do |attr_name, _|
+              [
+                sort_mapping.index(attr_name) || 10_000,
+                attr_name
+              ]
+            end.to_h
+          else
+            # :nocov:
+            input
+            # :nocov:
+          end
         end
 
         # @return [<Hash>]

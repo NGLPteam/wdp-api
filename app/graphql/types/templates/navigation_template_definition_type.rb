@@ -17,6 +17,12 @@ module Types
         The background gradient to use for this template. Affects presentation.
         TEXT
       end
+
+      field :hide_metadata, Boolean, null: true do
+        description <<~TEXT
+        If true, the metadata template/tab should be hidden for this schema.
+        TEXT
+      end
     end
   end
 end

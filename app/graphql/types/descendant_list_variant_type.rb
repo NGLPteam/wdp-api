@@ -3,7 +3,7 @@
 module Types
   class DescendantListVariantType < Types::BaseEnum
     description <<~TEXT
-    An enumerated value associated with the templating subsystem.
+    An enum used to control how a descendant list template should be rendered.
     TEXT
 
     value "CARDS", value: "cards" do

@@ -1,0 +1,7 @@
+---
+body:
+  slot_kind: block
+header:
+  slot_kind: inline
+subheader:
+  slot_kind: inline

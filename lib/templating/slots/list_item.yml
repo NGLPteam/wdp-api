@@ -1,0 +1,33 @@
+---
+context_a:
+  slot_kind: inline
+context_abbr:
+  slot_kind: inline
+context_b:
+  slot_kind: inline
+context_c:
+  slot_kind: inline
+context_full:
+  slot_kind: inline
+description:
+  slot_kind: block
+header:
+  slot_kind: inline
+  default_template: |-
+    {{ entity.title }}
+meta_a:
+  slot_kind: inline
+meta_b:
+  slot_kind: inline
+nested_context:
+  slot_kind: inline
+nested_header:
+  slot_kind: inline
+nested_metadata:
+  slot_kind: inline
+nested_subheader:
+  slot_kind: inline
+subheader:
+  slot_kind: inline
+  default_template: |-
+    {{ entity.subtitle }}

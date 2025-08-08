@@ -1,0 +1,41 @@
+---
+background:
+  property_kind_name: background
+  default: none
+  enum_name: hero_background
+descendant_search_prompt:
+  property_kind_name: string
+  deprecation_reason: This is a slot now.
+enable_descendant_browsing:
+  property_kind_name: boolean
+  default: false
+enable_descendant_search:
+  property_kind_name: boolean
+  default: false
+list_contributors:
+  property_kind_name: boolean
+  default: false
+show_basic_view_metrics:
+  property_kind_name: boolean
+  default: false
+show_big_search_prompt:
+  property_kind_name: boolean
+  default: false
+show_breadcrumbs:
+  property_kind_name: boolean
+  default: false
+show_doi:
+  property_kind_name: boolean
+  default: false
+show_hero_image:
+  property_kind_name: boolean
+  default: false
+show_sharing_link:
+  property_kind_name: boolean
+  default: false
+show_split_display:
+  property_kind_name: boolean
+  default: false
+show_thumbnail_image:
+  property_kind_name: boolean
+  default: false

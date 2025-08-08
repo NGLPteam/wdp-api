@@ -9,7 +9,7 @@ module Templates
       def resolve_entities
         list_name = yield Maybe(manual_list_name)
 
-        Success source_entity.manual_list_entries.currently_visible.where(template_kind:, list_name:).limit(selection_limit).map(&:target)
+        Success source_entity.manual_list_entries.currently_visible.where(template_kind:, list_name:).limit(limit).map(&:target)
       end
     end
   end

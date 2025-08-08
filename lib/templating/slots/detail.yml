@@ -1,0 +1,39 @@
+---
+body:
+  slot_kind: block
+header:
+  slot_kind: inline
+  default_template: |-
+    {{ entity.title }}
+items_a:
+  slot_kind: block
+  description: |-
+    Items column (1/4).
+    It is used to list arbitrary properties (metadata) associated
+    with the schema that lend themselves well to enumeration.
+items_b:
+  slot_kind: block
+  description: |-
+    Items column (2/4).
+    It is used to list arbitrary properties (metadata) associated
+    with the schema that lend themselves well to enumeration.
+items_c:
+  slot_kind: block
+  description: |-
+    Items column (3/4).
+    It is used to list arbitrary properties (metadata) associated
+    with the schema that lend themselves well to enumeration.
+items_d:
+  slot_kind: block
+  description: |-
+    Items column (4/4).
+    It is used to list arbitrary properties (metadata) associated
+    with the schema that lend themselves well to enumeration.
+subheader:
+  slot_kind: inline
+  default_template: |-
+    {{ entity.subtitle }}
+summary:
+  slot_kind: block
+  default_template: |-
+    {{ entity.summary }}

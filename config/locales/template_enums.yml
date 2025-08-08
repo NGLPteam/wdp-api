@@ -36,6 +36,20 @@ en:
         description: "A vertical, summarized list of entities."
       tree:
         description: "A tree structure."
+    detail_variant:
+      columns:
+        description: |-
+          A columnar display format for entity details, similar to metadata.
+
+          It will make use of the `items*` slots in order to render the content.
+
+          See the `hideMetadata` property on the navigation template for an
+          optimal use case with moving metadata from its own tab over to the
+          main layout.
+      full:
+        description: "Display 'full' detail about the entity."
+      summary:
+        description: "Display detail about the entity in a summarized fashion."
     link_list_selection_mode:
       dynamic:
         description: "Render links from a dynamic list, determined at query time."
@@ -54,6 +68,13 @@ en:
         description: "A vertical, summarized list of entities."
       tree:
         description: "A tree structure."
+    list_entity_context:
+      abbr:
+        description: Show an abbreviated amount of context for listed entities.
+      full:
+        description: Show the maximum amount of context for listed entities.
+      none:
+        description: Show the minimal / no amount of context for listed entities.
     selection_source_mode:
       ancestor:
         description: "Selections should inherit from a named ancestor of this entity."

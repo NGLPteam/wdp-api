@@ -37,12 +37,12 @@ module Types
         TEXT
       end
 
-      field :ordering_source_mode, ::Types::SelectionSourceModeType, null: true do
+      field :ordering_source_ancestor_name, Types::SchemaComponentType, null: true do
         description <<~TEXT
         TEXT
       end
 
-      field :ordering_source_ancestor_name, Types::SchemaComponentType, null: true do
+      field :ordering_source_mode, ::Types::SelectionSourceModeType, null: true do
         description <<~TEXT
         TEXT
       end

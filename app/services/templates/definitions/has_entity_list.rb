@@ -31,6 +31,7 @@ module Templates
         {
           selection_mode: fallback ? selection_fallback_mode : selection_mode,
           selection_limit:,
+          selection_unbounded:,
           source_entity:,
           template_definition_id: id,
           template_kind:,
