@@ -1,0 +1,5 @@
+---
+entity_label:
+  slot_kind: inline
+  default_template: |-
+    Entity

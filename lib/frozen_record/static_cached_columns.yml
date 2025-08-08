@@ -18829,6 +18829,19 @@
   default_function:
   has_default: true
   virtual: false
+- id: Templates::DescendantListDefinition#selection_unbounded
+  model_name: Templates::DescendantListDefinition
+  table_name: templates_descendant_list_definitions
+  name: selection_unbounded
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
+  default_function:
+  has_default: true
+  virtual: false
 - id: Templates::DescendantListInstance#id
   model_name: Templates::DescendantListInstance
   table_name: templates_descendant_list_instances
@@ -19737,6 +19750,19 @@
   default:
   default_function:
   has_default: false
+  virtual: false
+- id: Templates::HeroDefinition#hide_summary
+  model_name: Templates::HeroDefinition
+  table_name: templates_hero_definitions
+  name: hide_summary
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
+  default_function:
+  has_default: true
   virtual: false
 - id: Templates::HeroInstance#id
   model_name: Templates::HeroInstance
@@ -20776,6 +20802,19 @@
   default_function:
   has_default: true
   virtual: false
+- id: Templates::LinkListDefinition#selection_unbounded
+  model_name: Templates::LinkListDefinition
+  table_name: templates_link_list_definitions
+  name: selection_unbounded
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
+  default_function:
+  has_default: true
+  virtual: false
 - id: Templates::LinkListInstance#id
   model_name: Templates::LinkListInstance
   table_name: templates_link_list_instances
@@ -21263,6 +21302,19 @@
   default:
   default_function:
   has_default: false
+  virtual: false
+- id: Templates::ListItemDefinition#selection_unbounded
+  model_name: Templates::ListItemDefinition
+  table_name: templates_list_item_definitions
+  name: selection_unbounded
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
+  default_function:
+  has_default: true
   virtual: false
 - id: Templates::ListItemInstance#id
   model_name: Templates::ListItemInstance
@@ -22201,6 +22253,19 @@
     sql_type: navigation_background
     type: enum
   default: none
+  default_function:
+  has_default: true
+  virtual: false
+- id: Templates::NavigationDefinition#hide_metadata
+  model_name: Templates::NavigationDefinition
+  table_name: templates_navigation_definitions
+  name: hide_metadata
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
   default_function:
   has_default: true
   virtual: false

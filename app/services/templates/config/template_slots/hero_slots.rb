@@ -17,11 +17,13 @@ module Templates
 
         attribute :header, ::Templates::Config::Utility::SlotValue, default: -> { ::TemplateSlot.default_slot_value_for("hero#header") }
 
-        attribute :header_subtitle, ::Templates::Config::Utility::SlotValue
-
         attribute :header_aside, ::Templates::Config::Utility::SlotValue
 
+        attribute :header_parent, ::Templates::Config::Utility::SlotValue
+
         attribute :header_sidebar, ::Templates::Config::Utility::SlotValue
+
+        attribute :header_subtitle, ::Templates::Config::Utility::SlotValue
 
         attribute :header_summary, ::Templates::Config::Utility::SlotValue
 
@@ -31,9 +33,9 @@ module Templates
 
         attribute :subheader, ::Templates::Config::Utility::SlotValue
 
-        attribute :subheader_subtitle, ::Templates::Config::Utility::SlotValue
-
         attribute :subheader_aside, ::Templates::Config::Utility::SlotValue
+
+        attribute :subheader_subtitle, ::Templates::Config::Utility::SlotValue
 
         attribute :subheader_summary, ::Templates::Config::Utility::SlotValue
 
@@ -50,11 +52,13 @@ module Templates
 
           map_element "header", to: :header, render_nil: true
 
-          map_element "header-subtitle", to: :header_subtitle, render_nil: true
-
           map_element "header-aside", to: :header_aside, render_nil: true
 
+          map_element "header-parent", to: :header_parent, render_nil: true
+
           map_element "header-sidebar", to: :header_sidebar, render_nil: true
+
+          map_element "header-subtitle", to: :header_subtitle, render_nil: true
 
           map_element "header-summary", to: :header_summary, render_nil: true
 
@@ -64,9 +68,9 @@ module Templates
 
           map_element "subheader", to: :subheader, render_nil: true
 
-          map_element "subheader-subtitle", to: :subheader_subtitle, render_nil: true
-
           map_element "subheader-aside", to: :subheader_aside, render_nil: true
+
+          map_element "subheader-subtitle", to: :subheader_subtitle, render_nil: true
 
           map_element "subheader-summary", to: :subheader_summary, render_nil: true
 

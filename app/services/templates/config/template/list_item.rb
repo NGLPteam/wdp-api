@@ -9,23 +9,25 @@ module Templates
       class ListItem < ::Templates::Config::Utility::AbstractTemplate
         configures_template! :list_item
 
+        attribute :dynamic_ordering_definition, ::Templates::Config::Properties::OrderingDefinition
+
+        attribute :manual_list_name, ::Templates::Config::Properties::SchemaComponent, default: -> { "manual" }
+
+        attribute :ordering_identifier, ::Templates::Config::Properties::SchemaComponent
+
         attribute :see_all_ordering_identifier, ::Templates::Config::Properties::SchemaComponent
-
-        attribute :selection_source, ::Templates::Config::Properties::SelectionSource
-
-        attribute :selection_mode, ::Templates::Config::Properties::ListItemSelectionMode
 
         attribute :selection_fallback_mode, ::Templates::Config::Properties::ListItemSelectionMode
 
         attribute :selection_limit, ::Templates::Config::Properties::Limit, default: -> { 3 }
 
-        attribute :dynamic_ordering_definition, ::Templates::Config::Properties::OrderingDefinition
-
-        attribute :ordering_identifier, ::Templates::Config::Properties::SchemaComponent
-
-        attribute :manual_list_name, ::Templates::Config::Properties::SchemaComponent, default: -> { "manual" }
+        attribute :selection_mode, ::Templates::Config::Properties::ListItemSelectionMode
 
         attribute :selection_property_path, ::Templates::Config::Properties::SchemaPropertyPath
+
+        attribute :selection_source, ::Templates::Config::Properties::SelectionSource
+
+        attribute :selection_unbounded, ::Templates::Config::Properties::Boolean, default: -> { false }
 
         attribute :use_selection_fallback, ::Templates::Config::Properties::Boolean, default: -> { false }
 
@@ -52,6 +54,8 @@ module Templates
           map_element "selection-property-path", to: :selection_property_path
 
           map_element "selection-source", to: :selection_source
+
+          map_element "selection-unbounded", to: :selection_unbounded
 
           map_element "use-selection-fallback", to: :use_selection_fallback
 

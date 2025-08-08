@@ -12,17 +12,6 @@ module Types
         TEXT
       end
 
-      field :title, String, null: true do
-        description <<~TEXT
-        TEXT
-      end
-
-      field :variant, ::Types::LinkListVariantType, null: true do
-        description <<~TEXT
-        The variant rendering mode to use for this template. Affects presentation.
-        TEXT
-      end
-
       field :background, ::Types::LinkListBackgroundType, null: true do
         description <<~TEXT
         The background gradient to use for this template. Affects presentation.
@@ -35,69 +24,19 @@ module Types
         TEXT
       end
 
-      field :entity_context, ::Types::ListEntityContextType, null: true do
-        description <<~TEXT
-        Enumerate how much context to show when listing entities.
-
-        Replaces `showEntityContext`.
-        TEXT
-      end
-
-      field :selection_source, ::Types::TemplateSelectionSourceType, null: true do
-        description <<~TEXT
-        When selecting entities based on `selectionMode`, this property determines
-        which entity (relevant to the rendering entity) should be used for lookups.
-
-        By default, it is `self`, which means the rendering entity itself.
-
-        It can also support things like `ancestor.journal`, `ancestor.issue`, etc.,
-        in order to render a list of values in its parent.
-        TEXT
-      end
-
-      field :selection_source_mode, ::Types::SelectionSourceModeType, null: true do
-        description <<~TEXT
-        An enum representing what mode `selectionSource` is in. Not directly set,
-        it is used internally for lookups.
-        TEXT
-      end
-
-      field :selection_source_ancestor_name, Types::SchemaComponentType, null: true do
-        description <<~TEXT
-        The derived name of the ancestor used for the `selectionSource`.
-
-        Exposed for introspection only.
-        TEXT
-      end
-
-      field :selection_mode, ::Types::LinkListSelectionModeType, null: true do
-        description <<~TEXT
-        The default mode to use when rendering a list of entities.
-
-        See also `selectionFallbackMode` and `useSelectionFallback`.
-        TEXT
-      end
-
-      field :selection_fallback_mode, ::Types::LinkListSelectionModeType, null: true do
-        description <<~TEXT
-        The fallback mode to use when rendering a list of entities, when the list from
-        `selectionMode` is empty and `useSelectionFallback` has been set to true.
-        TEXT
-      end
-
-      field :selection_limit, Int, null: true do
-        description <<~TEXT
-        Regardless of `selectionMode`, this limit will be applied on whatever resulting
-        list of entities are produced, so that only up to that amount of entities are
-        rendered in the template proper.
-        TEXT
-      end
-
       field :dynamic_ordering_definition, Types::OrderingDefinitionType, null: true do
         description <<~TEXT
         When `selectionMode` is set to `DYNAMIC`, this uses the same basic structure
         as schemas to define a dynamic ordering that is resolved at runtime and based
         on the `selectionSource`.
+        TEXT
+      end
+
+      field :entity_context, ::Types::ListEntityContextType, null: true do
+        description <<~TEXT
+        Enumerate how much context to show when listing entities.
+
+        Replaces `showEntityContext`.
         TEXT
       end
 
@@ -123,9 +62,78 @@ module Types
         TEXT
       end
 
+      field :selection_fallback_mode, ::Types::LinkListSelectionModeType, null: true do
+        description <<~TEXT
+        The fallback mode to use when rendering a list of entities, when the list from
+        `selectionMode` is empty and `useSelectionFallback` has been set to true.
+        TEXT
+      end
+
+      field :selection_limit, Int, null: true do
+        description <<~TEXT
+        Regardless of `selectionMode`, this limit will be applied on whatever resulting
+        list of entities are produced, so that only up to that amount of entities are
+        rendered in the template proper.
+        TEXT
+      end
+
+      field :selection_mode, ::Types::LinkListSelectionModeType, null: true do
+        description <<~TEXT
+        The default mode to use when rendering a list of entities.
+
+        See also `selectionFallbackMode` and `useSelectionFallback`.
+        TEXT
+      end
+
+      field :selection_source, ::Types::TemplateSelectionSourceType, null: true do
+        description <<~TEXT
+        When selecting entities based on `selectionMode`, this property determines
+        which entity (relevant to the rendering entity) should be used for lookups.
+
+        By default, it is `self`, which means the rendering entity itself.
+
+        It can also support things like `ancestor.journal`, `ancestor.issue`, etc.,
+        in order to render a list of values in its parent.
+        TEXT
+      end
+
+      field :selection_source_ancestor_name, Types::SchemaComponentType, null: true do
+        description <<~TEXT
+        The derived name of the ancestor used for the `selectionSource`.
+
+        Exposed for introspection only.
+        TEXT
+      end
+
+      field :selection_source_mode, ::Types::SelectionSourceModeType, null: true do
+        description <<~TEXT
+        An enum representing what mode `selectionSource` is in. Not directly set,
+        it is used internally for lookups.
+        TEXT
+      end
+
+      field :selection_unbounded, Boolean, null: true do
+        description <<~TEXT
+        When true, this takes priority over `selectionLimit`. It allows an entire
+        matching list of records to be retrieved. It should be used with caution,
+        since very large entity trees could cause responses to be slow.
+        TEXT
+      end
+
       field :show_contributors, Boolean, null: true do
         description <<~TEXT
         Show contributors when listing entities.
+        TEXT
+      end
+
+      field :show_entity_context, Boolean, null: true, deprecation_reason: "Use entity_context enum instead" do
+        description <<~TEXT
+        Show additional context about each entity in the selection.
+        TEXT
+      end
+
+      field :show_hero_image, Boolean, null: true do
+        description <<~TEXT
         TEXT
       end
 
@@ -141,13 +149,7 @@ module Types
         TEXT
       end
 
-      field :show_entity_context, Boolean, null: true, deprecation_reason: "Use entity_context enum instead" do
-        description <<~TEXT
-        Show additional context about each entity in the selection.
-        TEXT
-      end
-
-      field :show_hero_image, Boolean, null: true do
+      field :title, String, null: true do
         description <<~TEXT
         TEXT
       end
@@ -156,6 +158,12 @@ module Types
         description <<~TEXT
         Controls whether or not to use `selectionFallbackMode` if the entity list returned
         via `selectionMode` turns out to be empty at runtime.
+        TEXT
+      end
+
+      field :variant, ::Types::LinkListVariantType, null: true do
+        description <<~TEXT
+        The variant rendering mode to use for this template. Affects presentation.
         TEXT
       end
 

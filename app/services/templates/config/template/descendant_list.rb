@@ -9,43 +9,45 @@ module Templates
       class DescendantList < ::Templates::Config::Utility::AbstractTemplate
         configures_template! :descendant_list
 
-        attribute :title, ::Templates::Config::Properties::String
-
-        attribute :variant, ::Templates::Config::Properties::DescendantListVariant
-
         attribute :background, ::Templates::Config::Properties::DescendantListBackground, default: -> { "none" }
 
         attribute :browse_style, ::Templates::Config::Properties::Boolean, default: -> { false }
 
-        attribute :entity_context, ::Templates::Config::Properties::ListEntityContext, default: -> { "none" }
-
-        attribute :selection_source, ::Templates::Config::Properties::SelectionSource
-
-        attribute :selection_mode, ::Templates::Config::Properties::DescendantListSelectionMode
-
-        attribute :selection_fallback_mode, ::Templates::Config::Properties::DescendantListSelectionMode
-
-        attribute :selection_limit, ::Templates::Config::Properties::Limit, default: -> { 3 }
-
         attribute :dynamic_ordering_definition, ::Templates::Config::Properties::OrderingDefinition
 
-        attribute :ordering_identifier, ::Templates::Config::Properties::SchemaComponent
+        attribute :entity_context, ::Templates::Config::Properties::ListEntityContext, default: -> { "none" }
 
         attribute :manual_list_name, ::Templates::Config::Properties::SchemaComponent, default: -> { "manual" }
 
-        attribute :selection_property_path, ::Templates::Config::Properties::SchemaPropertyPath
+        attribute :ordering_identifier, ::Templates::Config::Properties::SchemaComponent
 
         attribute :see_all_button_label, ::Templates::Config::Properties::String, default: -> { "See All" }
 
         attribute :see_all_ordering_identifier, ::Templates::Config::Properties::SchemaComponent
 
-        attribute :show_contributors, ::Templates::Config::Properties::Boolean
+        attribute :selection_fallback_mode, ::Templates::Config::Properties::DescendantListSelectionMode
 
-        attribute :show_nested_entities, ::Templates::Config::Properties::Boolean
+        attribute :selection_limit, ::Templates::Config::Properties::Limit, default: -> { 3 }
+
+        attribute :selection_mode, ::Templates::Config::Properties::DescendantListSelectionMode
+
+        attribute :selection_property_path, ::Templates::Config::Properties::SchemaPropertyPath
+
+        attribute :selection_source, ::Templates::Config::Properties::SelectionSource
+
+        attribute :selection_unbounded, ::Templates::Config::Properties::Boolean, default: -> { false }
+
+        attribute :show_contributors, ::Templates::Config::Properties::Boolean
 
         attribute :show_hero_image, ::Templates::Config::Properties::Boolean, default: -> { false }
 
+        attribute :show_nested_entities, ::Templates::Config::Properties::Boolean
+
+        attribute :title, ::Templates::Config::Properties::String
+
         attribute :use_selection_fallback, ::Templates::Config::Properties::Boolean, default: -> { false }
+
+        attribute :variant, ::Templates::Config::Properties::DescendantListVariant
 
         attribute :width, ::Templates::Config::Properties::TemplateWidth, default: -> { "full" }
 
@@ -80,6 +82,8 @@ module Templates
           map_element "selection-property-path", to: :selection_property_path
 
           map_element "selection-source", to: :selection_source
+
+          map_element "selection-unbounded", to: :selection_unbounded
 
           map_element "show-contributors", to: :show_contributors
 

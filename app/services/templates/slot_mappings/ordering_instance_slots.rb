@@ -5,8 +5,8 @@ module Templates
     # @see Templates::OrderingInstance
     # @see Templates::SlotMappings::OrderingDefinitionSlots
     class OrderingInstanceSlots < AbstractInstanceSlots
-      inline! :previous_label
       inline! :next_label
+      inline! :previous_label
     end
   end
 end

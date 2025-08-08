@@ -11,6 +11,8 @@ module Templates
 
         attribute :background, ::Templates::Config::Properties::NavigationBackground, default: -> { "none" }
 
+        attribute :hide_metadata, ::Templates::Config::Properties::Boolean, default: -> { false }
+
         attribute :slots, Templates::Config::TemplateSlots::NavigationSlots,
           default: -> { Templates::Config::TemplateSlots::NavigationSlots.new }
 
@@ -18,6 +20,8 @@ module Templates
           root "navigation"
 
           map_element "background", to: :background
+
+          map_element "hide-metadata", to: :hide_metadata
 
           map_element "slots", to: :slots
         end

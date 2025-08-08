@@ -1,0 +1,5 @@
+---
+header:
+  slot_kind: inline
+  default_template: |-
+    Contributors

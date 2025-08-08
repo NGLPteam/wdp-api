@@ -1,0 +1,36 @@
+---
+dynamic_ordering_definition:
+  property_kind_name: ordering_definition
+manual_list_name:
+  property_kind_name: schema_component
+  default: manual
+ordering_identifier:
+  property_kind_name: schema_component
+see_all_ordering_identifier:
+  property_kind_name: schema_component
+selection_fallback_mode:
+  property_kind_name: selection_mode
+  enum_name: list_item_selection_mode
+selection_limit:
+  property_kind_name: limit
+  default: 3
+selection_mode:
+  property_kind_name: selection_mode
+  enum_name: list_item_selection_mode
+selection_property_path:
+  property_kind_name: schema_property_path
+selection_source:
+  property_kind_name: selection_source
+selection_source_ancestor_name:
+  property_kind_name: schema_component
+  skip_configuration: true
+selection_source_mode:
+  property_kind_name: selection_source_mode
+  skip_configuration: true
+  skip_declaration: true
+selection_unbounded:
+  property_kind_name: boolean
+  default: false
+use_selection_fallback:
+  property_kind_name: boolean
+  default: false

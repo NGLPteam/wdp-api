@@ -65,6 +65,11 @@ en:
         description: |
           When `selectionMode` is set to `PROPERTY`, this should be set to the full path
           for a given schema property on the associated `selectionSource`
+      selection_unbounded:
+          description: |-
+            When true, this takes priority over `selectionLimit`. It allows an entire
+            matching list of records to be retrieved. It should be used with caution,
+            since very large entity trees could cause responses to be slow.
       show_contributors:
         description: |
           Show contributors when listing entities.
@@ -109,6 +114,10 @@ en:
         description: |
           Whether to show and use the 'body' slot on a detail view.
           Primarily intended for items with copious text to display.
+    hero:
+      hide_summary:
+        description: |-
+          If true, hide the summary component of the hero template.
     link_list:
       see_all_ordering_identifier:
         description: |
@@ -122,6 +131,10 @@ en:
         description: |
           If provided, this will expose an ordering on the template instance that can
           be used to generate a link to the ordering in the frontend.
+    navigation:
+      hide_metadata:
+        description: |-
+          If true, the metadata template/tab should be hidden for this schema.
     ordering:
       ordering_identifier:
         description: |

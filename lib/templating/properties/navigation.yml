@@ -1,0 +1,8 @@
+---
+background:
+  property_kind_name: background
+  default: none
+  enum_name: navigation_background
+hide_metadata:
+  property_kind_name: boolean
+  default: false

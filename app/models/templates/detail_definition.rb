@@ -16,9 +16,9 @@ module Templates
 
     graphql_node_type_name "::Types::Templates::DetailTemplateDefinitionType"
 
-    pg_enum! :variant, as: :detail_variant, allow_blank: false, suffix: :variant
-
     pg_enum! :background, as: :detail_background, allow_blank: false, suffix: :background, default: "none"
+
+    pg_enum! :variant, as: :detail_variant, allow_blank: false, suffix: :variant
 
     pg_enum! :width, as: :template_width, allow_blank: false, suffix: :width, default: "full"
 

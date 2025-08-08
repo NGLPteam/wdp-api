@@ -3,7 +3,7 @@
 module Types
   class TemplateWidthType < Types::BaseEnum
     description <<~TEXT
-    An enumerated value associated with the templating subsystem.
+    An enum that helps organize things on the frontend to put certain templates side by side where it makes sense.
     TEXT
 
     value "FULL", value: "full" do

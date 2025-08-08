@@ -3,7 +3,7 @@
 module Types
   class ListItemSelectionModeType < Types::BaseEnum
     description <<~TEXT
-    An enumerated value associated with the templating subsystem.
+    An enum used to control the mode of selection for a list item template's associated records (if applicable).
     TEXT
 
     value "DYNAMIC", value: "dynamic" do

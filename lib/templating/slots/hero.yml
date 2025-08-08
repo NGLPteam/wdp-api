@@ -1,0 +1,41 @@
+---
+big_search_prompt:
+  slot_kind: inline
+  default_template: |-
+    Search
+call_to_action:
+  slot_kind: block
+descendant_search_prompt:
+  slot_kind: inline
+  default_template: |-
+    Search
+header:
+  slot_kind: inline
+  default_template: |-
+    {{ entity.title }}
+header_aside:
+  slot_kind: inline
+header_parent:
+  slot_kind: inline
+header_sidebar:
+  slot_kind: block
+header_subtitle:
+  slot_kind: inline
+header_summary:
+  slot_kind: block
+metadata:
+  slot_kind: inline
+sidebar:
+  slot_kind: block
+subheader:
+  slot_kind: inline
+subheader_aside:
+  slot_kind: inline
+subheader_subtitle:
+  slot_kind: inline
+subheader_summary:
+  slot_kind: block
+summary:
+  slot_kind: block
+  default_template: |-
+    {{ entity.title }}

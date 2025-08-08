@@ -35,8 +35,19 @@ module Templates
 
     alias empty? empty
 
+    # @return [Boolean]
+    attr_reader :flat_depth
+
+    alias flat_depth? flat_depth
+
     # @return [<Layouts::ListItemInstance>]
     attr_reader :list_item_layouts
+
+    # @return [Integer, nil]
+    attr_reader :maximum_depth
+
+    # @return [Integer, nil]
+    attr_reader :minimum_depth
 
     # {#entities} that have valid list item layouts.
     #
@@ -58,6 +69,12 @@ module Templates
       @count = valid_entities.size
 
       @empty = valid_entities.blank?
+
+      @minimum_depth = valid_entities.minimum(:hierarchical_depth)
+
+      @maximum_depth = valid_entities.maximum(:hierarchical_depth)
+
+      @flat_depth = minimum_depth.present? && maximum_depth.present? && minimum_depth == maximum_depth
     end
 
     private

@@ -11,8 +11,6 @@ module Templates
 
       alias definition dynamic_ordering_definition
 
-      alias limit selection_limit
-
       alias id template_definition_id
 
       def resolve_entities

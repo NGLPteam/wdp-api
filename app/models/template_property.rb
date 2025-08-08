@@ -1,8 +1,7 @@
 # frozen_string_literal: true
 
 class TemplateProperty < Support::FrozenRecordHelpers::AbstractRecord
-  include Dry::Core::Equalizer.new(:template_kind, :name)
-  include Dry::Core::Memoizable
+  include Templates::Config::SourcedByTemplateKind
 
   schema!(types: ::Templates::TypeRegistry) do
     required(:id).filled(:string)
@@ -26,7 +25,7 @@ class TemplateProperty < Support::FrozenRecordHelpers::AbstractRecord
     skip_declaration: false,
   )
 
-  calculates_id_from! :template_kind, :name
+  multiline! :deprecation_reason
 
   calculates! :description do |record|
     template_kind = record.fetch("template_kind")
@@ -50,10 +49,6 @@ class TemplateProperty < Support::FrozenRecordHelpers::AbstractRecord
 
   self.primary_key = :id
 
-  add_index :id, unique: true
-  add_index :name
-  add_index :template_kind
-
   alias_attribute :kind, :property_kind_name
 
   delegate :any_enum?, to: :property_kind
@@ -62,7 +57,6 @@ class TemplateProperty < Support::FrozenRecordHelpers::AbstractRecord
     to: :template
 
   scope :active, -> { where(active: true) }
-  scope :for_template, ->(kind) { where(template_kind: kind.to_s) }
   scope :deprecated, -> { where(deprecated: true) }
 
   def has_default?
@@ -92,11 +86,6 @@ class TemplateProperty < Support::FrozenRecordHelpers::AbstractRecord
 
   def exists_on_definition?
     name.in? definition_klass.column_names
-  end
-
-  # @return [Template]
-  memoize def template
-    Template.find template_kind
   end
 
   # @return [Templates::Compositions::TemplateProperty]

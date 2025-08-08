@@ -1,0 +1,5 @@
+---
+background:
+  property_kind_name: background
+  default: none
+  enum_name: metadata_background

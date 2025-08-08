@@ -309,7 +309,8 @@ CREATE TYPE public.detail_background AS ENUM (
 
 CREATE TYPE public.detail_variant AS ENUM (
     'full',
-    'summary'
+    'summary',
+    'columns'
 );
 
 
@@ -6743,7 +6744,8 @@ CREATE TABLE public.templates_descendant_list_definitions (
     show_contributors boolean DEFAULT false NOT NULL,
     show_nested_entities boolean DEFAULT false NOT NULL,
     entity_context public.list_entity_context DEFAULT 'none'::public.list_entity_context NOT NULL,
-    browse_style boolean DEFAULT false NOT NULL
+    browse_style boolean DEFAULT false NOT NULL,
+    selection_unbounded boolean DEFAULT false NOT NULL
 );
 
 
@@ -6844,7 +6846,8 @@ CREATE TABLE public.templates_hero_definitions (
     show_sharing_link boolean DEFAULT false NOT NULL,
     show_split_display boolean DEFAULT false NOT NULL,
     show_thumbnail_image boolean DEFAULT false NOT NULL,
-    descendant_search_prompt text
+    descendant_search_prompt text,
+    hide_summary boolean DEFAULT false NOT NULL
 );
 
 
@@ -6906,7 +6909,8 @@ CREATE TABLE public.templates_link_list_definitions (
     show_contributors boolean DEFAULT false NOT NULL,
     show_nested_entities boolean DEFAULT false NOT NULL,
     entity_context public.list_entity_context DEFAULT 'none'::public.list_entity_context NOT NULL,
-    browse_style boolean DEFAULT false NOT NULL
+    browse_style boolean DEFAULT false NOT NULL,
+    selection_unbounded boolean DEFAULT false NOT NULL
 );
 
 
@@ -6959,7 +6963,8 @@ CREATE TABLE public.templates_list_item_definitions (
     manual_list_name text DEFAULT 'manual'::text NOT NULL,
     selection_source_ancestor_name text,
     selection_property_path text,
-    see_all_ordering_identifier text
+    see_all_ordering_identifier text,
+    selection_unbounded boolean DEFAULT false NOT NULL
 );
 
 
@@ -7042,7 +7047,8 @@ CREATE TABLE public.templates_navigation_definitions (
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     config jsonb DEFAULT '{}'::jsonb NOT NULL,
     slots jsonb DEFAULT '{}'::jsonb NOT NULL,
-    background public.navigation_background DEFAULT 'none'::public.navigation_background NOT NULL
+    background public.navigation_background DEFAULT 'none'::public.navigation_background NOT NULL,
+    hide_metadata boolean DEFAULT false NOT NULL
 );
 
 
@@ -14430,6 +14436,7 @@ ALTER TABLE ONLY public.templates_ordering_instances
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20250807202326'),
 ('20250806224428'),
 ('20250730184809'),
 ('20250709172917'),

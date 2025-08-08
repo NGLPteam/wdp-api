@@ -1,0 +1,27 @@
+---
+block_header:
+  slot_kind: inline
+  description: |
+    Differs from the `header` where its value could be "Most Recent Issue", while header is that entity's title/number.
+    It's for when the block should have the content of it's title field visible, but we decided to never render
+    the title field itself.
+block_header_fallback:
+  slot_kind: inline
+  description: |-
+    The template to use for the block header when the fallback logic was used (if applicable).
+header:
+  slot_kind: inline
+  default_template: |-
+    Descendants
+header_aside:
+  slot_kind: inline
+header_fallback:
+  slot_kind: inline
+  description: |-
+    The template to use for the header when the fallback logic was used (if applicable).
+list_context:
+  slot_kind: inline
+metadata:
+  slot_kind: inline
+subtitle:
+  slot_kind: inline

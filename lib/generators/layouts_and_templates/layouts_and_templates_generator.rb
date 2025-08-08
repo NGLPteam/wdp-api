@@ -5,6 +5,12 @@ class LayoutsAndTemplatesGenerator < Rails::Generators::Base
 
   MODEL_CONCERNS = Rails.root.join("app", "models", "concerns")
 
+  def recompile_slots_and_properties!
+    TemplateSlot.recompile_from_source!
+
+    TemplateProperty.recompile_from_source!
+  end
+
   def generate_layouts_and_templates!
     layout_kinds.each do |layout_kind|
       generate_layout!(layout_kind:)

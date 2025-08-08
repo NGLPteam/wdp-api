@@ -8,9 +8,9 @@ module Templates
     class BlurbDefinitionSlots < AbstractDefinitionSlots
       instance_slots_klass Templates::SlotMappings::BlurbInstanceSlots
 
+      block! :body
       inline! :header
       inline! :subheader
-      block! :body
     end
   end
 end

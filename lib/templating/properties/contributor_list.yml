@@ -1,0 +1,15 @@
+---
+background:
+  property_kind_name: background
+  default: none
+  enum_name: contributor_list_background
+filter:
+  property_kind_name: contributor_list_filter
+  enum_name: contributor_list_filter
+limit:
+  property_kind_name: limit
+  default: 3
+width:
+  property_kind_name: width
+  default: full
+  enum_name: template_width

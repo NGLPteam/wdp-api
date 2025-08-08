@@ -1,0 +1,32 @@
+---
+background:
+  property_kind_name: background
+  default: none
+  enum_name: ordering_background
+ordering_identifier:
+  property_kind_name: schema_component
+ordering_source:
+  property_kind_name: selection_source
+  default: parent
+ordering_source_ancestor_name:
+  property_kind_name: schema_component
+  skip_configuration: true
+ordering_source_mode:
+  property_kind_name: selection_source_mode
+  default: parent
+  skip_configuration: true
+  skip_declaration: true
+selection_source:
+  property_kind_name: selection_source
+  default: self
+selection_source_ancestor_name:
+  property_kind_name: schema_component
+  skip_configuration: true
+selection_source_mode:
+  property_kind_name: selection_source_mode
+  skip_configuration: true
+  skip_declaration: true
+width:
+  property_kind_name: width
+  default: full
+  enum_name: template_width

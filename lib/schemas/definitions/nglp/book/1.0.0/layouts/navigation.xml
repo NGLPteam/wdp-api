@@ -3,6 +3,7 @@
   <templates>
     <navigation>
       <background>none</background>
+      <hide-metadata>true</hide-metadata>
       <slots>
         <entity-label>Book</entity-label>
       </slots>

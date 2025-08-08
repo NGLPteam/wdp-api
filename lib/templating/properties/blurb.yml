@@ -1,0 +1,8 @@
+---
+background:
+  property_kind_name: background
+  default: none
+width:
+  property_kind_name: width
+  default: full
+  enum_name: template_width

@@ -9,10 +9,12 @@ class TemplateEnumProperty < Support::FrozenRecordHelpers::AbstractRecord
     required(:name).filled(:enum_property_name)
     required(:category).value(:enum_property_category)
     optional(:default).maybe(:string)
+    optional(:description).maybe(:stripped_string)
   end
 
   default_attributes!(
     category: "none",
+    description: "An enumerated value associated with the templating subsystem."
   )
 
   configure_i18n_scoped_attributes!(
@@ -50,6 +52,10 @@ class TemplateEnumProperty < Support::FrozenRecordHelpers::AbstractRecord
   end
 
   # @!group Generator / Introspection Helpers
+
+  def gql_description(indent: 4)
+    description.to_s.indent(indent).strip
+  end
 
   # @return [String]
   memoize def gql_type_file_name
