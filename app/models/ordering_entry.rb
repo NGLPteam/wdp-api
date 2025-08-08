@@ -30,7 +30,10 @@ class OrderingEntry < ApplicationRecord
     foreign_key: %i[ordering_id ordering_entry_id],
     dependent: :nullify
 
-  has_one :ordering_entry_sibling_link, foreign_key: %i[ordering_id sibling_id], dependent: :delete, inverse_of: :sibling
+  has_one :ordering_entry_sibling_link,
+    primary_key: %i[ordering_id id],
+    foreign_key: %i[ordering_id sibling_id],
+    dependent: :delete, inverse_of: :sibling
 
   has_one :prev_sibling, through: :ordering_entry_sibling_link, source: :prev
   has_one :next_sibling, through: :ordering_entry_sibling_link, source: :next
